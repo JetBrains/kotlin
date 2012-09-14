@@ -195,162 +195,10 @@ public class TypeHierarchyResolver {
     ) {
         final Collection<JetDeclarationContainer> forDeferredResolve = new ArrayList<JetDeclarationContainer>();
 
+        ClassifierCollector collector = new ClassifierCollector(outerScope, owner, forDeferredResolve);
+
         for (PsiElement declaration : declarations) {
-            declaration.accept(new JetVisitorVoid() {
-                @Override
-                public void visitJetFile(JetFile file) {
-                    NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
-                            file, outerScope, RedeclarationHandler.DO_NOTHING);
-                    context.getNamespaceDescriptors().put(file, namespaceDescriptor);
-
-                    WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(),
-                                                                             new TraceBasedRedeclarationHandler(trace), "namespace");
-                    namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-                    context.getNamespaceScopes().put(file, namespaceScope);
-
-                    if (file.isScript()) {
-                        scriptHeaderResolver.processScriptHierarchy(file.getScript(), namespaceScope);
-                    }
-
-                    prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
-                }
-
-                @Override
-                public void visitClass(JetClass klass) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                            owner.getOwnerForChildren(), outerScope, getClassKind(klass), JetPsiUtil.safeName(klass.getName()));
-                    context.getClasses().put(klass, mutableClassDescriptor);
-                    trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
-
-                    createClassObjectForEnumClass(klass, mutableClassDescriptor);
-
-                    JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-
-                    prepareForDeferredCall(classScope, mutableClassDescriptor, klass);
-
-                    owner.addClassifierDescriptor(mutableClassDescriptor);
-                }
-
-                @Override
-                public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    MutableClassDescriptor objectDescriptor =
-                            createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()),
-                                                           ClassKind.OBJECT);
-                    owner.addObjectDescriptor(objectDescriptor);
-                    trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
-                }
-
-                @Override
-                public void visitEnumEntry(JetEnumEntry enumEntry) {
-                    // TODO: Bad casting
-                    MutableClassDescriptorLite ownerClassDescriptor = (MutableClassDescriptorLite) owner.getOwnerForChildren();
-                    MutableClassDescriptorLite classObjectDescriptor = ownerClassDescriptor.getClassObjectDescriptor();
-
-                    assert classObjectDescriptor != null : enumEntry.getParent().getText();
-                    createClassDescriptorForEnumEntry(enumEntry, classObjectDescriptor.getBuilder());
-                }
-
-                @Override
-                public void visitTypedef(JetTypedef typedef) {
-                    trace.report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
-                }
-
-                @Override
-                public void visitClassObject(JetClassObject classObject) {
-                    JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
-                    if (objectDeclaration != null) {
-                        Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());
-                        MutableClassDescriptor classObjectDescriptor =
-                              createClassDescriptorForObject(objectDeclaration, owner, getStaticScope(classObject, owner),
-                                                             classObjectName, ClassKind.CLASS_OBJECT);
-                        NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
-                        switch (status) {
-                            case DUPLICATE:
-                                trace.report(MANY_CLASS_OBJECTS.on(classObject));
-                                break;
-                            case NOT_ALLOWED:
-                                trace.report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
-                                break;
-                            case OK:
-                                // Everything is OK so no errors to trace.
-                                break;
-                        }
-                    }
-                }
-
-                private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
-                    if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
-                                mutableClassDescriptor, outerScope, ClassKind.CLASS_OBJECT,
-                                getClassObjectName(JetPsiUtil.safeName(klass.getName())));
-                        mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
-                        classObjectDescriptor.setModality(Modality.FINAL);
-                        classObjectDescriptor.setVisibility(ModifiersChecker.resolveVisibilityFromModifiers(klass));
-                        classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
-                        classObjectDescriptor.createTypeConstructor();
-                        ConstructorDescriptorImpl primaryConstructorForObject =
-                                createPrimaryConstructorForObject(null, classObjectDescriptor);
-                        primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
-                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
-                        classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
-                    }
-                }
-
-                private MutableClassDescriptor createClassDescriptorForObject(
-                        @NotNull JetObjectDeclaration declaration, @NotNull NamespaceLikeBuilder owner,
-                        @NotNull JetScope scope, @NotNull Name name, @NotNull ClassKind kind
-                ) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                            owner.getOwnerForChildren(), scope, kind, name);
-                    context.getObjects().put(declaration, mutableClassDescriptor);
-
-                    JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
-
-                    prepareForDeferredCall(classScope, mutableClassDescriptor, declaration);
-
-                    createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
-                    trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
-                    return mutableClassDescriptor;
-                }
-
-                private MutableClassDescriptor createClassDescriptorForEnumEntry(
-                        @NotNull JetEnumEntry declaration,
-                        @NotNull NamespaceLikeBuilder owner
-                ) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                            owner.getOwnerForChildren(), getStaticScope(declaration, owner), ClassKind.ENUM_ENTRY,
-                            JetPsiUtil.safeName(declaration.getName()));
-                    context.getClasses().put(declaration, mutableClassDescriptor);
-
-                    prepareForDeferredCall(mutableClassDescriptor.getScopeForMemberResolution(), mutableClassDescriptor, declaration);
-
-                    // ??? - is enum entry object?
-                    createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
-                    owner.addObjectDescriptor(mutableClassDescriptor);
-                    trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
-                    return mutableClassDescriptor;
-                }
-
-                private ConstructorDescriptorImpl createPrimaryConstructorForObject(
-                        @Nullable PsiElement object,
-                        MutableClassDescriptor mutableClassDescriptor
-                ) {
-                    ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver
-                            .createAndRecordPrimaryConstructorForObject(object, mutableClassDescriptor, trace);
-                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
-                    return constructorDescriptor;
-                }
-
-                private void prepareForDeferredCall(
-                        @NotNull JetScope outerScope,
-                        @NotNull WithDeferredResolve withDeferredResolve,
-                        @NotNull JetDeclarationContainer container
-                ) {
-                    forDeferredResolve.add(container);
-                    context.normalScope.put(container, outerScope);
-                    context.forDeferredResolver.put(container, withDeferredResolve);
-                }
-            });
+            declaration.accept(collector);
         }
 
         return forDeferredResolve;
@@ -617,6 +465,176 @@ public class TypeHierarchyResolver {
                     }
                 }
             }
+        }
+    }
+
+    private class ClassifierCollector extends JetVisitorVoid {
+        private final JetScope outerScope;
+        private final NamespaceLikeBuilder owner;
+        private final Collection<JetDeclarationContainer> forDeferredResolve;
+
+        public ClassifierCollector(@NotNull JetScope outerScope,
+                @NotNull NamespaceLikeBuilder owner,
+                @NotNull Collection<JetDeclarationContainer> forDeferredResolve
+        ) {
+            this.outerScope = outerScope;
+            this.owner = owner;
+            this.forDeferredResolve = forDeferredResolve;
+        }
+
+        @Override
+        public void visitJetFile(JetFile file) {
+            NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
+                    file, outerScope, RedeclarationHandler.DO_NOTHING);
+            context.getNamespaceDescriptors().put(file, namespaceDescriptor);
+
+            WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(),
+                                                                     new TraceBasedRedeclarationHandler(trace), "namespace");
+            namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+            context.getNamespaceScopes().put(file, namespaceScope);
+
+            if (file.isScript()) {
+                scriptHeaderResolver.processScriptHierarchy(file.getScript(), namespaceScope);
+            }
+
+            prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
+        }
+
+        @Override
+        public void visitClass(JetClass klass) {
+            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
+                    owner.getOwnerForChildren(), outerScope, getClassKind(klass), JetPsiUtil.safeName(klass.getName()));
+            context.getClasses().put(klass, mutableClassDescriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
+
+            createClassObjectForEnumClass(klass, mutableClassDescriptor);
+
+            JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
+
+            prepareForDeferredCall(classScope, mutableClassDescriptor, klass);
+
+            owner.addClassifierDescriptor(mutableClassDescriptor);
+        }
+
+        @Override
+        public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+            MutableClassDescriptor objectDescriptor =
+                    createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()),
+                                                   ClassKind.OBJECT);
+            owner.addObjectDescriptor(objectDescriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
+        }
+
+        @Override
+        public void visitEnumEntry(JetEnumEntry enumEntry) {
+            // TODO: Bad casting
+            MutableClassDescriptorLite ownerClassDescriptor = (MutableClassDescriptorLite) owner.getOwnerForChildren();
+            MutableClassDescriptorLite classObjectDescriptor = ownerClassDescriptor.getClassObjectDescriptor();
+
+            assert classObjectDescriptor != null : enumEntry.getParent().getText();
+            createClassDescriptorForEnumEntry(enumEntry, classObjectDescriptor.getBuilder());
+        }
+
+        @Override
+        public void visitTypedef(JetTypedef typedef) {
+            trace.report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
+        }
+
+        @Override
+        public void visitClassObject(JetClassObject classObject) {
+            JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
+            if (objectDeclaration != null) {
+                Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());
+                MutableClassDescriptor classObjectDescriptor =
+                      createClassDescriptorForObject(objectDeclaration, owner, getStaticScope(classObject, owner),
+                                                     classObjectName, ClassKind.CLASS_OBJECT);
+                NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
+                switch (status) {
+                    case DUPLICATE:
+                        trace.report(MANY_CLASS_OBJECTS.on(classObject));
+                        break;
+                    case NOT_ALLOWED:
+                        trace.report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
+                        break;
+                    case OK:
+                        // Everything is OK so no errors to trace.
+                        break;
+                }
+            }
+        }
+
+        private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
+            if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+                MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
+                        mutableClassDescriptor, outerScope, ClassKind.CLASS_OBJECT,
+                        getClassObjectName(JetPsiUtil.safeName(klass.getName())));
+                mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
+                classObjectDescriptor.setModality(Modality.FINAL);
+                classObjectDescriptor.setVisibility(ModifiersChecker.resolveVisibilityFromModifiers(klass));
+                classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
+                classObjectDescriptor.createTypeConstructor();
+                ConstructorDescriptorImpl primaryConstructorForObject =
+                        createPrimaryConstructorForObject(null, classObjectDescriptor);
+                primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
+                classObjectDescriptor.getBuilder().addFunctionDescriptor(
+                        DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
+                classObjectDescriptor.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+            }
+        }
+
+        private MutableClassDescriptor createClassDescriptorForObject(
+                @NotNull JetObjectDeclaration declaration, @NotNull NamespaceLikeBuilder owner,
+                @NotNull JetScope scope, @NotNull Name name, @NotNull ClassKind kind
+        ) {
+            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
+                    owner.getOwnerForChildren(), scope, kind, name);
+            context.getObjects().put(declaration, mutableClassDescriptor);
+
+            JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
+
+            prepareForDeferredCall(classScope, mutableClassDescriptor, declaration);
+
+            createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
+            trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
+            return mutableClassDescriptor;
+        }
+
+        private MutableClassDescriptor createClassDescriptorForEnumEntry(
+                @NotNull JetEnumEntry declaration,
+                @NotNull NamespaceLikeBuilder owner
+        ) {
+            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
+                    owner.getOwnerForChildren(), getStaticScope(declaration, owner), ClassKind.ENUM_ENTRY,
+                    JetPsiUtil.safeName(declaration.getName()));
+            context.getClasses().put(declaration, mutableClassDescriptor);
+
+            prepareForDeferredCall(mutableClassDescriptor.getScopeForMemberResolution(), mutableClassDescriptor, declaration);
+
+            // ??? - is enum entry object?
+            createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
+            owner.addObjectDescriptor(mutableClassDescriptor);
+            trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
+            return mutableClassDescriptor;
+        }
+
+        private ConstructorDescriptorImpl createPrimaryConstructorForObject(
+                @Nullable PsiElement object,
+                MutableClassDescriptor mutableClassDescriptor
+        ) {
+            ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver
+                    .createAndRecordPrimaryConstructorForObject(object, mutableClassDescriptor, trace);
+            mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
+            return constructorDescriptor;
+        }
+
+        private void prepareForDeferredCall(
+                @NotNull JetScope outerScope,
+                @NotNull WithDeferredResolve withDeferredResolve,
+                @NotNull JetDeclarationContainer container
+        ) {
+            forDeferredResolve.add(container);
+            context.normalScope.put(container, outerScope);
+            context.forDeferredResolver.put(container, withDeferredResolve);
         }
     }
 }
