@@ -167,11 +167,6 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern(javaUtil, "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern(javaUtil, "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
 
-        add(pattern("jet", "MutableCollection", "add"), new KotlinFunctionIntrinsic("collectionAdd"));
-        add(pattern("jet", "MutableCollection", "remove"), new KotlinFunctionIntrinsic("collectionRemove"));
-        add(pattern("jet", "Collection", "iterator"), new KotlinFunctionIntrinsic("collectionIterator"));
-        add(pattern("jet", "Collection", "size"), new KotlinFunctionIntrinsic("collectionSize"));
-        add(pattern("jet", "Collection", "isEmpty"), new KotlinFunctionIntrinsic("collectionIsEmpty"));
     }
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {

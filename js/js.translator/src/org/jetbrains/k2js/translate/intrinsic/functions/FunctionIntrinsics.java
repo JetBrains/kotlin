@@ -80,6 +80,9 @@ public final class FunctionIntrinsics {
             if (factory.getPredicate().apply(descriptor)) {
                 return factory.getIntrinsic(descriptor);
             }
+            else {
+                int f = 4;
+            }
         }
         return FunctionIntrinsic.NO_INTRINSIC;
     }
