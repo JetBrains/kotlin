@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -257,7 +258,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (ErrorUtils.isError(descriptor)) {
             if (classBuilderMode != ClassBuilderMode.SIGNATURES) {
-                throw new IllegalStateException("error types are not allowed when classBuilderMode = " + classBuilderMode);
+                throw new IllegalStateException(generateErrorMessageForErrorType(descriptor));
             }
             Type asmType = Type.getObjectType("error/NonExistentClass");
             if (signatureVisitor != null) {
@@ -318,6 +319,24 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
+    }
+
+    private String generateErrorMessageForErrorType(@NotNull DeclarationDescriptor descriptor) {
+        PsiElement declarationElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
+        PsiElement parentDeclarationElement = null;
+        if (declarationElement != null) {
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration != null) {
+                parentDeclarationElement = BindingContextUtils.descriptorToDeclaration(bindingContext, containingDeclaration);
+            }
+        }
+
+        return String.format("Error types are not allowed when classBuilderMode = %s. For declaration %s:%s in %s:%s",
+                      classBuilderMode,
+                      declarationElement,
+                      declarationElement != null ? declarationElement.getText() : "null",
+                      parentDeclarationElement,
+                      parentDeclarationElement != null ? parentDeclarationElement.getText() : "null");
     }
 
     private void writeGenericType(JetType jetType, BothSignatureWriter signatureVisitor, Type asmType, boolean forceReal) {
