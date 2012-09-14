@@ -6,10 +6,10 @@ import java.util.concurrent.Future
 import java.util.concurrent.Callable
 
 inline val currentThread : Thread
-    get() = Thread.currentThread().sure()
+    get() = Thread.currentThread()!!
 
 inline var Thread.name : String
-    get() = getName().sure()
+    get() = getName()!!
     set(name: String) { setName(name) }
 
 inline var Thread.daemon : Boolean
@@ -66,7 +66,7 @@ public inline fun Executor.invoke(action: ()->Unit) {
  */
 public inline fun <T>ExecutorService.submit(action: ()->T):Future<T> {
     val c:Callable<T> = callable(action)
-    return submit(c).sure();
+    return submit(c)!!;
 }
 
 /**

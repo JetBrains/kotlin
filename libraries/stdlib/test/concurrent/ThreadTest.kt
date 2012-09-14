@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit.*
 class ThreadTest {
     test fun scheduledTask() {
 
-        val pool = Executors.newFixedThreadPool(1).sure()
+        val pool = Executors.newFixedThreadPool(1)!!
         val countDown = CountDownLatch(1)
         pool {
             countDown.countDown()
@@ -21,7 +21,7 @@ class ThreadTest {
 
     test fun callableInvoke() {
 
-        val pool = Executors.newFixedThreadPool(1).sure()
+        val pool = Executors.newFixedThreadPool(1)!!
         val future = pool<String> {
             "Hello"
         }

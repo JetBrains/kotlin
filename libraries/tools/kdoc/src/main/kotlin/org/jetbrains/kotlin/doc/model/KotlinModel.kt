@@ -137,14 +137,14 @@ fun inheritedExtensionProperties(properties: Collection<KProperty>): Map<KClass,
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun extensionFunctions(functions: Collection<KFunction>): Map<KClass, List<KFunction>> {
     val map = TreeMap<KClass, List<KFunction>>()
-    functions.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass.sure() }
+    functions.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass!! }
     return map
 }
 
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KProperty>> {
     val map = TreeMap<KClass, List<KProperty>>()
-    properties.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass.sure() }
+    properties.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass!! }
     return map
 }
 
@@ -176,7 +176,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
 
     public val allPackages: Collection<KPackage>
-    get() = packageMap.values().sure()
+    get() = packageMap.values()!!
 
     /** Returns the local packages */
     public val packages: Collection<KPackage>
@@ -345,7 +345,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     }
 
     fun wikiConvert(text: String, linkRenderer: LinkRenderer, fileName: String?): String {
-        return markdownProcessor.markdownToHtml(text, linkRenderer).sure()
+        return markdownProcessor.markdownToHtml(text, linkRenderer)!!
     }
 
     fun sourceLinkFor(filePath: String, sourceLine: Int, lineLinkText: String = "#L"): String? {
@@ -552,8 +552,8 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 // source code function if folks adopted a convention of naming the test method after the
                 // method its acting as a demo/test for
                 if (words.size > 1) {
-                    val includeFile = words[0].sure()
-                    val fnName = words[1].sure()
+                    val includeFile = words[0]!!
+                    val fnName = words[1]!!
                     val content = findFunctionInclude(psiElement, includeFile, fnName)
                     if (content != null) {
                         return content
@@ -571,7 +571,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     protected fun findFunctionInclude(psiElement: PsiElement, includeFile: String, functionName: String): String? {
         var dir = psiElement.getContainingFile()?.getParent()
         if (dir != null) {
-            val file = relativeFile(dir.sure(), includeFile)
+            val file = relativeFile(dir!!, includeFile)
             if (file != null) {
                 val text = file.getText()
                 if (text != null) {
@@ -947,7 +947,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
 
     public val classes: Collection<KClass>
-    get() = classMap.values().sure().filter{ it.isApi() }
+    get() = classMap.values()!!.filter{ it.isApi() }
 
     public val annotations: Collection<KClass> = ArrayList<KClass>()
 
@@ -1046,7 +1046,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
 }
 
 class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: MutableList<KType> = ArrayList<KType>())
-: KNamed(klass?.name ?: jetType.toString().sure(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
+: KNamed(klass?.name ?: jetType.toString()!!, model, jetType.getConstructor().getDeclarationDescriptor()!!) {
     {
         if (klass != null) {
             this.wikiDescription = klass.wikiDescription

@@ -14,33 +14,33 @@ public inline fun String.indexOf(str : String) : Int = (this as java.lang.String
 
 public inline fun String.indexOf(str : String, fromIndex : Int) : Int = (this as java.lang.String).indexOf(str, fromIndex)
 
-public inline fun String.replace(oldChar: Char, newChar : Char) : String = (this as java.lang.String).replace(oldChar, newChar).sure()
+public inline fun String.replace(oldChar: Char, newChar : Char) : String = (this as java.lang.String).replace(oldChar, newChar)!!
 
-public inline fun String.replaceAll(regex: String, replacement : String) : String = (this as java.lang.String).replaceAll(regex, replacement).sure()
+public inline fun String.replaceAll(regex: String, replacement : String) : String = (this as java.lang.String).replaceAll(regex, replacement)!!
 
-public inline fun String.trim() : String = (this as java.lang.String).trim().sure()
+public inline fun String.trim() : String = (this as java.lang.String).trim()!!
 
-public inline fun String.toUpperCase() : String = (this as java.lang.String).toUpperCase().sure()
+public inline fun String.toUpperCase() : String = (this as java.lang.String).toUpperCase()!!
 
-public inline fun String.toLowerCase() : String = (this as java.lang.String).toLowerCase().sure()
+public inline fun String.toLowerCase() : String = (this as java.lang.String).toLowerCase()!!
 
 public inline fun String.length() : Int = (this as java.lang.String).length()
 
-public inline fun String.getBytes() : ByteArray = (this as java.lang.String).getBytes().sure()
+public inline fun String.getBytes() : ByteArray = (this as java.lang.String).getBytes()!!
 
-public inline fun String.toCharArray() : CharArray = (this as java.lang.String).toCharArray().sure()
+public inline fun String.toCharArray() : CharArray = (this as java.lang.String).toCharArray()!!
 
 public inline fun String.toCharList(): List<Char> = toCharArray().toList()
 
-public inline fun String.format(format : String, vararg args : Any?) : String = java.lang.String.format(format, args).sure()
+public inline fun String.format(format : String, vararg args : Any?) : String = java.lang.String.format(format, args)!!
 
 public inline fun String.split(regex : String) : Array<String> = (this as java.lang.String).split(regex) as Array<String>
 
 public inline fun String.split(ch : Char) : Array<String> = (this as java.lang.String).split(java.util.regex.Pattern.quote(ch.toString())) as Array<String>
 
-public inline fun String.substring(beginIndex : Int) : String = (this as java.lang.String).substring(beginIndex).sure()
+public inline fun String.substring(beginIndex : Int) : String = (this as java.lang.String).substring(beginIndex)!!
 
-public inline fun String.substring(beginIndex : Int, endIndex : Int) : String = (this as java.lang.String).substring(beginIndex, endIndex).sure()
+public inline fun String.substring(beginIndex : Int, endIndex : Int) : String = (this as java.lang.String).substring(beginIndex, endIndex)!!
 
 public inline fun String.startsWith(prefix: String) : Boolean = (this as java.lang.String).startsWith(prefix)
 
@@ -74,59 +74,59 @@ public inline fun String(stringBuffer : java.lang.StringBuffer) : String = java.
 
 public inline fun String(stringBuilder : java.lang.StringBuilder) : String = java.lang.String(stringBuilder) as String
 
-public inline fun String.replaceFirst(regex : String, replacement : String) : String = (this as java.lang.String).replaceFirst(regex, replacement).sure()
+public inline fun String.replaceFirst(regex : String, replacement : String) : String = (this as java.lang.String).replaceFirst(regex, replacement)!!
 
-public inline fun String.charAt(index : Int) : Char = (this as java.lang.String).charAt(index).sure()
+public inline fun String.charAt(index : Int) : Char = (this as java.lang.String).charAt(index)!!
 
-public inline fun String.split(regex : String, limit : Int) : Array<String?> = (this as java.lang.String).split(regex, limit).sure()
+public inline fun String.split(regex : String, limit : Int) : Array<String?> = (this as java.lang.String).split(regex, limit)!!
 
-public inline fun String.codePointAt(index : Int) : Int = (this as java.lang.String).codePointAt(index).sure()
+public inline fun String.codePointAt(index : Int) : Int = (this as java.lang.String).codePointAt(index)!!
 
-public inline fun String.codePointBefore(index : Int) : Int = (this as java.lang.String).codePointBefore(index).sure()
+public inline fun String.codePointBefore(index : Int) : Int = (this as java.lang.String).codePointBefore(index)!!
 
 public inline fun String.codePointCount(beginIndex : Int, endIndex : Int) : Int = (this as java.lang.String).codePointCount(beginIndex, endIndex)
 
-public inline fun String.compareToIgnoreCase(str : String) : Int = (this as java.lang.String).compareToIgnoreCase(str).sure()
+public inline fun String.compareToIgnoreCase(str : String) : Int = (this as java.lang.String).compareToIgnoreCase(str)!!
 
-public inline fun String.concat(str : String) : String = (this as java.lang.String).concat(str).sure()
+public inline fun String.concat(str : String) : String = (this as java.lang.String).concat(str)!!
 
-public inline fun String.contentEquals(cs : CharSequence) : Boolean = (this as java.lang.String).contentEquals(cs).sure()
+public inline fun String.contentEquals(cs : CharSequence) : Boolean = (this as java.lang.String).contentEquals(cs)!!
 
-public inline fun String.contentEquals(sb : StringBuffer) : Boolean = (this as java.lang.String).contentEquals(sb).sure()
+public inline fun String.contentEquals(sb : StringBuffer) : Boolean = (this as java.lang.String).contentEquals(sb)!!
 
-public inline fun String.getBytes(charset : java.nio.charset.Charset) : ByteArray = (this as java.lang.String).getBytes(charset).sure()
+public inline fun String.getBytes(charset : java.nio.charset.Charset) : ByteArray = (this as java.lang.String).getBytes(charset)!!
 
-public inline fun String.getBytes(charsetName : String) : ByteArray = (this as java.lang.String).getBytes(charsetName).sure()
+public inline fun String.getBytes(charsetName : String) : ByteArray = (this as java.lang.String).getBytes(charsetName)!!
 
-public inline fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Tuple0 = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin).sure()
+public inline fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) : Tuple0 = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)!!
 
-public inline fun String.indexOf(ch : Char) : Int = (this as java.lang.String).indexOf(ch.toString()).sure()
+public inline fun String.indexOf(ch : Char) : Int = (this as java.lang.String).indexOf(ch.toString())!!
 
-public inline fun String.indexOf(ch : Char, fromIndex : Int) : Int = (this as java.lang.String).indexOf(ch.toString(), fromIndex).sure()
+public inline fun String.indexOf(ch : Char, fromIndex : Int) : Int = (this as java.lang.String).indexOf(ch.toString(), fromIndex)!!
 
-public inline fun String.intern() : String = (this as java.lang.String).intern().sure()
+public inline fun String.intern() : String = (this as java.lang.String).intern()!!
 
-public inline fun String.isEmpty() : Boolean = (this as java.lang.String).isEmpty().sure()
+public inline fun String.isEmpty() : Boolean = (this as java.lang.String).isEmpty()!!
 
-public inline fun String.lastIndexOf(ch : Char, fromIndex : Int) : Int = (this as java.lang.String).lastIndexOf(ch.toString(), fromIndex).sure()
+public inline fun String.lastIndexOf(ch : Char, fromIndex : Int) : Int = (this as java.lang.String).lastIndexOf(ch.toString(), fromIndex)!!
 
-public inline fun String.lastIndexOf(str : String, fromIndex : Int) : Int = (this as java.lang.String).lastIndexOf(str, fromIndex).sure()
+public inline fun String.lastIndexOf(str : String, fromIndex : Int) : Int = (this as java.lang.String).lastIndexOf(str, fromIndex)!!
 
-public inline fun String.matches(regex : String) : Boolean = (this as java.lang.String).matches(regex).sure()
+public inline fun String.matches(regex : String) : Boolean = (this as java.lang.String).matches(regex)!!
 
-public inline fun String.offsetByCodePoints(index : Int, codePointOffset : Int) : Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset).sure()
+public inline fun String.offsetByCodePoints(index : Int, codePointOffset : Int) : Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset)!!
 
-public inline fun String.regionMatches(ignoreCase : Boolean, toffset : Int, other : String, ooffset : Int, len : Int) : Boolean = (this as java.lang.String).regionMatches(ignoreCase, toffset, other, ooffset, len).sure()
+public inline fun String.regionMatches(ignoreCase : Boolean, toffset : Int, other : String, ooffset : Int, len : Int) : Boolean = (this as java.lang.String).regionMatches(ignoreCase, toffset, other, ooffset, len)!!
 
-public inline fun String.regionMatches(toffset : Int, other : String, ooffset : Int, len : Int) : Boolean = (this as java.lang.String).regionMatches(toffset, other, ooffset, len).sure()
+public inline fun String.regionMatches(toffset : Int, other : String, ooffset : Int, len : Int) : Boolean = (this as java.lang.String).regionMatches(toffset, other, ooffset, len)!!
 
-public inline fun String.replace(target : CharSequence, replacement : CharSequence) : String = (this as java.lang.String).replace(target, replacement).sure()
+public inline fun String.replace(target : CharSequence, replacement : CharSequence) : String = (this as java.lang.String).replace(target, replacement)!!
 
-public inline fun String.subSequence(beginIndex : Int, endIndex : Int) : CharSequence = (this as java.lang.String).subSequence(beginIndex, endIndex).sure()
+public inline fun String.subSequence(beginIndex : Int, endIndex : Int) : CharSequence = (this as java.lang.String).subSequence(beginIndex, endIndex)!!
 
-public inline fun String.toLowerCase(locale : java.util.Locale) : String = (this as java.lang.String).toLowerCase(locale).sure()
+public inline fun String.toLowerCase(locale : java.util.Locale) : String = (this as java.lang.String).toLowerCase(locale)!!
 
-public inline fun String.toUpperCase(locale : java.util.Locale) : String = (this as java.lang.String).toUpperCase(locale).sure()
+public inline fun String.toUpperCase(locale : java.util.Locale) : String = (this as java.lang.String).toUpperCase(locale)!!
 
 
 public inline fun CharSequence.charAt(index : Int) : Char = (this as java.lang.CharSequence).charAt(index)
@@ -144,19 +144,19 @@ public inline fun CharSequence.length() : Int = (this as java.lang.CharSequence)
 
 public inline fun String.toByteArray(encoding: String?=null):ByteArray {
     if(encoding==null) {
-        return (this as java.lang.String).getBytes().sure()
+        return (this as java.lang.String).getBytes()!!
     } else {
-        return (this as java.lang.String).getBytes(encoding).sure()
+        return (this as java.lang.String).getBytes(encoding)!!
     }
 }
-public inline fun String.toByteArray(encoding: java.nio.charset.Charset):ByteArray =  (this as java.lang.String).getBytes(encoding).sure()
+public inline fun String.toByteArray(encoding: java.nio.charset.Charset):ByteArray =  (this as java.lang.String).getBytes(encoding)!!
 
-public inline fun String.toBoolean() : Boolean = java.lang.Boolean.parseBoolean(this).sure()
-public inline fun String.toShort() : Short = java.lang.Short.parseShort(this).sure()
-public inline fun String.toInt() : Int = java.lang.Integer.parseInt(this).sure()
-public inline fun String.toLong() : Long = java.lang.Long.parseLong(this).sure()
-public inline fun String.toFloat() : Float = java.lang.Float.parseFloat(this).sure()
-public inline fun String.toDouble() : Double = java.lang.Double.parseDouble(this).sure()
+public inline fun String.toBoolean() : Boolean = java.lang.Boolean.parseBoolean(this)!!
+public inline fun String.toShort() : Short = java.lang.Short.parseShort(this)!!
+public inline fun String.toInt() : Int = java.lang.Integer.parseInt(this)!!
+public inline fun String.toLong() : Long = java.lang.Long.parseLong(this)!!
+public inline fun String.toFloat() : Float = java.lang.Float.parseFloat(this)!!
+public inline fun String.toDouble() : Double = java.lang.Double.parseDouble(this)!!
 
 /**
  * Converts the string into a regular expression [[Pattern]] optionally
@@ -164,7 +164,7 @@ public inline fun String.toDouble() : Double = java.lang.Double.parseDouble(this
  * so that strings can be split or matched on.
  */
 public inline fun String.toRegex(flags: Int=0): java.util.regex.Pattern {
-    return java.util.regex.Pattern.compile(this, flags).sure()
+    return java.util.regex.Pattern.compile(this, flags)!!
 }
 
 inline val String.reader : StringReader

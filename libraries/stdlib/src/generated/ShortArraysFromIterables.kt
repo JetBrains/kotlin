@@ -172,7 +172,7 @@ public inline fun ShortArray.foldRight(initial: Short, operation: (Short, Short)
  * @includeFunctionBody ../../test/CollectionTest.kt reduce
  */
 public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
-    val iterator = this.iterator().sure()
+    val iterator = this.iterator()!!
     if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
@@ -226,7 +226,7 @@ public inline fun <K> ShortArray.groupByTo(result: MutableMap<K, MutableList<Sho
 public inline fun ShortArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString().sure()
+    return buffer.toString()!!
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */

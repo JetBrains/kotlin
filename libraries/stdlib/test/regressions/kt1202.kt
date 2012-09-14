@@ -99,7 +99,7 @@ fun parseAtomic(tokens : Deque<Token>) : ParseResult<Expression> {
             else
                 Failure("Expecting ')'")
         }
-        is Number -> Success(Num(Integer.parseInt((token as Token).text).sure()))
+        is Number -> Success(Num(Integer.parseInt((token as Token).text)!!))
         else -> Failure("Unexpected EOF")
     }
 }

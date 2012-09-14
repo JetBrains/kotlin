@@ -23,7 +23,7 @@ class WriterPrinter(val writer: Writer) : Printer {
 fun Template.renderToText(): String {
   val buffer = StringWriter()
   renderTo(buffer)
-  return buffer.toString().sure()
+  return buffer.toString()!!
 }
 
 fun Template.renderTo(writer: Writer): Unit {

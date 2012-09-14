@@ -25,7 +25,7 @@ public fun File.recurse(block: (File) -> Unit): Unit {
  * Returns this if the file is a directory or the parent if its a file inside a directory
  */
 inline val File.directory: File
-get() = if (this.isDirectory()) this else this.getParentFile().sure()
+get() = if (this.isDirectory()) this else this.getParentFile()!!
 
 /**
  * Returns the canoncial path of the file

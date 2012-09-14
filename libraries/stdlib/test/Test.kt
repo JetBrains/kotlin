@@ -14,7 +14,7 @@ class TestBuilt<T>(name: String, val builder: TestBuilder<T>, val test: TestBuil
     private var myState: T? = null
 
     var state : T
-        get() = myState.sure()
+        get() = myState!!
         set(newState: T) { myState = newState }
 
     override fun countTestCases(): Int = 1

@@ -39,7 +39,7 @@ var Element.childrenText: String
                 i++
             }
         }
-        return buffer.toString().sure()
+        return buffer.toString()!!
     }
     set(value) {
         val element = this as Element
@@ -336,7 +336,7 @@ public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = fal
     for (n in nodes) {
         builder.append(n.toXmlString(xmlDeclaration))
     }
-    return builder.toString().sure()
+    return builder.toString()!!
 }
 
 // Syntax sugar
@@ -359,7 +359,7 @@ inline fun Element.plusAssign(text: String?): Element = this.addText(text)
  * Creates a new element which can be configured via a function
  */
 fun Document.createElement(name: String, init: Element.()-> Unit): Element {
-    val elem = this.createElement(name).sure()
+    val elem = this.createElement(name)!!
     elem.init()
     return elem
 }
@@ -368,7 +368,7 @@ fun Document.createElement(name: String, init: Element.()-> Unit): Element {
  * Creates a new element to an element which has an owner Document which can be configured via a function
  */
 fun Element.createElement(name: String, doc: Document? = null, init: Element.()-> Unit): Element {
-    val elem = ownerDocument(doc).createElement(name).sure()
+    val elem = ownerDocument(doc).createElement(name)!!
     elem.init()
     return elem
 }

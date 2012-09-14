@@ -116,7 +116,7 @@ public open class ToStringFormatter : Formatter {
     }
 }
 
-public val defaultLocale : Locale = Locale.getDefault().sure()
+public val defaultLocale : Locale = Locale.getDefault()!!
 
 /**
  * Formats values using a given [[Locale]] for internationalisation
@@ -125,9 +125,9 @@ public open class LocaleFormatter(val locale : Locale = defaultLocale) : ToStrin
 
     public override fun toString() : String = "LocaleFormatter{$locale}"
 
-    public var numberFormat : NumberFormat = NumberFormat.getInstance(locale).sure()
+    public var numberFormat : NumberFormat = NumberFormat.getInstance(locale)!!
 
-    public var dateFormat : DateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, locale).sure()
+    public var dateFormat : DateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, locale)!!
 
     public override fun format(out : Appendable, value : Any?) {
         if (value is Number) {

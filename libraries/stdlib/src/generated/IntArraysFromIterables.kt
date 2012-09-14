@@ -172,7 +172,7 @@ public inline fun IntArray.foldRight(initial: Int, operation: (Int, Int) -> Int)
  * @includeFunctionBody ../../test/CollectionTest.kt reduce
  */
 public inline fun IntArray.reduce(operation: (Int, Int) -> Int): Int {
-    val iterator = this.iterator().sure()
+    val iterator = this.iterator()!!
     if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
@@ -226,7 +226,7 @@ public inline fun <K> IntArray.groupByTo(result: MutableMap<K, MutableList<Int>>
 public inline fun IntArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString().sure()
+    return buffer.toString()!!
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */

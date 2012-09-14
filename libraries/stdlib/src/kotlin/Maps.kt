@@ -23,20 +23,20 @@ public inline fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
 
 /** Returns the key of the entry */
 val <K,V> Map.Entry<K,V>.key : K
-    get() = getKey().sure()
+    get() = getKey()!!
 
 /** Returns the value of the entry */
 val <K,V> Map.Entry<K,V>.value : V
-    get() = getValue().sure()
+    get() = getValue()!!
 
 /** Returns the key of the entry */
 fun <K,V> Map.Entry<K,V>.component1() : K {
-    return getKey().sure()
+    return getKey()!!
 }
 
 /** Returns the value of the entry */
 fun <K,V> Map.Entry<K,V>.component2() : V {
-    return getValue().sure()
+    return getValue()!!
 }
 
 /**
