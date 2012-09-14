@@ -7,7 +7,7 @@ fun getJavaClass<T>() : java.lang.Class<T> { <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_
 public class Throwables() {
     class object {
         public fun propagateIfInstanceOf<X : Throwable?>(throwable : Throwable?, declaredType : Class<X?>?) : Unit {
-            if (((throwable != null) && declaredType?.isInstance(throwable).sure()))
+            if (((throwable != null) && declaredType?.isInstance(throwable)!!))
             {
                 throw declaredType?.cast(throwable)!!
             }
