@@ -41,10 +41,8 @@ public class EditSignatureAction extends AnAction {
     private final PsiMethod elementInEditor;
 
     public EditSignatureAction(@NotNull PsiMethod elementInEditor) {
+        super(isAnnotationEditable(elementInEditor) ? "Edit" : "View");
         this.elementInEditor = elementInEditor;
-        boolean editable = ExternalAnnotationsManager.getInstance(elementInEditor.getProject())
-                .isExternalAnnotationWritable(getAnnotationOwner(elementInEditor), KOTLIN_SIGNATURE_ANNOTATION);
-        getTemplatePresentation().setText(editable ? "Edit" : "View");
     }
 
     @Override
@@ -83,9 +81,9 @@ public class EditSignatureAction extends AnAction {
         }
         else {
             PsiMethod annotationOwner = getAnnotationOwner(elementInEditor);
-            boolean editable = ExternalAnnotationsManager.getInstance(elementInEditor.getProject())
-                    .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
-            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor, elementInEditor);
+            boolean editable = isAnnotationEditable(elementInEditor);
+            EditSignatureBalloon balloon = new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable);
+            balloon.show(point, editor, elementInEditor);
         }
     }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
+import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
@@ -91,5 +92,17 @@ class KotlinSignatureUtil {
 
     static void refreshMarkers(@NotNull Project project) {
         DaemonCodeAnalyzer.getInstance(project).restart();
+    }
+
+    static boolean isAnnotationEditable(@NotNull PsiMethod element) {
+        PsiMethod annotationOwner = getAnnotationOwner(element);
+        PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
+        assert annotation != null;
+        if (annotation.getContainingFile() != annotationOwner.getContainingFile()) {
+            return annotation.isWritable();
+        } else {
+            ExternalAnnotationsManager annotationsManager = ExternalAnnotationsManager.getInstance(element.getProject());
+            return annotationsManager.isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+        }
     }
 }
