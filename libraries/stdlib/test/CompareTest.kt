@@ -4,13 +4,22 @@ import java.util.Comparator
 import kotlin.test.*
 import org.junit.Test
 
-class Item(val name: String, val rating: Int) {
+class Item(val name: String, val rating: Int): Comparable<Item> {
     fun toString() = "Item($name, $rating)"
+
+    public override fun compareTo(other: Item): Int {
+        return compareBy(this, other, {it.rating}, {it.name})
+    }
 }
 
 class CompareTest {
     val v1 = Item("wine", 9)
     val v2 = Item("beer", 10)
+
+    Test fun compareByCompareTo() {
+        val diff = v1.compareTo(v2)
+        assertTrue(diff < 0)
+    }
 
     Test fun compareByNameFirst() {
         val diff = compareBy(v1, v2, {(i: Item) -> i.name}, {(i: Item) -> i.rating})
@@ -19,6 +28,11 @@ class CompareTest {
 
     Test fun compareByRatingFirst() {
         val diff = compareBy(v1, v2, {(i: Item) -> i.rating}, {(i: Item) -> i.name})
+        assertTrue(diff < 0)
+    }
+
+    Test fun compareByRatingFirstUsingItNotation() {
+        val diff = compareBy(v1, v2, {it.rating}, {it.name})
         assertTrue(diff < 0)
     }
 
