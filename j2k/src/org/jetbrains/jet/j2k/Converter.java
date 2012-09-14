@@ -751,7 +751,7 @@ public class Converter {
             boolean containsQuestDot = expressionToExpression(expression).toKotlin().contains("?.");
 
             if (isPrimitiveTypeOrNull && isRef && containsQuestDot) {
-                conversion += ".sure()";
+                conversion += "!!";
             }
 
             if (actualType != null) {

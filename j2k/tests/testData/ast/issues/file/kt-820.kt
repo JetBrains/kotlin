@@ -9,6 +9,6 @@ var myContainer : Container? = Container()
 }
 open class Test() {
 open fun test() : Unit {
-var b : Byte = One.myContainer?.myInt.sure().toByte()
+var b : Byte = One.myContainer?.myInt!!.toByte()
 }
 }

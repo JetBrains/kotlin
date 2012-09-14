@@ -8,7 +8,7 @@ if (parent == null || !parent?.exists())
 return false
 }
 var result : Boolean = true
-if (parent?.isDirectory().sure())
+if (parent?.isDirectory()!!)
 {
 return true
 }
