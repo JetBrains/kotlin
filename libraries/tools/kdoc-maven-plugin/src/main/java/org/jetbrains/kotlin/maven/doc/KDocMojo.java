@@ -65,6 +65,15 @@ public class KDocMojo extends KotlinCompileMojoBase {
      */
     public String output;
 
+    // TODO not sure why this doesn't work :(
+    // * @parameter default-value="$(project.basedir}/src/main/resources"
+
+    /**
+     * The directories used to scan for annotation.xml files for Kotlin annotations
+     *
+     * @parameter
+     */
+    public List<String> annotationPaths;
 
     // TODO not sure why default is stopping us passing this value in via a config
     // default-value="${project.compileSourceRoots}"
@@ -184,6 +193,12 @@ public class KDocMojo extends KotlinCompileMojoBase {
             KDocArguments kdoc = (KDocArguments) arguments;
             KDocConfig docConfig = kdoc.getDocConfig();
             docConfig.setDocOutputDir(docOutputDir);
+
+            kdoc.noJdkAnnotations = true;
+            kdoc.annotations = getFullAnnotationsPath(getLog(), annotationPaths);
+
+
+
             if (ignorePackages != null) {
                 docConfig.getIgnorePackages().addAll(ignorePackages);
             }
@@ -208,6 +223,7 @@ public class KDocMojo extends KotlinCompileMojoBase {
             getLog().info("sources: " + sources);
             getLog().info("sourceRootHref: " + sourceRootHref);
             getLog().info("projectRootDir: " + projectRootDir);
+            getLog().info("kotlin annotations: " + kdoc.annotations);
             getLog().info("packageDescriptionFiles: " + packageDescriptionFiles);
             getLog().info("packagePrefixToUrls: " + packagePrefixToUrls);
             getLog().info("API docs ignore packages: " + ignorePackages);

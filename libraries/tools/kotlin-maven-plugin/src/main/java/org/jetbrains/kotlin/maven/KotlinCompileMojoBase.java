@@ -235,15 +235,19 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.setOutputDir(output);
 
         arguments.noJdkAnnotations = true;
+        arguments.annotations = getFullAnnotationsPath(log, annotationPaths);
+        log.info("Using kotlin annotations from " + arguments.annotations);
+    }
+
+    protected String getFullAnnotationsPath(Log log, List<String> annotations) {
         String jdkAnnotation = getJdkAnnotations().getPath();
-        arguments.annotations = jdkAnnotation;
 
         List<String> list = new ArrayList<String>();
         if (jdkAnnotation != null && jdkAnnotation.length() > 0) {
             list.add(jdkAnnotation);
         }
-        if (annotationPaths != null) {
-            for (String annotationPath : annotationPaths) {
+        if (annotations != null) {
+            for (String annotationPath : annotations) {
                 if (new File(annotationPath).exists()) {
                     list.add(annotationPath);
                 } else {
@@ -251,8 +255,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
                 }
             }
         }
-        arguments.annotations = join(list, File.pathSeparator);
-        log.info("Using kotlin annotations from " + arguments.annotations);
+        return join(list, File.pathSeparator);
     }
 
 
