@@ -32,7 +32,7 @@
 
         return obj1 === obj2;
     };
-    Kotlin.toString = function (o) {
+    Kotlin.stringify = function (o) {
         if (o === null || o === undefined) {
             return "null";
         }
@@ -99,17 +99,6 @@
         },
         hasNext: function () {
             return this.index < this.size;
-        }
-    });
-
-    var ListIterator = Kotlin.$createClass(ArrayIterator, {
-        initialize: function (list) {
-            this.list = list;
-            this.size = list.size();
-            this.index = 0;
-        },
-        next: function () {
-            return this.list.get(this.index++);
         }
     });
 

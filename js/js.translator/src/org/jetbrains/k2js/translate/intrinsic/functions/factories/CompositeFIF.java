@@ -44,6 +44,19 @@ public abstract class CompositeFIF implements FunctionIntrinsicFactory {
             return JsAstUtils.equality(new JsNameRef("length", receiver), context.program().getNumberLiteral(0));
         }
     };
+    @NotNull
+    protected static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            assert receiver != null;
+            return receiver;
+        }
+    };
 
     @NotNull
     private final List<Pair<Predicate<FunctionDescriptor>, FunctionIntrinsic>> patternsAndIntrinsics = Lists.newArrayList();
