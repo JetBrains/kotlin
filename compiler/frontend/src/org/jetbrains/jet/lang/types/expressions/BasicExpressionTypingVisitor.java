@@ -556,7 +556,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
         //TODO move further
-        if (expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
+        if (!(receiverType instanceof NamespaceType) && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
             if (selectorReturnType != null && !selectorReturnType.isNullable() && !JetStandardClasses.isUnit(selectorReturnType)) {
                 if (receiverType.isNullable()) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
