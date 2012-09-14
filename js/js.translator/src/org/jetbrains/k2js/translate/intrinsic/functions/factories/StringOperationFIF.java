@@ -39,13 +39,13 @@ public final class StringOperationFIF extends CompositeFIF {
         add(pattern("jet", "String", "get"), new BuiltInFunctionIntrinsic("charAt"));
 
         add(pattern("jet", "String", "<get-length>"), LENGTH_PROPERTY_INTRINSIC);
-        add(pattern("js", "<get-size>").receiverExists(true), LENGTH_PROPERTY_INTRINSIC);
-        add(pattern("js", "length").receiverExists(true), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern("js", "<get-size>").receiverExists(), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern("js", "length").receiverExists(), LENGTH_PROPERTY_INTRINSIC);
         add(pattern("jet", "CharSequence", "<get-length>"), LENGTH_PROPERTY_INTRINSIC);
 
-        add(pattern("js", "startsWith").receiverExists(true), new ContainsFunctionIntrinsic(false));
-        add(pattern("js", "contains").receiverExists(true), new ContainsFunctionIntrinsic(true));
-        add(pattern("js", "endsWith").receiverExists(true), new FunctionIntrinsic() {
+        add(pattern("js", "startsWith").receiverExists(), new ContainsFunctionIntrinsic(false));
+        add(pattern("js", "contains").receiverExists(), new ContainsFunctionIntrinsic(true));
+        add(pattern("js", "endsWith").receiverExists(), new FunctionIntrinsic() {
             @NotNull
             @Override
             public JsExpression apply(
@@ -57,7 +57,7 @@ public final class StringOperationFIF extends CompositeFIF {
                 return JsAstUtils.inequality(new JsInvocation(new JsNameRef("indexOf", a.first), Arrays.asList(b.first, JsAstUtils.subtract(new JsNameRef("length", a.second), new JsNameRef("length", b.second)))), context.program().getNumberLiteral(-1));
             }
         });
-        add(pattern("js", "isEmpty").receiverExists(true), IS_EMPTY_INTRINSIC);
+        add(pattern("js", "isEmpty").receiverExists(), IS_EMPTY_INTRINSIC);
     }
 
     private static class ContainsFunctionIntrinsic extends FunctionIntrinsic {

@@ -45,7 +45,7 @@ public native abstract class AbstractList<E>(): AbstractCollection<E>(), Mutable
     override fun remove(index: Int): E = js.noImpl
 
     override fun indexOf(o: Any?): Int = js.noImpl
-    override fun lastIndexOf(o : Any?) : Int = js.noImpl
+    override fun lastIndexOf(o: Any?): Int = js.noImpl
 
     override fun listIterator() : MutableListIterator<E> = js.noImpl
     override fun listIterator(index : Int) : MutableListIterator<E> = js.noImpl
@@ -72,19 +72,19 @@ public library class HashSet<E>(): AbstractCollection<E>(), MutableSet<E> {
 }
 
 library
-public open class HashMap<K, V>() : MutableMap<K, V> {
-    public override fun size() : Int = js.noImpl
-    public override fun isEmpty() : Boolean = js.noImpl
-    public override fun get(key : Any?) : V? = js.noImpl
-    public override fun containsKey(key : Any?) : Boolean = js.noImpl
-    public override fun put(key : K, value : V) : V = js.noImpl
-    public override fun putAll(m : Map<out K, out V>) : Unit = js.noImpl
-    public override fun remove(key : Any?) : V? = js.noImpl
-    public override fun clear() : Unit = js.noImpl
-    public override fun containsValue(value : Any?) : Boolean = js.noImpl
-    public override fun keySet() : MutableSet<K> = js.noImpl
-    public override fun values() : MutableCollection<V> = js.noImpl
-    public override fun entrySet() : MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
+public open class HashMap<K, V>(): MutableMap<K, V> {
+    override public fun size(): Int = js.noImpl
+    override public fun isEmpty(): Boolean = js.noImpl
+    override public fun get(key: Any?): V? = js.noImpl
+    override public  fun containsKey(key: Any?): Boolean = js.noImpl
+    override public fun put(key: K, value: V): V = js.noImpl
+    override public fun putAll(m: Map<out K, out V>): Unit = js.noImpl
+    override public fun remove(key: Any?): V? = js.noImpl
+    override public fun clear(): Unit = js.noImpl
+    override public fun containsValue(value: Any?): Boolean = js.noImpl
+    override public fun keySet(): MutableSet<K> = js.noImpl
+    override public fun values(): MutableCollection<V> = js.noImpl
+    override public fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
 }
 
 library

@@ -211,20 +211,38 @@
         }
     }
 
-    Kotlin.collectionAdd = function(c, o) {
+    Kotlin.collectionAdd = function (c, o) {
         return Array.isArray(c) ? c.push(o) : c.add(o);
     };
-    Kotlin.collectionRemove = function(c, o) {
+    Kotlin.collectionAddAll = function (c, collection) {
+        if (Array.isArray(c)) {
+            return Kotlin.arrayAddAll(c, collection);
+        }
+
+        return c.addAll(collection);
+    };
+    Kotlin.collectionRemove = function (c, o) {
         return Array.isArray(c) ? Kotlin.arrayRemove(c, o) : c.remove(o);
     };
-    Kotlin.collectionIterator = function(c) {
+    Kotlin.collectionClear = function (c) {
+        if (Array.isArray(c)) {
+            c.length = 0;
+        }
+        else {
+            c.clear();
+        }
+    };
+    Kotlin.collectionIterator = function (c) {
         return Array.isArray(c) ? Kotlin.arrayIterator(c) : c.iterator();
     };
-    Kotlin.collectionSize = function(c) {
+    Kotlin.collectionSize = function (c) {
         return Array.isArray(c) ? c.length : c.size();
     };
-    Kotlin.collectionIsEmpty = function(c) {
+    Kotlin.collectionIsEmpty = function (c) {
         return Array.isArray(c) ? c.length === 0 : c.isEmpty();
+    };
+    Kotlin.collectionContains = function (c, o) {
+        return Array.isArray(c) ? Kotlin.arrayIndexOf(c, o) !== -1 : c.contains(o);
     };
 
     Kotlin.arrayIndexOf = function (a, o) {

@@ -114,16 +114,23 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    private static FunctionIntrinsicFactory INSTANCE;
+
     @NotNull
-    public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
+    public static FunctionIntrinsicFactory getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TopLevelFIF();
+        }
+        return INSTANCE;
+    }
 
     private TopLevelFIF() {
-        add(pattern("jet", "toString").receiverExists(true), new KotlinFunctionIntrinsic("toString"));
-        add(pattern("jet", "equals").receiverExists(true), EQUALS);
+        add(pattern("jet", "toString").receiverExists(), new KotlinFunctionIntrinsic("toString"));
+        add(pattern("jet", "equals").receiverExists(), EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("arrayOfNulls"));
-        add(pattern("jet", "iterator").receiverExists(true), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
         add(new DescriptorPredicate() {
                 @Override
                 public boolean apply(@NotNull FunctionDescriptor descriptor) {
@@ -160,7 +167,7 @@ public final class TopLevelFIF extends CompositeFIF {
         );
 
         String[] javaUtil = {"java", "util"};
-        add(pattern(javaUtil, "set").receiverExists(true), NATIVE_MAP_SET);
+        add(pattern(javaUtil, "set").receiverExists(), NATIVE_MAP_SET);
         add(pattern("jet", "Map", "get"), NATIVE_MAP_GET);
         add(pattern(javaUtil, "HashMap", "get"), NATIVE_MAP_GET);
 
