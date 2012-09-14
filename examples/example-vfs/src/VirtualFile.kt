@@ -94,7 +94,7 @@ public class PhysicalVirtualFile(path : String) : VirtualFile(path) {
     get() {
         FileSystem.assertCanRead()
         return (ioFile.listFiles() ?: array<File?>()).
-                map{ FileSystem.getFileByIoFile(it.sure()) }?.toList()
+                map{ FileSystem.getFileByIoFile(it!!) }?.toList()
     }
 
     override public fun openInputStream(): InputStream {
@@ -106,7 +106,7 @@ public class PhysicalVirtualFile(path : String) : VirtualFile(path) {
     }
 }
 
-private val OS_SEPARATOR = java.io.File.separator.sure()
+private val OS_SEPARATOR = java.io.File.separator!!
 private val VFS_SEPARATOR = "/"
 
 private fun String.toSystemDependentPath() : String {

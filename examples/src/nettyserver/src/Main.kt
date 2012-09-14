@@ -23,7 +23,7 @@ fun main(args : Array<String>) {
                 response.content = "Hello, World!"
             }
             POST {
-                response.content = "You said: ${request.getContent().sure().toString(Charset.defaultCharset())}"
+                response.content = "You said: ${request.getContent()!!.toString(Charset.defaultCharset())}"
             }
         }
 

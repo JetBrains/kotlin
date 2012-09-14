@@ -21,11 +21,11 @@ class RestProcessor(val prefix: String, val builder: RestBuilder) : Processor {
         if(request.path.startsWith(prefix)) {
             if(request.request.getMethod() == HttpMethod.GET && builder.onGet != null) {
                 request.ok()
-                request.(builder.onGet.sure())()
+                request.(builder.onGet!!)()
             }
             else if(request.request.getMethod() == HttpMethod.POST && builder.onPost != null) {
                 request.ok()
-                request.(builder.onPost.sure())()
+                request.(builder.onPost!!)()
             }
             else {
                 request.setError(HttpResponseStatus.METHOD_NOT_ALLOWED)

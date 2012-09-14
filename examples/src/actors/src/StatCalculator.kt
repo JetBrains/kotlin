@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.examples.actors.Actor
 import java.util.concurrent.Executors
 import java.util.LinkedList
 
-class StatCalculator() : Actor(Executors.newSingleThreadExecutor().sure()) {
+class StatCalculator() : Actor(Executors.newSingleThreadExecutor()!!) {
     val list = LinkedList<Long> ()
     var average = 0.toLong()
     var sum = 0.toLong()

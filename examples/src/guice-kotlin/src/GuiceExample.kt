@@ -17,7 +17,7 @@ class StdoutLoggingService() : LoggingService(){
 class JdkLoggingService () : LoggingService() {
     protected [Inject] var jdkLogger: Logger? = null
 
-    override fun info(message: String)  = jdkLogger.sure().info(message)
+    override fun info(message: String)  = jdkLogger!!.info(message)
 }
 
 abstract class AppService(protected val mode: String) {

@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
 class TokenMessage(val nodeId : Int, value: Int, val isStop: Boolean) : AtomicInteger(value)
 
 class ThreadRing(val N: Int) {
-    val executor = Executors.newFixedThreadPool(MAX_THREADS).sure()
+    val executor = Executors.newFixedThreadPool(MAX_THREADS)!!
 
     val nodes : Array<Node> = Array<Node>(MAX_NODES+1, { (it : Int) -> Node(it+1) });
 
@@ -84,17 +84,17 @@ class ThreadRing(val N: Int) {
                             cdl.countDown()
                         } else {
                             m.set(nextValue)
-                            nextNode.sure().sendMessage(m)
+                            nextNode!!.sendMessage(m)
                         }
                         isActive = false
                     }
                     else {
                         if (m.get() == N) {
                             System.out?.println(nodeId);
-                            nextNode.sure().sendMessage(TokenMessage(nodeId, 0, true));
+                            nextNode!!.sendMessage(TokenMessage(nodeId, 0, true));
                         } else {
                             m.incrementAndGet()
-                            nextNode.sure().sendMessage(m);
+                            nextNode!!.sendMessage(m);
                         }
                     }
                 }

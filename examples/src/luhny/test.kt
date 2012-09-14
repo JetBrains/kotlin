@@ -147,7 +147,7 @@ fun computeLast(allButLast : String) : Char {
   return if (remainder == 0) '0' else ('0' + (10 - remainder)).toChar()
 }
 
-fun computeLast(allButLast : CharSequence) : Char = computeLast(allButLast.toString().sure())
+fun computeLast(allButLast : CharSequence) : Char = computeLast(allButLast.toString()!!)
 
 fun setRandomDigits(builder : StringBuilder, start : Int, end : Int) {
   for (i in start..end-1)
@@ -161,7 +161,7 @@ fun nonDigits() : String {
   val nonDigits = StringBuilder()
   for (i in 0..999)
     nonDigits.append((random.nextInt(68) + ':').toChar())
-  return nonDigits.toString().sure()
+  return nonDigits.toString()!!
 }
 
 fun testFormatted(delimiter : Char) {
@@ -179,7 +179,7 @@ fun formattedMask(delimiter : Char) : String {
       mask.append(delimiter)
   }
 
-  return mask.toString().sure()
+  return mask.toString()!!
 }
 
 /** Computes a random, valid card # with the specified number of digits. */
@@ -187,7 +187,7 @@ fun randomNumber(digits : Int) : String {
   val number = StringBuilder(digits)
   number.setLength(digits)
   setRandomDigits(number, 0, digits - 1)
-  number.setCharAt(digits - 1, computeLast(number.subSequence(0, digits - 1).sure()))
+  number.setCharAt(digits - 1, computeLast(number.subSequence(0, digits - 1)!!))
   return number.toString() ?: ""
 }
 
@@ -196,9 +196,9 @@ fun nestedNumber() : String {
   val number = StringBuilder(16)
   number.setLength(16);
   setRandomDigits(number, 0, 14);
-  number.setCharAt(14, computeLast(number.subSequence(1, 14).sure()))
-  number.setCharAt(15, computeLast(number.subSequence(0, 15).sure()))
-  return number.toString().sure()
+  number.setCharAt(14, computeLast(number.subSequence(1, 14)!!))
+  number.setCharAt(15, computeLast(number.subSequence(0, 15)!!))
+  return number.toString()!!
 }
 
 /** Creates a sequence of mask characters with the given length. */
@@ -211,7 +211,7 @@ fun repeatingSequence(c : Char, length : Int) : String {
   val sb = StringBuilder()
   for (i in 1..length)
     sb.append(c)
-  return sb.toString().sure()
+  return sb.toString()!!
 }
 
 class DigitSet() {
@@ -225,10 +225,10 @@ class DigitSet() {
 fun testOverlappingMatches() {
   val output = StringBuilder(randomNumber(MAX_LENGTH))
   for (i in 0..1000 - MAX_LENGTH - 1)
-    output.append(computeLast(output.subSequence(i + 1, i + MAX_LENGTH).sure()))
+    output.append(computeLast(output.subSequence(i + 1, i + MAX_LENGTH)!!))
 
   test("long sequence of overlapping, valid #s")
-  .send(output.toString().sure())
+  .send(output.toString()!!)
   .expect(mask(output.length()));
 }
 
@@ -245,7 +245,7 @@ fun nonMatchingSequence(length : Int) : String {
       val start = lastIndex - (subLength - 1);
       if (start < 0)
         break;
-      excluded.add(computeLast(builder.subSequence(start, lastIndex).sure()));
+      excluded.add(computeLast(builder.subSequence(start, lastIndex)!!));
     }
 
     // Find a digit that doesn't result in a valid card #.
@@ -256,5 +256,5 @@ fun nonMatchingSequence(length : Int) : String {
     builder.append(digit);
   }
 
-  return builder.toString().sure()
+  return builder.toString()!!
 }

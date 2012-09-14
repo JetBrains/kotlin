@@ -181,4 +181,4 @@ fun Executor.actor(handler: (Any)->Any?) : Actor = object: Actor(this) {
     }
 }
 
-fun singleThreadActor(handler: (Any)->Any?) : Actor = Executors.newSingleThreadExecutor().sure().actor(handler)
+fun singleThreadActor(handler: (Any)->Any?) : Actor = Executors.newSingleThreadExecutor()!!.actor(handler)

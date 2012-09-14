@@ -21,8 +21,8 @@ import org.jboss.netty.channel.ChannelFuture
 class RequestResponse(e: MessageEvent) {
     val request  = e.getMessage() as HttpRequest
     val response = DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.FORBIDDEN)
-    val channel  = e.getChannel().sure()
-    val path     = request.getUri().sure().sanitizeUri()
+    val channel  = e.getChannel()!!
+    val path     = request.getUri()!!.sanitizeUri()
 
     fun setError(status: HttpResponseStatus?) {
         response.setStatus(status)
@@ -43,8 +43,8 @@ class RequestResponse(e: MessageEvent) {
     }
 
     fun write() =
-        if(response.getStatus().sure().getCode() >= 400) {
-            channel.write(response).sure().addListener(ChannelFutureListener.CLOSE)
+        if(response.getStatus()!!.getCode() >= 400) {
+            channel.write(response)!!.addListener(ChannelFutureListener.CLOSE)
         }
         else {
             channel.write(response)
