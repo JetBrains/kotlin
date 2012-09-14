@@ -80,6 +80,23 @@ class MapTest {
         assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
     }
 
+    test fun iterateWithExtraction() {
+        val map = TreeMap<String, String>()
+        map["beverage"] = "beer"
+        map["location"] = "Mells"
+        map["name"] = "James"
+
+        val list = arrayList<String>()
+        for ((key, value) in map) {
+            println("key = ${key}, value = ${value}")
+            list.add(key)
+            list.add(value)
+        }
+
+        assertEquals(6, list.size())
+        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+    }
+
     test fun map() {
         val m1 = TreeMap<String, String>()
         m1["beverage"] = "beer"

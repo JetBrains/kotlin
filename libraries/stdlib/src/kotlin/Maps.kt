@@ -29,6 +29,16 @@ val <K,V> Map.Entry<K,V>.key : K
 val <K,V> Map.Entry<K,V>.value : V
     get() = getValue().sure()
 
+/** Returns the key of the entry */
+fun <K,V> Map.Entry<K,V>.component1() : K {
+    return getKey().sure()
+}
+
+/** Returns the value of the entry */
+fun <K,V> Map.Entry<K,V>.component2() : V {
+    return getValue().sure()
+}
+
 /**
  * Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key
  *
