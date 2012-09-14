@@ -54,6 +54,10 @@ public class OutOfBlockModificationTest extends LightCodeInsightFixtureTestCase 
         doTest();
     }
 
+    public void testInFunInMultiDeclaration() {
+        doTest();
+    }
+
     public void testInFunWithInference() {
         doTest();
     }

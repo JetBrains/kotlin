@@ -51,6 +51,9 @@ public final class JetModifiableBlockHelper {
 
                 return shouldChangeModificationCount(property);
             }
+            else if (declaration instanceof JetMultiDeclaration || declaration instanceof JetMultiDeclarationEntry) {
+                return shouldChangeModificationCount(declaration);
+            }
             else if (declaration instanceof JetFunctionLiteral) {
                 // TODO: Check return type
                 return shouldChangeModificationCount(declaration);
