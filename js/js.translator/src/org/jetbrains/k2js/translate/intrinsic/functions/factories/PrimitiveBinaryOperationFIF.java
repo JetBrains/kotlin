@@ -57,7 +57,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             HasArguments numberRangeConstructorInvocation = context.isEcma5() ? new JsInvocation(expr) : new JsNew(expr);
             //TODO: add tests and correct expression for reversed ranges.
             setArguments(numberRangeConstructorInvocation, rangeStart, rangeSize, /*range is not reversed*/JsLiteral.FALSE);
-            return (JsExpression) numberRangeConstructorInvocation;
+            return numberRangeConstructorInvocation;
         }
     };
 
@@ -82,18 +82,16 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final NamePredicate BINARY_OPERATIONS = new NamePredicate(OperatorConventions.BINARY_OPERATION_NAMES.values());
 
-    @NotNull
-    @Override
-    public Predicate<FunctionDescriptor> getPredicate() {
-        //TODO: check that it is binary operation
-        return Predicates.or(pattern(NamePredicate.PRIMITIVE_NUMBERS, BINARY_OPERATIONS),
-                             pattern("Boolean.or|and|xor"),
-                             pattern("String.plus"));
-    }
+    private static final Predicate<FunctionDescriptor> PREDICATE = Predicates
+            .or(pattern(NamePredicate.PRIMITIVE_NUMBERS, BINARY_OPERATIONS), pattern("Boolean.or|and|xor"), pattern("String.plus"));
 
-    @NotNull
+    @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        if (!PREDICATE.apply(descriptor)) {
+            return null;
+        }
+
         if (pattern(INTEGER_NUMBER_TYPES + ".div").apply(descriptor)) {
             return INTEGER_DIVISION_INTRINSIC;
         }

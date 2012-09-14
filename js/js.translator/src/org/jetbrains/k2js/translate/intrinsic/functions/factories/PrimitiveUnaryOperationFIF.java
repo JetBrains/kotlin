@@ -60,15 +60,13 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
     @NotNull
     private static final Predicate<FunctionDescriptor> PATTERN = Predicates.and(PRIMITIVE_UNARY_OPERATION_NAMES, NO_PARAMETERS);
 
-    @NotNull
-    @Override
-    public Predicate<FunctionDescriptor> getPredicate() {
-        return PATTERN;
-    }
-
-    @NotNull
+    @Nullable
     @Override
     public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+        if (!PATTERN.apply(descriptor)) {
+            return null;
+        }
+
         Name name = descriptor.getName();
         JetToken jetToken = OperatorConventions.UNARY_OPERATION_NAMES.inverse().get(name);
         final JsUnaryOperator jsOperator = OperatorTable.getUnaryOperator(jetToken);
