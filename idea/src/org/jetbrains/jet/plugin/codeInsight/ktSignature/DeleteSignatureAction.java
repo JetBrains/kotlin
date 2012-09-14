@@ -26,9 +26,7 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION;
-import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.findKotlinSignatureAnnotation;
-import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.refreshMarkers;
+import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -37,9 +35,9 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
 public class DeleteSignatureAction extends AnAction {
     private final PsiMethod annotationOwner;
 
-    public DeleteSignatureAction(@NotNull PsiMethod annotationOwner) {
+    public DeleteSignatureAction(@NotNull PsiMethod elementInEditor) {
         super("Delete");
-        this.annotationOwner = annotationOwner;
+        this.annotationOwner = getAnnotationOwner(elementInEditor);
     }
 
     @Override

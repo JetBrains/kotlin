@@ -106,16 +106,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                 @Nullable
                 @Override
                 public ActionGroup getPopupMenuActions() {
-                    DefaultActionGroup actionGroup = new DefaultActionGroup();
-
                     PsiMethod element = getElement();
                     assert element != null;
-                    PsiMethod annotationOwner = getAnnotationOwner(element);
 
-                    actionGroup.add(new EditSignatureAction(annotationOwner));
-                    actionGroup.add(new DeleteSignatureAction(annotationOwner));
-
-                    return actionGroup;
+                    return new DefaultActionGroup(new EditSignatureAction(element), new DeleteSignatureAction(element));
                 }
             };
         }

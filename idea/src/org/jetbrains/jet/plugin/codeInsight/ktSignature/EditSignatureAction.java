@@ -38,11 +38,11 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
  * @since 5 Sep 12
  */
 public class EditSignatureAction extends AnAction {
-    private final PsiMethod annotationOwner;
+    private final PsiMethod elementInEditor;
 
-    public EditSignatureAction(@NotNull PsiMethod annotationOwner) {
+    public EditSignatureAction(@NotNull PsiMethod elementInEditor) {
         super("Edit");
-        this.annotationOwner = annotationOwner;
+        this.elementInEditor = elementInEditor;
     }
 
     @Override
@@ -53,13 +53,13 @@ public class EditSignatureAction extends AnAction {
     public void actionPerformed(@NotNull DataContext dataContext, @Nullable Point point) {
         Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
         assert editor != null;
-        invokeEditSignature(annotationOwner, editor, point);
+        invokeEditSignature(elementInEditor, editor, point);
     }
 
-    static void invokeEditSignature(@NotNull PsiMethod element, @NotNull Editor editor, @Nullable Point point) {
-        PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
+    static void invokeEditSignature(@NotNull PsiMethod elementInEditor, @NotNull Editor editor, @Nullable Point point) {
+        PsiAnnotation annotation = findKotlinSignatureAnnotation(elementInEditor);
         assert annotation != null;
-        if (annotation.getContainingFile() == element.getContainingFile()) {
+        if (annotation.getContainingFile() == elementInEditor.getContainingFile()) {
             // not external, go to
             for (PsiNameValuePair pair : annotation.getParameterList().getAttributes()) {
                 if (pair.getName() == null || "value".equals(pair.getName())) {
@@ -80,10 +80,10 @@ public class EditSignatureAction extends AnAction {
             }
         }
         else {
-            PsiMethod annotationOwner = getAnnotationOwner(element);
-            boolean editable = ExternalAnnotationsManager.getInstance(element.getProject())
+            PsiMethod annotationOwner = getAnnotationOwner(elementInEditor);
+            boolean editable = ExternalAnnotationsManager.getInstance(elementInEditor.getProject())
                     .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
-            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor, element);
+            new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable).show(point, editor, elementInEditor);
         }
     }
 }
