@@ -49,9 +49,7 @@ public abstract class CompositeFIF implements FunctionIntrinsicFactory {
         @NotNull
         @Override
         public JsExpression apply(
-                @Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
         ) {
             assert receiver != null;
             return receiver;
