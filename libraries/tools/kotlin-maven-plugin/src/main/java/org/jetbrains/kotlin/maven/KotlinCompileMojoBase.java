@@ -36,6 +36,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.internal.com.intellij.openapi.util.text.StringUtil.join;
+
 public abstract class KotlinCompileMojoBase extends AbstractMojo {
     /**
      * The source directories containing the sources to be compiled.
@@ -45,6 +47,16 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      * @readonly
      */
     public List<String> sources;
+
+    // TODO not sure why this doesn't work :(
+    // * @parameter default-value="$(project.basedir}/src/main/resources"
+
+    /**
+     * The directories used to scan for annotation.xml files for Kotlin annotations
+     *
+     * @parameter
+     */
+    public List<String> annotationPaths;
 
     /**
      * The source directories containing the sources to be compiled for tests.
@@ -223,9 +235,26 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.setOutputDir(output);
 
         arguments.noJdkAnnotations = true;
-        arguments.annotations = getJdkAnnotations().getPath();
-        log.debug("Using jdk annotations from " + arguments.annotations);
+        String jdkAnnotation = getJdkAnnotations().getPath();
+        arguments.annotations = jdkAnnotation;
+
+        List<String> list = new ArrayList<String>();
+        if (jdkAnnotation != null && jdkAnnotation.length() > 0) {
+            list.add(jdkAnnotation);
+        }
+        if (annotationPaths != null) {
+            for (String annotationPath : annotationPaths) {
+                if (new File(annotationPath).exists()) {
+                    list.add(annotationPath);
+                } else {
+                    log.info("annotation path " + annotationPath + " does not exist");
+                }
+            }
+        }
+        arguments.annotations = join(list, File.pathSeparator);
+        log.info("Using kotlin annotations from " + arguments.annotations);
     }
+
 
     // TODO: Make a better runtime detection or get rid of it entirely
     private String getRuntimeFromClassPath(List<String> classpath) {
