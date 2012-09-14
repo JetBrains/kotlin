@@ -596,7 +596,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             final ClassDescriptor descriptor1 = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
             assert descriptor1 != null;
             Type type = Type.getObjectType(typeMapper.mapType(descriptor1).getInternalName());
-            v.newField(classObject, ACC_PUBLIC | ACC_STATIC, "$classobj", type.getDescriptor(), null, null);
+            v.newField(classObject, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "$classobj", type.getDescriptor(), null, null);
 
             staticInitializerChunks.add(new CodeChunk() {
                 @Override

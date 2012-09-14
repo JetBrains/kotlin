@@ -217,6 +217,11 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/classObject.jet");
     }
 
+    public void testClassObjectInTrait() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("classes/classObjectInTrait.jet");
+    }
+
     public void testClassObjectMethod() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         // todo to be implemented after removal of type info
