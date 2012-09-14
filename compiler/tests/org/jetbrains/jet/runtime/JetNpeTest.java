@@ -43,12 +43,12 @@ public class JetNpeTest extends CodegenTestCase {
     }
     
     public void testNotNull () throws Exception {
-        loadText("fun box() = if(10.sure() == 10) \"OK\" else \"fail\"");
+        loadText("fun box() = if(10!! == 10) \"OK\" else \"fail\"");
         blackBox();
     }
 
     public void testNull () throws Exception {
-        loadText("fun box() = if((null : Int?).sure() == 10) \"OK\" else \"fail\"");
+        loadText("fun box() = if((null : Int?)!! == 10) \"OK\" else \"fail\"");
 //        System.out.println(generateToText());
         Method box = generateFunction("box");
         assertThrows(box, NullPointerException.class, null);

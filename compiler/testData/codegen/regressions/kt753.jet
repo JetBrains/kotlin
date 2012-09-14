@@ -1,6 +1,6 @@
 package bitwise_demo
 
-fun Long?.shl(bits : Int?) : Long = this.sure().shl(bits.sure())
+fun Long?.shl(bits : Int?) : Long = this!!.shl(bits!!)
 
 fun box() : String {
     val x : Long? = 10

@@ -1,6 +1,6 @@
 package demo_range
 
-fun Int?.rangeTo(other : Int?) : IntRange = this.sure().rangeTo(other.sure())
+fun Int?.rangeTo(other : Int?) : IntRange = this!!.rangeTo(other!!)
 
 fun box() : String {
     val x : Int? = 10

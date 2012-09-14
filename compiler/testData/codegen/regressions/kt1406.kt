@@ -7,11 +7,11 @@ import kotlin.util.*
 
 class C{
     public fun foo(){
-        val items : Collection<Item> = java.util.Collections.singleton(Item()).sure()
+        val items : Collection<Item> = java.util.Collections.singleton(Item())!!
         val result = ArrayList<Item>()
         val pattern: Pattern? = Pattern.compile("...")
         items.filterTo(result) {
-            pattern.sure().matcher(it.name()).sure().matches()
+            pattern!!.matcher(it.name())!!.matches()
         }
     }
 
