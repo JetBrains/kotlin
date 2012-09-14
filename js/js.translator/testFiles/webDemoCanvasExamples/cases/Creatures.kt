@@ -226,14 +226,14 @@ class CanvasState(val canvas: HTMLCanvasElement) {
 
         jq(canvas).mousemove {
             if (selection != null) {
-                selection.sure().pos = mousePos(it) - dragOff
+                selection!!.pos = mousePos(it) - dragOff
                 valid = false
             }
         }
 
         jq(canvas).mouseup {
             if (selection != null) {
-                selection.sure().selected = false
+                selection!!.selected = false
             }
             selection = null
             valid = false
@@ -254,7 +254,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         var offset = Vector()
         var element: HTMLElement? = canvas
         while (element != null) {
-            val el: HTMLElement = element.sure()
+            val el: HTMLElement = element!!
             offset += Vector(el.offsetLeft, el.offsetTop)
             element = el.offsetParent
         }
