@@ -41,8 +41,10 @@ public class EditSignatureAction extends AnAction {
     private final PsiMethod elementInEditor;
 
     public EditSignatureAction(@NotNull PsiMethod elementInEditor) {
-        super("Edit");
         this.elementInEditor = elementInEditor;
+        boolean editable = ExternalAnnotationsManager.getInstance(elementInEditor.getProject())
+                .isExternalAnnotationWritable(getAnnotationOwner(elementInEditor), KOTLIN_SIGNATURE_ANNOTATION);
+        getTemplatePresentation().setText(editable ? "Edit" : "View");
     }
 
     @Override

@@ -38,6 +38,9 @@ public class DeleteSignatureAction extends AnAction {
     public DeleteSignatureAction(@NotNull PsiMethod elementInEditor) {
         super("Delete");
         this.annotationOwner = getAnnotationOwner(elementInEditor);
+        boolean editable = ExternalAnnotationsManager.getInstance(annotationOwner.getProject())
+                .isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+        getTemplatePresentation().setVisible(editable);
     }
 
     @Override
