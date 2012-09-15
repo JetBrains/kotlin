@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.util.slicedmap;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.Collection;
@@ -105,5 +107,17 @@ public class SlicedMapImpl implements MutableSlicedMap {
     public Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator() {
         //noinspection unchecked
         return (Iterator) map.entrySet().iterator();
+    }
+
+    @NotNull
+    @Override
+    public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+        ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
+        for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : map.entrySet()) {
+            if (entry.getKey().getSlice() == slice) {
+                builder.put((K) entry.getKey().getKey(), (V) entry.getValue());
+            }
+        }
+        return builder.build();
     }
 }
