@@ -16,10 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.*;
 
@@ -54,6 +55,15 @@ public class DelegatingBindingTrace implements BindingTrace {
         public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
             return DelegatingBindingTrace.this.getKeys(slice);
 
+        }
+
+        @NotNull
+        @TestOnly
+        @Override
+        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+            ImmutableMap<K, V> parentContents = parentContext.getSliceContents(slice);
+            ImmutableMap<K, V> currentContents = map.getSliceContents(slice);
+            return ImmutableMap.<K, V>builder().putAll(parentContents).putAll(currentContents).build();
         }
     };
 
