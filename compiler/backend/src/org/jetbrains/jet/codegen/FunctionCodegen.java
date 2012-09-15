@@ -27,6 +27,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
@@ -301,10 +302,10 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     public static void genJetAnnotations(
-            GenerationState state,
-            FunctionDescriptor functionDescriptor,
-            JvmMethodSignature jvmSignature,
-            String propertyTypeSignature,
+            @NotNull GenerationState state,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull JvmMethodSignature jvmSignature,
+            @Nullable String propertyTypeSignature,
             MethodVisitor mv
     ) {
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
@@ -313,6 +314,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         int start = 0;
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
+            assert propertyTypeSignature != null;
             PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter(),
                                                           ((PropertyAccessorDescriptor) functionDescriptor)
                                                                   .getCorrespondingProperty(),
@@ -331,6 +333,7 @@ public class FunctionCodegen extends GenerationStateAware {
             }
             aw.writeFlags(kotlinFlags);
             aw.writeKind(DescriptorKindUtils.kindToInt(functionDescriptor.getKind()));
+            //noinspection ConstantConditions
             aw.writeNullableReturnType(functionDescriptor.getReturnType().isNullable());
             aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
             aw.writeReturnType(jvmSignature.getKotlinReturnType());
@@ -340,13 +343,16 @@ public class FunctionCodegen extends GenerationStateAware {
             throw new IllegalStateException();
         }
 
+        final List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
+        assert kotlinParameterTypes != null;
+
         if (receiverParameter.exists()) {
             JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, start++);
             av.writeName("this$receiver");
             av.writeNullable(receiverParameter.getType().isNullable());
             av.writeReceiver();
-            if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(0) != null) {
-                av.writeType(jvmSignature.getKotlinParameterTypes().get(0).getKotlinSignature());
+            if (kotlinParameterTypes.get(0) != null) {
+                av.writeType(kotlinParameterTypes.get(0).getKotlinSignature());
             }
             av.visitEnd();
         }
@@ -357,8 +363,8 @@ public class FunctionCodegen extends GenerationStateAware {
             av.writeName(parameterDescriptor.getName().getName());
             av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
             av.writeNullable(parameterDescriptor.getType().isNullable());
-            if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
-                av.writeType(jvmSignature.getKotlinParameterTypes().get(i + start).getKotlinSignature());
+            if (kotlinParameterTypes.get(i) != null) {
+                av.writeType(kotlinParameterTypes.get(i + start).getKotlinSignature());
             }
             av.visitEnd();
         }
