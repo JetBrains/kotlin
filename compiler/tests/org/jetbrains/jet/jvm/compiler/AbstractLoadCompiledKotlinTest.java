@@ -17,17 +17,19 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import junit.framework.Assert;
-import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.generator.SimpleTestClassModel;
+import org.jetbrains.jet.test.generator.TestGenerator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
@@ -39,40 +41,34 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
  * @author Stepan Koltsov
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class LoadCompiledKotlinTest extends TestCaseWithTmpdir {
-
-    @NotNull
-    private final File testFile;
-    @NotNull
-    private final File txtFile;
-
-    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    public LoadCompiledKotlinTest(@NotNull File testFile) {
-        this.testFile = testFile;
-        this.txtFile = new File(testFile.getPath().replaceFirst("\\.kt$", ".txt"));
-        setName(testFile.getName());
-    }
-
-    @Override
-    public void runTest() throws Exception {
-        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(testFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir {
+    public void doTest(@NotNull String ktFileName) throws Exception {
+        File ktFile = new File(ktFileName);
+        File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
+        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(),
+                                                                        ConfigurationKind.JDK_ONLY);
 
         NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().getName());
-        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceFromBinaries(tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceFromBinaries(tmpdir, getTestRootDisposable(),
+                                                                                                  ConfigurationKind.JDK_ONLY);
         compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 
-    public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/loadKotlin", true, new JetTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new LoadCompiledKotlinTest(file);
-            }
-        });
+    public static void main(String[] args) throws IOException {
+        String aPackage = "org.jetbrains.jet.jvm.compiler";
+        String extension = "kt";
+        new TestGenerator(
+                "compiler/tests/",
+                aPackage,
+                "LoadCompiledKotlinTestGenerated",
+                AbstractLoadCompiledKotlinTest.class,
+                Arrays.asList(
+                        new SimpleTestClassModel(new File("compiler/testData/loadKotlin"), true, extension, "doTest")
+                ),
+                AbstractLoadCompiledKotlinTest.class
+        ).generateAndSave();
     }
-
 }
