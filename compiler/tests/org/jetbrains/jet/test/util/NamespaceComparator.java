@@ -23,6 +23,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -173,7 +174,9 @@ public class NamespaceComparator {
             ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
             deferred.assertTrue("Classifier not found in " + nsa + ": " + name, ca != null);
             deferred.assertTrue("Classifier not found in " + nsb + ": " + name, cb != null);
-            compareClassifiers(ca, cb, sb);
+            if (ca != null && cb != null) {
+                compareClassifiers(ca, cb, sb);
+            }
         }
 
         for (Name name : sorted(objectNames)) {
@@ -181,7 +184,9 @@ public class NamespaceComparator {
             ClassifierDescriptor cb = nsb.getMemberScope().getObjectDescriptor(name);
             deferred.assertTrue("Object not found in " + nsa + ": " + name, ca != null);
             deferred.assertTrue("Object not found in " + nsb + ": " + name, cb != null);
-            compareClassifiers(ca, cb, sb);
+            if (ca != null && cb != null) {
+                compareClassifiers(ca, cb, sb);
+            }
         }
 
         for (Name name : sorted(propertyNames)) {
