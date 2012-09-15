@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -114,7 +115,7 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         assertEquals("foo.TheClass.ClassObject$", classObjectClass.getQualifiedName());
         assertTrue(classObjectClass.hasModifierProperty(PsiModifier.STATIC));
 
-        final PsiField instance = classObjectClass.findFieldByName("$instance", false);
+        final PsiField instance = classObjectClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
         assertNotNull(instance);
         assertEquals("foo.TheClass.ClassObject$", instance.getType().getCanonicalText());
         assertTrue(instance.hasModifierProperty(PsiModifier.PUBLIC));

@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -360,7 +361,7 @@ public abstract class StackValue {
 
         final ClassKind kind = classDescriptor.getKind();
         if (kind == ClassKind.CLASS_OBJECT || kind == ClassKind.OBJECT) {
-            return field(type, JvmClassName.byInternalName(type.getInternalName()), "$instance", true);
+            return field(type, JvmClassName.byInternalName(type.getInternalName()), JvmAbi.INSTANCE_FIELD, true);
         }
         else if (kind == ClassKind.ENUM_ENTRY) {
             final JvmClassName owner = typeMapper.getBindingContext()

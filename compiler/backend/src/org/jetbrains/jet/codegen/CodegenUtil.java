@@ -49,8 +49,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
  * @author abreslav
@@ -363,5 +363,12 @@ public class CodegenUtil {
         if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
             throw new IllegalStateException("code generation for synthesized members should be handled separately");
         }
+    }
+
+    public static void initSingletonField(PsiElement element, Type classAsmType, ClassBuilder builder, InstructionAdapter iv) {
+        iv.anew(classAsmType);
+        iv.dup();
+        iv.invokespecial(classAsmType.getInternalName(), "<init>", "()V");
+        iv.putstatic(classAsmType.getInternalName(), JvmAbi.INSTANCE_FIELD, classAsmType.getDescriptor());
     }
 }

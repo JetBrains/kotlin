@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -1046,9 +1047,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         final JvmClassName className = closureCodegen.name;
         final Type asmType = className.getAsmType();
-        final String internalName = className.getInternalName();
         if (isConst(closure)) {
-            v.invokestatic(internalName, "$getInstance", "()" + className.getDescriptor());
+            v.getstatic(className.getInternalName(), JvmAbi.INSTANCE_FIELD, className.getDescriptor());
         }
         else {
             v.anew(asmType);
@@ -1056,7 +1056,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             final Method cons = closureCodegen.constructor;
             pushClosureOnStack(closure, false);
-            v.invokespecial(internalName, "<init>", cons.getDescriptor());
+            v.invokespecial(className.getInternalName(), "<init>", cons.getDescriptor());
         }
         return StackValue.onStack(asmType);
     }
@@ -1870,7 +1870,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.load(0, OBJECT_TYPE);
                 }
                 else {
-                    v.getstatic(exprType.getInternalName(), "$instance", exprType.getDescriptor());
+                    v.getstatic(exprType.getInternalName(), JvmAbi.INSTANCE_FIELD, exprType.getDescriptor());
                 }
                 StackValue.onStack(exprType).put(type, v);
             }
