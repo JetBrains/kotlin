@@ -103,24 +103,13 @@ public class FunctionCodegen extends GenerationStateAware {
 
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
 
-        int flags = getVisibilityAccessFlag(functionDescriptor);
-
-        if (!functionDescriptor.getValueParameters().isEmpty()
-            && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)
-                       .getVarargElementType() != null) {
-            flags |= ACC_VARARGS;
-        }
-
-        Modality modality = functionDescriptor.getModality();
-        if (modality == Modality.FINAL) {
-            DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-            if (!(containingDeclaration instanceof ClassDescriptor) ||
-                ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.TRAIT) {
-                flags |= ACC_FINAL;
-            }
-        }
-
         OwnerKind kind = context.getContextKind();
+
+        boolean isStatic = isStatic(kind);
+
+        boolean isAbstract = isAbstract(functionDescriptor, kind);
+
+        int flags = getMethodAsmFlags(functionDescriptor, kind);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             needJetAnnotations = false;
@@ -130,17 +119,6 @@ public class FunctionCodegen extends GenerationStateAware {
         ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
 
         if (kind != OwnerKind.TRAIT_IMPL || bodyExpressions != null) {
-            boolean isStatic = kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
-            if (isStatic || kind == OwnerKind.TRAIT_IMPL) {
-                flags |= ACC_STATIC;
-            }
-
-            boolean isAbstract = (
-                                         modality == Modality.ABSTRACT
-                                         || isInterface(functionDescriptor.getContainingDeclaration())
-                                 ) && !isStatic && kind != OwnerKind.TRAIT_IMPL;
-            if (isAbstract) flags |= ACC_ABSTRACT;
-
             final MethodVisitor mv =
                     v.newMethod(fun, flags, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(),
                                 jvmSignature.getGenericsSignature(), null);
@@ -299,6 +277,46 @@ public class FunctionCodegen extends GenerationStateAware {
         }
 
         generateDefaultIfNeeded(context, state, v, jvmSignature.getAsmMethod(), functionDescriptor, kind);
+    }
+
+    private static boolean isAbstract(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+        return (functionDescriptor.getModality() == Modality.ABSTRACT
+                 || isInterface(functionDescriptor.getContainingDeclaration())
+               )
+               && !isStatic(kind)
+               && kind != OwnerKind.TRAIT_IMPL;
+    }
+
+    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+        boolean isStatic = isStatic(kind);
+        boolean isAbstract = isAbstract(functionDescriptor, kind);
+
+        int flags = getVisibilityAccessFlag(functionDescriptor);
+
+        if (!functionDescriptor.getValueParameters().isEmpty()
+            && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)
+                       .getVarargElementType() != null) {
+            flags |= ACC_VARARGS;
+        }
+
+        if (functionDescriptor.getModality() == Modality.FINAL) {
+            DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+            if (!(containingDeclaration instanceof ClassDescriptor) ||
+                ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.TRAIT) {
+                flags |= ACC_FINAL;
+            }
+        }
+
+        if (isStatic || kind == OwnerKind.TRAIT_IMPL) {
+            flags |= ACC_STATIC;
+        }
+
+        if (isAbstract) flags |= ACC_ABSTRACT;
+        return flags;
+    }
+
+    private static boolean isStatic(OwnerKind kind) {
+        return kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
     }
 
     public static void genJetAnnotations(
@@ -465,7 +483,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         boolean hasReceiver = receiverParameter.exists();
-        boolean isStatic = kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
+        boolean isStatic = isStatic(kind);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             String correctedDescr = "(" + jvmSignature.getDescriptor().substring(jvmSignature.getDescriptor().indexOf(";") + 1);
