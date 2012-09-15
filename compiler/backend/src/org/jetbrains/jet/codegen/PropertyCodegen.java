@@ -41,9 +41,9 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.BitSet;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
  * @author max
@@ -62,7 +62,7 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public void gen(JetProperty p) {
-        final VariableDescriptor descriptor = state.getBindingContext().get(BindingContext.VARIABLE, p);
+        final VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, p);
         if (!(descriptor instanceof PropertyDescriptor)) {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
@@ -84,7 +84,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
     public void generateBackingField(PsiElement p, PropertyDescriptor propertyDescriptor) {
         //noinspection ConstantConditions
-        if (state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+        if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
             if (isInterface(containingDeclaration)) {
                 return;
@@ -94,7 +94,7 @@ public class PropertyCodegen extends GenerationStateAware {
             final JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
             if (initializer != null) {
                 if (initializer instanceof JetConstantExpression) {
-                    CompileTimeConstant<?> compileTimeValue = state.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
+                    CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, initializer);
                     value = compileTimeValue != null ? compileTimeValue.getValue() : null;
                 }
             }
@@ -111,9 +111,9 @@ public class PropertyCodegen extends GenerationStateAware {
             if (JetStandardLibrary.getInstance().isVolatile(propertyDescriptor)) {
                 modifiers |= ACC_VOLATILE;
             }
-            Type type = state.getTypeMapper().mapType(propertyDescriptor);
+            Type type = typeMapper.mapType(propertyDescriptor);
             FieldVisitor fieldVisitor = v.newField(p, modifiers, propertyDescriptor.getName().getName(), type.getDescriptor(), null, value);
-            AnnotationCodegen.forField(fieldVisitor, state.getTypeMapper()).genAnnotations(propertyDescriptor);
+            AnnotationCodegen.forField(fieldVisitor, typeMapper).genAnnotations(propertyDescriptor);
         }
     }
 
@@ -122,7 +122,7 @@ public class PropertyCodegen extends GenerationStateAware {
         if (getter != null) {
             if (getter.getBodyExpression() != null) {
                 JvmPropertyAccessorSignature signature =
-                        state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
+                        typeMapper.mapGetterSignature(propertyDescriptor, kind);
                 functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(),
                                                propertyDescriptor.getGetter());
             }
@@ -147,7 +147,7 @@ public class PropertyCodegen extends GenerationStateAware {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
                 JvmPropertyAccessorSignature signature =
-                        state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
+                        typeMapper.mapSetterSignature(propertyDescriptor, kind);
                 functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(),
                                                setterDescriptor);
             }
@@ -161,7 +161,7 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateDefaultGetter(JetProperty p) {
-        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
+        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, p);
         assert propertyDescriptor != null;
         int flags = getVisibilityAccessFlag(propertyDescriptor) |
                     (propertyDescriptor.getModality() == Modality.ABSTRACT
@@ -181,7 +181,7 @@ public class PropertyCodegen extends GenerationStateAware {
             flags |= ACC_STATIC;
         }
 
-        PsiElement psiElement = descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = descriptorToDeclaration(bindingContext, propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
             flags |= ACC_ABSTRACT;
@@ -191,7 +191,7 @@ public class PropertyCodegen extends GenerationStateAware {
             flags |= ACC_FINAL;
         }
 
-        JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
+        JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
@@ -205,7 +205,7 @@ public class PropertyCodegen extends GenerationStateAware {
         if (getter != null) {
             //noinspection ConstantConditions
             assert !getter.hasBody();
-            AnnotationCodegen.forMethod(mv, state.getTypeMapper()).genAnnotations(getter);
+            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(getter);
         }
 
         if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
@@ -219,7 +219,7 @@ public class PropertyCodegen extends GenerationStateAware {
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, OBJECT_TYPE);
                     }
-                    final Type type = state.getTypeMapper().mapType(propertyDescriptor);
+                    final Type type = typeMapper.mapType(propertyDescriptor);
 
                     if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
                         throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
@@ -233,7 +233,7 @@ public class PropertyCodegen extends GenerationStateAware {
                     else {
                         iv.visitFieldInsn(
                                 kind == OwnerKind.NAMESPACE ? GETSTATIC : GETFIELD,
-                                state.getTypeMapper().getOwner(propertyDescriptor, kind).getInternalName(),
+                                typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
                                 propertyDescriptor.getName().getName(),
                                 type.getDescriptor());
                     }
@@ -265,7 +265,7 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateDefaultSetter(JetProperty p) {
-        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
+        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, p);
         assert propertyDescriptor != null;
 
         int modifiers = getVisibilityAccessFlag(propertyDescriptor);
@@ -286,7 +286,7 @@ public class PropertyCodegen extends GenerationStateAware {
             flags |= ACC_STATIC;
         }
 
-        PsiElement psiElement = descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = descriptorToDeclaration(bindingContext, propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
             flags |= ACC_ABSTRACT;
@@ -296,7 +296,7 @@ public class PropertyCodegen extends GenerationStateAware {
             flags |= ACC_FINAL;
         }
 
-        JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
+        JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
         assert true;
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
@@ -307,7 +307,7 @@ public class PropertyCodegen extends GenerationStateAware {
                                       setter.getVisibility());
 
         assert !setter.hasBody();
-        AnnotationCodegen.forMethod(mv, state.getTypeMapper()).genAnnotations(setter);
+        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(setter);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             if (propertyDescriptor.getModality() != Modality.ABSTRACT) {
@@ -317,7 +317,7 @@ public class PropertyCodegen extends GenerationStateAware {
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    final Type type = state.getTypeMapper().mapType(propertyDescriptor);
+                    final Type type = typeMapper.mapType(propertyDescriptor);
                     int paramCode = 0;
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, OBJECT_TYPE);
@@ -339,7 +339,7 @@ public class PropertyCodegen extends GenerationStateAware {
                     else {
                         iv.load(paramCode, type);
                         iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? PUTSTATIC : PUTFIELD,
-                                          state.getTypeMapper().getOwner(propertyDescriptor, kind).getInternalName(),
+                                          typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
                                           propertyDescriptor.getName().getName(),
                                           type.getDescriptor());
                     }
@@ -361,11 +361,11 @@ public class PropertyCodegen extends GenerationStateAware {
 
     public void genDelegate(PropertyDescriptor declaration, PropertyDescriptor overriddenDescriptor, StackValue field) {
         JvmPropertyAccessorSignature jvmPropertyAccessorSignature =
-                state.getTypeMapper().mapGetterSignature(declaration, OwnerKind.IMPLEMENTATION);
+                typeMapper.mapGetterSignature(declaration, OwnerKind.IMPLEMENTATION);
         functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
 
         if (declaration.isVar()) {
-            jvmPropertyAccessorSignature = state.getTypeMapper().mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
+            jvmPropertyAccessorSignature = typeMapper.mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
             functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
         }
     }
