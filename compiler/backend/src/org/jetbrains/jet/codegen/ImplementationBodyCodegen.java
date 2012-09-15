@@ -56,10 +56,10 @@ import org.jetbrains.jet.utils.BitSetUtils;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
  * @author max
@@ -69,12 +69,14 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescrip
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String VALUES = "$VALUES";
     private JetDelegationSpecifier superCall;
-    private String superClass;
+    private Type superClassAsmType;
     @Nullable // null means java/lang/Object
     private JetType superClassType;
+    private final Type classAsmType;
 
     public ImplementationBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
+        classAsmType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
     }
 
     @Override
@@ -191,15 +193,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             // TODO: cache internal names
-            String outerClassInernalName = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+            String outerClassInernalName = classAsmType.getInternalName();
             String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
             v.visitInnerClass(innerClassInternalName, outerClassInernalName, innerClass.getName().getName(), innerClassAccess);
         }
 
         if (descriptor.getClassObjectDescriptor() != null) {
             int innerClassAccess = ACC_PUBLIC | ACC_FINAL | ACC_STATIC;
-            String outerClassInernalName = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
-            v.visitInnerClass(outerClassInernalName + JvmAbi.CLASS_OBJECT_SUFFIX, outerClassInernalName, JvmAbi.CLASS_OBJECT_CLASS_NAME,
+            v.visitInnerClass(classAsmType.getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX, classAsmType.getInternalName(), JvmAbi.CLASS_OBJECT_CLASS_NAME,
                               innerClassAccess);
         }
     }
@@ -246,7 +247,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         {   // superclass
             signatureVisitor.writeSuperclass();
             if (superClassType == null) {
-                signatureVisitor.writeClassBegin(superClass, false, false);
+                signatureVisitor.writeClassBegin(superClassAsmType.getInternalName(), false, false);
                 signatureVisitor.writeClassEnd();
             }
             else {
@@ -276,7 +277,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         signatureVisitor.writeSupersEnd();
 
-        return new JvmClassSignature(jvmName(), superClass, superInterfaces, signatureVisitor.makeJavaString(),
+        return new JvmClassSignature(jvmName(), superClassAsmType.getInternalName(), superInterfaces, signatureVisitor.makeJavaString(),
                                      signatureVisitor.makeKotlinClassSignature());
     }
 
@@ -284,11 +285,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (kind != OwnerKind.IMPLEMENTATION) {
             throw new IllegalStateException("must not call this method with kind " + kind);
         }
-        return typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+        return classAsmType.getInternalName();
     }
 
     protected void getSuperClass() {
-        superClass = "java/lang/Object";
+        superClassAsmType = AsmTypeConstants.OBJECT_TYPE;
         superClassType = null;
 
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
@@ -309,7 +310,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert superClassDescriptor != null;
                 if (!isInterface(superClassDescriptor)) {
                     superClassType = superType;
-                    superClass = typeMapper.mapType(superClassDescriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+                    superClassAsmType = typeMapper.mapType(superClassDescriptor.getDefaultType(), JetTypeMapperMode.IMPL);
                     superCall = specifier;
                 }
             }
@@ -318,11 +319,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (superClassType == null) {
             if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
                 superClassType = JetStandardLibrary.getInstance().getEnumType(descriptor.getDefaultType());
-                superClass = typeMapper.mapType(superClassType).getInternalName();
+                superClassAsmType = typeMapper.mapType(superClassType);
             }
             if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
                 superClassType = descriptor.getTypeConstructor().getSupertypes().iterator().next();
-                superClass = typeMapper.mapType(superClassType).getInternalName();
+                superClassAsmType = typeMapper.mapType(superClassType);
             }
         }
     }
@@ -392,9 +393,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
         if (!componentType.equals(Type.VOID_TYPE)) {
-            Type classType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
-            iv.load(0, classType);
-            iv.getfield(classType.getInternalName(), parameter.getName().getName(), componentType.getDescriptor());
+            iv.load(0, classAsmType);
+            iv.getfield(classAsmType.getInternalName(), parameter.getName().getName(), componentType.getDescriptor());
         }
         iv.areturn(componentType);
 
@@ -420,15 +420,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 FunctionCodegen.endVisit(mv, "values()", myClass);
             }
             {
-                Type type = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
 
                 MethodVisitor mv =
-                        v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + type.getDescriptor(), null, null);
+                        v.newMethod(myClass, ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null,
+                                    null);
                 mv.visitCode();
-                mv.visitLdcInsn(type);
+                mv.visitLdcInsn(classAsmType);
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitMethodInsn(INVOKESTATIC, "java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;");
-                mv.visitTypeInsn(CHECKCAST, type.getInternalName());
+                mv.visitTypeInsn(CHECKCAST, classAsmType.getInternalName());
                 mv.visitInsn(ARETURN);
                 FunctionCodegen.endVisit(mv, "values()", myClass);
             }
@@ -683,8 +683,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, constructorContext, state);
 
-        Type classType = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL);
-        JvmClassName classname = JvmClassName.byType(classType);
+        JvmClassName classname = JvmClassName.byType(classAsmType);
 
         if (superCall == null) {
             genSimpleSuperCall(iv);
@@ -700,7 +699,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             final Type type = typeMapper
                     .mapType(enclosingClassDescriptor(bindingContext, descriptor));
             String interfaceDesc = type.getDescriptor();
-            iv.load(0, classType);
+            iv.load(0, classAsmType);
             iv.load(frameMap.getOuterThisIndex(), type);
             iv.putfield(classname.getInternalName(), THIS$0, interfaceDesc);
         }
@@ -739,7 +738,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
-                genCallToDelegatorByExpressionSpecifier(iv, codegen, classType, classname, n++, specifier);
+                genCallToDelegatorByExpressionSpecifier(iv, codegen, classAsmType, classname, n++, specifier);
             }
         }
 
@@ -749,9 +748,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (parameter.getValOrVarNode() != null) {
                 VariableDescriptor descriptor = paramDescrs.get(curParam);
                 Type type = typeMapper.mapType(descriptor);
-                iv.load(0, classType);
+                iv.load(0, classAsmType);
                 iv.load(frameMap.getIndex(descriptor), type);
-                iv.putfield(classname.getInternalName(), descriptor.getName().getName(), type.getDescriptor());
+                iv.putfield(classAsmType.getInternalName(), descriptor.getName().getName(), type.getDescriptor());
             }
             curParam++;
         }
@@ -767,7 +766,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void genSuperCallToDelegatorToSuperClass(InstructionAdapter iv) {
-        iv.load(0, Type.getType("L" + superClass + ";"));
+        iv.load(0, superClassAsmType);
         JetType superType = bindingContext.get(BindingContext.TYPE, superCall.getTypeReference());
         List<Type> parameterTypes = new ArrayList<Type>();
         assert superType != null;
@@ -784,14 +783,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void genSimpleSuperCall(InstructionAdapter iv) {
-        iv.load(0, Type.getType("L" + superClass + ";"));
+        iv.load(0, superClassAsmType);
         if (descriptor.getKind() == ClassKind.ENUM_CLASS || descriptor.getKind() == ClassKind.ENUM_ENTRY) {
             iv.load(1, AsmTypeConstants.JAVA_STRING_TYPE);
             iv.load(2, Type.INT_TYPE);
-            iv.invokespecial(superClass, "<init>", "(Ljava/lang/String;I)V");
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
         }
         else {
-            iv.invokespecial(superClass, "<init>", "()V");
+            iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "()V");
         }
     }
 
@@ -875,7 +874,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             codegen.genToJVMStack(expression);
 
             String delegateField = "$delegate_" + n;
-            Type fieldType = typeMapper.mapType(superClassDescriptor.getDefaultType());
+            Type fieldType = typeMapper.mapType(superClassDescriptor);
             String fieldDesc = fieldType.getDescriptor();
 
             v.newField(specifier, ACC_PRIVATE|ACC_FINAL|ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
@@ -1164,7 +1163,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         else if (declaration instanceof JetEnumEntry) {
             String name = declaration.getName();
-            final String desc = "L" + typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName() + ";";
+            final String desc = "L" + classAsmType.getInternalName() + ";";
             v.newField(declaration, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
             if (myEnumConstants.isEmpty()) {
                 staticInitializerChunks.add(new CodeChunk() {
