@@ -106,16 +106,21 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
 
         assertNotNull(theClass);
 
-        PsiField classobj = theClass.findFieldByName("$classobj", false);
-        assertTrue(classobj != null && classobj.hasModifierProperty(PsiModifier.STATIC));
+        PsiField classobjField = theClass.findFieldByName("$classobj", false);
+        assertNull(classobjField);
 
-        PsiType type = classobj.getType();
-        assertTrue(type instanceof PsiClassType);
+        final PsiClass classObjectClass = theClass.findInnerClassByName("ClassObject$", false);
+        assertNotNull(classObjectClass);
+        assertEquals("foo.TheClass.ClassObject$", classObjectClass.getQualifiedName());
+        assertTrue(classObjectClass.hasModifierProperty(PsiModifier.STATIC));
 
-        assertEquals("foo.TheClass.ClassObject$", type.getCanonicalText());
+        final PsiField instance = classObjectClass.findFieldByName("$instance", false);
+        assertNotNull(instance);
+        assertEquals("foo.TheClass.ClassObject$", instance.getType().getCanonicalText());
+        assertTrue(instance.hasModifierProperty(PsiModifier.PUBLIC));
+        assertTrue(instance.hasModifierProperty(PsiModifier.STATIC));
+        assertTrue(instance.hasModifierProperty(PsiModifier.FINAL));
 
-        PsiClass classObjectClass = ((PsiClassType) type).resolve();
-        assertTrue(classObjectClass != null && classObjectClass.hasModifierProperty(PsiModifier.STATIC));
         PsiMethod[] methods = classObjectClass.findMethodsByName("getOut", false);
         
         assertEquals("java.io.PrintStream", methods[0].getReturnType().getCanonicalText());

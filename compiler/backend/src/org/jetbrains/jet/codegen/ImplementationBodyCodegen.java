@@ -591,28 +591,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForClassObject() {
-        final JetClassObject classObject = getClassObject();
-        if (classObject != null) {
-            final ClassDescriptor descriptor1 = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
-            assert descriptor1 != null;
-            Type type = Type.getObjectType(typeMapper.mapType(descriptor1).getInternalName());
-            v.newField(classObject, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "$classobj", type.getDescriptor(), null, null);
+        if (descriptor.getKind() != ClassKind.CLASS_OBJECT) return;
 
-            staticInitializerChunks.add(new CodeChunk() {
-                @Override
-                public void generate(InstructionAdapter v) {
-                    final ClassDescriptor descriptor1 = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
-                    assert descriptor1 != null;
-                    String name = typeMapper.mapType(descriptor1.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
-                    final Type classObjectType = Type.getObjectType(name);
-                    v.anew(classObjectType);
-                    v.dup();
-                    v.invokespecial(name, "<init>", "()V");
-                    v.putstatic(typeMapper.mapType(descriptor).getInternalName(), "$classobj",
-                                classObjectType.getDescriptor());
-                }
-            });
-        }
+        v.newField(myClass, ACC_PUBLIC | ACC_STATIC | ACC_FINAL , "$instance", classAsmType.getDescriptor(), null, null);
+
+        staticInitializerChunks.add(new CodeChunk() {
+            @Override
+            public void generate(InstructionAdapter v) {
+                v.anew(classAsmType);
+                v.dup();
+                v.invokespecial(classAsmType.getInternalName(), "<init>", "()V");
+                v.putstatic(typeMapper.mapType(descriptor).getInternalName(), "$instance", classAsmType.getDescriptor());
+            }
+        });
     }
 
     protected void generatePrimaryConstructor() {

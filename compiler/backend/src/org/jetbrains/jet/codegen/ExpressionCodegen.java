@@ -59,12 +59,12 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
 /**
  * @author max
@@ -1397,14 +1397,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (descriptor instanceof ClassDescriptor) {
             PsiElement declaration = descriptorToDeclaration(bindingContext, descriptor);
             if (declaration instanceof JetClass) {
-                final ClassDescriptor descriptor1 = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
-                assert descriptor1 != null;
-                final Type type = typeMapper.mapType(descriptor1);
-                return StackValue.field(type,
-                                        JvmClassName.byType(typeMapper.mapType(((ClassDescriptor) descriptor).getDefaultType(),
-                                                                               JetTypeMapperMode.IMPL)),
-                                        "$classobj",
-                                        true);
+                final ClassDescriptor classObjectDescriptor = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
+                assert classObjectDescriptor != null;
+                return StackValue.singleton(classObjectDescriptor, typeMapper);
             }
             else {
                 // todo ?
@@ -1875,9 +1870,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.load(0, OBJECT_TYPE);
                 }
                 else {
-                    ClassDescriptor containingDeclaration = (ClassDescriptor) classReceiverDeclarationDescriptor.getContainingDeclaration();
-                    Type classObjType = typeMapper.mapType(containingDeclaration.getDefaultType(), JetTypeMapperMode.IMPL);
-                    v.getstatic(classObjType.getInternalName(), "$classobj", exprType.getDescriptor());
+                    v.getstatic(exprType.getInternalName(), "$instance", exprType.getDescriptor());
                 }
                 StackValue.onStack(exprType).put(type, v);
             }
