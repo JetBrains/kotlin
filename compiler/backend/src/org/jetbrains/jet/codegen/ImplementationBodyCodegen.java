@@ -59,6 +59,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
@@ -352,9 +353,101 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateEnumMethods();
 
-        generateComponentFunctionsForDataClasses();
+        generateFunctionsForDataClasses();
 
         generateClosureFields(context.closure, v, state.getTypeMapper());
+    }
+
+    private void generateFunctionsForDataClasses() {
+        if (!JetStandardLibrary.isData(descriptor)) return;
+
+        generateComponentFunctionsForDataClasses();
+
+        generateDataClassToStringMethod();
+        generateDataClassHashCodeMethod();
+        generateDataClassEqualsMethod();
+    }
+
+    private void generateDataClassEqualsMethod() {
+        // todo: this is fake implementation
+
+        final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitMethodInsn(INVOKESPECIAL, superClassAsmType.getInternalName(), "equals", "(Ljava/lang/Object;)Z");
+        mv.visitInsn(IRETURN);
+        mv.visitMaxs(-1,-1);
+        mv.visitEnd();
+    }
+
+    private void generateDataClassHashCodeMethod() {
+        // todo: this is fake implementation
+
+        final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "hashCode", "()I", null, null);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKESPECIAL, superClassAsmType.getInternalName(), "hashCode", "()I");
+        mv.visitInsn(IRETURN);
+        mv.visitMaxs(-1,-1);
+        mv.visitEnd();
+    }
+
+    private void generateDataClassToStringMethod() {
+        final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+        final InstructionAdapter iv = new InstructionAdapter(mv);
+        mv.visitVarInsn(ALOAD, 0);
+
+        generateStringBuilderConstructor(iv);
+
+        boolean first = true;
+        for (JetParameter parameter : getPrimaryConstructorParameters()) {
+            if (parameter.getValOrVarNode() == null) continue;
+
+            PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+            assert propertyDescriptor != null;
+
+            if(first) {
+                iv.aconst(descriptor.getName() + "{" + propertyDescriptor.getName().getName()+"=");
+                first = false;
+            }
+            else {
+                iv.aconst(", " + propertyDescriptor.getName().getName()+"=");
+            }
+            CodegenUtil.invokeAppendMethod(iv, JAVA_STRING_TYPE);
+
+            iv.load(0, classAsmType);
+
+            // todo: seems to be more correct - need to be changed in sync with 'componentX' generation and related tests
+            // final Method
+            //        method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+            //
+            // iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
+            // final Type type = method.getReturnType();
+            Type type = typeMapper.mapType(propertyDescriptor);
+            iv.getfield(classAsmType.getInternalName(), parameter.getName(), type.getDescriptor());
+
+            if (type.getSort() == Type.ARRAY) {
+                final Type elementType = correctElementType(type);
+                if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
+                    iv.invokestatic("java/util/Arrays", "toString", "([Ljava/lang/Object;)Ljava/lang/String;");
+                    type = JAVA_STRING_TYPE;
+                }
+                else {
+                    if (elementType.getSort() != Type.CHAR) {
+                        iv.invokestatic("java/util/Arrays", "toString", "(" + type.getDescriptor() + ")Ljava/lang/String;");
+                        type = JAVA_STRING_TYPE;
+                    }
+                }
+            }
+            CodegenUtil.invokeAppendMethod(iv, type);
+        }
+
+        iv.aconst("}");
+        CodegenUtil.invokeAppendMethod(iv, JAVA_STRING_TYPE);
+
+        iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
+        iv.areturn(JAVA_STRING_TYPE);
+
+        FunctionCodegen.endVisit(mv, "toString", myClass);
     }
 
     private void generateComponentFunctionsForDataClasses() {
@@ -376,19 +469,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type componentType = typeMapper.mapReturnType(returnType);
 
         MethodVisitor mv = v.newMethod(myClass,
-                                       ACC_FINAL | getVisibilityAccessFlag(function),
+                                       FunctionCodegen.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
                                        function.getName().getName(),
                                        "()" + componentType.getDescriptor(),
                                        null, null);
 
-        JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-        BitSet kotlinFlags = getFlagsForVisibility(function.getVisibility());
-        aw.writeFlags(kotlinFlags);
-        aw.writeKind(DescriptorKindUtils.kindToInt(function.getKind()));
-        aw.writeNullableReturnType(returnType.isNullable());
-        JvmMethodSignature jvmMethodSignature = typeMapper.mapToCallableMethod(function, false, kind).getSignature();
-        aw.writeReturnType(jvmMethodSignature.getKotlinReturnType());
-        aw.visitEnd();
+        FunctionCodegen.genJetAnnotations(state, function, null, null, mv);
 
         mv.visitCode();
         InstructionAdapter iv = new InstructionAdapter(mv);
@@ -754,7 +840,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void genSimpleSuperCall(InstructionAdapter iv) {
         iv.load(0, superClassAsmType);
         if (descriptor.getKind() == ClassKind.ENUM_CLASS || descriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            iv.load(1, AsmTypeConstants.JAVA_STRING_TYPE);
+            iv.load(1, JAVA_STRING_TYPE);
             iv.load(2, Type.INT_TYPE);
             iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(Ljava/lang/String;I)V");
         }

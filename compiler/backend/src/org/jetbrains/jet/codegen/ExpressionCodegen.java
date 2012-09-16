@@ -984,7 +984,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.constant(constantValue.toString(), type);
         }
         else {
-            generateStringBuilderConstructor();
+            generateStringBuilderConstructor(v);
             for (JetStringTemplateEntry entry : expression.getEntries()) {
                 if (entry instanceof JetStringTemplateEntryWithExpression) {
                     invokeAppend(entry.getExpression());
@@ -994,7 +994,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                   ? ((JetEscapeStringTemplateEntry) entry).getUnescapedValue()
                                   : entry.getText();
                     v.aconst(text);
-                    invokeAppendMethod(JAVA_STRING_TYPE);
+                    invokeAppendMethod(v, JAVA_STRING_TYPE);
                 }
             }
             v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
@@ -2568,14 +2568,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    public void generateStringBuilderConstructor() {
-        Type type = getType(StringBuilder.class);
-        v.anew(type);
-        v.dup();
-        Method method = new Method("<init>", Type.VOID_TYPE, new Type[0]);
-        v.invokespecial("java/lang/StringBuilder", method.getName(), method.getDescriptor());
-    }
-
     public void invokeAppend(final JetExpression expr) {
         if (expr instanceof JetBinaryExpression) {
             final JetBinaryExpression binaryExpression = (JetBinaryExpression) expr;
@@ -2594,13 +2586,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         Type exprType = expressionType(expr);
         gen(expr, exprType);
-        invokeAppendMethod(exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
-    }
-
-    public void invokeAppendMethod(Type exprType) {
-        Method appendDescriptor = new Method("append", getType(StringBuilder.class),
-                                             new Type[] {exprType.getSort() == Type.OBJECT ? OBJECT_TYPE : exprType});
-        v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
+        invokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
     }
 
     @Nullable

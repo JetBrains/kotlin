@@ -322,10 +322,14 @@ public class FunctionCodegen extends GenerationStateAware {
     public static void genJetAnnotations(
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull JvmMethodSignature jvmSignature,
+            @Nullable JvmMethodSignature jvmSignature,
             @Nullable String propertyTypeSignature,
             MethodVisitor mv
     ) {
+        if (jvmSignature == null) {
+            jvmSignature = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, OwnerKind.IMPLEMENTATION).getSignature();
+        }
+
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
         Modality modality = functionDescriptor.getModality();
         ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();

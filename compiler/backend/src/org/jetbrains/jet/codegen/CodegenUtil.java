@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
@@ -47,7 +48,7 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
 /**
  * @author abreslav
@@ -368,5 +369,17 @@ public class CodegenUtil {
         iv.dup();
         iv.invokespecial(classAsmType.getInternalName(), "<init>", "()V");
         iv.putstatic(classAsmType.getInternalName(), JvmAbi.INSTANCE_FIELD, classAsmType.getDescriptor());
+    }
+
+    public static void generateStringBuilderConstructor(InstructionAdapter v) {
+        v.visitTypeInsn(NEW, "java/lang/StringBuilder");
+        v.dup();
+        v.invokespecial("java/lang/StringBuilder", "<init>", "()V");
+    }
+
+    public static void invokeAppendMethod(InstructionAdapter v, Type exprType) {
+        Method appendDescriptor = new Method("append", getType(StringBuilder.class),
+                                             new Type[] {exprType.getSort() == Type.OBJECT ? (exprType.equals(JAVA_STRING_TYPE) ? JAVA_STRING_TYPE : OBJECT_TYPE) : exprType});
+        v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
     }
 }

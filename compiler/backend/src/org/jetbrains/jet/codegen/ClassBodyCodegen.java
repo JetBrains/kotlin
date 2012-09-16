@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -116,7 +117,7 @@ public abstract class ClassBodyCodegen extends GenerationStateAware {
         }
     }
 
-    protected List<JetParameter> getPrimaryConstructorParameters() {
+    protected @NotNull List<JetParameter> getPrimaryConstructorParameters() {
         if (myClass instanceof JetClass) {
             return ((JetClass) myClass).getPrimaryConstructorParameters();
         }
