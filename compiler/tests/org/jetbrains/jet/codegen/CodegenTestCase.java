@@ -156,8 +156,12 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFile(String filename, String expected) {
+        blackBoxFile(filename, expected, false);
+    }
+
+    protected void blackBoxFile(String filename, String expected, boolean classPathInTheSameClassLoader) {
         loadFile(filename);
-        blackBox(expected);
+        blackBox(expected, classPathInTheSameClassLoader);
     }
 
     protected void blackBoxFileByFullPath(String filename) {
@@ -214,9 +218,13 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBox(String expected) {
+        blackBox(expected, false);
+    }
+
+    protected void blackBox(String expected, boolean classPathInTheSameClassLoader) {
         GenerationState state = generateClassesInFileGetState();
 
-        GeneratedClassLoader loader = createClassLoader(state.getFactory());
+        GeneratedClassLoader loader = createClassLoader(state.getFactory(), classPathInTheSameClassLoader);
 
         String r;
 
@@ -275,6 +283,10 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
+        blackBoxFileWithJava(ktFile, false);
+    }
+
+    protected void blackBoxFileWithJava(@NotNull String ktFile, boolean classPathInTheSameClassLoader) throws Exception {
         File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
         JetTestUtils.mkdirs(javaClassesTempDirectory);
         List<String> options = Arrays.asList(
@@ -287,10 +299,14 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
-        blackBoxFile(ktFile);
+        blackBoxFile(ktFile, "OK", classPathInTheSameClassLoader);
     }
 
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
+        return createClassLoader(codegens, false);
+    }
+
+    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens, boolean classPathInTheSameClassLoader) {
         List<URL> urls = Lists.newArrayList();
         for (File file : myEnvironment.getConfiguration().getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             try {
@@ -299,8 +315,16 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 throw new RuntimeException(e);
             }
         }
-        ClassLoader parentClassLoader = new URLClassLoader(urls.toArray(new URL[0]), CodegenTestCase.class.getClassLoader());
-        return new GeneratedClassLoader(codegens, parentClassLoader);
+
+        final URL[] urlsArray = urls.toArray(new URL[0]);
+
+        if (!classPathInTheSameClassLoader) {
+            ClassLoader parentClassLoader = new URLClassLoader(urlsArray, CodegenTestCase.class.getClassLoader());
+            return new GeneratedClassLoader(codegens, parentClassLoader);
+        }
+        else {
+            return new GeneratedClassLoader(codegens, CodegenTestCase.class.getClassLoader(), urlsArray);
+        }
     }
 
     protected String generateToText() {

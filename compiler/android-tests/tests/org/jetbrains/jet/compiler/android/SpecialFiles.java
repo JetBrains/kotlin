@@ -19,7 +19,8 @@ package org.jetbrains.jet.compiler.android;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Natalia.Ukhorskaya
@@ -120,6 +121,8 @@ public class SpecialFiles {
         excludedFiles.add("kt1779.kt"); // Bug KT-2202 - private fun tryToComputeNext() in AbstractIterator.kt
         excludedFiles.add("kt344.jet"); // Bug KT-2251
         excludedFiles.add("kt529.kt");  // Bug
+
+        excludedFiles.add("kt2981.kt"); // with java
     }
 
     private SpecialFiles() {

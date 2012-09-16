@@ -37,10 +37,7 @@ import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -70,6 +67,7 @@ public class CodegenUtil {
             .put(Visibilities.PUBLIC, ACC_PUBLIC)
             .put(Visibilities.INTERNAL, ACC_PUBLIC)
             .put(Visibilities.LOCAL, NO_FLAG_LOCAL)
+            .put(JavaDescriptorResolver.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
             .build();
 
     private static final Set<ClassDescriptor> PRIMITIVE_NUMBER_CLASSES = Sets.newHashSet(

@@ -72,7 +72,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JAVA_ROOT);
 
-    private static Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
+    public static Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             NamespaceDescriptor parentPackage = DescriptorUtils.getParentOfType(what, NamespaceDescriptor.class);

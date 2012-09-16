@@ -18,14 +18,18 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URL;
+import java.net.URLClassLoader;
+
 /**
  * @author yole
+ * @author alex.tkachman
  */
-public class GeneratedClassLoader extends ClassLoader {
+public class GeneratedClassLoader extends URLClassLoader {
     private ClassFileFactory state;
 
-    public GeneratedClassLoader(@NotNull ClassFileFactory state, ClassLoader parentClassLoader) {
-        super(parentClassLoader);
+    public GeneratedClassLoader(@NotNull ClassFileFactory state, ClassLoader parentClassLoader, URL...urls) {
+        super(urls, parentClassLoader);
         this.state = state;
     }
 
