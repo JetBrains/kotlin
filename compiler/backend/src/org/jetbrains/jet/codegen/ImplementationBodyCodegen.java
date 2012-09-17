@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -358,17 +359,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateClosureFields(context.closure, v, state.getTypeMapper());
     }
 
+    private List<PropertyDescriptor> getDataProperties() {
+        ArrayList<PropertyDescriptor> result = Lists.newArrayList();
+        for (JetParameter parameter : getPrimaryConstructorParameters()) {
+            if (parameter.getValOrVarNode() == null) continue;
+
+            PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+            assert propertyDescriptor != null;
+
+            result.add(propertyDescriptor);
+        }
+        return result;
+    }
+
     private void generateFunctionsForDataClasses() {
         if (!JetStandardLibrary.isData(descriptor)) return;
 
         generateComponentFunctionsForDataClasses();
 
-        generateDataClassToStringMethod();
-        generateDataClassHashCodeMethod();
-        generateDataClassEqualsMethod();
+        final List<PropertyDescriptor> properties = getDataProperties();
+        if (!properties.isEmpty()) {
+            generateDataClassToStringMethod(properties);
+            generateDataClassHashCodeMethod(properties);
+            generateDataClassEqualsMethod(properties);
+        }
     }
 
-    private void generateDataClassEqualsMethod() {
+    private void generateDataClassEqualsMethod(List<PropertyDescriptor> properties) {
         // todo: this is fake implementation
 
         final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
@@ -380,50 +397,69 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitEnd();
     }
 
-    private void generateDataClassHashCodeMethod() {
-        // todo: this is fake implementation
-
+    private void generateDataClassHashCodeMethod(List<PropertyDescriptor> properties) {
         final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "hashCode", "()I", null, null);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKESPECIAL, superClassAsmType.getInternalName(), "hashCode", "()I");
+        final InstructionAdapter iv = new InstructionAdapter(mv);
+
+        boolean first = true;
+        for (PropertyDescriptor propertyDescriptor : properties) {
+            if (!first) {
+                iv.iconst(31);
+                iv.mul(Type.INT_TYPE);
+            }
+
+            genPropertyOnStack(iv, propertyDescriptor);
+
+            Label ifNull = null;
+            if (propertyDescriptor.getType().isNullable()) {
+                ifNull = new Label();
+
+                iv.dup();
+                iv.ifnull(ifNull);
+            }
+
+            genHashCode(mv, iv, typeMapper.mapType(propertyDescriptor.getType()));
+
+            if (ifNull != null) {
+                Label end = new Label();
+                iv.goTo(end);
+                iv.mark(ifNull);
+                iv.pop();
+                iv.iconst(0);
+                iv.mark(end);
+            }
+
+            if (first) {
+                first = false;
+            }
+            else {
+                iv.add(Type.INT_TYPE);
+            }
+        }
+
         mv.visitInsn(IRETURN);
-        mv.visitMaxs(-1,-1);
+        mv.visitMaxs(-1, -1);
         mv.visitEnd();
     }
 
-    private void generateDataClassToStringMethod() {
+    private void generateDataClassToStringMethod(List<PropertyDescriptor> properties) {
         final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
         final InstructionAdapter iv = new InstructionAdapter(mv);
-        mv.visitVarInsn(ALOAD, 0);
 
         generateStringBuilderConstructor(iv);
 
         boolean first = true;
-        for (JetParameter parameter : getPrimaryConstructorParameters()) {
-            if (parameter.getValOrVarNode() == null) continue;
-
-            PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
-            assert propertyDescriptor != null;
-
-            if(first) {
+        for (PropertyDescriptor propertyDescriptor : properties) {
+            if (first) {
                 iv.aconst(descriptor.getName() + "{" + propertyDescriptor.getName().getName()+"=");
                 first = false;
             }
             else {
                 iv.aconst(", " + propertyDescriptor.getName().getName()+"=");
             }
-            CodegenUtil.invokeAppendMethod(iv, JAVA_STRING_TYPE);
+            invokeAppendMethod(iv, JAVA_STRING_TYPE);
 
-            iv.load(0, classAsmType);
-
-            // todo: seems to be more correct - need to be changed in sync with 'componentX' generation and related tests
-            // final Method
-            //        method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-            //
-            // iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
-            // final Type type = method.getReturnType();
-            Type type = typeMapper.mapType(propertyDescriptor);
-            iv.getfield(classAsmType.getInternalName(), parameter.getName(), type.getDescriptor());
+            Type type = genPropertyOnStack(iv, propertyDescriptor);
 
             if (type.getSort() == Type.ARRAY) {
                 final Type elementType = correctElementType(type);
@@ -438,16 +474,29 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                 }
             }
-            CodegenUtil.invokeAppendMethod(iv, type);
+            invokeAppendMethod(iv, type);
         }
 
         iv.aconst("}");
-        CodegenUtil.invokeAppendMethod(iv, JAVA_STRING_TYPE);
+        invokeAppendMethod(iv, JAVA_STRING_TYPE);
 
         iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
         iv.areturn(JAVA_STRING_TYPE);
 
         FunctionCodegen.endVisit(mv, "toString", myClass);
+    }
+
+    private Type genPropertyOnStack(InstructionAdapter iv, PropertyDescriptor propertyDescriptor) {
+        iv.load(0, classAsmType);
+        // todo: seems to be more correct - need to be changed in sync with 'componentX' generation and related tests
+        // final Method
+        //        method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+        //
+        // iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
+        // final Type type = method.getReturnType();
+        Type type = typeMapper.mapType(propertyDescriptor);
+        iv.getfield(classAsmType.getInternalName(), propertyDescriptor.getName().getName(), type.getDescriptor());
+        return type;
     }
 
     private void generateComponentFunctionsForDataClasses() {

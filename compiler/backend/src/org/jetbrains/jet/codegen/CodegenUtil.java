@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -392,5 +393,49 @@ public class CodegenUtil {
         receiver.put(type, v);
         v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;");
         return StackValue.onStack(JAVA_STRING_TYPE);
+    }
+
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type) {
+        if (type.getSort() == Type.ARRAY) {
+            final Type elementType = correctElementType(type);
+            if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
+                iv.invokestatic("java/util/Arrays", "hashCode", "([Ljava/lang/Object;)I");
+            }
+            else {
+                iv.invokestatic("java/util/Arrays", "hashCode", "(" + type.getDescriptor() + ")I");
+            }
+        }
+        else if (type.getSort() == Type.OBJECT) {
+            iv.invokevirtual("java/lang/Object", "hashCode", "()I");
+        }
+        else if (type.getSort() == Type.LONG) {
+            genLongHashCode(mv, iv);
+        }
+        else if (type.getSort() == Type.DOUBLE) {
+            iv.invokestatic("java/lang/Double", "doubleToLongBits", "(D)J");
+            genLongHashCode(mv, iv);
+        }
+        else if (type.getSort() == Type.FLOAT) {
+            iv.invokestatic("java/lang/Float", "floatToIntBits", "(F)I");
+        }
+        else if (type.getSort() == Type.BOOLEAN) {
+            Label end = new Label();
+            iv.dup();
+            iv.ifeq(end);
+            iv.pop();
+            iv.iconst(1);
+            iv.mark(end);
+        }
+        else { // byte short char int
+            // do nothing
+        }
+    }
+
+    private static void genLongHashCode(MethodVisitor mv, InstructionAdapter iv) {
+        iv.dup2();
+        iv.iconst(32);
+        iv.ushr(Type.LONG_TYPE);
+        iv.xor(Type.LONG_TYPE);
+        mv.visitInsn(L2I);
     }
 }

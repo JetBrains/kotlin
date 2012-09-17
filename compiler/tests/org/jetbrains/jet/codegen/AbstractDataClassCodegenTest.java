@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
 
@@ -31,7 +30,7 @@ public abstract class AbstractDataClassCodegenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithFullJdk();
     }
 
     public static void main(String[] args) throws IOException {
