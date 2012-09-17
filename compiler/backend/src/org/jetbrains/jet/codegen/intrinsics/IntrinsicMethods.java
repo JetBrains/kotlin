@@ -127,7 +127,6 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("plus"), 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("arrayOfNulls"), 1, new NewArray());
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("sure"), 0, new Sure());
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("synchronized"), 2, new StupidSync());
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("iterator"), 0, new IteratorIterator());
 
