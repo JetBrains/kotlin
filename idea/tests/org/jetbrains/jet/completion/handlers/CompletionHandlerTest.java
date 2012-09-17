@@ -68,6 +68,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testExtFunction() {
+        doTest();
+    }
+
     public void testHigherOrderFunction() {
         doTest();
     }
