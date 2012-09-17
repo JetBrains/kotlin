@@ -219,6 +219,10 @@ public class JetNameSuggester {
             JetCallExpression call = (JetCallExpression) expression;
             addNamesForExpression(result, call.getCalleeExpression(), validator);
         }
+        else if (expression instanceof JetPostfixExpression) {
+            JetPostfixExpression postfixExpression = (JetPostfixExpression) expression;
+            addNamesForExpression(result, postfixExpression.getBaseExpression(), validator);
+        }
     }
     
     public static boolean isIdentifier(String name) {
