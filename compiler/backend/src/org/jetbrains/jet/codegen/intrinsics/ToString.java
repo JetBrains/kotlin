@@ -20,11 +20,11 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
 
@@ -42,8 +42,14 @@ public class ToString implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-        v.invokestatic("java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
+        if (receiver.type.getSort() == Type.OBJECT || receiver.type.getSort() == Type.ARRAY) {
+            receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
+            v.invokestatic("java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;");
+        }
+        else {
+            receiver.put(receiver.type, v);
+            v.invokestatic("java/lang/String", "valueOf", "(" + receiver.type.getDescriptor() + ")Ljava/lang/String;");
+        }
         return StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE);
     }
 }

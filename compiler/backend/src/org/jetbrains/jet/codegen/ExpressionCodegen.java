@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
@@ -998,7 +999,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
             v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-            return StackValue.onStack(expressionType(expression));
+            return StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE);
         }
     }
 

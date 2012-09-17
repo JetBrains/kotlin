@@ -448,4 +448,8 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void testEmptyRanges() throws Exception {
         blackBoxFile("emptyRanges.kt");
     }
+
+    public void testToString() throws Exception {
+        blackBoxFile("intrinsics/tostring.kt");
+    }
 }
