@@ -1367,6 +1367,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/enum/enumInheritance.kt");
             }
             
+            @TestMetadata("enumModifier.kt")
+            public void testEnumModifier() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/enumModifier.kt");
+            }
+            
             @TestMetadata("enumStarImport.kt")
             public void testEnumStarImport() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/enumStarImport.kt");

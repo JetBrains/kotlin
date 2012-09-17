@@ -279,7 +279,7 @@ public class TypeHierarchyResolver {
                 }
 
                 private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
-                    if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
+                    if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
                                 mutableClassDescriptor, outerScope, ClassKind.CLASS_OBJECT,
                                 getClassObjectName(klass.getName()));

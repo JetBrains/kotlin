@@ -70,6 +70,8 @@ public interface Errors {
             .create(WARNING, positionModifier(JetTokens.OPEN_KEYWORD));
     SimpleDiagnosticFactory<JetModifierListOwner> OPEN_MODIFIER_IN_ENUM = SimpleDiagnosticFactory
             .create(ERROR, positionModifier(JetTokens.OPEN_KEYWORD));
+    SimpleDiagnosticFactory<JetModifierListOwner> ILLEGAL_ENUM_ANNOTATION = SimpleDiagnosticFactory
+            .create(ERROR, positionModifier(JetTokens.ENUM_KEYWORD));
     SimpleDiagnosticFactory<PsiElement>
             REDUNDANT_MODIFIER_IN_GETTER = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<PsiElement> TRAIT_CAN_NOT_BE_FINAL = SimpleDiagnosticFactory.create(ERROR);
