@@ -32,8 +32,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.*;
 
-import static org.jetbrains.jet.JetNodeTypes.BLOCK;
-import static org.jetbrains.jet.JetNodeTypes.FUNCTION_LITERAL;
+import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
@@ -166,6 +165,14 @@ public class JetBlock extends AbstractBlock {
         }
 
         if (parentType == FUNCTION_LITERAL && child1Type == LBRACE) {
+            if (child2Type == VALUE_PARAMETER_LIST) {
+                ASTNode firstParamListNode = ((ASTBlock) child2).getNode().getFirstChildNode();
+                if (firstParamListNode != null && firstParamListNode.getElementType() == LPAR) {
+                    // Don't put space for situation {<here>(a: Int) -> a }
+                    return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+                }
+            }
+
             return Spacing.createSpacing(spacesInSimpleMethod, spacesInSimpleMethod, 0,
                                          mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
         }
