@@ -288,20 +288,22 @@ public class Renderers {
         return result;
     }
 
-    public static final Renderer<Collection<ClassDescriptor>> CLASS_DESCRIPTOR_LIST = new Renderer<Collection<ClassDescriptor>>() {
+    public static final Renderer<Collection<ClassDescriptor>> CLASSES_OR_SEPARATED = new Renderer<Collection<ClassDescriptor>>() {
         @NotNull
         @Override
         public String render(@NotNull Collection<ClassDescriptor> descriptors) {
             StringBuilder sb = new StringBuilder();
-            sb.append("(");
-            for (Iterator<ClassDescriptor> iterator = descriptors.iterator(); iterator.hasNext(); ) {
-                ClassDescriptor descriptor = iterator.next();
+            int index = 0;
+            for (ClassDescriptor descriptor : descriptors) {
                 sb.append(DescriptorUtils.getFQName(descriptor).getFqName());
-                if (iterator.hasNext()) {
+                index++;
+                if (index <= descriptors.size() - 2) {
                     sb.append(", ");
                 }
+                else if (index == descriptors.size() - 1) {
+                    sb.append(" or ");
+                }
             }
-            sb.append(")");
             return sb.toString();
         }
     };
