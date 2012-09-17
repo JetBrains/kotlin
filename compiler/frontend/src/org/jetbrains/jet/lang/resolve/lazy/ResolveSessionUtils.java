@@ -217,7 +217,9 @@ public class ResolveSessionUtils {
 
     private static JetScope getExpressionResolutionScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
-        // DeclarationDescriptor descriptor = resolveToDescriptor(parentDeclaration);
+        if (parentDeclaration == null) {
+            return resolveSession.getResolutionScope(expression.getContainingFile().getFirstChild());
+        }
         return resolveSession.getResolutionScope(parentDeclaration);
     }
 

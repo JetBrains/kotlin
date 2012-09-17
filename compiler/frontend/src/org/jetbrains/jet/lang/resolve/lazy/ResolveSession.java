@@ -171,7 +171,7 @@ public class ResolveSession {
     }
 
     @NotNull
-    public JetScope getResolutionScope(PsiElement element) {
+    public JetScope getResolutionScope(@NotNull PsiElement element) {
         PsiElement parent = element.getParent();
         if (parent instanceof JetFile) {
             JetFile file = (JetFile) parent;
