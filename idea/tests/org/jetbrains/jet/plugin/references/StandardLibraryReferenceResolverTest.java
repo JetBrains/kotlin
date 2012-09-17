@@ -51,10 +51,6 @@ public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
         doTest();
     }
 
-    public void testSure() throws Exception {
-        doTest();
-    }
-
     public void testTimes() throws Exception {
         doTest();
     }

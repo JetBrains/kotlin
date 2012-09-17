@@ -1466,6 +1466,5 @@ public final fun </*0*/ T : jet.Any?>jet.Iterator<T>.iterator(): jet.Iterator<T>
 public final fun jet.LongIterator.iterator(): jet.LongIterator
 public final fun jet.ShortIterator.iterator(): jet.ShortIterator
 public final fun jet.String?.plus(/*0*/ other: jet.Any?): jet.String
-public final fun </*0*/ T : jet.Any>T?.sure(): T
 public final fun </*0*/ R : jet.Any?>synchronized(/*0*/ lock: jet.Any, /*1*/ block: jet.Function0<R>): R
 public final fun jet.Any?.toString(): jet.String
