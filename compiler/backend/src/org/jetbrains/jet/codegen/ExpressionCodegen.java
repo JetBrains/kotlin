@@ -968,7 +968,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitStringTemplateExpression(JetStringTemplateExpression expression, StackValue receiver) {
         StringBuilder constantValue = new StringBuilder("");
-        for (JetStringTemplateEntry entry : expression.getEntries()) {
+        final JetStringTemplateEntry[] entries = expression.getEntries();
+
+        if (entries.length == 1 && entries[0] instanceof JetStringTemplateEntryWithExpression) {
+            return genToString(v, gen(entries[0].getExpression()));
+        }
+
+        for (JetStringTemplateEntry entry : entries) {
             if (entry instanceof JetLiteralStringTemplateEntry) {
                 constantValue.append(entry.getText());
             }
@@ -986,7 +992,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             generateStringBuilderConstructor(v);
-            for (JetStringTemplateEntry entry : expression.getEntries()) {
+            for (JetStringTemplateEntry entry : entries) {
                 if (entry instanceof JetStringTemplateEntryWithExpression) {
                     invokeAppend(entry.getExpression());
                 }

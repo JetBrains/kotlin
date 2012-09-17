@@ -119,7 +119,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testByteLess() throws Exception {
         binOpTest("fun foo(a: Byte, b: Byte): Boolean = a < b",
-                Byte.valueOf((byte) 126), Byte.valueOf((byte) 127), true);
+                  Byte.valueOf((byte) 126), Byte.valueOf((byte) 127), true);
     }
 
     public void testBooleanConstant() throws Exception {
@@ -447,9 +447,5 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testEmptyRanges() throws Exception {
         blackBoxFile("emptyRanges.kt");
-    }
-
-    public void testToString() throws Exception {
-        blackBoxFile("intrinsics/tostring.kt");
     }
 }

@@ -382,4 +382,15 @@ public class CodegenUtil {
                                              new Type[] {exprType.getSort() == Type.OBJECT ? (exprType.equals(JAVA_STRING_TYPE) ? JAVA_STRING_TYPE : OBJECT_TYPE) : exprType});
         v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
     }
+
+    public static StackValue genToString(InstructionAdapter v, StackValue receiver) {
+        final int sort = receiver.type.getSort();
+
+        final Type type = sort == Type.OBJECT || sort == Type.ARRAY
+               ? AsmTypeConstants.OBJECT_TYPE
+               : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : receiver.type;
+        receiver.put(type, v);
+        v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;");
+        return StackValue.onStack(JAVA_STRING_TYPE);
+    }
 }

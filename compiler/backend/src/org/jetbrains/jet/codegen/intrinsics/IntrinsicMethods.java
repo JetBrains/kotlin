@@ -62,8 +62,11 @@ public class IntrinsicMethods {
     public static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
     public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
     private static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
+    private static final String KOTLIN_TO_STRING = "kotlin.toString";
+    private static final String KOTLIN_HASH_CODE = "kotlin.hashCode";
     private static final EnumValues ENUM_VALUES = new EnumValues();
     private static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
+    public static final ToString TO_STRING = new ToString();
 
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
@@ -75,6 +78,8 @@ public class IntrinsicMethods {
         namedMethods.put(KOTLIN_JAVA_CLASS_FUNCTION, new JavaClassFunction());
         namedMethods.put(KOTLIN_JAVA_CLASS_PROPERTY, new JavaClassProperty());
         namedMethods.put(KOTLIN_ARRAYS_ARRAY, new JavaClassArray());
+        namedMethods.put(KOTLIN_HASH_CODE, HASH_CODE);
+        namedMethods.put(KOTLIN_TO_STRING, TO_STRING);
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -117,7 +122,7 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("name"), 0, new EnumName());
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("ordinal"), 0, new EnumOrdinal());
 
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("toString"), 0, new ToString());
+        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("toString"), 0, TO_STRING);
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("equals"), 1, EQUALS);
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
         intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("plus"), 1, STRING_PLUS);
