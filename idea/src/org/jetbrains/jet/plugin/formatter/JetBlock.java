@@ -324,6 +324,7 @@ public class JetBlock extends AbstractBlock {
 
             ASTIndentStrategy.forNode("Indent for parts")
                     .in(PROPERTY, FUN)
+                    .notForType(BLOCK)
                     .set(Indent.getContinuationWithoutFirstIndent()),
     };
 
