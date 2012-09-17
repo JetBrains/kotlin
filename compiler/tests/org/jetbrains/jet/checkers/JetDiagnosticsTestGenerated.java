@@ -1352,6 +1352,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/enum")
+        @InnerTestClasses({Enum.Inner.class})
         public static class Enum extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInEnum() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/enum"), "kt", true);
@@ -1417,6 +1418,75 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/enum/javaEnumWithProperty.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/enum/inner")
+            public static class Inner extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInInner() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/enum/inner"), "kt", true);
+                }
+                
+                @TestMetadata("existingClassObject.kt")
+                public void testExistingClassObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/existingClassObject.kt");
+                }
+                
+                @TestMetadata("insideClass.kt")
+                public void testInsideClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/insideClass.kt");
+                }
+                
+                @TestMetadata("insideClassObject.kt")
+                public void testInsideClassObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/insideClassObject.kt");
+                }
+                
+                @TestMetadata("insideEnum.kt")
+                public void testInsideEnum() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/insideEnum.kt");
+                }
+                
+                @TestMetadata("insideEnumEntry.kt")
+                public void testInsideEnumEntry() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/insideEnumEntry.kt");
+                }
+                
+                @TestMetadata("insideInnerClassNotAllowed.kt")
+                public void testInsideInnerClassNotAllowed() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/insideInnerClassNotAllowed.kt");
+                }
+                
+                @TestMetadata("insideObject.kt")
+                public void testInsideObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/insideObject.kt");
+                }
+                
+                @TestMetadata("insideTrait.kt")
+                public void testInsideTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/insideTrait.kt");
+                }
+                
+                @TestMetadata("redeclarationInClassObject.kt")
+                public void testRedeclarationInClassObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/redeclarationInClassObject.kt");
+                }
+                
+                @TestMetadata("twoEnums.kt")
+                public void testTwoEnums() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/twoEnums.kt");
+                }
+                
+                @TestMetadata("twoEnumsInClassObjectAndInnerClass.kt")
+                public void testTwoEnumsInClassObjectAndInnerClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/enum/inner/twoEnumsInClassObjectAndInnerClass.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Enum");
+                suite.addTestSuite(Enum.class);
+                suite.addTestSuite(Inner.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/extensions")
@@ -3359,7 +3429,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
             suite.addTest(DeclarationChecks.innerSuite());
-            suite.addTestSuite(Enum.class);
+            suite.addTest(Enum.innerSuite());
             suite.addTestSuite(Extensions.class);
             suite.addTestSuite(Generics.class);
             suite.addTest(IncompleteCode.innerSuite());

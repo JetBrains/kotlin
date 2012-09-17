@@ -170,6 +170,7 @@ public class DefaultErrorMessages {
 
         MAP.put(ENUM_ENTRY_SHOULD_BE_INITIALIZED, "Missing delegation specifier ''{0}''", NAME);
         MAP.put(ENUM_ENTRY_ILLEGAL_TYPE, "The type constructor of enum entry should be ''{0}''", NAME);
+        MAP.put(ENUM_NOT_ALLOWED, "Enum class is not allowed here");
 
         MAP.put(UNINITIALIZED_VARIABLE, "Variable ''{0}'' must be initialized", NAME);
         MAP.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here", NAME);
