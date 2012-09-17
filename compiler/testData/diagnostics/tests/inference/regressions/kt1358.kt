@@ -9,3 +9,4 @@ fun bar(a: Any?) {
 }
 
 fun <T : Any> T?.foo() {}
+fun <T : Any> T?.sure() : T = this!!
