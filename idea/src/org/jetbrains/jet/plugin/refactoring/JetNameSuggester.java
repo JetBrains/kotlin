@@ -194,15 +194,6 @@ public class JetNameSuggester {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
             JetExpression selectorExpression = qualifiedExpression.getSelectorExpression();
             addNamesForExpression(result, selectorExpression, validator);
-            if (selectorExpression != null && selectorExpression instanceof JetCallExpression) {
-                JetExpression calleeExpression = ((JetCallExpression)selectorExpression).getCalleeExpression();
-                if (calleeExpression != null && calleeExpression instanceof JetSimpleNameExpression) {
-                    String name = ((JetSimpleNameExpression)calleeExpression).getReferencedName();
-                    if (name != null && name.equals("sure")) {
-                        addNamesForExpression(result, qualifiedExpression.getReceiverExpression(), validator);
-                    }
-                }
-            }
         }
         else if (expression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression reference = (JetSimpleNameExpression) expression;
