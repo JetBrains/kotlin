@@ -386,21 +386,66 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateDataClassEqualsMethod(List<PropertyDescriptor> properties) {
-        // todo: this is fake implementation
-
         final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitVarInsn(ALOAD, 1);
-        mv.visitMethodInsn(INVOKESPECIAL, superClassAsmType.getInternalName(), "equals", "(Ljava/lang/Object;)Z");
-        mv.visitInsn(IRETURN);
-        mv.visitMaxs(-1,-1);
-        mv.visitEnd();
+        final InstructionAdapter iv = new InstructionAdapter(mv);
+
+        mv.visitCode();
+        Label eq = new Label();
+        Label ne = new Label();
+
+        iv.load(0, OBJECT_TYPE);
+        iv.load(1, AsmTypeConstants.OBJECT_TYPE);
+        iv.ifacmpeq(eq);
+
+        iv.load(1, AsmTypeConstants.OBJECT_TYPE);
+        iv.instanceOf(classAsmType);
+        iv.ifeq(ne);
+
+        iv.load(1, AsmTypeConstants.OBJECT_TYPE);
+        iv.checkcast(classAsmType);
+        iv.store(2, AsmTypeConstants.OBJECT_TYPE);
+
+        for (PropertyDescriptor propertyDescriptor : properties) {
+            final JetType type = propertyDescriptor.getType();
+            final Type asmType = typeMapper.mapType(type);
+
+            genPropertyOnStack(iv, propertyDescriptor, 0);
+            genPropertyOnStack(iv, propertyDescriptor, 2);
+
+            if (asmType.getSort() == Type.ARRAY) {
+                final Type elementType = CodegenUtil.correctElementType(asmType);
+                if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
+                    iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z");
+                }
+                else {
+                    iv.invokestatic("java/util/Arrays", "equals", "([" + elementType.getDescriptor() + "[" + elementType.getDescriptor() + ")Z");
+                }
+            }
+            else {
+                final StackValue value =
+                        generateEqualsForExpressionsOnStack(iv, JetTokens.EQEQ, asmType, asmType, type.isNullable(), type.isNullable());
+                value.put(Type.BOOLEAN_TYPE, iv);
+            }
+
+            iv.ifeq(ne);
+        }
+
+        iv.mark(eq);
+        iv.iconst(1);
+        iv.areturn(Type.INT_TYPE);
+
+        iv.mark(ne);
+        iv.iconst(0);
+        iv.areturn(Type.INT_TYPE);
+
+        FunctionCodegen.endVisit(mv, "equals", myClass);
     }
 
     private void generateDataClassHashCodeMethod(List<PropertyDescriptor> properties) {
         final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "hashCode", "()I", null, null);
         final InstructionAdapter iv = new InstructionAdapter(mv);
 
+        mv.visitCode();
         boolean first = true;
         for (PropertyDescriptor propertyDescriptor : properties) {
             if (!first) {
@@ -408,7 +453,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.mul(Type.INT_TYPE);
             }
 
-            genPropertyOnStack(iv, propertyDescriptor);
+            genPropertyOnStack(iv, propertyDescriptor, 0);
 
             Label ifNull = null;
             if (propertyDescriptor.getType().isNullable()) {
@@ -438,14 +483,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         mv.visitInsn(IRETURN);
-        mv.visitMaxs(-1, -1);
-        mv.visitEnd();
+
+        FunctionCodegen.endVisit(mv, "hashCode", myClass);
     }
 
     private void generateDataClassToStringMethod(List<PropertyDescriptor> properties) {
         final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
         final InstructionAdapter iv = new InstructionAdapter(mv);
 
+        mv.visitCode();
         generateStringBuilderConstructor(iv);
 
         boolean first = true;
@@ -459,7 +505,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
             invokeAppendMethod(iv, JAVA_STRING_TYPE);
 
-            Type type = genPropertyOnStack(iv, propertyDescriptor);
+            Type type = genPropertyOnStack(iv, propertyDescriptor, 0);
 
             if (type.getSort() == Type.ARRAY) {
                 final Type elementType = correctElementType(type);
@@ -486,8 +532,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         FunctionCodegen.endVisit(mv, "toString", myClass);
     }
 
-    private Type genPropertyOnStack(InstructionAdapter iv, PropertyDescriptor propertyDescriptor) {
-        iv.load(0, classAsmType);
+    private Type genPropertyOnStack(InstructionAdapter iv, PropertyDescriptor propertyDescriptor, int index) {
+        iv.load(index, classAsmType);
         // todo: seems to be more correct - need to be changed in sync with 'componentX' generation and related tests
         // final Method
         //        method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
@@ -714,7 +760,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         staticInitializerChunks.add(new CodeChunk() {
             @Override
             public void generate(InstructionAdapter iv) {
-                initSingletonField(myClass, classAsmType, v, iv);
+                initSingletonField(classAsmType, iv);
             }
         });
     }

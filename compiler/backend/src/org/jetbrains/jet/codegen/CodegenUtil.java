@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
@@ -365,7 +367,7 @@ public class CodegenUtil {
         }
     }
 
-    public static void initSingletonField(PsiElement element, Type classAsmType, ClassBuilder builder, InstructionAdapter iv) {
+    public static void initSingletonField(Type classAsmType, InstructionAdapter iv) {
         iv.anew(classAsmType);
         iv.dup();
         iv.invokespecial(classAsmType.getInternalName(), "<init>", "()V");
@@ -437,5 +439,100 @@ public class CodegenUtil {
         iv.ushr(Type.LONG_TYPE);
         iv.xor(Type.LONG_TYPE);
         mv.visitInsn(L2I);
+    }
+
+    static StackValue compareExpressionsOnStack(InstructionAdapter v, IElementType opToken, Type operandType) {
+        if (operandType.getSort() == Type.OBJECT) {
+            v.invokeinterface("java/lang/Comparable", "compareTo", "(Ljava/lang/Object;)I");
+            v.iconst(0);
+            operandType = Type.INT_TYPE;
+        }
+        return StackValue.cmp(opToken, operandType);
+    }
+
+    static StackValue generateNullSafeEquals(
+            InstructionAdapter v,
+            IElementType opToken,
+            boolean leftNullable,
+            boolean rightNullable
+    ) {
+        if (!leftNullable) {
+            v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+            if (opToken == JetTokens.EXCLEQ) {
+                invertBoolean(v);
+            }
+        }
+        else {
+            if (rightNullable) {
+                v.dup2();   // left right left right
+                Label rightNull = new Label();
+                v.ifnull(rightNull);
+                Label leftNull = new Label();
+                v.ifnull(leftNull);
+                v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                    invertBoolean(v);
+                }
+                Label end = new Label();
+                v.goTo(end);
+                v.mark(rightNull);
+                // left right left
+                Label bothNull = new Label();
+                v.ifnull(bothNull);
+                v.mark(leftNull);
+                v.pop2();
+                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 1 : 0);
+                v.goTo(end);
+                v.mark(bothNull);
+                v.pop2();
+                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 0 : 1);
+                v.mark(end);
+            }
+            else {
+                v.dup2();   // left right left right
+                v.pop();
+                Label leftNull = new Label();
+                v.ifnull(leftNull);
+                v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
+                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                    invertBoolean(v);
+                }
+                Label end = new Label();
+                v.goTo(end);
+                // left right
+                v.mark(leftNull);
+                v.pop2();
+                v.iconst(opToken == JetTokens.EXCLEQ ? 1 : 0);
+                v.mark(end);
+            }
+        }
+
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
+    }
+
+    static void invertBoolean(InstructionAdapter v) {
+        v.iconst(1);
+        v.xor(Type.INT_TYPE);
+    }
+
+    public static StackValue generateEqualsForExpressionsOnStack(
+            InstructionAdapter v,
+            IElementType opToken,
+            Type leftType,
+            Type rightType,
+            boolean leftNullable,
+            boolean rightNullable
+    ) {
+        if ((isNumberPrimitive(leftType) || leftType.getSort() == Type.BOOLEAN) && leftType == rightType) {
+            return compareExpressionsOnStack(v, opToken, leftType);
+        }
+        else {
+            if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                return StackValue.cmp(opToken, leftType);
+            }
+            else {
+                return generateNullSafeEquals(v, opToken, leftNullable, rightNullable);
+            }
+        }
     }
 }

@@ -20,13 +20,14 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -74,8 +75,9 @@ public class Equals implements IntrinsicMethod {
         codegen.gen(rightExpr).put(AsmTypeConstants.OBJECT_TYPE, v);
 
         assert rightType != null;
-        return codegen
-                .generateEqualsForExpressionsOnStack(JetTokens.EQEQ, AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.OBJECT_TYPE, leftNullable,
+        return CodegenUtil
+                .generateEqualsForExpressionsOnStack(v, JetTokens.EQEQ, AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.OBJECT_TYPE,
+                                                     leftNullable,
                                                      rightType.isNullable());
     }
 }

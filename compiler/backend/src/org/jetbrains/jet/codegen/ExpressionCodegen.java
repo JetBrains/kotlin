@@ -2256,7 +2256,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             invokeFunctionByReference(expression.getOperationReference());
             if (inverted) {
-                invertBoolean();
+                invertBoolean(v);
             }
         }
         return StackValue.onStack(Type.BOOLEAN_TYPE);
@@ -2297,7 +2297,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         v.and(Type.INT_TYPE);
         if (inverted) {
-            invertBoolean();
+            invertBoolean(v);
         }
     }
 
@@ -2357,10 +2357,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (isPrimitive(leftType)) // both are primitive
         {
-            return generateEqualsForExpressionsOnStack(opToken, leftType, rightType, false, false);
+            return generateEqualsForExpressionsOnStack(v, opToken, leftType, rightType, false, false);
         }
 
-        return generateEqualsForExpressionsOnStack(opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
+        return generateEqualsForExpressionsOnStack(v, opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
     }
 
     private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
@@ -2376,81 +2376,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         v.pop();
         v.iconst(0);
         v.mark(ok);
-        return StackValue.onStack(Type.BOOLEAN_TYPE);
-    }
-
-    public StackValue generateEqualsForExpressionsOnStack(
-            IElementType opToken,
-            Type leftType,
-            Type rightType,
-            boolean leftNullable,
-            boolean rightNullable
-    ) {
-        if ((CodegenUtil.isNumberPrimitive(leftType) || leftType.getSort() == Type.BOOLEAN) && leftType == rightType) {
-            return compareExpressionsOnStack(opToken, leftType);
-        }
-        else {
-            if (opToken == JetTokens.EQEQEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                return StackValue.cmp(opToken, leftType);
-            }
-            else {
-                return generateNullSafeEquals(opToken, leftNullable, rightNullable);
-            }
-        }
-    }
-
-    private StackValue generateNullSafeEquals(IElementType opToken, boolean leftNullable, boolean rightNullable) {
-        if (!leftNullable) {
-            v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-            if (opToken == JetTokens.EXCLEQ) {
-                invertBoolean();
-            }
-        }
-        else {
-            if (rightNullable) {
-                v.dup2();   // left right left right
-                Label rightNull = new Label();
-                v.ifnull(rightNull);
-                Label leftNull = new Label();
-                v.ifnull(leftNull);
-                v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                    invertBoolean();
-                }
-                Label end = new Label();
-                v.goTo(end);
-                v.mark(rightNull);
-                // left right left
-                Label bothNull = new Label();
-                v.ifnull(bothNull);
-                v.mark(leftNull);
-                v.pop2();
-                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 1 : 0);
-                v.goTo(end);
-                v.mark(bothNull);
-                v.pop2();
-                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 0 : 1);
-                v.mark(end);
-            }
-            else {
-                v.dup2();   // left right left right
-                v.pop();
-                Label leftNull = new Label();
-                v.ifnull(leftNull);
-                v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                    invertBoolean();
-                }
-                Label end = new Label();
-                v.goTo(end);
-                // left right
-                v.mark(leftNull);
-                v.pop2();
-                v.iconst(opToken == JetTokens.EXCLEQ ? 1 : 0);
-                v.mark(end);
-            }
-        }
-
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
@@ -2490,16 +2415,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {
         gen(left, operandType);
         gen(right, operandType);
-        return compareExpressionsOnStack(opToken, operandType);
-    }
-
-    private StackValue compareExpressionsOnStack(IElementType opToken, Type operandType) {
-        if (operandType.getSort() == Type.OBJECT) {
-            v.invokeinterface("java/lang/Comparable", "compareTo", "(Ljava/lang/Object;)I");
-            v.iconst(0);
-            operandType = Type.INT_TYPE;
-        }
-        return StackValue.cmp(opToken, operandType);
+        return compareExpressionsOnStack(v, opToken, operandType);
     }
 
     private StackValue generateAssignmentExpression(JetBinaryExpression expression) {
@@ -3294,7 +3210,7 @@ The "returned" value of try expression with no finally is either the last expres
                 patternIsNullable = condJetType != null && condJetType.isNullable();
             }
             gen(patternExpression, condType);
-            return generateEqualsForExpressionsOnStack(JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable,
+            return generateEqualsForExpressionsOnStack(v, JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable,
                                                        patternIsNullable);
         }
         else {
@@ -3420,7 +3336,7 @@ The "returned" value of try expression with no finally is either the last expres
                 //invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
                 invokeFunctionByReference(operationReference);
                 if (inverted) {
-                    invertBoolean();
+                    invertBoolean(v);
                 }
             }
             return StackValue.onStack(Type.BOOLEAN_TYPE);
@@ -3444,11 +3360,6 @@ The "returned" value of try expression with no finally is either the last expres
                 bindingContext.get(RESOLVED_CALL, operationReference);
         Call call = bindingContext.get(CALL, operationReference);
         invokeFunction(call, StackValue.none(), resolvedCall);
-    }
-
-    private void invertBoolean() {
-        v.iconst(1);
-        v.xor(Type.INT_TYPE);
     }
 
     private boolean isIntRangeExpr(JetExpression rangeExpression) {

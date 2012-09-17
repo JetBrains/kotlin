@@ -126,7 +126,7 @@ public class ClosureCodegen extends GenerationStateAware {
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
-            initSingletonField(fun, name.getAsmType(), cv, iv);
+            initSingletonField(name.getAsmType(), iv);
             mv.visitInsn(RETURN);
             FunctionCodegen.endVisit(mv, "<clinit>", fun);
         }
