@@ -282,7 +282,7 @@ public class TypeHierarchyResolver {
                     if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
                         MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
                                 mutableClassDescriptor, outerScope, ClassKind.CLASS_OBJECT,
-                                getClassObjectName(klass.getName()));
+                                getClassObjectName(JetPsiUtil.safeName(klass.getName())));
                         mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
                         classObjectDescriptor.setModality(Modality.FINAL);
                         classObjectDescriptor.setVisibility(ModifiersChecker.resolveVisibilityFromModifiers(klass));
