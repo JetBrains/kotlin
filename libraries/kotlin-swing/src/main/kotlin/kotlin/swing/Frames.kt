@@ -52,5 +52,4 @@ var JFrame.jmenuBar: JMenuBar?
     get() = getJMenuBar()
     set(value) {
         setJMenuBar(value)
-        println("Set the menu bar to $value")
     }
