@@ -116,6 +116,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTestWithInvert();
     }
 
+    public void testUnnecessarySpacesInParametersLists() throws Exception {
+        doTest();
+    }
+
     public void testWhen() throws Exception {
         doTest();
     }

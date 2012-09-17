@@ -80,6 +80,15 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
                 .beforeInside(BLOCK, FUN).spaceIf(jetCommonSettings.SPACE_BEFORE_METHOD_LBRACE)
 
+                .afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0)
+                .beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0)
+                .afterInside(LT, TYPE_PARAMETER_LIST).spaces(0)
+                .beforeInside(GT, TYPE_PARAMETER_LIST).spaces(0)
+                .afterInside(LPAR, VALUE_ARGUMENT_LIST).spaces(0)
+                .beforeInside(RPAR, VALUE_ARGUMENT_LIST).spaces(0)
+                .afterInside(LT, TYPE_ARGUMENT_LIST).spaces(0)
+                .beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
+
                 // TODO: Ask for better API
                 // Type of the declaration colon
                 .beforeInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
