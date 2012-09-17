@@ -45,6 +45,10 @@ public class DefaultErrorMessages {
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP);
 
     static {
+
+        // TODO: remove when tuples are completely dropped
+        MAP.put(TUPLES_ARE_NOT_SUPPORTED, "Tuples are not supported. Press Alt+Enter to replace tuples with library classes");
+
         MAP.put(EXCEPTION_WHILE_ANALYZING, "{0}", new Renderer<Throwable>() {
             @NotNull
             @Override

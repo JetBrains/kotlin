@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.TUPLES_ARE_NOT_SUPPORTED;
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
 import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
 
@@ -180,6 +181,9 @@ public class TypeResolver {
 
                 @Override
                 public void visitTupleType(JetTupleType type) {
+                    // TODO: remove this method completely when tuples are droppped
+                    trace.report(TUPLES_ARE_NOT_SUPPORTED.on(type));
+
                     // TODO labels
                     result[0] = JetStandardClasses.getTupleType(resolveTypes(scope, type.getComponentTypeRefs(), trace, checkBounds));
                 }
