@@ -119,6 +119,10 @@ public class KeywordsCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testNoCompletionForCapitalPrefix() {
+        doTest();
+    }
+
     public void testPropertySetterGetter() {
         doTest();
     }
