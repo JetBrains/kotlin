@@ -262,7 +262,7 @@ public class JetTypeMapper extends BindingTraceAware {
             }
             Type asmType = Type.getObjectType("error/NonExistentClass");
             if (signatureVisitor != null) {
-                writeSimpleType(signatureVisitor, asmType, true);
+                signatureVisitor.writeAsmType(asmType, true);
             }
             checkValidType(asmType);
             return asmType;
@@ -302,7 +302,7 @@ public class JetTypeMapper extends BindingTraceAware {
             }
             boolean forceReal = KotlinToJavaTypesMap.getInstance().isForceReal(name);
 
-            writeGenericType(jetType, signatureVisitor, asmType, forceReal);
+            writeGenericType(signatureVisitor, asmType, jetType, forceReal);
 
             checkValidType(asmType);
             return asmType;
@@ -339,9 +339,10 @@ public class JetTypeMapper extends BindingTraceAware {
                       parentDeclarationElement != null ? parentDeclarationElement.getText() : "null");
     }
 
-    private void writeGenericType(JetType jetType, BothSignatureWriter signatureVisitor, Type asmType, boolean forceReal) {
+    private void writeGenericType(BothSignatureWriter signatureVisitor, Type asmType, JetType jetType, boolean forceReal) {
         if (signatureVisitor != null) {
-            signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable(), forceReal);
+            String kotlinTypeName = getKotlinTypeNameForSignature(jetType, asmType);
+            signatureVisitor.writeClassBegin(asmType.getInternalName(), jetType.isNullable(), forceReal, kotlinTypeName);
             for (TypeProjection proj : jetType.getArguments()) {
                 // TODO: +-
                 signatureVisitor.writeTypeArgument(proj.getProjectionKind());
@@ -355,18 +356,28 @@ public class JetTypeMapper extends BindingTraceAware {
     private Type mapKnownAsmType(JetType jetType, Type asmType, @Nullable BothSignatureWriter signatureVisitor) {
         if (signatureVisitor != null) {
             if (jetType.getArguments().isEmpty()) {
-                writeSimpleType(signatureVisitor, asmType, jetType.isNullable());
+                String kotlinTypeName = getKotlinTypeNameForSignature(jetType, asmType);
+                signatureVisitor.writeAsmType(asmType, jetType.isNullable(), kotlinTypeName);
             }
             else {
-                writeGenericType(jetType, signatureVisitor, asmType, false);
+                writeGenericType(signatureVisitor, asmType, jetType, false);
             }
         }
         checkValidType(asmType);
         return asmType;
     }
 
-    private static void writeSimpleType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
-        visitor.writeAsmType(asmType, nullable);
+    @Nullable
+    private static String getKotlinTypeNameForSignature(@NotNull JetType jetType, @NotNull Type asmType) {
+        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null) return null;
+        if (asmType.getSort() != Type.OBJECT) return null;
+
+        JvmClassName jvmClassName = JvmClassName.byType(asmType);
+        if (JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() > 1) {
+            return JvmClassName.byClassDescriptor(descriptor).getInternalName();
+        }
+        return null;
     }
 
     private void checkValidType(@NotNull Type type) {
