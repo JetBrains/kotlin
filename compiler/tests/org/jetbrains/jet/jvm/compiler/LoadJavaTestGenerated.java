@@ -255,11 +255,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTest("compiler/testData/loadJava/kotlinSignature/MethodWithMappedClasses.java");
         }
         
-        @TestMetadata("MethodWithTupleType.java")
-        public void testMethodWithTupleType() throws Exception {
-            doTest("compiler/testData/loadJava/kotlinSignature/MethodWithTupleType.java");
-        }
-        
         @TestMetadata("MethodWithTypeParameters.java")
         public void testMethodWithTypeParameters() throws Exception {
             doTest("compiler/testData/loadJava/kotlinSignature/MethodWithTypeParameters.java");
