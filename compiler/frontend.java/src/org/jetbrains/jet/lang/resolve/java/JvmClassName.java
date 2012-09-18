@@ -19,6 +19,10 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
@@ -63,6 +67,19 @@ public class JvmClassName {
     private static String decodeSpecialNames(String str) {
         String decodedObjectNames = StringUtil.replace(str, CLASS_OBJECT_REPLACE_GUARD, JvmAbi.CLASS_OBJECT_CLASS_NAME);
         return StringUtil.replace(decodedObjectNames, TRAIT_IMPL_REPLACE_GUARD, JvmAbi.TRAIT_IMPL_CLASS_NAME);
+    }
+
+    @NotNull
+    public static JvmClassName byClassDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
+        //todo inner inner classes
+        DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
+
+        if (!(containingDeclaration instanceof ClassDescriptor)) {
+            return byFqNameWithoutInnerClasses(DescriptorUtils.getFQName(classDescriptor).toSafe());
+        }
+
+        String fqName = DescriptorUtils.getFQName(containingDeclaration).getFqName();
+        return new JvmClassName(fqName.replace('.', '/') + "." + classDescriptor.getName());
     }
 
     private final static String CLASS_OBJECT_REPLACE_GUARD = "<class_object>";
