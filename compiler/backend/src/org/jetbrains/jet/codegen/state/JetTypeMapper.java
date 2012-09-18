@@ -534,7 +534,7 @@ public class JetTypeMapper extends BindingTraceAware {
         else {
             signatureVisitor.writeReturnType();
             JetType returnType = f.getReturnType();
-            assert returnType != null;
+            assert returnType != null : "Function " + f + " has no return type";
             mapReturnType(returnType, signatureVisitor);
             signatureVisitor.writeReturnTypeEnd();
         }
