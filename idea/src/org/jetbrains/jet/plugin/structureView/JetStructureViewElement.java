@@ -110,10 +110,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     public TreeElement[] getChildren() {
         if (myElement instanceof JetFile) {
             final JetFile jetFile = (JetFile) myElement;
-
-            context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile)
-                    .getBindingContext();
-
+            context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
             return wrapDeclarations(jetFile.getDeclarations());
         }
         else if (myElement instanceof JetClass) {
@@ -137,7 +134,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             }
         }
 
-        return new TreeElement[0];
+        return EMPTY_ARRAY;
     }
 
     private String getElementText() {
@@ -147,8 +144,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         if (myElement instanceof JetDeclaration) {
             JetDeclaration declaration = (JetDeclaration) myElement;
 
-            final DeclarationDescriptor descriptor =
-                    context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+            final DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
             if (descriptor != null) {
                 text = getDescriptorTreeText(descriptor);
             }
