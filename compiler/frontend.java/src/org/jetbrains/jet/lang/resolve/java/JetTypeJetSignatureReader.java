@@ -89,13 +89,10 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     private List<TypeProjection> typeArguments;
 
     @Override
-    public void visitClassType(String name, boolean nullable, boolean forceReal) {
-        FqName ourName = new FqName(name
-                .replace('/', '.')
-                .replace('$', '.') // TODO: not sure
-            );
+    public void visitClassType(String signatureName, boolean nullable, boolean forceReal) {
+        FqName fqName = JvmClassName.bySignatureName(signatureName).getFqName();
 
-        enterClass(resolveClassDescriptorByFqName(ourName, forceReal), ourName.getFqName(), nullable);
+        enterClass(resolveClassDescriptorByFqName(fqName, forceReal), fqName.getFqName(), nullable);
     }
 
     private void enterClass(@Nullable ClassDescriptor classDescriptor, @NotNull String className, boolean nullable) {
@@ -136,15 +133,12 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public void visitInnerClassType(String signatureName, boolean nullable, boolean forceReal) {
-        int index = signatureName.lastIndexOf(".");
-        String outerSignatureName = signatureName.substring(0, index);
-        String innerName = signatureName.substring(index + 1);
-
-        FqName outerFqName = new FqName(outerSignatureName.replace('/', '.'));
-        ClassDescriptor descriptor = resolveClassDescriptorByFqName(outerFqName, forceReal);
-
-        ClassDescriptor innerClassDescriptor = descriptor != null ? DescriptorUtils.getInnerClassByName(descriptor, innerName) : null;
-        enterClass(innerClassDescriptor, signatureName, nullable);
+        JvmClassName jvmClassName = JvmClassName.bySignatureName(signatureName);
+        ClassDescriptor descriptor = resolveClassDescriptorByFqName(jvmClassName.getOuterClassFqName(), forceReal);
+        for (String innerClassName : jvmClassName.getInnerClassNameList()) {
+            descriptor = descriptor != null ? DescriptorUtils.getInnerClassByName(descriptor, innerClassName) : null;
+        }
+        enterClass(descriptor, signatureName, nullable);
     }
 
     private static Variance parseVariance(JetSignatureVariance variance) {

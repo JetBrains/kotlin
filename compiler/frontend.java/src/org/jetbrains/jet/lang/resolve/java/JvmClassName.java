@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
@@ -24,6 +25,8 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -49,7 +52,7 @@ public class JvmClassName {
      */
     @NotNull
     public static JvmClassName byFqNameWithoutInnerClasses(@NotNull FqName fqName) {
-        JvmClassName r = new JvmClassName(fqName.getFqName().replace('.', '/'));
+        JvmClassName r = new JvmClassName(fqNameToInternalName(fqName));
         r.fqName = fqName;
         return r;
     }
@@ -57,6 +60,13 @@ public class JvmClassName {
     @NotNull
     public static JvmClassName byFqNameWithoutInnerClasses(@NotNull String fqName) {
         return byFqNameWithoutInnerClasses(new FqName(fqName));
+    }
+
+    @NotNull
+    public static JvmClassName bySignatureName(@NotNull String signatureName) {
+        JvmClassName className = new JvmClassName(signatureNameToInternalName(signatureName));
+        className.signatureName = signatureName;
+        return className;
     }
 
     private static String encodeSpecialNames(String str) {
@@ -70,25 +80,66 @@ public class JvmClassName {
     }
 
     @NotNull
-    public static JvmClassName byClassDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
-        //todo inner inner classes
-        DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
+    private static JvmClassName byFqNameAndInnerClassList(@NotNull FqName fqName, @NotNull List<String> innerClassList) {
+        String outerClassName = fqNameToInternalName(fqName);
+        StringBuilder sb = new StringBuilder(outerClassName);
+        for (String innerClassName : innerClassList) {
+            sb.append("$").append(innerClassName);
+        }
+        return new JvmClassName(sb.toString());
+    }
 
-        if (!(containingDeclaration instanceof ClassDescriptor)) {
-            return byFqNameWithoutInnerClasses(DescriptorUtils.getFQName(classDescriptor).toSafe());
+    @NotNull
+    public static JvmClassName byClassDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
+        DeclarationDescriptor descriptor = classDescriptor;
+
+        List<String> innerClassNames = Lists.newArrayList();
+        while (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+            innerClassNames.add(descriptor.getName().getName());
+            descriptor = descriptor.getContainingDeclaration();
+            assert descriptor != null;
         }
 
-        String fqName = DescriptorUtils.getFQName(containingDeclaration).getFqName();
-        return new JvmClassName(fqName.replace('.', '/') + "." + classDescriptor.getName());
+        return byFqNameAndInnerClassList(DescriptorUtils.getFQName(descriptor).toSafe(), innerClassNames);
     }
+
+    @NotNull
+    private static String fqNameToInternalName(@NotNull FqName fqName) {
+        return fqName.getFqName().replace('.', '/');
+    }
+
+    @NotNull
+    private static String signatureNameToInternalName(@NotNull String signatureName) {
+        return signatureName.replace('.', '$');
+    }
+
+    @NotNull
+    private static String internalNameToFqName(@NotNull String name) {
+        return decodeSpecialNames(encodeSpecialNames(name).replace('$', '.').replace('/', '.'));
+    }
+
+    @NotNull
+    private static String internalNameToSignatureName(@NotNull String name) {
+        return decodeSpecialNames(encodeSpecialNames(name).replace('$', '.'));
+    }
+
+    @NotNull
+    private static String signatureNameToFqName(@NotNull String name) {
+        return name.replace('/', '.');
+    }
+
 
     private final static String CLASS_OBJECT_REPLACE_GUARD = "<class_object>";
     private final static String TRAIT_IMPL_REPLACE_GUARD = "<trait_impl>";
 
-    @NotNull
+    // Internal name:  jet/Map$Entry
+    // FqName:         jet.Map.Entry
+    // Signature name: jet/Map.Entry
+
     private final String internalName;
     private FqName fqName;
     private String descriptor;
+    private String signatureName;
 
     private Type asmType;
 
@@ -99,7 +150,7 @@ public class JvmClassName {
     @NotNull
     public FqName getFqName() {
         if (fqName == null) {
-            this.fqName = new FqName(decodeSpecialNames(encodeSpecialNames(internalName).replace('$', '.').replace('/', '.')));
+            this.fqName = new FqName(internalNameToFqName(internalName));
         }
         return fqName;
     }
@@ -127,6 +178,36 @@ public class JvmClassName {
             asmType = Type.getType(getDescriptor());
         }
         return asmType;
+    }
+
+    @NotNull
+    public String getSignatureName() {
+        if (signatureName == null) {
+            signatureName = internalNameToSignatureName(internalName);
+        }
+        return signatureName;
+    }
+
+    @NotNull
+    public FqName getOuterClassFqName() {
+        String signatureName = getSignatureName();
+        int index = signatureName.indexOf('.');
+        String outerClassName = index != -1 ? signatureName.substring(0, index) : signatureName;
+        return new FqName(signatureNameToFqName(outerClassName));
+    }
+
+    @NotNull
+    public List<String> getInnerClassNameList() {
+        List<String> innerClassList = Lists.newArrayList();
+        String signatureName = getSignatureName();
+        int index = signatureName.indexOf('.');
+        while (index != -1) {
+            int nextIndex = signatureName.indexOf('.', index + 1);
+            String innerClassName = nextIndex != -1 ? signatureName.substring(index + 1, nextIndex) : signatureName.substring(index + 1);
+            innerClassList.add(innerClassName);
+            index = nextIndex;
+        }
+        return innerClassList;
     }
 
     @Override

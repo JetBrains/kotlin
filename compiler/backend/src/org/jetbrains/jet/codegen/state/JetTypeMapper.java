@@ -375,7 +375,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         JvmClassName jvmClassName = JvmClassName.byType(asmType);
         if (JavaToKotlinClassMap.getInstance().mapPlatformClass(jvmClassName.getFqName()).size() > 1) {
-            return JvmClassName.byClassDescriptor(descriptor).getInternalName();
+            return JvmClassName.byClassDescriptor(descriptor).getSignatureName();
         }
         return null;
     }
