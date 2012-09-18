@@ -21,6 +21,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
@@ -37,8 +38,8 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -101,6 +102,12 @@ public final class AnalyzerFacadeWithCache {
                             @Override
                             public Result<AnalyzeExhaust> compute() {
                                 try {
+                                    if (DumbService.isDumb(file.getProject())) {
+                                        return new Result<AnalyzeExhaust>(
+                                                AnalyzeExhaust.success(BindingContext.EMPTY, ModuleConfiguration.EMPTY),
+                                                PsiModificationTracker.MODIFICATION_COUNT);
+                                    }
+
                                     ApplicationUtils.warnTimeConsuming(LOG);
 
                                     // Collect context for headers first
