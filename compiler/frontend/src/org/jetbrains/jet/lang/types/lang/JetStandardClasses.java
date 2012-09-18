@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -91,7 +92,6 @@ public class JetStandardClasses {
                 },
                 JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>singleton(constructorDescriptor),
-                null,
                 null
         );
         NOTHING_TYPE = new JetTypeImpl(getNothing());
@@ -125,7 +125,6 @@ public class JetStandardClasses {
                 Collections.<JetType>emptySet(),
                 JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>singleton(constructorDescriptor),
-                null,
                 null
         );
         ANY_TYPE = new JetTypeImpl(ANY.getTypeConstructor(), new JetScopeImpl() {
@@ -201,14 +200,84 @@ public class JetStandardClasses {
                     writableScope,
                     Collections.<ConstructorDescriptor>singleton(constructorDescriptor),
                     null);
+
+            if (i == 0) {
+                // Unit.VALUE
+                classDescriptor.setClassObjectDescriptor(createClassObjectForUnit(classDescriptor));
+            }
+
             TUPLE_CONSTRUCTORS.add(TUPLE[i].getTypeConstructor());
 
-            constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(), constructorValueParameters, Visibilities.PUBLIC);
+            constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(), constructorValueParameters, i == 0 ? Visibilities.PRIVATE : Visibilities.PUBLIC);
             constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
         }
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @NotNull
+    private static ClassDescriptor createClassObjectForUnit(@NotNull ClassDescriptorImpl unitClass) {
+        ClassDescriptorImpl classObjectDescriptor = new ClassDescriptorImpl(
+                unitClass,
+                ClassKind.CLASS_OBJECT,
+                Collections.<AnnotationDescriptor>emptyList(),
+                Modality.FINAL,
+                DescriptorUtils.getClassObjectName(unitClass.getName())
+        );
+        WritableScopeImpl classObjectMemberScope = new WritableScopeImpl(
+                JetScope.EMPTY,
+                classObjectDescriptor,
+                RedeclarationHandler.DO_NOTHING,
+                "Unit class object members"
+        );
+        PropertyDescriptor valueProperty = createUnitValueProperty(unitClass, classObjectDescriptor);
+        classObjectMemberScope.addPropertyDescriptor(valueProperty);
+        classObjectMemberScope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        ConstructorDescriptorImpl classObjectConstructorDescriptor = new ConstructorDescriptorImpl(classObjectDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
+        classObjectConstructorDescriptor.initialize(
+                Collections.<TypeParameterDescriptor>emptyList(),
+                Collections.<ValueParameterDescriptor>emptyList(),
+                Visibilities.PRIVATE
+        );
+
+        classObjectDescriptor.initialize(
+                /*sealed = */ true,
+                Collections.<TypeParameterDescriptor>emptyList(),
+                Collections.singleton(getAnyType()),
+                classObjectMemberScope,
+                Collections.<ConstructorDescriptor>singleton(classObjectConstructorDescriptor),
+                classObjectConstructorDescriptor
+        );
+
+        classObjectConstructorDescriptor.setReturnType(classObjectDescriptor.getDefaultType());
+
+        return classObjectDescriptor;
+    }
+
+    @NotNull
+    private static PropertyDescriptor createUnitValueProperty(
+            @NotNull ClassDescriptorImpl unitClass,
+            @NotNull ClassDescriptorImpl unitClassObject
+    ) {
+        PropertyDescriptor valueProperty = new PropertyDescriptor(
+                unitClassObject,
+                Collections.<AnnotationDescriptor>emptyList(),
+                Modality.FINAL,
+                Visibilities.PUBLIC,
+                /*isVar = */ false,
+                Name.identifier("VALUE"),
+                CallableMemberDescriptor.Kind.DECLARATION);
+        valueProperty.setType(
+                unitClass.getDefaultType(),
+                Collections.<TypeParameterDescriptor>emptyList(),
+                unitClassObject.getImplicitReceiver(),
+                ReceiverDescriptor.NO_RECEIVER);
+        PropertyGetterDescriptor getter = DescriptorResolver.createDefaultGetter(valueProperty);
+        getter.initialize(unitClass.getDefaultType());
+        valueProperty.initialize(getter, null);
+        return valueProperty;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static final int MAX_FUNCTION_ORDER = 22;
 

@@ -3278,6 +3278,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/tuples/BasicTuples.kt");
             }
             
+            @TestMetadata("UnitValue.kt")
+            public void testUnitValue() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tuples/UnitValue.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/varargs")

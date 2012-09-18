@@ -3367,7 +3367,7 @@ The "returned" value of try expression with no finally is either the last expres
             throw new UnsupportedOperationException("tuple too large");
         }
         if (entries.size() == 0) {
-            v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
+            v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "VALUE", "Ljet/Tuple0;");
             return StackValue.onStack(JET_TUPLE0_TYPE);
         }
 

@@ -24,4 +24,10 @@ public class TupleGenTest extends CodegenTestCase {
         blackBoxFile("/tuples/basic.jet");
 //        System.out.println(generateToText());
     }
+
+    public void testUnitValue() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("/tuples/UnitValue.kt");
+//        System.out.println(generateToText());
+    }
 }

@@ -148,14 +148,23 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
+        Name tuple0Name = JetStandardClasses.getTuple(0).getName();
+        intrinsicsMap.registerIntrinsic(
+                getClassObjectFqName(tuple0Name),
+                Name.identifier("VALUE"), -1, new UnitValue());
+
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
             intrinsicsMap.registerIntrinsic(
-                    JetStandardClasses.STANDARD_CLASSES_FQNAME.child(type.getRangeTypeName()).toUnsafe().child(
-                            getClassObjectName(type.getRangeTypeName())),
+                    getClassObjectFqName(type.getRangeTypeName()),
                     Name.identifier("EMPTY"), -1, new EmptyRange(type));
         }
 
         declareArrayMethods();
+    }
+
+    @NotNull
+    private static FqNameUnsafe getClassObjectFqName(@NotNull Name builtinClassName) {
+        return JetStandardClasses.STANDARD_CLASSES_FQNAME.child(builtinClassName).toUnsafe().child(getClassObjectName(builtinClassName));
     }
 
     private void declareArrayMethods() {

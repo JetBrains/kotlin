@@ -3,7 +3,6 @@
 
 package jet
 
-public class Tuple0() {}
 public class Tuple1<out T1>(public val _1: T1) {}
 public class Tuple2<out T1, out T2>(public val _1: T1, public val _2: T2) {}
 public class Tuple3<out T1, out T2, out T3>(public val _1: T1, public val _2: T2, public val _3: T3) {}

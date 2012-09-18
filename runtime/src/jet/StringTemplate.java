@@ -58,7 +58,7 @@ public class StringTemplate {
             @Override
             public Tuple0 invoke(Object o) {
                 builder.append(o);
-                return Tuple0.INSTANCE;
+                return Tuple0.VALUE;
             }
         });
         return builder.toString();

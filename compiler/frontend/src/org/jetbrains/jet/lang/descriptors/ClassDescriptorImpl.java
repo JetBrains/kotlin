@@ -25,9 +25,11 @@ import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -40,52 +42,52 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     private ConstructorDescriptor primaryConstructor;
     private ReceiverDescriptor implicitReceiver;
     private final Modality modality;
+    private ClassDescriptor classObjectDescriptor;
+    private final  ClassKind kind;
+
+    public ClassDescriptorImpl(
+        @NotNull DeclarationDescriptor containingDeclaration,
+        @NotNull List<AnnotationDescriptor> annotations,
+        @NotNull Modality modality,
+        @NotNull Name name
+    ) {
+        this(containingDeclaration, ClassKind.CLASS, annotations, modality, name);
+    }
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull ClassKind kind,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
             @NotNull Name name) {
         super(containingDeclaration, annotations, name);
+        this.kind = kind;
         this.modality = modality;
     }
 
-    public final ClassDescriptorImpl initialize(boolean sealed,
-                                            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-                                            @NotNull Collection<JetType> supertypes,
-                                            @NotNull JetScope memberDeclarations,
-                                            @NotNull Set<ConstructorDescriptor> constructors,
-                                            @Nullable ConstructorDescriptor primaryConstructor) {
-        return initialize(sealed, typeParameters, supertypes, memberDeclarations, constructors, primaryConstructor, getClassType(supertypes));
-    }
 
-    public final ClassDescriptorImpl initialize(boolean sealed,
-                                                @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-                                                @NotNull Collection<JetType> supertypes,
-                                                @NotNull JetScope memberDeclarations,
-                                                @NotNull Set<ConstructorDescriptor> constructors,
-                                                @Nullable ConstructorDescriptor primaryConstructor,
-                                                @Nullable JetType superclassType) {
+    public final ClassDescriptorImpl initialize(
+            boolean sealed,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @NotNull Collection<JetType> supertypes,
+            @NotNull JetScope memberDeclarations,
+            @NotNull Set<ConstructorDescriptor> constructors,
+            @Nullable ConstructorDescriptor primaryConstructor
+    ) {
         this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName().getName(), typeParameters, supertypes);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
+        this.classObjectDescriptor = classObjectDescriptor;
         return this;
-    }
-
-    @NotNull
-    private JetType getClassType(@NotNull Collection<JetType> types) {
-        for (JetType type : types) {
-            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
-            if (classDescriptor != null) {
-                return type;
-            }
-        }
-        return JetStandardClasses.getAnyType();
     }
 
     public void setPrimaryConstructor(@NotNull ConstructorDescriptor primaryConstructor) {
         this.primaryConstructor = primaryConstructor;
+    }
+
+    public void setClassObjectDescriptor(@NotNull ClassDescriptor classObjectDescriptor) {
+        this.classObjectDescriptor = classObjectDescriptor;
     }
 
     @Override
@@ -126,18 +128,18 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
 
     @Override
     public JetType getClassObjectType() {
-        return null;
+        return getClassObjectDescriptor().getDefaultType();
     }
 
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        return null;
+        return classObjectDescriptor;
     }
 
     @NotNull
     @Override
     public ClassKind getKind() {
-        return ClassKind.CLASS;
+        return kind;
     }
 
     @Override

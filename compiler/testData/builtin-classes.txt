@@ -1123,7 +1123,11 @@ public open class jet.Throwable : jet.Any {
     public final fun printStackTrace(): jet.Tuple0
 }
 public final class jet.Tuple0 : jet.Any {
-    public final /*constructor*/ fun <init>(): jet.Tuple0
+    private final /*constructor*/ fun <init>(): jet.Tuple0
+    public final class object jet.Tuple0.<class-object-for-Tuple0> : jet.Any {
+        private final /*constructor*/ fun <init>(): jet.Tuple0.<class-object-for-Tuple0>
+        public final val VALUE: jet.Tuple0
+    }
 }
 public final class jet.Tuple1</*0*/ out T1 : jet.Any?> : jet.Any {
     public final /*constructor*/ fun </*0*/ out T1 : jet.Any?><init>(/*0*/ _1: T1): jet.Tuple1<T1>
