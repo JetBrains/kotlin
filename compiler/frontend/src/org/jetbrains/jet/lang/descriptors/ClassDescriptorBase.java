@@ -36,7 +36,9 @@ public abstract class ClassDescriptorBase implements ClassDescriptor {
     @NotNull
     @Override
     public JetScope getMemberScope(List<TypeProjection> typeArguments) {
-        assert typeArguments.size() == getTypeConstructor().getParameters().size();
+        assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Illegal number of type arguments: expected " 
+                                                                                     + getTypeConstructor().getParameters().size() + " but was " + typeArguments.size() 
+                                                                                     + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();
         if (typeArguments.isEmpty()) return getScopeForMemberLookup();
 
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
