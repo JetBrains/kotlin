@@ -196,7 +196,6 @@ public class JetSignatureReader {
                                 v.visitEnd();
                                 return pos;
                             }
-                            start = pos;
                             visited = false;
                             inner = true;
                             break;
@@ -226,7 +225,7 @@ public class JetSignatureReader {
     ) {
         String name = signature.substring(start, pos - 1);
         if (inner) {
-            v.visitInnerClassType(name, nullable);
+            v.visitInnerClassType(name, nullable, forceReal);
         }
         else {
             v.visitClassType(name, nullable, forceReal);

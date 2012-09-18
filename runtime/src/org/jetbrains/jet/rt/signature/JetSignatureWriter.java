@@ -172,7 +172,7 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     }
 
     @Override
-    public void visitInnerClassType(final String name, boolean nullable) {
+    public void visitInnerClassType(final String name, boolean nullable, boolean forceReal) {
         endArguments();
         visitNullabe(nullable);
         buf.append('.');
