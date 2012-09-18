@@ -776,10 +776,11 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (closure != null) {
             for (Map.Entry<DeclarationDescriptor, EnclosedValueDescriptor> entry : closure.getCaptureVariables().entrySet()) {
-                if (entry.getKey() instanceof VariableDescriptor && !(entry.getKey() instanceof PropertyDescriptor)) {
-                    Type sharedVarType = getSharedVarType(entry.getKey());
+                DeclarationDescriptor variableDescriptor = entry.getKey();
+                if (variableDescriptor instanceof VariableDescriptor && !(variableDescriptor instanceof PropertyDescriptor)) {
+                    Type sharedVarType = getSharedVarType(variableDescriptor);
                     if (sharedVarType == null) {
-                        sharedVarType = mapType(((VariableDescriptor) entry.getKey()).getType());
+                        sharedVarType = mapType(((VariableDescriptor) variableDescriptor).getType());
                     }
                     signatureWriter.writeParameterType(JvmMethodParameterKind.SHARED_VAR);
                     signatureWriter.writeAsmType(sharedVarType, false);
