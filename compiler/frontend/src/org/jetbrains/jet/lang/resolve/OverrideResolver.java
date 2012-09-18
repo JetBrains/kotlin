@@ -735,7 +735,7 @@ public class OverrideResolver {
                 if (OverridingUtil.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
                     invisibleOverride = fromSuper;
                     if (Visibilities.isVisible(fromSuper, declared)) {
-                        throw new IllegalStateException("Descriptor " + fromSuper + "is overridable by " + declared + " and visible but does not appear in its getOverriddenDescriptors()");
+                        throw new IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared + " and visible but does not appear in its getOverriddenDescriptors()");
                     }
                     break outer;
                 }
