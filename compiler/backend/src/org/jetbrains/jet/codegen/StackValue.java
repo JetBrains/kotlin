@@ -99,7 +99,7 @@ public abstract class StackValue {
 
     public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
         put(this.type, v);
-        coerce(Type.BOOLEAN_TYPE, v);
+        coerceTo(Type.BOOLEAN_TYPE, v);
         if (jumpIfFalse) {
             v.ifeq(label);
         }
@@ -231,7 +231,7 @@ public abstract class StackValue {
             v.checkcast(type);
         }
         else {
-            coerce(type, v);
+            coerceTo(type, v);
         }
     }
 
@@ -244,8 +244,12 @@ public abstract class StackValue {
         }
     }
 
-    protected void coerce(Type toType, InstructionAdapter v) {
+    protected void coerceTo(Type toType, InstructionAdapter v) {
         coerce(this.type, toType, v);
+    }
+
+    protected void coerceFrom(Type topOfStackType, InstructionAdapter v) {
+        coerce(topOfStackType, this.type, v);
     }
 
     protected static void coerce(Type fromType, Type toType, InstructionAdapter v) {
@@ -382,7 +386,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            coerce(type, v);
+            coerceTo(type, v);
         }
     }
 
@@ -401,13 +405,13 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.load(index, this.type);
-            coerce(type, v);
+            coerceTo(type, v);
             // TODO unbox
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            coerce(topOfStackType, this.type, v);
+            coerceFrom(topOfStackType, v);
             v.store(index, this.type);
         }
     }
@@ -419,7 +423,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -465,7 +469,7 @@ public abstract class StackValue {
             else {
                 v.aconst(value);
             }
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -616,12 +620,12 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.aload(boxed);    // assumes array and index are on the stack
-            onStack(boxed).coerce(type, v);
+            coerce(boxed, type, v);
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            onStack(type).coerce(boxed, v);
+            coerce(topOfStackType, boxed, v);
             v.astore(boxed);
         }
 
@@ -677,7 +681,7 @@ public abstract class StackValue {
             else {
                 ((IntrinsicMethod) getter).generate(codegen, v, type, null, null, null, state);
             }
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -901,7 +905,7 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -918,7 +922,7 @@ public abstract class StackValue {
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            coerce(topOfStackType, this.type, v);
+            coerceFrom(topOfStackType, v);
             v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
     }
@@ -976,11 +980,12 @@ public abstract class StackValue {
                     v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
                 }
             }
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
+            coerceFrom(topOfStackType, v);
             if (isSuper && isInterface) {
                 assert setter != null;
                 v.visitMethodInsn(INVOKESTATIC, methodOwner.getInternalName(), setter.getName(),
@@ -1047,8 +1052,8 @@ public abstract class StackValue {
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
             v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
-            coerce(refType, this.type, v);
-            coerce(this.type, type, v);
+            coerceFrom(refType, v);
+            coerceTo(type, v);
             if (isReleaseOnPut) {
                 v.aconst(null);
                 v.store(index, OBJECT_TYPE);
@@ -1057,6 +1062,7 @@ public abstract class StackValue {
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
+            coerceFrom(topOfStackType, v);
             v.load(index, OBJECT_TYPE);
             v.swap();
             Type refType = refType(this.type);
@@ -1133,13 +1139,13 @@ public abstract class StackValue {
             Type sharedType = sharedTypeForType(this.type);
             Type refType = refType(this.type);
             v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
-            StackValue.onStack(refType).coerce(this.type, v);
-            StackValue.onStack(this.type).coerce(type, v);
+            coerceFrom(refType, v);
+            coerceTo(type, v);
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            coerce(topOfStackType, v);
+            coerceFrom(topOfStackType, v);
             v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
         }
     }
@@ -1200,7 +1206,7 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             if (!type.equals(Type.VOID_TYPE)) {
                 v.load(index, Type.INT_TYPE);
-                coerce(type, v);
+                coerceTo(type, v);
             }
             v.iinc(index, increment);
         }
@@ -1221,7 +1227,7 @@ public abstract class StackValue {
             v.iinc(index, increment);
             if (!type.equals(Type.VOID_TYPE)) {
                 v.load(index, Type.INT_TYPE);
-                coerce(type, v);
+                coerceTo(type, v);
             }
         }
     }

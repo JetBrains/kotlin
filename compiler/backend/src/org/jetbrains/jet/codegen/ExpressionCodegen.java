@@ -2697,6 +2697,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             v.iconst(increment);
+            asmType = Type.INT_TYPE;
         }
         v.add(asmType);
         value.store(asmType, v);
@@ -3202,7 +3203,7 @@ The "returned" value of try expression with no finally is either the last expres
                 condType = asmType(condJetType);
                 if (!(CodegenUtil.isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
                     subjectType = boxType(subjectType);
-                    expressionToMatch.coerce(subjectType, v);
+                    expressionToMatch.coerceTo(subjectType, v);
                 }
             }
             else {
