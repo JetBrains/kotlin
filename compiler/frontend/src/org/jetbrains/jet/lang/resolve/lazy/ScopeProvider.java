@@ -80,13 +80,19 @@ public class ScopeProvider {
     }
 
     @NotNull
-    public JetScope getResolutionScopeForDeclaration(@NotNull JetDeclaration jetDeclaration) {
-        PsiElement immediateParent = jetDeclaration.getParent();
-        if (immediateParent instanceof JetFile) {
-            return getFileScopeForDeclarationResolution((JetFile) immediateParent);
-        }
+    public JetScope getResolutionScopeForDeclaration(@NotNull PsiElement elementOfDeclaration) {
+        JetDeclaration jetDeclaration = PsiTreeUtil.getParentOfType(elementOfDeclaration, JetDeclaration.class, false);
+
+        assert !(elementOfDeclaration instanceof JetDeclaration) || jetDeclaration == elementOfDeclaration :
+                "For JetDeclaration element getParentOfType() should return itself.";
 
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(jetDeclaration, JetDeclaration.class);
+        if (parentDeclaration == null) {
+            return getFileScopeForDeclarationResolution((JetFile) elementOfDeclaration.getContainingFile());
+        }
+
+        assert jetDeclaration != null : "Can't happen because of getParentOfType(null, ?) == null";
+
         if (parentDeclaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
             LazyClassDescriptor classDescriptor = (LazyClassDescriptor) resolveSession.getClassDescriptor(classOrObject);
@@ -98,13 +104,18 @@ public class ScopeProvider {
             }
             return classDescriptor.getScopeForMemberDeclarationResolution();
         }
-        else if (parentDeclaration instanceof JetClassObject) {
+
+        if (parentDeclaration instanceof JetClassObject) {
+            assert jetDeclaration instanceof JetObjectDeclaration : "Should be situation for getting scope for object in class [object {...}]";
+
             JetClassObject classObject = (JetClassObject) parentDeclaration;
-            LazyClassDescriptor classObjectDescriptor = resolveSession.getClassObjectDescriptor(classObject);
-            return classObjectDescriptor.getScopeForMemberDeclarationResolution();
+            LazyClassDescriptor classObjectDescriptor =
+                    (LazyClassDescriptor) resolveSession.getClassObjectDescriptor(classObject).getContainingDeclaration();
+
+            // During class object header resolve there should be no resolution for parent class generic params
+            return new InnerClassesScopeWrapper(classObjectDescriptor.getScopeForMemberDeclarationResolution());
         }
-        else {
-            throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + " " + jetDeclaration.getText());
-        }
+
+        throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + " " + jetDeclaration.getText());
     }
 }

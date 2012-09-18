@@ -183,7 +183,7 @@ public class ResolveSessionUtils {
             JetFile file
     ) {
         BodyResolver bodyResolver = createBodyResolver(trace, file, resolveSession.getModuleConfiguration());
-        JetScope scope = resolveSession.getResolutionScope(namedFunction);
+        JetScope scope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(namedFunction);
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(namedFunction);
         bodyResolver.resolveFunctionBody(trace, namedFunction, functionDescriptor, scope);
     }
@@ -216,11 +216,12 @@ public class ResolveSessionUtils {
     }
 
     private static JetScope getExpressionResolutionScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
+        ScopeProvider provider = resolveSession.getInjector().getScopeProvider();
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
         if (parentDeclaration == null) {
-            return resolveSession.getResolutionScope(expression.getContainingFile().getFirstChild());
+            return provider.getFileScopeForDeclarationResolution((JetFile) expression.getContainingFile());
         }
-        return resolveSession.getResolutionScope(parentDeclaration);
+        return provider.getResolutionScopeForDeclaration(parentDeclaration);
     }
 
     public static JetScope getExpressionMemberScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
