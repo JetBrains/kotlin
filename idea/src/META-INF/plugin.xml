@@ -223,7 +223,6 @@
 
       <applicationService serviceInterface="org.jetbrains.jet.plugin.editor.JetEditorOptions"
                           serviceImplementation="org.jetbrains.jet.plugin.editor.JetEditorOptions"/>
-      <exportable serviceInterface="org.jetbrains.jet.plugin.editor.JetEditorOptions"/>
       <editorAppearanceConfigurable instance="org.jetbrains.jet.plugin.editor.JetSettingEditorConfigurable"/>
 
       <intentionAction>
