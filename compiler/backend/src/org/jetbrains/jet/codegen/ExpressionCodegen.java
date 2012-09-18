@@ -3360,34 +3360,6 @@ The "returned" value of try expression with no finally is either the last expres
         return false;
     }
 
-    @Override
-    public StackValue visitTupleExpression(JetTupleExpression expression, StackValue receiver) {
-        final List<JetExpression> entries = expression.getEntries();
-        if (entries.size() > 22) {
-            throw new UnsupportedOperationException("tuple too large");
-        }
-        if (entries.size() == 0) {
-            v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "VALUE", "Ljet/Tuple0;");
-            return StackValue.onStack(JET_TUPLE0_TYPE);
-        }
-
-        final String className = "jet/Tuple" + entries.size();
-        Type tupleType = Type.getObjectType(className);
-        StringBuilder signature = new StringBuilder("(");
-        for (int i = 0; i != entries.size(); ++i) {
-            signature.append("Ljava/lang/Object;");
-        }
-        signature.append(")V");
-
-        v.anew(tupleType);
-        v.dup();
-        for (JetExpression entry : entries) {
-            gen(entry, OBJECT_TYPE);
-        }
-        v.invokespecial(className, "<init>", signature.toString());
-        return StackValue.onStack(tupleType);
-    }
-
     private void throwNewException(final String className) {
         v.anew(Type.getObjectType(className));
         v.dup();
