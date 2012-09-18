@@ -157,7 +157,7 @@ public class NamespaceCodegen extends GenerationStateAware {
 
             if (k > 0) {
                 PsiFile containingFile = file.getContainingFile();
-                String namespaceInternalName = name.child(Name.identifier(JvmAbi.PACKAGE_CLASS)).getFqName().replace('.', '/');
+                String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(name.child(Name.identifier(JvmAbi.PACKAGE_CLASS))).getInternalName();
                 String className = getMultiFileNamespaceInternalName(namespaceInternalName, containingFile);
                 ClassBuilder builder = state.getFactory().forNamespacepart(className);
 
@@ -287,7 +287,7 @@ public class NamespaceCodegen extends GenerationStateAware {
             return JvmClassName.byInternalName(JvmAbi.PACKAGE_CLASS);
         }
 
-        return JvmClassName.byInternalName(fqName.getFqName().replace('.', '/') + "/" + JvmAbi.PACKAGE_CLASS);
+        return JvmClassName.byFqNameWithoutInnerClasses(fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS)));
     }
 
     @NotNull
