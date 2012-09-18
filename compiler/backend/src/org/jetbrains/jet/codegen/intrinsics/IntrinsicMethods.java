@@ -66,7 +66,7 @@ public class IntrinsicMethods {
     private static final String KOTLIN_HASH_CODE = "kotlin.hashCode";
     private static final EnumValues ENUM_VALUES = new EnumValues();
     private static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
-    public static final ToString TO_STRING = new ToString();
+    private static final ToString TO_STRING = new ToString();
 
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
