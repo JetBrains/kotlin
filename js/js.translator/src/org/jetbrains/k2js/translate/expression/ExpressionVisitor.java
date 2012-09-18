@@ -355,17 +355,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitTupleExpression(@NotNull JetTupleExpression expression,
-            @NotNull TranslationContext context) {
-        JsArrayLiteral result = new JsArrayLiteral();
-        for (JetExpression entry : expression.getEntries()) {
-            result.getExpressions().add(translateAsExpression(entry, context));
-        }
-        return result;
-    }
-
-    @Override
-    @NotNull
     public JsNode visitThrowExpression(@NotNull JetThrowExpression expression,
             @NotNull TranslationContext context) {
         JetExpression thrownExpression = expression.getThrownExpression();
