@@ -47,6 +47,7 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
+@Deprecated // Tuples are to be removed in Kotlin M4
 public class MigrateTuplesInProjectFix extends JetIntentionAction<PsiElement> {
     public MigrateTuplesInProjectFix(@NotNull PsiElement element) {
         super(element);

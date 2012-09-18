@@ -1564,6 +1564,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "#" "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
      *   ;
      */
+    @Deprecated // Tuples are to be removed in Kotlin M4
     private void parseTupleType() {
         assert _at(HASH);
 

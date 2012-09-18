@@ -25,7 +25,10 @@ import java.util.List;
 /**
  * @author max
  */
+@Deprecated // Tuples are to be removed in Kotlin M4
 public class JetTupleExpression extends JetExpressionImpl {
+
+    @Deprecated // Tuples are to be removed in Kotlin M4
     public JetTupleExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -40,6 +43,7 @@ public class JetTupleExpression extends JetExpressionImpl {
         return visitor.visitTupleExpression(this, data);
     }
 
+    @Deprecated // Tuples are to be removed in Kotlin M4
     public List<JetExpression> getEntries() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetExpression.class);
     }

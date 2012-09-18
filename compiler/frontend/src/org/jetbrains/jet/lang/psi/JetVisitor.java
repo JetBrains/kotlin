@@ -168,6 +168,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
+    @Deprecated // Tuples are to be removed in Kotlin M4
     public R visitTupleExpression(JetTupleExpression expression, D data) {
         return visitExpression(expression, data);
     }
@@ -336,6 +337,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitTypeElement(type, data);
     }
 
+    @Deprecated // Tuples are to be removed in Kotlin M4
     public R visitTupleType(JetTupleType type, D data) {
         return visitTypeElement(type, data);
     }

@@ -64,10 +64,15 @@ public interface JetNodeTypes {
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetValueArgument.class);
     JetNodeType VALUE_ARGUMENT_NAME                 = new JetNodeType("VALUE_ARGUMENT_NAME", JetValueArgumentName.class);
     JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
+
+    @Deprecated // Tuples are to be removed in Kotlin M4
     JetNodeType LABELED_TUPLE_ENTRY                 = new JetNodeType("LABELED_TUPLE_ENTRY");
+    @Deprecated // Tuples are to be removed in Kotlin M4
     JetNodeType LABELED_TUPLE_TYPE_ENTRY            = new JetNodeType("LABELED_TUPLE_TYPE_ENTRY");
 
     JetNodeType USER_TYPE     = new JetNodeType("USER_TYPE", JetUserType.class);
+
+    @Deprecated // Tuples are to be removed in Kotlin M4
     JetNodeType TUPLE_TYPE    = new JetNodeType("TUPLE_TYPE", JetTupleType.class);
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);
@@ -95,6 +100,7 @@ public interface JetNodeTypes {
     JetNodeType LITERAL_STRING_TEMPLATE_ENTRY = new JetNodeType("LITERAL_STRING_TEMPLATE_ENTRY", JetLiteralStringTemplateEntry.class);
     JetNodeType ESCAPE_STRING_TEMPLATE_ENTRY = new JetNodeType("ESCAPE_STRING_TEMPLATE_ENTRY", JetEscapeStringTemplateEntry.class);
 
+    @Deprecated // Tuples are to be removed in Kotlin M4
     JetNodeType TUPLE                     = new JetNodeType("TUPLE", JetTupleExpression.class);
     JetNodeType PARENTHESIZED             = new JetNodeType("PARENTHESIZED", JetParenthesizedExpression.class);
     JetNodeType RETURN                    = new JetNodeType("RETURN", JetReturnExpression.class);
