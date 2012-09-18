@@ -534,15 +534,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private Type genPropertyOnStack(InstructionAdapter iv, PropertyDescriptor propertyDescriptor, int index) {
         iv.load(index, classAsmType);
-        // todo: seems to be more correct - need to be changed in sync with 'componentX' generation and related tests
-        // final Method
-        //        method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
-        //
-        // iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
-        // final Type type = method.getReturnType();
-        Type type = typeMapper.mapType(propertyDescriptor);
-        iv.getfield(classAsmType.getInternalName(), propertyDescriptor.getName().getName(), type.getDescriptor());
-        return type;
+        final Method
+                method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getJvmMethodSignature().getAsmMethod();
+
+        iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
+        return method.getReturnType();
     }
 
     private void generateComponentFunctionsForDataClasses() {
@@ -563,10 +559,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert returnType != null : "Return type of component function should not be null: " + function;
         Type componentType = typeMapper.mapReturnType(returnType);
 
+        final String desc = "()" + componentType.getDescriptor();
         MethodVisitor mv = v.newMethod(myClass,
                                        FunctionCodegen.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
                                        function.getName().getName(),
-                                       "()" + componentType.getDescriptor(),
+                                       desc,
                                        null, null);
 
         FunctionCodegen.genJetAnnotations(state, function, null, null, mv);
@@ -575,7 +572,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         InstructionAdapter iv = new InstructionAdapter(mv);
         if (!componentType.equals(Type.VOID_TYPE)) {
             iv.load(0, classAsmType);
-            iv.getfield(classAsmType.getInternalName(), parameter.getName().getName(), componentType.getDescriptor());
+            iv.invokevirtual(classAsmType.getInternalName(), PropertyCodegen.getterName(parameter.getName()), desc);
         }
         iv.areturn(componentType);
 
