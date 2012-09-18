@@ -1,3 +1,3 @@
 package test
 
-fun tuple0() = #()
+fun tuple0() = Unit.VALUE

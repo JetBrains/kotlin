@@ -1,2 +1,2 @@
 // "Specify Type Explicitly" "true"
-val x <caret>= #()
+val x <caret>= Unit.VALUE

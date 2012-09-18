@@ -2,7 +2,8 @@ import testData.libraries.*
 
 fun foo() {
     println("".exProp)
-    println(#(1, 2).exProp)
+    val p = Pair(1, 2)
+    println(p.exProp)
 }
 
 // main.kt
@@ -16,4 +17,4 @@ fun foo() {
 //    return this
 //}
 //
-//public val <T> #(T, T).<2>exProp : String
+//public val <T> Pair<T, T>.<2>exProp : String

@@ -1,8 +1,10 @@
 package unresolved
 
+class Pair<A, B>(a: A, b: B)
+
 fun testGenericArgumentsCount() {
-    val <warning>p1</warning>: Tuple2<error><Int></error> = #(2, 2)
-    val <warning>p2</warning>: <error>Tuple2</error> = #(2, 2)
+    val <warning>p1</warning>: Pair<error><Int></error> = Pair(2, 2)
+    val <warning>p2</warning>: <error>Pair</error> = Pair(2, 2)
 }
 
 fun testUnresolved() {

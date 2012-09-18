@@ -3,17 +3,18 @@
 
 package kt234_kt973
 
+class Pair<A, B>(a: A, b: B)
 
-fun test(t : #(Int, Int)) : Int {
+fun test(t : Pair<Int, Int>) : Int {
     <!NO_ELSE_IN_WHEN!>when<!> (t) {
-        #(10, 10) -> return 1
+        Pair(10, 10) -> return 1
     }
     return 0 // unreachable code
 }
 
-fun test1(t : #(Int, Int)) : Int {
+fun test1(t : Pair<Int, Int>) : Int {
     when (t) {
-        #(10, 10) -> return 1
+        Pair(10, 10) -> return 1
         else -> return 2
     }
     <!UNREACHABLE_CODE!>return 0<!> // unreachable code

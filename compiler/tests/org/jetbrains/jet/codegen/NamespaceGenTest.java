@@ -17,15 +17,12 @@
 package org.jetbrains.jet.codegen;
 
 import jet.IntRange;
-import jet.Tuple2;
-import jet.Tuple4;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author yole
@@ -505,25 +502,6 @@ public class NamespaceGenTest extends CodegenTestCase {
         list.add("Language");
         main.invoke(null, list);
         assertEquals("JetLanguage", list.get(0));
-    }
-
-    public void testTupleLiteral() throws Exception {
-        loadText("fun foo() = #(1, \"foo\")");
-//        System.out.println(generateToText());
-        final Method main = generateFunction("foo");
-        Tuple2 tuple2 = (Tuple2) main.invoke(null);
-        assertEquals(1, tuple2._1);
-        assertEquals("foo", tuple2._2);
-    }
-
-    public void testParametrizedTupleLiteral() throws Exception {
-        loadText("fun <E,D> E.foo(extra: java.util.List<D>) = #(1, \"foo\", this, extra)");
-//        System.out.println(generateToText());
-        final Method main = generateFunction();
-        Tuple4 tuple4 = (Tuple4) main.invoke(null, "aaa", Arrays.asList(10));
-        assertEquals(1, tuple4._1);
-        assertEquals("foo", tuple4._2);
-        assertEquals("aaa", tuple4._3);
     }
 
     public void testEscapeSequence() throws Exception {

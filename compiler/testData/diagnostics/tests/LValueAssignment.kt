@@ -36,9 +36,12 @@ class D() {
     }
 }
 
+fun foo(): Unit {}
+
 fun cannotBe(var <!UNUSED_PARAMETER!>i<!>: Int) {
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
-    <!VARIABLE_EXPECTED!>#()<!> = #();
+    <!VARIABLE_EXPECTED!>""<!> = "";
+    <!VARIABLE_EXPECTED!>foo()<!> = Unit.VALUE;
 
     (<!VARIABLE_EXPECTED!>i <!USELESS_CAST!>as<!> Int<!>) = 34
     (<!VARIABLE_EXPECTED!>i is Int<!>) = false

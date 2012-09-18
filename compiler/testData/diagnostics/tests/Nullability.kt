@@ -38,28 +38,28 @@ fun test() {
     out.println();
   }
 
-  if (out == null || out.println(0) == #()) {
+  if (out == null || out.println(0) == Unit.VALUE) {
     out?.println(1)
   }
   else {
     out.println(2)
   }
 
-  if (out != null && out.println() == #()) {
+  if (out != null && out.println() == Unit.VALUE) {
     out.println();
   }
   else {
     out?.println();
   }
 
-  if (out == null || out.println() == #()) {
+  if (out == null || out.println() == Unit.VALUE) {
     out?.println();
   }
   else {
     out.println();
   }
 
-  if (1 == 2 || out != null && out.println(1) == #()) {
+  if (1 == 2 || out != null && out.println(1) == Unit.VALUE) {
     out?.println(2);
   }
   else {
@@ -94,28 +94,28 @@ fun test() {
     out.println();
   }
 
-  if (out == null || out.println(0) == #()) {
+  if (out == null || out.println(0) == Unit.VALUE) {
     out?.println(1)
   }
   else {
     out.println(2)
   }
 
-  if (out != null && out.println() == #()) {
+  if (out != null && out.println() == Unit.VALUE) {
     out.println();
   }
   else {
     out?.println();
   }
 
-  if (out == null || out.println() == #()) {
+  if (out == null || out.println() == Unit.VALUE) {
     out?.println();
   }
   else {
     out.println();
   }
 
-  if (1 == 2 || out != null && out.println(1) == #()) {
+  if (1 == 2 || out != null && out.println(1) == Unit.VALUE) {
     out?.println(2);
   }
   else {

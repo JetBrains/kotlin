@@ -1085,11 +1085,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlow/IsExpression.kt");
             }
             
-            @TestMetadata("TupleExpression.kt")
-            public void testTupleExpression() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/dataFlow/TupleExpression.kt");
-            }
-            
             @TestMetadata("WhenSubject.kt")
             public void testWhenSubject() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlow/WhenSubject.kt");
@@ -3271,11 +3266,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         public static class Tuples extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInTuples() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/tuples"), "kt", true);
-            }
-            
-            @TestMetadata("BasicTuples.kt")
-            public void testBasicTuples() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tuples/BasicTuples.kt");
             }
             
             @TestMetadata("UnitValue.kt")

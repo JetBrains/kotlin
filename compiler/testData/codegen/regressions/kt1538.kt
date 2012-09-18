@@ -2,17 +2,17 @@ import java.util.HashMap
 
 fun parseCatalogs(hashMap: Any?) {
     val r = toHasMap(hashMap)
-    if (!r._1) {
+    if (!r.first) {
         return
     }
-    val nodes = r._2
+    val nodes = r.second
 }
 
-fun toHasMap(value: Any?): #(Boolean, HashMap<String, Any?>?) {
+fun toHasMap(value: Any?): Pair<Boolean, HashMap<String, Any?>?> {
     if(value is HashMap<*, *>) {
-        return #(true, value as HashMap<String, Any?>)
+        return Pair(true, value as HashMap<String, Any?>)
     }
-    return #(false, null as HashMap<String, Any?>?)
+    return Pair(false, null as HashMap<String, Any?>?)
 }
 
 fun box() : String {

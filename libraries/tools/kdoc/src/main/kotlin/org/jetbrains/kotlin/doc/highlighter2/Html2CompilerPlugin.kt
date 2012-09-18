@@ -54,7 +54,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
 
         File(srcOutputRoot, "highlight.css").write { outputStream ->
             css.copyTo(outputStream)
-            #()
+            Unit.VALUE
         }
 
         for (sourceInfo in model.sourcesInfo) {

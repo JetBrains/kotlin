@@ -42,5 +42,3 @@ fun test() {
     else -> 1
   }
 }
-
-val #(Int, Int).boo : #(Int, Int, Int) = #(1, 1, 1)
