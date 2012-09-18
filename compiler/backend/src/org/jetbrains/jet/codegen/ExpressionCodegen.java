@@ -2683,23 +2683,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue value = genQualified(receiver, operand);
         value.dupReceiver(v);
         value.put(asmType, v);
-        if (asmType == Type.LONG_TYPE) {
-            //noinspection UnnecessaryBoxing
-            v.lconst(increment);
-        }
-        else if (asmType == Type.FLOAT_TYPE) {
-            //noinspection UnnecessaryBoxing
-            v.fconst(increment);
-        }
-        else if (asmType == Type.DOUBLE_TYPE) {
-            //noinspection UnnecessaryBoxing
-            v.dconst(increment);
-        }
-        else {
-            v.iconst(increment);
-            asmType = Type.INT_TYPE;
-        }
-        v.add(asmType);
+        asmType = genIncrement(asmType, increment, v);
         value.store(asmType, v);
     }
 

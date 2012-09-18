@@ -535,4 +535,33 @@ public class CodegenUtil {
             }
         }
     }
+
+    public static Type genIncrement(Type expectedType, int myDelta, InstructionAdapter v) {
+        if (expectedType == Type.LONG_TYPE) {
+            //noinspection UnnecessaryBoxing
+            v.lconst(myDelta);
+        }
+        else if (expectedType == Type.FLOAT_TYPE) {
+            //noinspection UnnecessaryBoxing
+            v.fconst(myDelta);
+        }
+        else if (expectedType == Type.DOUBLE_TYPE) {
+            //noinspection UnnecessaryBoxing
+            v.dconst(myDelta);
+        }
+        else {
+            v.iconst(myDelta);
+            expectedType = Type.INT_TYPE;
+        }
+        v.add(expectedType);
+        return expectedType;
+    }
+
+    public static Type genNegate(Type expectedType, InstructionAdapter v) {
+        if (expectedType == Type.BYTE_TYPE || expectedType == Type.SHORT_TYPE || expectedType == Type.CHAR_TYPE) {
+            expectedType = Type.INT_TYPE;
+        }
+        v.neg(expectedType);
+        return expectedType;
+    }
 }

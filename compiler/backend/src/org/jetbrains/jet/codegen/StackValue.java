@@ -252,7 +252,7 @@ public abstract class StackValue {
         coerce(topOfStackType, this.type, v);
     }
 
-    protected static void coerce(Type fromType, Type toType, InstructionAdapter v) {
+    public static void coerce(Type fromType, Type toType, InstructionAdapter v) {
         if (toType.equals(fromType)) return;
 
         if (toType.getSort() == Type.VOID && fromType.getSort() != Type.VOID) {

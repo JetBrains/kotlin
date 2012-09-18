@@ -1,4 +1,10 @@
+class A(var b: Byte) {
+  fun c(d: Short)  = (b + d.toByte()).toChar()
+}
+
 fun box() : String {
+    if(A(10.toByte()).c(20.toShort()) != 30.toByte().toChar()) return "plus failed"
+
     var x = 20.toByte()
     var y = 20.toByte()
     val foo = {

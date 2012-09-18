@@ -52,7 +52,7 @@ public class UnaryMinus implements IntrinsicMethod {
         else {
             receiver.put(expectedType, v);
         }
-        v.neg(expectedType);
+        StackValue.coerce(CodegenUtil.genNegate(expectedType, v), expectedType, v);
         return StackValue.onStack(expectedType);
     }
 }
