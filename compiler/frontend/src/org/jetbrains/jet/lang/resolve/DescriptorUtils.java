@@ -355,4 +355,14 @@ public class DescriptorUtils {
                 + (classifier == null ? "null" : classifier.getClass());
         return (ClassDescriptor) classifier;
     }
+
+    @SuppressWarnings("unchecked")
+    public static Collection<ClassDescriptor> getInnerClasses(ClassDescriptor classDescriptor) {
+        Collection<DeclarationDescriptor> innerClasses = classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors();
+        for (DeclarationDescriptor inner : innerClasses) {
+            assert inner instanceof ClassDescriptor
+                    : "Not a class in inner classes scope of " + classDescriptor + ": " + inner;
+        }
+        return (Collection) innerClasses;
+    }
 }

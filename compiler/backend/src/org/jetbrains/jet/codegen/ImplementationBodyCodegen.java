@@ -41,6 +41,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -165,47 +166,54 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         );
         v.visitSource(myClass.getContainingFile().getName(), null);
 
-        writeInnerOuterClasses();
+        writeOuterClass();
+
+        writeInnerClasses();
 
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
 
         writeClassSignatureIfNeeded(signature);
     }
 
-    private void writeInnerOuterClasses() {
+    private void writeOuterClass() {
         ClassDescriptor container = getContainingClassDescriptor(descriptor);
         if (container != null) {
             v.visitOuterClass(typeMapper.mapType(container.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName(), null, null);
         }
+    }
 
-        for (DeclarationDescriptor declarationDescriptor : descriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
-            assert declarationDescriptor instanceof ClassDescriptor;
-            ClassDescriptor innerClass = (ClassDescriptor) declarationDescriptor;
-            // TODO: proper access
-            int innerClassAccess = ACC_PUBLIC;
-            if (innerClass.getModality() == Modality.FINAL) {
-                innerClassAccess |= ACC_FINAL;
-            }
-            else if (innerClass.getModality() == Modality.ABSTRACT) {
-                innerClassAccess |= ACC_ABSTRACT;
-            }
-
-            if (innerClass.getKind() == ClassKind.TRAIT) {
-                innerClassAccess |= ACC_INTERFACE;
-            }
-
-            // TODO: cache internal names
-            String outerClassInernalName = classAsmType.getInternalName();
-            String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
-            v.visitInnerClass(innerClassInternalName, outerClassInernalName, innerClass.getName().getName(), innerClassAccess);
+    private void writeInnerClasses() {
+        for (ClassDescriptor innerClass : DescriptorUtils.getInnerClasses(descriptor)) {
+            writeInnerClass(innerClass);
         }
 
-        if (descriptor.getClassObjectDescriptor() != null) {
+        ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
+        if (classObjectDescriptor != null) {
             int innerClassAccess = ACC_PUBLIC | ACC_FINAL | ACC_STATIC;
             v.visitInnerClass(classAsmType.getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX, classAsmType.getInternalName(),
                               JvmAbi.CLASS_OBJECT_CLASS_NAME,
                               innerClassAccess);
         }
+    }
+
+    private void writeInnerClass(ClassDescriptor innerClass) {
+        // TODO: proper access
+        int innerClassAccess = ACC_PUBLIC;
+        if (innerClass.getModality() == Modality.FINAL) {
+            innerClassAccess |= ACC_FINAL;
+        }
+        else if (innerClass.getModality() == Modality.ABSTRACT) {
+            innerClassAccess |= ACC_ABSTRACT;
+        }
+
+        if (innerClass.getKind() == ClassKind.TRAIT) {
+            innerClassAccess |= ACC_INTERFACE;
+        }
+
+        // TODO: cache internal names
+        String outerClassInternalName = classAsmType.getInternalName();
+        String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+        v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerClass.getName().getName(), innerClassAccess);
     }
 
     private void writeClassSignatureIfNeeded(JvmClassSignature signature) {
