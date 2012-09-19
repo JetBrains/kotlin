@@ -48,7 +48,10 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 public interface Errors {
 
     // TODO: Temporary error message: to deprecate tuples we report this error and provide a quick fix
+    @Deprecated // Tuples will be dropped in Kotlin M4
     SimpleDiagnosticFactory<PsiElement> TUPLES_ARE_NOT_SUPPORTED = SimpleDiagnosticFactory.create(ERROR);
+    @Deprecated // Tuples will be dropped in Kotlin M4
+    SimpleDiagnosticFactory<PsiElement> TUPLES_ARE_NOT_SUPPORTED_BIG = SimpleDiagnosticFactory.create(ERROR);
 
     DiagnosticFactory1<JetFile, Throwable> EXCEPTION_WHILE_ANALYZING = DiagnosticFactory1.create(ERROR);
 

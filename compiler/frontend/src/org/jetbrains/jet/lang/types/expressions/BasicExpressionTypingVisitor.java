@@ -357,7 +357,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitTupleExpression(JetTupleExpression expression, ExpressionTypingContext context) {
         // TODO: remove this method completely when tuples are droppped
-        context.trace.report(TUPLES_ARE_NOT_SUPPORTED.on(expression));
+        if (expression.getEntries().size() <= 3) {
+            context.trace.report(TUPLES_ARE_NOT_SUPPORTED.on(expression));
+        }
+        else {
+            context.trace.report(TUPLES_ARE_NOT_SUPPORTED_BIG.on(expression));
+        }
 
         List<JetExpression> entries = expression.getEntries();
         List<JetType> types = new ArrayList<JetType>();

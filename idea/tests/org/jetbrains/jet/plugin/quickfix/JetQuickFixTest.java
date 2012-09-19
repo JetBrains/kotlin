@@ -130,11 +130,11 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics();
 
         if (diagnostics.size() != 0) {
-            String[] expectedErrorStrings = InTextDirectivesUtils.findListWithPrefix("// ERROR:", getFile().getText());
+            List<String> expectedErrorStrings = InTextDirectivesUtils.findLinesWithPrefixRemoved("// ERROR:", getFile().getText());
 
             System.out.println(getFile().getText());
 
-            Collection<String> expectedErrors = new HashSet<String>(Arrays.asList(expectedErrorStrings));
+            Collection<String> expectedErrors = new HashSet<String>(expectedErrorStrings);
 
             StringBuilder builder = new StringBuilder();
             boolean hasErrors = false;

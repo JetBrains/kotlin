@@ -47,7 +47,8 @@ public class DefaultErrorMessages {
     static {
 
         // TODO: remove when tuples are completely dropped
-        MAP.put(TUPLES_ARE_NOT_SUPPORTED, "Tuples are not supported. Press Alt+Enter to replace tuples with library classes");
+        MAP.put(TUPLES_ARE_NOT_SUPPORTED, "Tuples are not supported. In the IDE you can use Alt+Enter to replace tuples with library classes");
+        MAP.put(TUPLES_ARE_NOT_SUPPORTED_BIG, "Tuples are not supported. Use data classes instead");
 
         MAP.put(EXCEPTION_WHILE_ANALYZING, "{0}", new Renderer<Throwable>() {
             @NotNull

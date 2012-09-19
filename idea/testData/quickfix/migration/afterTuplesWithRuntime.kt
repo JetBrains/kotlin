@@ -1,6 +1,6 @@
 // "Migrate tuples in project: e.g., #(,) and #(,,) will be replaced by Pair and Triple" "true"
-// ERROR: Tuples are not supported. Press Alt+Enter to replace tuples with library classes
-// ERROR: Tuples are not supported. Press Alt+Enter to replace tuples with library classes
+// ERROR: <html>Tuples are not supported.<br/>Use data classes instead. For example:<br/><b>data class</b> FourThings(<b>val</b> a: A, <b>val</b> b: B, <b>val</b> c: C, <b>val</b> d: D)</html>
+// ERROR: <html>Tuples are not supported.<br/>Use data classes instead. For example:<br/><b>data class</b> FourThings(<b>val</b> a: A, <b>val</b> b: B, <b>val</b> c: C, <b>val</b> d: D)</html>
 
 fun foo2() : Pair<Int, Int> {
     return Pair(1, 1)

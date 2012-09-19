@@ -61,7 +61,7 @@ public final class InTextDirectivesUtils {
     }
 
     @NotNull
-    private static List<String> findLinesWithPrefixRemoved(String prefix, String fileText) {
+    public static List<String> findLinesWithPrefixRemoved(String prefix, String fileText) {
         ArrayList<String> result = new ArrayList<String>();
 
         for (String line : fileNonEmptyLines(fileText)) {
