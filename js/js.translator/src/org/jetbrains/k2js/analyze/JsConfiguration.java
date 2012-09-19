@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -48,10 +48,12 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
 public class JsConfiguration implements ModuleConfiguration {
 
     @NotNull
-    private static final List<ImportPath> DEFAULT_IMPORT_PATHS = Arrays.asList(new ImportPath("js.*"), new ImportPath("java.lang.*"),
-                                                                              new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME,
-                                                                                             true),
-                                                                              new ImportPath("kotlin.*"));
+    public static final List<ImportPath> DEFAULT_IMPORT_PATHS = Arrays.asList(
+            new ImportPath("js.*"),
+            new ImportPath("java.lang.*"),
+            new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true),
+            new ImportPath("kotlin.*"));
+
     @NotNull
     private final Project project;
     /*
