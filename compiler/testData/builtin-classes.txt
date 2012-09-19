@@ -864,7 +864,7 @@ public final class jet.LongRange : jet.Range<jet.Long>, jet.LongIterable {
         public final val EMPTY: jet.LongRange
     }
 }
-public abstract trait jet.Map</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Any {
+public abstract trait jet.Map</*0*/ K : jet.Any?, /*1*/ out V : jet.Any?> : jet.Any {
     public abstract fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
     public abstract fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
     public abstract fun entrySet(): jet.Set<jet.Map.Entry<K, V>>
