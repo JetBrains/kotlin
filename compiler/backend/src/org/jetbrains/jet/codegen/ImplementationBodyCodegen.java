@@ -19,6 +19,8 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -41,6 +43,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
@@ -183,12 +186,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeInnerClasses() {
+        // Inner enums are moved by frontend to a class object of outer class, but we want them to be inner for the outer class itself
+        // (to avoid publicly visible names like A$ClassObject$$B), so they are handled specially in this method
+
         for (ClassDescriptor innerClass : DescriptorUtils.getInnerClasses(descriptor)) {
-            writeInnerClass(innerClass);
+            // If it's an inner enum inside a class object, don't write it
+            // (instead write it to inner classes of this class object's containing class)
+            if (!isEnumMovedToClassObject(innerClass)) {
+                writeInnerClass(innerClass, false);
+            }
         }
 
         ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
         if (classObjectDescriptor != null) {
+            // Process all enums here which were moved to our class object
+            for (ClassDescriptor innerClass : DescriptorUtils.getInnerClasses(classObjectDescriptor)) {
+                if (isEnumMovedToClassObject(innerClass)) {
+                    writeInnerClass(innerClass, true);
+                }
+            }
+
             int innerClassAccess = ACC_PUBLIC | ACC_FINAL | ACC_STATIC;
             v.visitInnerClass(classAsmType.getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX, classAsmType.getInternalName(),
                               JvmAbi.CLASS_OBJECT_CLASS_NAME,
@@ -196,7 +213,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void writeInnerClass(ClassDescriptor innerClass) {
+    private void writeInnerClass(ClassDescriptor innerClass, boolean isStatic) {
         // TODO: proper access
         int innerClassAccess = ACC_PUBLIC;
         if (innerClass.getModality() == Modality.FINAL) {
@@ -209,11 +226,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (innerClass.getKind() == ClassKind.TRAIT) {
             innerClassAccess |= ACC_INTERFACE;
         }
+        else if (innerClass.getKind() == ClassKind.ENUM_CLASS) {
+            innerClassAccess |= ACC_ENUM;
+        }
+
+        if (isStatic) {
+            innerClassAccess |= ACC_STATIC;
+        }
 
         // TODO: cache internal names
         String outerClassInternalName = classAsmType.getInternalName();
         String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
         v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerClass.getName().getName(), innerClassAccess);
+    }
+
+    private boolean isEnumMovedToClassObject(ClassDescriptor innerClass) {
+        // Checks if this is enum, moved to class object by frontend
+
+        return Boolean.TRUE.equals(bindingContext.get(BindingContext.IS_ENUM_MOVED_TO_CLASS_OBJECT, innerClass));
     }
 
     private void writeClassSignatureIfNeeded(JvmClassSignature signature) {
