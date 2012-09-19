@@ -497,7 +497,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean first = true;
         for (PropertyDescriptor propertyDescriptor : properties) {
             if (first) {
-                iv.aconst(descriptor.getName() + "{" + propertyDescriptor.getName().getName()+"=");
+                iv.aconst(descriptor.getName() + "(" + propertyDescriptor.getName().getName()+"=");
                 first = false;
             }
             else {
@@ -523,7 +523,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             invokeAppendMethod(iv, type);
         }
 
-        iv.aconst("}");
+        iv.aconst(")");
         invokeAppendMethod(iv, JAVA_STRING_TYPE);
 
         iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");

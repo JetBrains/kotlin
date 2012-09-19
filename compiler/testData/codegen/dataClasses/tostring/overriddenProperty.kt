@@ -7,5 +7,5 @@ class B : A("Fail") {
 fun foo(a: A) = a
 
 fun box(): String {
-    return if ("${foo(B())}" == "A{x=OK}") "OK" else "fail"
+    return if ("${foo(B())}" == "A(x=OK)") "OK" else "fail"
 }
