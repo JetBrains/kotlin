@@ -26,6 +26,9 @@ import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 /**
  * @author abreslav
  */
@@ -37,46 +40,50 @@ public class ScopeProvider {
         this.resolveSession = resolveSession;
     }
 
+    private final Map<JetFile, JetScope> fileScopeCache = new WeakHashMap<JetFile, JetScope>();
+
     // This scope does not contain imported functions
     @NotNull
     public JetScope getFileScopeForDeclarationResolution(JetFile file) {
-        // package
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        if (header == null) {
-            throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
+        if (!fileScopeCache.containsKey(file)) {
+            // package
+            JetNamespaceHeader header = file.getNamespaceHeader();
+            if (header == null) {
+                throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
+            }
+
+            FqName fqName = new FqName(header.getQualifiedName());
+            NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
+
+            if (packageDescriptor == null) {
+                throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());
+            }
+
+            WritableScope fileScope = new WritableScopeImpl(
+                    JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
+
+            fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+
+            NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+            if (rootPackageDescriptor == null) {
+                throw new IllegalStateException("Root package not found");
+            }
+
+            // Don't import twice
+            if (!packageDescriptor.getQualifiedName().equals(FqName.ROOT)) {
+                fileScope.importScope(rootPackageDescriptor.getMemberScope());
+            }
+
+            ImportsResolver.processImportsInFile(true, fileScope, Lists.newArrayList(file.getImportDirectives()),
+                                                 rootPackageDescriptor.getMemberScope(),
+                                                 resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
+                                                 resolveSession.getInjector().getQualifiedExpressionResolver());
+
+            fileScope.changeLockLevel(WritableScope.LockLevel.READING);
+            fileScopeCache.put(file, new ChainedScope(packageDescriptor, packageDescriptor.getMemberScope(), fileScope));
         }
 
-        FqName fqName = new FqName(header.getQualifiedName());
-        NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
-
-        if (packageDescriptor == null) {
-            throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());
-        }
-
-        WritableScope fileScope = new WritableScopeImpl(
-                JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
-
-        fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-        NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
-        if (rootPackageDescriptor == null) {
-            throw new IllegalStateException("Root package not found");
-        }
-
-        // Don't import twice
-        if (!packageDescriptor.getQualifiedName().equals(FqName.ROOT)) {
-            fileScope.importScope(rootPackageDescriptor.getMemberScope());
-        }
-
-        ImportsResolver.processImportsInFile(true, fileScope, Lists.newArrayList(file.getImportDirectives()),
-                                             rootPackageDescriptor.getMemberScope(),
-                                             resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
-                                             resolveSession.getInjector().getQualifiedExpressionResolver());
-
-        fileScope.changeLockLevel(WritableScope.LockLevel.READING);
-
-        // TODO: Cache
-        return new ChainedScope(packageDescriptor, packageDescriptor.getMemberScope(), fileScope);
+        return fileScopeCache.get(file);
     }
 
     @NotNull
