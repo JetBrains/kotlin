@@ -226,7 +226,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                 return descriptor.getVisibility() == Visibilities.PUBLIC || descriptor.getVisibility() == Visibilities.INTERNAL;
             }
             else {
-                assert false : "Descriptor of the class isn't found in the binding context";
+                assert false : "Descriptor of the class isn't found in the binding context: " + member;
             }
         }
 
