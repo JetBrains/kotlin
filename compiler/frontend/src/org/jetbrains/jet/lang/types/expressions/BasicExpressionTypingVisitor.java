@@ -885,7 +885,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return typeInfo;
         }
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
-        if (isKnownToBeNotNull(baseExpression, context)) {
+        if (isKnownToBeNotNull(baseExpression, context) && !ErrorUtils.isErrorType(type)) {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
         }
         else {

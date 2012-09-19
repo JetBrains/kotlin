@@ -2098,6 +2098,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/kt362.kt");
             }
             
+            @TestMetadata("noUnnecessaryNotNullAssertionOnErrorType.kt")
+            public void testNoUnnecessaryNotNullAssertionOnErrorType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/noUnnecessaryNotNullAssertionOnErrorType.kt");
+            }
+            
             @TestMetadata("NullableNothingIsExactlyNull.kt")
             public void testNullableNothingIsExactlyNull() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/NullableNothingIsExactlyNull.kt");
