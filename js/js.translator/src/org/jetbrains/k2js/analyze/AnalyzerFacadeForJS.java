@@ -26,10 +26,19 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
@@ -135,5 +144,40 @@ public final class AnalyzerFacadeForJS {
                 return notLibFile;
             }
         };
+    }
+
+    @NotNull
+    public static ResolveSession getLazyResolveSession(Collection<JetFile> files, final Config config) {
+        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
+                Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
+
+        // ModuleConfiguration moduleConfiguration = new JsConfiguration(config.getProject(), null);
+
+        ModuleConfiguration moduleConfigurationJs = new ModuleConfiguration() {
+            @Override
+            public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
+                for (ImportPath path : JsConfiguration.DEFAULT_IMPORT_PATHS) {
+                    directives.add(JetPsiFactory.createImportDirective(config.getProject(), path));
+                }
+            }
+
+            @Override
+            public void extendNamespaceScope(
+                    @NotNull BindingTrace trace,
+                    @NotNull NamespaceDescriptor namespaceDescriptor,
+                    @NotNull WritableScope namespaceMemberScope
+            ) {
+                namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+            }
+
+            @NotNull
+            @Override
+            public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+                return PlatformToKotlinClassMap.EMPTY;
+            }
+        };
+
+        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        return new ResolveSession(config.getProject(), lazyModule, moduleConfigurationJs, declarationProviderFactory);
     }
 }

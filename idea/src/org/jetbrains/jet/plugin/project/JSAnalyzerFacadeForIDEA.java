@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
 import java.util.Collection;
@@ -64,5 +65,11 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
             @NotNull ModuleConfiguration configuration
     ) {
         return AnalyzerFacadeForJS.analyzeBodiesInFiles(filesForBodiesResolve, new IDEAConfig(project), traceContext, bodiesResolveContext, configuration);
+    }
+
+    @NotNull
+    @Override
+    public ResolveSession getLazyResolveSession(@NotNull Project project, @NotNull Collection<JetFile> files) {
+        return AnalyzerFacadeForJS.getLazyResolveSession(files, new IDEAConfig(project));
     }
 }
