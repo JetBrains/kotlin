@@ -214,9 +214,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
 
-    static class ResolverEnumClassObjectClassData extends ResolverClassData {
+    static class ResolverSyntheticClassObjectClassData extends ResolverClassData {
 
-        protected ResolverEnumClassObjectClassData(
+        protected ResolverSyntheticClassObjectClassData(
                 @Nullable PsiClass psiClass,
                 @Nullable FqName fqName,
                 @NotNull ClassDescriptorFromJvmBytecode descriptor
@@ -545,8 +545,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 false);
         String context = "constructor of class " + psiClass.getQualifiedName();
         ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(constructorDescriptor,
-                constructor.getParameters(),
-                TypeVariableResolvers.classTypeVariableResolver(classData.classDescriptor, context));
+                                                                                          constructor.getParameters(),
+                                                                                          TypeVariableResolvers.classTypeVariableResolver(
+                                                                                                  classData.classDescriptor, context));
         if (valueParameterDescriptors.receiverType != null) {
             throw new IllegalStateException();
         }
@@ -585,6 +586,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return createClassObjectDescriptorForEnum(containing, psiClass);
         }
 
+        // If there's at least one inner enum, we need to create a class object (to put this enum into)
+        for (PsiClass innerClass : psiClass.getInnerClasses()) {
+            if (isInnerEnum(innerClass, containing)) {
+                return createSyntheticClassObject(containing, psiClass);
+            }
+        }
+
         PsiClass classObjectPsiClass = getInnerClassClassObject(psiClass);
         if (classObjectPsiClass == null) {
             return null;
@@ -602,20 +610,35 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return classObjectDescriptor;
     }
 
+    private static boolean isInnerEnum(@NotNull PsiClass innerClass, DeclarationDescriptor owner) {
+        if (!innerClass.isEnum()) return false;
+        if (!(owner instanceof ClassDescriptor)) return false;
+
+        ClassKind kind = ((ClassDescriptor) owner).getKind();
+        return kind == ClassKind.CLASS || kind == ClassKind.TRAIT || kind == ClassKind.ENUM_CLASS;
+    }
+
     @NotNull
     private MutableClassDescriptorLite createClassObjectDescriptorForEnum(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
+        MutableClassDescriptorLite classObjectDescriptor = createSyntheticClassObject(containing, psiClass);
+
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+
+        return classObjectDescriptor;
+    }
+
+    @NotNull
+    private MutableClassDescriptorLite createSyntheticClassObject(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
         String psiClassQualifiedName = psiClass.getQualifiedName();
         assert psiClassQualifiedName != null : "Reading java class with no qualified name";
         FqNameUnsafe fqName = new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
         ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
                 containing, ClassKind.CLASS_OBJECT, psiClass, null, this);
 
-        ResolverEnumClassObjectClassData data = new ResolverEnumClassObjectClassData(psiClass, null, classObjectDescriptor);
+        ResolverSyntheticClassObjectClassData data = new ResolverSyntheticClassObjectClassData(psiClass, null, classObjectDescriptor);
         setUpClassObjectDescriptor(containing, fqName, data, getClassObjectName(containing.getName().getName()));
 
-        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
-        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
-        
         return classObjectDescriptor;
     }
 
@@ -655,6 +678,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             ClassDescriptor clazz = resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
             if (clazz == null) {
                 throw new IllegalStateException("PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
+            }
+            if (isInnerEnum(psiClass, clazz)) {
+                ClassDescriptor classObjectDescriptor = clazz.getClassObjectDescriptor();
+                if (classObjectDescriptor == null) {
+                    throw new IllegalStateException("Class object for a class with inner enum should've been created earlier: " + clazz);
+                }
+                return classObjectDescriptor;
             }
             return clazz;
         }
@@ -1887,7 +1917,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
         if (staticMembers) {
-            return new ArrayList<ClassDescriptor>(0);
+            return resolveInnerClassesOfClassObject(owner, psiClass);
         }
 
         PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
@@ -1900,12 +1930,39 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
                 continue;
             }
-            ClassDescriptor classDescriptor = resolveClass(new FqName(innerPsiClass.getQualifiedName()),
-                                                           DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-            assert classDescriptor != null: "couldn't resolve class " + innerPsiClass.getQualifiedName();
+            if (isInnerEnum(innerPsiClass, owner)) {
+                // Inner enums will be put later into our class object
+                continue;
+            }
+            ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
             r.add(classDescriptor);
         }
         return r;
+    }
+
+    private List<ClassDescriptor> resolveInnerClassesOfClassObject(DeclarationDescriptor owner, PsiClass psiClass) {
+        if (!DescriptorUtils.isClassObject(owner)) {
+            return new ArrayList<ClassDescriptor>(0);
+        }
+
+        List<ClassDescriptor> r = new ArrayList<ClassDescriptor>(0);
+        // If we're a class object, inner enums of our parent need to be put into us
+        DeclarationDescriptor containingDeclaration = owner.getContainingDeclaration();
+        for (PsiClass innerPsiClass : psiClass.getInnerClasses()) {
+            if (isInnerEnum(innerPsiClass, containingDeclaration)) {
+                ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
+                r.add(classDescriptor);
+            }
+        }
+        return r;
+    }
+
+    private ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
+        String name = innerPsiClass.getQualifiedName();
+        assert name != null : "Inner class has no qualified name";
+        ClassDescriptor classDescriptor = resolveClass(new FqName(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        assert classDescriptor != null : "Couldn't resolve class " + name;
+        return classDescriptor;
     }
 
     @NotNull

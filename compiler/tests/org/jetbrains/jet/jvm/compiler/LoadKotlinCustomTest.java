@@ -82,6 +82,14 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
     }
 
     public void testEnumVisibility() throws Exception {
-        doTest(PATH + "/enum");
+        doTest(ENUM_DIR);
+    }
+
+    public void testInnerEnum() throws Exception {
+        doTest(ENUM_DIR);
+    }
+
+    public void testInnerEnumExistingClassObject() throws Exception {
+        doTest(ENUM_DIR);
     }
 }
