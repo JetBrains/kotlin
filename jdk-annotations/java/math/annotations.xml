@@ -1,0 +1,180 @@
+<root>
+  <!-- java.math.BigInteger -->
+  <item name='java.math.BigInteger BigInteger(int, byte[]) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger BigInteger(java.lang.String, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger BigInteger(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger BigInteger(int, java.util.Random) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger BigInteger(int, int, java.util.Random) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger probablePrime(int, java.util.Random) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger probablePrime(int, java.util.Random)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger nextProbablePrime()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger valueOf(long)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger ZERO'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger ONE'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger TEN'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger add(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger add(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger subtract(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger subtract(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger multiply(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger multiply(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger divide(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger divide(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger[] divideAndRemainder(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger[] divideAndRemainder(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger remainder(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger remainder(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger pow(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger gcd(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger gcd(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger abs()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger negate()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger mod(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger mod(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger modPow(java.math.BigInteger, java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger modPow(java.math.BigInteger, java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger modPow(java.math.BigInteger, java.math.BigInteger) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger modInverse(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger modInverse(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger shiftLeft(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger shiftRight(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger and(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger and(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger or(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger or(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger xor(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger xor(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger not()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger andNot(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger andNot(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger setBit(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger clearBit(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger flipBit(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger int compareTo(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger boolean equals(java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger min(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger min(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger max(java.math.BigInteger)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.math.BigInteger max(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.lang.String toString(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger java.lang.String toString()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigInteger byte[] toByteArray()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>
