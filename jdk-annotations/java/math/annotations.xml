@@ -498,4 +498,32 @@
   <item name='java.math.BigDecimal java.math.BigDecimal ulp()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.math.MathContext -->
+  <item name='java.math.MathContext UNLIMITED'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.MathContext DECIMAL32'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.MathContext DECIMAL64'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.MathContext DECIMAL128'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.MathContext MathContext(int, java.math.RoundingMode) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.MathContext MathContext(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.MathContext java.math.RoundingMode getRoundingMode()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.MathContext boolean equals(java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.math.MathContext java.lang.String toString()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
