@@ -264,8 +264,18 @@ public class JetCompletionContributor extends CompletionContributor {
             if (element.getParent() instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression nameExpression = (JetSimpleNameExpression)element.getParent();
 
-                // Top level completion should be executed for simple which is not in qualified expression
-                return (PsiTreeUtil.getParentOfType(nameExpression, JetQualifiedExpression.class) == null);
+                // Top level completion should be executed for simple name which is not in qualified expression
+                if (PsiTreeUtil.getParentOfType(nameExpression, JetQualifiedExpression.class) != null) {
+                    return false;
+                }
+
+                // Don't call top level completion in qualified named position of user type
+                PsiElement parent = nameExpression.getParent();
+                if (parent instanceof JetUserType && ((JetUserType) parent).getQualifier() != null) {
+                    return false;
+                }
+
+                return true;
             }
         }
 

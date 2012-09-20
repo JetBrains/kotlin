@@ -172,6 +172,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testNoTopLevelCompletionInQualifiedUserTypes() {
+        doTest();
+    }
+
     public void testOnlyScopedClassesWithoutExplicit() {
         doTest();
     }
