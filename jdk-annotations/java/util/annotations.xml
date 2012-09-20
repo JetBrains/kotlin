@@ -969,4 +969,32 @@
   <item name='java.util.BitSet java.lang.String toString()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.util.Currency -->
+  <item name='java.util.Currency java.util.Currency getInstance(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Currency java.util.Currency getInstance(java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Currency java.util.Currency getInstance(java.util.Locale)'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Currency java.util.Currency getInstance(java.util.Locale) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Currency java.lang.String getCurrencyCode()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Currency java.lang.String getSymbol()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Currency java.lang.String getSymbol(java.util.Locale)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Currency java.lang.String getSymbol(java.util.Locale) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Currency java.lang.String toString()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
