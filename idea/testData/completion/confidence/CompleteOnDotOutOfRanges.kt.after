@@ -1,3 +1,5 @@
 fun test() {
-  12.inc(). <caret>
+  12.inc().<caret>
 }
+
+// TYPE: "."

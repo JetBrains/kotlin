@@ -21,8 +21,10 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
 import java.io.File;
 
@@ -30,38 +32,49 @@ import java.io.File;
  * @author Nikolay Krasko
  */
 public class JetConfidenceTest extends LightCompletionTestCase {
+    private static final String TYPE_DIRECTIVE_PREFIX = "// TYPE:";
+
     public void testCompleteOnDotOutOfRanges() {
-        doTest(".");
+        doTest();
     }
 
     public void testImportAsConfidence() {
-        doTest("as");
-    }
-
-    public void testInModifierList() {
-        doTest("pub");
+        doTest();
     }
 
     public void testInBeginningOfFunctionLiteral() {
-        doTest("mm");
+        doTest();
     }
 
     public void testInBeginningOfFunctionLiteralInBrackets() {
-        doTest("mm");
+        doTest();
     }
 
     public void testInBlockOfFunctionLiteral() {
-        doTest("mm");
+        doTest();
+    }
+
+    public void testInModifierList() {
+        doTest();
     }
 
     public void testNoAutoCompletionForRangeOperator() {
-        doTest(".");
+        doTest();
     }
 
-    protected void doTest(String completionActivateType) {
+    protected void doTest() {
         configureByFile(getBeforeFileName());
-        type(completionActivateType + " ");
+        type(getTypeTextFromFile());
         checkResultByFile(getAfterFileName());
+    }
+
+    protected static String getTypeTextFromFile() {
+        String text = getEditor().getDocument().getText();
+
+        String[] directives = InTextDirectivesUtils.findListWithPrefix(TYPE_DIRECTIVE_PREFIX, text);
+        assertEquals("One directive with \"" + TYPE_DIRECTIVE_PREFIX +"\" expected", 1, directives.length);
+
+        return StringUtil.unquoteString(directives[0]);
     }
 
     protected String getBeforeFileName() {
