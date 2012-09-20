@@ -345,4 +345,8 @@
   <item name='java.lang.StringBuilder java.lang.String toString()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.lang.Readable -->
+  <item name='java.lang.Readable int read(java.nio.CharBuffer) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
