@@ -767,4 +767,38 @@
             <val name="value" val="&quot;fun sort(a : Array&lt;out Any?&gt;) : Unit&quot;"/>
         </annotation>
     </item>
+  <!-- java.util.Timer -->
+  <item name='java.util.Timer Timer(java.lang.String, boolean) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void schedule(java.util.TimerTask, long) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void schedule(java.util.TimerTask, java.util.Date) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void schedule(java.util.TimerTask, java.util.Date) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void schedule(java.util.TimerTask, long, long) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void schedule(java.util.TimerTask, java.util.Date, long) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void schedule(java.util.TimerTask, java.util.Date, long) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void scheduleAtFixedRate(java.util.TimerTask, long, long) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void scheduleAtFixedRate(java.util.TimerTask, java.util.Date, long) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void scheduleAtFixedRate(java.util.TimerTask, java.util.Date, long) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Timer void sched(java.util.TimerTask, long, long) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
