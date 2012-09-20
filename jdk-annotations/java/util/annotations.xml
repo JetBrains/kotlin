@@ -801,4 +801,8 @@
   <item name='java.util.Timer void sched(java.util.TimerTask, long, long) 0'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.util.Random -->
+  <item name='java.util.Random void nextBytes(byte[]) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
