@@ -19,10 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 
 /**
  * @author yole
@@ -312,6 +309,46 @@ public class PropertyGenTest extends CodegenTestCase {
             Method getBar = aClass.getDeclaredMethod("getBar");
             assertTrue((getBar.getModifiers() & Opcodes.ACC_PROTECTED) != 0);
             assertTrue((getBar.getModifiers() & Opcodes.ACC_FINAL) == 0);
+        }
+        catch (Throwable e) {
+            System.out.println(generateToText());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void testKt2677() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        loadFile("regressions/kt2677.kt");
+        final Class aClass = loadImplementationClass(generateClassesInFile(), "DerivedWeatherReport");
+        final Class bClass = aClass.getSuperclass();
+
+        try {
+            {
+                Method get = aClass.getDeclaredMethod("getForecast");
+                Type type = get.getGenericReturnType();
+                assertInstanceOf(type, ParameterizedType.class);
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
+
+                Method set = aClass.getDeclaredMethod("setForecast", (Class)parameterizedType.getRawType());
+                type = set.getGenericParameterTypes()[0];
+                parameterizedType = (ParameterizedType) type;
+                assertInstanceOf(type, ParameterizedType.class);
+                assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
+            }
+            {
+                Method get = bClass.getDeclaredMethod("getForecast");
+                Type type = get.getGenericReturnType();
+                assertInstanceOf(type, ParameterizedType.class);
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
+
+                Method set = bClass.getDeclaredMethod("setForecast", (Class)parameterizedType.getRawType());
+                type = set.getGenericParameterTypes()[0];
+                parameterizedType = (ParameterizedType) type;
+                assertInstanceOf(type, ParameterizedType.class);
+                assertEquals(String.class, parameterizedType.getActualTypeArguments()[0]);
+            }
         }
         catch (Throwable e) {
             System.out.println(generateToText());
