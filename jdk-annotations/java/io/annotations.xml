@@ -318,4 +318,48 @@
   <item name='java.io.DataOutputStream int writeUTF(java.lang.String, java.io.DataOutput) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.io.FileInputStream -->
+  <item name='java.io.FileInputStream FileInputStream(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileInputStream FileInputStream(java.io.File) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileInputStream FileInputStream(java.io.FileDescriptor) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileInputStream int read(byte[]) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileInputStream int read(byte[], int, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <!-- java.io.FileOutputStream -->
+  <item name='java.io.FileOutputStream FileOutputStream(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream FileOutputStream(java.lang.String, boolean) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream FileOutputStream(java.io.File) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream FileOutputStream(java.io.File, boolean) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream FileOutputStream(java.io.FileDescriptor) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream void write(byte[]) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream void write(byte[], int, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream java.io.FileDescriptor getFD()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.FileOutputStream java.nio.channels.FileChannel getChannel()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
