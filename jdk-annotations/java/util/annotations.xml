@@ -724,11 +724,6 @@
       <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
-  <item name='java.util.Iterable java.util.Iterator<E> iterator()'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
-    </annotation>
-  </item>
   <item name='java.util.AbstractSequentialList java.util.ListIterator<E> listIterator(int)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun listIterator(index : Int) : ListIterator&lt;E&gt;&quot;"/>
