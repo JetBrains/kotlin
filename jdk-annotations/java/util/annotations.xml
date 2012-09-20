@@ -944,4 +944,29 @@
   <item name='java.util.Scanner java.util.Scanner reset()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.util.BitSet -->
+  <item name='java.util.BitSet java.util.BitSet get(int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.BitSet void and(java.util.BitSet) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.BitSet void or(java.util.BitSet) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.BitSet void xor(java.util.BitSet) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.BitSet void andNot(java.util.BitSet) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.BitSet boolean equals(java.lang.Object) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.BitSet java.lang.Object clone()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.BitSet java.lang.String toString()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
