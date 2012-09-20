@@ -177,4 +177,319 @@
   <item name='java.math.BigInteger byte[] toByteArray()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.math.BigDecimal -->
+  <item name='java.math.BigDecimal ONE'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal TEN'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(char[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(char[], int, int, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(char[], int, int, java.math.MathContext) 3'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(char[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(char[], java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(char[], java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.lang.String, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.lang.String, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(double, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.math.BigInteger) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.math.BigInteger, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.math.BigInteger, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.math.BigInteger, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.math.BigInteger, int, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(java.math.BigInteger, int, java.math.MathContext) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(int, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal BigDecimal(long, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal valueOf(long, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal valueOf(long)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal valueOf(double)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal add(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal add(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal add(java.math.BigDecimal, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal add(java.math.BigDecimal, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal add(java.math.BigDecimal, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal subtract(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal subtract(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal subtract(java.math.BigDecimal, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal subtract(java.math.BigDecimal, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal subtract(java.math.BigDecimal, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal multiply(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal multiply(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal multiply(java.math.BigDecimal, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal multiply(java.math.BigDecimal, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal multiply(java.math.BigDecimal, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, int, java.math.RoundingMode)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, int, java.math.RoundingMode) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, int, java.math.RoundingMode) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, java.math.RoundingMode) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, java.math.RoundingMode) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divide(java.math.BigDecimal, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divideToIntegralValue(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divideToIntegralValue(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divideToIntegralValue(java.math.BigDecimal, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divideToIntegralValue(java.math.BigDecimal, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal divideToIntegralValue(java.math.BigDecimal, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal remainder(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal remainder(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal remainder(java.math.BigDecimal, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal remainder(java.math.BigDecimal, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal remainder(java.math.BigDecimal, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal[] divideAndRemainder(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun divideAndRemainder(divisor : BigDecimal) : Array&lt;out BigDecimal&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal[] divideAndRemainder(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal[] divideAndRemainder(java.math.BigDecimal, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun divideAndRemainder(divisor : BigDecimal, mc : MathContext) : Array&lt;out BigDecimal&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal[] divideAndRemainder(java.math.BigDecimal, java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal[] divideAndRemainder(java.math.BigDecimal, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal pow(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal pow(int, java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal pow(int, java.math.MathContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal abs()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal abs(java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal abs(java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal negate()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal negate(java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal negate(java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal plus()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal plus(java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal plus(java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigInteger unscaledValue()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal round(java.math.MathContext)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal round(java.math.MathContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal setScale(int, java.math.RoundingMode)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal setScale(int, java.math.RoundingMode) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal setScale(int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal movePointLeft(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal movePointRight(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal scaleByPowerOfTen(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal stripTrailingZeros()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal int compareTo(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal boolean equals(java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal min(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal min(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal max(java.math.BigDecimal)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal max(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.lang.String toString()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.lang.String toEngineeringString()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.lang.String toPlainString()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigInteger toBigInteger()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigInteger toBigIntegerExact()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal.LongOverflow void check(java.math.BigDecimal) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.math.BigDecimal java.math.BigDecimal ulp()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
