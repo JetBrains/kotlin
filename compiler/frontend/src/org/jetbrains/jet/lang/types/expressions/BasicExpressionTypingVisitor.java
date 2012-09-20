@@ -974,7 +974,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
             JetType compareToReturnType = getTypeForBinaryCall(context.scope, Name.identifier("compareTo"), context, expression);
-            if (compareToReturnType != null) {
+            if (compareToReturnType != null && !ErrorUtils.isErrorType(compareToReturnType)) {
                 TypeConstructor constructor = compareToReturnType.getConstructor();
                 JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
                 TypeConstructor intTypeConstructor = standardLibrary.getInt().getTypeConstructor();
