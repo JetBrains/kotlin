@@ -20,14 +20,15 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.correctElementType;
 
 /**
  * @author alex.tkachman
@@ -44,7 +45,7 @@ public class ArrayGet implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-        Type type = CodegenUtil.correctElementType(receiver.type);
+        Type type = correctElementType(receiver.type);
 
         codegen.gen(arguments.get(0), Type.INT_TYPE);
 

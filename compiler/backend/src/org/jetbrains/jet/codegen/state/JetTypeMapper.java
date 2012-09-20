@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -658,7 +659,7 @@ public class JetTypeMapper extends BindingTraceAware {
                                ((ClassDescriptor) parentDescriptor).getKind() == ClassKind.ANNOTATION_CLASS;
         String name = isAnnotation ? descriptor.getName().getName() : PropertyCodegen.getterName(descriptor.getName());
 
-        // TODO: do not generate generics if not needed
+        // TODO: do not genClassOrObject generics if not needed
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
 
         writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);

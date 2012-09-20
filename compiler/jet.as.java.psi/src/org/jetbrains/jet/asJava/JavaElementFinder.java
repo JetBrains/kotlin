@@ -29,7 +29,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
@@ -40,6 +39,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
+
+import static org.jetbrains.jet.codegen.CodegenUtil.getLocalNameForObject;
 
 public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacadeKotlinHacks.KotlinFinderMarker {
     private final Project project;
@@ -166,7 +167,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         if (given != null) return given;
 
         if (declaration instanceof JetObjectDeclaration) {
-            return CodegenUtil.getLocalNameForObject((JetObjectDeclaration) declaration);
+            return getLocalNameForObject((JetObjectDeclaration) declaration);
         }
 
         return null;

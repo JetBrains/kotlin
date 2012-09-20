@@ -39,6 +39,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isIntPrimitive;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
 /**
@@ -61,7 +63,7 @@ public abstract class StackValue {
             instructionAdapter.aconst(null);
         }
         else {
-            Type boxed = CodegenUtil.boxType(type);
+            Type boxed = boxType(type);
             instructionAdapter.invokestatic(boxed.getInternalName(), "valueOf", "(" + type.getDescriptor() + ")" + boxed.getDescriptor());
         }
     }
@@ -76,7 +78,7 @@ public abstract class StackValue {
      * JVM stack after this value was generated.
      *
      * @param type  the type as which the value should be put
-     * @param v     the visitor used to generate the instructions
+     * @param v     the visitor used to genClassOrObject the instructions
      * @param depth the number of new values put onto the stack
      */
     protected void moveToTopOfStack(Type type, InstructionAdapter v, int depth) {
@@ -171,7 +173,7 @@ public abstract class StackValue {
 
     private static void box(final Type type, final Type toType, InstructionAdapter v) {
         // TODO handle toType correctly
-        if (type == Type.INT_TYPE || (CodegenUtil.isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
+        if (type == Type.INT_TYPE || (isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
         }
         else if (type == Type.BOOLEAN_TYPE) {
@@ -614,7 +616,7 @@ public abstract class StackValue {
 
         public ArrayElement(Type type, boolean unbox) {
             super(type);
-            this.boxed = unbox ? CodegenUtil.boxType(type) : type;
+            this.boxed = unbox ? boxType(type) : type;
         }
 
         @Override

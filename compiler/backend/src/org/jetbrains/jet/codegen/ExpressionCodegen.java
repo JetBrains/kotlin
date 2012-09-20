@@ -61,6 +61,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -117,7 +118,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
         final CodegenContext contextForInners = context.intoClass(classDescriptor, OwnerKind.IMPLEMENTATION, state);
-        genInners(state, objectDeclaration, contextForInners);
+        contextForInners.genInners(state, objectDeclaration);
 
         final CodegenContext objectContext = context.intoAnonymousClass(classDescriptor, this);
         objectContext.copyAccessors(contextForInners.getAccessors());
@@ -994,7 +995,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.constant(constantValue.toString(), type);
         }
         else {
-            generateStringBuilderConstructor(v);
+            genStringBuilderConstructor(v);
             for (JetStringTemplateEntry entry : entries) {
                 if (entry instanceof JetStringTemplateEntryWithExpression) {
                     invokeAppend(entry.getExpression());
@@ -1004,7 +1005,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                   ? ((JetEscapeStringTemplateEntry) entry).getUnescapedValue()
                                   : entry.getText();
                     v.aconst(text);
-                    invokeAppendMethod(v, JAVA_STRING_TYPE);
+                    genInvokeAppendMethod(v, JAVA_STRING_TYPE);
                 }
             }
             v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
@@ -1665,9 +1666,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
 
-        final int flag = CodegenUtil.getVisibilityAccessFlag(propertyDescriptor) |
-                         (getter == null ? 0 : CodegenUtil.getVisibilityAccessFlag(getter)) |
-                         (setter == null ? 0 : CodegenUtil.getVisibilityAccessFlag(setter));
+        final int flag = getVisibilityAccessFlag(propertyDescriptor) |
+                         (getter == null ? 0 : getVisibilityAccessFlag(getter)) |
+                         (setter == null ? 0 : getVisibilityAccessFlag(setter));
 
         if ((flag & ACC_PRIVATE) == 0) {
             return propertyDescriptor;
@@ -1677,7 +1678,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private FunctionDescriptor accessableFunctionDescriptor(FunctionDescriptor fd) {
-        final int flag = CodegenUtil.getVisibilityAccessFlag(fd);
+        final int flag = getVisibilityAccessFlag(fd);
         if ((flag & ACC_PRIVATE) == 0) {
             return fd;
         }
@@ -2261,7 +2262,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             invokeFunctionByReference(expression.getOperationReference());
             if (inverted) {
-                invertBoolean(v);
+                genInvertBoolean(v);
             }
         }
         return StackValue.onStack(Type.BOOLEAN_TYPE);
@@ -2302,7 +2303,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         v.and(Type.INT_TYPE);
         if (inverted) {
-            invertBoolean(v);
+            genInvertBoolean(v);
         }
     }
 
@@ -2362,10 +2363,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (isPrimitive(leftType)) // both are primitive
         {
-            return generateEqualsForExpressionsOnStack(v, opToken, leftType, rightType, false, false);
+            return genEqualsForExpressionsOnStack(v, opToken, leftType, rightType, false, false);
         }
 
-        return generateEqualsForExpressionsOnStack(v, opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
+        return
+                genEqualsForExpressionsOnStack(v, opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
     }
 
     private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {
@@ -2514,7 +2516,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         Type exprType = expressionType(expr);
         gen(expr, exprType);
-        invokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
+        genInvokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType);
     }
 
     @Nullable
@@ -3187,10 +3189,10 @@ The "returned" value of try expression with no finally is either the last expres
             boolean patternIsNullable = false;
             JetType condJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, patternExpression);
             Type condType;
-            if (CodegenUtil.isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
+            if (isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
                 assert condJetType != null;
                 condType = asmType(condJetType);
-                if (!(CodegenUtil.isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
+                if (!(isNumberPrimitive(condType) || condType.getSort() == Type.BOOLEAN)) {
                     subjectType = boxType(subjectType);
                     expressionToMatch.coerceTo(subjectType, v);
                 }
@@ -3200,8 +3202,8 @@ The "returned" value of try expression with no finally is either the last expres
                 patternIsNullable = condJetType != null && condJetType.isNullable();
             }
             gen(patternExpression, condType);
-            return generateEqualsForExpressionsOnStack(v, JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable,
-                                                       patternIsNullable);
+            return genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable,
+                                                  patternIsNullable);
         }
         else {
             return gen(patternExpression);
@@ -3326,7 +3328,7 @@ The "returned" value of try expression with no finally is either the last expres
                 //invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
                 invokeFunctionByReference(operationReference);
                 if (inverted) {
-                    invertBoolean(v);
+                    genInvertBoolean(v);
                 }
             }
             return StackValue.onStack(Type.BOOLEAN_TYPE);

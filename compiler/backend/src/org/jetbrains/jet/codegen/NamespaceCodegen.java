@@ -128,19 +128,17 @@ public class NamespaceCodegen extends GenerationStateAware {
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                CodegenUtil.generateFunctionOrProperty(
-                        state, (JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
+                context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
             }
             else if (declaration instanceof JetNamedFunction) {
                 if (!multiFile) {
                     final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                    CodegenUtil.generateFunctionOrProperty(
-                            state, (JetTypeParameterListOwner) declaration, context, v.getClassBuilder());
+                    context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
                 final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                CodegenUtil.generate(state, context, (JetClassOrObject) declaration);
+                context.genClassOrObject(state, (JetClassOrObject) declaration);
             }
             else if (declaration instanceof JetScript) {
                 state.getScriptCodegen().generate((JetScript) declaration);
@@ -176,16 +174,12 @@ public class NamespaceCodegen extends GenerationStateAware {
                         {
                             final CodegenContext context =
                                     CodegenContext.STATIC.intoNamespace(descriptor);
-                            CodegenUtil
-                                    .generateFunctionOrProperty(state, (JetTypeParameterListOwner) declaration,
-                                                                context, builder);
+                            context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, builder);
                         }
                         {
                             final CodegenContext context =
                                     CodegenContext.STATIC.intoNamespacePart(className, descriptor);
-                            CodegenUtil
-                                    .generateFunctionOrProperty(state, (JetTypeParameterListOwner) declaration,
-                                                                context, v.getClassBuilder());
+                            context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                         }
                     }
                 }

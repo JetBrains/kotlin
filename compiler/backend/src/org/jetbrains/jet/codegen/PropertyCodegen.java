@@ -42,6 +42,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.BitSet;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.genStubThrow;
+import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -214,7 +216,7 @@ public class PropertyCodegen extends GenerationStateAware {
             if (propertyDescriptor.getModality() != Modality.ABSTRACT) {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    StubCodegen.generateStubThrow(mv);
+                    genStubThrow(mv);
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
@@ -316,7 +318,7 @@ public class PropertyCodegen extends GenerationStateAware {
             if (propertyDescriptor.getModality() != Modality.ABSTRACT) {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    StubCodegen.generateStubThrow(mv);
+                    genStubThrow(mv);
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);

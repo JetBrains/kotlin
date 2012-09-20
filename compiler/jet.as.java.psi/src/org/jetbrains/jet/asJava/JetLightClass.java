@@ -266,7 +266,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     public static PsiMethod wrapMethod(@NotNull JetNamedFunction function) {
         //noinspection unchecked
         if (PsiTreeUtil.getParentOfType(function, JetFunction.class, JetProperty.class) != null) {
-            // Don't generate method wrappers for internal declarations. Their classes are not generated during calcStub
+            // Don't genClassOrObject method wrappers for internal declarations. Their classes are not generated during calcStub
             // with ClassBuilderMode.SIGNATURES mode, and this produces "Class not found exception" in getDelegate()
             return null;
         }

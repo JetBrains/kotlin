@@ -19,8 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -43,7 +41,6 @@ import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
@@ -61,6 +58,7 @@ import org.jetbrains.jet.utils.BitSetUtils;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -394,7 +392,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateFunctionsForDataClasses();
 
-        generateClosureFields(context.closure, v, state.getTypeMapper());
+        genClosureFields(context.closure, v, state.getTypeMapper());
     }
 
     private List<PropertyDescriptor> getDataProperties() {
@@ -451,7 +449,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             genPropertyOnStack(iv, propertyDescriptor, 2);
 
             if (asmType.getSort() == Type.ARRAY) {
-                final Type elementType = CodegenUtil.correctElementType(asmType);
+                final Type elementType = correctElementType(asmType);
                 if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
                     iv.invokestatic("java/util/Arrays", "equals", "([Ljava/lang/Object;[Ljava/lang/Object;)Z");
                 }
@@ -461,7 +459,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
             else {
                 final StackValue value =
-                        generateEqualsForExpressionsOnStack(iv, JetTokens.EQEQ, asmType, asmType, type.isNullable(), type.isNullable());
+                        genEqualsForExpressionsOnStack(iv, JetTokens.EQEQ, asmType, asmType, type.isNullable(), type.isNullable());
                 value.put(Type.BOOLEAN_TYPE, iv);
             }
 
@@ -530,7 +528,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final InstructionAdapter iv = new InstructionAdapter(mv);
 
         mv.visitCode();
-        generateStringBuilderConstructor(iv);
+        genStringBuilderConstructor(iv);
 
         boolean first = true;
         for (PropertyDescriptor propertyDescriptor : properties) {
@@ -541,7 +539,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             else {
                 iv.aconst(", " + propertyDescriptor.getName().getName()+"=");
             }
-            invokeAppendMethod(iv, JAVA_STRING_TYPE);
+            genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
             Type type = genPropertyOnStack(iv, propertyDescriptor, 0);
 
@@ -558,11 +556,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                 }
             }
-            invokeAppendMethod(iv, type);
+            genInvokeAppendMethod(iv, type);
         }
 
         iv.aconst(")");
-        invokeAppendMethod(iv, JAVA_STRING_TYPE);
+        genInvokeAppendMethod(iv, JAVA_STRING_TYPE);
 
         iv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
         iv.areturn(JAVA_STRING_TYPE);
@@ -673,7 +671,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(null, ACC_BRIDGE | ACC_SYNTHETIC | ACC_STATIC, bridge.getName().getName(),
                                            method.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                StubCodegen.generateStubCode(mv);
+                genStubCode(mv);
             }
             else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
@@ -718,7 +716,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                               original,
                                                               getter.getVisibility());
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    StubCodegen.generateStubCode(mv);
+                    genStubCode(mv);
                 }
                 else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                     mv.visitCode();
@@ -753,7 +751,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                               original,
                                                               setter.getVisibility());
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    StubCodegen.generateStubCode(mv);
+                    genStubCode(mv);
                 }
                 else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                     mv.visitCode();
@@ -795,7 +793,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         staticInitializerChunks.add(new CodeChunk() {
             @Override
             public void generate(InstructionAdapter iv) {
-                initSingletonField(classAsmType, iv);
+                genInitSingletonField(classAsmType, iv);
             }
         });
     }
@@ -841,7 +839,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         writeParameterAnnotations(constructorDescriptor, constructorMethod, hasThis0, mv);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
+            genStubCode(mv);
             return;
         }
 
@@ -1238,7 +1236,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 aw.visitEnd();
 
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    StubCodegen.generateStubCode(mv);
+                    genStubCode(mv);
                 }
                 else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                     mv.visitCode();

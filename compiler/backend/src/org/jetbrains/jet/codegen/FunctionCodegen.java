@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -130,7 +131,7 @@ public class FunctionCodegen extends GenerationStateAware {
             }
 
             if (!isAbstract && state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                StubCodegen.generateStubCode(mv);
+                genStubCode(mv);
             }
 
 
@@ -258,7 +259,7 @@ public class FunctionCodegen extends GenerationStateAware {
                         Type sharedVarType = state.getTypeMapper().getSharedVarType(parameter);
                         mv.visitLocalVariable(parameterName, type.getDescriptor(), null, methodBegin, divideLabel, k);
 
-                        String nameForSharedVar = generateTmpVariableName(localVariableNames);
+                        String nameForSharedVar = createTmpVariableName(localVariableNames);
                         localVariableNames.add(nameForSharedVar);
 
                         mv.visitLocalVariable(nameForSharedVar, sharedVarType.getDescriptor(), null, divideLabel, methodEnd, k);
@@ -516,7 +517,7 @@ public class FunctionCodegen extends GenerationStateAware {
                                              descriptor, null, null);
         InstructionAdapter iv = new InstructionAdapter(mv);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
+            genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             generateDefaultImpl(owner, state, jvmSignature, functionDescriptor, kind, receiverParameter, hasReceiver, isStatic,
@@ -684,7 +685,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
+            genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
@@ -738,7 +739,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         final MethodVisitor mv = v.newMethod(null, flags, method.getName(), method.getDescriptor(), null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
+            genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 public class CompilationException extends RuntimeException {
     private final PsiElement element;
 
-    CompilationException(@NotNull String message, @Nullable Throwable cause, @NotNull PsiElement element) {
+    public CompilationException(@NotNull String message, @Nullable Throwable cause, @NotNull PsiElement element) {
         super(message, cause);
         this.element = element;
     }

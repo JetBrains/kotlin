@@ -202,7 +202,7 @@ public class ScriptCodegen extends GenerationStateAware {
 
     private void genMembers(@NotNull JetScript scriptDeclaration, @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder) {
         for (JetDeclaration decl : scriptDeclaration.getDeclarations()) {
-            CodegenUtil.generateFunctionOrProperty(state, (JetTypeParameterListOwner) decl, context, classBuilder);
+            context.genFunctionOrProperty(state, (JetTypeParameterListOwner) decl, classBuilder);
         }
     }
 
