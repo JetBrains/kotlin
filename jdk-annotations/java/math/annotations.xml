@@ -526,4 +526,8 @@
   <item name='java.math.MathContext java.lang.String toString()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.math.RoundingMode -->
+  <item name='java.math.RoundingMode java.math.RoundingMode valueOf(int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
