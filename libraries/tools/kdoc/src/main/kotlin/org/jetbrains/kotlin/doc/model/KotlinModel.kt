@@ -212,7 +212,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
         sourceDirs.map { file -> file.getCanonicalPath()!! }
 
         fun relativePath(psiFile: PsiFile): String {
-            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()).getCanonicalFile()!!
+            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()!!).getCanonicalFile()!!
             val filePath = file.getPath()!!
             for (sourceDirPath in normalizedSourceDirs) {
                 if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {

@@ -75,7 +75,7 @@ fun join(x : Int, vararg a : String) : String {
     for (s in a) {
         b.append(s)
     }
-    return b.toString()!!
+    return b.toString()
 }
 
 fun <T> joinG(x : Int, vararg a : T) : String {
@@ -83,7 +83,7 @@ fun <T> joinG(x : Int, vararg a : T) : String {
     for (s in a) {
         b.append(s)
     }
-    return b.toString()!!
+    return b.toString()
 }
 
 fun <T> joinT(<!UNUSED_PARAMETER!>x<!> : Int, vararg <!UNUSED_PARAMETER!>a<!> : T) : T? {

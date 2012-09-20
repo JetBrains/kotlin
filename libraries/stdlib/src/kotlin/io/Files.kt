@@ -207,6 +207,6 @@ fun File.readLines(charset : String = "UTF-8") : List<String> {
  */
 fun File.listFiles(filter : (file : File) -> Boolean) : Array<File>? = listFiles(
     object : FileFilter {
-        override fun accept(file: File?) = filter(file!!)
+        override fun accept(file: File) = filter(file)
     }
 ) as Array<File>?

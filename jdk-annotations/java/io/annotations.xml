@@ -1,0 +1,127 @@
+<root>
+    <item name='java.io.File separator'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File pathSeparator'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File File(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File File(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File File(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File File(java.io.File, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File File(java.io.File, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File File(java.net.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.lang.String getParent()'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File java.io.File getParentFile()'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File java.lang.String getPath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.lang.String getAbsolutePath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.io.File getAbsoluteFile()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.lang.String getCanonicalPath()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.io.File getCanonicalFile()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File @java.lang.Deprecated java.net.URL toURL()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.net.URI toURI()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.lang.String[] list()'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun list() : Array&lt;String&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.io.File java.lang.String[] list(java.io.FilenameFilter) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File java.lang.String[] list(java.io.FilenameFilter)'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun list(filter : FilenameFilter?) : Array&lt;String&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.io.File java.io.File[] listFiles()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun listFiles() : Array&lt;File&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.io.File java.io.File[] listFiles(java.io.FilenameFilter)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun listFiles(filter : FilenameFilter?) : Array&lt;File&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.io.File java.io.File[] listFiles(java.io.FileFilter)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun listFiles(filter : FileFilter?) : Array&lt;File&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.io.File boolean renameTo(java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.io.File[] listRoots()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun listRoots() : Array&lt;File&gt;?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String, java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String, java.io.File) 1'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String, java.io.File) 2'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String, java.io.File)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.File java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.FileFilter boolean accept(java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.FilenameFilter boolean accept(java.io.File, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.io.FilenameFilter boolean accept(java.io.File, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

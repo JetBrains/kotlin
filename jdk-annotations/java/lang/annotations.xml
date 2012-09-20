@@ -14,14 +14,335 @@
       <val name="value" val="&quot;fun currentThread() : Thread&quot;"/>
     </annotation>
   </item>
+  <item name='java.lang.System java.lang.String setProperty(java.lang.String, java.lang.String)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun setProperty(key : String, value : String) : String?&quot;"/>
+    </annotation>
+  </item>
+  <!-- CharSequence -->
   <item name='java.lang.CharSequence java.lang.String toString()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun toString() : String&quot;"/>
     </annotation>
   </item>
-    <item name='java.lang.System java.lang.String setProperty(java.lang.String, java.lang.String)'>
-        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun setProperty(key : String, value : String) : String?&quot;"/>
-        </annotation>
-    </item>
+  <item name='java.lang.CharSequence java.lang.CharSequence subSequence(int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <!-- AbstractStringBuilder -->
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.Object)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.Object) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.StringBuffer) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.StringBuffer)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.CharSequence)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.CharSequence) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.CharSequence, int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(java.lang.CharSequence, int, int) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(char[]) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(char[])'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(char[], int, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(char[], int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(boolean)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(char)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(long)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(float)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder append(double)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder delete(int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder appendCodePoint(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder deleteCharAt(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder replace(int, int, java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder replace(int, int, java.lang.String) 2'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.String substring(int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.CharSequence subSequence(int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.String substring(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, char[], int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, char[], int, int) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.Object)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.Object) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.String) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, char[]) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, char[])'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.CharSequence)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.CharSequence) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.CharSequence, int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, java.lang.CharSequence, int, int) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, boolean)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, char)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, long)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, float)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder insert(int, double)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder int indexOf(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder int indexOf(java.lang.String, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder int lastIndexOf(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder int lastIndexOf(java.lang.String, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.AbstractStringBuilder reverse()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.AbstractStringBuilder java.lang.String toString()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <!-- StringBuilder -->
+  <item name='java.lang.StringBuilder StringBuilder(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder StringBuilder(java.lang.CharSequence) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.Object) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.Object)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.StringBuilder)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.StringBuilder) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.StringBuffer)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.StringBuffer) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.CharSequence)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.CharSequence) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.CharSequence, int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(java.lang.CharSequence, int, int) 0'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(char[]) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(char[])'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(char[], int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(char[], int, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(boolean)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(char)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(long)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(float)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder append(double)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder appendCodePoint(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder delete(int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder deleteCharAt(int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder replace(int, int, java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder replace(int, int, java.lang.String) 2'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, char[], int, int) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, char[], int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.Object)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.Object) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, char[]) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, char[])'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.CharSequence)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.CharSequence) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.CharSequence, int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.CharSequence, int, int) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, java.lang.String) 1'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, boolean)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, char)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, int)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, long)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, float)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder insert(int, double)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder int indexOf(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder int indexOf(java.lang.String, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder int lastIndexOf(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder int lastIndexOf(java.lang.String, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.StringBuilder reverse()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.StringBuilder java.lang.String toString()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
