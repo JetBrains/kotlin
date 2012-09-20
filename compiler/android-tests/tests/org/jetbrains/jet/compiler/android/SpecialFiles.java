@@ -122,6 +122,8 @@ public class SpecialFiles {
         excludedFiles.add("kt1779.kt"); // Bug KT-2202 - private fun tryToComputeNext() in AbstractIterator.kt
         excludedFiles.add("kt344.jet"); // Bug KT-2251
         excludedFiles.add("kt529.kt");  // Bug
+
+        excludedFiles.add("noClassObjectForJavaClass.kt");
     }
 
     private SpecialFiles() {
