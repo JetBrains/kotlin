@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -61,7 +62,7 @@ public final class TipsManager {
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
             JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
 
-            if (expressionType != null && resolutionScope != null) {
+            if (expressionType != null && resolutionScope != null && !ErrorUtils.isErrorType(expressionType)) {
                 if (!(expressionType instanceof NamespaceType)) {
                     ExpressionReceiver receiverDescriptor = new ExpressionReceiver(receiverExpression, expressionType);
                     Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();

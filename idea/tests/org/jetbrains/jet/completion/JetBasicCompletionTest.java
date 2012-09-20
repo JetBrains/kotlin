@@ -56,6 +56,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testDoNotCompleteForErrorReceivers() {
+        doTest();
+    }
+
     public void testExtendClassName() {
         doTest();
     }
