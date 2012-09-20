@@ -89,7 +89,7 @@ public abstract class ClassBodyCodegen extends GenerationStateAware {
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-            state.getMemberCodegen().generateFunctionOrProperty((JetTypeParameterListOwner) declaration, context, v);
+            CodegenUtil.generateFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, context, v);
         }
     }
 

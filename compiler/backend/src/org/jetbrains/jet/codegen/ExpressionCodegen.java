@@ -116,8 +116,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //noinspection SuspiciousMethodCalls
         final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
-        final CodegenContext objectContext = context.intoAnonymousClass(classDescriptor, this);
+        final CodegenContext contextForInners = context.intoClass(classDescriptor, OwnerKind.IMPLEMENTATION, state);
+        genInners(state, objectDeclaration, contextForInners);
 
+        final CodegenContext objectContext = context.intoAnonymousClass(classDescriptor, this);
+        objectContext.copyAccessors(contextForInners.getAccessors());
         new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state).generate();
 
         return closure;

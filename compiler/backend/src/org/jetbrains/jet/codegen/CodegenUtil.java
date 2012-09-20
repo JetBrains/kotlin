@@ -29,18 +29,20 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
+import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassObject;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -49,6 +51,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -565,5 +568,110 @@ public class CodegenUtil {
         }
         v.neg(expectedType);
         return expectedType;
+    }
+
+    public static void generate(GenerationState state, CodegenContext context, JetClassOrObject aClass) {
+        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
+
+        if (descriptor == null || ErrorUtils.isError(descriptor) || descriptor.getName().equals(JetPsiUtil.NO_NAME_PROVIDED)) {
+            if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
+                throw new IllegalStateException(
+                        "Generating bad descriptor in ClassBuilderMode = " + state.getClassBuilderMode() + ": " + descriptor);
+            }
+            return;
+        }
+
+        ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor);
+
+        final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) {
+            // Outer class implementation must happen prior inner classes so we get proper scoping tree in JetLightClass's delegate
+            // The same code is present below for the case when we generate real bytecode. This is because the order should be
+            // different for the case when we compute closures
+            generateImplementation(state, context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.getAccessors(), classBuilder);
+        }
+
+        genInners(state, aClass, contextForInners);
+
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
+            generateImplementation(state, context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.getAccessors(), classBuilder);
+        }
+
+        classBuilder.done();
+    }
+
+    public static void genInners(GenerationState state, JetClassOrObject aClass, CodegenContext contextForInners) {
+        for (JetDeclaration declaration : aClass.getDeclarations()) {
+            if (declaration instanceof JetClass) {
+                if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(
+                        state.getBindingContext(), (JetEnumEntry) declaration)) {
+                    continue;
+                }
+
+                generate(state, contextForInners, (JetClass) declaration);
+            }
+            else if (declaration instanceof JetClassObject) {
+                generate(state, contextForInners, ((JetClassObject) declaration).getObjectDeclaration());
+            }
+            else if (declaration instanceof JetObjectDeclaration) {
+                generate(state, contextForInners, (JetObjectDeclaration) declaration);
+            }
+        }
+    }
+
+    private static void generateImplementation(
+            GenerationState state,
+            CodegenContext context,
+            JetClassOrObject aClass,
+            OwnerKind kind,
+            Map<DeclarationDescriptor, DeclarationDescriptor> accessors,
+            ClassBuilder classBuilder
+    ) {
+        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
+        CodegenContext classContext = context.intoClass(descriptor, kind, state);
+        classContext.copyAccessors(accessors);
+
+        new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
+
+        if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
+            ClassBuilder traitBuilder = state.getFactory().forTraitImplementation(descriptor, state);
+            new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state)
+                    .generate();
+            traitBuilder.done();
+        }
+    }
+
+    public static void generateFunctionOrProperty(
+            GenerationState state,
+            @NotNull JetTypeParameterListOwner functionOrProperty,
+            @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder
+    ) {
+        FunctionCodegen functionCodegen = new FunctionCodegen(context, classBuilder, state);
+        if (functionOrProperty instanceof JetNamedFunction) {
+            try {
+                functionCodegen.gen((JetNamedFunction) functionOrProperty);
+            }
+            catch (CompilationException e) {
+                throw e;
+            }
+            catch (Exception e) {
+                throw new CompilationException("Failed to generate function " + functionOrProperty.getName(), e, functionOrProperty);
+            }
+        }
+        else if (functionOrProperty instanceof JetProperty) {
+            try {
+                new PropertyCodegen(context, classBuilder, functionCodegen).gen((JetProperty) functionOrProperty);
+            }
+            catch (CompilationException e) {
+                throw e;
+            }
+            catch (Exception e) {
+                throw new CompilationException("Failed to generate property " + functionOrProperty.getName(), e, functionOrProperty);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Unknown parameter: " + functionOrProperty);
+        }
     }
 }
