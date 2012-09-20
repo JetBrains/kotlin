@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.completion;
 
-import com.intellij.codeInsight.completion.CompletionCharFilter;
 import com.intellij.codeInsight.lookup.CharFilter;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.psi.PsiFile;
@@ -24,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 public class JetReferenceCharFilter extends CharFilter {
-    private final static CharFilter delegate = new CompletionCharFilter();
-
     @Override
     @Nullable
     public Result acceptChar(char c, int prefixLength, Lookup lookup) {
@@ -34,10 +31,13 @@ public class JetReferenceCharFilter extends CharFilter {
             return null;
         }
 
-        if (c == '.') {
-            return Result.HIDE_LOOKUP;
+        if (c == '.' && prefixLength == 0 && !lookup.isSelectionTouched()) {
+            int caret = lookup.getEditor().getCaretModel().getOffset();
+            if (caret > 0 && lookup.getEditor().getDocument().getCharsSequence().charAt(caret - 1) == '.') {
+                return Result.HIDE_LOOKUP;
+            }
         }
 
-        return delegate.acceptChar(c, prefixLength, lookup);
+        return null;
     }
 }

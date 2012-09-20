@@ -30,6 +30,9 @@ import java.io.File;
  * @author Nikolay Krasko
  */
 public class JetConfidenceTest extends LightCompletionTestCase {
+    public void testCompleteOnDotOutOfRanges() {
+        doTest(".");
+    }
 
     public void testImportAsConfidence() {
         doTest("as");
@@ -49,6 +52,10 @@ public class JetConfidenceTest extends LightCompletionTestCase {
 
     public void testInBlockOfFunctionLiteral() {
         doTest("mm");
+    }
+
+    public void testNoAutoCompletionForRangeOperator() {
+        doTest(".");
     }
 
     protected void doTest(String completionActivateType) {
