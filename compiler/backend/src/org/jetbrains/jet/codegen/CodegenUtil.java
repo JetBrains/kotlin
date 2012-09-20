@@ -28,7 +28,6 @@ import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
@@ -51,7 +50,8 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
  * @author abreslav
@@ -380,21 +380,23 @@ public class CodegenUtil {
         v.invokespecial("java/lang/StringBuilder", "<init>", "()V");
     }
 
-    public static void invokeAppendMethod(InstructionAdapter v, Type exprType) {
-        Method appendDescriptor = new Method("append", getType(StringBuilder.class),
-                                             new Type[] {exprType.getSort() == Type.OBJECT ? (exprType.equals(JAVA_STRING_TYPE) ? JAVA_STRING_TYPE : OBJECT_TYPE) : exprType});
-        v.invokevirtual("java/lang/StringBuilder", "append", appendDescriptor.getDescriptor());
+    public static void invokeAppendMethod(InstructionAdapter v, Type type) {
+        type = getStringValueOfOrStringBuilderAppendType(type);
+        v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;");
     }
 
     public static StackValue genToString(InstructionAdapter v, StackValue receiver) {
-        final int sort = receiver.type.getSort();
-
-        final Type type = sort == Type.OBJECT || sort == Type.ARRAY
-               ? AsmTypeConstants.OBJECT_TYPE
-               : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : receiver.type;
+        final Type type = getStringValueOfOrStringBuilderAppendType(receiver.type);
         receiver.put(type, v);
         v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;");
         return StackValue.onStack(JAVA_STRING_TYPE);
+    }
+
+    private static Type getStringValueOfOrStringBuilderAppendType(Type type) {
+        final int sort = type.getSort();
+        return sort == Type.OBJECT || sort == Type.ARRAY
+                   ? AsmTypeConstants.OBJECT_TYPE
+                   : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
     }
 
     static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type) {
