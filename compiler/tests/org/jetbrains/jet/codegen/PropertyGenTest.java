@@ -280,6 +280,11 @@ public class PropertyGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt2509.kt");
     }
 
+    public void testKt2786() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2786.kt");
+    }
+
     public void testKt1528() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxMultiFile("regressions/kt1528_1.kt", "regressions/kt1528_3.kt");

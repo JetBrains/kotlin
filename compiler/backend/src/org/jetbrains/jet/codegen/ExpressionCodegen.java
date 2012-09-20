@@ -1510,9 +1510,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         boolean overridesTrait = isOverrideForTrait(propertyDescriptor);
         boolean isFakeOverride = propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+        boolean isDelegate = propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
         PropertyDescriptor initialDescriptor = propertyDescriptor;
         propertyDescriptor = initialDescriptor.getOriginal();
         boolean isInsideClass = !isFakeOverride &&
+                                !isDelegate &&
                                 (((containingDeclaration == null && !context.hasThisDescriptor() ||
                                    context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
                                   (context.getParentContext() instanceof NamespaceContext) &&
