@@ -111,7 +111,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
         System.`in`?.reset()
     }
 
-    public override fun read(b: ByteArray?): Int {
+    public override fun read(b: ByteArray): Int {
         return System.`in`?.read(b) ?: -1
     }
 
@@ -135,7 +135,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
         return System.`in`?.markSupported() ?: false
     }
 
-    public override fun read(b: ByteArray?, off: Int, len: Int): Int {
+    public override fun read(b: ByteArray, off: Int, len: Int): Int {
         return System.`in`?.read(b, off, len) ?: -1
     }
 }))
