@@ -20,6 +20,7 @@ import com.intellij.codeInsight.BaseExternalAnnotationsManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +67,9 @@ public class CoreExternalAnnotationsManager extends BaseExternalAnnotationsManag
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean editExternalAnnotation(@NotNull PsiModifierListOwner listOwner, @NotNull String annotationFQN,
-            @NotNull PsiNameValuePair[] value) {
+            @Nullable PsiNameValuePair[] value) {
         throw new UnsupportedOperationException();
     }
 
