@@ -114,8 +114,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
 
             this.staticMembers = staticMembers;
-            this.kotlin = psiClass != null &&
-                    (new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS));
+            this.kotlin = psiClass != null && isKotlinClass(psiClass);
             classOrNamespaceDescriptor = descriptor;
 
             if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {
@@ -586,6 +585,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return createClassObjectDescriptorForEnum(containing, psiClass);
         }
 
+        if (!isKotlinClass(psiClass)) {
+            return null;
+        }
+
         // If there's at least one inner enum, we need to create a class object (to put this enum into)
         for (PsiClass innerClass : psiClass.getInnerClasses()) {
             if (isInnerEnum(innerClass, containing)) {
@@ -608,6 +611,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData, new ArrayList<TypeParameterDescriptor>(0)));
         setUpClassObjectDescriptor(containing, fqName, classData, getClassObjectName(containing.getName()));
         return classObjectDescriptor;
+    }
+
+    private static boolean isKotlinClass(@NotNull PsiClass psiClass) {
+        return new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS);
     }
 
     private static boolean isInnerEnum(@NotNull PsiClass innerClass, DeclarationDescriptor owner) {
@@ -679,7 +686,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (clazz == null) {
                 throw new IllegalStateException("PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
             }
-            if (isInnerEnum(psiClass, clazz)) {
+            if (isInnerEnum(psiClass, clazz) && isKotlinClass(psiClass)) {
                 ClassDescriptor classObjectDescriptor = clazz.getClassObjectDescriptor();
                 if (classObjectDescriptor == null) {
                     throw new IllegalStateException("Class object for a class with inner enum should've been created earlier: " + clazz);
