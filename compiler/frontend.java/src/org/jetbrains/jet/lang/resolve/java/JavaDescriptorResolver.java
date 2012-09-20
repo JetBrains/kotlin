@@ -1579,6 +1579,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             returnType = alternativeSignatureData.getReturnType();
             methodTypeParameters = alternativeSignatureData.getTypeParameters();
         }
+        else if (alternativeSignatureData.getError() != null) {
+            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, functionDescriptorImpl, alternativeSignatureData.getError());
+        }
 
         functionDescriptorImpl.initialize(
                 valueParameterDescriptors.receiverType,

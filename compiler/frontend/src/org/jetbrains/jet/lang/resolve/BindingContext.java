@@ -252,6 +252,8 @@ public interface BindingContext {
 
     WritableSlice<ClassDescriptor, Boolean> INCOMPLETE_HIERARCHY = Slices.createCollectiveSetSlice();
 
+    WritableSlice<DeclarationDescriptor, String> ALTERNATIVE_SIGNATURE_DATA_ERROR = Slices.createSimpleSlice();
+
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer
             Void _static_initializer = BasicWritableSlice.initSliceDebugNames(BindingContext.class);
