@@ -177,6 +177,12 @@
   <item name='java.math.BigInteger byte[] toByteArray()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='java.math.BigInteger java.math.BigInteger[] divideAndRemainder(java.math.BigInteger)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun divideAndRemainder(val value: BigInteger?) : Array&lt;BigInteger&gt;&quot;"/>
+    </annotation>
+  </item>
   <!-- java.math.BigDecimal -->
   <item name='java.math.BigDecimal ONE'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
