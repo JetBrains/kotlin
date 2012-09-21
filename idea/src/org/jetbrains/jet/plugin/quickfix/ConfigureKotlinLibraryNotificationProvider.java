@@ -26,7 +26,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileTextField;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -55,6 +55,7 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -87,15 +88,10 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
             if (CompilerManager.getInstance(myProject).isExcludedFromCompilation(file)) return null;
 
-            final Module module = ModuleUtil.findModuleForFile(file, myProject);
+            final Module module = ModuleUtilCore.findModuleForFile(file, myProject);
             if (module == null) return null;
 
-            if (isMavenModule(module)) return null;
-
-            if (isJsModule(module)) return null;
-
-            GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-            if (JavaPsiFacade.getInstance(myProject).findClass("jet.JetObject", scope) == null) {
+            if (!isModuleAlreadyConfigured(module)) {
                 return createNotificationPanel(module);
             }
         }
@@ -105,7 +101,6 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         catch (IndexNotReadyException e) {
             // Ignore
         }
-
 
         return null;
     }
@@ -249,6 +244,16 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
                 EditorNotifications.getInstance(myProject).updateAllNotifications();
             }
         });
+    }
+
+    private boolean isModuleAlreadyConfigured(Module module) {
+        return isMavenModule(module) || isJsModule(module) || isWithJavaModule(module);
+    }
+
+    private boolean isWithJavaModule(Module module) {
+        // Can find a reference to kotlin class in module scope
+        GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
+        return (JavaPsiFacade.getInstance(myProject).findClass(JvmStdlibNames.JET_OBJECT.getSignatureName(), scope) != null);
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
