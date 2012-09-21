@@ -1083,4 +1083,35 @@
   <item name='java.util.Calendar java.lang.String toString()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.util.GregorianCalendar -->
+  <item name='java.util.GregorianCalendar GregorianCalendar(java.util.TimeZone) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar GregorianCalendar(java.util.Locale) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar GregorianCalendar(java.util.TimeZone, java.util.Locale) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar GregorianCalendar(java.util.TimeZone, java.util.Locale) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar void setGregorianChange(java.util.Date) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar java.util.Date getGregorianChange()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar boolean equals(java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.GregorianCalendar java.lang.Object clone()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar java.util.TimeZone getTimeZone()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.GregorianCalendar void setTimeZone(java.util.TimeZone) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
