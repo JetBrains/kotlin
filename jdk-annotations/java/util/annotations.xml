@@ -1114,4 +1114,173 @@
   <item name='java.util.GregorianCalendar void setTimeZone(java.util.TimeZone) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <!-- java.util.Locale -->
+  <item name='java.util.Locale ENGLISH'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale FRENCH'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale GERMAN'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale ITALIAN'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale JAPANESE'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale KOREAN'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale CHINESE'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale SIMPLIFIED_CHINESE'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale TRADITIONAL_CHINESE'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale FRANCE'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale GERMANY'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale ITALY'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale JAPAN'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale KOREA'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale CHINA'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale PRC'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale TAIWAN'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale UK'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale US'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale CANADA'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale CANADA_FRENCH'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale ROOT'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale Locale(java.lang.String, java.lang.String, java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale Locale(java.lang.String, java.lang.String, java.lang.String) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale Locale(java.lang.String, java.lang.String, java.lang.String) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale Locale(java.lang.String, java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale Locale(java.lang.String, java.lang.String) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale Locale(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.util.Locale getDefault()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale void setDefault(java.util.Locale) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.util.Locale[] getAvailableLocales()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun getAvailableLocales() : Array&lt;out Locale&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Locale java.lang.String[] getISOCountries()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun getISOCountries() : Array&lt;out String&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Locale java.lang.String[] getISOLanguages()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun getISOLanguages() : Array&lt;out String&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Locale java.lang.String getLanguage()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getCountry()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getVariant()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String toString()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getISO3Language()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getISO3Country()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayLanguage(java.util.Locale)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayLanguage(java.util.Locale) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayLanguage()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayCountry()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayCountry(java.util.Locale)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayCountry(java.util.Locale) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayVariant()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayVariant(java.util.Locale)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayVariant(java.util.Locale) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayName()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayName(java.util.Locale)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.String getDisplayName(java.util.Locale) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale java.lang.Object clone()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Locale boolean equals(java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
 </root>
