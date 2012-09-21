@@ -253,7 +253,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     private boolean isWithJavaModule(Module module) {
         // Can find a reference to kotlin class in module scope
         GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-        return (JavaPsiFacade.getInstance(myProject).findClass(JvmStdlibNames.JET_OBJECT.getSignatureName(), scope) != null);
+        return (JavaPsiFacade.getInstance(myProject).findClass(JvmStdlibNames.JET_OBJECT.getFqName().getFqName(), scope) != null);
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
