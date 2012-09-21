@@ -60,7 +60,7 @@ public inline fun String(bytes : ByteArray, offset : Int, length : Int, charsetN
 
 public inline fun String(bytes : ByteArray, offset : Int, length : Int, charset : java.nio.charset.Charset) : String = java.lang.String(bytes, offset, length, charset) as String
 
-public inline fun String(bytes : ByteArray, charsetName : String?) : String = java.lang.String(bytes, charsetName) as String
+public inline fun String(bytes : ByteArray, charsetName : String) : String = java.lang.String(bytes, charsetName) as String
 
 public inline fun String(bytes : ByteArray, charset : java.nio.charset.Charset) : String = java.lang.String(bytes, charset) as String
 
@@ -78,7 +78,7 @@ public inline fun String.replaceFirst(regex : String, replacement : String) : St
 
 public inline fun String.charAt(index : Int) : Char = (this as java.lang.String).charAt(index)!!
 
-public inline fun String.split(regex : String, limit : Int) : Array<String?> = (this as java.lang.String).split(regex, limit)!!
+public inline fun String.split(regex : String, limit : Int) : Array<String> = (this as java.lang.String).split(regex, limit)
 
 public inline fun String.codePointAt(index : Int) : Int = (this as java.lang.String).codePointAt(index)!!
 
