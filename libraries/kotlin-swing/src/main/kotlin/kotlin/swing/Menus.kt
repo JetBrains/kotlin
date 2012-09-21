@@ -32,7 +32,7 @@ set(value) {
     setAccelerator(value)
 }
 
-fun JMenu.add(vararg actions: Action): Unit {
+fun JMenu.item(vararg actions: Action): Unit {
     for (action in actions) {
         val answer = JMenuItem(action)
         add(answer)
