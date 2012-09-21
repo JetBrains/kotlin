@@ -375,7 +375,7 @@ class AlternativeSignatureData {
                             fail("Star projection is not available in alternative signatures");
                         default:
                     }
-                    if (altVariance != variance) {
+                    if (altVariance != variance && variance != Variance.INVARIANT) {
                         fail("Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance);
                     }
                 }
