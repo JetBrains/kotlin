@@ -56,7 +56,7 @@ inline fun DefaultButtonModel.addActionListener(fn: (ActionEvent) -> Unit): Unit
     addActionListener(actionListener(fn))
 }
 
-inline fun JComboBox.addActionListener(fn: (ActionEvent) -> Unit): Unit {
+inline fun JComboBox<*>.addActionListener(fn: (ActionEvent) -> Unit): Unit {
     addActionListener(actionListener(fn))
 }
 
