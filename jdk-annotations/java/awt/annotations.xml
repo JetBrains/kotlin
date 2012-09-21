@@ -74,4 +74,9 @@
             <val name="value" val="&quot;fun createUnion(r : Rectangle2D) : Rectangle2D&quot;"/>
         </annotation>
     </item>
+    <item name='java.awt.Rectangle void add(java.awt.Rectangle)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun add(r : Rectangle) : Unit&quot;"/>
+        </annotation>
+    </item>
 </root>

@@ -675,7 +675,7 @@
   </item>
   <item name='java.io.PrintWriter java.io.PrintWriter printf(java.lang.String, java.lang.Object...)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun printf(format : String?, vararg args : Any?) : PrintWriter?&quot;"/>
+      <val name="value" val="&quot;fun printf(format : String, vararg args : Any?) : PrintWriter&quot;"/>
     </annotation>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
