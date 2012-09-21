@@ -151,7 +151,7 @@ public inline fun ShortArray.forEach(operation: (Short) -> Unit) : Unit = for (e
  *
  * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
-public inline fun ShortArray.fold(initial: Short, operation: (Short, Short) -> Short): Short {
+public inline fun <R> ShortArray.fold(initial: R, operation: (R, Short) -> R): R {
     var answer = initial
     for (element in this) answer = operation(answer, element)
     return answer
@@ -162,7 +162,7 @@ public inline fun ShortArray.fold(initial: Short, operation: (Short, Short) -> S
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun ShortArray.foldRight(initial: Short, operation: (Short, Short) -> Short): Short = reverse().fold(initial, {x, y -> operation(y, x)})
+public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> R): R = reverse().fold(initial, {x, y -> operation(y, x)})
 
 
 /**

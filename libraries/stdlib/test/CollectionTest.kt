@@ -135,6 +135,18 @@ class CollectionTest {
         }
     }
 
+    test fun foldWithDifferentTypes() {
+        expect(7) {
+            val numbers = arrayList("a", "ab", "abc")
+            numbers.fold(1){ a, b -> a + b.size}
+        }
+
+        expect("1234") {
+            val numbers = arrayList(1, 2, 3, 4)
+            numbers.fold(""){ a, b -> a + b}
+        }
+    }
+
     test fun foldWithNonCommutativeOperation() {
         expect(1) {
             val numbers = arrayList(1, 2, 3)
@@ -146,6 +158,13 @@ class CollectionTest {
         expect("1234") {
             val numbers = arrayList(1, 2, 3, 4)
             numbers.map{it.toString()}.foldRight(""){ a, b -> a + b}
+        }
+    }
+
+    test fun foldRightWithDifferentTypes() {
+        expect("1234") {
+            val numbers = arrayList(1, 2, 3, 4)
+            numbers.foldRight(""){ a, b -> "" + a + b}
         }
     }
 

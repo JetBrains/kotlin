@@ -151,7 +151,7 @@ public inline fun DoubleArray.forEach(operation: (Double) -> Unit) : Unit = for 
  *
  * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
-public inline fun DoubleArray.fold(initial: Double, operation: (Double, Double) -> Double): Double {
+public inline fun <R> DoubleArray.fold(initial: R, operation: (R, Double) -> R): R {
     var answer = initial
     for (element in this) answer = operation(answer, element)
     return answer
@@ -162,7 +162,7 @@ public inline fun DoubleArray.fold(initial: Double, operation: (Double, Double) 
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun DoubleArray.foldRight(initial: Double, operation: (Double, Double) -> Double): Double = reverse().fold(initial, {x, y -> operation(y, x)})
+public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -> R): R = reverse().fold(initial, {x, y -> operation(y, x)})
 
 
 /**

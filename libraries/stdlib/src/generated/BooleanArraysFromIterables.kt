@@ -151,7 +151,7 @@ public inline fun BooleanArray.forEach(operation: (Boolean) -> Unit) : Unit = fo
  *
  * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
-public inline fun BooleanArray.fold(initial: Boolean, operation: (Boolean, Boolean) -> Boolean): Boolean {
+public inline fun <R> BooleanArray.fold(initial: R, operation: (R, Boolean) -> R): R {
     var answer = initial
     for (element in this) answer = operation(answer, element)
     return answer
@@ -162,7 +162,7 @@ public inline fun BooleanArray.fold(initial: Boolean, operation: (Boolean, Boole
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun BooleanArray.foldRight(initial: Boolean, operation: (Boolean, Boolean) -> Boolean): Boolean = reverse().fold(initial, {x, y -> operation(y, x)})
+public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R) -> R): R = reverse().fold(initial, {x, y -> operation(y, x)})
 
 
 /**

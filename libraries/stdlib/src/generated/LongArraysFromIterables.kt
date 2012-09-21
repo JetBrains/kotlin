@@ -151,7 +151,7 @@ public inline fun LongArray.forEach(operation: (Long) -> Unit) : Unit = for (ele
  *
  * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
-public inline fun LongArray.fold(initial: Long, operation: (Long, Long) -> Long): Long {
+public inline fun <R> LongArray.fold(initial: R, operation: (R, Long) -> R): R {
     var answer = initial
     for (element in this) answer = operation(answer, element)
     return answer
@@ -162,7 +162,7 @@ public inline fun LongArray.fold(initial: Long, operation: (Long, Long) -> Long)
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun LongArray.foldRight(initial: Long, operation: (Long, Long) -> Long): Long = reverse().fold(initial, {x, y -> operation(y, x)})
+public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R): R = reverse().fold(initial, {x, y -> operation(y, x)})
 
 
 /**

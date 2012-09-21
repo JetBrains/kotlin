@@ -151,7 +151,7 @@ public inline fun ByteArray.forEach(operation: (Byte) -> Unit) : Unit = for (ele
  *
  * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
-public inline fun ByteArray.fold(initial: Byte, operation: (Byte, Byte) -> Byte): Byte {
+public inline fun <R> ByteArray.fold(initial: R, operation: (R, Byte) -> R): R {
     var answer = initial
     for (element in this) answer = operation(answer, element)
     return answer
@@ -162,7 +162,7 @@ public inline fun ByteArray.fold(initial: Byte, operation: (Byte, Byte) -> Byte)
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun ByteArray.foldRight(initial: Byte, operation: (Byte, Byte) -> Byte): Byte = reverse().fold(initial, {x, y -> operation(y, x)})
+public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R): R = reverse().fold(initial, {x, y -> operation(y, x)})
 
 
 /**

@@ -150,7 +150,7 @@ public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit) : Unit = for (
  *
  * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
-public inline fun <T> Iterator<T>.fold(initial: T, operation: (T, T) -> T): T {
+public inline fun <T,R> Iterator<T>.fold(initial: R, operation: (R, T) -> R): R {
     var answer = initial
     for (element in this) answer = operation(answer, element)
     return answer
@@ -161,7 +161,7 @@ public inline fun <T> Iterator<T>.fold(initial: T, operation: (T, T) -> T): T {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
-public inline fun <T> Iterator<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, {x, y -> operation(y, x)})
+public inline fun <T,R> Iterator<T>.foldRight(initial: R, operation: (T, R) -> R): R = reverse().fold(initial, {x, y -> operation(y, x)})
 
 
 /**
