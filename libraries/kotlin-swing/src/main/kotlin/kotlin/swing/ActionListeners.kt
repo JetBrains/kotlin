@@ -56,9 +56,12 @@ inline fun DefaultButtonModel.addActionListener(fn: (ActionEvent) -> Unit): Unit
     addActionListener(actionListener(fn))
 }
 
+/*
+TODO depending on the JDK this may or may not compile with or without the type argument
 inline fun JComboBox<*>.addActionListener(fn: (ActionEvent) -> Unit): Unit {
     addActionListener(actionListener(fn))
 }
+*/
 
 inline fun JFileChooser.addActionListener(fn: (ActionEvent) -> Unit): Unit {
     addActionListener(actionListener(fn))
