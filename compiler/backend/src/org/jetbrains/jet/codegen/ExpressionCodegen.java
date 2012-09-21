@@ -118,11 +118,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         final CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
 
         final CodegenContext contextForInners = context.intoClass(classDescriptor, OwnerKind.IMPLEMENTATION, state);
-        contextForInners.genInners(state, objectDeclaration);
 
         final CodegenContext objectContext = context.intoAnonymousClass(classDescriptor, this);
+        final ImplementationBodyCodegen implementationBodyCodegen = new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state);
+
+        implementationBodyCodegen.genInners(contextForInners, state, objectDeclaration);
+
         objectContext.copyAccessors(contextForInners.getAccessors());
-        new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state).generate();
+
+        implementationBodyCodegen.generate();
 
         return closure;
     }

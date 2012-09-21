@@ -28,7 +28,6 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -48,7 +47,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 /**
  * @author max
  */
-public class NamespaceCodegen extends GenerationStateAware {
+public class NamespaceCodegen extends MemberCodegen {
     @NotNull
     private final ClassBuilderOnDemand v;
     @NotNull private final FqName name;
@@ -128,17 +127,17 @@ public class NamespaceCodegen extends GenerationStateAware {
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
             }
             else if (declaration instanceof JetNamedFunction) {
                 if (!multiFile) {
                     final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                    context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                    genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
                 final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                context.genClassOrObject(state, (JetClassOrObject) declaration);
+                genClassOrObject(context, (JetClassOrObject) declaration);
             }
             else if (declaration instanceof JetScript) {
                 state.getScriptCodegen().generate((JetScript) declaration);
@@ -174,12 +173,12 @@ public class NamespaceCodegen extends GenerationStateAware {
                         {
                             final CodegenContext context =
                                     CodegenContext.STATIC.intoNamespace(descriptor);
-                            context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, builder);
+                            genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, builder);
                         }
                         {
                             final CodegenContext context =
                                     CodegenContext.STATIC.intoNamespacePart(className, descriptor);
-                            context.genFunctionOrProperty(state, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                            genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                         }
                     }
                 }

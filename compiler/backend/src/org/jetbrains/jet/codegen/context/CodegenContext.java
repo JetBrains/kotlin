@@ -26,16 +26,14 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.THIS$0;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLASS_FOR_FUNCTION;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.FQN;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /*
@@ -300,109 +298,5 @@ public abstract class CodegenContext {
     @NotNull
     public Map<DeclarationDescriptor, DeclarationDescriptor> getAccessors() {
         return accessors == null ? Collections.<DeclarationDescriptor, DeclarationDescriptor>emptyMap() : accessors;
-    }
-
-    public void genFunctionOrProperty(
-            GenerationState state,
-            @NotNull JetTypeParameterListOwner functionOrProperty,
-            @NotNull ClassBuilder classBuilder
-    ) {
-        FunctionCodegen functionCodegen = new FunctionCodegen(this, classBuilder, state);
-        if (functionOrProperty instanceof JetNamedFunction) {
-            try {
-                functionCodegen.gen((JetNamedFunction) functionOrProperty);
-            }
-            catch (CompilationException e) {
-                throw e;
-            }
-            catch (Exception e) {
-                throw new CompilationException("Failed to generate function " + functionOrProperty.getName(), e, functionOrProperty);
-            }
-        }
-        else if (functionOrProperty instanceof JetProperty) {
-            try {
-                new PropertyCodegen(this, classBuilder, functionCodegen).gen((JetProperty) functionOrProperty);
-            }
-            catch (CompilationException e) {
-                throw e;
-            }
-            catch (Exception e) {
-                throw new CompilationException("Failed to generate property " + functionOrProperty.getName(), e, functionOrProperty);
-            }
-        }
-        else {
-            throw new IllegalArgumentException("Unknown parameter: " + functionOrProperty);
-        }
-    }
-
-    public void genImplementation(
-            GenerationState state,
-            JetClassOrObject aClass,
-            OwnerKind kind,
-            Map<DeclarationDescriptor, DeclarationDescriptor> accessors,
-            ClassBuilder classBuilder
-    ) {
-        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
-        CodegenContext classContext = intoClass(descriptor, kind, state);
-        classContext.copyAccessors(accessors);
-
-        new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
-
-        if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
-            ClassBuilder traitBuilder = state.getFactory().forTraitImplementation(descriptor, state);
-            new TraitImplBodyCodegen(aClass, intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state)
-                    .generate();
-            traitBuilder.done();
-        }
-    }
-
-    public void genInners(GenerationState state, JetClassOrObject aClass) {
-        for (JetDeclaration declaration : aClass.getDeclarations()) {
-            if (declaration instanceof JetClass) {
-                if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(
-                        state.getBindingContext(), (JetEnumEntry) declaration)) {
-                    continue;
-                }
-
-                genClassOrObject(state, (JetClass) declaration);
-            }
-            else if (declaration instanceof JetClassObject) {
-                genClassOrObject(state, ((JetClassObject) declaration).getObjectDeclaration());
-            }
-            else if (declaration instanceof JetObjectDeclaration) {
-                genClassOrObject(state, (JetObjectDeclaration) declaration);
-            }
-        }
-    }
-
-    public void genClassOrObject(GenerationState state, JetClassOrObject aClass) {
-        ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
-
-        if (descriptor == null || ErrorUtils.isError(descriptor) || descriptor.getName().equals(JetPsiUtil.NO_NAME_PROVIDED)) {
-            if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
-                throw new IllegalStateException(
-                        "Generating bad descriptor in ClassBuilderMode = " + state.getClassBuilderMode() + ": " + descriptor);
-            }
-            return;
-        }
-
-        ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor);
-
-        final CodegenContext contextForInners = intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) {
-            // Outer class implementation must happen prior inner classes so we get proper scoping tree in JetLightClass's delegate
-            // The same code is present below for the case when we genClassOrObject real bytecode. This is because the order should be
-            // different for the case when we compute closures
-            genImplementation(state, aClass, OwnerKind.IMPLEMENTATION, contextForInners.getAccessors(), classBuilder);
-        }
-
-        contextForInners.genInners(state, aClass);
-
-        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
-            genImplementation(state, aClass, OwnerKind.IMPLEMENTATION, contextForInners.getAccessors(), classBuilder);
-        }
-
-        classBuilder.done();
     }
 }

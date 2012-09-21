@@ -27,7 +27,6 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -48,7 +47,7 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 /**
  * @author Stepan Koltsov
  */
-public class ScriptCodegen extends GenerationStateAware {
+public class ScriptCodegen extends MemberCodegen {
 
     @NotNull
     private ClassFileFactory classFileFactory;
@@ -202,7 +201,7 @@ public class ScriptCodegen extends GenerationStateAware {
 
     private void genMembers(@NotNull JetScript scriptDeclaration, @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder) {
         for (JetDeclaration decl : scriptDeclaration.getDeclarations()) {
-            context.genFunctionOrProperty(state, (JetTypeParameterListOwner) decl, classBuilder);
+            genFunctionOrProperty(context, (JetTypeParameterListOwner) decl, classBuilder);
         }
     }
 
