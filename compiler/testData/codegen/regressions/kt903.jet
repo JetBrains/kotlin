@@ -1,6 +1,6 @@
 import java.util.ArrayList
 
-fun Int.plus(a: Int?) = this + a.sure()
+fun Int.plus(a: Int?) = this + a!!
 
 public open class PerfectNumberFinder() {
         open public fun isPerfect(number : Int) : Boolean {

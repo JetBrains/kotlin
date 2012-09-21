@@ -63,7 +63,14 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsFieldImpl clsField) {
-        return getJetDeclarationByClsElement(clsField);
+        JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsField);
+        if (jetDeclaration instanceof JetProperty) {
+            JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
+            if (sourceProperty != null) {
+                return sourceProperty;
+            }
+        }
+        return jetDeclaration;
     }
 
     @Nullable

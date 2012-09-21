@@ -4,7 +4,7 @@ fun unitEmptyInfer() {}
 fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <!TYPE_MISMATCH!>1<!>}
-fun unitUnitReturn() : Unit {return #()}
+fun unitUnitReturn() : Unit {return Unit.VALUE}
 fun test1() : Any = {<!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return<!>}
 fun test2() : Any = @a {return@a 1}
 fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
@@ -25,7 +25,7 @@ fun foo(<!UNUSED_PARAMETER!>expr<!>: StringBuilder): Int {
 }
 
 
-fun unitShort() : Unit = #()
+fun unitShort() : Unit = Unit.VALUE
 fun unitShortConv() : Unit = <!TYPE_MISMATCH!>1<!>
 fun unitShortNull() : Unit = <!TYPE_MISMATCH!>null<!>
 
@@ -42,7 +42,7 @@ fun intFunctionLiteral(): Int = <!TYPE_MISMATCH!>{ 10 }<!>
 fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
 fun blockReturnValueTypeMismatch() : Int {return <!ERROR_COMPILE_TIME_VALUE!>3.4<!>}
 fun blockReturnValueTypeMatch() : Int {return 1}
-fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>#()<!>}
+fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit.VALUE<!>}
 
 fun blockAndAndMismatch() : Int {
   true && false

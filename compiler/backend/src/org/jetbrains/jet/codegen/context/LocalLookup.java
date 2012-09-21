@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
@@ -27,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
+import static org.jetbrains.jet.codegen.AsmUtil.RECEIVER$0;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -122,7 +122,7 @@ public interface LocalLookup {
 
                 final JetType receiverType = ((CallableDescriptor) d).getReceiverParameter().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
-                StackValue innerValue = StackValue.field(type, className, CodegenUtil.RECEIVER$0, false);
+                StackValue innerValue = StackValue.field(type, className, RECEIVER$0, false);
                 closure.setCaptureReceiver();
 
                 return innerValue;

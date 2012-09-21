@@ -27,5 +27,5 @@ fun test(a : List<Int>, m : Map<String, Int>) {
   )
   HashMap<Int, Int>().get(0)
   if (m.get("") != null)
-  System.out.println(m.get("").sure().plus(1))
+  System.out.println(m.get("")!!.plus(1))
 }

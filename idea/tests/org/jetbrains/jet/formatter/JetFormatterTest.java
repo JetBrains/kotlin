@@ -60,6 +60,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTest();
     }
 
+    public void testFunctionWithNewLineBrace() throws Exception {
+        doTest();
+    }
+
     public void testGetterAndSetter() throws Exception {
         doTest();
     }
@@ -110,6 +114,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
 
     public void testSpacesAroundUnaryOperations() throws Exception {
         doTestWithInvert();
+    }
+
+    public void testUnnecessarySpacesInParametersLists() throws Exception {
+        doTest();
     }
 
     public void testWhen() throws Exception {

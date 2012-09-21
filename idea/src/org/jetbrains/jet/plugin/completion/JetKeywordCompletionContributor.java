@@ -221,7 +221,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
         @Override
         public boolean prefixMatches(@NotNull String name) {
-            return StringUtil.startsWithIgnoreCase(name, getPrefix());
+            return StringUtil.startsWith(name, getPrefix());
         }
 
         @NotNull

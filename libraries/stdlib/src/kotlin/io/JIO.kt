@@ -13,7 +13,7 @@ public val defaultBufferSize: Int = 64 * 1024
 /**
  * Returns the default [[Charset]] which defaults to UTF-8
  */
-public val defaultCharset: Charset = Charset.forName("UTF-8").sure()
+public val defaultCharset: Charset = Charset.forName("UTF-8")!!
 
 
 /** Prints the given message to [[System.out]] */
@@ -111,7 +111,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
         System.`in`?.reset()
     }
 
-    public override fun read(b: ByteArray?): Int {
+    public override fun read(b: ByteArray): Int {
         return System.`in`?.read(b) ?: -1
     }
 
@@ -135,7 +135,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
         return System.`in`?.markSupported() ?: false
     }
 
-    public override fun read(b: ByteArray?, off: Int, len: Int): Int {
+    public override fun read(b: ByteArray, off: Int, len: Int): Int {
         return System.`in`?.read(b, off, len) ?: -1
     }
 }))
@@ -251,7 +251,7 @@ class LineIterator(val reader: BufferedReader) : Iterator<String> {
         }
         val answer = nextValue
         nextValue = null
-        return answer.sure()
+        return answer!!
     }
 }
 
@@ -266,7 +266,7 @@ class LineIterator(val reader: BufferedReader) : Iterator<String> {
 public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteArray {
     val buffer = ByteArrayOutputStream(estimatedSize)
     this.copyTo(buffer)
-    return buffer.toByteArray().sure()
+    return buffer.toByteArray()!!
 }
 
 /**
@@ -277,7 +277,7 @@ public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteAr
 public fun Reader.readText(): String {
     val buffer = StringWriter()
     copyTo(buffer)
-    return buffer.toString().sure()
+    return buffer.toString()!!
 }
 
 /**
@@ -333,5 +333,5 @@ public fun URL.readText(encoding: Charset): String = readBytes().toString(encodi
  *
  * This method is not recommended on huge files.
  */
-public fun URL.readBytes(): ByteArray = this.openStream().sure().use<InputStream,ByteArray>{ it.readBytes() }
+public fun URL.readBytes(): ByteArray = this.openStream()!!.use<InputStream,ByteArray>{ it.readBytes() }
 

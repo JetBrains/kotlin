@@ -430,7 +430,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         var offset = Vector()
         var element: HTMLElement? = canvas
         while (element != null) {
-            val el: HTMLElement = element.sure()
+            val el: HTMLElement = element!!
             offset += Vector(el.offsetLeft, el.offsetTop)
             element = el.offsetParent
         }

@@ -34,7 +34,7 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
  * @author Pavel Talanov
  */
 /*
- *  This test should be implemented via LoadCompiledKotlinTest.
+ *  This test should be implemented via AbstractLoadCompiledKotlinTest.
  *  Atm it's not possible due to enums being loaded differently from binaries (in contrast to from sources).
  */
 public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
@@ -82,6 +82,14 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
     }
 
     public void testEnumVisibility() throws Exception {
-        doTest(PATH + "/enum");
+        doTest(ENUM_DIR);
+    }
+
+    public void testInnerEnum() throws Exception {
+        doTest(ENUM_DIR);
+    }
+
+    public void testInnerEnumExistingClassObject() throws Exception {
+        doTest(ENUM_DIR);
     }
 }

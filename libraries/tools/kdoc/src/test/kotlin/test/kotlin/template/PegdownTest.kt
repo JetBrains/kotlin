@@ -19,7 +19,7 @@ class PegdownTest() : TestCase() {
         "a [Link](somewhere) blah")
 
         for (text in markups) {
-            val answer = markdownProcessor.markdownToHtml(text, linkRenderer).sure()
+            val answer = markdownProcessor.markdownToHtml(text, linkRenderer)!!
             println("$text = $answer")
         }
     }

@@ -156,7 +156,7 @@ class Creature(override var pos: Vector, val state: CanvasState): Shape() {
         val gradientCentre = position + directionToLogo * (radius / 4)
         val gradient = context.createRadialGradient(gradientCentre.x, gradientCentre.y, 1.0, gradientCentre.x, gradientCentre.y, 2 * radius)!!
         for (colorStop in colorStops) {
-            gradient.addColorStop(colorStop._1, colorStop._2)
+            gradient.addColorStop(colorStop.first, colorStop.second)
         }
         return gradient
     }
@@ -226,14 +226,14 @@ class CanvasState(val canvas: HTMLCanvasElement) {
 
         jq(canvas).mousemove {
             if (selection != null) {
-                selection.sure().pos = mousePos(it) - dragOff
+                selection!!.pos = mousePos(it) - dragOff
                 valid = false
             }
         }
 
         jq(canvas).mouseup {
             if (selection != null) {
-                selection.sure().selected = false
+                selection!!.selected = false
             }
             selection = null
             valid = false
@@ -254,7 +254,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         var offset = Vector()
         var element: HTMLElement? = canvas
         while (element != null) {
-            val el: HTMLElement = element.sure()
+            val el: HTMLElement = element!!
             offset += Vector(el.offsetLeft, el.offsetTop)
             element = el.offsetParent
         }
@@ -287,23 +287,23 @@ class CanvasState(val canvas: HTMLCanvasElement) {
 }
 
 class RadialGradientGenerator(val context: CanvasContext) {
-    val gradients = ArrayList<Array<#(Double, String)>>()
+    val gradients = ArrayList<Array<Pair<Double, String>>>()
     var current = 0
 
-    fun newColorStops(vararg colorStops: #(Double, String)) {
+    fun newColorStops(vararg colorStops: Pair<Double, String>) {
         gradients.add(colorStops)
     }
 
     {
-        newColorStops(#(0.0, "#F59898"), #(0.5, "#F57373"), #(1.0, "#DB6B6B"))
-        newColorStops(#(0.39, "rgb(140,167,209)"), #(0.7, "rgb(104,139,209)"), #(0.85, "rgb(67,122,217)"))
-        newColorStops(#(0.0, "rgb(255,222,255)"), #(0.5, "rgb(255,185,222)"), #(1.0, "rgb(230,154,185)"))
-        newColorStops(#(0.0, "rgb(255,209,114)"), #(0.5, "rgb(255,174,81)"), #(1.0, "rgb(241,145,54)"))
-        newColorStops(#(0.0, "rgb(132,240,135)"), #(0.5, "rgb(91,240,96)"), #(1.0, "rgb(27,245,41)"))
-        newColorStops(#(0.0, "rgb(250,147,250)"), #(0.5, "rgb(255,80,255)"), #(1.0, "rgb(250,0,217)"))
+        newColorStops(Pair(0.0, "#F59898"), Pair(0.5, "#F57373"), Pair(1.0, "#DB6B6B"))
+        newColorStops(Pair(0.39, "rgb(140,167,209)"), Pair(0.7, "rgb(104,139,209)"), Pair(0.85, "rgb(67,122,217)"))
+        newColorStops(Pair(0.0, "rgb(255,222,255)"), Pair(0.5, "rgb(255,185,222)"), Pair(1.0, "rgb(230,154,185)"))
+        newColorStops(Pair(0.0, "rgb(255,209,114)"), Pair(0.5, "rgb(255,174,81)"), Pair(1.0, "rgb(241,145,54)"))
+        newColorStops(Pair(0.0, "rgb(132,240,135)"), Pair(0.5, "rgb(91,240,96)"), Pair(1.0, "rgb(27,245,41)"))
+        newColorStops(Pair(0.0, "rgb(250,147,250)"), Pair(0.5, "rgb(255,80,255)"), Pair(1.0, "rgb(250,0,217)"))
     }
 
-    fun getNext(): Array<#(Double, String)> {
+    fun getNext(): Array<Pair<Double, String>> {
         val result = gradients.get(current)
         current = (current + 1) % gradients.size()
         return result

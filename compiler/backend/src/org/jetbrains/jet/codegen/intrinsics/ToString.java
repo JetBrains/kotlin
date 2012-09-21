@@ -20,13 +20,14 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.genToString;
 
 /**
  * @author alex.tkachman
@@ -42,6 +43,6 @@ public class ToString implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        return CodegenUtil.genToString(v, receiver);
+        return genToString(v, receiver);
     }
 }

@@ -20,7 +20,7 @@ fun f9(init : A?) {
     a?.<!UNRESOLVED_REFERENCE!>bar<!>()
     a?.foo()
   }
-  if (!(a is B) || a.bar() == #()) {
+  if (!(a is B) || a.bar() == Unit.VALUE) {
       a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   }
   if (!(a is B)) {
@@ -102,7 +102,7 @@ fun f13(a : A?) {
   }
 
   a?.foo()
-  if (a is B && a.foo() == #()) {
+  if (a is B && a.foo() == Unit.VALUE) {
     a.foo()
     a.bar()
   }
@@ -153,7 +153,7 @@ fun illegalWhenBlock(a: Any): Int {
 }
 fun declarations(a: Any?) {
     if (a is String) {
-       val <!UNUSED_VARIABLE!>p4<!>: #(Int, String) = #(2, a)
+       val <!UNUSED_VARIABLE!>p4<!>: String = a
     }
     if (a is String?) {
         if (a != null) {
@@ -172,25 +172,6 @@ fun vars(a: Any?) {
         b = <!UNUSED_VALUE!>a<!>
     }
 }
-fun tuples(a: Any?) {
-    if (a != null) {
-        val <!UNUSED_VARIABLE!>s<!>: #(Any, String) = #(a, <!TYPE_MISMATCH!>a<!>)
-    }
-    if (a is String) {
-        val <!UNUSED_VARIABLE!>s<!>: #(Any, String) = #(a, a)
-    }
-    fun illegalTupleReturnType(): #(Any, String) = #(<!TYPE_MISMATCH!>a<!>, <!TYPE_MISMATCH!>a<!>)
-    if (a is String) {
-        fun legalTupleReturnType(): #(Any, String) = #(a, a)
-    }
-    val <!UNUSED_VARIABLE!>illegalFunctionLiteral<!>: Function0<Int> = <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>a<!> }<!>
-    val <!UNUSED_VARIABLE!>illegalReturnValueInFunctionLiteral<!>: Function0<Int> = { (): Int -> <!TYPE_MISMATCH!>a<!> }
-
-    if (a is Int) {
-        val <!UNUSED_VARIABLE!>legalFunctionLiteral<!>: Function0<Int> = { a }
-        val <!UNUSED_VARIABLE!>alsoLegalFunctionLiteral<!>: Function0<Int> = { (): Int -> a }
-    }
-}
 fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
     if (a is Int) return { a }
     else return { 1 }
@@ -198,8 +179,6 @@ fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
 fun returnFunctionLiteral(a: Any?): Function0<Int> =
     if (a is Int) { (): Int -> a }
     else { () -> 1 }
-
-fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <!TYPE_MISMATCH!>a<!>)
 
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {

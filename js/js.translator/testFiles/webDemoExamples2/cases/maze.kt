@@ -171,12 +171,12 @@ fun printMaze(str : String) {
  *    OOOOOOOOOOOOOOOOO
  */
 fun makeMaze(s : String) : Maze {
-  val lines = s.split("\n").sure()
+  val lines = s.split("\n")!!
   val w = max<String?>(lines.toList(), comparator<String?> {o1, o2 ->
           val l1 : Int = o1?.size ?: 0
           val l2 = o2?.size ?: 0
           l1 - l2
-  }).sure()
+  })!!
   val data = Array<Array<Boolean>>(lines.size) {Array<Boolean>(w.size) {false}}
 
   var start : #(Int, Int)? = null
@@ -184,7 +184,7 @@ fun makeMaze(s : String) : Maze {
 
   for (line in lines.indices) {
     for (x in lines[line].indices) {
-      val c = lines[line].sure()[x]
+      val c = lines[line]!![x]
       data[line][x] = c == 'O'
       when (c) {
         'I' -> start = #(line, x)
@@ -202,12 +202,12 @@ fun makeMaze(s : String) : Maze {
       throw IllegalArgumentException("No goal point in the maze (should be indicated with a '$' sign)")
   }
 
-  return Maze(w.size, lines.size, data, start.sure(), end.sure())
+  return Maze(w.size, lines.size, data, start!!, end!!)
 }
 
 
 // An excerpt from the Standard Library
-val String?.indices : IntRange get() = IntRange(0, this.sure().size)
+val String?.indices : IntRange get() = IntRange(0, this!!.size)
 
 fun <K, V> Map<K, V>.set(k : K, v : V) { put(k, v) }
 

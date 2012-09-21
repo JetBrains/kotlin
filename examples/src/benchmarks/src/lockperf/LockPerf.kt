@@ -32,7 +32,7 @@ fun <T> Int.latch(op:  CountDownLatch.() -> T) : T {
 }
 
 fun main(args: Array<String>) {
-    val processors = Runtime.getRuntime().sure().availableProcessors()
+    val processors = Runtime.getRuntime()!!.availableProcessors()
     var threadNum = 1
     while(threadNum <= 1024) {
         val counter = AtomicInteger()

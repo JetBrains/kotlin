@@ -65,7 +65,7 @@ abstract class Tag(val name : String) : Element() {
   fun toString(): String {
     val builder = StringBuilder()
     appendTo(builder)
-    return builder.toString().sure()
+    return builder.toString()!!
   }
 }
 

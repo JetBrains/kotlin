@@ -25,7 +25,7 @@ public fun File.recurse(block: (File) -> Unit): Unit {
  * Returns this if the file is a directory or the parent if its a file inside a directory
  */
 inline val File.directory: File
-get() = if (this.isDirectory()) this else this.getParentFile().sure()
+get() = if (this.isDirectory()) this else this.getParentFile()!!
 
 /**
  * Returns the canoncial path of the file
@@ -207,6 +207,6 @@ fun File.readLines(charset : String = "UTF-8") : List<String> {
  */
 fun File.listFiles(filter : (file : File) -> Boolean) : Array<File>? = listFiles(
     object : FileFilter {
-        override fun accept(file: File?) = filter(file!!)
+        override fun accept(file: File) = filter(file)
     }
 ) as Array<File>?

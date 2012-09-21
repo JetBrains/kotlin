@@ -144,14 +144,18 @@ public class JetSignatureReader {
         }
         
         char c;
-        int start, end;
-        boolean visited, inner;
-        String name;
+        int start;
+        int end;
+        boolean visited;
+        boolean inner;
 
-        boolean nullable = false;
+        boolean nullable;
         if (signature.charAt(pos) == '?') {
             nullable = true;
             pos++;
+        }
+        else {
+            nullable = false;
         }
 
         switch (c = signature.charAt(pos++)) {
@@ -186,53 +190,23 @@ public class JetSignatureReader {
                         case '.':
                         case ';':
                             if (!visited) {
-                                name = signature.substring(start, pos - 1);
-                                if (inner) {
-                                    v.visitInnerClassType(name, nullable);
-                                }
-                                else {
-                                    v.visitClassType(name, nullable, forceReal);
-                                }
+                                parseTypeConstructor(signature, v, start, pos, inner, nullable, forceReal);
                             }
                             if (c == ';') {
                                 v.visitEnd();
                                 return pos;
                             }
-                            start = pos;
                             visited = false;
                             inner = true;
                             break;
 
                         case '<':
-                            name = signature.substring(start, pos - 1);
-                            if (inner) {
-                                v.visitInnerClassType(name, nullable);
-                            }
-                            else {
-                                v.visitClassType(name, nullable, forceReal);
-                            }
+                            parseTypeConstructor(signature, v, start, pos, inner, nullable, forceReal);
                             visited = true;
-                            top: while (true) {
-                                switch (c = signature.charAt(pos)) {
-                                    case '>':
-                                        break top;
-                                    case '*':
-                                        ++pos;
-                                        v.visitTypeArgument();
-                                        break;
-                                    case '+':
-                                    case '-':
-                                        pos = parseType(signature,
-                                                        pos + 1,
-                                                        v.visitTypeArgument(JetSignatureVariance.parseVariance(c)));
-                                        break;
-                                    default:
-                                        pos = parseType(signature,
-                                                        pos,
-                                                        v.visitTypeArgument(JetSignatureVariance.INVARIANT));
-                                        break;
-                                }
-                            }
+                            pos = parseTypeArguments(signature, pos, v);
+
+                        default:
+                            break;
                     }
                 }
             default:
@@ -240,5 +214,46 @@ public class JetSignatureReader {
         }
     }
 
+    private static void parseTypeConstructor(
+            String signature,
+            JetSignatureVisitor v,
+            int start,
+            int pos,
+            boolean inner,
+            boolean nullable,
+            boolean forceReal
+    ) {
+        String name = signature.substring(start, pos - 1);
+        if (inner) {
+            v.visitInnerClassType(name, nullable, forceReal);
+        }
+        else {
+            v.visitClassType(name, nullable, forceReal);
+        }
+    }
 
+    private static int parseTypeArguments(String signature, int pos, JetSignatureVisitor v) {
+        char c;
+        while (true) {
+            switch (c = signature.charAt(pos)) {
+                case '>':
+                    return pos;
+                case '*':
+                    ++pos;
+                    v.visitTypeArgument();
+                    break;
+                case '+':
+                case '-':
+                    pos = parseType(signature,
+                                    pos + 1,
+                                    v.visitTypeArgument(JetSignatureVariance.parseVariance(c)));
+                    break;
+                default:
+                    pos = parseType(signature,
+                                    pos,
+                                    v.visitTypeArgument(JetSignatureVariance.INVARIANT));
+                    break;
+            }
+        }
+    }
 }

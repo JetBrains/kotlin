@@ -29,6 +29,9 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.config.Config;
 
@@ -135,5 +138,13 @@ public final class AnalyzerFacadeForJS {
                 return notLibFile;
             }
         };
+    }
+
+    @NotNull
+    public static ResolveSession getLazyResolveSession(Collection<JetFile> files, final Config config) {
+        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
+                Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
+        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        return new ResolveSession(config.getProject(), lazyModule, new JsConfiguration(config.getProject(), null), declarationProviderFactory);
     }
 }

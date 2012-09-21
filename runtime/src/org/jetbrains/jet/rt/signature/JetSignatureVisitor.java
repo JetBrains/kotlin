@@ -136,9 +136,9 @@ public interface JetSignatureVisitor {
     /**
      * Visits an inner class.
      *
-     * @param name the local name of the inner class in its enclosing class.
+     * @param name the full name of the inner class.
      */
-    void visitInnerClassType(String name, boolean nullable);
+    void visitInnerClassType(String name, boolean nullable, boolean forceReal);
 
     /**
      * Visits an unbounded type argument of the last visited class or inner

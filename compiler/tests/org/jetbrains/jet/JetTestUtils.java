@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
@@ -30,6 +31,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
@@ -87,6 +89,13 @@ public class JetTestUtils {
                 public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
                     return DUMMY_TRACE.getKeys(slice);
                 }
+
+                @NotNull
+                @TestOnly
+                @Override
+                public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+                    return ImmutableMap.of();
+                }
             };
         }
 
@@ -137,6 +146,13 @@ public class JetTestUtils {
                 @Override
                 public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
                     return DUMMY_EXCEPTION_ON_ERROR_TRACE.getKeys(slice);
+                }
+
+                @NotNull
+                @TestOnly
+                @Override
+                public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+                    return ImmutableMap.of();
                 }
             };
         }

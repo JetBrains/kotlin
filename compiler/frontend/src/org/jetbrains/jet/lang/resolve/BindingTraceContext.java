@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.util.slicedmap.MutableSlicedMap;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
@@ -51,6 +53,13 @@ public class BindingTraceContext implements BindingTrace {
         @Override
         public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
             return BindingTraceContext.this.getKeys(slice);
+        }
+
+        @NotNull
+        @TestOnly
+        @Override
+        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+            return map.getSliceContents(slice);
         }
     };
 

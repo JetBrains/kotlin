@@ -35,7 +35,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
     private val sourceDirPaths: List<String> = sourceDirs.map { d -> d.getPath()!! }
 
     private fun fileToWrite(psiFile: PsiFile): String {
-        val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()).getCanonicalFile()!!
+        val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()!!).getCanonicalFile()!!
         val filePath = file.getPath()!!
         for (sourceDirPath in sourceDirPaths) {
             if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
@@ -54,7 +54,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
 
         File(srcOutputRoot, "highlight.css").write { outputStream ->
             css.copyTo(outputStream)
-            #()
+            Unit.VALUE
         }
 
         for (sourceInfo in model.sourcesInfo) {

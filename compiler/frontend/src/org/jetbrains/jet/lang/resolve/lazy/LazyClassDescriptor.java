@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -139,7 +140,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             }
             scope.changeLockLevel(WritableScope.LockLevel.READING);
 
-            scopeForClassHeaderResolution = new ChainedScope(this, scope, resolveSession.getResolutionScope(declarationProvider.getOwnerInfo().getScopeAnchor()));
+            PsiElement scopeAnchor = declarationProvider.getOwnerInfo().getScopeAnchor();
+            scopeForClassHeaderResolution = new ChainedScope(this, scope, getScopeProvider().getResolutionScopeForDeclaration(scopeAnchor));
         }
         return scopeForClassHeaderResolution;
     }
@@ -285,8 +287,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             JetModifierList modifierList = classInfo.getModifierList();
             if (modifierList != null) {
                 AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
-                annotations = annotationResolver
-                        .resolveAnnotations(resolveSession.getResolutionScope(classInfo.getScopeAnchor()), modifierList, resolveSession.getTrace());
+                JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
+                annotations = annotationResolver.resolveAnnotations(scopeForDeclaration, modifierList, resolveSession.getTrace());
             }
             else {
                 annotations = Collections.emptyList();
@@ -424,6 +426,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return Collections.emptyList();
             }
         };
+    }
+
+    private ScopeProvider getScopeProvider() {
+        return resolveSession.getInjector().getScopeProvider();
     }
 
 }

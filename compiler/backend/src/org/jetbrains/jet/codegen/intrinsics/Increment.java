@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -29,6 +28,8 @@ import org.jetbrains.jet.lang.psi.JetParenthesizedExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 
 /**
  * @author yole
@@ -52,7 +53,7 @@ public class Increment implements IntrinsicMethod {
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
         if (nullable) {
-            expectedType = CodegenUtil.unboxType(expectedType);
+            expectedType = unboxType(expectedType);
         }
         if (arguments.size() > 0) {
             JetExpression operand = arguments.get(0);
@@ -61,7 +62,7 @@ public class Increment implements IntrinsicMethod {
             }
             if (operand instanceof JetReferenceExpression) {
                 final int index = codegen.indexOfLocal((JetReferenceExpression) operand);
-                if (index >= 0 && CodegenUtil.isIntPrimitive(expectedType)) {
+                if (index >= 0 && isIntPrimitive(expectedType)) {
                     return StackValue.preIncrement(index, myDelta);
                 }
             }
@@ -70,30 +71,13 @@ public class Increment implements IntrinsicMethod {
             value.dupReceiver(v);
 
             value.put(expectedType, v);
-            plusMinus(v, expectedType);
-            value.store(expectedType, v);
+            value.store(genIncrement(expectedType, myDelta, v), v);
             value.put(expectedType, v);
         }
         else {
             receiver.put(expectedType, v);
-            plusMinus(v, expectedType);
+            StackValue.coerce(genIncrement(expectedType, myDelta, v), expectedType, v);
         }
         return StackValue.onStack(expectedType);
-    }
-
-    private void plusMinus(InstructionAdapter v, Type expectedType) {
-        if (expectedType == Type.LONG_TYPE) {
-            v.lconst(myDelta);
-        }
-        else if (expectedType == Type.FLOAT_TYPE) {
-            v.fconst(myDelta);
-        }
-        else if (expectedType == Type.DOUBLE_TYPE) {
-            v.dconst(myDelta);
-        }
-        else {
-            v.iconst(myDelta);
-        }
-        v.add(expectedType);
     }
 }

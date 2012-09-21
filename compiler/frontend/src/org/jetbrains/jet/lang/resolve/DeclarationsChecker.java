@@ -66,6 +66,7 @@ public class DeclarationsChecker {
             MutableClassDescriptor objectDescriptor = entry.getValue();
 
             if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
+            checkObject(objectDeclaration);
             modifiersChecker.checkIllegalModalityModifiers(objectDeclaration);
         }
 
@@ -91,12 +92,22 @@ public class DeclarationsChecker {
 
     }
 
+    private void reportErrorIfHasEnumModifier(JetModifierListOwner declaration) {
+        if (declaration.hasModifier(JetTokens.ENUM_KEYWORD)) {
+            trace.report(ILLEGAL_ENUM_ANNOTATION.on(declaration));
+        }
+    }
+    
+    private void checkObject(JetObjectDeclaration declaration) {
+        reportErrorIfHasEnumModifier(declaration);
+    }
+
     private void checkClass(JetClass aClass, MutableClassDescriptor classDescriptor) {
         checkOpenMembers(classDescriptor);
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
         }
-        else if (aClass.hasModifier(JetTokens.ENUM_KEYWORD)) {
+        else if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
             checkEnumModifiers(aClass);
         }
         else if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
@@ -105,6 +116,7 @@ public class DeclarationsChecker {
     }
 
     private void checkTraitModifiers(JetClass aClass) {
+        reportErrorIfHasEnumModifier(aClass);
         JetModifierList modifierList = aClass.getModifierList();
         if (modifierList == null) return;
         if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
@@ -130,6 +142,7 @@ public class DeclarationsChecker {
     }
 
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
+        reportErrorIfHasEnumModifier(property);
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
@@ -247,6 +260,7 @@ public class DeclarationsChecker {
     }
 
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
+        reportErrorIfHasEnumModifier(function);
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         checkDeclaredTypeInPublicMember(function, functionDescriptor);

@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
@@ -108,7 +109,7 @@ public class ClosureCodegen extends GenerationStateAware {
             generateConstInstance(fun, cv);
         }
 
-        generateClosureFields(closure, cv, state.getTypeMapper());
+        genClosureFields(closure, cv, state.getTypeMapper());
 
         cv.done();
 
@@ -122,11 +123,11 @@ public class ClosureCodegen extends GenerationStateAware {
         cv.newField(fun, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, name.getDescriptor(), null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
+            genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
-            initSingletonField(fun, name.getAsmType(), cv, iv);
+            genInitSingletonField(name.getAsmType(), iv);
             mv.visitInsn(RETURN);
             FunctionCodegen.endVisit(mv, "<clinit>", fun);
         }
@@ -164,7 +165,7 @@ public class ClosureCodegen extends GenerationStateAware {
                 cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE | ACC_VOLATILE, "invoke", bridge.getAsmMethod().getDescriptor(), null,
                              new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
+            genStubCode(mv);
         }
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
@@ -212,7 +213,7 @@ public class ClosureCodegen extends GenerationStateAware {
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
         final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            StubCodegen.generateStubCode(mv);
+            genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();

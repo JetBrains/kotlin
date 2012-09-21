@@ -980,8 +980,7 @@ public class JetParsing extends AbstractJetParsing {
             expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
 
             if (at(COLON)) {
-                advance();
-
+                advance();  // COLON
                 parseTypeRef();
             }
             setterParameter.done(VALUE_PARAMETER);
@@ -1565,6 +1564,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : "#" "(" parameter{","} ")" // tuple with named entries, the names do not affect assignment compatibility
      *   ;
      */
+    @Deprecated // Tuples are to be removed in Kotlin M4
     private void parseTupleType() {
         assert _at(HASH);
 
@@ -1730,20 +1730,23 @@ public class JetParsing extends AbstractJetParsing {
     private boolean parseFunctionParameterRest() {
         expect(IDENTIFIER, "Parameter name expected", PARAMETER_NAME_RECOVERY_SET);
 
+        boolean noErrors = true;
+
         if (at(COLON)) {
             advance(); // COLON
             parseTypeRef();
         }
         else {
-            error("Parameters must have type annotation");
-            return false;
+            errorWithRecovery("Parameters must have type annotation", PARAMETER_NAME_RECOVERY_SET);
+            noErrors = false;
         }
 
         if (at(EQ)) {
             advance(); // EQ
             myExpressionParsing.parseExpression();
         }
-        return true;
+
+        return noErrors;
     }
 
     /*

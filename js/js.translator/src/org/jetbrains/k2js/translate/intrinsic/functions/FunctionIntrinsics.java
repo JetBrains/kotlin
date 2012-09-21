@@ -45,7 +45,6 @@ public final class FunctionIntrinsics {
     private void registerFactories() {
         register(PrimitiveUnaryOperationFIF.INSTANCE);
         register(PrimitiveBinaryOperationFIF.INSTANCE);
-        register(TupleGetterFIF.INSTANCE);
         register(StringOperationFIF.INSTANCE);
         register(ArrayFIF.INSTANCE);
         register(TopLevelFIF.INSTANCE);

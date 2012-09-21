@@ -1,6 +1,0 @@
-namespace test
-
-public open class test.MethodWithTupleType : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.MethodWithTupleType
-    public open fun foo(/*0*/ p0: jet.Tuple2<jet.String, jet.String?>): jet.Tuple0
-}

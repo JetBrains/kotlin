@@ -13,7 +13,7 @@ fun applyMask(a : String) : String {
   }
   luhny.processEnd()
 
-  return luhny.output.toString().sure()
+  return luhny.output.toString()!!
 }
 
 class Luhny() {

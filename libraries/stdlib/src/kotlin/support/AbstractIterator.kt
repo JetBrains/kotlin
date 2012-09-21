@@ -33,13 +33,13 @@ public abstract class AbstractIterator<T>: Iterator<T> {
     override fun next(): T {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
-        return next.sure()
+        return next!!
     }
 
     /** Returns the next element in the iteration without advancing the iteration */
     fun peek(): T {
         if (!hasNext()) throw NoSuchElementException()
-        return next.sure();
+        return next!!;
     }
 
     private fun tryToComputeNext(): Boolean {

@@ -1,4 +1,4 @@
-fun Int?.inc() = this.sure().inc()
+fun Int?.inc() = this!!.inc()
 
 public fun box() : String {
     var i : Int? = 10

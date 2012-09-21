@@ -1130,11 +1130,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithMappedClasses.kt");
             }
             
-            @TestMetadata("MethodWithTupleType.kt")
-            public void testMethodWithTupleType() throws Exception {
-                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithTupleType.kt");
-            }
-            
             @TestMetadata("MethodWithTypeParameters.kt")
             public void testMethodWithTypeParameters() throws Exception {
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithTypeParameters.kt");
@@ -1347,6 +1342,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
     public static class NamespaceComparator extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInNamespaceComparator() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest", new File("compiler/testData/lazyResolve/namespaceComparator"), "kt", true);
+        }
+        
+        @TestMetadata("classObjectAnnotation.kt")
+        public void testClassObjectAnnotation() throws Exception {
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/classObjectAnnotation.kt");
+        }
+        
+        @TestMetadata("classObjectHeader.kt")
+        public void testClassObjectHeader() throws Exception {
+            doTestSinglePackage("compiler/testData/lazyResolve/namespaceComparator/classObjectHeader.kt");
         }
         
         @TestMetadata("enum.kt")

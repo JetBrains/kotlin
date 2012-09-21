@@ -39,6 +39,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isIntPrimitive;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
 /**
@@ -61,7 +63,7 @@ public abstract class StackValue {
             instructionAdapter.aconst(null);
         }
         else {
-            Type boxed = CodegenUtil.boxType(type);
+            Type boxed = boxType(type);
             instructionAdapter.invokestatic(boxed.getInternalName(), "valueOf", "(" + type.getDescriptor() + ")" + boxed.getDescriptor());
         }
     }
@@ -76,7 +78,7 @@ public abstract class StackValue {
      * JVM stack after this value was generated.
      *
      * @param type  the type as which the value should be put
-     * @param v     the visitor used to generate the instructions
+     * @param v     the visitor used to genClassOrObject the instructions
      * @param depth the number of new values put onto the stack
      */
     protected void moveToTopOfStack(Type type, InstructionAdapter v, int depth) {
@@ -99,7 +101,7 @@ public abstract class StackValue {
 
     public void condJump(Label label, boolean jumpIfFalse, InstructionAdapter v) {
         put(this.type, v);
-        coerce(Type.BOOLEAN_TYPE, v);
+        coerceTo(Type.BOOLEAN_TYPE, v);
         if (jumpIfFalse) {
             v.ifeq(label);
         }
@@ -171,7 +173,7 @@ public abstract class StackValue {
 
     private static void box(final Type type, final Type toType, InstructionAdapter v) {
         // TODO handle toType correctly
-        if (type == Type.INT_TYPE || (CodegenUtil.isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
+        if (type == Type.INT_TYPE || (isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
         }
         else if (type == Type.BOOLEAN_TYPE) {
@@ -231,7 +233,7 @@ public abstract class StackValue {
             v.checkcast(type);
         }
         else {
-            coerce(type, v);
+            coerceTo(type, v);
         }
     }
 
@@ -244,11 +246,15 @@ public abstract class StackValue {
         }
     }
 
-    protected void coerce(Type toType, InstructionAdapter v) {
+    protected void coerceTo(Type toType, InstructionAdapter v) {
         coerce(this.type, toType, v);
     }
 
-    protected static void coerce(Type fromType, Type toType, InstructionAdapter v) {
+    protected void coerceFrom(Type topOfStackType, InstructionAdapter v) {
+        coerce(topOfStackType, this.type, v);
+    }
+
+    public static void coerce(Type fromType, Type toType, InstructionAdapter v) {
         if (toType.equals(fromType)) return;
 
         if (toType.getSort() == Type.VOID && fromType.getSort() != Type.VOID) {
@@ -306,7 +312,7 @@ public abstract class StackValue {
     }
 
     public static void putTuple0Instance(InstructionAdapter v) {
-        v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "INSTANCE", "Ljet/Tuple0;");
+        v.visitFieldInsn(GETSTATIC, "jet/Tuple0", "VALUE", "Ljet/Tuple0;");
     }
 
     protected void putAsBoolean(InstructionAdapter v) {
@@ -382,7 +388,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            coerce(type, v);
+            coerceTo(type, v);
         }
     }
 
@@ -401,13 +407,13 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.load(index, this.type);
-            coerce(type, v);
+            coerceTo(type, v);
             // TODO unbox
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            coerce(topOfStackType, this.type, v);
+            coerceFrom(topOfStackType, v);
             v.store(index, this.type);
         }
     }
@@ -419,7 +425,7 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -465,7 +471,7 @@ public abstract class StackValue {
             else {
                 v.aconst(value);
             }
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -610,18 +616,18 @@ public abstract class StackValue {
 
         public ArrayElement(Type type, boolean unbox) {
             super(type);
-            this.boxed = unbox ? CodegenUtil.boxType(type) : type;
+            this.boxed = unbox ? boxType(type) : type;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.aload(boxed);    // assumes array and index are on the stack
-            onStack(boxed).coerce(type, v);
+            coerce(boxed, type, v);
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            onStack(type).coerce(boxed, v);
+            coerce(topOfStackType, boxed, v);
             v.astore(boxed);
         }
 
@@ -677,7 +683,7 @@ public abstract class StackValue {
             else {
                 ((IntrinsicMethod) getter).generate(codegen, v, type, null, null, null, state);
             }
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -901,7 +907,7 @@ public abstract class StackValue {
         @Override
         public void put(Type type, InstructionAdapter v) {
             v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, owner.getInternalName(), name, this.type.getDescriptor());
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
@@ -918,7 +924,7 @@ public abstract class StackValue {
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            coerce(topOfStackType, this.type, v);
+            coerceFrom(topOfStackType, v);
             v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, owner.getInternalName(), name, this.type.getDescriptor());
         }
     }
@@ -976,11 +982,12 @@ public abstract class StackValue {
                     v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
                 }
             }
-            coerce(type, v);
+            coerceTo(type, v);
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
+            coerceFrom(topOfStackType, v);
             if (isSuper && isInterface) {
                 assert setter != null;
                 v.visitMethodInsn(INVOKESTATIC, methodOwner.getInternalName(), setter.getName(),
@@ -1047,8 +1054,8 @@ public abstract class StackValue {
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
             v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
-            coerce(refType, this.type, v);
-            coerce(this.type, type, v);
+            coerceFrom(refType, v);
+            coerceTo(type, v);
             if (isReleaseOnPut) {
                 v.aconst(null);
                 v.store(index, OBJECT_TYPE);
@@ -1057,6 +1064,7 @@ public abstract class StackValue {
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
+            coerceFrom(topOfStackType, v);
             v.load(index, OBJECT_TYPE);
             v.swap();
             Type refType = refType(this.type);
@@ -1133,13 +1141,13 @@ public abstract class StackValue {
             Type sharedType = sharedTypeForType(this.type);
             Type refType = refType(this.type);
             v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
-            StackValue.onStack(refType).coerce(this.type, v);
-            StackValue.onStack(this.type).coerce(type, v);
+            coerceFrom(refType, v);
+            coerceTo(type, v);
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            coerce(topOfStackType, v);
+            coerceFrom(topOfStackType, v);
             v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
         }
     }
@@ -1200,7 +1208,7 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             if (!type.equals(Type.VOID_TYPE)) {
                 v.load(index, Type.INT_TYPE);
-                coerce(type, v);
+                coerceTo(type, v);
             }
             v.iinc(index, increment);
         }
@@ -1221,7 +1229,7 @@ public abstract class StackValue {
             v.iinc(index, increment);
             if (!type.equals(Type.VOID_TYPE)) {
                 v.load(index, Type.INT_TYPE);
-                coerce(type, v);
+                coerceTo(type, v);
             }
         }
     }

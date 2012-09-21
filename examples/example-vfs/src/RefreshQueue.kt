@@ -95,7 +95,7 @@ internal object RefreshQueue {
     /* Deletes file from file system recursively, notifying listeners */
     private fun deleteRecursively(file : VirtualFile) {
         val fileInfoMaybe : VirtualFileInfo? = FileSystem.fileToInfo[file.path]
-        val fileInfo = fileInfoMaybe.sure()
+        val fileInfo = fileInfoMaybe!!
         fileInfo.children.forEach{ deleteRecursively(it) }
         FileSystem.notifyEventHappened(VirtualFileDeletedEvent(file))
         FileSystem.fileToInfo.remove(file)

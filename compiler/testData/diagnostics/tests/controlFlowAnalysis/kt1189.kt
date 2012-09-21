@@ -3,7 +3,7 @@ package kt1189
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 inline fun <T> ReentrantReadWriteLock.write(action: ()->T) : T {
-    val rl = readLock().sure()
+    val rl = readLock()!!
     var readCount = 0
     val writeCount = getWriteHoldCount()
     if(writeCount == 0) {
@@ -13,7 +13,7 @@ inline fun <T> ReentrantReadWriteLock.write(action: ()->T) : T {
                 rl.unlock()
     }
 
-    val wl = writeLock().sure()
+    val wl = writeLock()!!
     wl.lock()
     try {
         return action()

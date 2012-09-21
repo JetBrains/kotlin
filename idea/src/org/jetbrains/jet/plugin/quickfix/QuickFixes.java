@@ -123,6 +123,10 @@ public class QuickFixes {
         factories.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
         factories.put(CANNOT_WEAKEN_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
 
+        factories.put(TUPLES_ARE_NOT_SUPPORTED, MigrateTuplesInProjectFix.createFactory());
+
+        factories.put(UNRESOLVED_REFERENCE, MigrateSureInProjectFix.createFactory());
+
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
         actions.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
         actions.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);

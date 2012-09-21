@@ -47,6 +47,12 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
  */
 public interface Errors {
 
+    // TODO: Temporary error message: to deprecate tuples we report this error and provide a quick fix
+    @Deprecated // Tuples will be dropped in Kotlin M4
+    SimpleDiagnosticFactory<PsiElement> TUPLES_ARE_NOT_SUPPORTED = SimpleDiagnosticFactory.create(ERROR);
+    @Deprecated // Tuples will be dropped in Kotlin M4
+    SimpleDiagnosticFactory<PsiElement> TUPLES_ARE_NOT_SUPPORTED_BIG = SimpleDiagnosticFactory.create(ERROR);
+
     DiagnosticFactory1<JetFile, Throwable> EXCEPTION_WHILE_ANALYZING = DiagnosticFactory1.create(ERROR);
 
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.create();
@@ -70,6 +76,8 @@ public interface Errors {
             .create(WARNING, positionModifier(JetTokens.OPEN_KEYWORD));
     SimpleDiagnosticFactory<JetModifierListOwner> OPEN_MODIFIER_IN_ENUM = SimpleDiagnosticFactory
             .create(ERROR, positionModifier(JetTokens.OPEN_KEYWORD));
+    SimpleDiagnosticFactory<JetModifierListOwner> ILLEGAL_ENUM_ANNOTATION = SimpleDiagnosticFactory
+            .create(ERROR, positionModifier(JetTokens.ENUM_KEYWORD));
     SimpleDiagnosticFactory<PsiElement>
             REDUNDANT_MODIFIER_IN_GETTER = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<PsiElement> TRAIT_CAN_NOT_BE_FINAL = SimpleDiagnosticFactory.create(ERROR);
@@ -151,6 +159,7 @@ public interface Errors {
 
     DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, NAME_IDENTIFIER);
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR);
+    SimpleDiagnosticFactory<PsiElement> ENUM_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
 
     DiagnosticFactory1<JetSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = DiagnosticFactory1.create(ERROR);

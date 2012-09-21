@@ -1,7 +1,9 @@
 import java.util.ArrayList
 
-class MyListOfPairs<T> : ArrayList<#(T, T)>() { }
+class Pair<A, B>(val a: A, val b: B)
+
+class MyListOfPairs<T> : ArrayList<Pair<T, T>>() { }
 
 fun test() {
-    MyListOfPairs<Int>() : ArrayList<#(Int, Int)>
+    MyListOfPairs<Int>() : ArrayList<Pair<Int, Int>>
 }

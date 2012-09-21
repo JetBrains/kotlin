@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
 import java.util.Collection;
 import java.util.List;
@@ -50,5 +51,11 @@ public interface AnalyzerFacade {
             @NotNull BindingTrace traceContext,
             @NotNull BodiesResolveContext bodiesResolveContext,
             @NotNull ModuleConfiguration configuration
+    );
+
+    @NotNull
+    ResolveSession getLazyResolveSession(
+            @NotNull Project project,
+            @NotNull Collection<JetFile> files
     );
 }

@@ -8,7 +8,7 @@ import java.util.Properties
 /**
  * create connection for the specified jdbc url with no credentials
  */
-fun getConnection(url : String) : Connection = DriverManager.getConnection(url).sure()
+fun getConnection(url : String) : Connection = DriverManager.getConnection(url)!!
 
 /**
  * create connection for the specified jdbc url and properties

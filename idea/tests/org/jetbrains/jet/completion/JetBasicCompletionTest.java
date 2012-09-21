@@ -56,6 +56,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testDoNotCompleteForErrorReceivers() {
+        doTest();
+    }
+
     public void testExtendClassName() {
         doTest();
     }
@@ -169,6 +173,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     }
 
     public void testNoEmptyNamespace() {
+        doTest();
+    }
+
+    public void testNoTopLevelCompletionInQualifiedUserTypes() {
         doTest();
     }
 

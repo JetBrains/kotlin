@@ -189,36 +189,36 @@ public class JetNameSuggester {
         return matcher.replaceAll("");
     }
     
-    private static void addNamesForExpression(ArrayList<String> result, JetExpression expression, JetNameValidator validator) {
-        if (expression instanceof JetQualifiedExpression) {
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
-            JetExpression selectorExpression = qualifiedExpression.getSelectorExpression();
-            addNamesForExpression(result, selectorExpression, validator);
-            if (selectorExpression != null && selectorExpression instanceof JetCallExpression) {
-                JetExpression calleeExpression = ((JetCallExpression)selectorExpression).getCalleeExpression();
-                if (calleeExpression != null && calleeExpression instanceof JetSimpleNameExpression) {
-                    String name = ((JetSimpleNameExpression)calleeExpression).getReferencedName();
-                    if (name != null && name.equals("sure")) {
-                        addNamesForExpression(result, qualifiedExpression.getReceiverExpression(), validator);
-                    }
+    private static void addNamesForExpression(final ArrayList<String> result, JetExpression expression, final JetNameValidator validator) {
+        expression.accept(new JetVisitorVoid() {
+            @Override
+            public void visitQualifiedExpression(JetQualifiedExpression expression) {
+                JetExpression selectorExpression = expression.getSelectorExpression();
+                addNamesForExpression(result, selectorExpression, validator);
+            }
+
+            @Override
+            public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+                String referenceName = expression.getReferencedName();
+                if (referenceName == null) return;
+                if (referenceName.equals(referenceName.toUpperCase())) {
+                    addName(result, referenceName, validator);
+                }
+                else {
+                    addCamelNames(result, referenceName, validator);
                 }
             }
-        }
-        else if (expression instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression reference = (JetSimpleNameExpression) expression;
-            String referenceName = reference.getReferencedName();
-            if (referenceName == null) return;
-            if (referenceName.equals(referenceName.toUpperCase())) {
-                addName(result, referenceName, validator);
+
+            @Override
+            public void visitCallExpression(JetCallExpression expression) {
+                addNamesForExpression(result, expression.getCalleeExpression(), validator);
             }
-            else {
-                addCamelNames(result, referenceName, validator);
+
+            @Override
+            public void visitPostfixExpression(JetPostfixExpression expression) {
+                addNamesForExpression(result, expression.getBaseExpression(), validator);
             }
-        }
-        else if (expression instanceof JetCallExpression) {
-            JetCallExpression call = (JetCallExpression) expression;
-            addNamesForExpression(result, call.getCalleeExpression(), validator);
-        }
+        });
     }
     
     public static boolean isIdentifier(String name) {

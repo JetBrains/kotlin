@@ -1,5 +1,7 @@
 package testData.libraries
 
+public class Pair<A, B>(val first: A, val second: B)
+
 public trait SimpleTrait {
 }
 
@@ -60,7 +62,7 @@ public abstract class ClassWithAbstractAndOpenMembers {
 public fun main(args : Array<String>) {
 }
 
-public val globalVal : #(Int, String) = #(239, "239")
+public val globalVal : Pair<Int, String> = Pair(239, "239")
 
 public val globalValWithGetter : Long
 get() {
@@ -77,9 +79,9 @@ get() {
     return this
 }
 
-public val <T> #(T, T).exProp : String
+public val <T> Pair<T, T>.exProp : String
 get() {
-    return "${this._1} : ${this._2}"
+    return "${this.first} : ${this.second}"
 }
 
 public fun func(a : Int, b : String = "55") {

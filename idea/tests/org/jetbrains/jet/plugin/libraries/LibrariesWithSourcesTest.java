@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.libraries;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,7 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.containers.MultiMap;
-import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
@@ -116,13 +116,13 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
     }
 
     private String getActualAnnotatedLibraryCode() {
-        MultiMap<PsiFile, Tuple2<Integer, Integer>> filesToNumbersAndOffsets = new MultiMap<PsiFile, Tuple2<Integer, Integer>>();
+        MultiMap<PsiFile, Pair<Integer, Integer>> filesToNumbersAndOffsets = new MultiMap<PsiFile, Pair<Integer, Integer>>();
         int refNumber = 1;
         for (JetPsiReference ref : collectInterestingReferences()) {
             PsiElement target = ref.resolve();
             assertNotNull(target);
             PsiElement navigationElement = target.getNavigationElement();
-            Tuple2<Integer, Integer> numberAndOffset = new Tuple2<Integer, Integer>(refNumber++, navigationElement.getTextOffset());
+            Pair<Integer, Integer> numberAndOffset = new Pair<Integer, Integer>(refNumber++, navigationElement.getTextOffset());
             filesToNumbersAndOffsets.putValue(navigationElement.getContainingFile(), numberAndOffset);
         }
 
@@ -140,27 +140,27 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
 
         StringBuilder result = new StringBuilder();
         for (PsiFile file : files) {
-            List<Tuple2<Integer, Integer>> numbersAndOffsets = new ArrayList<Tuple2<Integer, Integer>>(filesToNumbersAndOffsets.get(file));
+            List<Pair<Integer, Integer>> numbersAndOffsets = new ArrayList<Pair<Integer, Integer>>(filesToNumbersAndOffsets.get(file));
 
-            Collections.sort(numbersAndOffsets, Collections.reverseOrder(new Comparator<Tuple2<Integer, Integer>>() {
+            Collections.sort(numbersAndOffsets, Collections.reverseOrder(new Comparator<Pair<Integer, Integer>>() {
                 @Override
-                public int compare(Tuple2<Integer, Integer> t1, Tuple2<Integer, Integer> t2) {
-                    int offsets = t1._2.compareTo(t2._2);
-                    return offsets == 0 ? t1._1.compareTo(t2._1) : offsets;
+                public int compare(Pair<Integer, Integer> t1, Pair<Integer, Integer> t2) {
+                    int offsets = t1.second.compareTo(t2.second);
+                    return offsets == 0 ? t1.first.compareTo(t2.first) : offsets;
                 }
             }));
 
             Document document = PsiDocumentManager.getInstance(getProject()).getDocument(file);
             assertNotNull(document);
             StringBuilder resultForFile = new StringBuilder(document.getText());
-            for (Tuple2<Integer, Integer> numberOffset : numbersAndOffsets) {
-                resultForFile.insert(numberOffset._2, String.format("<%d>", numberOffset._1));
+            for (Pair<Integer, Integer> numberOffset : numbersAndOffsets) {
+                resultForFile.insert(numberOffset.second, String.format("<%d>", numberOffset.first));
             }
 
             int minLine = Integer.MAX_VALUE;
             int maxLine = Integer.MIN_VALUE;
-            for (Tuple2<Integer, Integer> numberOffset : numbersAndOffsets) {
-                int lineNumber = document.getLineNumber(numberOffset._2);
+            for (Pair<Integer, Integer> numberOffset : numbersAndOffsets) {
+                int lineNumber = document.getLineNumber(numberOffset.second);
                 minLine = Math.min(minLine, lineNumber);
                 maxLine = Math.max(maxLine, lineNumber);
             }

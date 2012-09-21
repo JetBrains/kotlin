@@ -18,7 +18,9 @@ package boundsWithSubstitutors
   open class A {}
   open class B<T : A>()
 
-  abstract class C<T : B<<!UPPER_BOUND_VIOLATED!>Int<!>>, X :  (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) -> #(B<<!UPPER_BOUND_VIOLATED!>Any<!>>, B<A>)>() : B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>() { // 2 errors
+  class Pair<A, B>
+
+  abstract class C<T : B<<!UPPER_BOUND_VIOLATED!>Int<!>>, X :  (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) -> Pair<B<<!UPPER_BOUND_VIOLATED!>Any<!>>, B<A>>>() : B<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>() { // 2 errors
     val a = B<<!UPPER_BOUND_VIOLATED!>Char<!>>() // error
 
     abstract val x :  (B<<!UPPER_BOUND_VIOLATED!>Char<!>>) -> B<<!UPPER_BOUND_VIOLATED!>Any<!>>

@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -30,7 +31,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.PsiTreeUtil;
-import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -45,7 +45,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
@@ -53,7 +52,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Evgeny Gerashchenko
@@ -64,7 +62,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static<D extends ClassOrNamespaceDescriptor> Tuple2<BindingContext, D>
+    private static<D extends ClassOrNamespaceDescriptor> Pair<BindingContext, D>
             getBindingContextAndClassOrNamespaceDescriptor(@NotNull ReadOnlySlice<FqName, D> slice,
                                                            @NotNull JetDeclaration declaration,
                                                            @Nullable FqName fqName) {
@@ -80,19 +78,19 @@ public class JetSourceNavigationHelper {
                 Predicates.<PsiFile>alwaysTrue()).getBindingContext();
         D descriptor = bindingContext.get(slice, fqName);
         if (descriptor != null) {
-            return new Tuple2<BindingContext, D>(bindingContext, descriptor);
+            return new Pair<BindingContext, D>(bindingContext, descriptor);
         }
         return null;
     }
 
     @Nullable
-    private static Tuple2<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClass decompiledClass) {
+    private static Pair<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClass decompiledClass) {
         return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, decompiledClass,
                                                               JetPsiUtil.getFQName(decompiledClass));
     }
 
     @Nullable
-    private static Tuple2<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(
+    private static Pair<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(
             @NotNull JetDeclaration declaration) {
         JetFile file = (JetFile) declaration.getContainingFile();
         return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, declaration,
@@ -101,12 +99,12 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static JetClassOrObject getSourceClass(@NotNull JetClass decompiledClass) {
-        Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClass);
+        Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClass);
         if (bindingContextAndClassDescriptor == null) return null;
         PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(
-                bindingContextAndClassDescriptor._1, bindingContextAndClassDescriptor._2);
+                bindingContextAndClassDescriptor.first, bindingContextAndClassDescriptor.second);
         if (declaration == null) {
-            throw new IllegalStateException("class not found by " + bindingContextAndClassDescriptor._2);
+            throw new IllegalStateException("class not found by " + bindingContextAndClassDescriptor.second);
         }
         return (JetClassOrObject) declaration;
     }
@@ -159,11 +157,11 @@ public class JetSourceNavigationHelper {
 
         PsiElement declarationContainer = decompiledDeclaration.getParent();
         if (declarationContainer instanceof JetFile) {
-            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor =
+            Pair<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor =
                     getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
             if (bindingContextAndNamespaceDescriptor == null) return null;
-            BindingContext bindingContext = bindingContextAndNamespaceDescriptor._1;
-            NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor._2;
+            BindingContext bindingContext = bindingContextAndNamespaceDescriptor.first;
+            NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor.second;
             if (receiverType == null) {
                 // non-extension property
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
@@ -197,10 +195,10 @@ public class JetSourceNavigationHelper {
             if (jetClass == null) {
                 return null;
             }
-            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(jetClass);
+            Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(jetClass);
             if (bindingContextAndClassDescriptor != null) {
-                BindingContext bindingContext = bindingContextAndClassDescriptor._1;
-                ClassDescriptor classDescriptor = bindingContextAndClassDescriptor._2;
+                BindingContext bindingContext = bindingContextAndClassDescriptor.first;
+                ClassDescriptor classDescriptor = bindingContextAndClassDescriptor.second;
                 JetScope memberScope = classDescriptor.getDefaultType().getMemberScope();
                 if (isClassObject) {
                     JetType classObjectType = classDescriptor.getClassObjectType();

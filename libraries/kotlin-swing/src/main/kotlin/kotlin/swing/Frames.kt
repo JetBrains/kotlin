@@ -25,25 +25,25 @@ var JFrame.contentPane: Container?
     }
 
 var JFrame.title: String
-    get() = getTitle().sure()
+    get() = getTitle()!!
     set(t) {
         setTitle(t)
     }
 
 var JFrame.size: Pair<Int, Int>
-    get() = Pair(getSize().sure().getWidth().toInt(), getSize().sure().getHeight().toInt())
+    get() = Pair(getSize()!!.getWidth().toInt(), getSize()!!.getHeight().toInt())
     set(dim) {
         setSize(Dimension(dim.first, dim.second))
     }
 
 var JFrame.height: Int
-    get() = getSize().sure().getHeight().toInt()
+    get() = getSize()!!.getHeight().toInt()
     set(h) {
         setSize(width, h)
     }
 
 var JFrame.width: Int
-    get() = getSize().sure().getWidth().toInt()
+    get() = getSize()!!.getWidth().toInt()
     set(w) {
         setSize(height, w)
     }

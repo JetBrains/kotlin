@@ -26,7 +26,7 @@ fun spectralnormGame(n: Int) : Double {
         u[i] = 1.0
     }
 
-    val nthread = Runtime.getRuntime ().sure().availableProcessors ();
+    val nthread = Runtime.getRuntime ()!!.availableProcessors ();
     barrier = CyclicBarrier (nthread);
 
     val chunk = n / nthread

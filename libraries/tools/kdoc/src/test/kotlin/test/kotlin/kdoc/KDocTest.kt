@@ -38,8 +38,7 @@ class KDocTest {
         config.docOutputDir = outDir.toString()!!
         config.title = "Kotlin API"
 
-        //todo@svtk KT-2745
-        val ignorePackages = config.ignorePackages as MutableSet<String>
+        val ignorePackages = config.ignorePackages
         ignorePackages.add("org.jetbrains.kotlin")
         ignorePackages.add("java")
         ignorePackages.add("jet")

@@ -36,7 +36,7 @@ public object FileSystem {
      */
     public fun getFileByIoFile(ioFile : File) : VirtualFile {
         FileSystem.assertCanRead()
-        return PhysicalVirtualFile(ioFile.getAbsolutePath().sure().toSystemIndependentPath())
+        return PhysicalVirtualFile(ioFile.getAbsolutePath()!!.toSystemIndependentPath())
     }
 
     /**

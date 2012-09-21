@@ -6,7 +6,7 @@ fun <T : Any> T?.iterator() = object {
     fun next() : T {
         if (hasNext) {
             hasNext = false
-            return this@iterator.sure()
+            return this@iterator!!
         }
         throw java.util.NoSuchElementException()
     }

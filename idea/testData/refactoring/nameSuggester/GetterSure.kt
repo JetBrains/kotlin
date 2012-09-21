@@ -1,11 +1,10 @@
 fun getFooGoo(): String? = "text"
 
 fun a() {
-    <selection>getFooGoo().sure()</selection>
+    <selection>getFooGoo()!!</selection>
 }
 /*
 fooGoo
 goo
 s
-sure
 */

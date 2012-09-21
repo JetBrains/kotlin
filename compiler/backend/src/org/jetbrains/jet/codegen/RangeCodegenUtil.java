@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitiveNumberClassDescriptor;
+
 /**
  * @author abreslav
  */
@@ -91,7 +93,7 @@ public class RangeCodegenUtil {
 
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {
         if ("rangeTo".equals(rangeTo.getName().getName())) {
-            if (CodegenUtil.isPrimitiveNumberClassDescriptor(rangeTo.getContainingDeclaration())) {
+            if (isPrimitiveNumberClassDescriptor(rangeTo.getContainingDeclaration())) {
                 return true;
             }
         }

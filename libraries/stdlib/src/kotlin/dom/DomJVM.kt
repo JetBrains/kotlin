@@ -157,7 +157,7 @@ fun Element.removeClass(cssClass: String): Boolean {
 
 /** Creates a new document with the given document builder*/
 public fun createDocument(builder: DocumentBuilder): Document {
-    return builder.newDocument().sure()
+    return builder.newDocument()!!
 }
 
 /** Creates a new document with an optional DocumentBuilderFactory */
@@ -209,13 +209,13 @@ public fun parseXml(inputSource: InputSource, builder: DocumentBuilder = default
 
 
 /** Creates a new TrAX transformer */
-public fun createTransformer(source: Source? = null, factory: TransformerFactory = TransformerFactory.newInstance().sure()): Transformer {
+public fun createTransformer(source: Source? = null, factory: TransformerFactory = TransformerFactory.newInstance()!!): Transformer {
     val transformer = if (source != null) {
         factory.newTransformer(source)
     } else {
         factory.newTransformer()
     }
-    return transformer.sure()
+    return transformer!!
 }
 
 /** Converts the node to an XML String */
@@ -225,7 +225,7 @@ public fun Node.toXmlString(): String = toXmlString(false)
 public fun Node.toXmlString(xmlDeclaration: Boolean): String {
     val writer = StringWriter()
     writeXmlString(writer, xmlDeclaration)
-    return writer.toString().sure()
+    return writer.toString()!!
 }
 
 /** Converts the node to an XML String and writes it to the given [[Writer]] */

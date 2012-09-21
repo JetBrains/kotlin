@@ -210,11 +210,9 @@ public class AllInjectorsGenerator {
                            new GivenExpression("bindingTrace.getBindingContext()"));
         generator.addField(false, ClassBuilderMode.class, "classBuilderMode",
                            new GivenExpression("classBuilderFactory.getClassBuilderMode()"));
-        generator.addPublicField(ClassCodegen.class);
         generator.addPublicField(ScriptCodegen.class);
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.addPublicField(ClassFileFactory.class);
-        generator.addPublicField(MemberCodegen.class);
 
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }

@@ -19,9 +19,10 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.ConfigurationKind;
 
 public class TupleGenTest extends CodegenTestCase {
-    public void testBasic() {
+
+    public void testUnitValue() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("/tuples/basic.jet");
+        blackBoxFile("/tuples/UnitValue.kt");
 //        System.out.println(generateToText());
     }
 }

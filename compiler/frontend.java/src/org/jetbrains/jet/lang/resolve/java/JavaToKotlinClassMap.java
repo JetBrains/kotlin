@@ -30,13 +30,12 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
-import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
  * @author svtk
  */
-public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
+public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
     private static JavaToKotlinClassMap instance = null;
 
     @NotNull
@@ -55,42 +54,6 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
     private JavaToKotlinClassMap() {
         init();
         initPrimitives();
-    }
-
-    private void init() {
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-
-        register(Object.class, JetStandardClasses.getAny());
-        register(String.class, standardLibrary.getString());
-        register(CharSequence.class, standardLibrary.getCharSequence());
-        register(Throwable.class, standardLibrary.getThrowable());
-        register(Number.class, standardLibrary.getNumber());
-        register(Comparable.class, standardLibrary.getComparable());
-        register(Enum.class, standardLibrary.getEnum());
-        register(Annotation.class, standardLibrary.getAnnotation());
-        register(Iterable.class, standardLibrary.getIterable());
-        register(Iterator.class, standardLibrary.getIterator());
-
-        registerCovariant(Iterable.class, standardLibrary.getMutableIterable());
-        registerCovariant(Iterator.class, standardLibrary.getMutableIterator());
-
-        register(Collection.class, standardLibrary.getCollection());
-        registerCovariant(Collection.class, standardLibrary.getMutableCollection());
-
-        register(List.class, standardLibrary.getList());
-        registerCovariant(List.class, standardLibrary.getMutableList());
-
-        register(Set.class, standardLibrary.getSet());
-        registerCovariant(Set.class, standardLibrary.getMutableSet());
-
-        register(Map.class, standardLibrary.getMap());
-        registerCovariant(Map.class, standardLibrary.getMutableMap());
-
-        register(Map.Entry.class, standardLibrary.getMapEntry());
-        registerCovariant(Map.Entry.class, standardLibrary.getMutableMapEntry());
-
-        register(ListIterator.class, standardLibrary.getListIterator());
-        registerCovariant(ListIterator.class, standardLibrary.getMutableListIterator());
     }
 
     private void initPrimitives() {
@@ -131,17 +94,28 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         return new FqName(javaClass.getName().replace("$", "."));
     }
 
-    private void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+    @Override
+    /*package*/ void register(
+            @NotNull Class<?> javaClass,
+            @NotNull ClassDescriptor kotlinDescriptor
+    ) {
         register(getJavaClassFqName(javaClass), kotlinDescriptor);
+    }
+
+    @Override
+    /*package*/ void register(
+            @NotNull Class<?> javaClass,
+            @NotNull ClassDescriptor kotlinDescriptor,
+            @NotNull ClassDescriptor kotlinMutableDescriptor
+    ) {
+        FqName javaClassName = getJavaClassFqName(javaClass);
+        register(javaClassName, kotlinDescriptor);
+        registerCovariant(javaClassName, kotlinMutableDescriptor);
     }
 
     private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         classDescriptorMap.put(javaClassName, kotlinDescriptor);
         packagesWithMappedClasses.put(javaClassName.parent(), kotlinDescriptor);
-    }
-
-    private void registerCovariant(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
-        registerCovariant(getJavaClassFqName(javaClass), kotlinDescriptor);
     }
 
     private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {

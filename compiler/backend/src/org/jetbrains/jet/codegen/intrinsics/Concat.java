@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -28,6 +27,9 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.genInvokeAppendMethod;
+import static org.jetbrains.jet.codegen.AsmUtil.genStringBuilderConstructor;
 
 /**
  * @author yole
@@ -44,15 +46,15 @@ public class Concat implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         if (receiver == null || receiver == StackValue.none()) {                                                     // LHS + RHS
-            CodegenUtil.generateStringBuilderConstructor(v);
+            genStringBuilderConstructor(v);
             codegen.invokeAppend(arguments.get(0));                                // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(1));
         }
         else {                                    // LHS.plus(RHS)
             receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-            CodegenUtil.generateStringBuilderConstructor(v);
+            genStringBuilderConstructor(v);
             v.swap();                                                              // StringBuilder LHS
-            CodegenUtil.invokeAppendMethod(v, expectedType);  // StringBuilder(LHS)
+            genInvokeAppendMethod(v, expectedType);  // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(0));
         }
 

@@ -320,12 +320,12 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testSureNonnull () throws Exception {
-        loadText("fun box() = 10.sure().toString()");
+        loadText("fun box() = 10!!.toString()");
         assertFalse(generateToText().contains("IFNONNULL"));
     }
 
     public void testSureNullable () throws Exception {
-        loadText("val a : Int? = 10; fun box() = a.sure().toString()");
+        loadText("val a : Int? = 10; fun box() = a!!.toString()");
         assertTrue(generateToText().contains("IFNONNULL"));
     }
 
@@ -447,5 +447,13 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testEmptyRanges() throws Exception {
         blackBoxFile("emptyRanges.kt");
+    }
+
+    public void test2251() throws Exception {
+        blackBoxFile("regressions/kt2251.kt");
+    }
+
+    public void test2794() throws Exception {
+        blackBoxFile("regressions/kt2794.kt");
     }
 }

@@ -38,6 +38,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest(CompletionType.BASIC, 2, "SortedSet", null);
     }
 
+    public void testDoNotInsertImportForAlreadyImported() {
+        doTest();
+    }
+
     public void testNonStandardArray() {
         doTest(CompletionType.BASIC, 2, "Array", "java.lang.reflect");
     }
@@ -68,7 +72,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
-    public void testSureInsert() {
+    public void testExtFunction() {
         doTest();
     }
 

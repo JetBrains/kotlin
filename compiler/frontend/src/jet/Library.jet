@@ -16,8 +16,6 @@ public fun Any?.equals(other : Any?) : Boolean// = this === other
 // Returns "null" for null
 public fun Any?.toString() : String// = this === other
 
-public fun <T : Any> T?.sure() : T
-
 public fun String?.plus(other: Any?) : String
 
 public trait Comparable<in T> {

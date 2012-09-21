@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
@@ -135,7 +134,7 @@ public class ResolveSession {
         if (classOrObject.getParent() instanceof JetClassObject) {
             return getClassObjectDescriptor((JetClassObject) classOrObject.getParent());
         }
-        JetScope resolutionScope = getInjector().getScopeProvider().getResolutionScopeForDeclaration((JetDeclaration) classOrObject);
+        JetScope resolutionScope = getInjector().getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
         Name name = classOrObject.getNameAsName();
         assert name != null : "Name is null for " + classOrObject + " " + classOrObject.getText();
         ClassifierDescriptor classifier = resolutionScope.getClassifier(name);
@@ -168,33 +167,6 @@ public class ResolveSession {
     @NotNull
     public DeclarationProviderFactory getDeclarationProviderFactory() {
         return declarationProviderFactory;
-    }
-
-    @NotNull
-    public JetScope getResolutionScope(PsiElement element) {
-        PsiElement parent = element.getParent();
-        if (parent instanceof JetFile) {
-            JetFile file = (JetFile) parent;
-            return getInjector().getScopeProvider().getFileScopeForDeclarationResolution(file);
-        }
-
-        if (parent instanceof JetClassBody) {
-            return getEnclosingLazyClass(element).getScopeForMemberDeclarationResolution();
-        }
-
-        if (parent instanceof JetClassObject) {
-            return new InnerClassesScopeWrapper(getEnclosingLazyClass(element).getScopeForMemberDeclarationResolution());
-        }
-
-        throw new IllegalArgumentException("Unsupported PSI element: " + element);
-    }
-
-    private LazyClassDescriptor getEnclosingLazyClass(PsiElement element) {
-        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element.getParent(), JetClassOrObject.class);
-        assert classOrObject != null : "Called for an element that is not a class member: " + element;
-        ClassDescriptor classDescriptor = getClassDescriptor(classOrObject);
-        assert classDescriptor instanceof LazyClassDescriptor : "Trying to resolve a member of a non-lazily loaded class: " + element;
-        return (LazyClassDescriptor) classDescriptor;
     }
 
     @NotNull

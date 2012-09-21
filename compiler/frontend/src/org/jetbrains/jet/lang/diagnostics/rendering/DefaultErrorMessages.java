@@ -45,6 +45,11 @@ public class DefaultErrorMessages {
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP);
 
     static {
+
+        // TODO: remove when tuples are completely dropped
+        MAP.put(TUPLES_ARE_NOT_SUPPORTED, "Tuples are not supported. In the IDE you can use Alt+Enter to replace tuples with library classes");
+        MAP.put(TUPLES_ARE_NOT_SUPPORTED_BIG, "Tuples are not supported. Use data classes instead");
+
         MAP.put(EXCEPTION_WHILE_ANALYZING, "{0}", new Renderer<Throwable>() {
             @NotNull
             @Override
@@ -82,6 +87,7 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in trait");
         MAP.put(OPEN_MODIFIER_IN_TRAIT, "Modifier ''open'' is redundant in trait");
         MAP.put(OPEN_MODIFIER_IN_ENUM, "Modifier ''open'' is not applicable for enum class");
+        MAP.put(ILLEGAL_ENUM_ANNOTATION, "Annotation ''enum'' is only applicable for class");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
         MAP.put(TRAIT_CAN_NOT_BE_FINAL, "Trait cannot be final");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
@@ -95,7 +101,7 @@ public class DefaultErrorMessages {
         MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", NAME);
         MAP.put(USELESS_HIDDEN_IMPORT, "Useless import, it is hidden further");
         MAP.put(USELESS_SIMPLE_IMPORT, "Useless import, does nothing");
-        MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASS_DESCRIPTOR_LIST);
+        MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 
         MAP.put(CANNOT_INFER_PARAMETER_TYPE,
                 "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
@@ -164,6 +170,7 @@ public class DefaultErrorMessages {
 
         MAP.put(ENUM_ENTRY_SHOULD_BE_INITIALIZED, "Missing delegation specifier ''{0}''", NAME);
         MAP.put(ENUM_ENTRY_ILLEGAL_TYPE, "The type constructor of enum entry should be ''{0}''", NAME);
+        MAP.put(ENUM_NOT_ALLOWED, "Enum class is not allowed here");
 
         MAP.put(UNINITIALIZED_VARIABLE, "Variable ''{0}'' must be initialized", NAME);
         MAP.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here", NAME);

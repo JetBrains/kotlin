@@ -75,4 +75,9 @@ public class JetSimpleNameReference extends JetPsiReference {
         PsiElement element = JetPsiFactory.createNameIdentifier(myExpression.getProject(), newElementName);
         return myExpression.getReferencedNameElement().replace(element);
     }
+
+    @Override
+    public String toString() {
+        return JetSimpleNameReference.class.getSimpleName() + ": " + myExpression.getText();
+    }
 }

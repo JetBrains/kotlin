@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -29,6 +28,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
 /**
  * @author yole
@@ -52,7 +53,7 @@ public class BinaryOp implements IntrinsicMethod {
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
         if (nullable) {
-            expectedType = CodegenUtil.unboxType(expectedType);
+            expectedType = unboxType(expectedType);
         }
         if (arguments.size() == 1) {
             // Intrinsic is called as an ordinary function
@@ -68,7 +69,7 @@ public class BinaryOp implements IntrinsicMethod {
         v.visitInsn(expectedType.getOpcode(opcode));
 
         if (nullable) {
-            StackValue.onStack(expectedType).put(expectedType = CodegenUtil.boxType(expectedType), v);
+            StackValue.onStack(expectedType).put(expectedType = boxType(expectedType), v);
         }
         return StackValue.onStack(expectedType);
     }

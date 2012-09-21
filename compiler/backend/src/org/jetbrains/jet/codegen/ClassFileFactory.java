@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+
 /**
  * @author max
  * @author alex.tkachman
@@ -114,7 +116,7 @@ public final class ClassFileFactory extends GenerationStateAware {
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
         Type type = state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.IMPL);
-        if (CodegenUtil.isPrimitive(type)) {
+        if (isPrimitive(type)) {
             throw new IllegalStateException("Codegen for primitive type is not possible: " + aClass);
         }
         return newVisitor(type.getInternalName() + ".class");

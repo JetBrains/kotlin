@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
 
     println("Stock server started")
 
-    val executor = Executors.newFixedThreadPool(4*Runtime.getRuntime().sure().availableProcessors()).sure()
+    val executor = Executors.newFixedThreadPool(4*Runtime.getRuntime()!!.availableProcessors())!!
 
     for(i in 0..numberOfClients) {
         val client = executor.actor{ message ->

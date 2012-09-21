@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -31,8 +31,10 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,13 +45,15 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
 /**
 * @author Pavel Talanov
 */
-public final class JsConfiguration implements ModuleConfiguration {
+public class JsConfiguration implements ModuleConfiguration {
 
     @NotNull
-    private static final List<ImportPath> DEFAULT_IMPORT_PATHS = Arrays.asList(new ImportPath("js.*"), new ImportPath("java.lang.*"),
-                                                                              new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME,
-                                                                                             true),
-                                                                              new ImportPath("kotlin.*"));
+    public static final List<ImportPath> DEFAULT_IMPORT_PATHS = Arrays.asList(
+            new ImportPath("js.*"),
+            new ImportPath("java.lang.*"),
+            new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true),
+            new ImportPath("kotlin.*"));
+
     @NotNull
     private final Project project;
     /*
@@ -75,6 +79,12 @@ public final class JsConfiguration implements ModuleConfiguration {
             @NotNull WritableScope namespaceMemberScope) {
         DefaultModuleConfiguration.createStandardConfiguration(project, BuiltinsScopeExtensionMode.ALL)
                 .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+
+        // Extend root namespace with standard classes
+        if (namespaceDescriptor.getQualifiedName().shortNameOrSpecial().equals(FqNameUnsafe.ROOT_NAME)) {
+            namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+        }
+
         if (hasPreanalyzedContextForTests()) {
             extendScopeWithPreAnalyzedContextForTests(namespaceDescriptor, namespaceMemberScope);
         }

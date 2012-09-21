@@ -18,20 +18,33 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
+import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -68,6 +81,67 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
                 project, scriptParameters, filesForBodiesResolve,
                 headersTraceContext, bodiesResolveContext, configuration);
+    }
+
+    @NotNull
+    @Override
+    public ResolveSession getLazyResolveSession(@NotNull final Project fileProject, @NotNull Collection<JetFile> files) {
+        ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
+
+        BindingTraceContext javaResolverTrace = new BindingTraceContext();
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
+                fileProject, javaResolverTrace, javaModule, BuiltinsScopeExtensionMode.ALL);
+
+        final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
+
+        // TODO: Replace with stub declaration provider
+        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(files, new Predicate<FqName>() {
+            @Override
+            public boolean apply(FqName fqName) {
+                return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
+            }
+        });
+
+        final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+
+        ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
+            @Override
+            public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
+                final Collection<ImportPath> defaultImports = Lists.newArrayList(JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS);
+                defaultImports.addAll(Arrays.asList(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS));
+
+                for (ImportPath defaultJetImport : defaultImports) {
+                    directives.add(JetPsiFactory.createImportDirective(fileProject, defaultJetImport));
+                }
+            }
+
+            @Override
+            public void extendNamespaceScope(
+                    @NotNull BindingTrace trace,
+                    @NotNull NamespaceDescriptor namespaceDescriptor,
+                    @NotNull WritableScope namespaceMemberScope
+            ) {
+                FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
+                if (new FqName("jet").equals(fqName)) {
+                    namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+                }
+                if (psiClassFinder.findPsiPackage(fqName) != null) {
+                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);
+                    assert javaPackageScope != null;
+                    namespaceMemberScope.importScope(javaPackageScope);
+                }
+            }
+
+            @NotNull
+            @Override
+            public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+                return PlatformToKotlinClassMap.EMPTY;
+            }
+        };
+
+        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+
+        return new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(

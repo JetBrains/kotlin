@@ -105,7 +105,7 @@ class CollectionTest {
         assertNull(x)
 
         val f = data.find{it.startsWith("f")}
-        f.sure()
+        f!!
         assertEquals("foo", f)
     }
 
@@ -390,7 +390,7 @@ class CollectionTest {
         private val collection = collection
 
         override fun iterator(): Iterator<T> {
-            return collection.iterator().sure()
+            return collection.iterator()!!
         }
     }
 }

@@ -129,7 +129,7 @@ public inline fun <T> T?.makeString(separator: String = ", ", prefix: String = "
         buffer.append(this)
     }
     buffer.append(postfix)
-    return buffer.toString().sure()
+    return buffer.toString()!!
 }
 
 

@@ -1,4 +1,4 @@
-fun <T> Array<T>?.get(i : Int?) = this.sure().get(i.sure())
+fun <T> Array<T>?.get(i : Int?) = this!!.get(i!!)
 fun <T> array(vararg t : T) : Array<T> = t
 
 fun box() : String {

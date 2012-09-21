@@ -152,19 +152,22 @@ public class BothSignatureWriter {
         state = to;
     }
 
+    public void writeAsmType(Type asmType, boolean nullable) {
+        writeAsmType(asmType, nullable, null);
+    }
 
     /**
      * Shortcut
      */
-    public void writeAsmType(Type asmType, boolean nullable) {
+    public void writeAsmType(Type asmType, boolean nullable, @Nullable String kotlinTypeName) {
         switch (asmType.getSort()) {
             case Type.OBJECT:
-                writeClassBegin(asmType.getInternalName(), nullable, false);
+                writeClassBegin(asmType.getInternalName(), nullable, false, kotlinTypeName);
                 writeClassEnd();
                 return;
             case Type.ARRAY:
                 writeArrayType(nullable);
-                writeAsmType(asmType.getElementType(), false);
+                writeAsmType(asmType.getElementType(), false, kotlinTypeName);
                 writeArrayEnd();
                 return;
             default:
@@ -218,8 +221,12 @@ public class BothSignatureWriter {
     }
 
     public void writeClassBegin(String internalName, boolean nullable, boolean real) {
+        writeClassBegin(internalName, nullable, real, null);
+    }
+
+    public void writeClassBegin(String internalName, boolean nullable, boolean real, @Nullable String kotlinTypeName) {
         signatureVisitor().visitClassType(internalName);
-        jetSignatureWriter.visitClassType(internalName, nullable, real);
+        jetSignatureWriter.visitClassType(kotlinTypeName == null ? internalName : kotlinTypeName, nullable, real);
         writeAsmType0(Type.getObjectType(internalName));
     }
 

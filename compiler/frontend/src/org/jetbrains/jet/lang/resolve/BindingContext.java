@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -58,6 +60,13 @@ public interface BindingContext {
         @Override
         public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
             return Collections.emptyList();
+        }
+
+        @NotNull
+        @TestOnly
+        @Override
+        public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+            return ImmutableMap.of();
         }
     };
 
@@ -221,6 +230,8 @@ public interface BindingContext {
     ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR = Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
 
+    WritableSlice<ClassDescriptor, Boolean> IS_ENUM_MOVED_TO_CLASS_OBJECT = Slices.createSimpleSlice();
+
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
     WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =
             Slices.<ValueParameterDescriptor, PropertyDescriptor>sliceBuilder().build();
@@ -253,4 +264,9 @@ public interface BindingContext {
     // slice.isCollective() must be true
     @NotNull
     <K, V> Collection<K> getKeys(WritableSlice<K, V> slice);
+
+    /** This method should be used only for debug and testing */
+    @TestOnly
+    @NotNull
+    <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice);
 }

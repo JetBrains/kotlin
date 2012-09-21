@@ -24,7 +24,7 @@ Executes given calculation under read lock
 Returns result of the calculation
 */
 public inline fun <T> ReentrantReadWriteLock.read(action: ()->T) : T {
-    val rl = readLock().sure()
+    val rl = readLock()!!
     rl.lock()
     try {
         return action()
@@ -41,12 +41,12 @@ If such write has been initiated by checking some condition, the condition must 
 Returns result of the calculation
 */
 public inline fun <T> ReentrantReadWriteLock.write(action: ()->T) : T {
-    val rl = readLock().sure()
+    val rl = readLock()!!
 
     val readCount = if (getWriteHoldCount() == 0) getReadHoldCount() else 0
     readCount times { rl.unlock() }
 
-    val wl = writeLock().sure()
+    val wl = writeLock()!!
     wl.lock()
     try {
         return action()

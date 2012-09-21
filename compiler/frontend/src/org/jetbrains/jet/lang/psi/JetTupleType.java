@@ -25,7 +25,10 @@ import java.util.List;
 /**
  * @author max
  */
+@Deprecated // Tuples are to be removed in Kotlin M4
 public class JetTupleType extends JetTypeElement {
+
+    @Deprecated // Tuples are to be removed in Kotlin M4
     public JetTupleType(@NotNull ASTNode node) {
         super(node);
     }
@@ -47,6 +50,7 @@ public class JetTupleType extends JetTypeElement {
     }
 
     @NotNull
+    @Deprecated // Tuples are to be removed in Kotlin M4
     public List<JetTypeReference> getComponentTypeRefs() {
         return findChildrenByType(JetNodeTypes.TYPE_REFERENCE);
     }

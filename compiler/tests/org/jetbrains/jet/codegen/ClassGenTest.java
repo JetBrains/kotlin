@@ -441,7 +441,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testKt1538() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
         blackBoxFile("regressions/kt1538.kt");
     }
 
@@ -605,5 +605,10 @@ public class ClassGenTest extends CodegenTestCase {
     public void testKt2781() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFileWithJava("regressions/kt2781.kt", true);
+    }
+
+    public void testKt2607() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2607.kt");
     }
 }

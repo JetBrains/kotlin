@@ -27,7 +27,6 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -42,18 +41,16 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
  * @author Stepan Koltsov
  */
-public class ScriptCodegen extends GenerationStateAware {
+public class ScriptCodegen extends MemberCodegen {
 
     @NotNull
     private ClassFileFactory classFileFactory;
-    @NotNull
-    private MemberCodegen memberCodegen;
 
     private List<ScriptDescriptor> earlierScripts;
     private Method scriptConstructorMethod;
@@ -65,11 +62,6 @@ public class ScriptCodegen extends GenerationStateAware {
     @Inject
     public void setClassFileFactory(@NotNull ClassFileFactory classFileFactory) {
         this.classFileFactory = classFileFactory;
-    }
-
-    @Inject
-    public void setMemberCodegen(@NotNull MemberCodegen memberCodegen) {
-        this.memberCodegen = memberCodegen;
     }
 
     public void generate(JetScript scriptDeclaration) {
@@ -209,7 +201,7 @@ public class ScriptCodegen extends GenerationStateAware {
 
     private void genMembers(@NotNull JetScript scriptDeclaration, @NotNull CodegenContext context, @NotNull ClassBuilder classBuilder) {
         for (JetDeclaration decl : scriptDeclaration.getDeclarations()) {
-            memberCodegen.generateFunctionOrProperty((JetTypeParameterListOwner) decl, context, classBuilder);
+            genFunctionOrProperty(context, (JetTypeParameterListOwner) decl, classBuilder);
         }
     }
 

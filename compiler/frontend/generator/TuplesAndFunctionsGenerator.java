@@ -22,11 +22,10 @@ import java.io.PrintStream;
  * @author abreslav
  */
 public class TuplesAndFunctionsGenerator {
-    private static int TUPLE_COUNT = 23;
+    private static final int TUPLE_COUNT = 23;
 
     private static void generateTuples(PrintStream out, int count) {
         generated(out);
-        out.println("public class Tuple0() {}");
         for (int i = 1; i < count; i++) {
             out.print("public class Tuple" + i);
             out.print("<");

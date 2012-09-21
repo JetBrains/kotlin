@@ -24,6 +24,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
@@ -41,6 +42,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.BitSet;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.AsmUtil.genStubThrow;
+import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -192,12 +195,13 @@ public class PropertyCodegen extends GenerationStateAware {
         }
 
         JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
-        final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
+        final JvmMethodSignature jvmMethodSignature = signature.getJvmMethodSignature();
+        final String descriptor = jvmMethodSignature.getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
-        MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
+        MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, jvmMethodSignature.getGenericsSignature(), null);
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
         generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(),
-                                      signature.getJvmMethodSignature().getKotlinTypeParameter(), propertyDescriptor,
+                                      jvmMethodSignature.getKotlinTypeParameter(), propertyDescriptor,
                                       getter == null
                                       ? propertyDescriptor.getVisibility()
                                       : getter.getVisibility());
@@ -212,7 +216,7 @@ public class PropertyCodegen extends GenerationStateAware {
             if (propertyDescriptor.getModality() != Modality.ABSTRACT) {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    StubCodegen.generateStubThrow(mv);
+                    genStubThrow(mv);
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
@@ -298,12 +302,13 @@ public class PropertyCodegen extends GenerationStateAware {
 
         JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
         assert true;
-        final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
-        MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
+        final JvmMethodSignature jvmMethodSignature = signature.getJvmMethodSignature();
+        final String descriptor = jvmMethodSignature.getAsmMethod().getDescriptor();
+        MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, jvmMethodSignature.getGenericsSignature(), null);
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         assert setter != null;
         generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(),
-                                      signature.getJvmMethodSignature().getKotlinTypeParameter(), propertyDescriptor,
+                                      jvmMethodSignature.getKotlinTypeParameter(), propertyDescriptor,
                                       setter.getVisibility());
 
         assert !setter.hasBody();
@@ -313,7 +318,7 @@ public class PropertyCodegen extends GenerationStateAware {
             if (propertyDescriptor.getModality() != Modality.ABSTRACT) {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-                    StubCodegen.generateStubThrow(mv);
+                    genStubThrow(mv);
                 }
                 else {
                     InstructionAdapter iv = new InstructionAdapter(mv);

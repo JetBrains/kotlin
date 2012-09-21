@@ -2,11 +2,13 @@ package a
 
 //KT-2234 'period!!' has type Int?
 
+class Pair<A, B>(val a: A, val b: B)
+
 fun main(args : Array<String>) {
     val d : Long = 1
     val period : Int? = null
-    if (period != null) #(d, period<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> : Int) else #(d, 1)
-    if (period != null) #(d, period : Int) else #(d, 1)
+    if (period != null) Pair(d, period<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> : Int) else Pair(d, 1)
+    if (period != null) Pair(d, period : Int) else Pair(d, 1)
 }
 
 fun foo() {

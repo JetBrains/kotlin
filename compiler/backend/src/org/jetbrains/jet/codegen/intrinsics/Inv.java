@@ -20,13 +20,14 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
 /**
  * @author yole
@@ -45,7 +46,7 @@ public class Inv implements IntrinsicMethod {
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
         if (nullable) {
-            expectedType = CodegenUtil.unboxType(expectedType);
+            expectedType = unboxType(expectedType);
         }
         receiver.put(expectedType, v);
         if (expectedType == Type.LONG_TYPE) {

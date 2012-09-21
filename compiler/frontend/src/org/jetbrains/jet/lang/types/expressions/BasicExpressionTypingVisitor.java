@@ -356,6 +356,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitTupleExpression(JetTupleExpression expression, ExpressionTypingContext context) {
+        // TODO: remove this method completely when tuples are droppped
+        if (expression.getEntries().size() <= 3) {
+            context.trace.report(TUPLES_ARE_NOT_SUPPORTED.on(expression));
+        }
+        else {
+            context.trace.report(TUPLES_ARE_NOT_SUPPORTED_BIG.on(expression));
+        }
+
         List<JetExpression> entries = expression.getEntries();
         List<JetType> types = new ArrayList<JetType>();
         for (JetExpression entry : entries) {
@@ -882,7 +890,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return typeInfo;
         }
         DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
-        if (isKnownToBeNotNull(baseExpression, context)) {
+        if (isKnownToBeNotNull(baseExpression, context) && !ErrorUtils.isErrorType(type)) {
             context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
         }
         else {
@@ -966,7 +974,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
             JetType compareToReturnType = getTypeForBinaryCall(context.scope, Name.identifier("compareTo"), context, expression);
-            if (compareToReturnType != null) {
+            if (compareToReturnType != null && !ErrorUtils.isErrorType(compareToReturnType)) {
                 TypeConstructor constructor = compareToReturnType.getConstructor();
                 JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
                 TypeConstructor intTypeConstructor = standardLibrary.getInt().getTypeConstructor();

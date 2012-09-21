@@ -22,7 +22,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -34,14 +33,14 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.generateMethodThrow;
-import static org.jetbrains.jet.codegen.CodegenUtil.getVisibilityAccessFlag;
+import static org.jetbrains.jet.codegen.AsmUtil.genMethodThrow;
+import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 
 /**
  * @author max
  * @author yole
  */
-public abstract class ClassBodyCodegen extends GenerationStateAware {
+public abstract class ClassBodyCodegen extends MemberCodegen {
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
@@ -89,7 +88,7 @@ public abstract class ClassBodyCodegen extends GenerationStateAware {
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration, FunctionCodegen functionCodegen) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-            state.getMemberCodegen().generateFunctionOrProperty((JetTypeParameterListOwner) declaration, context, v);
+            genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v);
         }
     }
 
@@ -146,7 +145,7 @@ public abstract class ClassBodyCodegen extends GenerationStateAware {
         // generates stub 'remove' function for subclasses of Iterator to be compatible with java.util.Iterator
         if (DescriptorUtils.isIteratorWithoutRemoveImpl(descriptor)) {
             final MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "remove", "()V", null, null);
-            generateMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
+            genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating method called on a Kotlin Iterator");
         }
     }
 }

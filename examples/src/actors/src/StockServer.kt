@@ -7,7 +7,7 @@ import java.util.concurrent.Executors
 import java.util.HashMap
 import java.util.HashSet
 
-class StockServer(val numberOfShards : Int) : Actor(Executors.newFixedThreadPool(numberOfShards+1).sure()) {
+class StockServer(val numberOfShards : Int) : Actor(Executors.newFixedThreadPool(numberOfShards+1)!!) {
     private val stockToServer = HashMap<String,StockServerShard> ()
 
     private val statCalculator = StatCalculator()

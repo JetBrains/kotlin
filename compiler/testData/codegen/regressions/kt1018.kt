@@ -1,7 +1,7 @@
 public class StockMarketTableModel() {
 
     public fun getColumnCount() : Int {
-        return COLUMN_TITLES?.size.sure()
+        return COLUMN_TITLES?.size!!
     }
 
     class object {

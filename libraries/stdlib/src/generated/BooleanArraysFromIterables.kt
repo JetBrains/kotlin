@@ -172,7 +172,7 @@ public inline fun BooleanArray.foldRight(initial: Boolean, operation: (Boolean, 
  * @includeFunctionBody ../../test/CollectionTest.kt reduce
  */
 public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean): Boolean {
-    val iterator = this.iterator().sure()
+    val iterator = this.iterator()!!
     if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
@@ -226,7 +226,7 @@ public inline fun <K> BooleanArray.groupByTo(result: MutableMap<K, MutableList<B
 public inline fun BooleanArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString().sure()
+    return buffer.toString()!!
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */

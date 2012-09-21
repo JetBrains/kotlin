@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -87,44 +89,56 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     private List<TypeProjection> typeArguments;
 
     @Override
-    public void visitClassType(String name, boolean nullable, boolean forceReal) {
-        FqName ourName = new FqName(name
-                .replace('/', '.')
-                .replace('$', '.') // TODO: not sure
-            );
-        
-        this.classDescriptor = null;
-        if (!forceReal) {
-            classDescriptor = JavaToKotlinClassMap.getInstance().mapKotlinClass(ourName,
-                                                                                  JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_INVARIANT);
-        }
+    public void visitClassType(String signatureName, boolean nullable, boolean forceReal) {
+        FqName fqName = JvmClassName.bySignatureName(signatureName).getFqName();
 
-        if (classDescriptor == null) {
-            // TODO: this is the worst code in Kotlin project
-            Matcher matcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName.getFqName());
-            if (matcher.matches()) {
-                classDescriptor = JetStandardClasses.getFunction(Integer.parseInt(matcher.group(1)));
-            }
-        }
-        
-        if (classDescriptor == null) {
-            Matcher matcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName.getFqName());
-            if (matcher.matches()) {
-                classDescriptor = JetStandardClasses.getTuple(Integer.parseInt(matcher.group(1)));
-            }
-        }
+        enterClass(resolveClassDescriptorByFqName(fqName, forceReal), fqName.getFqName(), nullable);
+    }
 
-
-        if (this.classDescriptor == null) {
-            this.classDescriptor = javaDescriptorResolver.resolveClass(ourName, DescriptorSearchRule.INCLUDE_KOTLIN);
-        }
+    private void enterClass(@Nullable ClassDescriptor classDescriptor, @NotNull String className, boolean nullable) {
+        this.classDescriptor = classDescriptor;
 
         if (this.classDescriptor == null) {
             // TODO: report in to trace
-            this.errorType = ErrorUtils.createErrorType("class not found by name: " + ourName);
+            this.errorType = ErrorUtils.createErrorType("class not found by name: " + className);
         }
         this.nullable = nullable;
         this.typeArguments = new ArrayList<TypeProjection>();
+    }
+
+    @Nullable
+    private ClassDescriptor resolveClassDescriptorByFqName(FqName ourName, boolean forceReal) {
+        if (!forceReal) {
+            ClassDescriptor mappedDescriptor = JavaToKotlinClassMap.getInstance().
+                    mapKotlinClass(ourName, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_INVARIANT);
+            if (mappedDescriptor != null) {
+                return mappedDescriptor;
+            }
+        }
+
+        // TODO: this is the worst code in Kotlin project
+        Matcher functionMatcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName.getFqName());
+        if (functionMatcher.matches()) {
+            return JetStandardClasses.getFunction(Integer.parseInt(functionMatcher.group(1)));
+        }
+
+        Matcher patternMatcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName.getFqName());
+        if (patternMatcher.matches()) {
+            return JetStandardClasses.getTuple(Integer.parseInt(patternMatcher.group(1)));
+        }
+
+
+        return javaDescriptorResolver.resolveClass(ourName, DescriptorSearchRule.INCLUDE_KOTLIN);
+    }
+
+    @Override
+    public void visitInnerClassType(String signatureName, boolean nullable, boolean forceReal) {
+        JvmClassName jvmClassName = JvmClassName.bySignatureName(signatureName);
+        ClassDescriptor descriptor = resolveClassDescriptorByFqName(jvmClassName.getOuterClassFqName(), forceReal);
+        for (String innerClassName : jvmClassName.getInnerClassNameList()) {
+            descriptor = descriptor != null ? DescriptorUtils.getInnerClassByName(descriptor, innerClassName) : null;
+        }
+        enterClass(descriptor, signatureName, nullable);
     }
 
     private static Variance parseVariance(JetSignatureVariance variance) {

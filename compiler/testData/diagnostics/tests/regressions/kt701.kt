@@ -4,9 +4,9 @@ fun getJavaClass<T>() : java.lang.Class<T> { return "" <!CAST_NEVER_SUCCEEDS!>as
 public class Throwables() {
     class object {
         public fun propagateIfInstanceOf<X : Throwable?>(throwable : Throwable?, declaredType : Class<X?>?) {
-            if (((throwable != null) && declaredType?.isInstance(throwable).sure()))
+            if (((throwable != null) && declaredType?.isInstance(throwable)!!))
             {
-                throw declaredType?.cast(throwable).sure()
+                throw declaredType?.cast(throwable)!!
             }
         }
         public fun propagateIfPossible(throwable : Throwable?) {

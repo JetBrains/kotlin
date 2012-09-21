@@ -864,7 +864,7 @@ public final class jet.LongRange : jet.Range<jet.Long>, jet.LongIterable {
         public final val EMPTY: jet.LongRange
     }
 }
-public abstract trait jet.Map</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Any {
+public abstract trait jet.Map</*0*/ K : jet.Any?, /*1*/ out V : jet.Any?> : jet.Any {
     public abstract fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
     public abstract fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
     public abstract fun entrySet(): jet.Set<jet.Map.Entry<K, V>>
@@ -1123,7 +1123,11 @@ public open class jet.Throwable : jet.Any {
     public final fun printStackTrace(): jet.Tuple0
 }
 public final class jet.Tuple0 : jet.Any {
-    public final /*constructor*/ fun <init>(): jet.Tuple0
+    private final /*constructor*/ fun <init>(): jet.Tuple0
+    public final class object jet.Tuple0.<class-object-for-Tuple0> : jet.Any {
+        private final /*constructor*/ fun <init>(): jet.Tuple0.<class-object-for-Tuple0>
+        public final val VALUE: jet.Tuple0
+    }
 }
 public final class jet.Tuple1</*0*/ out T1 : jet.Any?> : jet.Any {
     public final /*constructor*/ fun </*0*/ out T1 : jet.Any?><init>(/*0*/ _1: T1): jet.Tuple1<T1>
@@ -1466,6 +1470,5 @@ public final fun </*0*/ T : jet.Any?>jet.Iterator<T>.iterator(): jet.Iterator<T>
 public final fun jet.LongIterator.iterator(): jet.LongIterator
 public final fun jet.ShortIterator.iterator(): jet.ShortIterator
 public final fun jet.String?.plus(/*0*/ other: jet.Any?): jet.String
-public final fun </*0*/ T : jet.Any>T?.sure(): T
 public final fun </*0*/ R : jet.Any?>synchronized(/*0*/ lock: jet.Any, /*1*/ block: jet.Function0<R>): R
 public final fun jet.Any?.toString(): jet.String

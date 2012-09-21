@@ -139,7 +139,7 @@ fun makeField(s : String) : Field {
           val l1 : Int = o1.size
           val l2 = o2.size
           l1 - l2
-  }).sure()
+  })!!
   val data = Array(lines.size) {Array(w.size) {false}}
 
   // workaround
@@ -160,7 +160,7 @@ fun makeField(s : String) : Field {
 }
 
 // An excerpt from the Standard Library
-val String?.indices : IntRange get() = IntRange(0, this.sure().size)
+val String?.indices : IntRange get() = IntRange(0, this!!.size)
 
 fun <K, V> MutableMap<K, V>.set(k : K, v : V) { put(k, v) }
 

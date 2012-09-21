@@ -51,7 +51,11 @@ public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
         doTest();
     }
 
-    public void testSure() throws Exception {
+    public void testEquals() throws Exception {
+        doTest();
+    }
+
+    public void testToString() throws Exception {
         doTest();
     }
 

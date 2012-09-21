@@ -35,7 +35,7 @@ fun HttpResponse.set(header: String, value: Any?) : Unit {
 var HttpResponse.content : Any?
     get() = throw UnsupportedOperationException()
     set(c: Any?) {
-        val buffer = ChannelBuffers.copiedBuffer(c.toString(), CharsetUtil.UTF_8).sure()
+        val buffer = ChannelBuffers.copiedBuffer(c.toString(), CharsetUtil.UTF_8)!!
         setContent(buffer)
         setHeader("Content-Length", buffer.readableBytes())
     }

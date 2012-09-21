@@ -22,33 +22,24 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
  * @author alex.tkachman
  */
 @AssertInvisibleInResolver
-public class Tuple0 extends Tuple {
-    public static final Tuple0 INSTANCE = new Tuple0();
+public class Tuple0 {
+    public static final Tuple0 VALUE = new Tuple0();
 
     private Tuple0() {
     }
 
     @Override
     public String toString() {
-        return "()";
+        return "Unit.VALUE";
     }
 
     @Override
     public boolean equals(Object o) {
-        return o == INSTANCE;
+        return o == VALUE;
     }
 
     @Override
     public int hashCode() {
         return 239;
-    }
-
-    @Override
-    public void forEach(Function1<Object, Tuple0> fn) {
-    }
-
-    @Override
-    public int size() {
-        return 0;
     }
 }

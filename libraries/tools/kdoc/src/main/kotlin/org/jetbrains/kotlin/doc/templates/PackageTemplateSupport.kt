@@ -257,7 +257,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             }
             val pType = if (p.isVarArg()) {
                 print("vararg ")
-                p.varArgType().sure()
+                p.varArgType()!!
             } else {
                 p.aType
             }

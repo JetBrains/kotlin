@@ -172,7 +172,7 @@ public inline fun ByteArray.foldRight(initial: Byte, operation: (Byte, Byte) -> 
  * @includeFunctionBody ../../test/CollectionTest.kt reduce
  */
 public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte {
-    val iterator = this.iterator().sure()
+    val iterator = this.iterator()!!
     if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
@@ -226,7 +226,7 @@ public inline fun <K> ByteArray.groupByTo(result: MutableMap<K, MutableList<Byte
 public inline fun ByteArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString().sure()
+    return buffer.toString()!!
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */

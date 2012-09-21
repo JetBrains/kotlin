@@ -1591,6 +1591,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : "#" "(" (((SimpleName "=")? expression){","})? ")"
      *   ;
      */
+    @Deprecated // Tuples are to be removed in Kotlin M4
     private void parseTupleExpression() {
         assert _at(HASH);
         PsiBuilder.Marker mark = mark();

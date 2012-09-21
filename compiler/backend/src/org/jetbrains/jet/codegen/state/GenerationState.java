@@ -68,12 +68,6 @@ public class GenerationState {
     @NotNull
     private final JetTypeMapper typeMapper;
 
-    @NotNull
-    private final MemberCodegen memberCodegen;
-
-    @NotNull
-    private final ClassCodegen classCodegen;
-
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
         this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
     }
@@ -98,8 +92,6 @@ public class GenerationState {
                 builtinToJavaTypesMapping, this, builderFactory, project);
 
         this.scriptCodegen = injector.getScriptCodegen();
-        this.memberCodegen = injector.getMemberCodegen();
-        this.classCodegen = injector.getClassCodegen();
         this.intrinsics = injector.getIntrinsics();
         this.classFileFactory = injector.getClassFileFactory();
     }
@@ -152,16 +144,6 @@ public class GenerationState {
     @NotNull
     public IntrinsicMethods getIntrinsics() {
         return intrinsics;
-    }
-
-    @NotNull
-    public MemberCodegen getMemberCodegen() {
-        return memberCodegen;
-    }
-
-    @NotNull
-    public ClassCodegen getClassCodegen() {
-        return classCodegen;
     }
 
     public void beforeCompile() {
