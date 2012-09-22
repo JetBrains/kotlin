@@ -160,6 +160,9 @@ public class Slices {
             super(rewritePolicy);
         }
 
+        protected BasicRemovableSlice(RewritePolicy rewritePolicy, boolean isCollective) {
+            super(rewritePolicy, isCollective);
+        }
     }
 
     public static class SliceWithOpposite<K, V> extends BasicRemovableSlice<K, V> {
@@ -200,26 +203,18 @@ public class Slices {
 
     public static class SetSlice<K> extends BasicRemovableSlice<K, Boolean> {
 
-        private final boolean collective;
-
         protected SetSlice(RewritePolicy rewritePolicy) {
             this(rewritePolicy, false);
         }
 
         protected SetSlice(RewritePolicy rewritePolicy, boolean collective) {
-            super(rewritePolicy);
-            this.collective = collective;
+            super(rewritePolicy, collective);
         }
 
         @Override
         public Boolean computeValue(SlicedMap map, K key, Boolean value, boolean valueNotFound) {
             Boolean result = super.computeValue(map, key, value, valueNotFound);
             return result != null ? result : false;
-        }
-
-        @Override
-        public boolean isCollective() {
-            return collective;
         }
     }
 
