@@ -53,7 +53,6 @@ import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.BitSetUtils;
 
 import java.util.*;
 
@@ -248,10 +247,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (signature.getKotlinGenericSignature() != null || descriptor.getVisibility() != Visibilities.PUBLIC) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(JvmStdlibNames.JET_CLASS.getDescriptor(), true);
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
-            BitSet flags = getFlagsForVisibility(descriptor.getVisibility());
-            int flagsValue = BitSetUtils.toInt(flags);
-            if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
-                annotationVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
+            int flags = getFlagsForVisibility(descriptor.getVisibility());
+            if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flags) {
+                annotationVisitor.visit(JvmStdlibNames.JET_FLAGS_FIELD, flags);
             }
             annotationVisitor.visitEnd();
         }
@@ -827,9 +825,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
 
-        int flagsValue = BitSetUtils.toInt(getFlagsForVisibility(constructorDescriptor.getVisibility()));
+        int flagsValue = getFlagsForVisibility(constructorDescriptor.getVisibility());
         if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
-            jetConstructorVisitor.visit(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, flagsValue);
+            jetConstructorVisitor.visit(JvmStdlibNames.JET_FLAGS_FIELD, flagsValue);
         }
 
         jetConstructorVisitor.visitEnd();
@@ -1218,21 +1216,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JvmMethodSignature jvmSignature =
                         typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
                 JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-                BitSet kotlinFlags = getFlagsForVisibility(fun.getVisibility());
+                int kotlinFlags = getFlagsForVisibility(fun.getVisibility());
                 if (fun instanceof PropertyAccessorDescriptor) {
-                    kotlinFlags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
+                    kotlinFlags |= JvmStdlibNames.FLAG_PROPERTY_BIT;
                     aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                     aw.writePropertyType(jvmSignature.getKotlinReturnType());
                 }
                 else {
                     JetType returnType = fun.getReturnType();
                     assert returnType != null;
-                    aw.writeNullableReturnType(returnType.isNullable());
+                    if (returnType.isNullable())
+                        kotlinFlags |= JvmStdlibNames.FLAG_NULLABLE_RETURN_TYPE_BIT;
                     aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                     aw.writeReturnType(jvmSignature.getKotlinReturnType());
                 }
+                kotlinFlags |= DescriptorKindUtils.kindToFlags(inheritedFun.getKind());
                 aw.writeFlags(kotlinFlags);
-                aw.writeKind(DescriptorKindUtils.kindToInt(inheritedFun.getKind()));
                 aw.visitEnd();
 
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {

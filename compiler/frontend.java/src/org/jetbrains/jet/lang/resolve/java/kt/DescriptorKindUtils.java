@@ -17,39 +17,32 @@
 package org.jetbrains.jet.lang.resolve.java.kt;
 
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
 /**
  * @author udalov
+ * @author alex.tkachman
  */
 public class DescriptorKindUtils {
-    private static final int KIND_DECLARATION = 0;
-    private static final int KIND_FAKE_OVERRIDE = 1;
-    private static final int KIND_DELEGATION = 2;
-    private static final int KIND_SYNTHESIZED = 3;
-
     private DescriptorKindUtils() {
     }
 
-    public static int getDefaultKindValue() {
-        return KIND_DECLARATION;
-    }
-
-    public static int kindToInt(CallableMemberDescriptor.Kind kind) {
+    public static int kindToFlags(CallableMemberDescriptor.Kind kind) {
         switch (kind) {
-            case DECLARATION: return KIND_DECLARATION;
-            case FAKE_OVERRIDE: return KIND_FAKE_OVERRIDE;
-            case DELEGATION: return KIND_DELEGATION;
-            case SYNTHESIZED: return KIND_SYNTHESIZED;
+            case DECLARATION: return JvmStdlibNames.FLAG_KIND_DECLARATION;
+            case FAKE_OVERRIDE: return JvmStdlibNames.FLAG_KIND_FAKE_OVERRIDE;
+            case DELEGATION: return JvmStdlibNames.FLAG_KIND_DELEGATION;
+            case SYNTHESIZED: return JvmStdlibNames.FLAG_KIND_SYNTHESIZED;
             default: throw new IllegalArgumentException("Unknown kind: " + kind);
         }
     }
 
-    public static CallableMemberDescriptor.Kind intToKind(int value) {
-        switch (value) {
-            case KIND_DECLARATION: return CallableMemberDescriptor.Kind.DECLARATION;
-            case KIND_FAKE_OVERRIDE: return CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-            case KIND_DELEGATION: return CallableMemberDescriptor.Kind.DELEGATION;
-            case KIND_SYNTHESIZED: return CallableMemberDescriptor.Kind.SYNTHESIZED;
+    public static CallableMemberDescriptor.Kind flagsToKind(int value) {
+        switch (value & JvmStdlibNames.FLAG_KIND_MASK) {
+            case JvmStdlibNames.FLAG_KIND_DECLARATION: return CallableMemberDescriptor.Kind.DECLARATION;
+            case JvmStdlibNames.FLAG_KIND_FAKE_OVERRIDE: return CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+            case JvmStdlibNames.FLAG_KIND_DELEGATION: return CallableMemberDescriptor.Kind.DELEGATION;
+            case JvmStdlibNames.FLAG_KIND_SYNTHESIZED: return CallableMemberDescriptor.Kind.SYNTHESIZED;
             default: throw new IllegalArgumentException("Unknown int value of kind: " + value);
         }
     }

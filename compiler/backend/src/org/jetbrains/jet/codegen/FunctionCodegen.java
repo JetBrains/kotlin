@@ -348,16 +348,17 @@ public class FunctionCodegen extends GenerationStateAware {
                 throw new IllegalStateException();
             }
             JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
-            BitSet kotlinFlags = getFlagsForVisibility(functionDescriptor.getVisibility());
+            int kotlinFlags = getFlagsForVisibility(functionDescriptor.getVisibility());
             if (isInterface(functionDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
-                kotlinFlags.set(modality == Modality.FINAL
+                kotlinFlags |= modality == Modality.FINAL
                                 ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
-                                : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
+                                : JvmStdlibNames.FLAG_FORCE_OPEN_BIT;
             }
-            aw.writeFlags(kotlinFlags);
-            aw.writeKind(DescriptorKindUtils.kindToInt(functionDescriptor.getKind()));
+            kotlinFlags |= DescriptorKindUtils.kindToFlags(functionDescriptor.getKind());
             //noinspection ConstantConditions
-            aw.writeNullableReturnType(functionDescriptor.getReturnType().isNullable());
+            if (functionDescriptor.getReturnType().isNullable())
+                kotlinFlags |= JvmStdlibNames.FLAG_NULLABLE_RETURN_TYPE_BIT;
+            aw.writeFlags(kotlinFlags);
             aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
             aw.writeReturnType(jvmSignature.getKotlinReturnType());
             aw.visitEnd();

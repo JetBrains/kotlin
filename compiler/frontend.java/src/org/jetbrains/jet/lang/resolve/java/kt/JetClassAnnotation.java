@@ -22,37 +22,29 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.utils.BitSetUtils;
-
-import java.util.BitSet;
 
 /**
  * @author Stepan Koltsov
  */
 public class JetClassAnnotation extends PsiAnnotationWithFlags {
 
+    private String signature;
+
     public JetClassAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
-    
-    private String signature;
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        signature = getStringAttribute(JvmStdlibNames.JET_CLASS_SIGNATURE, "");
+    }
+
     public String signature() {
-        if (signature == null) {
-            signature = getStringAttribute(JvmStdlibNames.JET_CLASS_SIGNATURE, "");
-        }
+        checkInitialized();
         return signature;
     }
 
-
-    private BitSet flags = null;
-    @NotNull
-    public BitSet flags() {
-        if (flags == null) {
-            flags = BitSetUtils.toBitSet(getIntAttribute(JvmStdlibNames.JET_CLASS_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE));
-        }
-        return flags;
-    }
-    
     @NotNull
     public static JetClassAnnotation get(PsiClass psiClass) {
         return new JetClassAnnotation(JavaDescriptorResolver.findAnnotation(psiClass, JvmStdlibNames.JET_CLASS.getFqName().getFqName()));

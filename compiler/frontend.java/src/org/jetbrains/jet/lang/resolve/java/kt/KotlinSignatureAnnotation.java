@@ -29,21 +29,24 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @since 6/1/12
  */
 public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
+    private String signature;
+
     public KotlinSignatureAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
 
-    private String signature;
+    @Override
+    protected void initialize() {
+        signature = StringUtil.unescapeStringCharacters(getStringAttribute(JvmStdlibNames.KOTLIN_SIGNATURE_VALUE_METHOD, ""));
+    }
 
     public String signature() {
-        if (signature == null) {
-            signature = StringUtil.unescapeStringCharacters(getStringAttribute(JvmStdlibNames.KOTLIN_SIGNATURE_VALUE_METHOD, ""));
-        }
+        checkInitialized();
         return signature;
     }
 
     @NotNull
-    public static KotlinSignatureAnnotation get(PsiMethod psiClass) {
-        return new KotlinSignatureAnnotation(JavaDescriptorResolver.findAnnotation(psiClass, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName()));
+    public static KotlinSignatureAnnotation get(PsiMethod psiMethod) {
+        return new KotlinSignatureAnnotation(JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName()));
     }
 }

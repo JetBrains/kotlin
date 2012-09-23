@@ -17,10 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java.kt;
 
 import com.intellij.psi.PsiAnnotation;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.BitSet;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
 /**
  * @author Evgeny Gerashchenko
@@ -31,6 +29,33 @@ public abstract class PsiAnnotationWithFlags extends PsiAnnotationWrapper {
         super(psiAnnotation);
     }
 
-    @NotNull
-    public abstract BitSet flags();
+    @Override
+    protected void initialize() {
+        initialized = getIntAttribute(JvmStdlibNames.JET_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
+    }
+
+    public final int flags() {
+        checkInitialized();
+        return initialized;
+    }
+
+    public final boolean hasPropertyFlag() {
+        return (flags() & JvmStdlibNames.FLAG_PROPERTY_BIT) != 0;
+    }
+
+    public final boolean hasForceFinalFlag() {
+        return (flags() & JvmStdlibNames.FLAG_FORCE_FINAL_BIT) != 0;
+    }
+
+    public final boolean hasForceOpenFlag() {
+        return (flags() & JvmStdlibNames.FLAG_FORCE_OPEN_BIT) != 0;
+    }
+
+    public final boolean hasInternalFlag() {
+        return (flags() & JvmStdlibNames.FLAG_INTERNAL_BIT) != 0;
+
+    }
+    public final boolean hasPrivateFlag() {
+        return (flags() & JvmStdlibNames.FLAG_PRIVATE_BIT) != 0;
+    }
 }

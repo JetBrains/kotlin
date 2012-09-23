@@ -39,8 +39,6 @@ import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
-import java.util.BitSet;
-
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.genStubThrow;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
@@ -254,15 +252,13 @@ public class PropertyCodegen extends GenerationStateAware {
     ) {
         JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
         Modality modality = propertyDescriptor.getModality();
-        BitSet flags = getFlagsForVisibility(visibility);
-        flags.set(JvmStdlibNames.FLAG_PROPERTY_BIT);
+        int flags = getFlagsForVisibility(visibility) | JvmStdlibNames.FLAG_PROPERTY_BIT;
         if (isInterface(propertyDescriptor.getContainingDeclaration()) && modality != Modality.ABSTRACT) {
-            flags.set(modality == Modality.FINAL
+            flags |= modality == Modality.FINAL
                       ? JvmStdlibNames.FLAG_FORCE_FINAL_BIT
-                      : JvmStdlibNames.FLAG_FORCE_OPEN_BIT);
+                      : JvmStdlibNames.FLAG_FORCE_OPEN_BIT;
         }
-        aw.writeFlags(flags);
-        aw.writeKind(DescriptorKindUtils.kindToInt(propertyDescriptor.getKind()));
+        aw.writeFlags(flags | DescriptorKindUtils.kindToFlags(propertyDescriptor.getKind()));
         aw.writeTypeParameters(typeParameters);
         aw.writePropertyType(kotlinType);
         aw.visitEnd();

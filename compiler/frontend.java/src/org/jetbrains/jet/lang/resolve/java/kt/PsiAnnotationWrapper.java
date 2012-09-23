@@ -26,26 +26,32 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PsiAnnotationWrapper {
 
     @Nullable
-    private PsiAnnotation psiAnnotation;
+    private final PsiAnnotation psiAnnotation;
+
+    protected int initialized = -1;
 
     protected PsiAnnotationWrapper(@Nullable PsiAnnotation psiAnnotation) {
         this.psiAnnotation = psiAnnotation;
     }
 
-    @Nullable
-    public PsiAnnotation getPsiAnnotation() {
-        return psiAnnotation;
-    }
-
     public boolean isDefined() {
         return psiAnnotation != null;
     }
-    
+
+    protected abstract void initialize();
+
+    protected void checkInitialized () {
+        if (initialized == -1) {
+            initialized = 0;
+            initialize();
+        }
+    }
+
     @NotNull
     protected String getStringAttribute(String name, String defaultValue) {
         return PsiAnnotationUtils.getStringAttribute(psiAnnotation, name, defaultValue);
     }
-    
+
     protected boolean getBooleanAttribute(String name, boolean defaultValue) {
         return PsiAnnotationUtils.getBooleanAttribute(psiAnnotation, name, defaultValue);
     }
@@ -53,5 +59,4 @@ public abstract class PsiAnnotationWrapper {
     protected int getIntAttribute(String name, int defaultValue) {
         return PsiAnnotationUtils.getIntAttribute(psiAnnotation, name, defaultValue);
     }
-
 }

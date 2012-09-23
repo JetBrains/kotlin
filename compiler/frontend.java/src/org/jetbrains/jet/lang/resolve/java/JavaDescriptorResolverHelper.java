@@ -131,7 +131,7 @@ class JavaDescriptorResolverHelper {
                     NamedMembers members = getNamedMembers(Name.identifier(propertyName));
 
                     // TODO: some java properties too
-                    if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_PROPERTY_BIT)) {
+                    if (method.getJetMethod().hasPropertyFlag()) {
 
                         int i = 0;
 
@@ -173,7 +173,7 @@ class JavaDescriptorResolverHelper {
                     String propertyName = propertyParseResult.getPropertyName();
                     NamedMembers members = getNamedMembers(Name.identifier(propertyName));
 
-                    if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_PROPERTY_BIT)) {
+                    if (method.getJetMethod().hasPropertyFlag()) {
                         if (method.getParameters().size() == 0) {
                             // TODO: report error properly
                             throw new IllegalStateException();
@@ -210,7 +210,7 @@ class JavaDescriptorResolverHelper {
                     }
                 }
                 
-                if (!method.getJetMethod().flags().get(JvmStdlibNames.FLAG_PROPERTY_BIT)) {
+                if (!method.getJetMethod().hasPropertyFlag()) {
                     NamedMembers namedMembers = getNamedMembers(Name.identifier(method.getName()));
                     namedMembers.addMethod(method);
                 }

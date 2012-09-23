@@ -32,6 +32,10 @@ public class JetTypeParameterAnnotation extends PsiAnnotationWrapper {
         super(psiAnnotation);
     }
 
+    @Override
+    protected void initialize() {
+    }
+
     @NotNull
     public static JetTypeParameterAnnotation get(@NotNull PsiParameter psiParameter) {
         return new JetTypeParameterAnnotation(

@@ -1214,7 +1214,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (members.getter != null && members.getter.getMember() instanceof PsiMethodWrapper) {
                 JetMethodAnnotation jetMethod = ((PsiMethodWrapper) members.getter.getMember()).getJetMethod();
                 visibility = resolveVisibility(anyMember.getMember().psiMember, jetMethod);
-                kind = DescriptorKindUtils.intToKind(jetMethod.kind());
+                kind = DescriptorKindUtils.flagsToKind(jetMethod.kind());
             }
 
             DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, anyMember.getMember().isStatic());
@@ -1533,7 +1533,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         // TODO: ugly
-        if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_PROPERTY_BIT)) {
+        if (method.getJetMethod().hasPropertyFlag()) {
             return null;
         }
 
@@ -1549,7 +1549,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 scopeData.classOrNamespaceDescriptor,
                 resolveAnnotations(method.getPsiMethod()),
                 Name.identifier(method.getName()),
-                DescriptorKindUtils.intToKind(method.getJetMethod().kind())
+                DescriptorKindUtils.flagsToKind(method.getJetMethod().kind())
         );
 
         String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
@@ -1893,10 +1893,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
         if (memberWrapper instanceof PsiMethodWrapper) {
             PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
-            if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_FORCE_OPEN_BIT)) {
+            if (method.getJetMethod().hasForceOpenFlag()) {
                 return Modality.OPEN;
             }
-            if (method.getJetMethod().flags().get(JvmStdlibNames.FLAG_FORCE_FINAL_BIT)) {
+            if (method.getJetMethod().hasForceFinalFlag()) {
                 return Modality.FINAL;
             }
         }
@@ -1907,11 +1907,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private static Visibility resolveVisibility(PsiModifierListOwner modifierListOwner,
             @Nullable PsiAnnotationWithFlags annotation) {
         if (annotation != null) {
-            BitSet flags = annotation.flags();
-            if (flags.get(JvmStdlibNames.FLAG_PRIVATE_BIT)) {
+            if (annotation.hasPrivateFlag()) {
                 return Visibilities.PRIVATE;
             }
-            else if (flags.get(JvmStdlibNames.FLAG_INTERNAL_BIT)) {
+            else if (annotation.hasInternalFlag()) {
                 return Visibilities.INTERNAL;
             }
         }

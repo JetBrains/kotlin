@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
 public @interface JetMethod {
     /**
      * See CallableMemberDescriptor.Kind
+     * @deprecated See JvmStdlibNames - now kind is kept in flags
      * @return kind of this method
      */
     int kind() default 0;
@@ -46,6 +47,7 @@ public @interface JetMethod {
     int flags() default 0;
     
     /**
+     * @deprecated not used any more
      * @return type projections or empty
      */
     JetTypeProjection[] returnTypeProjections() default {};
@@ -57,6 +59,7 @@ public @interface JetMethod {
     String typeParameters() default "";
 
     /**
+     * @deprecated - now it kept in flags
      * @return is this type returnTypeNullable
      */
     boolean nullableReturnType() default false;

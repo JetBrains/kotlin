@@ -20,10 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
-import org.jetbrains.jet.utils.BitSetUtils;
-
-import java.util.BitSet;
 
 /**
  * @author Stepan Koltsov
@@ -35,16 +31,9 @@ public class JetMethodAnnotationWriter {
         this.av = av;
     }
 
-    public void writeFlags(BitSet flags) {
-        int flagsValue = BitSetUtils.toInt(flags);
-        if (flagsValue != JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
-            av.visit(JvmStdlibNames.JET_METHOD_FLAGS_FIELD, flagsValue);
-        }
-    }
-
-    public void writeKind(int kind) {
-        if (kind != DescriptorKindUtils.getDefaultKindValue()) {
-            av.visit(JvmStdlibNames.JET_METHOD_KIND_FIELD, kind);
+    public void writeFlags(int flags) {
+        if (flags != JvmStdlibNames.FLAGS_DEFAULT_VALUE) {
+            av.visit(JvmStdlibNames.JET_FLAGS_FIELD, flags);
         }
     }
 
@@ -63,12 +52,6 @@ public class JetMethodAnnotationWriter {
     public void writePropertyType(@NotNull String propertyType) {
         if (propertyType.length() > 0) {
             av.visit(JvmStdlibNames.JET_METHOD_PROPERTY_TYPE_FIELD, propertyType);
-        }
-    }
-
-    public void writeNullableReturnType(boolean nullableReturnType) {
-        if (nullableReturnType) {
-            av.visit(JvmStdlibNames.JET_METHOD_NULLABLE_RETURN_TYPE_FIELD, nullableReturnType);
         }
     }
 

@@ -37,7 +37,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
@@ -102,16 +105,14 @@ public class CodegenUtil {
     }
 
 
-    @NotNull
-    public static BitSet getFlagsForVisibility(@NotNull Visibility visibility) {
-        BitSet flags = new BitSet();
+    public static int getFlagsForVisibility(@NotNull Visibility visibility) {
         if (visibility == Visibilities.INTERNAL) {
-            flags.set(JvmStdlibNames.FLAG_INTERNAL_BIT);
+            return JvmStdlibNames.FLAG_INTERNAL_BIT;
         }
         else if (visibility == Visibilities.PRIVATE) {
-            flags.set(JvmStdlibNames.FLAG_PRIVATE_BIT);
+            return JvmStdlibNames.FLAG_PRIVATE_BIT;
         }
-        return flags;
+        return 0;
     }
 
     @NotNull
