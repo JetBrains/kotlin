@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
@@ -40,7 +40,7 @@ class JavaDescriptorResolverHelper {
         private final boolean staticMembers;
         private final boolean kotlin;
         
-        private Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
+        private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
         private Builder(PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
             this.psiClass = psiClass;
@@ -156,17 +156,12 @@ class JavaDescriptorResolverHelper {
                         }
 
                         // TODO: what if returnType == null?
-                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType(), method.getPsiMethod());
+                        final PsiType returnType = method.getReturnType();
+                        assert returnType != null;
+                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), returnType, method.getPsiMethod());
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
                     }
-                    else if (!kotlin && false) {
-                        if (method.getParameters().size() == 0) {
-                            TypeSource propertyType = new TypeSource("", method.getReturnType(), method.getPsiMethod());
-                            members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, null));
-                        }
-                    }
-
                 }
                 else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
 
@@ -201,13 +196,6 @@ class JavaDescriptorResolverHelper {
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
                     }
-                    else if (!kotlin && false) {
-                        if (method.getParameters().size() == 1) {
-                            PsiParameter psiParameter = method.getParameters().get(0).getPsiParameter();
-                            TypeSource propertyType = new TypeSource("", psiParameter.getType(), psiParameter);
-                            members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, null));
-                        }
-                    }
                 }
                 
                 if (!method.getJetMethod().hasPropertyFlag()) {
@@ -222,6 +210,7 @@ class JavaDescriptorResolverHelper {
     @NotNull
     static Map<Name, NamedMembers> getNamedMembers(@NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
         if (resolverScopeData.psiClass != null) {
+            @SuppressWarnings("ConstantConditions")
             Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.psiClass), resolverScopeData.staticMembers, resolverScopeData.kotlin);
             builder.run();
             return builder.namedMembersMap;
