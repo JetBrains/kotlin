@@ -27,14 +27,11 @@ public class JvmStdlibNames {
 
     public static final String JET_VALUE_PARAMETER_NAME_FIELD = "name";
     public static final String JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
-    public static final String JET_VALUE_PARAMETER_NULLABLE_FIELD = "nullable";
     public static final String JET_VALUE_PARAMETER_TYPE_FIELD = "type";
     public static final String JET_VALUE_PARAMETER_RECEIVER_FIELD = "receiver";
 
 
     public static final JvmClassName JET_TYPE_PARAMETER = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetTypeParameter");
-
-    public static final String JET_TYPE_PARAMETER_NAME_FIELD = "name";
 
 
     public static final JvmClassName JET_METHOD = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetMethod");
@@ -47,7 +44,7 @@ public class JvmStdlibNames {
 
     public static final int FLAGS_DEFAULT_VALUE = 0;
 
-    public static final int FLAG_PROPERTY_BIT = 1 << 0;
+    public static final int FLAG_PROPERTY_BIT = 1;
     public static final int FLAG_FORCE_OPEN_BIT = 1 << 1;
     public static final int FLAG_FORCE_FINAL_BIT = 1 << 2;
     public static final int FLAG_PRIVATE_BIT =  1 << 3;
