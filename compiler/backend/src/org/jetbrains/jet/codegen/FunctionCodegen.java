@@ -356,8 +356,6 @@ public class FunctionCodegen extends GenerationStateAware {
             }
             kotlinFlags |= DescriptorKindUtils.kindToFlags(functionDescriptor.getKind());
             //noinspection ConstantConditions
-            if (functionDescriptor.getReturnType().isNullable())
-                kotlinFlags |= JvmStdlibNames.FLAG_NULLABLE_RETURN_TYPE_BIT;
             aw.writeFlags(kotlinFlags);
             aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
             aw.writeReturnType(jvmSignature.getKotlinReturnType());

@@ -61,10 +61,6 @@ public class JetMethodAnnotation extends PsiAnnotationWithFlags {
         return returnType;
     }
 
-    public boolean returnTypeNullable() {
-        return (flags() & JvmStdlibNames.FLAG_NULLABLE_RETURN_TYPE_BIT) != 0;
-    }
-
     @NotNull
     public String propertyType() {
         checkInitialized();

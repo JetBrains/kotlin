@@ -1879,10 +1879,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             transformedType = semanticServices.getTypeTransformer().transformToType(
                     returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
         }
-        if (method.getJetMethod().returnTypeNullable()) {
-            return TypeUtils.makeNullableAsSpecified(transformedType, true);
-        }
-        else if (findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+
+        if (findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }
         else {

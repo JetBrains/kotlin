@@ -52,14 +52,13 @@ public class JvmStdlibNames {
     public static final int FLAG_FORCE_FINAL_BIT = 1 << 2;
     public static final int FLAG_PRIVATE_BIT =  1 << 3;
     public static final int FLAG_INTERNAL_BIT = 1 << 4;
-    public static final int FLAG_NULLABLE_RETURN_TYPE_BIT = 1 << 5;
 
     // three bits (one reserved)
-    public static final int FLAG_KIND_MASK = 7 << 6;
-    public static final int FLAG_KIND_DECLARATION =   0 << 6;
-    public static final int FLAG_KIND_FAKE_OVERRIDE = 1 << 6;
-    public static final int FLAG_KIND_DELEGATION =    2 << 6;
-    public static final int FLAG_KIND_SYNTHESIZED =   3 << 6;
+    public static final int FLAG_KIND_MASK = 7 << 5;
+    public static final int FLAG_KIND_DECLARATION =   0 << 5;
+    public static final int FLAG_KIND_FAKE_OVERRIDE = 1 << 5;
+    public static final int FLAG_KIND_DELEGATION =    2 << 5;
+    public static final int FLAG_KIND_SYNTHESIZED =   3 << 5;
 
     public static final JvmClassName JET_CONSTRUCTOR = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetConstructor");
 

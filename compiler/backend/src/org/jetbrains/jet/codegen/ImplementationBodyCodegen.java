@@ -1225,8 +1225,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 else {
                     JetType returnType = fun.getReturnType();
                     assert returnType != null;
-                    if (returnType.isNullable())
-                        kotlinFlags |= JvmStdlibNames.FLAG_NULLABLE_RETURN_TYPE_BIT;
                     aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                     aw.writeReturnType(jvmSignature.getKotlinReturnType());
                 }

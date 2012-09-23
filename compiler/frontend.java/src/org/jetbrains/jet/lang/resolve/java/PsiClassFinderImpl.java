@@ -79,19 +79,21 @@ public class PsiClassFinderImpl implements PsiClassFinder {
             return null;
         }
 
-        PsiAnnotation assertInvisibleAnnotation = JavaDescriptorResolver
-                .findAnnotation(original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
-        if (assertInvisibleAnnotation != null) {
-            if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
-                return null;
-            }
-            else if (runtimeClassesHandleMode == RuntimeClassesHandleMode.THROW) {
-                throw new IllegalStateException(
-                        "classpath is configured incorrectly:" +
-                        " class " + qualifiedName + " from runtime must not be loaded by compiler");
-            }
-            else {
-                throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
+        if ("jet".equals(qualifiedName.parent().getFqName())) {
+            PsiAnnotation assertInvisibleAnnotation = JavaDescriptorResolver
+                    .findAnnotation(original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+            if (assertInvisibleAnnotation != null) {
+                if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
+                    return null;
+                }
+                else if (runtimeClassesHandleMode == RuntimeClassesHandleMode.THROW) {
+                    throw new IllegalStateException(
+                            "classpath is configured incorrectly:" +
+                            " class " + qualifiedName + " from runtime must not be loaded by compiler");
+                }
+                else {
+                    throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
+                }
             }
         }
 
