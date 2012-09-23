@@ -28,9 +28,9 @@ import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -134,13 +134,14 @@ class JetFromJavaDescriptorHelper {
         PsiClass containingClass = method.getContainingClass();
 
         if (containingClass != null) {
-            FqName classFQN = new FqName(containingClass.getQualifiedName());
+            final String qualifiedName = containingClass.getQualifiedName();
+            assert qualifiedName != null;
 
-            if (classFQN != null) {
-                if (classFQN.shortName().toString().equals(JvmAbi.PACKAGE_CLASS)) {
-                    FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
-                    return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
-                }
+            FqName classFQN = new FqName(qualifiedName);
+
+            if (classFQN.shortName().toString().equals(JvmAbi.PACKAGE_CLASS)) {
+                FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
+                return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
             }
         }
 
