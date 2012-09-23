@@ -239,7 +239,7 @@ public class ControlStructuresTest extends CodegenTestCase {
         loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
         String text = generateToText();
         assertTrue(!text.contains("java/lang/Object.equals"));
-        System.out.println(text);
+        //System.out.println(text);
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, null, null));
@@ -442,6 +442,6 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testForInSmartCastedToArray() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/forInSmartCastedToArray.kt");
-        System.out.println(generateToText());
+        //System.out.println(generateToText());
     }
 }

@@ -127,7 +127,7 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testKt1199() {
         blackBoxFile("regressions/kt1199.kt");
-        System.out.println(generateToText());
+        //System.out.println(generateToText());
     }
 
     public void testFunction() throws InvocationTargetException, IllegalAccessException {
