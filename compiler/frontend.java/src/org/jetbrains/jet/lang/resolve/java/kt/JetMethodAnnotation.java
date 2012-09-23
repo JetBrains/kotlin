@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  */
 public class JetMethodAnnotation extends PsiAnnotationWithFlags {
 
+    public static final JetMethodAnnotation NULL_ANNOTATION = new JetMethodAnnotation(null);
     private String typeParameters;
     private String returnType;
     private String propertyType;
@@ -68,6 +69,8 @@ public class JetMethodAnnotation extends PsiAnnotationWithFlags {
     }
 
     public static JetMethodAnnotation get(PsiMethod psiMethod) {
-        return new JetMethodAnnotation(JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().getFqName()));
+        final PsiAnnotation annotation =
+                JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().getFqName());
+        return annotation != null ? new JetMethodAnnotation(annotation) : NULL_ANNOTATION;
     }
 }

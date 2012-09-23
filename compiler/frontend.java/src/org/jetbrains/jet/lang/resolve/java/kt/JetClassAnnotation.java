@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  */
 public class JetClassAnnotation extends PsiAnnotationWithFlags {
 
+    public static final JetClassAnnotation NULL_ANNOTATION = new JetClassAnnotation(null);
     private String signature;
 
     public JetClassAnnotation(@Nullable PsiAnnotation psiAnnotation) {
@@ -47,6 +48,7 @@ public class JetClassAnnotation extends PsiAnnotationWithFlags {
 
     @NotNull
     public static JetClassAnnotation get(PsiClass psiClass) {
-        return new JetClassAnnotation(JavaDescriptorResolver.findAnnotation(psiClass, JvmStdlibNames.JET_CLASS.getFqName().getFqName()));
+        final PsiAnnotation annotation = JavaDescriptorResolver.findAnnotation(psiClass, JvmStdlibNames.JET_CLASS.getFqName().getFqName());
+        return annotation != null ? new JetClassAnnotation(annotation) : NULL_ANNOTATION;
     }
 }

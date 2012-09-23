@@ -27,7 +27,9 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @author Stepan Koltsov
  */
 public class JetTypeParameterAnnotation extends PsiAnnotationWrapper {
-    
+
+    public static final JetTypeParameterAnnotation NULL_ANNOTATION = new JetTypeParameterAnnotation(null);
+
     protected JetTypeParameterAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
@@ -38,7 +40,8 @@ public class JetTypeParameterAnnotation extends PsiAnnotationWrapper {
 
     @NotNull
     public static JetTypeParameterAnnotation get(@NotNull PsiParameter psiParameter) {
-        return new JetTypeParameterAnnotation(
-                JavaDescriptorResolver.findAnnotation(psiParameter, JvmStdlibNames.JET_TYPE_PARAMETER.getFqName().getFqName()));
+        final PsiAnnotation annotation =
+                JavaDescriptorResolver.findAnnotation(psiParameter, JvmStdlibNames.JET_TYPE_PARAMETER.getFqName().getFqName());
+        return annotation != null ? new JetTypeParameterAnnotation(annotation) : NULL_ANNOTATION;
     }
 }
