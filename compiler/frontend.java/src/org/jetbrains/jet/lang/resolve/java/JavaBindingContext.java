@@ -34,4 +34,6 @@ public class JavaBindingContext {
     public static final WritableSlice<NamespaceDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND =
             Slices.createSimpleSlice();
 
+    private JavaBindingContext() {
+    }
 }
