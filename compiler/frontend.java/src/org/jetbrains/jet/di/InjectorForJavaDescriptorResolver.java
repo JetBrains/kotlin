@@ -77,7 +77,6 @@ public class InjectorForJavaDescriptorResolver {
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
-        javaDescriptorSignatureResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaDescriptorSignatureResolver.setJavaSemanticServices(javaSemanticServices);
 
         javaBridgeConfiguration.init();
