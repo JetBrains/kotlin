@@ -42,6 +42,7 @@ public @interface JetValueParameter {
     JetTypeProjection[] typeProjections() default {};
 
     /**
+     * @deprecated info contained in type field
      * @return is this type nullable
      */
     boolean nullable () default false;

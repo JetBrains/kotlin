@@ -371,7 +371,6 @@ public class FunctionCodegen extends GenerationStateAware {
         if (receiverParameter.exists()) {
             JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, start++);
             av.writeName("this$receiver");
-            av.writeNullable(receiverParameter.getType().isNullable());
             av.writeReceiver();
             if (kotlinParameterTypes.get(0) != null) {
                 av.writeType(kotlinParameterTypes.get(0).getKotlinSignature());
@@ -384,7 +383,6 @@ public class FunctionCodegen extends GenerationStateAware {
             JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
             av.writeName(parameterDescriptor.getName().getName());
             av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
-            av.writeNullable(parameterDescriptor.getType().isNullable());
             if (kotlinParameterTypes.get(i) != null) {
                 av.writeType(kotlinParameterTypes.get(i + start).getKotlinSignature());
             }

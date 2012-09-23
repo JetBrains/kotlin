@@ -37,7 +37,6 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     
     private String name;
     private String type;
-    private boolean nullable;
     private boolean receiver;
     private boolean hasDefaultValue;
 
@@ -45,7 +44,6 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     protected void initialize() {
         name = getStringAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "");
         type = getStringAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, "");
-        nullable = getBooleanAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, false);
         receiver = getBooleanAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD, false);
         hasDefaultValue = getBooleanAttribute(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, false);
     }
@@ -60,11 +58,6 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     public String type() {
         checkInitialized();
         return type;
-    }
-
-    public boolean nullable() {
-        checkInitialized();
-        return nullable;
     }
 
     public boolean receiver() {

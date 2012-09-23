@@ -997,10 +997,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         else {
 
             JetType transformedType;
-            if (parameter.getJetValueParameter().nullable()) {
-                transformedType = TypeUtils.makeNullableAsSpecified(outType, parameter.getJetValueParameter().nullable());
-            }
-            else if (findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+            if (findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
             }
             else {

@@ -42,12 +42,6 @@ public class JetValueParameterAnnotationWriter {
                 mv.visitParameterAnnotation(n, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true));
     }
 
-    public void writeNullable(boolean nullable) {
-        if (nullable) {
-            av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
-        }
-    }
-
     public void writeReceiver() {
         av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD, true);
     }
