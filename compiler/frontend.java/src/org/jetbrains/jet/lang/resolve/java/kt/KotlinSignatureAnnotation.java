@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @since 6/1/12
  */
 public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
+    public static final KotlinSignatureAnnotation NULL_ANNOTATION = new KotlinSignatureAnnotation(null);
     private String signature;
 
     public KotlinSignatureAnnotation(@Nullable PsiAnnotation psiAnnotation) {
@@ -47,6 +48,8 @@ public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
 
     @NotNull
     public static KotlinSignatureAnnotation get(PsiMethod psiMethod) {
-        return new KotlinSignatureAnnotation(JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName()));
+        final PsiAnnotation annotation =
+                JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
+        return annotation != null ? new KotlinSignatureAnnotation(annotation) : NULL_ANNOTATION;
     }
 }
