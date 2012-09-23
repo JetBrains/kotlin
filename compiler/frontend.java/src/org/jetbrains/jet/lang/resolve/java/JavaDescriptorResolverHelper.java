@@ -57,7 +57,6 @@ class JavaDescriptorResolverHelper {
             NamedMembers r = namedMembersMap.get(name);
             if (r == null) {
                 r = new NamedMembers();
-                r.name = name;
                 namedMembersMap.put(name, r);
             }
             return r;
