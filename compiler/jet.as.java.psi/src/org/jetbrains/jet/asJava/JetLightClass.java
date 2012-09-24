@@ -58,6 +58,28 @@ import javax.swing.*;
 import java.util.Collections;
 
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
+    static class JetBadWrapperException extends RuntimeException {
+        private final String context;
+
+        public JetBadWrapperException(@Nullable Exception exc, @NotNull JetNamedDeclaration originalElement, PsiElement wrappedElement) {
+            super("Error while wrapping function " + originalElement.getName(), exc);
+            context = String.format("=== In file ===\n" +
+                                    "%s\n" +
+                                    "===On element===\n" +
+                                    "%s\n" +
+                                    "===WrappedElement===\n" +
+                                    "%s\n",
+                                    originalElement.getContainingFile().getText(),
+                                    originalElement.getText(),
+                                    wrappedElement.toString());
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + "\nContext:\n" + context;
+        }
+    }
+
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     private final JetFile file;
@@ -277,8 +299,13 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         }
 
         for (PsiMethod method : wrapper.getMethods()) {
-            if (method instanceof PsiCompiledElement && ((PsiCompiledElement) method).getMirror() == function) {
-                return method;
+            try {
+                if (method instanceof PsiCompiledElement && ((PsiCompiledElement) method).getMirror() == function) {
+                    return method;
+                }
+            }
+            catch (Exception exception) {
+                throw new JetBadWrapperException(exception, function, method);
             }
         }
 
