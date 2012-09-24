@@ -849,6 +849,36 @@
   </item>
 
   <!-- java.util.Collections -->
+  <item name='java.util.Collections java.util.List&lt;T&gt; emptyList()'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;T&gt; emptyList() : List&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Collections java.util.Set&lt;T&gt; emptySet()'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;T&gt; emptySet() : Set&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Collections java.util.Map&lt;K,V&gt; emptyMap()'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;K, V&gt; emptyMap() : Map&lt;K, V&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Collections java.util.Set&lt;T&gt; singleton(T)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;T&gt; singleton(o : T?) : Set&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Collections java.util.List&lt;T&gt; singletonList(T)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;T&gt; singletonList(o : T?) : List&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Collections java.util.Map&lt;K,V&gt; singletonMap(K, V)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;K, V&gt; singletonMap(key : K, value : V) : Map&lt;K, V&gt;&quot;"/>
+      </annotation>
+  </item>
   <item name='java.util.Collections void sort(java.util.List&lt;T&gt;)'>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
