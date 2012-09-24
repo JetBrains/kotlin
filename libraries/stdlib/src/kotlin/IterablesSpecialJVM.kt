@@ -2,6 +2,7 @@ package kotlin
 
 import java.util.AbstractList
 import java.util.Comparator
+import java.util.ArrayList
 
 // TODO this function is here as it breaks the JS compiler; lets move back to JLangIterablesSpecial when it works again :)
 
@@ -13,7 +14,7 @@ import java.util.Comparator
  * @includeFunctionBody ../../test/CollectionTest.kt sortBy
  */
 public inline fun <in T, R: Comparable<in R>> Iterable<T>.sortBy(f: (T) -> R): List<T> {
-    val sortedList = this.toList()
+    val sortedList = toCollection(ArrayList<T>())
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
         val xr = f(x)
         val yr = f(y)

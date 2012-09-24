@@ -5,6 +5,6 @@ import java.util.Collections
 
 class M {
     trait A {
-        abstract val l<caret>: MutableList<Int>?
+        abstract val l<caret>: MutableList<Int>
     }
 }

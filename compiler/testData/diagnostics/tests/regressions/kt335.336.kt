@@ -3,7 +3,7 @@
 
 import java.util.*
 
-fun <T : Comparable<T>> List<T>.sort() {
+fun <T : Comparable<T>> MutableList<T>.sort() {
   Collections.sort(this) // Error here
 }
 

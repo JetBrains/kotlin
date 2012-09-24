@@ -6,7 +6,7 @@ import java.util.Collections.*
 
 fun foo(list: List<String>) : String {
     val w : String = max(list, comparator<String?> {o1, o2 -> 1
-    })!!
+    })
     return w
 }
 

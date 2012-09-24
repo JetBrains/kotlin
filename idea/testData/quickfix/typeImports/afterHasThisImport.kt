@@ -9,7 +9,7 @@ import java.util.List
 
 class M {
     trait A {
-        val l<caret>: MutableList<Int>?
+        val l<caret>: MutableList<Int>
     }
 }
 }
