@@ -79,6 +79,7 @@ public class SpecialFiles {
 
     private static void fillExcludedFiles() {
         excludedFiles.add("kt2781.kt"); // Must compile Java files before
+        excludedFiles.add("simpleJavaInnerEnum.kt"); // Must compile Java files before
         excludedFiles.add("referencesStaticInnerClassMethod.kt"); // Must compile Java files before
         excludedFiles.add("referencesStaticInnerClassMethodL2.kt"); // Must compile Java files before
         excludedFiles.add("simpleJavaEnum.kt"); // Must compile Java files before

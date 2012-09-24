@@ -101,13 +101,14 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
         return this;
     }
 
-    private static boolean isStatic(DeclarationDescriptor declarationDescriptor) {
-        if (declarationDescriptor instanceof NamespaceDescriptor) {
+    private static boolean isStatic(ClassDescriptor declarationClassDescriptor) {
+        DeclarationDescriptor containingDescriptor = declarationClassDescriptor.getContainingDeclaration();
+        if (containingDescriptor instanceof NamespaceDescriptor) {
             return true;
         }
-        else if (declarationDescriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-            return classDescriptor.getKind().isObject() || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+        else if (containingDescriptor instanceof ClassDescriptor) {
+            ClassDescriptor containingClassDescriptor = (ClassDescriptor) containingDescriptor;
+            return containingClassDescriptor.getKind().isObject() || declarationClassDescriptor.getKind() == ClassKind.ENUM_CLASS;
         }
         else {
             return false;
@@ -303,7 +304,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
                         return ClassObjectStatus.DUPLICATE;
                     }
 
-                    if (!isStatic(MutableClassDescriptorLite.this.getContainingDeclaration())) {
+                    if (!isStatic(MutableClassDescriptorLite.this)) {
                         return ClassObjectStatus.NOT_ALLOWED;
                     }
 
