@@ -1730,8 +1730,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     if (enclosed != context.getThisDescriptor()) {
                         CodegenContext c = context;
                         //noinspection ConstantConditions
-                        while (!(c instanceof ClassContext) ||
-                               !DescriptorUtils.isSubclass(c.getThisDescriptor(), enclosed)) {
+                        while (true) {
+                            if ((c instanceof ClassContext || c instanceof AnonymousClassContext) &&
+                                    DescriptorUtils.isSubclass(c.getThisDescriptor(), enclosed)) {
+                                break;
+                            }
                             c = c.getParentContext();
                             assert c != null;
                         }

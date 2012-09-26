@@ -25,7 +25,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 /**
  * @author alex.tkachman
 */
-class AnonymousClassContext extends CodegenContext {
+public class AnonymousClassContext extends CodegenContext {
     public AnonymousClassContext(
             JetTypeMapper typeMapper,
             ClassDescriptor contextDescriptor,
