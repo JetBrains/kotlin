@@ -939,4 +939,41 @@
   <item name='java.lang.Class boolean isAssignableFrom(java.lang.Class&lt;?&gt;) 0'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+    <item name='java.lang.Runtime java.lang.Runtime getRuntime()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.lang.Runtime java.lang.Process exec(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.lang.Runtime java.lang.Process exec(java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.lang.Runtime java.lang.Process exec(java.lang.String, java.lang.String[], java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun exec(command : String, envp : Array&lt;out String&gt;, dir : File?) : Process&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.lang.Runtime java.lang.Process exec(java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun exec(cmdarray : Array&lt;out String&gt;) : Process&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.lang.Runtime java.lang.Process exec(java.lang.String[], java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun exec(cmdarray : Array&lt;out String&gt;, envp : Array&lt;out String&gt;) : Process&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.lang.Runtime void loadLibrary(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.lang.Runtime java.lang.Process exec(java.lang.String, java.lang.String[]) 0'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun exec(command : String, envp : Array&lt;out String&gt;?) : Process?&quot;"/>
+        </annotation>
+    </item>
 </root>
