@@ -446,60 +446,65 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             constructors.add(createPrimaryConstructorForObject(containingClass));
         }
         else if (psiConstructors.length == 0) {
-            // We need to create default constructors for classes and abstract classes.
-            // Example:
-            // class Kotlin() : Java() {}
-            // abstract public class Java {}
-            if (!psiClass.isInterface()) {
-                ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                        containingClass,
-                        Collections.<AnnotationDescriptor>emptyList(),
-                        false);
-                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), containingClass
-                        .getVisibility(), isStatic);
-                constructors.add(constructorDescriptor);
-                trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
+            if (trace.get(BindingContext.CONSTRUCTOR, psiClass) != null) {
+                constructors.add(trace.get(BindingContext.CONSTRUCTOR, psiClass));
             }
-            if (psiClass.isAnnotationType()) {
-                // A constructor for an annotation type takes all the "methods" in the @interface as parameters
-                ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                        containingClass,
-                        Collections.<AnnotationDescriptor>emptyList(),
-                        false);
-
-                List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
-                PsiMethod[] methods = psiClass.getMethods();
-                for (int i = 0; i < methods.length; i++) {
-                    PsiMethod method = methods[i];
-                    if (method instanceof PsiAnnotationMethod) {
-                        PsiAnnotationMethod annotationMethod = (PsiAnnotationMethod) method;
-                        assert annotationMethod.getParameterList().getParameters().length == 0;
-
-                        PsiType returnType = annotationMethod.getReturnType();
-
-                        // We take the following heuristical convention:
-                        // if the last method of the @interface is an array, we convert it into a vararg
-                        JetType varargElementType = null;
-                        if (i == methods.length - 1 && (returnType instanceof PsiArrayType)) {
-                            varargElementType = semanticServices.getTypeTransformer().transformToType(((PsiArrayType) returnType).getComponentType(), resolverForTypeParameters);
-                        }
-
-                        assert returnType != null;
-                        valueParameters.add(new ValueParameterDescriptorImpl(
-                                constructorDescriptor,
-                                i,
-                                Collections.<AnnotationDescriptor>emptyList(),
-                                Name.identifier(method.getName()),
-                                false,
-                                semanticServices.getTypeTransformer().transformToType(returnType, resolverForTypeParameters),
-                                annotationMethod.getDefaultValue() != null,
-                                varargElementType));
-                    }
+            else {
+                // We need to create default constructors for classes and abstract classes.
+                // Example:
+                // class Kotlin() : Java() {}
+                // abstract public class Java {}
+                if (!psiClass.isInterface()) {
+                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                            containingClass,
+                            Collections.<AnnotationDescriptor>emptyList(),
+                            false);
+                    constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), containingClass
+                            .getVisibility(), isStatic);
+                    constructors.add(constructorDescriptor);
+                    trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
                 }
+                if (psiClass.isAnnotationType()) {
+                    // A constructor for an annotation type takes all the "methods" in the @interface as parameters
+                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                            containingClass,
+                            Collections.<AnnotationDescriptor>emptyList(),
+                            false);
 
-                constructorDescriptor.initialize(typeParameters, valueParameters, containingClass.getVisibility(), isStatic);
-                constructors.add(constructorDescriptor);
-                trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
+                    List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+                    PsiMethod[] methods = psiClass.getMethods();
+                    for (int i = 0; i < methods.length; i++) {
+                        PsiMethod method = methods[i];
+                        if (method instanceof PsiAnnotationMethod) {
+                            PsiAnnotationMethod annotationMethod = (PsiAnnotationMethod) method;
+                            assert annotationMethod.getParameterList().getParameters().length == 0;
+
+                            PsiType returnType = annotationMethod.getReturnType();
+
+                            // We take the following heuristical convention:
+                            // if the last method of the @interface is an array, we convert it into a vararg
+                            JetType varargElementType = null;
+                            if (i == methods.length - 1 && (returnType instanceof PsiArrayType)) {
+                                varargElementType = semanticServices.getTypeTransformer().transformToType(((PsiArrayType) returnType).getComponentType(), resolverForTypeParameters);
+                            }
+
+                            assert returnType != null;
+                            valueParameters.add(new ValueParameterDescriptorImpl(
+                                    constructorDescriptor,
+                                    i,
+                                    Collections.<AnnotationDescriptor>emptyList(),
+                                    Name.identifier(method.getName()),
+                                    false,
+                                    semanticServices.getTypeTransformer().transformToType(returnType, resolverForTypeParameters),
+                                    annotationMethod.getDefaultValue() != null,
+                                    varargElementType));
+                        }
+                    }
+
+                    constructorDescriptor.initialize(typeParameters, valueParameters, containingClass.getVisibility(), isStatic);
+                    constructors.add(constructorDescriptor);
+                    trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
+                }
             }
         }
         else {
@@ -527,15 +532,20 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return null;
         }
 
+        if (trace.get(BindingContext.CONSTRUCTOR, psiConstructor) != null) {
+            return trace.get(BindingContext.CONSTRUCTOR, psiConstructor);
+        }
+
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classData.classDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false);
+
         String context = "constructor of class " + psiClass.getQualifiedName();
-        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(constructorDescriptor,
-                                                                                          constructor.getParameters(),
-                                                                                          TypeVariableResolvers.classTypeVariableResolver(
-                                                                                                  classData.classDescriptor, context));
+        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(
+                constructorDescriptor, constructor.getParameters(),
+                TypeVariableResolvers.classTypeVariableResolver(classData.classDescriptor, context));
+
         if (valueParameterDescriptors.receiverType != null) {
             throw new IllegalStateException();
         }
@@ -1442,7 +1452,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 }
             }
         }
-        
+
         try {
             namedMembers.functionDescriptors = functions;
             tempTrace.commit();
