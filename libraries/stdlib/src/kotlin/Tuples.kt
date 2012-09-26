@@ -4,7 +4,7 @@ import kotlin.nullable.hashCodeOrDefault
 import java.io.Serializable
 
 // TODO: make it a data class
-public class Pair<A, B> (
+public class Pair<out A, out B> (
         public val first: A,
         public val second: B
 ) : Serializable {
