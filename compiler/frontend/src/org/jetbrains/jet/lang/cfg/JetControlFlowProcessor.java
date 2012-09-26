@@ -700,7 +700,7 @@ public class JetControlFlowProcessor {
         public void visitMultiDeclaration(JetMultiDeclaration declaration) {
             JetExpression initializer = declaration.getInitializer();
             if (initializer != null) {
-                builder.read(initializer);
+                value(initializer, false);
             }
             List<JetMultiDeclarationEntry> entries = declaration.getEntries();
             for (JetMultiDeclarationEntry entry : entries) {

@@ -1336,6 +1336,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/ForWithExplicitTypes.kt");
                 }
                 
+                @TestMetadata("kt2829.kt")
+                public void testKt2829() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/kt2829.kt");
+                }
+                
                 @TestMetadata("RedeclarationInForLoop.kt")
                 public void testRedeclarationInForLoop() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations/RedeclarationInForLoop.kt");
