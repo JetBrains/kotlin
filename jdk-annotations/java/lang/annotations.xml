@@ -766,12 +766,7 @@
           <val name="value" val="&quot;fun isInstance(obj : Any?) : Boolean&quot;"/>
       </annotation>
   </item>
-  <item name='java.lang.Class boolean isAssignableFrom(java.lang.Class&lt;?&gt;)'>
-      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun isAssignableFrom(cls : Class&lt;out Any?&gt;) : Boolean&quot;"/>
-      </annotation>
-  </item>
-  <item name='java.lang.Class java.lang.String getName()'>
+    <item name='java.lang.Class java.lang.String getName()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='java.lang.Class java.lang.ClassLoader getClassLoader()'>
@@ -931,5 +926,17 @@
                val="&quot;fun &lt;A : Annotation?&gt; getAnnotation(annotationClass : Class&lt;A&gt;) : A?&quot;"/>
       </annotation>
       <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.String toString()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt; forName(java.lang.String) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt; forName(java.lang.String, boolean, java.lang.ClassLoader) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class boolean isAssignableFrom(java.lang.Class&lt;?&gt;) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
 </root>
