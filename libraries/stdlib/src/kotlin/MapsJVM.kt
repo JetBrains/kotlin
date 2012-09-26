@@ -57,7 +57,7 @@ public inline fun <K,V,R> Map<K,V>.map(transform: (Map.Entry<K,V>) -> R) : List<
  *
  * @includeFunctionBody ../../test/MapTest.kt mapValues
  */
-public inline fun <K,V,R> MutableMap<K,V>.mapValues(transform : (Map.Entry<K,V>) -> R): Map<K,R> {
+public inline fun <K,V,R> Map<K,V>.mapValues(transform : (Map.Entry<K,V>) -> R): Map<K,R> {
     return mapValuesTo(java.util.HashMap<K,R>(this.size), transform)
 }
 
