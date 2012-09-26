@@ -22,10 +22,7 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.junit.Assert;
 
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
+import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -62,6 +59,8 @@ public class ForTestCompileRuntime {
                 "-output", destdir.getPath(),
                 "-src", "./libraries/stdlib/src",
                 "-noStdlib",
+                "-noJdkAnnotations",
+                "-annotations", "./jdk-annotations",
                 "-classpath", "out/production/runtime");
         if (exitCode != ExitCode.OK) {
             throw new IllegalStateException("stdlib for test compilation failed: " + exitCode);
