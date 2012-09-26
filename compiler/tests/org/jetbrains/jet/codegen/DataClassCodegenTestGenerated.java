@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jetbrains.jet.codegen;
 
 import junit.framework.Test;
@@ -88,6 +87,16 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractDataClassCodegenTest", new File("compiler/testData/codegen/dataClasses/equals"), "kt", true);
         }
         
+        @TestMetadata("alreadyDeclared.kt")
+        public void testAlreadyDeclared() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/equals/alreadyDeclared.kt");
+        }
+        
+        @TestMetadata("alreadyDeclaredWrongSignature.kt")
+        public void testAlreadyDeclaredWrongSignature() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/equals/alreadyDeclaredWrongSignature.kt");
+        }
+        
         @TestMetadata("genericarray.kt")
         public void testGenericarray() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/equals/genericarray.kt");
@@ -119,6 +128,16 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
     public static class Hashcode extends AbstractDataClassCodegenTest {
         public void testAllFilesPresentInHashcode() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractDataClassCodegenTest", new File("compiler/testData/codegen/dataClasses/hashcode"), "kt", true);
+        }
+        
+        @TestMetadata("alreadyDeclared.kt")
+        public void testAlreadyDeclared() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/hashcode/alreadyDeclared.kt");
+        }
+        
+        @TestMetadata("alreadyDeclaredWrongSignature.kt")
+        public void testAlreadyDeclaredWrongSignature() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/hashcode/alreadyDeclaredWrongSignature.kt");
         }
         
         @TestMetadata("array.kt")
@@ -177,6 +196,16 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
     public static class Tostring extends AbstractDataClassCodegenTest {
         public void testAllFilesPresentInTostring() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractDataClassCodegenTest", new File("compiler/testData/codegen/dataClasses/tostring"), "kt", true);
+        }
+        
+        @TestMetadata("alreadyDeclared.kt")
+        public void testAlreadyDeclared() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/tostring/alreadyDeclared.kt");
+        }
+        
+        @TestMetadata("alreadyDeclaredWrongSignature.kt")
+        public void testAlreadyDeclaredWrongSignature() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/tostring/alreadyDeclaredWrongSignature.kt");
         }
         
         @TestMetadata("arrayParams.kt")

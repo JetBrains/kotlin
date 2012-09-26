@@ -50,7 +50,9 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -411,10 +413,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateComponentFunctionsForDataClasses();
 
-        final List<PropertyDescriptor> properties = getDataProperties();
+        List<PropertyDescriptor> properties = getDataProperties();
         if (!properties.isEmpty()) {
+            generateDataClassToStringIfNeeded(properties);
+            generateDataClassHashCodeIfNeeded(properties);
+            generateDataClassEqualsIfNeeded(properties);
+        }
+    }
+
+    private void generateDataClassToStringIfNeeded(List<PropertyDescriptor> properties) {
+        ClassDescriptor stringClass = JetStandardLibrary.getInstance().getString();
+        if (getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toString"), stringClass) == null) {
             generateDataClassToStringMethod(properties);
+        }
+    }
+
+    private void generateDataClassHashCodeIfNeeded(List<PropertyDescriptor> properties) {
+        ClassDescriptor intClass = JetStandardLibrary.getInstance().getInt();
+        if (getDeclaredFunctionByRawSignature(descriptor, Name.identifier("hashCode"), intClass) == null) {
             generateDataClassHashCodeMethod(properties);
+        }
+    }
+
+    private void generateDataClassEqualsIfNeeded(List<PropertyDescriptor> properties) {
+        ClassDescriptor booleanClass = JetStandardLibrary.getInstance().getBoolean();
+        ClassDescriptor anyClass = JetStandardClasses.getAny();
+        FunctionDescriptor equalsFunction = getDeclaredFunctionByRawSignature(descriptor, Name.identifier("equals"), booleanClass, anyClass);
+        if (equalsFunction == null) {
             generateDataClassEqualsMethod(properties);
         }
     }

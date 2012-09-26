@@ -37,10 +37,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
@@ -199,5 +196,42 @@ public class CodegenUtil {
         if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
             throw new IllegalStateException("code generation for synthesized members should be handled separately");
         }
+    }
+
+    @Nullable
+    public static FunctionDescriptor getDeclaredFunctionByRawSignature(
+            @NotNull ClassDescriptor owner,
+            @NotNull Name name,
+            @NotNull ClassDescriptor returnedClass,
+            @NotNull ClassDescriptor... valueParameterClasses
+    ) {
+        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
+        for (FunctionDescriptor function : functions) {
+            if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION
+                && function.getTypeParameters().isEmpty()
+                && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClasses))
+                && rawTypeMatches(function.getReturnType(), returnedClass)) {
+                return function;
+            }
+        }
+        return null;
+    }
+
+    private static boolean valueParameterClassesMatch(
+            @NotNull List<ValueParameterDescriptor> parameters,
+            @NotNull List<ClassDescriptor> classes) {
+        if (parameters.size() != classes.size()) return false;
+        for (int i = 0; i < parameters.size(); i++) {
+            ValueParameterDescriptor parameterDescriptor = parameters.get(i);
+            ClassDescriptor classDescriptor = classes.get(i);
+            if (!rawTypeMatches(parameterDescriptor.getType(), classDescriptor)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean rawTypeMatches(JetType type, ClassDescriptor classDescriptor) {
+        return type.getConstructor().getDeclarationDescriptor().getOriginal() == classDescriptor.getOriginal();
     }
 }
