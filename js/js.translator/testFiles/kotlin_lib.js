@@ -276,7 +276,9 @@
         return collection.size() != 0
     };
     Kotlin.arrayAddAt = function (a, index, o) {
-        rangeCheck(index, a.length);
+        if (index > a.length || index < 0) {
+            throw new RangeError("Index: " + index + ", Size: " + a.length);
+        }
         return a.splice(index, 0, o);
     };
     Kotlin.arrayGet = function (a, index) {

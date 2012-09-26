@@ -16,6 +16,8 @@ fun box(): Boolean {
     }
 
     // test addAt
+    list.add(0, 400)
+    list.remove(0);
     list.add(1, 500)
     // test contains, addAll
     if (!list.contains(500) || list.contains(600) || list.addAll(ArrayList<Int>())) {
