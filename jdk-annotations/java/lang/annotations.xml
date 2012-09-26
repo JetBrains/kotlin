@@ -4,6 +4,9 @@
       <val name="value" val="&quot;fun iterator() : Iterator&lt;T&gt;&quot;"/>
     </annotation>
   </item>
+  <item name='java.lang.Object java.lang.Class&lt;?&gt; getClass()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='java.lang.Object java.lang.Object clone()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun clone() : Any&quot;"/>
@@ -747,5 +750,186 @@
   </item>
   <item name='java.lang.String java.lang.String intern()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <!-- java.lang.Class -->
+  <item name='java.lang.Class T newInstance()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun newInstance() : T&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt; forName(java.lang.String, boolean, java.lang.ClassLoader)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class boolean isInstance(java.lang.Object)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun isInstance(obj : Any?) : Boolean&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class boolean isAssignableFrom(java.lang.Class&lt;?&gt;)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun isAssignableFrom(cls : Class&lt;out Any?&gt;) : Boolean&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.String getName()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.ClassLoader getClassLoader()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.TypeVariable&lt;java.lang.Class&lt;T&gt;&gt;[] getTypeParameters()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;? super T&gt; getSuperclass()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Type getGenericSuperclass()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.Package getPackage()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt;[] getInterfaces()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Type[] getGenericInterfaces()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt; getComponentType()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Method getEnclosingMethod()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Constructor&lt;?&gt; getEnclosingConstructor()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt; getDeclaringClass()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt; getEnclosingClass()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.String getSimpleName()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.String getCanonicalName()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.String getSimpleBinaryName()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt;[] getClasses()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getClasses() : Array&lt;Class&lt;out Any?&gt;&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Field[] getFields()'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getFields() : Array&lt;Field&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Method[] getMethods()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getMethods() : Array&lt;Method&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Constructor&lt;?&gt;[] getConstructors()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getConstructors() : Array&lt;Constructor&lt;out Any?&gt;&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Field getField(java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Method getMethod(java.lang.String, java.lang.Class&lt;?&gt;...)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun getMethod(name : String, vararg parameterTypes : Class&lt;out Any?&gt;) : Method&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Constructor&lt;T&gt; getConstructor(java.lang.Class&lt;?&gt;...)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun getConstructor(vararg parameterTypes : Class&lt;out Any?&gt;) : Constructor&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt;[] getDeclaredClasses()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getDeclaredClasses() : Array&lt;Class&lt;out Any?&gt;&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Field[] getDeclaredFields()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getDeclaredFields() : Array&lt;Field&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Method[] getDeclaredMethods()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getDeclaredMethods() : Array&lt;Method&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Constructor&lt;?&gt;[] getDeclaredConstructors()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun getDeclaredConstructors() : Array&lt;Constructor&lt;out Any?&gt;&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Field getDeclaredField(java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getDeclaredField(name : String) : Field&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Method getDeclaredMethod(java.lang.String, java.lang.Class&lt;?&gt;...)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun getDeclaredMethod(name : String, vararg parameterTypes : Class&lt;out Any?&gt;) : Method&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.reflect.Constructor&lt;T&gt; getDeclaredConstructor(java.lang.Class&lt;?&gt;...)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun getDeclaredConstructor(vararg parameterTypes : Class&lt;out Any?&gt;) : Constructor&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.io.InputStream getResourceAsStream(java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getResourceAsStream(name : String) : InputStream?&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.net.URL getResource(java.lang.String)'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getResource(name : String) : URL&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class T[] getEnumConstants()'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getEnumConstants() : Array&lt;T&gt;?&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.lang.Class java.lang.Class&lt;? extends U&gt; asSubclass(java.lang.Class&lt;U&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.lang.Class A getAnnotation(java.lang.Class&lt;A&gt;)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;A : Annotation?&gt; getAnnotation(annotationClass : Class&lt;A&gt;) : A?&quot;"/>
+      </annotation>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
   </item>
 </root>
