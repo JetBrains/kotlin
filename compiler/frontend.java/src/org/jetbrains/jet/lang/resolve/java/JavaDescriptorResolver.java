@@ -53,7 +53,6 @@ import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -1411,13 +1410,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return;
         }
 
-        TemporaryBindingTrace tempTrace = TemporaryBindingTrace.create(trace);
-
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
-            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData, tempTrace);
+            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
             if (function != null) {
                 functionsFromCurrent.add(function);
             }
@@ -1453,15 +1450,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
         }
 
-        try {
-            namedMembers.functionDescriptors = functions;
-            tempTrace.commit();
-        } catch (Throwable e) {
-            assert false : "No errors are expected while saving state";
-            throw ExceptionUtils.rethrow(e);
-        }
+        namedMembers.functionDescriptors = functions;
     }
-    
+
     private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, Name methodName) {
         Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
         for (JetType supertype : getSupertypes(scopeData)) {
@@ -1536,7 +1527,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
-            @NotNull ResolverScopeData scopeData, BindingTrace tempTrace) {
+            @NotNull ResolverScopeData scopeData) {
 
         getResolverScopeData(scopeData);
 
@@ -1559,6 +1550,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (OBJECT_FQ_NAME.getFqName().equals(ownerClassName)) {
                 return null;
             }
+        }
+
+        if (trace.get(BindingContext.FUNCTION, psiMethod) != null) {
+            return trace.get(BindingContext.FUNCTION, psiMethod);
         }
 
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
@@ -1605,7 +1600,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         );
 
         if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-            BindingContextUtils.recordFunctionDeclarationToDescriptor(tempTrace, psiMethod, functionDescriptorImpl);
+            BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, psiMethod, functionDescriptorImpl);
         }
 
         if (containingClass != psiClass && !method.isStatic()) {
