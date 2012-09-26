@@ -1,4 +1,5 @@
 <root>
+    <!-- java.util.concurrent.ConcurrentMap -->
     <item name='java.util.concurrent.ConcurrentMap V putIfAbsent(K, V)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
             <val name="value" val="&quot;fun putIfAbsent(key : K, value : V) : V?&quot;"/>
@@ -18,5 +19,120 @@
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
             <val name="value" val="&quot;fun replace(key : K, value : V) : V?&quot;"/>
         </annotation>
+    </item>
+    <!-- java.util.concurrent.Executor -->
+    <item name='java.util.concurrent.Executor void execute(java.lang.Runnable)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun execute(command : Runnable) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <!-- java.util.concurrent.Executors -->
+    <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newFixedThreadPool(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newSingleThreadExecutor()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newCachedThreadPool()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService newSingleThreadScheduledExecutor()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService newScheduledThreadPool(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ThreadFactory defaultThreadFactory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ThreadFactory privilegedThreadFactory()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newFixedThreadPool(int, java.util.concurrent.ThreadFactory) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newSingleThreadExecutor(java.util.concurrent.ThreadFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newCachedThreadPool(java.util.concurrent.ThreadFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService newSingleThreadScheduledExecutor(java.util.concurrent.ThreadFactory) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService newScheduledThreadPool(int, java.util.concurrent.ThreadFactory) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService unconfigurableExecutorService(java.util.concurrent.ExecutorService) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService unconfigurableScheduledExecutorService(java.util.concurrent.ScheduledExecutorService) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;T&gt; callable(java.lang.Runnable, T) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;java.lang.Object&gt; callable(java.lang.Runnable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;java.lang.Object&gt; callable(java.security.PrivilegedAction&lt;?&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;java.lang.Object&gt; callable(java.security.PrivilegedExceptionAction&lt;?&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;T&gt; privilegedCallable(java.util.concurrent.Callable&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;T&gt; privilegedCallableUsingCurrentClassLoader(java.util.concurrent.Callable&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+  <!-- java.util.concurrent.ExecutorService -->
+    <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.lang.Runnable&gt; shutdownNow()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun shutdownNow() : MutableList&lt;Runnable&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.concurrent.ExecutorService boolean awaitTermination(long, java.util.concurrent.TimeUnit) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;T&gt; submit(java.util.concurrent.Callable&lt;T&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;T&gt; submit(java.lang.Runnable, T) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;?&gt; submit(java.lang.Runnable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;) 0'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;out Callable&lt;T&gt;&gt;) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;, long, java.util.concurrent.TimeUnit) 0 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;out Callable&lt;T&gt;&gt;, timeout : Long, unit : TimeUnit) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;out Callable&lt;T&gt;&gt;) : T?&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;, long, java.util.concurrent.TimeUnit) 0 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;out Callable&lt;T&gt;&gt;, timeout : Long, unit : TimeUnit) : T?&quot;"/>
+      </annotation>
     </item>
 </root>
