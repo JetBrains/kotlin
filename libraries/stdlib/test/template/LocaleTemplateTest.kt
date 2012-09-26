@@ -13,11 +13,11 @@ class LocaleTemplateTest : TestCase() {
     }
 
     fun testFrance() : Unit {
-        format(LocaleFormatter(Locale.FRANCE!!))
+        format(LocaleFormatter(Locale.FRANCE))
     }
 
     fun testGermany() : Unit {
-        format(LocaleFormatter(Locale.GERMANY!!))
+        format(LocaleFormatter(Locale.GERMANY))
     }
 
     fun format(formatter: LocaleFormatter): Unit {

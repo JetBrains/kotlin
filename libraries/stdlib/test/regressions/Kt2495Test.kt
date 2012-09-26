@@ -14,7 +14,7 @@ fun f(xs: Iterator<Int>): Int {
 class Kt2495Test {
     test fun duplicateIteratorsBug() {
         val list = arrayList(1, 2, 3)
-        val result = f(list.iterator()!!)
+        val result = f(list.iterator())
         assertEquals(6, result)
     }
 }

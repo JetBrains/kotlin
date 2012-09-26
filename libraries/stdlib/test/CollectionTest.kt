@@ -409,7 +409,7 @@ class CollectionTest {
         private val collection = collection
 
         override fun iterator(): Iterator<T> {
-            return collection.iterator()!!
+            return collection.iterator()
         }
     }
 }

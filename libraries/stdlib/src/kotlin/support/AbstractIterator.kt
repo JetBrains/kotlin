@@ -108,7 +108,7 @@ class CompositeIterator<T>(vararg iterators: Iterator<T>): AbstractIterator<T>()
             val iter = currentIter
             if (iter != null) {
                 if (iter.hasNext()) {
-                    setNext(iter.next()!!)
+                    setNext(iter.next())
                     return
                 } else {
                     currentIter = null

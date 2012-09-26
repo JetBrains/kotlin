@@ -116,7 +116,7 @@ public open class ToStringFormatter : Formatter {
     }
 }
 
-public val defaultLocale : Locale = Locale.getDefault()!!
+public val defaultLocale : Locale = Locale.getDefault()
 
 /**
  * Formats values using a given [[Locale]] for internationalisation

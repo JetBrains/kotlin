@@ -100,6 +100,9 @@
     <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;T&gt; submit(java.util.concurrent.Callable&lt;T&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;T&gt; submit(java.util.concurrent.Callable&lt;T&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;T&gt; submit(java.lang.Runnable, T) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
