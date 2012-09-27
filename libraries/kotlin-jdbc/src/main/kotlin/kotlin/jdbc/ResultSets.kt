@@ -47,7 +47,7 @@ fun <T> ResultSet.map(fn : (ResultSet) -> T) : jet.Iterable<T> {
  * Returns array with column names
  */
 fun ResultSet.getColumnNames() : jet.Array<String> {
-    val meta = getMetaData()!!
+    val meta = getMetaData()
     return jet.Array<String>(meta.getColumnCount(), {meta.getColumnName(it + 1) ?: it.toString()})
 }
 

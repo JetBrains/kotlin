@@ -8,17 +8,17 @@ import java.util.Properties
 /**
  * create connection for the specified jdbc url with no credentials
  */
-fun getConnection(url : String) : Connection = DriverManager.getConnection(url)!!
+fun getConnection(url : String) : Connection = DriverManager.getConnection(url)
 
 /**
  * create connection for the specified jdbc url and properties
  */
-fun getConnection(url : String, info : Map<String, String>) : Connection = DriverManager.getConnection(url, info.toProperties())!!
+fun getConnection(url : String, info : Map<String, String>) : Connection = DriverManager.getConnection(url, info.toProperties())
 
 /**
  * create connection for the specified jdbc url and credentials
  */
-fun getConnection(url : String, user : String, password : String) : Connection = DriverManager.getConnection(url, user, password)!!
+fun getConnection(url : String, user : String, password : String) : Connection = DriverManager.getConnection(url, user, password)
 
 /**
  * Executes specified block with connection and close connection after this
@@ -65,11 +65,7 @@ fun Connection.update(template : StringTemplate) : Int {
 fun <T> Connection.query(sql: String, block: (ResultSet) -> T): T {
     return statement{
         val rs = it.executeQuery(sql)
-        if (rs != null) {
-            block(rs)
-        } else {
-            throw IllegalStateException("No ResultSet returned executeQuery($sql) on $this")
-        }
+        block(rs)
     }
 }
 
@@ -222,7 +218,7 @@ class PreparedStatementBuilder(val template : StringTemplate, val connection : C
             out.append(if (constantText) it else "?")
             constantText = !constantText
         }
-        return out.toString() ?: ""
+        return out.toString()
     }
 }
 

@@ -17,11 +17,7 @@ fun PreparedStatement.update(): Int {
 fun <T> PreparedStatement.query(block: (ResultSet) -> T): T {
     try {
         val resultSet = this.executeQuery()
-        if (resultSet == null) {
-            throw IllegalStateException("No ResultSet returned from $this")
-        } else {
-            return block(resultSet)
-        }
+        return block(resultSet)
     } finally {
         close()
     }

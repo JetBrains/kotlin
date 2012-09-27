@@ -1,0 +1,58 @@
+<root>
+    <!-- java.sql.DriverManager -->
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Driver getDriver(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Driver getDriver(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.util.Properties)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager void registerDriver(java.sql.Driver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <!-- TODO: provide correct signature after bug in compiler fixed-->
+    <item name='java.sql.DriverManager java.util.Enumeration getDrivers()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <!-- java.sql.ResultSet -->
+    <item name='java.sql.ResultSet java.sql.ResultSetMetaData getMetaData()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+  <!-- java.sql.Statement -->
+    <item name='java.sql.Statement java.sql.ResultSet executeQuery(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+  <item name='java.sql.Statement java.sql.ResultSet executeQuery(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.sql.Statement int executeUpdate(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <!-- java.sql.PreparedStatement -->
+    <item name='java.sql.PreparedStatement java.sql.ResultSet executeQuery()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
