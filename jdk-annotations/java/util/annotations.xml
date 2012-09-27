@@ -1708,4 +1708,26 @@
   <item name='java.util.Locale boolean equals(java.lang.Object) 0'>
     <annotation name='org.jetbrains.annotations.Nullable'/>
   </item>
+  <item name='java.util.ServiceLoader java.util.Iterator&lt;S&gt; iterator()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <!-- java.util.ServiceLoader -->
+  <item name='java.util.ServiceLoader java.util.ServiceLoader&lt;S&gt; load(java.lang.Class&lt;S&gt;, java.lang.ClassLoader)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.ServiceLoader java.util.ServiceLoader&lt;S&gt; load(java.lang.Class&lt;S&gt;, java.lang.ClassLoader) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.ServiceLoader java.util.ServiceLoader&lt;S&gt; load(java.lang.Class&lt;S&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.ServiceLoader java.util.ServiceLoader&lt;S&gt; load(java.lang.Class&lt;S&gt;) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.ServiceLoader java.util.ServiceLoader&lt;S&gt; loadInstalled(java.lang.Class&lt;S&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.ServiceLoader java.util.ServiceLoader&lt;S&gt; loadInstalled(java.lang.Class&lt;S&gt;) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
