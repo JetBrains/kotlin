@@ -46,7 +46,7 @@ fun <K,V> Map.Entry<K,V>.component2() : V {
  */
 public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
     if (this.containsKey(key)) {
-        return this.get(key)
+        return this.get(key) as V
     } else {
         return defaultValue()
     }
@@ -59,7 +59,7 @@ public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
  */
 public inline fun <K,V> MutableMap<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
     if (this.containsKey(key)) {
-        return this.get(key)
+        return this.get(key) as V
     } else {
         val answer = defaultValue()
         this.put(key, answer)
