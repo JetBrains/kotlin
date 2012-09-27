@@ -3,7 +3,7 @@ package java.util
 import java.lang.*
 
 library("collectionsMax")
-public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
+public fun max<T>(col : jet.Collection<T>, comp : Comparator<T>) : T = js.noImpl
 
 library
 public trait Comparator<T> {
@@ -22,10 +22,10 @@ public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun add(e: E): Boolean = js.noImpl
     override fun remove(o: Any?): Boolean = js.noImpl
 
-    override fun addAll(c: Collection<E>): Boolean = js.noImpl
-    override fun containsAll(c : Collection<Any?>) : Boolean = js.noImpl
-    override fun removeAll(c : Collection<Any?>) : Boolean = js.noImpl
-    override fun retainAll(c : Collection<Any?>) : Boolean = js.noImpl
+    override fun addAll(c: jet.Collection<E>): Boolean = js.noImpl
+    override fun containsAll(c : jet.Collection<Any?>) : Boolean = js.noImpl
+    override fun removeAll(c : jet.Collection<Any?>) : Boolean = js.noImpl
+    override fun retainAll(c : jet.Collection<Any?>) : Boolean = js.noImpl
 
     override fun clear(): Unit = js.noImpl
     override fun size(): Int = js.noImpl
@@ -40,7 +40,7 @@ public native abstract class AbstractList<E>(): AbstractCollection<E>(), Mutable
 
     override fun add(e: E): Boolean = js.noImpl
     override fun add(index: Int, element: E): Unit = js.noImpl
-    override fun addAll(index : Int, c : Collection<E>) : Boolean = js.noImpl
+    override fun addAll(index: Int, c: jet.Collection<E>) : Boolean = js.noImpl
 
     override fun remove(index: Int): E = js.noImpl
 
@@ -78,7 +78,7 @@ public open class HashMap<K, V>(): MutableMap<K, V> {
     override public fun get(key: Any?): V? = js.noImpl
     override public  fun containsKey(key: Any?): Boolean = js.noImpl
     override public fun put(key: K, value: V): V = js.noImpl
-    override public fun putAll(m: Map<out K, out V>): Unit = js.noImpl
+    override public fun putAll(m: jet.Map<out K, out V>): Unit = js.noImpl
     override public fun remove(key: Any?): V? = js.noImpl
     override public fun clear(): Unit = js.noImpl
     override public fun containsValue(value: Any?): Boolean = js.noImpl
