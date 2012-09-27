@@ -26,12 +26,12 @@ import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.jet.codegen.ClassBuilder;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
 import java.util.List;
 
@@ -81,21 +81,37 @@ public class StubClassBuilder extends ClassBuilder {
 
     @Override
     public MethodVisitor newMethod(@Nullable PsiElement origin, int access, String name, String desc, @Nullable String signature, @Nullable String[] exceptions) {
-        final MethodVisitor answer = super.newMethod(origin, access, name, desc, signature, exceptions);
-        markLastChild(origin);
-        return answer;
+        final MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
+
+        if (internalVisitor != null) {
+            // If stub for method generated
+            markLastChild(origin);
+        }
+
+        return internalVisitor;
     }
 
     @Override
     public FieldVisitor newField(@Nullable PsiElement origin, int access, String name, String desc, @Nullable String signature, @Nullable Object value) {
-        final FieldVisitor answer = super.newField(origin, access, name, desc, signature, value);
-        markLastChild(origin);
-        return answer;
+        final FieldVisitor internalVisitor = super.newField(origin, access, name, desc, signature, value);
+
+        if (internalVisitor != null) {
+            // If stub for field generated
+            markLastChild(origin);
+        }
+
+        return internalVisitor;
     }
 
-    private void markLastChild(PsiElement origin) {
+    private void markLastChild(@Nullable PsiElement origin) {
         final List children = v.getResult().getChildrenStubs();
         StubBase last = (StubBase) children.get(children.size() - 1);
+
+        PsiElement oldOrigin = last.getUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT);
+        if (oldOrigin != null) {
+            throw new IllegalStateException("Rewriting origin element: " + oldOrigin.getText() + " for stub " + last.toString());
+        }
+
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT, origin);
     }
 

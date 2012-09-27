@@ -63,6 +63,10 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         doTestWrapMethod(true);
     }
 
+    public void testWrapFunWithDefaultParam() {
+        doTestWrapMethod(true);
+    }
+
     public void testWrapFunWithImplInTrait() {
         doTestWrapMethod(true);
     }
