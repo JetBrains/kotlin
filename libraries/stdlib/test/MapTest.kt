@@ -15,6 +15,10 @@ class MapTest {
         val b = data.getOrElse("foo"){3}
         assertEquals(3, b)
         assertEquals(0, data.size())
+
+        val empty = HashMap<String, Int?>()
+        val c = empty.getOrElse("") {null}
+        assertEquals(null, c)
     }
 
     test fun getOrPut() {
@@ -26,6 +30,10 @@ class MapTest {
         assertEquals(2, b)
 
         assertEquals(1, data.size())
+
+        val empty = HashMap<String, Int?>()
+        val c = empty.getOrPut("") {null}
+        assertEquals(null, c)
     }
 
     test fun sizeAndEmpty() {
