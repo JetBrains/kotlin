@@ -24,10 +24,10 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.impl.compiled.ClsEnumConstantImpl;
 import com.intellij.psi.impl.compiled.ClsFieldImpl;
-import com.intellij.psi.impl.compiled.ClsMethodImpl;
 import com.intellij.psi.impl.java.stubs.*;
 import com.intellij.psi.stubs.StubBase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.asJava.wrappers.JetClsMethodImpl;
 
 class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<PsiElement> ORIGIN_ELEMENT = Key.create("ORIGIN_ELEMENT");
@@ -99,20 +99,11 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
     @Override
     public PsiMethod createMethod(PsiMethodStub stub) {
         final PsiElement origin = ((StubBase) stub).getUserData(ORIGIN_ELEMENT);
-        if (origin == null) return delegate.createMethod(stub);
+        if (origin == null) {
+            return delegate.createMethod(stub);
+        }
 
-        return new ClsMethodImpl(stub) {
-            @Override
-            public PsiElement getMirror() {
-                return origin;
-            }
-
-            @NotNull
-            @Override
-            public PsiElement getNavigationElement() {
-                return origin;
-            }
-        };
+        return new JetClsMethodImpl(stub, origin);
     }
 
     @Override
