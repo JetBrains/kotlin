@@ -33,14 +33,14 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
         NULL_ANNOTATION.checkInitialized();
     }
 
-    public JetValueParameterAnnotation(@Nullable PsiAnnotation psiAnnotation) {
-        super(psiAnnotation);
-    }
-
     private String name;
     private String type;
     private boolean receiver;
     private boolean hasDefaultValue;
+
+    public JetValueParameterAnnotation(@Nullable PsiAnnotation psiAnnotation) {
+        super(psiAnnotation);
+    }
 
     @Override
     protected void initialize() {
