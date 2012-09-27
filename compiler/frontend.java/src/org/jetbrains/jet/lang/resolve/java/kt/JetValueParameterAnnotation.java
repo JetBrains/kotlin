@@ -38,7 +38,7 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     private boolean receiver;
     private boolean hasDefaultValue;
 
-    public JetValueParameterAnnotation(@Nullable PsiAnnotation psiAnnotation) {
+    private JetValueParameterAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
 
