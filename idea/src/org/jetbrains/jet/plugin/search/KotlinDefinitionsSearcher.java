@@ -41,8 +41,8 @@ public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, Psi
                     return JetLightClass.wrapDelegate((JetClass) queryParameters);
                 }
             });
-            Query<PsiClass> query = ClassInheritorsSearch.search(psiClass, true);
             if (psiClass != null) {
+                Query<PsiClass> query = ClassInheritorsSearch.search(psiClass, true);
                 query.forEach(new Processor<PsiClass>() {
                     @Override
                     public boolean process(final PsiClass clazz) {
