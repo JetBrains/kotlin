@@ -44,10 +44,9 @@ fun <K,V> Map.Entry<K,V>.component2() : V {
  *
  * @includeFunctionBody ../../test/MapTest.kt getOrElse
  */
-public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V?) : V? {
-    val current = this.get(key)
-    if (current != null) {
-        return current
+public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
+    if (this.containsKey(key)) {
+        return this.get(key)
     } else {
         return defaultValue()
     }
@@ -59,9 +58,8 @@ public inline fun <K,V> Map<K,V>.getOrElse(key: K, defaultValue: ()-> V?) : V? {
  * @includeFunctionBody ../../test/MapTest.kt getOrElse
  */
 public inline fun <K,V> MutableMap<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
-    val current = this.get(key)
-    if (current != null) {
-        return current
+    if (this.containsKey(key)) {
+        return this.get(key)
     } else {
         val answer = defaultValue()
         this.put(key, answer)
