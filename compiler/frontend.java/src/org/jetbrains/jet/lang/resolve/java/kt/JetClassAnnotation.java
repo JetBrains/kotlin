@@ -27,14 +27,14 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @author Stepan Koltsov
  */
 public class JetClassAnnotation extends PsiAnnotationWithFlags {
-    public static final JetClassAnnotation NULL_ANNOTATION = new JetClassAnnotation(null);
+    private static final JetClassAnnotation NULL_ANNOTATION = new JetClassAnnotation(null);
     static {
         NULL_ANNOTATION.checkInitialized();
     }
 
     private String signature;
 
-    public JetClassAnnotation(@Nullable PsiAnnotation psiAnnotation) {
+    private JetClassAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
 

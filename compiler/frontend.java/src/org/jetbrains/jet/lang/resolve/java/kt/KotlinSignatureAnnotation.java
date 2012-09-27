@@ -29,14 +29,14 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @since 6/1/12
  */
 public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
-    public static final KotlinSignatureAnnotation NULL_ANNOTATION = new KotlinSignatureAnnotation(null);
+    private static final KotlinSignatureAnnotation NULL_ANNOTATION = new KotlinSignatureAnnotation(null);
     static {
         NULL_ANNOTATION.checkInitialized();
     }
 
     private String signature;
 
-    public KotlinSignatureAnnotation(@Nullable PsiAnnotation psiAnnotation) {
+    private KotlinSignatureAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
 
