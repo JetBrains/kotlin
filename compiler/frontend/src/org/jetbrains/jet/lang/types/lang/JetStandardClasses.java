@@ -613,11 +613,6 @@ public class JetStandardClasses {
     }
 
     public static boolean isStandardClass(@NotNull FqName fqName) {
-        for (DeclarationDescriptor descriptor : getAllStandardClasses()) {
-            if (DescriptorUtils.getFQName(descriptor).equals(fqName.toUnsafe())) {
-                return true;
-            }
-        }
-        return false;
+        return JetStandardClasses.STANDARD_CLASSES_FQNAME.equals(fqName.parent());
     }
 }

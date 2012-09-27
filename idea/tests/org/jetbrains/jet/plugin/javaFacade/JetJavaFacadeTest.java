@@ -87,6 +87,19 @@ public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
         doTestWrapClass();
     }
 
+    public void testEa38770() {
+        myFixture.configureByFile(getTestName(true) + ".kt");
+
+        PsiReference reference = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
+        assertNotNull(reference);
+        PsiElement element = reference.resolve();
+        assertNotNull(element);
+        assertInstanceOf(element, JetNamedFunction.class);
+        JetNamedFunction toString = (JetNamedFunction) element;
+
+        assertNull("There should be no wrapper for built-in function", JetLightClass.wrapMethod(toString));
+    }
+
     public void testInnerClass() throws Exception {
         myFixture.configureByFile(getTestName(true) + ".kt");
 
