@@ -41,6 +41,7 @@ public class JetClassAnnotation extends PsiAnnotationWithFlags {
         signature = getStringAttribute(JvmStdlibNames.JET_CLASS_SIGNATURE, "");
     }
 
+    @NotNull
     public String signature() {
         checkInitialized();
         return signature;

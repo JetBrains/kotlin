@@ -41,6 +41,7 @@ public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
         signature = StringUtil.unescapeStringCharacters(getStringAttribute(JvmStdlibNames.KOTLIN_SIGNATURE_VALUE_METHOD, ""));
     }
 
+    @NotNull
     public String signature() {
         checkInitialized();
         return signature;
