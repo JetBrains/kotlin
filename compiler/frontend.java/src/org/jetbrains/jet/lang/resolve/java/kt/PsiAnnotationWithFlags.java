@@ -25,18 +25,20 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @since 6/14/12
  */
 public abstract class PsiAnnotationWithFlags extends PsiAnnotationWrapper {
+    private int flags;
+
     protected PsiAnnotationWithFlags(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);
     }
 
     @Override
     protected void initialize() {
-        initialized = getIntAttribute(JvmStdlibNames.JET_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
+        flags = getIntAttribute(JvmStdlibNames.JET_FLAGS_FIELD, JvmStdlibNames.FLAGS_DEFAULT_VALUE);
     }
 
     public final int flags() {
         checkInitialized();
-        return initialized;
+        return flags;
     }
 
     public final boolean hasPropertyFlag() {

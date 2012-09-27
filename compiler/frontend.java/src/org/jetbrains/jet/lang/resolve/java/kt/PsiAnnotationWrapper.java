@@ -28,7 +28,7 @@ public abstract class PsiAnnotationWrapper {
     @Nullable
     private final PsiAnnotation psiAnnotation;
 
-    protected int initialized = -1;
+    private boolean initialized = false;
 
     protected PsiAnnotationWrapper(@Nullable PsiAnnotation psiAnnotation) {
         this.psiAnnotation = psiAnnotation;
@@ -41,9 +41,9 @@ public abstract class PsiAnnotationWrapper {
     protected abstract void initialize();
 
     protected void checkInitialized () {
-        if (initialized == -1) {
-            initialized = 0;
+        if (!initialized) {
             initialize();
+            initialized = true;
         }
     }
 
