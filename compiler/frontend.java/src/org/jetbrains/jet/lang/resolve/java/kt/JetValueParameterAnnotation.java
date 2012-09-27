@@ -28,8 +28,10 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @author alex.tkachman
  */
 public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
-
     public static final JetValueParameterAnnotation NULL_ANNOTATION = new JetValueParameterAnnotation(null);
+    static {
+        NULL_ANNOTATION.checkInitialized();
+    }
 
     public JetValueParameterAnnotation(@Nullable PsiAnnotation psiAnnotation) {
         super(psiAnnotation);

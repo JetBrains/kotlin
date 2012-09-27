@@ -28,8 +28,11 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
  * @author alex.tkachman
  */
 public class JetMethodAnnotation extends PsiAnnotationWithFlags {
-
     public static final JetMethodAnnotation NULL_ANNOTATION = new JetMethodAnnotation(null);
+    static {
+        NULL_ANNOTATION.checkInitialized();
+    }
+
     private String typeParameters;
     private String returnType;
     private String propertyType;
