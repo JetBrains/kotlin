@@ -18,8 +18,7 @@ public fun println(s : Any?) {}
 library("print")
 public fun print(s : Any?) {}
 //TODO: consistent parseInt
-library("parseInt")
-public fun parseInt(s : String) : Int = js.noImpl
+native public fun parseInt(s: String, radix:Int = 10): Int = js.noImpl
 library
 public fun safeParseInt(s : String) : Int? = js.noImpl
 library

@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -57,6 +58,18 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression,
             @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+
+        // todo workaround (default parameter translation fixed in next commits (develar fork))
+        if (compileTimeValue == null) {
+            if (expression.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
+                return JsLiteral.getBoolean(Boolean.valueOf(expression.getText()));
+            }
+            else if (expression.getNode().getElementType() == JetNodeTypes.INTEGER_CONSTANT) {
+                // public fun parseInt(s: String, radix:Int = 10): Int = js.noImpl
+                return context.program().getNumberLiteral(Integer.parseInt(expression.getText()));
+            }
+        }
+
         assert compileTimeValue != null;
 
         if (compileTimeValue instanceof NullValue) {

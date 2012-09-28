@@ -168,21 +168,11 @@
         compareTo: throwAbstractFunctionInvocationError("Comparable#compareTo")
     });
 
-    Kotlin.Appendable = Kotlin.$createClass({
-        initialize: function () {
-        },
-        append: throwAbstractFunctionInvocationError("Appendable#append")
-    });
-
     Kotlin.Closeable = Kotlin.$createClass({
         initialize: function () {
         },
         close: throwAbstractFunctionInvocationError("Closeable#close")
     });
-
-    Kotlin.parseInt = function (str) {
-        return parseInt(str, 10);
-    };
 
     Kotlin.safeParseInt = function(str) {
         var r = parseInt(str, 10);
@@ -464,20 +454,6 @@
         }
         return max;
     };
-
-    Kotlin.StringBuilder = Kotlin.$createClass(
-            {
-                initialize:function () {
-                    this.string = "";
-                },
-                append:function (obj) {
-                    this.string = this.string + obj.toString();
-                },
-                toString:function () {
-                    return this.string;
-                }
-            }
-    );
 
     function nullFun(i) {
         return null;
