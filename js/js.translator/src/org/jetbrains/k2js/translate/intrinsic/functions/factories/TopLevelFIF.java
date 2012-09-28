@@ -16,9 +16,7 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -43,6 +41,7 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
@@ -164,6 +163,34 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern(javaUtil, "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern(javaUtil, "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
 
+        add(pattern(javaUtil, "StringBuilder", "<init>"), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(new JsNameRef("s"), context.program().getStringLiteral(""))));
+            }
+        });
+        add(pattern(new String[] {"java", "lang", "Appendable"}, "append").checkOverridden(), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                assert arguments.size() == 1;
+                return new JsBinaryOperation(JsBinaryOperator.ASG_ADD, new JsNameRef("s", receiver), arguments.get(0));
+            }
+        });
+        add(pattern(javaUtil, "StringBuilder", "toString"), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                return new JsNameRef("s", receiver);
+            }
+        });
     }
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {

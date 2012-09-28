@@ -31,9 +31,8 @@ public trait Comparable<T> {
     public fun compareTo(that: T): Int
 }
 
-library
-public trait Appendable {
-    public open fun append(csq: CharSequence?): Appendable?
-    public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable?
-    public open fun append(c: Char): Appendable?
+native public trait Appendable {
+    public fun append(csq: CharSequence?): Appendable?
+    public fun append(csq: CharSequence?, start: Int, end: Int): Appendable?
+    public fun append(c: Char): Appendable?
 }

@@ -87,13 +87,12 @@ public open class HashMap<K, V>(): MutableMap<K, V> {
     override public fun entrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = js.noImpl
 }
 
-library
-public class StringBuilder() : Appendable {
+native public class StringBuilder(): Appendable {
     override fun append(c: Char): Appendable? = js.noImpl
     override fun append(csq: CharSequence?): Appendable? = js.noImpl
     override fun append(csq: CharSequence?, start: Int, end: Int): Appendable? = js.noImpl
-    public fun append(obj : Any?) : StringBuilder = js.noImpl
-    public fun toString() : String = js.noImpl
+    public fun append(obj: Any?): StringBuilder = js.noImpl
+    public fun toString(): String = js.noImpl
 }
 
 library
