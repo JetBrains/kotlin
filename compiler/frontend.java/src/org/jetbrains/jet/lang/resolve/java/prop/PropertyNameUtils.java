@@ -26,6 +26,9 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
  */
 public class PropertyNameUtils {
 
+    private PropertyNameUtils() {
+    }
+
     @Nullable
     public static PropertyParseResult parseMethodToProperty(@NotNull String methodName) {
         // TODO: support is properties

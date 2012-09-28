@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -34,7 +35,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     public JavaPackageScope(
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices,
-            @NotNull JavaDescriptorResolver.ResolverScopeData resolverNamespaceData) {
+            @NotNull ResolverScopeData resolverNamespaceData) {
         super(semanticServices, resolverNamespaceData);
         this.packageFQN = packageFQN;
 

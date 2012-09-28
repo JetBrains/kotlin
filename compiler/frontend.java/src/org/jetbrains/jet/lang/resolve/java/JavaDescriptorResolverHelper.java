@@ -20,6 +20,7 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -103,7 +104,6 @@ class JavaDescriptorResolverHelper {
         }
 
         private void processMethods() {
-            
             for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
                 getNamedMembers(Name.identifier(method.getName()));
 
@@ -207,7 +207,7 @@ class JavaDescriptorResolverHelper {
 
 
     @NotNull
-    static Map<Name, NamedMembers> getNamedMembers(@NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+    static Map<Name, NamedMembers> getNamedMembers(@NotNull ResolverScopeData resolverScopeData) {
         if (resolverScopeData.psiClass != null) {
             @SuppressWarnings("ConstantConditions")
             Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.psiClass), resolverScopeData.staticMembers, resolverScopeData.kotlin);

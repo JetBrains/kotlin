@@ -23,6 +23,7 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
@@ -37,14 +38,14 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     @NotNull
     protected final JavaSemanticServices semanticServices;
     @NotNull
-    protected final JavaDescriptorResolver.ResolverScopeData resolverScopeData;
+    protected final ResolverScopeData resolverScopeData;
 
     // cache
     private Collection<DeclarationDescriptor> allDescriptors;
 
     protected JavaClassOrPackageScope(
             @NotNull JavaSemanticServices semanticServices,
-            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+            @NotNull ResolverScopeData resolverScopeData) {
         this.semanticServices = semanticServices;
         this.resolverScopeData = resolverScopeData;
     }

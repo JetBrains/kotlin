@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -78,7 +79,7 @@ public class JavaDescriptorSignatureResolver {
 
         private TypeParameterDescriptorInitialization(
                 @NotNull TypeParameterDescriptorImpl descriptor, @NotNull PsiTypeParameter psiTypeParameter,
-                List<JetType> upperBoundsForKotlin
+                @Nullable List<JetType> upperBoundsForKotlin
         ) {
             this.origin = TypeParameterDescriptorOrigin.KOTLIN;
             this.descriptor = descriptor;
@@ -112,8 +113,11 @@ public class JavaDescriptorSignatureResolver {
         @NotNull
         private final TypeParameterDescriptorImpl typeParameterDescriptor;
 
-        protected JetSignatureTypeParameterVisitor(PsiTypeParameterListOwner psiOwner,
-                String name, TypeVariableResolver typeVariableResolver, TypeParameterDescriptorImpl typeParameterDescriptor)
+        protected JetSignatureTypeParameterVisitor(
+                @NotNull PsiTypeParameterListOwner psiOwner,
+                @NotNull String name,
+                @NotNull TypeVariableResolver typeVariableResolver,
+                @NotNull TypeParameterDescriptorImpl typeParameterDescriptor)
         {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
@@ -309,7 +313,7 @@ public class JavaDescriptorSignatureResolver {
     }
 
 
-    List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, JavaDescriptorResolver.ResolverClassData classData) {
+    List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverClassData classData) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
 
         if (jetClassAnnotation.signature().length() > 0) {
