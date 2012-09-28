@@ -3,6 +3,9 @@
   <item name='java.util.regex.Pattern java.util.regex.Pattern compile(java.lang.String) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='java.util.regex.Pattern java.util.regex.Pattern compile(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='java.util.regex.Pattern java.util.regex.Pattern compile(java.lang.String, int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
