@@ -35,7 +35,7 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     private final TypeConstructor constructor;
     private final List<TypeProjection> arguments;
     private final boolean nullable;
-    private JetScope memberScope;
+    private final JetScope memberScope;
 
     public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, @NotNull List<TypeProjection> arguments, JetScope memberScope) {
         super(annotations);
@@ -82,10 +82,6 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
     @NotNull
     @Override
     public JetScope getMemberScope() {
-        if (memberScope == null) {
-            // TODO : this was supposed to mean something...
-            throw new IllegalStateException(this.toString());
-        }
         return memberScope;
     }
 
@@ -113,23 +109,14 @@ public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
         JetTypeImpl type = (JetTypeImpl) o;
 
-        // TODO
         return nullable == type.nullable && JetTypeChecker.INSTANCE.equalTypes(this, type);
-//        if (nullable != type.nullable) return false;
-//        if (arguments != null ? !arguments.equals(type.arguments) : type.arguments != null) return false;
-//        if (constructor != null ? !constructor.equals(type.constructor) : type.constructor != null) return false;
-//        if (memberScope != null ? !memberScope.equals(type.memberScope) : type.memberScope != null) return false;
-
-//        return true;
     }
 
     @Override
     public int hashCode() {
         int result = constructor != null ? constructor.hashCode() : 0;
-        result = 31 * result + (arguments != null ? arguments.hashCode() : 0);
+        result = 31 * result + arguments.hashCode();
         result = 31 * result + (nullable ? 1 : 0);
         return result;
     }
-
-
 }
