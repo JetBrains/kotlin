@@ -124,11 +124,6 @@
       <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
-  <item name='java.util.ArrayList java.util.Iterator<E> iterator()'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun iterator() : MutableIterator&lt;E&gt;&quot;"/>
-    </annotation>
-  </item>
   <item name='java.util.List java.util.ListIterator<E> listIterator()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun listIterator() : MutableListIterator&lt;E&gt;&quot;"/>
@@ -389,7 +384,7 @@
       <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
     </annotation>
   </item>
-  <item name='java.util.Queue E()'>
+  <item name='java.util.Queue E element()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun element() : E&quot;"/>
     </annotation>
@@ -449,7 +444,7 @@
       <val name="value" val="&quot;fun descendingIterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
-  <item name='java.util.LinkedList E()'>
+  <item name='java.util.LinkedList E element()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun element() : E&quot;"/>
     </annotation>
@@ -589,7 +584,7 @@
       <val name="value" val="&quot;fun descendingIterator() : MutableIterator&lt;E&gt;&quot;"/>
     </annotation>
   </item>
-  <item name='java.util.Deque E()'>
+  <item name='java.util.Deque E element()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun element() : E&quot;"/>
     </annotation>

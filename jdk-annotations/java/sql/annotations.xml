@@ -34,7 +34,7 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <!-- TODO: provide correct signature after bug in compiler fixed-->
-    <item name='java.sql.DriverManager java.util.Enumeration getDrivers()'>
+    <item name='java.sql.DriverManager java.util.Enumeration<java.sql.Driver> getDrivers()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <!-- java.sql.ResultSet -->
