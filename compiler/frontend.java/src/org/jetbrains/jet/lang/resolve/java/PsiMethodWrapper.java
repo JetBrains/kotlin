@@ -44,8 +44,8 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
         if (parameters == null) {
             PsiParameter[] psiParameters = getPsiMethod().getParameterList().getParameters();
             parameters = new ArrayList<PsiParameterWrapper>(psiParameters.length);
-            for (int i = 0; i < psiParameters.length; ++i) {
-                parameters.add(new PsiParameterWrapper(psiParameters[i]));
+            for (PsiParameter psiParameter : psiParameters) {
+                parameters.add(new PsiParameterWrapper(psiParameter));
             }
         }
         return parameters;
@@ -83,6 +83,7 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
         return signatureAnnotation;
     }
 
+    @Override
     public boolean isAbstract() {
         return psiMember.hasModifierProperty(PsiModifier.ABSTRACT);
     }
