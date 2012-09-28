@@ -11,10 +11,14 @@ abstract class TabService(val ctorParam:String) {
 abstract class PageManager(val tabService: TabService)
 
 class ChromePageManager(val expected: String): PageManager(object : TabService(expected) {
+    private fun postProcessCreatedTab() {
+    }
+
     override fun createTab(focusWindow: Boolean, callback: (tabs: String)->Unit) {
         getLastFocused {
             fun createTab() {
                 if (focusWindow) {
+                    postProcessCreatedTab()
                     callback(expected)
                 }
             }

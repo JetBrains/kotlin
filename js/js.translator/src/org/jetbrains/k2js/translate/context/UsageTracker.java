@@ -22,7 +22,6 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -56,6 +55,22 @@ public final class UsageTracker {
         return used;
     }
 
+    @Nullable
+    public ClassDescriptor getOuterClassDescriptor() {
+        if (outerClassDescriptor != null || children == null) {
+            return outerClassDescriptor;
+        }
+
+        for (UsageTracker child : children) {
+            ClassDescriptor childOuterClassDescriptor = child.getOuterClassDescriptor();
+            if (childOuterClassDescriptor != null) {
+                return childOuterClassDescriptor;
+            }
+        }
+
+        return null;
+    }
+
     private void addChild(UsageTracker child) {
         if (children == null) {
             children = new SmartList<UsageTracker>();
@@ -83,7 +98,7 @@ public final class UsageTracker {
         }
         else if (descriptor instanceof SimpleFunctionDescriptor) {
             CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
-            if (JsDescriptorUtils.isExtension(callableDescriptor)) {
+            if (callableDescriptor.getReceiverParameter() != null) {
                 return;
             }
 
@@ -125,20 +140,6 @@ public final class UsageTracker {
                 outerClassDescriptor = (ClassDescriptor) containingDeclaration;
             }
         }
-    }
-
-    @Nullable
-    public ClassDescriptor getOuterClassDescriptor() {
-        if (outerClassDescriptor == null && parent != null) {
-            UsageTracker p = parent;
-            do {
-                if (p.outerClassDescriptor != null) {
-                    return p.outerClassDescriptor;
-                }
-            }
-            while ((p = p.parent) != null);
-        }
-        return outerClassDescriptor;
     }
 
     public void forEachCaptured(Consumer<CallableDescriptor> consumer) {
