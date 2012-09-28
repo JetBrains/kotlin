@@ -38,7 +38,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
@@ -63,17 +63,17 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
 */
 class EditSignatureBalloon implements Disposable {
     private final Editor editor;
-    private final PsiMethod method;
+    private final PsiModifierListOwner annotatedElement;
     private final Project project;
     private final String previousSignature;
     private final MyPanel panel;
     private final Balloon balloon;
     private final boolean editable;
 
-    public EditSignatureBalloon(@NotNull PsiMethod method, @NotNull String previousSignature, boolean editable) {
-        this.method = method;
+    public EditSignatureBalloon(@NotNull PsiModifierListOwner annotatedElement, @NotNull String previousSignature, boolean editable) {
+        this.annotatedElement = annotatedElement;
         this.editable = editable;
-        project = method.getProject();
+        project = annotatedElement.getProject();
         this.previousSignature = previousSignature;
 
         editor = createEditor();
@@ -183,7 +183,7 @@ class EditSignatureBalloon implements Disposable {
             @Override
             protected void run(Result result) throws Throwable {
                 ExternalAnnotationsManager.getInstance(project).editExternalAnnotation(
-                        method, KOTLIN_SIGNATURE_ANNOTATION, signatureToNameValuePairs(project, newSignature));
+                        annotatedElement, KOTLIN_SIGNATURE_ANNOTATION, signatureToNameValuePairs(project, newSignature));
             }
         }.execute();
     }

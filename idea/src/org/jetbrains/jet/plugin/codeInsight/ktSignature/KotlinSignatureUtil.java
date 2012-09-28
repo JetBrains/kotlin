@@ -40,10 +40,10 @@ class KotlinSignatureUtil {
     }
 
     @NotNull
-    static PsiMethod getAnnotationOwner(@NotNull PsiElement element) {
-        PsiMethod annotationOwner = element.getOriginalElement() instanceof PsiMethod
-                                    ? (PsiMethod) element.getOriginalElement()
-                                    : (PsiMethod) element;
+    static PsiModifierListOwner getAnnotationOwner(@NotNull PsiElement element) {
+        PsiModifierListOwner annotationOwner = element.getOriginalElement() instanceof PsiModifierListOwner
+                                    ? (PsiModifierListOwner) element.getOriginalElement()
+                                    : (PsiModifierListOwner) element;
         if (!annotationOwner.isPhysical()) {
             // this is fake PsiFile which is mirror for ClsFile without sources
             ASTNode node = SourceTreeToPsiMap.psiElementToTree(element);
@@ -82,8 +82,8 @@ class KotlinSignatureUtil {
 
     @Nullable
     static PsiAnnotation findKotlinSignatureAnnotation(@NotNull PsiElement element) {
-        if (!(element instanceof PsiMethod)) return null;
-        PsiMethod annotationOwner = getAnnotationOwner(element);
+        if (!(element instanceof PsiModifierListOwner)) return null;
+        PsiModifierListOwner annotationOwner = getAnnotationOwner(element);
         PsiAnnotation annotation = JavaDescriptorResolver.findAnnotation(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
         if (annotation == null) return null;
         if (annotation.getParameterList().getAttributes().length == 0) return null;
@@ -94,8 +94,8 @@ class KotlinSignatureUtil {
         DaemonCodeAnalyzer.getInstance(project).restart();
     }
 
-    static boolean isAnnotationEditable(@NotNull PsiMethod element) {
-        PsiMethod annotationOwner = getAnnotationOwner(element);
+    static boolean isAnnotationEditable(@NotNull PsiElement element) {
+        PsiModifierListOwner annotationOwner = getAnnotationOwner(element);
         PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
         assert annotation != null;
         if (annotation.getContainingFile() != annotationOwner.getContainingFile()) {

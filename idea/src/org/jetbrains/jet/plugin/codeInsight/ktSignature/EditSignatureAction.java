@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.codeInsight.ktSignature;
 
-import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -38,9 +37,9 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
  * @since 5 Sep 12
  */
 public class EditSignatureAction extends AnAction {
-    private final PsiMethod elementInEditor;
+    private final PsiModifierListOwner elementInEditor;
 
-    public EditSignatureAction(@NotNull PsiMethod elementInEditor) {
+    public EditSignatureAction(@NotNull PsiModifierListOwner elementInEditor) {
         super(isAnnotationEditable(elementInEditor) ? "Edit" : "View");
         this.elementInEditor = elementInEditor;
     }
@@ -56,7 +55,7 @@ public class EditSignatureAction extends AnAction {
         invokeEditSignature(elementInEditor, editor, point);
     }
 
-    static void invokeEditSignature(@NotNull PsiMethod elementInEditor, @NotNull Editor editor, @Nullable Point point) {
+    static void invokeEditSignature(@NotNull PsiElement elementInEditor, @NotNull Editor editor, @Nullable Point point) {
         PsiAnnotation annotation = findKotlinSignatureAnnotation(elementInEditor);
         assert annotation != null;
         if (annotation.getContainingFile() == elementInEditor.getContainingFile()) {
@@ -80,7 +79,7 @@ public class EditSignatureAction extends AnAction {
             }
         }
         else {
-            PsiMethod annotationOwner = getAnnotationOwner(elementInEditor);
+            PsiModifierListOwner annotationOwner = getAnnotationOwner(elementInEditor);
             boolean editable = isAnnotationEditable(elementInEditor);
             EditSignatureBalloon balloon = new EditSignatureBalloon(annotationOwner, getKotlinSignature(annotation), editable);
             balloon.show(point, editor, elementInEditor);

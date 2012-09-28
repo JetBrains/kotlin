@@ -22,14 +22,14 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -62,9 +62,9 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
     };
 
-    private static final GutterIconNavigationHandler<PsiMethod> NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiMethod>() {
+    private static final GutterIconNavigationHandler<PsiModifierListOwner> NAVIGATION_HANDLER = new GutterIconNavigationHandler<PsiModifierListOwner>() {
         @Override
-        public void navigate(MouseEvent e, PsiMethod element) {
+        public void navigate(MouseEvent e, PsiModifierListOwner element) {
             if (UIUtil.isActionClick(e, MouseEvent.MOUSE_RELEASED)) {
                 new EditSignatureAction(element).actionPerformed(DataManager.getInstance().getDataContext(e.getComponent()), e.getPoint());
             }
@@ -94,19 +94,19 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         refreshMarkers(project);
     }
 
-    private static class MyLineMarkerInfo extends LineMarkerInfo<PsiMethod> {
+    private static class MyLineMarkerInfo extends LineMarkerInfo<PsiModifierListOwner> {
         public MyLineMarkerInfo(PsiElement element) {
-            super((PsiMethod) element, element.getTextOffset(), JetIcons.SMALL_LOGO, Pass.UPDATE_ALL, TOOLTIP_PROVIDER, NAVIGATION_HANDLER);
+            super((PsiModifierListOwner) element, element.getTextOffset(), JetIcons.SMALL_LOGO, Pass.UPDATE_ALL, TOOLTIP_PROVIDER, NAVIGATION_HANDLER);
         }
 
         @Nullable
         @Override
         public GutterIconRenderer createGutterRenderer() {
-            return new LineMarkerGutterIconRenderer<PsiMethod>(this) {
+            return new LineMarkerGutterIconRenderer<PsiModifierListOwner>(this) {
                 @Nullable
                 @Override
                 public ActionGroup getPopupMenuActions() {
-                    PsiMethod element = getElement();
+                    PsiModifierListOwner element = getElement();
                     assert element != null;
 
                     return new DefaultActionGroup(new EditSignatureAction(element), new DeleteSignatureAction(element));
