@@ -20,7 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 
 /**
 * @author svtk
@@ -36,11 +39,21 @@ public final class CallResolutionContext<D extends CallableDescriptor, F extends
         this.tracing = tracing;
     }
 
+    private CallResolutionContext(@NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing, @NotNull ResolvedCallImpl<D> candidateCall) {
+        super(context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo);
+        this.candidateCall = candidateCall;
+        this.tracing = tracing;
+    }
+
     public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {
         return new CallResolutionContext<D, F>(candidateCall, task, trace, tracing, call);
     }
 
     public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing) {
         return create(candidateCall, task, trace, tracing, task.call);
+    }
+
+    public static <D extends CallableDescriptor> CallResolutionContext<D, D> create(@NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing, @NotNull ResolvedCallImpl<D> candidateCall) {
+        return new CallResolutionContext<D, D>(context, tracing, candidateCall);
     }
 }

@@ -328,7 +328,7 @@ public class CallResolver {
                 }
                 continue;
             }
-            completeTypeInferenceDependentOnExpectedTypeForCall(resolvedCall, context, tracing, successful, failed);
+            completeTypeInferenceDependentOnExpectedTypeForCall(CallResolutionContext.create(context, tracing, resolvedCall), successful, failed);
         }
         OverloadResolutionResultsImpl<D> results = computeResultAndReportErrors(context.trace, tracing, successful, failed);
         if (!results.isSingleResult()) {
@@ -337,12 +337,12 @@ public class CallResolver {
         return results;
     }
 
-    private <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(ResolvedCallImpl<D> resolvedCall,
-            BasicResolutionContext context,
-            TracingStrategy tracing,
+    private <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
+            CallResolutionContext<D, D> context,
             Set<ResolvedCallWithTrace<D>> successful,
             Set<ResolvedCallWithTrace<D>> failed
     ) {
+        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         assert resolvedCall.hasUnknownTypeParameters();
         D descriptor = resolvedCall.getCandidateDescriptor();
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
@@ -383,7 +383,7 @@ public class CallResolver {
             }
             List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, resolvedCall.getTrace()).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
-            tracing.typeInferenceFailed(resolvedCall.getTrace(),
+            context.tracing.typeInferenceFailed(resolvedCall.getTrace(),
                                         InferenceErrorData
                                                 .create(descriptor, constraintSystem, argumentTypes, receiverType, context.expectedType),
                                         constraintSystemWithoutExpectedTypeConstraint);
@@ -394,9 +394,9 @@ public class CallResolver {
 
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
         // Here we type check the arguments with inferred types expected
-        checkValueArgumentTypes(context, resolvedCall, resolvedCall.getTrace());
+        checkAllValueArguments(context);
 
-        checkBounds(resolvedCall, constraintSystem, resolvedCall.getTrace(), tracing);
+        checkBounds(resolvedCall, constraintSystem, resolvedCall.getTrace(), context.tracing);
         resolvedCall.setHasUnknownTypeParameters(false);
         if (resolvedCall.getStatus().isSuccess() || resolvedCall.getStatus() == ResolutionStatus.UNKNOWN_STATUS) {
             resolvedCall.addStatus(ResolutionStatus.SUCCESS);
@@ -866,7 +866,7 @@ public class CallResolver {
 
 
     private <D extends CallableDescriptor, F extends D> ValueArgumentsCheckingResult checkAllValueArguments(CallResolutionContext<D, F> context) {
-        ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall);
+        ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall, context.candidateCall.getTrace());
         ResolutionStatus resultStatus = checkingResult.status;
         ResolvedCall<D> candidateCall = context.candidateCall;
 
@@ -925,10 +925,6 @@ public class CallResolver {
             this.status = status;
             this.argumentTypes = argumentTypes;
         }
-    }
-
-    private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkValueArgumentTypes(ResolutionContext context, ResolvedCallImpl<D> candidateCall) {
-        return checkValueArgumentTypes(context, candidateCall, candidateCall.getTrace());
     }
 
     private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkValueArgumentTypes(ResolutionContext context, ResolvedCallImpl<D> candidateCall, BindingTrace trace) {
