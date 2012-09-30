@@ -200,7 +200,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private TIntArrayList statementStarts = new TIntArrayList();
 
     public JsToStringGenerationVisitor(TextOutput out) {
-        this.p = out;
+        p = out;
     }
 
     @Override
@@ -1252,10 +1252,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             * If the binary operation has a higher precedence than op, then it won't
             * be parenthesized, so check the first argument of the binary operation.
             */
-            if (binary.getOperator().getPrecedence() > op.getPrecedence()) {
-                return spaceCalc(op, binary.getArg1());
-            }
-            return false;
+            return binary.getOperator().getPrecedence() > op.getPrecedence() && spaceCalc(op, binary.getArg1());
         }
         if (arg instanceof JsPrefixOperation) {
             JsOperator op2 = ((JsPrefixOperation) arg).getOperator();

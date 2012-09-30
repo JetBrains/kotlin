@@ -39,12 +39,12 @@ public class JsPropertyInitializer extends JsNodeImpl {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext ctx) {
-        if (v.visit(this, ctx)) {
+    public void traverse(JsVisitor v, JsContext context) {
+        if (v.visit(this, context)) {
             labelExpr = v.accept(labelExpr);
             valueExpr = v.accept(valueExpr);
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, context);
     }
 
     @Override

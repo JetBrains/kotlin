@@ -61,13 +61,13 @@ public final class JsConditional extends JsExpressionImpl {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext ctx) {
-        if (v.visit(this, ctx)) {
+    public void traverse(JsVisitor v, JsContext context) {
+        if (v.visit(this, context)) {
             testExpr = v.accept(testExpr);
             thenExpr = v.accept(thenExpr);
             elseExpr = v.accept(elseExpr);
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, context);
     }
 
     @Override

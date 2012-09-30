@@ -43,9 +43,9 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
         }
 
         @Override
-        public void traverse(JsVisitor v, JsContext ctx) {
-            v.visit(this, ctx);
-            v.endVisit(this, ctx);
+        public void traverse(JsVisitor v, JsContext context) {
+            v.visit(this, context);
+            v.endVisit(this, context);
         }
 
         @Override
@@ -87,9 +87,9 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
       }
 
       @Override
-      public void traverse(JsVisitor v, JsContext ctx) {
-        v.visit(this, ctx);
-        v.endVisit(this, ctx);
+      public void traverse(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+        v.endVisit(this, context);
       }
 
       @Override

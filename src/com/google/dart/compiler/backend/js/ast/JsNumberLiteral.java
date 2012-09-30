@@ -38,9 +38,9 @@ public abstract class JsNumberLiteral extends JsValueLiteral {
         }
 
         @Override
-        public void traverse(JsVisitor v, JsContext ctx) {
-            v.visit(this, ctx);
-            v.endVisit(this, ctx);
+        public void traverse(JsVisitor v, JsContext context) {
+            v.visit(this, context);
+            v.endVisit(this, context);
         }
 
         public String toString() {
@@ -66,9 +66,9 @@ public abstract class JsNumberLiteral extends JsValueLiteral {
         }
 
         @Override
-        public void traverse(JsVisitor v, JsContext ctx) {
-            v.visit(this, ctx);
-            v.endVisit(this, ctx);
+        public void traverse(JsVisitor v, JsContext context) {
+            v.visit(this, context);
+            v.endVisit(this, context);
         }
 
         public String toString() {

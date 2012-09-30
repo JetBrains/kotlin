@@ -48,15 +48,15 @@ public class JsTry extends JsNodeImpl implements JsStatement {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext ctx) {
-        if (v.visit(this, ctx)) {
+    public void traverse(JsVisitor v, JsContext context) {
+        if (v.visit(this, context)) {
             tryBlock = v.accept(tryBlock);
             v.acceptWithInsertRemove(catches);
             if (finallyBlock != null) {
                 finallyBlock = v.accept(finallyBlock);
             }
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, context);
     }
 
     @Override

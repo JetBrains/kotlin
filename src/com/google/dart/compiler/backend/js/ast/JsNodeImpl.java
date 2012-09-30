@@ -1,6 +1,5 @@
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.backend.js.JsSourceGenerationVisitor;
 import com.google.dart.compiler.backend.js.JsToStringGenerationVisitor;
 import com.google.dart.compiler.common.AbstractNode;
 import com.google.dart.compiler.common.SourceInfo;
@@ -10,20 +9,10 @@ abstract class JsNodeImpl extends AbstractNode implements JsNode {
     protected JsNodeImpl() {
     }
 
-    // Causes source generation to delegate to the one visitor
-    public final String toSource() {
-        TextOutputImpl out = new TextOutputImpl();
-        JsSourceGenerationVisitor v = new JsSourceGenerationVisitor(out);
-        v.accept(this);
-        return out.toString();
-    }
-
-    // Causes source generation to delegate to the one visitor
     @Override
     public String toString() {
         TextOutputImpl out = new TextOutputImpl();
-        JsToStringGenerationVisitor v = new JsToStringGenerationVisitor(out);
-        v.accept(this);
+        new JsToStringGenerationVisitor(out).accept(this);
         return out.toString();
     }
 
@@ -34,7 +23,7 @@ abstract class JsNodeImpl extends AbstractNode implements JsNode {
 
     public JsNode setSourceRef(SourceInfo info) {
         if (info != null) {
-            this.setSourceInfo(info);
+            setSourceInfo(info);
         }
         return this;
     }

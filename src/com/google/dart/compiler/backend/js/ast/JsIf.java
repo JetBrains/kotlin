@@ -38,28 +38,28 @@ public final class JsIf extends JsNodeImpl implements JsStatement {
         return thenStatement;
     }
 
-    public void setElseStatement(JsStatement elseStmt) {
-        this.elseStatement = elseStmt;
+    public void setElseStatement(JsStatement elseStatement) {
+        this.elseStatement = elseStatement;
     }
 
-    public void setIfExpression(JsExpression ifExpr) {
-        this.ifExpression = ifExpr;
+    public void setIfExpression(JsExpression ifExpression) {
+        this.ifExpression = ifExpression;
     }
 
-    public void setThenStatement(JsStatement thenStmt) {
-        this.thenStatement = thenStmt;
+    public void setThenStatement(JsStatement thenStatement) {
+        this.thenStatement = thenStatement;
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext ctx) {
-        if (v.visit(this, ctx)) {
+    public void traverse(JsVisitor v, JsContext context) {
+        if (v.visit(this, context)) {
             ifExpression = v.accept(ifExpression);
             thenStatement = v.accept(thenStatement);
             if (elseStatement != null) {
                 elseStatement = v.accept(elseStatement);
             }
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, context);
     }
 
     @Override

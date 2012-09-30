@@ -68,12 +68,12 @@ public final class JsInvocation extends JsExpressionImpl implements HasArguments
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext ctx) {
-        if (v.visit(this, ctx)) {
+    public void traverse(JsVisitor v, JsContext context) {
+        if (v.visit(this, context)) {
             qualifier = v.accept(qualifier);
             v.acceptList(arguments);
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, context);
     }
 
     @Override

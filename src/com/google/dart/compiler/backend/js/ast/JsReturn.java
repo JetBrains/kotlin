@@ -27,13 +27,13 @@ public final class JsReturn extends JsNodeImpl implements JsStatement {
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    if (v.visit(this, ctx)) {
+  public void traverse(JsVisitor v, JsContext context) {
+    if (v.visit(this, context)) {
       if (expr != null) {
         expr = v.accept(expr);
       }
     }
-    v.endVisit(this, ctx);
+    v.endVisit(this, context);
   }
 
     @Override

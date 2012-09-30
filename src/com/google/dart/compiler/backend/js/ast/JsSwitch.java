@@ -32,12 +32,12 @@ public class JsSwitch extends JsNodeImpl implements JsStatement {
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    if (v.visit(this, ctx)) {
+  public void traverse(JsVisitor v, JsContext context) {
+    if (v.visit(this, context)) {
       expr = v.accept(expr);
       v.acceptWithInsertRemove(cases);
     }
-    v.endVisit(this, ctx);
+    v.endVisit(this, context);
   }
 
   @Override

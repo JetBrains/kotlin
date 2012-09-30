@@ -13,9 +13,9 @@ public class JsEmpty extends JsNodeImpl implements JsStatement {
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    v.visit(this, ctx);
-    v.endVisit(this, ctx);
+  public void traverse(JsVisitor v, JsContext context) {
+    v.visit(this, context);
+    v.endVisit(this, context);
   }
 
   @Override

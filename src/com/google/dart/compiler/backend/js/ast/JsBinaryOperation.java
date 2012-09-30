@@ -81,8 +81,8 @@ public final class JsBinaryOperation extends JsExpressionImpl {
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    if (v.visit(this, ctx)) {
+  public void traverse(JsVisitor v, JsContext context) {
+    if (v.visit(this, context)) {
       if (op.isAssignment()) {
         arg1 = v.acceptLvalue(arg1);
       } else {
@@ -90,7 +90,7 @@ public final class JsBinaryOperation extends JsExpressionImpl {
       }
       arg2 = v.accept(arg2);
     }
-    v.endVisit(this, ctx);
+    v.endVisit(this, context);
   }
 
   @Override

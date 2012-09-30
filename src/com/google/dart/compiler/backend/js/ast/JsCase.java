@@ -24,12 +24,12 @@ public final class JsCase extends JsSwitchMember {
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext ctx) {
-    if (v.visit(this, ctx)) {
+  public void traverse(JsVisitor v, JsContext context) {
+    if (v.visit(this, context)) {
       caseExpr = v.accept(caseExpr);
       v.acceptWithInsertRemove(statements);
     }
-    v.endVisit(this, ctx);
+    v.endVisit(this, context);
   }
 
   @Override

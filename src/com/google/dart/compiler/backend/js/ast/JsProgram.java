@@ -112,13 +112,13 @@ public final class JsProgram extends JsNodeImpl {
     }
 
     @Override
-    public void traverse(JsVisitor v, @Nullable JsContext ctx) {
-        if (v.visit(this, ctx)) {
+    public void traverse(JsVisitor v, @Nullable JsContext context) {
+        if (v.visit(this, context)) {
             for (JsProgramFragment fragment : fragments) {
                 v.accept(fragment);
             }
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, context);
     }
 
     @Override

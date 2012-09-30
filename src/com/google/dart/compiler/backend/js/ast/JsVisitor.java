@@ -90,7 +90,7 @@ public class JsVisitor {
   };
 
   public final <T extends JsVisitable> T accept(T node) {
-    return this.doAccept(node);
+    return doAccept(node);
   }
 
   public final <T extends JsVisitable> void acceptList(List<T> collection) {
@@ -103,10 +103,6 @@ public class JsVisitor {
 
   public final <T extends JsVisitable> void acceptWithInsertRemove(List<T> collection) {
     doAcceptWithInsertRemove(collection);
-  }
-
-  public boolean didChange() {
-    throw new UnsupportedOperationException();
   }
 
   public void endVisit(JsArrayAccess x, JsContext ctx) {
