@@ -222,11 +222,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     private void printExpressions(List<JsExpression> expressions) {
-        boolean sep = false;
-        for (JsExpression arg : expressions) {
-            sep = sepCommaOptSpace(sep);
-            boolean isEnclosed = parenPushIfCommaExpression(arg);
-            accept(arg);
+        boolean notFirst = false;
+        for (JsExpression expression : expressions) {
+            notFirst = sepCommaOptSpace(notFirst) && !(expression instanceof JsDocComment);
+            boolean isEnclosed = parenPushIfCommaExpression(expression);
+            accept(expression);
             if (isEnclosed) {
                 rightParen();
             }
@@ -556,10 +556,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         leftParen();
-        boolean sep = false;
+        boolean notFirst = false;
         for (Object element : x.getParameters()) {
             JsParameter param = (JsParameter) element;
-            sep = sepCommaOptSpace(sep);
+            notFirst = sepCommaOptSpace(notFirst);
             accept(param);
         }
         rightParen();
@@ -610,8 +610,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public boolean visit(JsInvocation x, JsContext ctx) {
-        JsExpression qualifier = x.getQualifier();
-        printPair(x, qualifier);
+        printPair(x, x.getQualifier());
 
         leftParen();
         printExpressions(x.getArguments());
@@ -697,20 +696,20 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.indentIn();
         }
 
-        boolean isNotFirst = false;
+        boolean notFirst = false;
         for (JsPropertyInitializer item : objectLiteral.getPropertyInitializers()) {
-            if (isNotFirst) {
+            if (notFirst) {
                 p.print(',');
             }
 
             if (objectLiteral.isMultiline()) {
                 newlineOpt();
             }
-            else if (isNotFirst) {
+            else if (notFirst) {
                 spaceOpt();
             }
 
-            isNotFirst = true;
+            notFirst = true;
 
             JsExpression labelExpr = item.getLabelExpr();
             // labels can be either string, integral, or decimal literals
@@ -907,7 +906,65 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         return false;
     }
 
-    protected void _newline() {
+    @Override
+    public boolean visit(JsDocComment comment, JsContext context) {
+        boolean asSingleLine = comment.getTags().size() == 1;
+        if (!asSingleLine) {
+            newlineOpt();
+        }
+        p.print("/**");
+        if (asSingleLine) {
+            space();
+        }
+        else {
+            newline();
+        }
+
+        boolean notFirst = false;
+        for (Map.Entry<String, Object> entry : comment.getTags().entrySet()) {
+            if (notFirst) {
+                newline();
+                p.print(' ');
+                p.print('*');
+            }
+            else {
+                notFirst = true;
+            }
+
+            p.print('@');
+            p.print(entry.getKey());
+            Object value = entry.getValue();
+            if (value != null) {
+                space();
+                if (value instanceof CharSequence) {
+                    p.print((CharSequence) value);
+                }
+                else {
+                    visit((JsNameRef) value, context);
+                }
+            }
+
+            if (!asSingleLine) {
+                newline();
+            }
+        }
+
+        if (asSingleLine) {
+            space();
+        }
+        else {
+            newlineOpt();
+        }
+
+        p.print('*');
+        p.print('/');
+        if (asSingleLine) {
+            spaceOpt();
+        }
+        return false;
+    }
+
+    protected void newline() {
         p.newline();
     }
 
@@ -977,7 +1034,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                         newlineOpt();
                     }
                     else {
-                        _newline();
+                        newline();
                     }
                 }
                 else {
