@@ -26,7 +26,7 @@ public class TextOutputImpl implements TextOutput {
 
     public TextOutputImpl(boolean compact) {
         this.compact = compact;
-        this.out = new StringBuilder();
+        out = new StringBuilder();
     }
 
     @Override
