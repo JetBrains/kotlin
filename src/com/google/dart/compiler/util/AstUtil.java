@@ -13,23 +13,6 @@ public final class AstUtil {
     private AstUtil() {
     }
 
-    public static JsNameRef newQualifiedNameRef(String name) {
-        JsNameRef node = null;
-        int endPos;
-        int startPos = 0;
-        do {
-            endPos = name.indexOf('.', startPos);
-            String part = (endPos == -1
-                           ? name.substring(startPos)
-                           : name.substring(startPos, endPos));
-            node = new JsNameRef(part, node);
-            startPos = endPos + 1;
-        }
-        while (endPos != -1);
-
-        return node;
-    }
-
     /**
      * Returns a sequence of expressions (using the binary sequence operator).
      *
