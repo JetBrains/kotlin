@@ -53,7 +53,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
             JsExpression rangeEnd = arguments.get(0);
             JsBinaryOperation rangeSize = sum(subtract(rangeEnd, rangeStart),
                                               context.program().getNumberLiteral(1));
-            JsNameRef expr = AstUtil.newQualifiedNameRef("Kotlin.NumberRange");
+            JsNameRef expr = new JsNameRef("NumberRange", "Kotlin");
             HasArguments numberRangeConstructorInvocation = context.isEcma5() ? new JsInvocation(expr) : new JsNew(expr);
             //TODO: add tests and correct expression for reversed ranges.
             setArguments(numberRangeConstructorInvocation, rangeStart, rangeSize, /*range is not reversed*/JsLiteral.FALSE);
