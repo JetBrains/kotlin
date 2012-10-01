@@ -34,15 +34,15 @@ public final class StringTest extends AbstractExpressionTest {
     }
 
     public void testIntInTemplate() throws Exception {
-        runFunctionOutputTest("intInTemplate.kt", "foo", "box", "my age is 3");
+        fooBoxIsValue("my age is 3");
     }
 
     public void testStringInTemplate() throws Exception {
-        runFunctionOutputTest("stringInTemplate.kt", "foo", "box", "oHelloo");
+        fooBoxIsValue("oHelloo");
     }
 
-    public void testMultipleExpressionInTemplate() throws Exception {
-        runFunctionOutputTest("multipleExpressionsInTemplate.kt", "foo", "box", "left = 3\nright = 2\nsum = 5\n");
+    public void testMultipleExpressionsInTemplate() throws Exception {
+        fooBoxIsValue("left = 3\nright = 2\nsum = 5\n");
     }
 
     public void testObjectToStringCallInTemplate() throws Exception {
