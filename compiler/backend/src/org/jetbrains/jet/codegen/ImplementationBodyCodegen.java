@@ -866,10 +866,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        generatePrimiryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, hasThis0, closure, mv);
+        generatePrimaryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, hasThis0, closure, mv);
     }
 
-    private void generatePrimiryConstructorImpl(
+    private void generatePrimaryConstructorImpl(
             ConstructorDescriptor constructorDescriptor,
             ConstructorContext constructorContext,
             JvmMethodSignature constructorMethod,
