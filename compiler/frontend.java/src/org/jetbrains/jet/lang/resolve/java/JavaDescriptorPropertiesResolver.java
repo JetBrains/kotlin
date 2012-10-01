@@ -326,24 +326,20 @@ public final class JavaDescriptorPropertiesResolver {
         return members.setter != null;
     }
 
-    private static boolean isPropertyFinal(ResolverScopeData scopeData, GroupingValue propertyGrouping) {
-        boolean isFinal;
+    private static boolean isPropertyFinal(ResolverScopeData scopeData, GroupingValue members) {
         if (!scopeData.kotlin) {
-            isFinal = true;
+            return true;
         }
-        else if (propertyGrouping.setter == null && propertyGrouping.getter == null) {
-            isFinal = false;
+
+        if (members.getter != null) {
+            return members.getter.getMember().isFinal();
         }
-        else if (propertyGrouping.getter != null) {
-            isFinal = propertyGrouping.getter.getMember().isFinal();
+
+        if (members.setter != null) {
+            return members.setter.getMember().isFinal();
         }
-        else if (propertyGrouping.setter != null) {
-            isFinal = propertyGrouping.setter.getMember().isFinal();
-        }
-        else {
-            isFinal = false;
-        }
-        return isFinal;
+
+        return false;
     }
 
     private static Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, Name propertyName) {
