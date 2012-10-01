@@ -1,6 +1,5 @@
 package kotlin.browser
 
-import js.native
 import org.w3c.dom.Document
 
 private var _document: Document? = null
@@ -8,7 +7,7 @@ private var _document: Document? = null
 /**
  * Provides access to the current active browsers DOM for the currently visible page.
  */
-native public var document: Document
+public var document: Document
     get() {
         // Note this code is only executed on the JVM
         val answer = _document
