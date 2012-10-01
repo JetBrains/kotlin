@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.types.JetType;
 
-import static org.jetbrains.jet.codegen.AsmUtil.RECEIVER$0;
+import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -122,7 +122,7 @@ public interface LocalLookup {
 
                 final JetType receiverType = ((CallableDescriptor) d).getReceiverParameter().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
-                StackValue innerValue = StackValue.field(type, className, RECEIVER$0, false);
+                StackValue innerValue = StackValue.field(type, className, CAPTURED_RECEIVER_FIELD, false);
                 closure.setCaptureReceiver();
 
                 return innerValue;

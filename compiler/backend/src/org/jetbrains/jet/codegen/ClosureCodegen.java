@@ -247,11 +247,11 @@ public class ClosureCodegen extends GenerationStateAware {
         final ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
             final Type type = typeMapper.mapType(captureThis);
-            args.add(new Pair<String, Type>(THIS$0, type));
+            args.add(new Pair<String, Type>(CAPTURED_THIS_FIELD, type));
         }
         final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
-            args.add(new Pair<String, Type>(RECEIVER$0, typeMapper.mapType(captureReceiver)));
+            args.add(new Pair<String, Type>(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiver)));
         }
 
         for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {

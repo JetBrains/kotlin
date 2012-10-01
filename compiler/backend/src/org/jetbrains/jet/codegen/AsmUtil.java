@@ -72,8 +72,8 @@ public class AsmUtil {
             .put(JavaDescriptorResolver.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
             .build();
 
-    public static final String RECEIVER$0 = "receiver$0";
-    public static final String THIS$0 = "this$0";
+    public static final String CAPTURED_RECEIVER_FIELD = "receiver$0";
+    public static final String CAPTURED_THIS_FIELD = "this$0";
 
     private static final String STUB_EXCEPTION = "java/lang/RuntimeException";
     private static final String STUB_EXCEPTION_MESSAGE = "Stubs are for compiler only, do not add them to runtime classpath";
@@ -201,13 +201,13 @@ public class AsmUtil {
         final ClassifierDescriptor captureThis = closure.getCaptureThis();
         final int access = ACC_PUBLIC | ACC_SYNTHETIC | ACC_FINAL;
         if (captureThis != null) {
-            v.newField(null, access, THIS$0, typeMapper.mapType(captureThis).getDescriptor(), null,
+            v.newField(null, access, CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis).getDescriptor(), null,
                        null);
         }
 
         final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
         if (captureReceiver != null) {
-            v.newField(null, access, RECEIVER$0, typeMapper.mapType(captureReceiver).getDescriptor(),
+            v.newField(null, access, CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiver).getDescriptor(),
                        null, null);
         }
 

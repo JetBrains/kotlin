@@ -837,7 +837,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         MutableClosure closure = context.closure;
-        boolean hasThis0 = closure != null && closure.getCaptureThis() != null;
+        boolean hasCapturedThis = closure != null && closure.getCaptureThis() != null;
 
         final CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, context.closure);
         final JvmMethodSignature constructorMethod = callableMethod.getSignature();
@@ -859,14 +859,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(constructorDescriptor);
 
-        writeParameterAnnotations(constructorDescriptor, constructorMethod, hasThis0, mv);
+        writeParameterAnnotations(constructorDescriptor, constructorMethod, hasCapturedThis, mv);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
             return;
         }
 
-        generatePrimaryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, hasThis0, closure, mv);
+        generatePrimaryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, hasCapturedThis, closure, mv);
     }
 
     private void generatePrimaryConstructorImpl(
@@ -874,7 +874,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             ConstructorContext constructorContext,
             JvmMethodSignature constructorMethod,
             CallableMethod callableMethod,
-            boolean hasThis0,
+            boolean hasCapturedThis,
             MutableClosure closure,
             MethodVisitor mv
     ) {
@@ -901,24 +901,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor, frameMap);
         }
 
-        if (hasThis0) {
+        if (hasCapturedThis) {
             final Type type = typeMapper
                     .mapType(enclosingClassDescriptor(bindingContext, descriptor));
             String interfaceDesc = type.getDescriptor();
             iv.load(0, classAsmType);
             iv.load(frameMap.getOuterThisIndex(), type);
-            iv.putfield(classname.getInternalName(), THIS$0, interfaceDesc);
+            iv.putfield(classname.getInternalName(), CAPTURED_THIS_FIELD, interfaceDesc);
         }
 
         if (closure != null) {
-            int k = hasThis0 ? 2 : 1;
+            int k = hasCapturedThis ? 2 : 1;
             final String internalName = typeMapper.mapType(descriptor).getInternalName();
             final ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
             if (captureReceiver != null) {
                 iv.load(0, OBJECT_TYPE);
                 final Type asmType = typeMapper.mapType(captureReceiver.getDefaultType(), JetTypeMapperMode.IMPL);
                 iv.load(1, asmType);
-                iv.putfield(internalName, RECEIVER$0, asmType.getDescriptor());
+                iv.putfield(internalName, CAPTURED_RECEIVER_FIELD, asmType.getDescriptor());
                 k += asmType.getSize();
             }
 

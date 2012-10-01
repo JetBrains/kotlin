@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.AsmUtil.THIS$0;
+import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLASS_FOR_FUNCTION;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.FQN;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -262,7 +262,8 @@ public abstract class CodegenContext {
         final ClassDescriptor enclosingClass = getEnclosingClass();
         outerExpression = enclosingClass != null
                           ? StackValue
-                .field(typeMapper.mapType(enclosingClass), CodegenBinding.getJvmInternalName(typeMapper.getBindingTrace(), classDescriptor), THIS$0,
+                .field(typeMapper.mapType(enclosingClass), CodegenBinding.getJvmInternalName(typeMapper.getBindingTrace(), classDescriptor),
+                       CAPTURED_THIS_FIELD,
                        false)
                           : null;
     }
