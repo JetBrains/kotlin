@@ -25,6 +25,7 @@ import java.util.List;
 /**
  * Command line arguments for the {@link K2JVMCompiler}
  */
+@SuppressWarnings("UnusedDeclaration")
 public class K2JVMCompilerArguments extends CompilerArguments {
 
 
@@ -62,6 +63,9 @@ public class K2JVMCompilerArguments extends CompilerArguments {
 
     @Argument(value = "noJdkAnnotations", description = "don't include JDK external annotations into classpath")
     public boolean noJdkAnnotations;
+
+    @Argument(value = "notNullAssertions", description = "generate not-null assertion after each invokation of method returning not-null")
+    public boolean notNullAssertions;
 
     @Argument(value = "builtins", description = "compile builtin classes (internal)")
     public boolean builtins;

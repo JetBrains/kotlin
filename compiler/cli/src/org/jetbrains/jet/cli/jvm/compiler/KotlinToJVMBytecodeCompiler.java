@@ -341,11 +341,11 @@ public class KotlinToJVMBytecodeCompiler {
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
             }
         };
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
-                                                              exhaust, environment.getSourceFiles(),
-                                                              environment.getConfiguration().get(
-                                                                      JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY,
-                                                                      BuiltinToJavaTypesMapping.ENABLED));
+        GenerationState generationState = new GenerationState(
+                project, ClassBuilderFactories.binaries(stubs), backendProgress, exhaust, environment.getSourceFiles(),
+                environment.getConfiguration().get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
+                environment.getConfiguration().get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false)
+        );
         GenerationStrategy.STANDARD.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());

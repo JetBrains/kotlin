@@ -41,4 +41,7 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> STUBS = CompilerConfigurationKey.create("stubs");
     public static final CompilerConfigurationKey<BuiltinToJavaTypesMapping> BUILTIN_TO_JAVA_TYPES_MAPPING_KEY =
             CompilerConfigurationKey.create("builtin to java types mapping");
+
+    public static final CompilerConfigurationKey<Boolean> GENERATE_NOT_NULL_ASSERTIONS =
+            CompilerConfigurationKey.create("generate not-null assertions");
 }

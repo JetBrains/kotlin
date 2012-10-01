@@ -8,6 +8,7 @@ Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -noJdk [flag] don't include Java runtime into classpath
   -noStdlib [flag] don't include Kotlin runtime into classpath
   -noJdkAnnotations [flag] don't include JDK external annotations into classpath
+  -notNullAssertions [flag] generate not-null assertion after each invokation of method returning not-null
   -builtins [flag] compile builtin classes (internal)
   -output [String] output directory
   -module [String] module to compile

@@ -68,14 +68,20 @@ public class GenerationState {
     @NotNull
     private final JetTypeMapper typeMapper;
 
+    private final boolean generateNotNullAssertions;
+
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED);
+        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED, true);
     }
 
     public GenerationState(
             @NotNull Project project,
-            ClassBuilderFactory builderFactory, Progress progress,
-            @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping
+            ClassBuilderFactory builderFactory,
+            @NotNull Progress progress,
+            @NotNull AnalyzeExhaust exhaust,
+            @NotNull List<JetFile> files,
+            @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
+            boolean generateNotNullAssertions
     ) {
         this.project = project;
         this.progress = progress;
@@ -94,6 +100,8 @@ public class GenerationState {
         this.scriptCodegen = injector.getScriptCodegen();
         this.intrinsics = injector.getIntrinsics();
         this.classFileFactory = injector.getClassFileFactory();
+
+        this.generateNotNullAssertions = generateNotNullAssertions;
     }
 
     @NotNull
@@ -144,6 +152,10 @@ public class GenerationState {
     @NotNull
     public IntrinsicMethods getIntrinsics() {
         return intrinsics;
+    }
+
+    public boolean isGenerateNotNullAssertions() {
+        return generateNotNullAssertions;
     }
 
     public void beforeCompile() {
