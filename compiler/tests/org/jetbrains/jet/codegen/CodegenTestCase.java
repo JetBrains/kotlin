@@ -174,6 +174,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         blackBox();
     }
 
+    protected void blackBoxMultiFile(String expected, boolean classPathInTheSameClassLoader, String... filenames) {
+        loadFiles(filenames);
+        blackBox(expected, classPathInTheSameClassLoader);
+    }
+
     @NotNull
     private Class<?> loadClassFromType(@NotNull Type type) {
         try {
@@ -287,19 +292,25 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFileWithJava(@NotNull String ktFile, boolean classPathInTheSameClassLoader) throws Exception {
+        File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
+
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
+
+        blackBoxFile(ktFile, "OK", classPathInTheSameClassLoader);
+    }
+
+    protected File compileJava(@NotNull String filename) throws IOException {
         File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
         JetTestUtils.mkdirs(javaClassesTempDirectory);
         List<String> options = Arrays.asList(
                 "-d", javaClassesTempDirectory.getPath()
         );
 
-        File javaFile = new File("compiler/testData/codegen/" + ktFile.replaceFirst("\\.kt$", ".java"));
+        File javaFile = new File("compiler/testData/codegen/" + filename);
         JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
-
-        blackBoxFile(ktFile, "OK", classPathInTheSameClassLoader);
+        return javaClassesTempDirectory;
     }
 
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
