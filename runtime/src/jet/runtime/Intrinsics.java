@@ -18,9 +18,7 @@ package jet.runtime;
 
 import jet.Function0;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * @author alex.tkachman
@@ -36,7 +34,15 @@ public class Intrinsics {
     public static void throwNpe() {
         throw new JetNullPointerException();
     }
-    
+
+    public static void checkReturnedValueIsNotNull(Object value, String className, String methodName) {
+        if (value == null) {
+            IllegalStateException exception =
+                    new IllegalStateException("Method specified as non-null returned null: " + className + "." + methodName);
+            throw sanitizeStackTrace(exception);
+        }
+    }
+
     public static <T> Class<T> getJavaClass(T self) {
         return (Class<T>) self.getClass();
     }
@@ -59,7 +65,11 @@ public class Intrinsics {
         }
     }
 
-    private static Throwable sanitizeStackTrace(Throwable throwable) {
+    private static final Set<String> METHOD_NAMES_TO_SKIP = new HashSet<String>(Arrays.asList(
+            "throwNpe", "checkReturnedValueIsNotNull"
+    ));
+
+    private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>();
         boolean skip = true;
@@ -68,8 +78,10 @@ public class Intrinsics {
                 list.add(ste);
             }
             else {
-                if("jet.runtime.Intrinsics".equals(ste.getClassName()) && "throwNpe".equals(ste.getMethodName())) {
-                    skip = false;
+                if ("jet.runtime.Intrinsics".equals(ste.getClassName())) {
+                    if (METHOD_NAMES_TO_SKIP.contains(ste.getMethodName())) {
+                        skip = false;
+                    }
                 }
             }
         }

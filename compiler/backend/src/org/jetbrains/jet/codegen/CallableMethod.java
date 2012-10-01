@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
@@ -96,9 +98,18 @@ public class CallableMethod implements Callable {
         return receiverParameterType;
     }
 
-    void invoke(InstructionAdapter v) {
+    private void invoke(InstructionAdapter v) {
         v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getSignature().getAsmMethod().getName(),
                           getSignature().getAsmMethod().getDescriptor());
+    }
+
+    public void invokeWithNotNullAssertion(
+            @NotNull InstructionAdapter v,
+            @NotNull GenerationState state,
+            @NotNull ResolvedCall resolvedCall
+    ) {
+        invoke(v);
+        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
     }
 
     @Nullable
@@ -106,7 +117,7 @@ public class CallableMethod implements Callable {
         return generateCalleeType;
     }
 
-    public void invokeWithDefault(InstructionAdapter v, int mask) {
+    private void invokeDefault(InstructionAdapter v, int mask) {
         if (defaultImplOwner == null || defaultImplParam == null) {
             throw new IllegalStateException();
         }
@@ -123,6 +134,16 @@ public class CallableMethod implements Callable {
             v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
                               getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
         }
+    }
+
+    public void invokeDefaultWithNotNullAssertion(
+            @NotNull InstructionAdapter v,
+            @NotNull GenerationState state,
+            @NotNull ResolvedCall resolvedCall,
+            int mask
+    ) {
+        invokeDefault(v, mask);
+        AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
     }
 
     public boolean isNeedsThis() {

@@ -27,12 +27,14 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -416,5 +418,36 @@ public class AsmUtil {
 
     public static void genStubCode(MethodVisitor mv) {
         genMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
+    }
+
+    public static void genNotNullAssertionForMethod(
+            @NotNull InstructionAdapter v,
+            @NotNull GenerationState state,
+            @NotNull ResolvedCall resolvedCall
+    ) {
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        if (descriptor instanceof ConstructorDescriptor) return;
+
+        genNotNullAssertion(v, state, descriptor, "checkReturnedValueIsNotNull");
+    }
+
+    private static void genNotNullAssertion(
+            @NotNull InstructionAdapter v,
+            @NotNull GenerationState state,
+            @NotNull CallableDescriptor descriptor,
+            @NotNull String assertMethodToCall
+    ) {
+        if (!state.isGenerateNotNullAssertions()) return;
+
+        JetType type = descriptor.getReturnType();
+        if (type == null || type.isNullable()) return;
+
+        Type asmType = state.getTypeMapper().mapReturnType(type);
+        if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
+            v.dup();
+            v.visitLdcInsn(descriptor.getContainingDeclaration().getName().getName());
+            v.visitLdcInsn(descriptor.getName().getName());
+            v.invokestatic("jet/runtime/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
+        }
     }
 }

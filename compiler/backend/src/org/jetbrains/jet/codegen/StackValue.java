@@ -39,8 +39,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.boxType;
-import static org.jetbrains.jet.codegen.AsmUtil.isIntPrimitive;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
 /**
@@ -678,7 +677,7 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("no getter specified");
             }
             if (getter instanceof CallableMethod) {
-                ((CallableMethod) getter).invoke(v);
+                ((CallableMethod) getter).invokeWithNotNullAssertion(v, state, resolvedGetCall);
             }
             else {
                 ((IntrinsicMethod) getter).generate(codegen, v, type, null, null, null, state);
@@ -696,7 +695,7 @@ public abstract class StackValue {
                 Method asmMethod = method.getSignature().getAsmMethod();
                 Type[] argumentTypes = asmMethod.getArgumentTypes();
                 coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
-                method.invoke(v);
+                method.invokeWithNotNullAssertion(v, state, resolvedSetCall);
                 Type returnType = asmMethod.getReturnType();
                 if (returnType != Type.VOID_TYPE) {
                     pop(returnType, v);

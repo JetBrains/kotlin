@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.Progress;
 
 import java.io.File;
 import java.io.IOException;
@@ -356,7 +357,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 BuiltinsScopeExtensionMode.ALL);
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        alreadyGenerated = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, myFiles.getPsiFiles());
+        alreadyGenerated = new GenerationState(
+                myEnvironment.getProject(), classBuilderFactory, Progress.DEAF, analyzeExhaust, myFiles.getPsiFiles(),
+                myEnvironment.getConfiguration().get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
+                myEnvironment.getConfiguration().get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true)
+        );
         GenerationStrategy.STANDARD.compileCorrectFiles(alreadyGenerated, CompilationErrorHandler.THROW_EXCEPTION);
         return alreadyGenerated;
     }

@@ -1341,7 +1341,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.load(nextVar, t);
                 nextVar += t.getSize();
             }
-            superCallable.invoke(codegen.v);
+            superCallable.invokeWithNotNullAssertion(codegen.v, state, resolvedCall);
         }
         else {
             codegen.invokeMethodWithArguments(superCallable, (JetCallElement) superCall, StackValue.none());

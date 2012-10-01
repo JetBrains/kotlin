@@ -126,6 +126,9 @@ public class SpecialFiles {
         excludedFiles.add("kt529.kt");  // Bug
 
         excludedFiles.add("noClassObjectForJavaClass.kt");
+
+        excludedFiles.add("doGenerateAssertions.kt"); // Multi-file + Java
+        excludedFiles.add("doNotGenerateAssertions.kt"); // Multi-file + Java
     }
 
     private SpecialFiles() {
