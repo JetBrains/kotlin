@@ -71,6 +71,10 @@ public final class StringTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testNumbersInTemplate() throws Exception {
+        fooBoxIsValue("2354");
+    }
+
     private void checkHasNoToStringCalls() throws IOException {
         for (EcmaVersion ecmaVersion : DEFAULT_ECMA_VERSIONS) {
             String filePath = getOutputFilePath(getTestName(true) + ".kt", ecmaVersion);
