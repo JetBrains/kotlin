@@ -245,7 +245,7 @@ public class FunctionCodegen extends GenerationStateAware {
                 if (receiverParameter.exists()) {
                     Type type = state.getTypeMapper().mapType(receiverParameter.getType());
                     // TODO: specify signature
-                    mv.visitLocalVariable("this$receiver", type.getDescriptor(), null, methodBegin, methodEnd, k);
+                    mv.visitLocalVariable(JvmAbi.RECEIVER_PARAMETER, type.getDescriptor(), null, methodBegin, methodEnd, k);
                     k += type.getSize();
                 }
 
@@ -370,7 +370,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         if (receiverParameter.exists()) {
             JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, start++);
-            av.writeName("this$receiver");
+            av.writeName(JvmAbi.RECEIVER_PARAMETER);
             av.writeReceiver();
             if (kotlinParameterTypes.get(0) != null) {
                 av.writeType(kotlinParameterTypes.get(0).getKotlinSignature());

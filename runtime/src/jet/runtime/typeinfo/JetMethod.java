@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation for method
  *
- * The fact of receiver presence must be deducted from presence of 'this$receiver' parameter
+ * The fact of receiver presence must be deducted from presence of '$receiver' parameter
  *
  * @author alex.tkachman
  *
