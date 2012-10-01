@@ -149,4 +149,11 @@
   <item name='java.lang.reflect.Array void set(java.lang.Object, int, java.lang.Object) 2'>
     <annotation name='org.jetbrains.annotations.Nullable'/>
   </item>
+
+  <!-- java.lang.reflect.Method -->
+  <item name='java.lang.reflect.Method java.lang.annotation.Annotation[][] getParameterAnnotations()'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getParameterAnnotations() : Array&lt;Array&lt;Annotation&gt;&gt;&quot;"/>
+      </annotation>
+  </item>
 </root>
