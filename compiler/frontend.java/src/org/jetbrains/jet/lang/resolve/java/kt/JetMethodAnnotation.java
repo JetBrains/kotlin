@@ -50,7 +50,7 @@ public class JetMethodAnnotation extends PsiAnnotationWithFlags {
     }
 
     public int kind() {
-        return flags() & JvmStdlibNames.FLAG_KIND_MASK;
+        return flags() & JvmStdlibNames.FLAG_METHOD_KIND_MASK;
     }
 
     @NotNull

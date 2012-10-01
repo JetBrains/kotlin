@@ -29,20 +29,20 @@ public class DescriptorKindUtils {
 
     public static int kindToFlags(CallableMemberDescriptor.Kind kind) {
         switch (kind) {
-            case DECLARATION: return JvmStdlibNames.FLAG_KIND_DECLARATION;
-            case FAKE_OVERRIDE: return JvmStdlibNames.FLAG_KIND_FAKE_OVERRIDE;
-            case DELEGATION: return JvmStdlibNames.FLAG_KIND_DELEGATION;
-            case SYNTHESIZED: return JvmStdlibNames.FLAG_KIND_SYNTHESIZED;
+            case DECLARATION: return JvmStdlibNames.FLAG_METHOD_KIND_DECLARATION;
+            case FAKE_OVERRIDE: return JvmStdlibNames.FLAG_METHOD_KIND_FAKE_OVERRIDE;
+            case DELEGATION: return JvmStdlibNames.FLAG_METHOD_KIND_DELEGATION;
+            case SYNTHESIZED: return JvmStdlibNames.FLAG_METHOD_KIND_SYNTHESIZED;
             default: throw new IllegalArgumentException("Unknown kind: " + kind);
         }
     }
 
     public static CallableMemberDescriptor.Kind flagsToKind(int value) {
-        switch (value & JvmStdlibNames.FLAG_KIND_MASK) {
-            case JvmStdlibNames.FLAG_KIND_DECLARATION: return CallableMemberDescriptor.Kind.DECLARATION;
-            case JvmStdlibNames.FLAG_KIND_FAKE_OVERRIDE: return CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-            case JvmStdlibNames.FLAG_KIND_DELEGATION: return CallableMemberDescriptor.Kind.DELEGATION;
-            case JvmStdlibNames.FLAG_KIND_SYNTHESIZED: return CallableMemberDescriptor.Kind.SYNTHESIZED;
+        switch (value & JvmStdlibNames.FLAG_METHOD_KIND_MASK) {
+            case JvmStdlibNames.FLAG_METHOD_KIND_DECLARATION: return CallableMemberDescriptor.Kind.DECLARATION;
+            case JvmStdlibNames.FLAG_METHOD_KIND_FAKE_OVERRIDE: return CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+            case JvmStdlibNames.FLAG_METHOD_KIND_DELEGATION: return CallableMemberDescriptor.Kind.DELEGATION;
+            case JvmStdlibNames.FLAG_METHOD_KIND_SYNTHESIZED: return CallableMemberDescriptor.Kind.SYNTHESIZED;
             default: throw new IllegalArgumentException("Unknown int value of kind: " + value);
         }
     }
