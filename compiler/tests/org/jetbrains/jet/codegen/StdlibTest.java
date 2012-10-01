@@ -147,10 +147,6 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1568.kt");
     }
 
-    public void testKt1515() throws Exception {
-        blackBoxFile("regressions/kt1515.kt");
-    }
-
     public void testKt1592 () throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         loadFile("regressions/kt1592.kt");
         ClassFileFactory codegens = generateClassesInFile();
