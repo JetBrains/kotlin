@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -137,6 +138,17 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
         assert qualifiedName != null;
         FqName classFqName = new FqName(qualifiedName);
 
+        if (method.getReturnType() == null) {
+            // For constructor
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
+            assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
+            classDescriptor.getConstructors();
+
+            ConstructorDescriptor constructorDescriptor = injector.getBindingTrace().getBindingContext().get(BindingContext.CONSTRUCTOR, method);
+            assert constructorDescriptor != null: "Couldn't find constructor descriptor for " + method.getName() + " in " + classFqName;
+            return getDefaultConstructorAnnotation(constructorDescriptor, classFqName);
+        }
+
         if (method.getModifierList().hasModifierProperty(PsiModifier.STATIC)) {
             NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
             assert namespaceDescriptor != null: "Couldn't resolve namespace descriptor for " + classFqName;
@@ -153,12 +165,15 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
         return RENDERER.render(functionDescriptor);
     }
 
+    private static String getDefaultConstructorAnnotation(ConstructorDescriptor constructorDescriptor, FqName classFqName) {
+        return String.format("fun %s%s", classFqName.shortName(), RENDERER.renderFunctionParameters(constructorDescriptor));
+    }
+
     @Nullable
     private static PsiMethod findMethod(@NotNull PsiFile file, int offset) {
         PsiElement element = file.findElementAt(offset);
         PsiMethod res = PsiTreeUtil.getParentOfType(element, PsiMethod.class);
         if (res == null) return null;
-        if (res.getReturnType() == null) return null; // disabled for constructors
 
         //Not available in method's body
         PsiCodeBlock body = res.getBody();
