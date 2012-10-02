@@ -150,7 +150,7 @@ public class ScriptCodegen extends MemberCodegen {
                 instructionAdapter,
                 scriptDeclaration.getDeclarations(),
                 bindingContext,
-                typeMapper);
+                state);
 
         int offset = 1;
 

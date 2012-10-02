@@ -962,7 +962,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        generateInitializers(codegen, iv, myClass.getDeclarations(), bindingContext, typeMapper);
+        generateInitializers(codegen, iv, myClass.getDeclarations(), bindingContext, state);
 
         mv.visitInsn(RETURN);
         FunctionCodegen.endVisit(mv, "constructor", myClass);
@@ -1451,8 +1451,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     public static void generateInitializers(
             @NotNull ExpressionCodegen codegen, @NotNull InstructionAdapter iv, @NotNull List<JetDeclaration> declarations,
-            @NotNull BindingContext bindingContext, @NotNull JetTypeMapper typeMapper
+            @NotNull BindingContext bindingContext, @NotNull GenerationState state
     ) {
+        JetTypeMapper typeMapper = state.getTypeMapper();
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetProperty) {
                 final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, declaration);
@@ -1476,8 +1477,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
                         Type propType = typeMapper.mapType(jetType);
-                        StackValue.property(propertyDescriptor.getName().getName(), owner, owner,
-                                            propType, false, false, false, null, null, 0).store(propType, iv);
+                        StackValue.property(propertyDescriptor, owner, owner,
+                                            propType, false, false, false, null, null, 0, state).store(propType, iv);
                     }
                 }
             }

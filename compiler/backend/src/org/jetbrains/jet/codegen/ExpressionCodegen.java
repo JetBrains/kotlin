@@ -1613,9 +1613,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ownerParam = callableMethod.getDefaultImplParam();
         }
 
-        return StackValue
-                .property(propertyDescriptor.getName().getName(), owner, ownerParam, asmType(propertyDescriptor.getType()), isStatic,
-                          isInterface, isSuper, getter, setter, invokeOpcode);
+        return StackValue.property(propertyDescriptor, owner, ownerParam, asmType(propertyDescriptor.getType()),
+                                   isStatic, isInterface, isSuper, getter, setter, invokeOpcode, state);
     }
 
     private static boolean isOverrideForTrait(CallableMemberDescriptor propertyDescriptor) {
