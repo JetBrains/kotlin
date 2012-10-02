@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
  */
 public final class Namer {
     public static final String CALLEE_NAME = "$fun";
+    public static final String OUTER_CLASS_NAME = "$outer";
 
     private static final String INITIALIZE_METHOD_NAME = "initialize";
     private static final String CLASS_OBJECT_NAME = "createClass";
@@ -39,7 +40,7 @@ public final class Namer {
     private static final String SUPER_METHOD_NAME = "super_init";
     public static final String KOTLIN_OBJECT_NAME = "Kotlin";
     private static final String ROOT_NAMESPACE = "_";
-    private static final String RECEIVER_PARAMETER_NAME = "receiver";
+    private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
 

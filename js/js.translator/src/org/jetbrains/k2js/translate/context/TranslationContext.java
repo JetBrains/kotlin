@@ -38,11 +38,11 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedRe
  */
 public class TranslationContext {
     @NotNull
-    private final DynamicContext dynamicContext;
+    protected final DynamicContext dynamicContext;
     @NotNull
     private final StaticContext staticContext;
     @NotNull
-    private final AliasingContext aliasingContext;
+    protected AliasingContext aliasingContext;
     @Nullable
     private final UsageTracker usageTracker;
 
@@ -58,10 +58,12 @@ public class TranslationContext {
         return staticContext.isEcma5();
     }
 
-    private TranslationContext(@NotNull StaticContext staticContext,
+    private TranslationContext(
+            @NotNull StaticContext staticContext,
             @NotNull DynamicContext dynamicContext,
             @NotNull AliasingContext aliasingContext,
-            @Nullable UsageTracker usageTracker) {
+            @Nullable UsageTracker usageTracker
+    ) {
         this.dynamicContext = dynamicContext;
         this.staticContext = staticContext;
         this.aliasingContext = aliasingContext;
@@ -69,10 +71,17 @@ public class TranslationContext {
     }
 
     private TranslationContext(@NotNull TranslationContext parent, @NotNull AliasingContext aliasingContext) {
-        dynamicContext = parent.dynamicContext;
-        staticContext = parent.staticContext;
-        this.aliasingContext = aliasingContext;
-        usageTracker = parent.usageTracker;
+        this(parent.staticContext, parent.dynamicContext, aliasingContext, parent.usageTracker);
+    }
+
+    private TranslationContext(
+            @NotNull TranslationContext parent,
+            @NotNull JsFunction fun,
+            @NotNull AliasingContext aliasingContext,
+            @Nullable UsageTracker usageTracker
+    ) {
+        this(parent.staticContext, DynamicContext.newContext(fun.getScope(), fun.getBody()), aliasingContext,
+             usageTracker == null ? parent.usageTracker : usageTracker);
     }
 
     public UsageTracker usageTracker() {
@@ -85,7 +94,7 @@ public class TranslationContext {
 
     @NotNull
     public TranslationContext contextWithScope(@NotNull JsFunction fun) {
-        return contextWithScope(fun, aliasingContext, usageTracker);
+        return new TranslationContext(this, fun, aliasingContext, null);
     }
 
     @NotNull
@@ -97,8 +106,13 @@ public class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext contextWithScope(@NotNull JsFunction fun, @NotNull AliasingContext aliasingContext, @Nullable UsageTracker usageTracker) {
-        return contextWithScope(fun.getScope(), fun.getBody(), aliasingContext, usageTracker);
+    public TranslationContext newFunctionBody(
+            @NotNull JsFunction fun,
+            @Nullable AliasingContext aliasingContext,
+            @Nullable UsageTracker usageTracker
+    ) {
+        return new TranslationContext(this, fun, aliasingContext == null ? new AliasingContext(this.aliasingContext) : aliasingContext,
+                                      usageTracker);
     }
 
     @NotNull
@@ -112,8 +126,8 @@ public class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext innerContextWithThisAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsName alias) {
-        return new TranslationContext(this, aliasingContext.inner(correspondingDescriptor, alias.makeRef()));
+    public TranslationContext innerContextWithThisAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsNameRef alias) {
+        return new TranslationContext(this, aliasingContext.inner(correspondingDescriptor, alias));
     }
 
     @NotNull
@@ -215,7 +229,8 @@ public class TranslationContext {
         if (usageTracker != null) {
             usageTracker.triggerUsed(descriptor);
         }
-        return aliasingContext.getAliasForDescriptor(descriptor);
+        // ClassDescriptor — this or receiver, these aliases cannot be shared and applicable only in current context
+        return aliasingContext.getAliasForDescriptor(descriptor, false);
     }
 
     @NotNull
@@ -233,7 +248,7 @@ public class TranslationContext {
             usageTracker.triggerUsed(effectiveDescriptor);
         }
 
-        JsExpression alias = aliasingContext.getAliasForDescriptor(effectiveDescriptor);
+        JsExpression alias = aliasingContext.getAliasForDescriptor(effectiveDescriptor, false);
         return alias == null ? JsLiteral.THIS : alias;
     }
 }

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -38,10 +39,10 @@ import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.*;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
@@ -151,15 +152,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     // assume it is a local variable declaration
     public JsNode visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        VariableDescriptor descriptor = context.bindingContext().get(BindingContext.VARIABLE, expression);
-        assert descriptor != null;
+        VariableDescriptor descriptor = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.VARIABLE, expression);
         JsExpression initializer = translateInitializerForProperty(expression, context);
         JsName name = context.getNameForDescriptor(descriptor);
-        if (descriptor.isVar() && context.bindingContext().get(BindingContext.CAPTURED_IN_CLOSURE, descriptor) == Boolean.TRUE) {
+        if (descriptor.isVar() && Boolean.TRUE.equals(context.bindingContext().get(BindingContext.CAPTURED_IN_CLOSURE, descriptor))) {
             // well, wrap it
             JsNameRef alias = new JsNameRef("v", new JsNameRef(name));
-            initializer = new JsObjectLiteral(
-                    Collections.singletonList(new JsPropertyInitializer(alias, initializer == null ? JsLiteral.NULL : initializer)));
+            initializer = JsAstUtils.wrapValue(alias, initializer == null ? JsLiteral.NULL : initializer);
             context.aliasingContext().registerAlias(descriptor, alias);
         }
 

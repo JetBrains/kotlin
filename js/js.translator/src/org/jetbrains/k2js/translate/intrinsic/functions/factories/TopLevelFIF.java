@@ -39,9 +39,9 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
@@ -169,7 +169,7 @@ public final class TopLevelFIF extends CompositeFIF {
             public JsExpression apply(
                     @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
             ) {
-                return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(new JsNameRef("s"), context.program().getStringLiteral(""))));
+                return JsAstUtils.wrapValue("s", context.program().getStringLiteral(""));
             }
         });
         add(pattern(new String[] {"java", "lang", "Appendable"}, "append").checkOverridden(), new FunctionIntrinsic() {
