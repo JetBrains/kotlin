@@ -30,7 +30,7 @@ public @interface JetClass {
 
     /**
      * See JvmStdlibNames
-     * @return flags for method
+     * @return flags for class
      */
     int flags() default 0;
 }
