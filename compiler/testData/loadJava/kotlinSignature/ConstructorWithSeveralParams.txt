@@ -1,0 +1,5 @@
+namespace test
+
+public open class test.ConstructorWithSeveralParams : java.lang.Object {
+    public final /*constructor*/ fun <init>(/*0*/ p0: jet.Int, /*1*/ p1: jet.Int, /*2*/ p2: java.util.ArrayList<jet.String>): test.ConstructorWithSeveralParams
+}
