@@ -61,7 +61,7 @@ class AlternativeSignatureData {
     AlternativeSignatureData(
             @NotNull PsiMethodWrapper method,
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
-            @NotNull JetType returnType,
+            @Nullable JetType returnType,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters) {
         String signature = method.getSignatureAnnotation().signature();
         if (signature.isEmpty()) {
@@ -87,7 +87,9 @@ class AlternativeSignatureData {
 
             computeTypeParameters(methodTypeParameters);
             computeValueParameters(valueParameterDescriptors);
-            computeReturnType(returnType);
+            if (returnType != null) {
+                computeReturnType(returnType);
+            }
         }
         catch (AlternativeSignatureMismatchException e) {
             error = e.getMessage();

@@ -427,6 +427,16 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (valueParameterDescriptors.receiverType != null) {
             throw new IllegalStateException();
         }
+
+        AlternativeSignatureData alternativeSignatureData =
+                new AlternativeSignatureData(constructor, valueParameterDescriptors, null, Collections.<TypeParameterDescriptor>emptyList());
+        if (!alternativeSignatureData.isNone() && alternativeSignatureData.getError() == null) {
+            valueParameterDescriptors = alternativeSignatureData.getValueParameters();
+        }
+        else if (alternativeSignatureData.getError() != null) {
+            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, constructorDescriptor, alternativeSignatureData.getError());
+        }
+
         constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
                 valueParameterDescriptors.descriptors,
                 resolveVisibility(psiConstructor, constructor.getJetConstructor()), aStatic);
