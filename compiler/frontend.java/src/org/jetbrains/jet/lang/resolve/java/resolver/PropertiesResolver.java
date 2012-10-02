@@ -275,6 +275,9 @@ public final class PropertiesResolver {
                 trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, objectDescriptor);
             }
 
+            if (!scopeData.isKotlin()) {
+                trace.record(BindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
+            }
 
             propertiesFromCurrent.add(propertyDescriptor);
         }

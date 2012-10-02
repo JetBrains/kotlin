@@ -16,13 +16,18 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.asm4.ClassReader;
+import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.File;
@@ -59,5 +64,51 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
 
     public void testDoNotGenerateAssertions() throws Exception {
         doTestGenerateAssertions(false, "notNullAssertions/doNotGenerateAssertions.kt");
+    }
+
+    public void testNoAssertionsForKotlinFromSource() throws Exception {
+        setUpEnvironment(true);
+
+        loadFiles("notNullAssertions/noAssertionsForKotlin.kt", "notNullAssertions/noAssertionsForKotlinMain.kt");
+
+        assertNoIntrinsicsMethodIsCalled("namespace");
+    }
+
+    public void testNoAssertionsForKotlinFromBinary() throws Exception {
+        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
+        JetCoreEnvironment tmpEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
+        GenerationState state = generateCommon(ClassBuilderFactories.TEST, tmpEnvironment,
+                CodegenTestFiles.create(tmpEnvironment.getProject(), new String[] {"notNullAssertions/noAssertionsForKotlin.kt"}));
+        File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
+        CompileEnvironmentUtil.writeToOutputDirectory(state.getFactory(), compiledDirectory);
+
+        setUpEnvironment(true, compiledDirectory);
+
+        loadFile("notNullAssertions/noAssertionsForKotlinMain.kt");
+
+        assertNoIntrinsicsMethodIsCalled("namespace");
+    }
+
+    private void assertNoIntrinsicsMethodIsCalled(String className) {
+        ClassFileFactory classes = generateClassesInFile();
+        ClassReader reader = new ClassReader(classes.asBytes(className + ".class"));
+
+        reader.accept(new ClassVisitor(Opcodes.ASM4) {
+            @Override
+            public MethodVisitor visitMethod(
+                    int access, final String callerName, final String callerDesc, String signature, String[] exceptions
+            ) {
+                return new MethodVisitor(Opcodes.ASM4) {
+                    @Override
+                    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+                        assertFalse(
+                                "jet/Intrinsics method is called: " + name + desc + "  Caller: " + callerName + callerDesc,
+                                "jet/Intrinsics".equals(owner)
+                        );
+                    }
+                };
+            }
+        }, 0);
     }
 }

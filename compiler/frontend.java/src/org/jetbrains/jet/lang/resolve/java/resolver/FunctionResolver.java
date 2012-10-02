@@ -130,6 +130,10 @@ public final class FunctionResolver {
             BindingContextUtils.recordFunctionDeclarationToDescriptor(javaDescriptorResolver.getTrace(), psiMethod, functionDescriptorImpl);
         }
 
+        if (!scopeData.isKotlin()) {
+            javaDescriptorResolver.getTrace().record(BindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
+        }
+
         if (containingClass != psiClass && !method.isStatic()) {
             throw new IllegalStateException("non-static method in subclass");
         }
