@@ -49,4 +49,10 @@ fun checkAssertions(val illegalStateExpected: Boolean) {
     
     // prefix expression
     check("inc") { var a = A(); ++a }
+    
+    // field
+    check("NULL") { val a = A().NULL }
+    
+    // static field
+    check("STATIC_NULL") { val a = A.STATIC_NULL }
 }

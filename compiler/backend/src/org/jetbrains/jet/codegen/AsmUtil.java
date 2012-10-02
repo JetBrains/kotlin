@@ -420,6 +420,14 @@ public class AsmUtil {
         genMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
     }
 
+    public static void genNotNullAssertionForField(
+            @NotNull InstructionAdapter v,
+            @NotNull GenerationState state,
+            @NotNull PropertyDescriptor descriptor
+    ) {
+        genNotNullAssertion(v, state, descriptor, "checkFieldIsNotNull");
+    }
+
     public static void genNotNullAssertionForMethod(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,

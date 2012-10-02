@@ -43,6 +43,14 @@ public class Intrinsics {
         }
     }
 
+    public static void checkFieldIsNotNull(Object value, String className, String fieldName) {
+        if (value == null) {
+            IllegalStateException exception =
+                    new IllegalStateException("Field specified as non-null contains null: " + className + "." + fieldName);
+            throw sanitizeStackTrace(exception);
+        }
+    }
+
     public static <T> Class<T> getJavaClass(T self) {
         return (Class<T>) self.getClass();
     }
@@ -66,7 +74,7 @@ public class Intrinsics {
     }
 
     private static final Set<String> METHOD_NAMES_TO_SKIP = new HashSet<String>(Arrays.asList(
-            "throwNpe", "checkReturnedValueIsNotNull"
+            "throwNpe", "checkReturnedValueIsNotNull", "checkFieldIsNotNull"
     ));
 
     private static <T extends Throwable> T sanitizeStackTrace(T throwable) {

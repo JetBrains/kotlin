@@ -982,6 +982,7 @@ public abstract class StackValue {
                 if (getter == null) {
                     v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), descriptor.getName().getName(),
                                      this.type.getDescriptor());
+                    genNotNullAssertionForField(v, state, descriptor);
                 }
                 else {
                     v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());

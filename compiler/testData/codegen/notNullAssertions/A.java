@@ -1,6 +1,13 @@
 import jet.runtime.typeinfo.KotlinSignature;
+import org.jetbrains.annotations.NotNull;
 
 public class A {
+    @NotNull
+    public final String NULL = null;
+    
+    @NotNull
+    public static final String STATIC_NULL = null;
+    
     @KotlinSignature("fun foo() : String")
     public String foo() {
         return null;
