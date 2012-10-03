@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.wrapper;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;

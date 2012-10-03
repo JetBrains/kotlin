@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -103,12 +104,12 @@ public final class JavaDescriptorPropertiesResolver {
 
             PropertyAccessorData characteristicMember = getCharacteristicMember(members);
 
-            Visibility visibility = JavaDescriptorResolver.resolveVisibility(characteristicMember.getMember().psiMember, null);
+            Visibility visibility = JavaDescriptorResolver.resolveVisibility(characteristicMember.getMember().getPsiMember(), null);
             CallableMemberDescriptor.Kind kind = CallableMemberDescriptor.Kind.DECLARATION;
 
             if (members.getter != null && members.getter.getMember() instanceof PsiMethodWrapper) {
                 JetMethodAnnotation jetMethod = ((PsiMethodWrapper) members.getter.getMember()).getJetMethod();
-                visibility = JavaDescriptorResolver.resolveVisibility(characteristicMember.getMember().psiMember, jetMethod);
+                visibility = JavaDescriptorResolver.resolveVisibility(characteristicMember.getMember().getPsiMember(), jetMethod);
                 kind = DescriptorKindUtils.flagsToKind(jetMethod.kind());
             }
 
@@ -117,7 +118,7 @@ public final class JavaDescriptorPropertiesResolver {
             boolean isEnumEntry = DescriptorUtils.isEnumClassObject(realOwner);
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     realOwner,
-                    javaDescriptorResolver.resolveAnnotations(characteristicMember.getMember().psiMember),
+                    javaDescriptorResolver.resolveAnnotations(characteristicMember.getMember().getPsiMember()),
                     JavaDescriptorResolver.resolveModality(characteristicMember.getMember(), isFinal || isEnumEntry),
                     visibility,
                     isVar,
@@ -144,7 +145,7 @@ public final class JavaDescriptorPropertiesResolver {
             if (members.getter != null) {
                 getterDescriptor = new PropertyGetterDescriptor(
                         propertyDescriptor,
-                        javaDescriptorResolver.resolveAnnotations(members.getter.getMember().psiMember),
+                        javaDescriptorResolver.resolveAnnotations(members.getter.getMember().getPsiMember()),
                         Modality.OPEN,
                         visibility,
                         true,
@@ -153,16 +154,16 @@ public final class JavaDescriptorPropertiesResolver {
             }
 
             if (members.setter != null) {
-                Visibility setterVisibility = JavaDescriptorResolver.resolveVisibility(members.setter.getMember().psiMember, null);
+                Visibility setterVisibility = JavaDescriptorResolver.resolveVisibility(members.setter.getMember().getPsiMember(), null);
                 if (members.setter.getMember() instanceof PsiMethodWrapper) {
                     setterVisibility = JavaDescriptorResolver.resolveVisibility(
-                            members.setter.getMember().psiMember,
+                            members.setter.getMember().getPsiMember(),
                             ((PsiMethodWrapper) members.setter.getMember())
                                     .getJetMethod());
                 }
                 setterDescriptor = new PropertySetterDescriptor(
                         propertyDescriptor,
-                        javaDescriptorResolver.resolveAnnotations(members.setter.getMember().psiMember),
+                        javaDescriptorResolver.resolveAnnotations(members.setter.getMember().getPsiMember()),
                         Modality.OPEN,
                         setterVisibility,
                         true,
@@ -202,7 +203,7 @@ public final class JavaDescriptorPropertiesResolver {
             }
 
             if (kind == CallableMemberDescriptor.Kind.DECLARATION) {
-                trace.record(BindingContext.VARIABLE, characteristicMember.getMember().psiMember, propertyDescriptor);
+                trace.record(BindingContext.VARIABLE, characteristicMember.getMember().getPsiMember(), propertyDescriptor);
             }
 
             propertiesFromCurrent.add(propertyDescriptor);

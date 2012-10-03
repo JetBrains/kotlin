@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
