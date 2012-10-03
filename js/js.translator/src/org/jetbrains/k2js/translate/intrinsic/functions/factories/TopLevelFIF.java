@@ -124,10 +124,13 @@ public final class TopLevelFIF extends CompositeFIF {
     };
 
     @NotNull
+    public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
+
+    @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
-        add(pattern("jet", "toString").receiverExists(), new KotlinFunctionIntrinsic("toString"));
+        add(pattern("jet", "toString").receiverExists(), TO_STRING);
         add(pattern("jet", "equals").receiverExists(), EQUALS);
         add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
