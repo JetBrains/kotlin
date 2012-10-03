@@ -124,8 +124,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isFinal = true;
             }
         }
-        else if (myClass.getParent() instanceof JetClassObject) {
-            isStatic = true;
+        else {
+            isStatic = myClass.getParent() instanceof JetClassObject;
+            isFinal = true;
         }
 
         int access = 0;
