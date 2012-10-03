@@ -145,7 +145,7 @@ class JavaDescriptorResolveData {
 
     static class ResolverClassData extends ResolverScopeData {
 
-        final ClassDescriptorFromJvmBytecode classDescriptor;
+        private final ClassDescriptorFromJvmBytecode classDescriptor;
 
         List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameters;
 
@@ -166,8 +166,7 @@ class JavaDescriptorResolveData {
             classDescriptor = descriptor;
         }
 
-        @NotNull
-        public ClassDescriptor getClassDescriptor() {
+        public ClassDescriptorFromJvmBytecode getClassDescriptor() {
             return classDescriptor;
         }
 

@@ -206,7 +206,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
             classData = createJavaClassDescriptor(psiClass, tasks);
         }
-        return classData.classDescriptor;
+        return classData.getClassDescriptor();
     }
 
     @NotNull
@@ -235,7 +235,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 containingDeclaration, kind, psiClass, fqName, this)
                         .getResolverBinaryClassData();
         classDescriptorCache.put(fqName, classData);
-        classData.classDescriptor.setName(name);
+        classData.getClassDescriptor().setName(name);
 
         List<JetType> supertypes = new ArrayList<JetType>();
 
@@ -246,11 +246,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             typeParameters.add(typeParameter.descriptor);
         }
         
-        classData.classDescriptor.setTypeParameterDescriptors(typeParameters);
-        classData.classDescriptor.setSupertypes(supertypes);
-        classData.classDescriptor.setVisibility(resolveVisibility(psiClass, JetClassAnnotation.get(psiClass)));
+        classData.getClassDescriptor().setTypeParameterDescriptors(typeParameters);
+        classData.getClassDescriptor().setSupertypes(supertypes);
+        classData.getClassDescriptor().setVisibility(resolveVisibility(psiClass, JetClassAnnotation.get(psiClass)));
         Modality modality;
-        if (classData.classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+        if (classData.getClassDescriptor().getKind() == ClassKind.ANNOTATION_CLASS) {
             modality = Modality.FINAL;
         }
         else {
@@ -258,23 +258,23 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
                     !psiClass.hasModifierProperty(PsiModifier.FINAL));
         }
-        classData.classDescriptor.setModality(modality);
-        classData.classDescriptor.createTypeConstructor();
-        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
+        classData.getClassDescriptor().setModality(modality);
+        classData.getClassDescriptor().createTypeConstructor();
+        classData.getClassDescriptor().setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
 
-        javaDescriptorSignatureResolver.initializeTypeParameters(classData.typeParameters, classData.classDescriptor, "class " + qualifiedName);
+        javaDescriptorSignatureResolver.initializeTypeParameters(classData.typeParameters, classData.getClassDescriptor(), "class " + qualifiedName);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classData.getTypeParameters()));
 
-        MutableClassDescriptorLite classObject = createClassObjectDescriptor(classData.classDescriptor, psiClass);
+        MutableClassDescriptorLite classObject = createClassObjectDescriptor(classData.getClassDescriptor(), psiClass);
         if (classObject != null) {
-            classData.classDescriptor.getBuilder().setClassObjectDescriptor(classObject);
+            classData.getClassDescriptor().getBuilder().setClassObjectDescriptor(classObject);
         }
 
-        classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass, taskList));
+        classData.getClassDescriptor().setAnnotations(resolveAnnotations(psiClass, taskList));
 
-        trace.record(BindingContext.CLASS, psiClass, classData.classDescriptor);
+        trace.record(BindingContext.CLASS, psiClass, classData.getClassDescriptor());
 
         return classData;
     }
@@ -285,7 +285,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         PsiClass psiClass = classData.getPsiClass();
 
-        ClassDescriptorFromJvmBytecode containingClass = classData.classDescriptor;
+        ClassDescriptorFromJvmBytecode containingClass = classData.getClassDescriptor();
         assert psiClass != null;
         TypeVariableResolver resolverForTypeParameters = TypeVariableResolvers.classTypeVariableResolver(
                 containingClass, "class " + psiClass.getQualifiedName());
@@ -390,19 +390,19 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                classData.classDescriptor,
+                classData.getClassDescriptor(),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false);
 
         String context = "constructor of class " + psiClass.getQualifiedName();
         ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(
                 constructorDescriptor, constructor.getParameters(),
-                TypeVariableResolvers.classTypeVariableResolver(classData.classDescriptor, context));
+                TypeVariableResolvers.classTypeVariableResolver(classData.getClassDescriptor(), context));
 
         if (valueParameterDescriptors.receiverType != null) {
             throw new IllegalStateException();
         }
-        constructorDescriptor.initialize(classData.classDescriptor.getTypeConstructor().getParameters(),
+        constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
                 valueParameterDescriptors.descriptors,
                 resolveVisibility(psiConstructor, constructor.getJetConstructor()), aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
@@ -460,7 +460,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 containing, ClassKind.CLASS_OBJECT, classObjectPsiClass, fqName, this)
                         .getResolverBinaryClassData();
 
-        ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.classDescriptor;
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.getClassDescriptor();
         classObjectDescriptor.setSupertypes(
                 getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData, new ArrayList<TypeParameterDescriptor>(0)));
         setUpClassObjectDescriptor(containing, fqName, classData, getClassObjectName(containing.getName()));
@@ -509,7 +509,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             @NotNull ResolverClassData data,
             @NotNull Name classObjectName
     ) {
-        ClassDescriptorFromJvmBytecode classDescriptor = data.classDescriptor;
+        ClassDescriptorFromJvmBytecode classDescriptor = data.getClassDescriptor();
         classDescriptorCache.put(fqName, data);
         classDescriptor.setName(classObjectName);
         classDescriptor.setModality(Modality.FINAL);
@@ -562,7 +562,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     private Collection<JetType> getSupertypes(PsiClassWrapper psiClass, ResolverClassData classData, List<TypeParameterDescriptor> typeParameters) {
-        ClassDescriptor classDescriptor = classData.classDescriptor;
+        ClassDescriptor classDescriptor = classData.getClassDescriptor();
 
         final List<JetType> result = new ArrayList<JetType>();
 
@@ -1374,7 +1374,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     static Collection<JetType> getSupertypes(ResolverScopeData scope) {
         if (scope instanceof ResolverClassData) {
-            return ((ResolverClassData) scope).classDescriptor.getSupertypes();
+            return ((ResolverClassData) scope).getClassDescriptor().getSupertypes();
         }
         else if (scope instanceof ResolverNamespaceData) {
             return Collections.emptyList();

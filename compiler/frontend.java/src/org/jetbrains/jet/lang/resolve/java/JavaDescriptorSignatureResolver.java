@@ -318,10 +318,10 @@ public class JavaDescriptorSignatureResolver {
 
         if (jetClassAnnotation.signature().length() > 0) {
             return resolveClassTypeParametersFromJetSignature(
-                    jetClassAnnotation.signature(), psiClass, classData.classDescriptor);
+                    jetClassAnnotation.signature(), psiClass, classData.getClassDescriptor());
         }
 
-        return makeUninitializedTypeParameters(classData.classDescriptor, psiClass.getTypeParameters());
+        return makeUninitializedTypeParameters(classData.getClassDescriptor(), psiClass.getTypeParameters());
     }
 
 
