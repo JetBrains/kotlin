@@ -217,6 +217,7 @@
       <referencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinReferencesSearcher"/>
       <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDirectInheritorsSearcher"/>
       <definitionsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
+      <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.KotlinAnnotatedElementsSearcher"/>
 
       <toolWindow id="Kotlin"
                   factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"
