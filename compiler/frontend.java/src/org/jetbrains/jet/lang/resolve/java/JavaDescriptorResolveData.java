@@ -23,13 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Map;
 
-class JavaDescriptorResolveData {
-    static abstract class ResolverScopeData {
+public class JavaDescriptorResolveData {
+    public static abstract class ResolverScopeData {
         @Nullable
         public PsiClass getPsiClass() {
             return psiClass;
