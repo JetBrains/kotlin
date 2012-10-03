@@ -266,7 +266,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         javaDescriptorSignatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classData.getClassDescriptor(), "class " + qualifiedName);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
-        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classData.getTypeParameters()));
+        List<TypeParameterDescriptor> classTypeParameters = classData.getClassDescriptor().getTypeConstructor().getParameters();
+        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
 
         MutableClassDescriptorLite classObject = createClassObjectDescriptor(classData.getClassDescriptor(), psiClass);
         if (classObject != null) {

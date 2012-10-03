@@ -21,15 +21,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 class JavaDescriptorResolveData {
@@ -71,7 +67,13 @@ class JavaDescriptorResolveData {
         private final boolean kotlin;
         private final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
 
-        protected ResolverScopeData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @Nullable FqName fqName, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
+        protected ResolverScopeData(
+                @Nullable PsiClass psiClass,
+                @Nullable PsiPackage psiPackage,
+                @Nullable FqName fqName,
+                boolean staticMembers,
+                @NotNull ClassOrNamespaceDescriptor descriptor
+        ) {
             JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
 
             this.psiClass = psiClass;
@@ -123,15 +125,18 @@ class JavaDescriptorResolveData {
         void setNamedMembersMap(Map<Name, NamedMembers> namedMembersMap) {
             this.namedMembersMap = namedMembersMap;
         }
-
-        @NotNull
-        public abstract List<TypeParameterDescriptor> getTypeParameters();
     }
 
-    /** Class with instance members */
+    /**
+     * Class with instance members
+     */
     static class ResolverBinaryClassData extends ResolverClassData {
 
-        ResolverBinaryClassData(@NotNull PsiClass psiClass, @Nullable FqName fqName, @NotNull ClassDescriptorFromJvmBytecode classDescriptor) {
+        ResolverBinaryClassData(
+                @NotNull PsiClass psiClass,
+                @Nullable FqName fqName,
+                @NotNull ClassDescriptorFromJvmBytecode classDescriptor
+        ) {
             super(psiClass, null, fqName, false, classDescriptor);
         }
 
@@ -140,7 +145,6 @@ class JavaDescriptorResolveData {
         }
 
         static final ResolverClassData NEGATIVE = new ResolverBinaryClassData(true);
-
     }
 
     static class ResolverClassData extends ResolverScopeData {
@@ -167,13 +171,6 @@ class JavaDescriptorResolveData {
         public ClassDescriptorFromJvmBytecode getClassDescriptor() {
             return classDescriptor;
         }
-
-        @NotNull
-        @Override
-        public List<TypeParameterDescriptor> getTypeParameters() {
-            return getClassDescriptor().getTypeConstructor().getParameters();
-        }
-
     }
 
 
@@ -188,7 +185,9 @@ class JavaDescriptorResolveData {
         }
     }
 
-    /** Either package or class with static members */
+    /**
+     * Either package or class with static members
+     */
     static class ResolverNamespaceData extends ResolverScopeData {
         static final ResolverNamespaceData NEGATIVE = new ResolverNamespaceData(true);
 
@@ -196,7 +195,12 @@ class JavaDescriptorResolveData {
 
         private JavaPackageScope memberScope;
 
-        ResolverNamespaceData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @NotNull FqName fqName, @NotNull NamespaceDescriptor namespaceDescriptor) {
+        ResolverNamespaceData(
+                @Nullable PsiClass psiClass,
+                @Nullable PsiPackage psiPackage,
+                @NotNull FqName fqName,
+                @NotNull NamespaceDescriptor namespaceDescriptor
+        ) {
             super(psiClass, psiPackage, fqName, true, namespaceDescriptor);
             this.namespaceDescriptor = namespaceDescriptor;
         }
@@ -216,12 +220,6 @@ class JavaDescriptorResolveData {
 
         public void setMemberScope(JavaPackageScope memberScope) {
             this.memberScope = memberScope;
-        }
-
-        @NotNull
-        @Override
-        public List<TypeParameterDescriptor> getTypeParameters() {
-            return new ArrayList<TypeParameterDescriptor>(0);
         }
     }
 }
