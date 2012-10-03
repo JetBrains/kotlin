@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -38,6 +38,14 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import java.util.*;
 
 public final class JavaDescriptorPropertiesResolver {
+
+    private static class GroupingValue {
+        PropertyAccessorData getter;
+        PropertyAccessorData setter;
+        PropertyAccessorData field;
+        boolean ext;
+    }
+
     private final JavaDescriptorResolver javaDescriptorResolver;
     private JavaSemanticServices semanticServices;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
@@ -59,10 +67,11 @@ public final class JavaDescriptorPropertiesResolver {
         this.javaDescriptorSignatureResolver = javaDescriptorSignatureResolver;
     }
 
-    void resolveNamedGroupProperties(
+    public void resolveNamedGroupProperties(
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull ResolverScopeData scopeData,
-            @NotNull NamedMembers namedMembers, @NotNull Name propertyName,
+            @NotNull NamedMembers namedMembers,
+            @NotNull Name propertyName,
             @NotNull String context
     ) {
         JavaDescriptorResolver.getResolverScopeData(scopeData);
@@ -75,53 +84,7 @@ public final class JavaDescriptorPropertiesResolver {
             namedMembers.propertyAccessors = Collections.emptyList();
         }
 
-        class GroupingValue {
-            PropertyAccessorData getter;
-            PropertyAccessorData setter;
-            PropertyAccessorData field;
-            boolean ext;
-        }
-
-        Map<Object, GroupingValue> map = new HashMap<Object, GroupingValue>();
-
-        for (PropertyAccessorData propertyAccessor : namedMembers.propertyAccessors) {
-
-            Object key = propertyKeyForGrouping(propertyAccessor);
-
-            GroupingValue value = map.get(key);
-            if (value == null) {
-                value = new GroupingValue();
-                value.ext = propertyAccessor.getReceiverType() != null;
-                map.put(key, value);
-            }
-
-            if (value.ext != (propertyAccessor.getReceiverType() != null)) {
-                throw new IllegalStateException("internal error, incorrect key");
-            }
-
-            if (propertyAccessor.isGetter()) {
-                if (value.getter != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
-                value.getter = propertyAccessor;
-            }
-            else if (propertyAccessor.isSetter()) {
-                if (value.setter != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
-                value.setter = propertyAccessor;
-            }
-            else if (propertyAccessor.isField()) {
-                if (value.field != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
-                value.field = propertyAccessor;
-            }
-            else {
-                throw new IllegalStateException();
-            }
-        }
-
+        Map<String, GroupingValue> map = collectGroupingValuesFromAccessors(namedMembers.propertyAccessors);
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
 
@@ -352,7 +315,7 @@ public final class JavaDescriptorPropertiesResolver {
         return r;
     }
 
-    private static Object key(TypeSource typeSource) {
+    private static String key(TypeSource typeSource) {
         if (typeSource == null) {
             return "";
         }
@@ -360,29 +323,14 @@ public final class JavaDescriptorPropertiesResolver {
             return typeSource.getTypeString();
         }
         else {
-            return psiTypeToKey(typeSource.getPsiType());
+            return typeSource.getPsiType().getPresentableText();
         }
     }
 
-    private static Object psiTypeToKey(PsiType psiType) {
-        if (psiType instanceof PsiClassType) {
-            return ((PsiClassType) psiType).getClassName();
-        }
-        else if (psiType instanceof PsiPrimitiveType) {
-            return psiType.getPresentableText();
-        }
-        else if (psiType instanceof PsiArrayType) {
-            return Pair.create("[", psiTypeToKey(((PsiArrayType) psiType).getComponentType()));
-        }
-        else {
-            throw new IllegalStateException(psiType.getClass().toString());
-        }
-    }
-
-    private static Object propertyKeyForGrouping(PropertyAccessorData propertyAccessor) {
-        Object type = key(propertyAccessor.getType());
-        Object receiverType = key(propertyAccessor.getReceiverType());
-        return Pair.create(type, receiverType);
+    private static String propertyKeyForGrouping(PropertyAccessorData propertyAccessor) {
+        String type = key(propertyAccessor.getType());
+        String receiverType = key(propertyAccessor.getReceiverType());
+        return Pair.create(type, receiverType).toString();
     }
 
     @NotNull
@@ -407,5 +355,47 @@ public final class JavaDescriptorPropertiesResolver {
         else {
             return owner;
         }
+    }
+
+    private static Map<String, GroupingValue> collectGroupingValuesFromAccessors(List<PropertyAccessorData> propertyAccessors) {
+        Map<String, GroupingValue> map = new HashMap<String, GroupingValue>();
+        for (PropertyAccessorData propertyAccessor : propertyAccessors) {
+            String key = propertyKeyForGrouping(propertyAccessor);
+
+            GroupingValue value = map.get(key);
+            if (value == null) {
+                value = new GroupingValue();
+                value.ext = propertyAccessor.getReceiverType() != null;
+                map.put(key, value);
+            }
+
+            if (value.ext && (propertyAccessor.getReceiverType() == null)) {
+                throw new IllegalStateException("internal error, incorrect key");
+            }
+
+            if (propertyAccessor.isGetter()) {
+                if (value.getter != null) {
+                    throw new IllegalStateException("oops, duplicate key");
+                }
+                value.getter = propertyAccessor;
+            }
+            else if (propertyAccessor.isSetter()) {
+                if (value.setter != null) {
+                    throw new IllegalStateException("oops, duplicate key");
+                }
+                value.setter = propertyAccessor;
+            }
+            else if (propertyAccessor.isField()) {
+                if (value.field != null) {
+                    throw new IllegalStateException("oops, duplicate key");
+                }
+                value.field = propertyAccessor;
+            }
+            else {
+                throw new IllegalStateException();
+            }
+        }
+
+        return map;
     }
 }
