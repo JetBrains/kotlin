@@ -164,6 +164,29 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "  OBJECT_DECLARATION:PsiJetObjectStubImpl[name=Test fqName=Test]\n");
     }
 
+    public void testAnnotationOnClass() {
+        doBuildTest("Deprecated class Test {}",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]\n" +
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[text=Deprecated]\n" +
+                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
+    }
+
+    public void testAnnotationOnFunction() {
+        doBuildTest("Deprecated fun foo() {}",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[text=Deprecated]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
+    public void testAnnotationOnLocalFunction() {
+        doBuildTest("fun foo() { [Deprecated] fun innerFoo() {} }",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
     private void doBuildTest(@NonNls final String source, @NonNls @NotNull final String tree) {
         final JetFile file = (JetFile) createLightFile(JetFileType.INSTANCE, source);
         final FileASTNode fileNode = file.getNode();

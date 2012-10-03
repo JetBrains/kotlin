@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.stubindex;
 
 import com.intellij.psi.stubs.StubIndexKey;
+import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -43,5 +44,7 @@ public interface JetIndexKeys {
             StubIndexKey.createIndexKey("jet.top.level.property.fqn.name");
 
     StubIndexKey<String, JetNamedFunction> FUNCTIONS_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.functions.short.name");
+
+    StubIndexKey<String, JetAnnotationEntry> ANNOTATIONS_KEY = StubIndexKey.createIndexKey("jet.annotations");
 }
 

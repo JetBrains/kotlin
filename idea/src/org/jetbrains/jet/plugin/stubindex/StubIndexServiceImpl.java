@@ -17,10 +17,7 @@
 package org.jetbrains.jet.plugin.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
+import org.jetbrains.jet.lang.psi.stubs.*;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -90,5 +87,10 @@ public class StubIndexServiceImpl implements StubIndexService {
                 sink.occurrence(JetIndexKeys.TOP_LEVEL_PROPERTY_FQN_NAME_KEY, topFQName.toString());
             }
         }
+    }
+
+    @Override
+    public void indexAnnotation(PsiJetAnnotationStub stub, IndexSink sink) {
+        sink.occurrence(JetIndexKeys.ANNOTATIONS_KEY, stub.getText());
     }
 }

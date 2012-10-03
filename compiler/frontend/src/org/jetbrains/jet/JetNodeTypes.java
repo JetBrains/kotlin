@@ -57,7 +57,7 @@ public interface JetNodeTypes {
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType PRIMARY_CONSTRUCTOR_MODIFIER_LIST   = new JetNodeType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST", JetModifierList.class);
     JetNodeType ANNOTATION = new JetNodeType("ANNOTATION", JetAnnotation.class);
-    JetNodeType ANNOTATION_ENTRY = new JetNodeType("ANNOTATION_ENTRY", JetAnnotationEntry.class);
+    IElementType ANNOTATION_ENTRY = JetStubElementTypes.ANNOTATION_ENTRY;
 
     JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentList.class);
