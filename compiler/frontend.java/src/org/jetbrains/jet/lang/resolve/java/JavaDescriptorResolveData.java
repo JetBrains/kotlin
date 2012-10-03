@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -131,9 +132,9 @@ public class JavaDescriptorResolveData {
     /**
      * Class with instance members
      */
-    static class ResolverBinaryClassData extends ResolverClassData {
+    public static class ResolverBinaryClassData extends ResolverClassData {
 
-        ResolverBinaryClassData(
+        public ResolverBinaryClassData(
                 @NotNull PsiClass psiClass,
                 @Nullable FqName fqName,
                 @NotNull ClassDescriptorFromJvmBytecode classDescriptor
@@ -148,7 +149,7 @@ public class JavaDescriptorResolveData {
         static final ResolverClassData NEGATIVE = new ResolverBinaryClassData(true);
     }
 
-    static class ResolverClassData extends ResolverScopeData {
+    public static class ResolverClassData extends ResolverScopeData {
 
         private final ClassDescriptorFromJvmBytecode classDescriptor;
 
