@@ -147,13 +147,10 @@ class JavaDescriptorResolveData {
 
         private final ClassDescriptorFromJvmBytecode classDescriptor;
 
-        List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameters;
-
         protected ResolverClassData(boolean negative) {
             super(negative);
             this.classDescriptor = null;
         }
-
 
         protected ResolverClassData(
                 @Nullable PsiClass psiClass,
@@ -165,6 +162,7 @@ class JavaDescriptorResolveData {
             super(psiClass, psiPackage, fqName, staticMembers, descriptor);
             classDescriptor = descriptor;
         }
+
 
         public ClassDescriptorFromJvmBytecode getClassDescriptor() {
             return classDescriptor;

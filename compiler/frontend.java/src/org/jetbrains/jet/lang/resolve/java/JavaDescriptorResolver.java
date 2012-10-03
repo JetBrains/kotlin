@@ -239,10 +239,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         List<JetType> supertypes = new ArrayList<JetType>();
 
-        classData.typeParameters = javaDescriptorSignatureResolver.createUninitializedClassTypeParameters(psiClass, classData);
+        List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
+                = javaDescriptorSignatureResolver.createUninitializedClassTypeParameters(psiClass, classData);
         
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>();
-        for (JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization typeParameter : classData.typeParameters) {
+        for (JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization typeParameter : typeParameterDescriptorInitializations) {
             typeParameters.add(typeParameter.descriptor);
         }
         
@@ -262,7 +263,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         classData.getClassDescriptor().createTypeConstructor();
         classData.getClassDescriptor().setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
 
-        javaDescriptorSignatureResolver.initializeTypeParameters(classData.typeParameters, classData.getClassDescriptor(), "class " + qualifiedName);
+        javaDescriptorSignatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classData.getClassDescriptor(), "class " + qualifiedName);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classData.getTypeParameters()));
