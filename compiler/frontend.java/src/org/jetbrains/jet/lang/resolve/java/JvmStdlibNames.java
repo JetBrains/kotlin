@@ -57,6 +57,10 @@ public class JvmStdlibNames {
     public static final int FLAG_METHOD_KIND_DELEGATION =    2 << 5;
     public static final int FLAG_METHOD_KIND_SYNTHESIZED =   3 << 5;
 
+    public static final int FLAG_CLASS_KIND_MASK = 7 << 5;
+    public static final int FLAG_CLASS_KIND_DEFAULT = 0 << 5;
+    public static final int FLAG_CLASS_KIND_OBJECT = 1 << 5;
+
     public static final JvmClassName JET_CONSTRUCTOR = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetConstructor");
 
     /**

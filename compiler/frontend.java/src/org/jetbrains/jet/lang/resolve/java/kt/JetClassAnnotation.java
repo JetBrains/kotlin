@@ -50,6 +50,10 @@ public class JetClassAnnotation extends PsiAnnotationWithFlags {
         return signature;
     }
 
+    public int kind() {
+        return flags() & JvmStdlibNames.FLAG_CLASS_KIND_MASK;
+    }
+
     @NotNull
     public static JetClassAnnotation get(PsiClass psiClass) {
         final PsiAnnotation annotation = JavaDescriptorResolver.findAnnotation(psiClass, JvmStdlibNames.JET_CLASS.getFqName().getFqName());

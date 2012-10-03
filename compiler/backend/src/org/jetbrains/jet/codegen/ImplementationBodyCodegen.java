@@ -250,7 +250,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (signature.getKotlinGenericSignature() != null || descriptor.getVisibility() != Visibilities.PUBLIC) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(JvmStdlibNames.JET_CLASS.getDescriptor(), true);
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
-            int flags = getFlagsForVisibility(descriptor.getVisibility());
+            int flags = getFlagsForVisibility(descriptor.getVisibility()) | getFlagsForClassKind(descriptor);
             if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flags) {
                 annotationVisitor.visit(JvmStdlibNames.JET_FLAGS_FIELD, flags);
             }

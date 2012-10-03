@@ -112,6 +112,10 @@ public class CodegenUtil {
         return 0;
     }
 
+    public static int getFlagsForClassKind(@NotNull ClassDescriptor descriptor) {
+        return descriptor.getKind() == ClassKind.OBJECT ? JvmStdlibNames.FLAG_CLASS_KIND_OBJECT : JvmStdlibNames.FLAG_CLASS_KIND_DEFAULT;
+    }
+
     @NotNull
     public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
         final int paramCount = descriptor.getValueParameters().size();
