@@ -34,8 +34,10 @@ public class PsiParameterWrapper {
         this.jetTypeParameter = JetTypeParameterAnnotation.get(psiParameter);
     }
 
-    private JetValueParameterAnnotation jetValueParameter;
-    private JetTypeParameterAnnotation jetTypeParameter;
+    @NotNull
+    private final JetValueParameterAnnotation jetValueParameter;
+    @NotNull
+    private final JetTypeParameterAnnotation jetTypeParameter;
 
     @NotNull
     public PsiParameter getPsiParameter() {
