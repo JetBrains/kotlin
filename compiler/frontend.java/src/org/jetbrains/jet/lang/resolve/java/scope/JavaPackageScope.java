@@ -53,8 +53,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        // TODO
-        return null;
+        return semanticServices.getDescriptorResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
     }
 
     @Override

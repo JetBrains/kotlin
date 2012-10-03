@@ -230,7 +230,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         checkPsiClassIsNotJet(psiClass);
 
         Name name = Name.identifier(psiClass.getName());
-        ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : (psiClass.isEnum() ? ClassKind.ENUM_CLASS : ClassKind.CLASS);
+        JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
+        ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
 
         // class may be resolved during resolution of parent
@@ -257,7 +258,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         
         classData.getClassDescriptor().setTypeParameterDescriptors(typeParameters);
         classData.getClassDescriptor().setSupertypes(supertypes);
-        classData.getClassDescriptor().setVisibility(resolveVisibility(psiClass, JetClassAnnotation.get(psiClass)));
+        classData.getClassDescriptor().setVisibility(resolveVisibility(psiClass, jetClassAnnotation));
         Modality modality;
         if (classData.getClassDescriptor().getKind() == ClassKind.ANNOTATION_CLASS) {
             modality = Modality.FINAL;
@@ -287,6 +288,20 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         trace.record(BindingContext.CLASS, psiClass, classData.getClassDescriptor());
 
         return classData;
+    }
+
+    private static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
+        if (psiClass.isInterface()) {
+            return (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT);
+        }
+        else {
+            if (psiClass.isEnum()) {
+                return ClassKind.ENUM_CLASS;
+            }
+            else {
+                return jetClassAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT ? ClassKind.OBJECT : ClassKind.CLASS;
+            }
+        }
     }
 
     @NotNull
@@ -892,11 +907,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull Name fieldName, @NotNull ResolverScopeData scopeData) {
 
-        final PsiClass psiClass = scopeData.getPsiClass();
-        if (psiClass == null) {
-            return Collections.emptySet();
-        }
-
+        PsiClass psiClass = scopeData.getPsiClass();
         getResolverScopeData(scopeData);
 
         NamedMembers namedMembers = scopeData.getNamedMembersMap().get(fieldName);
@@ -904,9 +915,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return Collections.emptySet();
         }
 
-        final String qualifiedName = psiClass.getQualifiedName();
-        javaDescriptorPropertiesResolver.resolveNamedGroupProperties(
-                scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
+        //noinspection ConstantConditions
+        String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
+        javaDescriptorPropertiesResolver.resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
                 "class or namespace " + qualifiedName);
 
         return namedMembers.propertyDescriptors;

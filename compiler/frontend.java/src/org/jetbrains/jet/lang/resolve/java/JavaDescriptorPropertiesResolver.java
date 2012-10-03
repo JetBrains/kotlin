@@ -116,10 +116,11 @@ public final class JavaDescriptorPropertiesResolver {
             DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, characteristicMember.getMember().isStatic());
 
             boolean isEnumEntry = DescriptorUtils.isEnumClassObject(realOwner);
+            boolean isPropertyForNamedObject = members.field != null && JvmAbi.INSTANCE_FIELD.equals(members.field.getMember().getName());
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     realOwner,
                     javaDescriptorResolver.resolveAnnotations(characteristicMember.getMember().getPsiMember()),
-                    JavaDescriptorResolver.resolveModality(characteristicMember.getMember(), isFinal || isEnumEntry),
+                    JavaDescriptorResolver.resolveModality(characteristicMember.getMember(), isFinal || isEnumEntry || isPropertyForNamedObject),
                     visibility,
                     isVar,
                     propertyName,
@@ -205,6 +206,16 @@ public final class JavaDescriptorPropertiesResolver {
             if (kind == CallableMemberDescriptor.Kind.DECLARATION) {
                 trace.record(BindingContext.VARIABLE, characteristicMember.getMember().getPsiMember(), propertyDescriptor);
             }
+
+            if (isPropertyForNamedObject) {
+                ClassDescriptor objectDescriptor = (ClassDescriptor) propertyType.getConstructor().getDeclarationDescriptor();
+
+                assert objectDescriptor.getKind() == ClassKind.OBJECT;
+                assert objectDescriptor.getContainingDeclaration() == realOwner;
+
+                trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, objectDescriptor);
+            }
+
 
             propertiesFromCurrent.add(propertyDescriptor);
         }
@@ -377,11 +388,8 @@ public final class JavaDescriptorPropertiesResolver {
             @NotNull ResolverScopeData scopeData,
             boolean isStatic
     ) {
-        final PsiClass psiClass = scopeData.getPsiClass();
-        assert psiClass != null;
-
-        boolean isEnum = psiClass.isEnum();
-        if (isEnum && isStatic) {
+        PsiClass psiClass = scopeData.getPsiClass();
+        if (psiClass != null && psiClass.isEnum() && isStatic) {
             final String qualifiedName = psiClass.getQualifiedName();
             assert qualifiedName != null;
             final ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName(qualifiedName));
