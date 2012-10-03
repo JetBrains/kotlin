@@ -137,6 +137,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/loadKotlin/class/InnerClassExtendInnerClass.kt");
             }
             
+            @TestMetadata("NamedObject.kt")
+            public void testNamedObject() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/class/NamedObject.kt");
+            }
+            
+            @TestMetadata("NamedObjectWithAnotherTopLevelProperty.kt")
+            public void testNamedObjectWithAnotherTopLevelProperty() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
+            }
+            
             @TestMetadata("Trait.kt")
             public void testTrait() throws Exception {
                 doTestSinglePackage("compiler/testData/loadKotlin/class/Trait.kt");
