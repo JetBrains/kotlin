@@ -53,7 +53,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
-        return resolverScopeData.classOrNamespaceDescriptor;
+        return resolverScopeData.getClassOrNamespaceDescriptor();
     }
 
     @NotNull
@@ -74,7 +74,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
 
-            if (resolverScopeData.psiClass != null) {
+            if (resolverScopeData.getPsiClass() != null) {
 
                 ProgressIndicatorProvider.checkCanceled();
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
@@ -85,21 +85,21 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
                 // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
                 if (getContainingDeclaration() instanceof JavaNamespaceDescriptor) {
                     allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                            resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, false));
+                            resolverScopeData.getClassOrNamespaceDescriptor(), resolverScopeData.getPsiClass(), false));
                 }
                 else {
                     allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                            resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass,
-                            resolverScopeData.staticMembers));
+                            resolverScopeData.getClassOrNamespaceDescriptor(), resolverScopeData.getPsiClass(),
+                            resolverScopeData.isStaticMembers()));
                 }
             }
 
-            if (resolverScopeData.psiPackage != null) {
-                FqName packageFqName = resolverScopeData.fqName;
+            if (resolverScopeData.getPsiPackage() != null) {
+                FqName packageFqName = resolverScopeData.getFqName();
                 boolean isKotlinNamespace = packageFqName != null && semanticServices.getKotlinNamespaceDescriptor(packageFqName) != null;
                 final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
 
-                for (PsiPackage psiSubPackage : resolverScopeData.psiPackage.getSubPackages()) {
+                for (PsiPackage psiSubPackage : resolverScopeData.getPsiPackage().getSubPackages()) {
                     NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(
                             new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                     if (childNs != null) {
@@ -107,7 +107,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
                     }
                 }
 
-                for (PsiClass psiClass : resolverScopeData.psiPackage.getClasses()) {
+                for (PsiClass psiClass : resolverScopeData.getPsiPackage().getClasses()) {
                     if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
                         continue;
                     }

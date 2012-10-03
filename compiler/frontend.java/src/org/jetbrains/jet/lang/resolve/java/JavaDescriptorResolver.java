@@ -283,7 +283,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
-        PsiClass psiClass = classData.psiClass;
+        PsiClass psiClass = classData.getPsiClass();
 
         ClassDescriptorFromJvmBytecode containingClass = classData.classDescriptor;
         assert psiClass != null;
@@ -609,7 +609,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
         
         if (result.isEmpty()) {
-            if (classData.kotlin
+            if (classData.isKotlin()
                     || OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
                     // TODO: annotations
                     || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
@@ -882,7 +882,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull Name fieldName, @NotNull ResolverScopeData scopeData) {
 
-        final PsiClass psiClass = scopeData.psiClass;
+        final PsiClass psiClass = scopeData.getPsiClass();
         if (psiClass == null) {
             return Collections.emptySet();
         }
@@ -896,7 +896,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         final String qualifiedName = psiClass.getQualifiedName();
         javaDescriptorPropertiesResolver.resolveNamedGroupProperties(
-                scopeData.classOrNamespaceDescriptor, scopeData, namedMembers, fieldName,
+                scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
                 "class or namespace " + qualifiedName);
 
         return namedMembers.propertyDescriptors;
@@ -906,7 +906,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
 
         getResolverScopeData(scopeData);
-        final PsiClass psiClass = scopeData.psiClass;
+        final PsiClass psiClass = scopeData.getPsiClass();
         assert psiClass != null;
 
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
@@ -916,7 +916,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             Name propertyName = entry.getKey();
 
             javaDescriptorPropertiesResolver.resolveNamedGroupProperties(
-                    scopeData.classOrNamespaceDescriptor, scopeData, namedMembers, propertyName,
+                    scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, propertyName,
                     "class or namespace " + psiClass.getQualifiedName());
             descriptors.addAll(namedMembers.propertyDescriptors);
         }
@@ -1001,7 +1001,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         NamedMembers namedMembers = namedMembersMap.get(methodName);
         if (namedMembers != null && namedMembers.methods != null) {
 
-            resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass, namedMembers, methodName, scopeData);
+            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(), namedMembers, methodName, scopeData);
 
             return namedMembers.functionDescriptors;
         }
@@ -1055,7 +1055,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         final PsiMethod psiMethod = method.getPsiMethod();
         final PsiClass containingClass = psiMethod.getContainingClass();
-        if (scopeData.kotlin) {
+        if (scopeData.isKotlin()) {
             // TODO: unless maybe class explicitly extends Object
             assert containingClass != null;
             String ownerClassName = containingClass.getQualifiedName();
@@ -1069,7 +1069,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
-                scopeData.classOrNamespaceDescriptor,
+                scopeData.getClassOrNamespaceDescriptor(),
                 resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
                 DescriptorKindUtils.flagsToKind(method.getJetMethod().kind())
@@ -1102,7 +1102,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         functionDescriptorImpl.initialize(
                 valueParameterDescriptors.receiverType,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(scopeData.classOrNamespaceDescriptor),
+                DescriptorUtils.getExpectedThisObjectIfNeeded(scopeData.getClassOrNamespaceDescriptor()),
                 methodTypeParameters,
                 valueParameterDescriptors.descriptors,
                 returnType,
@@ -1364,7 +1364,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         for (Map.Entry<Name, NamedMembers> entry : scopeData.getNamedMembersMap().entrySet()) {
             Name methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
-            resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass,
+            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(),
                                        namedMembers, methodName, scopeData);
             functions.addAll(namedMembers.functionDescriptors);
         }

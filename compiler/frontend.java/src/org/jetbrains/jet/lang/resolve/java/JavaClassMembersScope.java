@@ -45,7 +45,7 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
             @NotNull ResolverScopeData resolverScopeData) {
         super(semanticServices, resolverScopeData);
 
-        if (resolverScopeData.psiClass == null) {
+        if (resolverScopeData.getPsiClass() == null) {
             throw new IllegalArgumentException("must pass PsiClass here");
         }
     }
@@ -79,9 +79,9 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
 
     private ClassifierDescriptor doGetClassifierDescriptor(Name name) {
         // TODO : suboptimal, walk the list only once
-        for (PsiClass innerClass : resolverScopeData.psiClass.getAllInnerClasses()) {
+        for (PsiClass innerClass : resolverScopeData.getPsiClass().getAllInnerClasses()) {
             if (name.getName().equals(innerClass.getName())) {
-                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != resolverScopeData.staticMembers) return null;
+                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != resolverScopeData.isStaticMembers()) return null;
                 ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver()
                         .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {

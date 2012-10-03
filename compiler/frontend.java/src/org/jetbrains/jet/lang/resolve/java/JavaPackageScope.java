@@ -39,7 +39,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
         super(semanticServices, resolverNamespaceData);
         this.packageFQN = packageFQN;
 
-        if (!resolverNamespaceData.staticMembers) {
+        if (!resolverNamespaceData.isStaticMembers()) {
             throw new IllegalArgumentException("instance members should be resolved using " + JavaClassMembersScope.class);
         }
     }

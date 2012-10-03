@@ -35,14 +35,41 @@ import java.util.Map;
 class JavaDescriptorResolveData {
     static abstract class ResolverScopeData {
         @Nullable
-        final PsiClass psiClass;
+        public PsiClass getPsiClass() {
+            return psiClass;
+        }
+
         @Nullable
-        final PsiPackage psiPackage;
+        public PsiPackage getPsiPackage() {
+            return psiPackage;
+        }
+
         @Nullable
-        final FqName fqName;
-        final boolean staticMembers;
-        final boolean kotlin;
-        final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
+        public FqName getFqName() {
+            return fqName;
+        }
+
+        public boolean isStaticMembers() {
+            return staticMembers;
+        }
+
+        public boolean isKotlin() {
+            return kotlin;
+        }
+
+        public ClassOrNamespaceDescriptor getClassOrNamespaceDescriptor() {
+            return classOrNamespaceDescriptor;
+        }
+
+        @Nullable
+        private final PsiClass psiClass;
+        @Nullable
+        private final PsiPackage psiPackage;
+        @Nullable
+        private final FqName fqName;
+        private final boolean staticMembers;
+        private final boolean kotlin;
+        private final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
 
         protected ResolverScopeData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @Nullable FqName fqName, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
             JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);

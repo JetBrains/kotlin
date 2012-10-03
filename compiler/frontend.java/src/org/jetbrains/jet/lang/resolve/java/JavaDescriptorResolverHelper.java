@@ -208,9 +208,9 @@ class JavaDescriptorResolverHelper {
 
     @NotNull
     static Map<Name, NamedMembers> getNamedMembers(@NotNull ResolverScopeData resolverScopeData) {
-        if (resolverScopeData.psiClass != null) {
+        if (resolverScopeData.getPsiClass() != null) {
             @SuppressWarnings("ConstantConditions")
-            Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.psiClass), resolverScopeData.staticMembers, resolverScopeData.kotlin);
+            Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.getPsiClass()), resolverScopeData.isStaticMembers(), resolverScopeData.isKotlin());
             builder.run();
             return builder.namedMembersMap;
         }

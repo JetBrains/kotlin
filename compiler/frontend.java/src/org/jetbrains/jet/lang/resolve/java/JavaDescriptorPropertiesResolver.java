@@ -327,7 +327,7 @@ public final class JavaDescriptorPropertiesResolver {
     }
 
     private static boolean isPropertyFinal(ResolverScopeData scopeData, GroupingValue members) {
-        if (!scopeData.kotlin) {
+        if (!scopeData.isKotlin()) {
             return true;
         }
 
@@ -376,7 +376,7 @@ public final class JavaDescriptorPropertiesResolver {
             @NotNull ResolverScopeData scopeData,
             boolean isStatic
     ) {
-        final PsiClass psiClass = scopeData.psiClass;
+        final PsiClass psiClass = scopeData.getPsiClass();
         assert psiClass != null;
 
         boolean isEnum = psiClass.isEnum();
