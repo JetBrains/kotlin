@@ -38,8 +38,6 @@ public class StringsTest extends CodegenTestCase {
 //        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("something", foo.invoke(null, "something"));
-        assertEquals("null", foo.invoke(null, new Object[]{null}));
-
     }
 
     public void testNullableAnyToString () throws InvocationTargetException, IllegalAccessException {
@@ -71,9 +69,7 @@ public class StringsTest extends CodegenTestCase {
 //        System.out.println(text);
         Method foo = generateFunction();
         assertEquals("something239120", foo.invoke(null, "something", 239));
-        assertEquals("null239120", foo.invoke(null, null, 239));
         assertEquals("239null120", foo.invoke(null, "239", null));
-        assertEquals("nullnull120", foo.invoke(null, null, null));
 
     }
 

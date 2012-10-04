@@ -41,11 +41,12 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         super.setUp();
     }
 
-    private void setUpEnvironment(boolean generateAssertions, File... extraClassPath) {
+    private void setUpEnvironment(boolean generateAssertions, boolean generateParamAssertions, File... extraClassPath) {
         CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, extraClassPath);
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, generateAssertions);
+        configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, generateParamAssertions);
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
     }
@@ -53,7 +54,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     private void doTestGenerateAssertions(boolean generateAssertions, String ktFile) throws Exception {
         File javaClassesTempDirectory = compileJava("notNullAssertions/A.java");
 
-        setUpEnvironment(generateAssertions, javaClassesTempDirectory);
+        setUpEnvironment(generateAssertions, false, javaClassesTempDirectory);
 
         blackBoxMultiFile("OK", false, "notNullAssertions/AssertionChecker.kt", ktFile);
     }
@@ -67,7 +68,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     public void testNoAssertionsForKotlinFromSource() throws Exception {
-        setUpEnvironment(true);
+        setUpEnvironment(true, false);
 
         loadFiles("notNullAssertions/noAssertionsForKotlin.kt", "notNullAssertions/noAssertionsForKotlinMain.kt");
 
@@ -83,11 +84,35 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
         CompileEnvironmentUtil.writeToOutputDirectory(state.getFactory(), compiledDirectory);
 
-        setUpEnvironment(true, compiledDirectory);
+        setUpEnvironment(true, false, compiledDirectory);
 
         loadFile("notNullAssertions/noAssertionsForKotlinMain.kt");
 
         assertNoIntrinsicsMethodIsCalled("namespace");
+    }
+
+    public void testGenerateParamAssertions() throws Exception {
+        File javaClassesTempDirectory = compileJava("notNullAssertions/doGenerateParamAssertions.java");
+
+        setUpEnvironment(false, true, javaClassesTempDirectory);
+
+        blackBoxFile("notNullAssertions/doGenerateParamAssertions.kt");
+    }
+
+    public void testDoNotGenerateParamAssertions() throws Exception {
+        setUpEnvironment(false, false);
+
+        loadFile("notNullAssertions/doNotGenerateParamAssertions.kt");
+
+        assertNoIntrinsicsMethodIsCalled("A");
+    }
+
+    public void testNoParamAssertionForPrivateMethod() throws Exception {
+        setUpEnvironment(false, true);
+
+        loadFile("notNullAssertions/noAssertionForPrivateMethod.kt");
+
+        assertNoIntrinsicsMethodIsCalled("A");
     }
 
     private void assertNoIntrinsicsMethodIsCalled(String className) {

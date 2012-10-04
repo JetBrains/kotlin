@@ -422,6 +422,31 @@ public class AsmUtil {
         genMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
     }
 
+    public static void genNotNullAssertionsForParameters(
+            @NotNull InstructionAdapter v,
+            @NotNull GenerationState state,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull FrameMap frameMap
+    ) {
+        if (!state.isGenerateNotNullParamAssertions()) return;
+
+        // Private method is not accessible from other classes, no assertions needed
+        if (getVisibilityAccessFlag(descriptor) == ACC_PRIVATE) return;
+
+        for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
+            JetType type = parameter.getReturnType();
+            if (type == null || type.isNullable()) continue;
+
+            int index = frameMap.getIndex(parameter);
+            Type asmType = state.getTypeMapper().mapReturnType(type);
+            if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
+                v.load(index, asmType);
+                v.visitLdcInsn(descriptor.getName().getName());
+                v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
+            }
+        }
+    }
+
     public static void genNotNullAssertionForField(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,

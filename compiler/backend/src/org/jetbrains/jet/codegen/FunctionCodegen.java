@@ -211,6 +211,8 @@ public class FunctionCodegen extends GenerationStateAware {
 
             createSharedVarsForParameters(mv, functionDescriptor, frameMap, localVariablesInfo);
 
+            genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
+
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, asmMethod.getReturnType(), context, state);
             codegen.returnExpression(fun.getBodyExpression());
 
