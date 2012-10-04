@@ -168,7 +168,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         doBuildTest("Deprecated class Test {}",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]\n" +
-                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[text=Deprecated]\n" +
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
                     "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
     }
 
@@ -176,7 +176,24 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         doBuildTest("Deprecated fun foo() {}",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
-                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[text=Deprecated]\n" +
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
+    public void testQualifiedAnnotationOnFunction() {
+        doBuildTest("java.lang.Deprecated fun foo() {}",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
+    public void testManyAnnotationsOnFunction() {
+        doBuildTest("[Deprecated Override] fun foo() {}",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]\n" +
+                    "    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Override]\n" +
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 

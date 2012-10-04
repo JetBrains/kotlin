@@ -95,6 +95,7 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
         return true;
     }
 
+    /* Return all elements annotated with given annotation name. Aliases don't work now. */
     private static Collection<? extends PsiElement> getJetAnnotationCandidates(final PsiClass annClass, final SearchScope useScope) {
         return ApplicationManager.getApplication().runReadAction(new Computable<Collection<? extends PsiElement>>() {
             @Override

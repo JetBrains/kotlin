@@ -91,6 +91,6 @@ public class StubIndexServiceImpl implements StubIndexService {
 
     @Override
     public void indexAnnotation(PsiJetAnnotationStub stub, IndexSink sink) {
-        sink.occurrence(JetIndexKeys.ANNOTATIONS_KEY, stub.getText());
+        sink.occurrence(JetIndexKeys.ANNOTATIONS_KEY, stub.getShortName());
     }
 }

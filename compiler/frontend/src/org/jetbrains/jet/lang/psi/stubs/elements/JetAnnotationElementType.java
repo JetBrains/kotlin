@@ -24,7 +24,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetAnnotationStubImpl;
 
@@ -48,12 +48,23 @@ public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotatio
 
     @Override
     public PsiJetAnnotationStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
-        return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, psi.getText());
+        JetTypeReference typeReference = psi.getTypeReference();
+        assert typeReference != null : "Annotation entry hasn't typeReference " + psi.getText();
+        JetTypeElement typeElement = typeReference.getTypeElement();
+        String shortName = null;
+        if (typeElement instanceof JetUserType) {
+            JetUserType userType = (JetUserType) typeElement;
+            shortName = userType.getReferencedName();
+        }
+        if (shortName == null) {
+            shortName = psi.getText();
+        }
+        return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, shortName);
     }
 
     @Override
     public void serialize(PsiJetAnnotationStub stub, StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getText());
+        dataStream.writeName(stub.getShortName());
     }
 
     @Override
