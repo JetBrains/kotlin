@@ -10,7 +10,31 @@ BUILD=$1
 }
 
 [ ! -f "$DEPLOY_SETTINGS" ] && {
-  echo "Maven deploy settings not found at $DEPLOY_SETTINGS"
+  echo "Maven deploy settings are not found at $DEPLOY_SETTINGS"
+  exit 1
+}
+
+[ ! -f "update_dependencies.xml" -o ! -f "Kotlin.iml" ] && {
+  echo "Run this script from Kotlin checkout root"
+  exit 1
+}
+
+for cmd in java javac ant mvn git; do
+  command -v $cmd >/dev/null 2>&1 || {
+    echo "$cmd must available in \$PATH"
+    exit 1
+  }
+done
+
+(javac -version 2>&1 | fgrep -q 1.6.) || {
+  echo "javac must report report 1.6.X version"
+  exit 1
+}
+
+uncommitted=`git status --porcelain -uno`
+[ -n "$uncommitted" ] && {
+  echo "Uncommited changes detected, commit them and run this script again"
+  echo "$uncommitted"
   exit 1
 }
 
