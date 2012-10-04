@@ -50,7 +50,7 @@ rm -rf /tmp/kotlin-dependencies
 [ -d dependencies ] && mv dependencies /tmp/kotlin-dependencies
 git clean -f -d -x
 git reset --hard
-mv /tmp/kotlin-dependencies dependencies
+[ -d /tmp/kotlin-dependencies ] && mv /tmp/kotlin-dependencies dependencies
 
 ant -f update_dependencies.xml
 ant -f build.xml -Dbuild.number=$BUILD dist
