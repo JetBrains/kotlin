@@ -335,21 +335,23 @@ public class KotlinToJVMBytecodeCompiler {
             AnalyzeExhaust exhaust,
             boolean stubs) {
         Project project = environment.getProject();
+        final CompilerConfiguration configuration = environment.getConfiguration();
         Progress backendProgress = new Progress() {
             @Override
             public void log(String message) {
-                environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
+                configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
             }
         };
         GenerationState generationState = new GenerationState(
                 project, ClassBuilderFactories.binaries(stubs), backendProgress, exhaust, environment.getSourceFiles(),
-                environment.getConfiguration().get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
-                environment.getConfiguration().get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false)
+                configuration.get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
+                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
+                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false)
         );
         GenerationStrategy.STANDARD.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
-        for (CompilerPlugin plugin : environment.getConfiguration().getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
+        for (CompilerPlugin plugin : configuration.getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
             plugin.processFiles(context);
         }
         return generationState;

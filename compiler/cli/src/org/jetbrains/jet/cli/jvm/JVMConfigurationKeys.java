@@ -44,4 +44,6 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_NOT_NULL_ASSERTIONS =
             CompilerConfigurationKey.create("generate not-null assertions");
+    public static final CompilerConfigurationKey<Boolean> GENERATE_NOT_NULL_PARAMETER_ASSERTIONS =
+            CompilerConfigurationKey.create("generate not-null parameter assertions");
 }

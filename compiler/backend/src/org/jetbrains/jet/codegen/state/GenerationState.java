@@ -70,8 +70,10 @@ public class GenerationState {
 
     private final boolean generateNotNullAssertions;
 
+    private final boolean generateNotNullParamAssertions;
+
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED, true);
+        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED, true, false);
     }
 
     public GenerationState(
@@ -81,7 +83,8 @@ public class GenerationState {
             @NotNull AnalyzeExhaust exhaust,
             @NotNull List<JetFile> files,
             @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
-            boolean generateNotNullAssertions
+            boolean generateNotNullAssertions,
+            boolean generateNotNullParamAssertions
     ) {
         this.project = project;
         this.progress = progress;
@@ -102,6 +105,7 @@ public class GenerationState {
         this.classFileFactory = injector.getClassFileFactory();
 
         this.generateNotNullAssertions = generateNotNullAssertions;
+        this.generateNotNullParamAssertions = generateNotNullParamAssertions;
     }
 
     @NotNull
@@ -156,6 +160,10 @@ public class GenerationState {
 
     public boolean isGenerateNotNullAssertions() {
         return generateNotNullAssertions;
+    }
+
+    public boolean isGenerateNotNullParamAssertions() {
+        return generateNotNullParamAssertions;
     }
 
     public void beforeCompile() {

@@ -67,6 +67,9 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "notNullAssertions", description = "generate not-null assertion after each invokation of method returning not-null")
     public boolean notNullAssertions;
 
+    @Argument(value = "notNullParamAssertions", description = "generate not-null assertions on parameters of methods accessible from Java")
+    public boolean notNullParamAssertions;
+
     @Argument(value = "builtins", description = "compile builtin classes (internal)")
     public boolean builtins;
 

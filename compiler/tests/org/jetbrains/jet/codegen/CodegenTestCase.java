@@ -35,6 +35,7 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -359,10 +360,12 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 BuiltinsScopeExtensionMode.ALL);
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+        CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState state = new GenerationState(
                 environment.getProject(), classBuilderFactory, Progress.DEAF, analyzeExhaust, files.getPsiFiles(),
-                environment.getConfiguration().get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
-                environment.getConfiguration().get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true)
+                configuration.get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
+                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
+                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true)
         );
         GenerationStrategy.STANDARD.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
