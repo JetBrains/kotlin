@@ -91,16 +91,36 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
-        if (method == null) return false;
-        if (findKotlinSignatureAnnotation(method) != null) return false;
-        if (method.getModifierList().hasExplicitModifier(PsiModifier.PRIVATE)) return false;
-        return createFix(method, "").isAvailable(project, editor, file);
+        if (method != null) {
+            if (findKotlinSignatureAnnotation(method) != null) return false;
+            if (method.getModifierList().hasExplicitModifier(PsiModifier.PRIVATE)) return false;
+            return createFix(method, "").isAvailable(project, editor, file);
+        }
+
+        PsiField field = findField(file, editor.getCaretModel().getOffset());
+        if (field != null) {
+            if (findKotlinSignatureAnnotation(field) != null) return false;
+            PsiModifierList modifierList = field.getModifierList();
+            if (modifierList == null || modifierList.hasExplicitModifier(PsiModifier.PRIVATE)) return false;
+            return createFix(field, "").isAvailable(project, editor, file);
+        }
+
+        return false;
     }
 
     @Override
     public void invoke(@NotNull final Project project, final Editor editor, PsiFile file) throws IncorrectOperationException {
-        final PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
-        String signature = getDefaultSignature(project, (PsiMethod) method.getOriginalElement());
+        PsiMethod method = findMethod(file, editor.getCaretModel().getOffset());
+        PsiField field = findField(file, editor.getCaretModel().getOffset());
+
+        assert (method != null || field != null);
+
+        String signature = method != null ?
+                           getDefaultSignature(project, (PsiMethod) method.getOriginalElement()) :
+                           getDefaultSignature(project, (PsiField) field.getOriginalElement());
+
+        final PsiModifierListOwner annotatedElement = method != null ? method : field;
+
         final MessageBusConnection busConnection = project.getMessageBus().connect();
         busConnection.subscribe(ExternalAnnotationsManager.TOPIC, new ExternalAnnotationsListener.Adapter() {
             @Override
@@ -108,23 +128,23 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
                     boolean successful) {
                 busConnection.disconnect();
 
-                if (successful && owner == method && KOTLIN_SIGNATURE_ANNOTATION.equals(annotationFQName)) {
+                if (successful && owner == annotatedElement && KOTLIN_SIGNATURE_ANNOTATION.equals(annotationFQName)) {
                     ApplicationManager.getApplication().invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             refreshMarkers(project);
-                            EditSignatureAction.invokeEditSignature(method, editor, null);
+                            EditSignatureAction.invokeEditSignature(annotatedElement, editor, null);
                         }
                     }, ModalityState.NON_MODAL);
                 }
             }
         });
-        createFix(method, signature).invoke(project, editor, file);
+        createFix(annotatedElement, signature).invoke(project, editor, file);
     }
 
     @NotNull
-    private static AddAnnotationFix createFix(@NotNull PsiMethod method, @NotNull String signature) {
-        return new AddAnnotationFix(KOTLIN_SIGNATURE_ANNOTATION, method, signatureToNameValuePairs(method.getProject(), signature));
+    private static AddAnnotationFix createFix(@NotNull PsiModifierListOwner annotatedElement, @NotNull String signature) {
+        return new AddAnnotationFix(KOTLIN_SIGNATURE_ANNOTATION, annotatedElement, signatureToNameValuePairs(annotatedElement.getProject(), signature));
     }
 
     @NotNull
@@ -169,6 +189,33 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
         return String.format("fun %s%s", classFqName.shortName(), RENDERER.renderFunctionParameters(constructorDescriptor));
     }
 
+    @NotNull
+    private static String getDefaultSignature(@NotNull Project project, @NotNull PsiField field) {
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, project);
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+
+        PsiClass containingClass = field.getContainingClass();
+        assert containingClass != null;
+        String qualifiedName = containingClass.getQualifiedName();
+        assert qualifiedName != null;
+        FqName classFqName = new FqName(qualifiedName);
+
+        PsiModifierList modifierList = field.getModifierList();
+        if (modifierList != null && modifierList.hasModifierProperty(PsiModifier.STATIC)) {
+            NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
+            assert namespaceDescriptor != null: "Couldn't resolve namespace descriptor for " + classFqName;
+            namespaceDescriptor.getMemberScope().getProperties(Name.identifier(field.getName()));
+        }
+        else {
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
+            assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
+            classDescriptor.getDefaultType().getMemberScope().getProperties(Name.identifier(field.getName()));
+        }
+
+        // TODO: Generate default string for the field
+        return "";
+    }
+
     @Nullable
     private static PsiMethod findMethod(@NotNull PsiFile file, int offset) {
         PsiElement element = file.findElementAt(offset);
@@ -184,5 +231,10 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
             }
         }
         return res;
+    }
+
+    @Nullable
+    private static PsiField findField(@NotNull PsiFile file, int offset) {
+        return PsiTreeUtil.getParentOfType(file.findElementAt(offset), PsiField.class);
     }
 }

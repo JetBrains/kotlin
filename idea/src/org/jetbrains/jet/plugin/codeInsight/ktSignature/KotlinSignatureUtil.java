@@ -49,8 +49,8 @@ class KotlinSignatureUtil {
             ASTNode node = SourceTreeToPsiMap.psiElementToTree(element);
             if (node != null) {
                 PsiCompiledElement compiledElement = node.getUserData(ClsElementImpl.COMPILED_ELEMENT);
-                if (compiledElement instanceof PsiMethod) {
-                    return (PsiMethod) compiledElement;
+                if (compiledElement instanceof PsiModifierListOwner) {
+                    return (PsiModifierListOwner) compiledElement;
                 }
             }
         }

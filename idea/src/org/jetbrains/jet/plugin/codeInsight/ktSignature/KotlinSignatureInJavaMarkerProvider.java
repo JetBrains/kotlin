@@ -50,6 +50,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final String SHOW_MARKERS_PROPERTY = "kotlin.signature.markers.enabled";
 
     private static final Function<PsiElement, String> TOOLTIP_PROVIDER = new Function<PsiElement, String>() {
+        @Nullable
         @Override
         public String fun(PsiElement element) {
             PsiAnnotation annotation = findKotlinSignatureAnnotation(element);
