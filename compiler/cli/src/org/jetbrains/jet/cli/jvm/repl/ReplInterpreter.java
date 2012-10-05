@@ -222,21 +222,14 @@ public class ReplInterpreter {
             return LineResult.error(errorCollector.getString());
         }
 
-        Progress backendProgress = new Progress() {
-            @Override
-            public void log(String message) {
-            }
-        };
-
         List<Pair<ScriptDescriptor, JvmClassName>> earierScripts = Lists.newArrayList();
 
         for (EarlierLine earlierLine : earlierLines) {
             earierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassName()));
         }
 
-        GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), backendProgress,
-                AnalyzeExhaust.success(trace.getBindingContext(), injector.getModuleConfiguration()), Collections.singletonList(psiFile),
-                BuiltinToJavaTypesMapping.ENABLED);
+        GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false),
+                AnalyzeExhaust.success(trace.getBindingContext(), injector.getModuleConfiguration()), Collections.singletonList(psiFile));
         generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassName, earierScripts,
                                                          CompilationErrorHandler.THROW_EXCEPTION);
 
