@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.kt;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -52,9 +52,9 @@ public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
     }
 
     @NotNull
-    public static KotlinSignatureAnnotation get(PsiMethod psiMethod) {
+    public static KotlinSignatureAnnotation get(PsiModifierListOwner psiModifierListOwner) {
         final PsiAnnotation annotation =
-                JavaDescriptorResolver.findAnnotation(psiMethod, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
+                JavaDescriptorResolver.findAnnotation(psiModifierListOwner, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
         return annotation != null ? new KotlinSignatureAnnotation(annotation) : NULL_ANNOTATION;
     }
 }
