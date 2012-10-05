@@ -3,7 +3,7 @@ package com.google.dart.compiler.backend.js.ast;
 import java.util.Collections;
 import java.util.Map;
 
-public class JsDocComment extends JsExpressionImpl implements JsExpression {
+public class JsDocComment extends JsExpressionImpl {
     private final Map<String, Object> tags;
 
     public JsDocComment(Map<String, Object> tags) {
