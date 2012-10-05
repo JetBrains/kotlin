@@ -1,0 +1,9 @@
+namespace test
+
+public open class test.PropertyComplexTypes</*0*/ T : jet.Any?> : java.lang.Object {
+    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(/*0*/ p0: T): test.PropertyComplexTypes<T>
+    public final var genericType: T
+    public final var listDefinedGeneric: java.util.ArrayList<jet.String>
+    public final var listGeneric: java.util.ArrayList<T>
+    public final var listOfGenericList: java.util.ArrayList<java.util.ArrayList<T>>
+}

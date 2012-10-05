@@ -14,42 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.PsiType;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 6/5/12
  */
-class AlternativeSignatureData {
+public class AlternativeMethodSignatureData extends ElementAlternativeSignatureData {
     private final JetNamedFunction altFunDeclaration;
     private final PsiMethodWrapper method;
-
-    private final boolean none;
-    private String error;
 
     private JavaDescriptorResolver.ValueParameterDescriptors altValueParameters;
     private JetType altReturnType;
@@ -58,56 +56,49 @@ class AlternativeSignatureData {
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters =
             new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
 
-    AlternativeSignatureData(
+    public AlternativeMethodSignatureData(
             @NotNull PsiMethodWrapper method,
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
-            @Nullable JetType returnType,
-            @NotNull List<TypeParameterDescriptor> methodTypeParameters) {
+            @Nullable JetType originalReturnType,
+            @NotNull List<TypeParameterDescriptor> methodTypeParameters
+    ) {
         String signature = method.getSignatureAnnotation().signature();
         if (signature.isEmpty()) {
-            none = true;
+            setAnnotated(false);
             altFunDeclaration = null;
             this.method = null;
             return;
         }
 
-        none = false;
+        setAnnotated(true);
         this.method = method;
         Project project = method.getPsiMethod().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
-        for (TypeParameterDescriptor tp : methodTypeParameters) {
-            originalToAltTypeParameters.put(tp, TypeParameterDescriptorImpl
-                    .createForFurtherModification(tp.getContainingDeclaration(), tp.getAnnotations(),
-                                                  tp.isReified(), tp.getVariance(), tp.getName(), tp.getIndex()));
+        for (TypeParameterDescriptor typeParameter : methodTypeParameters) {
+            originalToAltTypeParameters.put(typeParameter,
+                                            TypeParameterDescriptorImpl.createForFurtherModification(
+                                                    typeParameter.getContainingDeclaration(),
+                                                    typeParameter.getAnnotations(),
+                                                    typeParameter.isReified(),
+                                                    typeParameter.getVariance(),
+                                                    typeParameter.getName(),
+                                                    typeParameter.getIndex()));
         }
 
         try {
-            checkForSyntaxErrors();
+            checkForSyntaxErrors(altFunDeclaration);
+            checkEqualFunctionNames(altFunDeclaration, method);
 
             computeTypeParameters(methodTypeParameters);
             computeValueParameters(valueParameterDescriptors);
-            if (returnType != null) {
-                computeReturnType(returnType);
+
+            if (originalReturnType != null) {
+                altReturnType = computeReturnType(originalReturnType, altFunDeclaration.getReturnTypeRef(), originalToAltTypeParameters);
             }
         }
         catch (AlternativeSignatureMismatchException e) {
-            error = e.getMessage();
-        }
-    }
-
-    public boolean isNone() {
-        return none;
-    }
-
-    @Nullable
-    public String getError() {
-        return error;
-    }
-
-    private void checkForErrors() {
-        if (none || error != null) {
-            throw new IllegalStateException("Trying to read result while there is none");
+            setError(e.getMessage());
         }
     }
 
@@ -129,86 +120,85 @@ class AlternativeSignatureData {
         return altTypeParameters;
     }
 
-    private JetType computeType(JetTypeElement alternativeTypeElement, JetType autoType) {
-        //noinspection NullableProblems
-        return alternativeTypeElement.accept(new TypeTransformingVisitor(autoType), null);
-    }
-
-    private void computeReturnType(@NotNull JetType autoType) {
-        JetTypeReference altReturnTypeRef = altFunDeclaration.getReturnTypeRef();
-        if (altReturnTypeRef == null) {
-            if (JetStandardClasses.isUnit(autoType)) {
-                altReturnType = autoType;
-            }
-            else {
-                fail("Return type in alternative signature is missing, while in real signature it is '%s'",
-                     DescriptorRenderer.TEXT.renderType(autoType));
-            }
-        }
-        else {
-            altReturnType = computeType(altReturnTypeRef.getTypeElement(), autoType);
-        }
-    }
-
     private void computeValueParameters(JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors) {
-        List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.descriptors;
+        List<ValueParameterDescriptor> parameterDescriptors = valueParameterDescriptors.getDescriptors();
 
         if (parameterDescriptors.size() != altFunDeclaration.getValueParameters().size()) {
-            fail("Method signature has %d value parameters, but alternative signature has %d",
-                 parameterDescriptors.size(), altFunDeclaration.getValueParameters().size());
+            throw new AlternativeSignatureMismatchException("Method signature has %d value parameters, but alternative signature has %d",
+                                                            parameterDescriptors.size(), altFunDeclaration.getValueParameters().size());
         }
 
         List<ValueParameterDescriptor> altParamDescriptors = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, size = parameterDescriptors.size(); i < size; i++) {
-            ValueParameterDescriptor pd = parameterDescriptors.get(i);
-            JetParameter valueParameter = altFunDeclaration.getValueParameters().get(i);
+            ValueParameterDescriptor originalParameterDescriptor = parameterDescriptors.get(i);
+            JetParameter annotationValueParameter = altFunDeclaration.getValueParameters().get(i);
+
             //noinspection ConstantConditions
-            JetTypeElement alternativeTypeElement = valueParameter.getTypeReference().getTypeElement();
+            JetTypeElement alternativeTypeElement = annotationValueParameter.getTypeReference().getTypeElement();
+            assert alternativeTypeElement != null;
+
             JetType alternativeType;
             JetType alternativeVarargElementType;
-            if (pd.getVarargElementType() == null) {
-                if (valueParameter.isVarArg()) {
-                    fail("Parameter in method signature is not vararg, but in alternative signature it is vararg");
+
+            JetType originalParamVarargElementType = originalParameterDescriptor.getVarargElementType();
+            if (originalParamVarargElementType == null) {
+                if (annotationValueParameter.isVarArg()) {
+                    throw new AlternativeSignatureMismatchException("Parameter in method signature is not vararg, but in alternative signature it is vararg");
                 }
-                alternativeType = computeType(alternativeTypeElement, pd.getType());
+
+                alternativeType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParameterDescriptor.getType(), originalToAltTypeParameters);
                 alternativeVarargElementType = null;
             }
             else {
-                if (!valueParameter.isVarArg()) {
-                    fail("Parameter in method signature is vararg, but in alternative signature it is not");
+                if (!annotationValueParameter.isVarArg()) {
+                    throw new AlternativeSignatureMismatchException("Parameter in method signature is vararg, but in alternative signature it is not");
                 }
-                alternativeVarargElementType = computeType(alternativeTypeElement, pd.getVarargElementType());
+
+                alternativeVarargElementType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParamVarargElementType,
+                                                                                   originalToAltTypeParameters);
                 alternativeType = JetStandardLibrary.getInstance().getArrayType(alternativeVarargElementType);
             }
-            altParamDescriptors.add(new ValueParameterDescriptorImpl(pd.getContainingDeclaration(), pd.getIndex(), pd.getAnnotations(),
-                                                                     pd.getName(), pd.isVar(), alternativeType, pd.declaresDefaultValue(),
-                                                                     alternativeVarargElementType));
+
+            altParamDescriptors.add(new ValueParameterDescriptorImpl(
+                    originalParameterDescriptor.getContainingDeclaration(),
+                    originalParameterDescriptor.getIndex(),
+                    originalParameterDescriptor.getAnnotations(),
+                    originalParameterDescriptor.getName(),
+                    originalParameterDescriptor.isVar(),
+                    alternativeType,
+                    originalParameterDescriptor.declaresDefaultValue(),
+                    alternativeVarargElementType));
         }
-        if (valueParameterDescriptors.receiverType != null) {
+
+        if (valueParameterDescriptors.getReceiverType() != null) {
             throw new UnsupportedOperationException("Alternative annotations for extension functions are not supported yet");
         }
+
         altValueParameters = new JavaDescriptorResolver.ValueParameterDescriptors(null, altParamDescriptors);
     }
 
     private void computeTypeParameters(List<TypeParameterDescriptor> typeParameters) {
-
         if (typeParameters.size() != altFunDeclaration.getTypeParameters().size()) {
-            fail("Method signature has %d type parameters, but alternative signature has %d",
-                 typeParameters.size(), altFunDeclaration.getTypeParameters().size());
+            throw new AlternativeSignatureMismatchException("Method signature has %d type parameters, but alternative signature has %d",
+                                                            typeParameters.size(), altFunDeclaration.getTypeParameters().size());
         }
 
         altTypeParameters = new ArrayList<TypeParameterDescriptor>();
+
         for (int i = 0, size = typeParameters.size(); i < size; i++) {
-            TypeParameterDescriptor pd = typeParameters.get(i);
-            TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(pd);
+            TypeParameterDescriptor originalTypeParamDescriptor = typeParameters.get(i);
+
+            TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(originalTypeParamDescriptor);
+            JetTypeParameter altTypeParameter = altFunDeclaration.getTypeParameters().get(i);
+
             int upperBoundIndex = 0;
-            for (JetType upperBound : pd.getUpperBounds()) {
+            for (JetType upperBound : originalTypeParamDescriptor.getUpperBounds()) {
                 JetTypeElement altTypeElement;
-                JetTypeParameter parameter = altFunDeclaration.getTypeParameters().get(i);
+
                 if (upperBoundIndex == 0) {
-                    JetTypeReference extendsBound = parameter.getExtendsBound();
+                    JetTypeReference extendsBound = altTypeParameter.getExtendsBound();
                     if (extendsBound == null) { // default upper bound
-                        assert pd.getUpperBounds().size() == 1;
+                        assert originalTypeParamDescriptor.getUpperBounds().size() == 1;
                         altParamDescriptor.addDefaultUpperBound();
                         break;
                     }
@@ -218,18 +208,24 @@ class AlternativeSignatureData {
                 }
                 else {
                     JetTypeConstraint constraint =
-                            findTypeParameterConstraint(altFunDeclaration, pd.getName(), upperBoundIndex);
+                            findTypeParameterConstraint(altFunDeclaration, originalTypeParamDescriptor.getName(), upperBoundIndex);
                     if (constraint == null) {
-                        fail("Upper bound #%d for type parameter %s is missing", upperBoundIndex, pd.getName());
+                        throw new AlternativeSignatureMismatchException("Upper bound #%d for type parameter %s is missing",
+                                                                        upperBoundIndex, originalTypeParamDescriptor.getName());
                     }
                     //noinspection ConstantConditions
                     altTypeElement = constraint.getBoundTypeReference().getTypeElement();
                 }
-                altParamDescriptor.addUpperBound(computeType(altTypeElement, upperBound));
+
+                assert (altTypeElement != null);
+
+                altParamDescriptor.addUpperBound(TypeTransformingVisitor.computeType(altTypeElement, upperBound,
+                                                                                     originalToAltTypeParameters));
                 upperBoundIndex++;
             }
-            if (findTypeParameterConstraint(altFunDeclaration, pd.getName(), upperBoundIndex) != null) {
-                fail("Extra upper bound #%d for type parameter %s", upperBoundIndex, pd.getName());
+
+            if (findTypeParameterConstraint(altFunDeclaration, originalTypeParamDescriptor.getName(), upperBoundIndex) != null) {
+                throw new AlternativeSignatureMismatchException("Extra upper bound #%d for type parameter %s", upperBoundIndex, originalTypeParamDescriptor.getName());
             }
 
             altParamDescriptor.setInitialized();
@@ -237,9 +233,21 @@ class AlternativeSignatureData {
         }
     }
 
+    @Override
+    public String getSignature() {
+        String paramsString = StringUtil.join(method.getPsiMethod().getSignature(PsiSubstitutor.EMPTY).getParameterTypes(),
+                                              new Function<PsiType, String>() {
+                                                  @Override
+                                                  public String fun(PsiType psiType) {
+                                                      return psiType.getPresentableText();
+                                                  }
+                                              }, ", ");
+
+        return String.format("%s(%s)", altFunDeclaration.getName(), paramsString);
+    }
+
     @Nullable
-    private static JetTypeConstraint findTypeParameterConstraint(@NotNull JetFunction function, @NotNull Name typeParameterName,
-            int index) {
+    private static JetTypeConstraint findTypeParameterConstraint(@NotNull JetFunction function, @NotNull Name typeParameterName, int index) {
         if (index != 0) {
             int currentIndex = 0;
             for (JetTypeConstraint constraint : function.getTypeConstraints()) {
@@ -256,184 +264,10 @@ class AlternativeSignatureData {
         return null;
     }
 
-    private void checkForSyntaxErrors() {
-        List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(altFunDeclaration);
-        if (!syntaxErrors.isEmpty()) {
-            String textSignature = String.format("%s(%s)", method.getName(),
-                    StringUtil.join(method.getPsiMethod().getSignature(PsiSubstitutor.EMPTY).getParameterTypes(),
-                                    new Function<PsiType, String>() {
-                                        @Override
-                                        public String fun(PsiType psiType) {
-                                            return psiType.getPresentableText();
-                                        }
-                                    }, ", "));
-            int errorOffset = syntaxErrors.get(0).getTextOffset();
-            String syntaxErrorDescription = syntaxErrors.get(0).getErrorDescription();
-
-            if (syntaxErrors.size() == 1) {
-                fail("Alternative signature for %s has syntax error at %d: %s",
-                     textSignature, errorOffset, syntaxErrorDescription);
-            }
-            else {
-                fail("Alternative signature for %s has %d syntax errors, first is at %d: %s",
-                     textSignature, syntaxErrors.size(), errorOffset, syntaxErrorDescription);
-            }
+    private static void checkEqualFunctionNames(PsiNamedElement namedElement, PsiMethodWrapper method) {
+        if (!ComparatorUtil.equalsNullable(method.getName(), namedElement.getName())) {
+            throw new AlternativeSignatureMismatchException("Function names mismatch, original: %s, alternative: %s",
+                                                            method.getName(), namedElement.getName());
         }
-
-        if (!ComparatorUtil.equalsNullable(method.getName(), altFunDeclaration.getName())) {
-            fail("Function names mismatch, original: %s, alternative: %s", method.getName(), altFunDeclaration.getName());
-        }
-    }
-
-    private static void fail(String format, Object... params) {
-        throw new AlternativeSignatureMismatchException(String.format(format, params));
-    }
-
-    private static class AlternativeSignatureMismatchException extends RuntimeException {
-        private AlternativeSignatureMismatchException(String message) {
-            super(message);
-        }
-    }
-
-    private class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
-        private final JetType autoType;
-
-        public TypeTransformingVisitor(JetType autoType) {
-            this.autoType = autoType;
-        }
-
-        @Override
-        public JetType visitNullableType(JetNullableType nullableType, Void data) {
-            if (!autoType.isNullable()) {
-                fail("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
-                     DescriptorRenderer.TEXT.renderType(autoType), nullableType.getText());
-            }
-            return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), autoType));
-        }
-
-        @Override
-        public JetType visitFunctionType(JetFunctionType type, Void data) {
-            return visitCommonType(type.getReceiverTypeRef() == null
-                    ? JetStandardClasses.getFunction(type.getParameters().size())
-                    : JetStandardClasses.getReceiverFunction(type.getParameters().size()), type);
-        }
-
-        @Override
-        public JetType visitTupleType(JetTupleType type, Void data) {
-            return visitCommonType(JetStandardClasses.getTuple(type.getComponentTypeRefs().size()), type);
-        }
-
-        @Override
-        public JetType visitUserType(JetUserType type, Void data) {
-            JetUserType qualifier = type.getQualifier();
-            //noinspection ConstantConditions
-            String shortName = type.getReferenceExpression().getReferencedName();
-            String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
-            if (JetStandardClasses.UNIT_ALIAS.getName().equals(longName)) {
-                return visitCommonType(JetStandardClasses.getTuple(0), type);
-            }
-            return visitCommonType(longName, type);
-        }
-
-        private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
-            return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().getFqName(), type);
-        }
-
-        private JetType visitCommonType(@NotNull String qualifiedName, @NotNull JetTypeElement type) {
-            TypeConstructor originalTypeConstructor = autoType.getConstructor();
-            ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
-            assert declarationDescriptor != null;
-            String fqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe().getFqName();
-            ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(qualifiedName);
-            if (!isSameName(qualifiedName, fqName) && classFromLibrary == null) {
-                fail("Alternative signature type mismatch, expected: %s, actual: %s", qualifiedName, fqName);
-            }
-
-            List<TypeProjection> arguments = autoType.getArguments();
-
-            if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
-                fail("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
-                     DescriptorRenderer.TEXT.renderType(autoType), arguments.size(), type.getText(),
-                     type.getTypeArgumentsAsTypes().size());
-            }
-
-            List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
-            for (int i = 0, size = arguments.size(); i < size; i++) {
-                JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
-                TypeProjection argument = arguments.get(i);
-                JetType alternativeType =
-                        computeType(argumentAlternativeTypeElement, argument.getType());
-                Variance variance = argument.getProjectionKind();
-                if (type instanceof JetUserType) {
-                    JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
-                    Variance altVariance = Variance.INVARIANT;
-                    switch (typeProjection.getProjectionKind()) {
-                        case IN:
-                            altVariance = Variance.IN_VARIANCE;
-                            break;
-                        case OUT:
-                            altVariance = Variance.OUT_VARIANCE;
-                            break;
-                        case STAR:
-                            fail("Star projection is not available in alternative signatures");
-                        default:
-                    }
-                    if (altVariance != variance && variance != Variance.INVARIANT) {
-                        fail("Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance);
-                    }
-                }
-                altArguments.add(new TypeProjection(variance, alternativeType));
-            }
-
-            TypeConstructor typeConstructor;
-            if (classFromLibrary != null) {
-                typeConstructor = classFromLibrary.getTypeConstructor();
-            }
-            else {
-                typeConstructor = originalTypeConstructor;
-            }
-            ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
-            if (typeConstructorClassifier instanceof TypeParameterDescriptor
-                    && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
-                typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
-            }
-            JetScope memberScope;
-            if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
-                memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
-            }
-            else if (typeConstructorClassifier instanceof ClassDescriptor) {
-                memberScope = ((ClassDescriptor) typeConstructorClassifier).getMemberScope(altArguments);
-            }
-            else {
-                throw new AssertionError("Unexpected class of type constructor classifier "
-                                         + (typeConstructorClassifier == null ? "null" : typeConstructorClassifier.getClass().getName()));
-            }
-            return new JetTypeImpl(autoType.getAnnotations(), typeConstructor, false,
-                                   altArguments, memberScope);
-        }
-
-        @Nullable
-        private ClassDescriptor getAutoTypeAnalogWithinBuiltins(String qualifiedName) {
-            Type javaAnalog = KotlinToJavaTypesMap.getInstance().getJavaAnalog(autoType);
-            if (javaAnalog == null || javaAnalog.getSort() != Type.OBJECT)  return null;
-            Collection<ClassDescriptor> descriptors =
-                    JavaToKotlinClassMap.getInstance().mapPlatformClass(JvmClassName.byType(javaAnalog).getFqName());
-            for (ClassDescriptor descriptor : descriptors) {
-                String fqName = DescriptorUtils.getFQName(descriptor).getFqName();
-                if (isSameName(qualifiedName, fqName)) {
-                    return descriptor;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public JetType visitSelfType(JetSelfType type, Void data) {
-            throw new UnsupportedOperationException("Self-types are not supported yet");
-        }
-    }
-
-    private static boolean isSameName(String qualifiedName, String fullyQualifiedName) {
-        return fullyQualifiedName.equals(qualifiedName) || fullyQualifiedName.endsWith("." + qualifiedName);
     }
 }

@@ -1,0 +1,8 @@
+namespace test
+
+public open class test.PropertyArrayTypes</*0*/ T : jet.Any?> : java.lang.Object {
+    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(/*0*/ p0: T): test.PropertyArrayTypes<T>
+    public final var array: jet.Array<jet.String>
+    public final var arrayOfArrays: jet.Array<jet.Array<jet.String>>
+    public final var genericArray: jet.Array<T>
+}

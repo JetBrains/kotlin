@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
@@ -428,13 +429,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             throw new IllegalStateException();
         }
 
-        AlternativeSignatureData alternativeSignatureData =
-                new AlternativeSignatureData(constructor, valueParameterDescriptors, null, Collections.<TypeParameterDescriptor>emptyList());
-        if (!alternativeSignatureData.isNone() && alternativeSignatureData.getError() == null) {
-            valueParameterDescriptors = alternativeSignatureData.getValueParameters();
+        AlternativeMethodSignatureData alternativeMethodSignatureData =
+                new AlternativeMethodSignatureData(constructor, valueParameterDescriptors, null, Collections.<TypeParameterDescriptor>emptyList());
+        if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
+            valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
         }
-        else if (alternativeSignatureData.getError() != null) {
-            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, constructorDescriptor, alternativeSignatureData.getError());
+        else if (alternativeMethodSignatureData.hasErrors()) {
+            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, constructorDescriptor, alternativeMethodSignatureData.getError());
         }
 
         constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
@@ -808,13 +809,23 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return psiClassFinder.findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 
-    static class ValueParameterDescriptors {
+    public static class ValueParameterDescriptors {
         final JetType receiverType;
         final List<ValueParameterDescriptor> descriptors;
 
-        ValueParameterDescriptors(@Nullable JetType receiverType, List<ValueParameterDescriptor> descriptors) {
+        public ValueParameterDescriptors(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
             this.receiverType = receiverType;
             this.descriptors = descriptors;
+        }
+
+        @Nullable
+        public JetType getReceiverType() {
+            return receiverType;
+        }
+
+        @NotNull
+        public List<ValueParameterDescriptor> getDescriptors() {
+            return descriptors;
         }
     }
 
@@ -1120,15 +1131,15 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
         // TODO consider better place for this check
-        AlternativeSignatureData alternativeSignatureData =
-                new AlternativeSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters);
-        if (!alternativeSignatureData.isNone() && alternativeSignatureData.getError() == null) {
-            valueParameterDescriptors = alternativeSignatureData.getValueParameters();
-            returnType = alternativeSignatureData.getReturnType();
-            methodTypeParameters = alternativeSignatureData.getTypeParameters();
+        AlternativeMethodSignatureData alternativeMethodSignatureData =
+                new AlternativeMethodSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters);
+        if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
+            valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
+            returnType = alternativeMethodSignatureData.getReturnType();
+            methodTypeParameters = alternativeMethodSignatureData.getTypeParameters();
         }
-        else if (alternativeSignatureData.getError() != null) {
-            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, functionDescriptorImpl, alternativeSignatureData.getError());
+        else if (alternativeMethodSignatureData.hasErrors()) {
+            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, functionDescriptorImpl, alternativeMethodSignatureData.getError());
         }
 
         functionDescriptorImpl.initialize(

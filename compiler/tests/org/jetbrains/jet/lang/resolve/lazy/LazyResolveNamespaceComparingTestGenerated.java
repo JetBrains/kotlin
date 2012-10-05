@@ -1167,6 +1167,21 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithVararg.kt");
             }
             
+            @TestMetadata("PropertyArrayTypes.kt")
+            public void testPropertyArrayTypes() throws Exception {
+                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/PropertyArrayTypes.kt");
+            }
+            
+            @TestMetadata("PropertyComplexTypes.kt")
+            public void testPropertyComplexTypes() throws Exception {
+                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/PropertyComplexTypes.kt");
+            }
+            
+            @TestMetadata("PropertySimpleType.kt")
+            public void testPropertySimpleType() throws Exception {
+                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/PropertySimpleType.kt");
+            }
+            
             @TestMetadata("compiler/testData/loadJava/kotlinSignature/error")
             public static class Error extends AbstractLazyResolveNamespaceComparingTest {
                 @TestMetadata("AddingNullability.kt")

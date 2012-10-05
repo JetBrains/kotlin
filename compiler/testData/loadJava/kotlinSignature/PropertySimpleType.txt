@@ -1,0 +1,8 @@
+namespace test
+
+public open class test.PropertySimpleType : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.PropertySimpleType
+    protected final var protectedField: jet.String
+    public final var publicFieldVal: jet.String
+    public final var publicFieldVar: jet.String?
+}

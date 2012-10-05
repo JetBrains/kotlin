@@ -282,6 +282,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTest("compiler/testData/loadJava/kotlinSignature/MethodWithVararg.java");
         }
         
+        @TestMetadata("PropertyArrayTypes.java")
+        public void testPropertyArrayTypes() throws Exception {
+            doTest("compiler/testData/loadJava/kotlinSignature/PropertyArrayTypes.java");
+        }
+        
+        @TestMetadata("PropertyComplexTypes.java")
+        public void testPropertyComplexTypes() throws Exception {
+            doTest("compiler/testData/loadJava/kotlinSignature/PropertyComplexTypes.java");
+        }
+        
+        @TestMetadata("PropertySimpleType.java")
+        public void testPropertySimpleType() throws Exception {
+            doTest("compiler/testData/loadJava/kotlinSignature/PropertySimpleType.java");
+        }
+        
         @TestMetadata("compiler/testData/loadJava/kotlinSignature/error")
         public static class Error extends AbstractLoadJavaTest {
             @TestMetadata("AddingNullability.java")
@@ -327,7 +342,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             public void testWrongMethodName() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongMethodName.java");
             }
-            
+
             @TestMetadata("WrongReturnTypeStructure.java")
             public void testWrongReturnTypeStructure() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongReturnTypeStructure.java");

@@ -27,8 +27,10 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -114,7 +116,6 @@ public final class JavaDescriptorPropertiesResolver {
             }
 
             DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, characteristicMember.getMember().isStatic());
-
             boolean isEnumEntry = DescriptorUtils.isEnumClassObject(realOwner);
             boolean isPropertyForNamedObject = members.field != null && JvmAbi.INSTANCE_FIELD.equals(members.field.getMember().getName());
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
@@ -181,6 +182,20 @@ public final class JavaDescriptorPropertiesResolver {
 
             JetType propertyType = getPropertyType(members, characteristicMember, typeVariableResolverForPropertyInternals);
             JetType receiverType = getReceiverType(characteristicMember, typeVariableResolverForPropertyInternals);
+
+
+            if (characteristicMember.isField()) {
+                AlternativeFieldSignatureData signatureData =
+                        new AlternativeFieldSignatureData((PsiFieldWrapper) characteristicMember.getMember(), propertyType);
+                if (!signatureData.hasErrors()) {
+                    if (signatureData.isAnnotated()) {
+                        propertyType = signatureData.getReturnType();
+                    }
+                }
+                else {
+                    trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, propertyDescriptor, signatureData.getError());
+                }
+            }
 
             propertyDescriptor.setType(
                     propertyType,
