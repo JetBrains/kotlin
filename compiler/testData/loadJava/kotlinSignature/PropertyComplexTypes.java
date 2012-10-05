@@ -22,11 +22,6 @@ import java.util.ArrayList;
 import jet.runtime.typeinfo.KotlinSignature;
 
 public class PropertyComplexTypes<T> {
-    @KotlinSignature("fun PropertyComplexTypes(genericTypeParam : T)")
-    public PropertyComplexTypes(T genericTypeParam) {
-        // For initializing genericType field in kotlin
-    }
-
     @KotlinSignature("var genericType : T")
     public T genericType;
 

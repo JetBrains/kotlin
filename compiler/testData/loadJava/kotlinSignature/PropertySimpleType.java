@@ -20,15 +20,9 @@ import java.lang.String;
 import jet.runtime.typeinfo.KotlinSignature;
 
 public class PropertySimpleType {
-    @KotlinSignature("val publicFieldVal : String")
-    public String publicFieldVal;
+    @KotlinSignature("val fieldOne : String")
+    public String fieldOne;
 
-    @KotlinSignature("var publicFieldVar : String?")
-    public String publicFieldVar;
-
-    @KotlinSignature("var protectedField : String")
-    protected String protectedField;
-
-    @KotlinSignature("var privateField : String")
-    private String privateField;
+    @KotlinSignature("var fieldTwo : String?")
+    public String fieldTwo;
 }

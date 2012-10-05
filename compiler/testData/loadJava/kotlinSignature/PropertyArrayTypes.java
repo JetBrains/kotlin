@@ -22,11 +22,6 @@ import java.util.ArrayList;
 import jet.runtime.typeinfo.KotlinSignature;
 
 public class PropertyArrayTypes<T> {
-    @KotlinSignature("fun PropertyArrayTypes(genericTypeParam : T)")
-    public PropertyArrayTypes(T genericTypeParam) {
-        // For initializing genericType field in kotlin
-    }
-
     @KotlinSignature("var arrayOfArrays : Array<Array<String>>")
     public String[][] arrayOfArrays;
 

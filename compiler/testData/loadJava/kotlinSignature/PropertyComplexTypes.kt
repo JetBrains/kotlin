@@ -2,9 +2,9 @@ package test
 
 import java.util.*
 
-public open class PropertyComplexTypes<T>(p0 : T) : java.lang.Object() {
-  public var genericType : T = p0
-  public var listDefinedGeneric : ArrayList<String> = ArrayList<String>()
-  public var listGeneric : ArrayList<T> = ArrayList<T>()
-  public var listOfGenericList : ArrayList<ArrayList<T>> = ArrayList<ArrayList<T>>()
+public open class PropertyComplexTypes<T>() : java.lang.Object() {
+  public var genericType : T = null!!
+  public var listDefinedGeneric : ArrayList<String> = null!!
+  public var listGeneric : ArrayList<T> = null!!
+  public var listOfGenericList : ArrayList<ArrayList<T>> = null!!
 }
