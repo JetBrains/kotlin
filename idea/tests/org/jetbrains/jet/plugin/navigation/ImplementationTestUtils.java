@@ -47,7 +47,7 @@ public final class ImplementationTestUtils {
 
     public static void assertGotoImplementations(Editor editor, GotoTargetHandler.GotoData gotoData) {
         // Get expected references from the tested document
-        List<String> expectedReferences = Arrays.asList(InTextDirectivesUtils.findListWithPrefix("// REF:", editor.getDocument().getText()));
+        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefix("// REF:", editor.getDocument().getText());
         Collections.sort(expectedReferences);
 
         if (gotoData != null) {

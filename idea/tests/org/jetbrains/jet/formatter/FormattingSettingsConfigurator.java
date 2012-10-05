@@ -33,8 +33,8 @@ public class FormattingSettingsConfigurator {
     private final String[] settingsToFalse;
 
     public FormattingSettingsConfigurator(String fileText) {
-        settingsToTrue = InTextDirectivesUtils.findListWithPrefix("// SET_TRUE:", fileText);
-        settingsToFalse = InTextDirectivesUtils.findListWithPrefix("// SET_FALSE:", fileText);
+        settingsToTrue = InTextDirectivesUtils.findArrayWithPrefix("// SET_TRUE:", fileText);
+        settingsToFalse = InTextDirectivesUtils.findArrayWithPrefix("// SET_FALSE:", fileText);
     }
 
     public void configureSettings(CodeStyleSettings settings) {

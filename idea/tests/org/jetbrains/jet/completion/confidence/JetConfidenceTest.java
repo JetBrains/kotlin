@@ -71,7 +71,7 @@ public class JetConfidenceTest extends LightCompletionTestCase {
     protected static String getTypeTextFromFile() {
         String text = getEditor().getDocument().getText();
 
-        String[] directives = InTextDirectivesUtils.findListWithPrefix(TYPE_DIRECTIVE_PREFIX, text);
+        String[] directives = InTextDirectivesUtils.findArrayWithPrefix(TYPE_DIRECTIVE_PREFIX, text);
         assertEquals("One directive with \"" + TYPE_DIRECTIVE_PREFIX +"\" expected", 1, directives.length);
 
         return StringUtil.unquoteString(directives[0]);

@@ -37,7 +37,7 @@ public final class InTextDirectivesUtils {
 
     @Nullable
     public static Integer getPrefixedInt(String fileText, String prefix) {
-        final String[] numberStrings = findListWithPrefix(prefix, fileText);
+        final String[] numberStrings = findArrayWithPrefix(prefix, fileText);
         if (numberStrings.length > 0) {
             return Integer.parseInt(numberStrings[0]);
         }
@@ -46,7 +46,12 @@ public final class InTextDirectivesUtils {
     }
 
     @NotNull
-    public static String[] findListWithPrefix(String prefix, String fileText) {
+    public static String[] findArrayWithPrefix(String prefix, String fileText) {
+        return ArrayUtil.toStringArray(findListWithPrefix(prefix, fileText));
+    }
+
+    @NotNull
+    public static List<String> findListWithPrefix(String prefix, String fileText) {
         ArrayList<String> result = new ArrayList<String>();
 
         for (String line : findLinesWithPrefixRemoved(prefix, fileText)) {
@@ -57,7 +62,7 @@ public final class InTextDirectivesUtils {
             }
         }
 
-        return ArrayUtil.toStringArray(result);
+        return result;
     }
 
     @NotNull
