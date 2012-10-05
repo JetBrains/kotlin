@@ -20,7 +20,6 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.kt.KotlinSignatureAnnotation;
 
 /**
  * @author Stepan Koltsov
@@ -41,14 +40,5 @@ public class PsiFieldWrapper extends PsiMemberWrapper {
     @Override
     public boolean isAbstract() {
         return false;
-    }
-
-    private KotlinSignatureAnnotation signatureAnnotation;
-    @NotNull
-    public KotlinSignatureAnnotation getSignatureAnnotation() {
-        if (signatureAnnotation == null) {
-            signatureAnnotation = KotlinSignatureAnnotation.get(getPsiMember());
-        }
-        return signatureAnnotation;
     }
 }

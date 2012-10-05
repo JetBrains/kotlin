@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.wrapper;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.kt.KotlinSignatureAnnotation;
 
 /**
  * @author Stepan Koltsov
@@ -55,4 +56,12 @@ public abstract class PsiMemberWrapper {
         return psiMember.getName();
     }
 
+    private KotlinSignatureAnnotation signatureAnnotation;
+    @NotNull
+    public KotlinSignatureAnnotation getSignatureAnnotation() {
+        if (signatureAnnotation == null) {
+            signatureAnnotation = KotlinSignatureAnnotation.get(getPsiMember());
+        }
+        return signatureAnnotation;
+    }
 }

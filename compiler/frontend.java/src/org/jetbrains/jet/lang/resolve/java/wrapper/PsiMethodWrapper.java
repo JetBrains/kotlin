@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
-import org.jetbrains.jet.lang.resolve.java.kt.KotlinSignatureAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,15 +71,6 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
             jetConstructor = JetConstructorAnnotation.get(getPsiMethod());
         }
         return jetConstructor;
-    }
-
-    private KotlinSignatureAnnotation signatureAnnotation;
-    @NotNull
-    public KotlinSignatureAnnotation getSignatureAnnotation() {
-        if (signatureAnnotation == null) {
-            signatureAnnotation = KotlinSignatureAnnotation.get(getPsiMethod());
-        }
-        return signatureAnnotation;
     }
 
     @Override
