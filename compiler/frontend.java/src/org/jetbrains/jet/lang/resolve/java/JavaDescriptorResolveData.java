@@ -190,14 +190,14 @@ public class JavaDescriptorResolveData {
     /**
      * Either package or class with static members
      */
-    static class ResolverNamespaceData extends ResolverScopeData {
-        static final ResolverNamespaceData NEGATIVE = new ResolverNamespaceData(true);
+    public static class ResolverNamespaceData extends ResolverScopeData {
+        public static final ResolverNamespaceData NEGATIVE = new ResolverNamespaceData(true);
 
         private final NamespaceDescriptor namespaceDescriptor;
 
         private JavaPackageScope memberScope;
 
-        ResolverNamespaceData(
+        public ResolverNamespaceData(
                 @Nullable PsiClass psiClass,
                 @Nullable PsiPackage psiPackage,
                 @NotNull FqName fqName,
@@ -212,7 +212,7 @@ public class JavaDescriptorResolveData {
             this.namespaceDescriptor = null;
         }
 
-        JavaPackageScope getMemberScope() {
+        public JavaPackageScope getMemberScope() {
             return memberScope;
         }
 

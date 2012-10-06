@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverNam
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverSyntheticClassObjectClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
@@ -123,12 +122,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private BindingTrace trace;
     private PsiClassFinder psiClassFinder;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
-    private PropertiesResolver propertiesResolver = new PropertiesResolver(this);
+    private final PropertiesResolver propertiesResolver = new PropertiesResolver(this);
     private final ClassResolver classResolver = new ClassResolver(this);
     private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
     private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
     private final AnnotationResolver annotationResolver = new AnnotationResolver(this);
     private final FunctionResolver functionResolver = new FunctionResolver(this);
+    private final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
 
     @Inject
     public void setProject(Project project) {
@@ -214,6 +214,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public AnnotationResolver getAnnotationResolver() {
         return annotationResolver;
+    }
+
+    public Map<FqName, ResolverNamespaceData> getNamespaceDescriptorCacheByFqn() {
+        return namespaceDescriptorCacheByFqn;
     }
 
     public static void checkPsiClassIsNotJet(PsiClass psiClass) {
@@ -361,7 +365,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return clazz;
         }
 
-        NamespaceDescriptor ns = resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
+        NamespaceDescriptor ns = namespaceResolver.resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
         if (ns == null) {
             throw new IllegalStateException("cannot resolve namespace " + fqName.parent() + ", required to be container for " + fqName);
         }
@@ -462,125 +466,22 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         // First, let's check that there is no Kotlin package:
-        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(qualifiedName);
-        if (kotlinNamespaceDescriptor != null) {
-            if (searchRule == DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN) {
-                throw new IllegalStateException("class must not be found in kotlin: " + qualifiedName);
-            }
-            else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
-                return null;
-            }
-            else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
-                // TODO: probably this is evil
-                return kotlinNamespaceDescriptor;
-            }
-            else {
-                throw new IllegalStateException("unknown searchRule: " + searchRule);
-            }
-        }
 
-        ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(qualifiedName);
-        if (namespaceData != null) {
-            return namespaceData.getNamespaceDescriptor();
-        }
-
-        NamespaceDescriptorParent parentNs = resolveParentNamespace(qualifiedName);
-        if (parentNs == null) {
-            return null;
-        }
-
-        JavaNamespaceDescriptor ns = new JavaNamespaceDescriptor(
-                parentNs,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
-                qualifiedName
-        );
-
-        ResolverNamespaceData scopeData = createNamespaceResolverScopeData(qualifiedName, ns);
-        if (scopeData == null) {
-            return null;
-        }
-
-        trace.record(BindingContext.NAMESPACE, scopeData.getPsiPackageOrPsiClass(), ns);
-
-        ns.setMemberScope(scopeData.getMemberScope());
-
-        return scopeData.getNamespaceDescriptor();
+        return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
     }
 
     @Override
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
-        return resolveNamespace(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-    }
-
-    private NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {
-        if (fqName.isRoot()) {
-            return FAKE_ROOT_MODULE;
-        }
-        else {
-            return resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
-        }
-    }
-
-    @Nullable
-    private ResolverNamespaceData createNamespaceResolverScopeData(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        PsiPackage psiPackage;
-        PsiClass psiClass;
-
-        lookingForPsi:
-        {
-            psiClass = getPsiClassForJavaPackageScope(fqName);
-            psiPackage = semanticServices.getPsiClassFinder().findPsiPackage(fqName);
-            if (psiClass != null || psiPackage != null) {
-                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.PROPER);
-                break lookingForPsi;
-            }
-
-            psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
-            if (psiClass != null && !psiClass.isEnum()) {
-                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.CLASS_STATICS);
-                break lookingForPsi;
-            }
-
-            ResolverNamespaceData oldValue = namespaceDescriptorCacheByFqn.put(fqName, ResolverNamespaceData.NEGATIVE);
-            if (oldValue != null) {
-                throw new IllegalStateException("rewrite at " + fqName);
-            }
-            return null;
-        }
-
-        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
-
-        namespaceData.setMemberScope(new JavaPackageScope(fqName, semanticServices, namespaceData));
-
-        ResolverNamespaceData oldValue = namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
-        if (oldValue != null) {
-            throw new IllegalStateException("rewrite at "  + fqName);
-        }
-
-        return namespaceData;
+        return namespaceResolver.resolveNamespace(qualifiedName);
     }
 
     @Nullable
     public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        ResolverNamespaceData resolverNamespaceData = namespaceDescriptorCacheByFqn.get(fqName);
-        if (resolverNamespaceData == null) {
-            resolverNamespaceData = createNamespaceResolverScopeData(fqName, ns);
-        }
-        if (resolverNamespaceData == null) {
-            return null;
-        }
-        if (resolverNamespaceData == ResolverNamespaceData.NEGATIVE) {
-            throw new IllegalStateException("This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin: " + fqName);
-        }
-        JavaPackageScope scope = resolverNamespaceData.getMemberScope();
-        if (scope == null) {
-            throw new IllegalStateException("fqn: " + fqName);
-        }
-        return scope;
+        return namespaceResolver.getJavaPackageScope(fqName, ns);
     }
 
     @Nullable
-    private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
+    public PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
         return psiClassFinder.findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 
