@@ -30,8 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
@@ -42,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSign
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.resolver.ClassResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.CompileTimeConstResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.ConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.PropertiesResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
@@ -54,11 +54,13 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -128,6 +130,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private PropertiesResolver propertiesResolver = new PropertiesResolver(this);
     private final ClassResolver classResolver = new ClassResolver(this);
     private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
+    private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
 
     @Inject
     public void setProject(Project project) {
@@ -203,12 +206,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return constructorResolver.resolveConstructors(classData);
     }
 
-    @Nullable
-    private ConstructorDescriptor resolveConstructor(PsiClass psiClass, ResolverClassData classData, boolean aStatic, PsiMethod psiConstructor) {
-
-        //noinspection deprecation
-
-        return constructorResolver.resolveConstructor(psiClass, classData, aStatic, psiConstructor);
+    public ClassResolver getClassResolver() {
+        return classResolver;
     }
 
     public static void checkPsiClassIsNotJet(PsiClass psiClass) {
@@ -968,7 +967,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    private AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
+    public AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
         String qname = psiAnnotation.getQualifiedName();
         if (qname == null) {
@@ -1001,7 +1000,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (name == null) name = "value";
             Name identifier = Name.identifier(name);
 
-            CompileTimeConstant compileTimeConst = getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
+            CompileTimeConstant compileTimeConst =
+                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
             if (compileTimeConst != null) {
                 ValueParameterDescriptor valueParameterDescriptor = getValueParameterDescriptorForAnnotationParameter(identifier, clazz);
                 if (valueParameterDescriptor != null) {
@@ -1027,145 +1027,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (parameterName.equals(argumentName)) {
                 return parameter;
             }
-        }
-        return null;
-    }
-
-    @Nullable
-    private CompileTimeConstant<?> getCompileTimeConstFromExpression(
-            FqName annotationFqName, Name parameterName,
-            PsiAnnotationMemberValue value, List<Runnable> taskList
-    ) {
-        if (value instanceof PsiLiteralExpression) {
-            return getCompileTimeConstFromLiteralExpression((PsiLiteralExpression) value);
-        }
-        // Enum
-        else if (value instanceof PsiReferenceExpression) {
-            return getCompileTimeConstFromReferenceExpression((PsiReferenceExpression) value, taskList);
-        }
-        // Array
-        else if (value instanceof PsiArrayInitializerMemberValue) {
-            return getCompileTimeConstFromArrayExpression(annotationFqName, parameterName, (PsiArrayInitializerMemberValue) value, taskList);
-        }
-        // Annotation
-        else if (value instanceof PsiAnnotation) {
-            return getCompileTimeConstFromAnnotation((PsiAnnotation) value, taskList);
-        }
-        return null;
-    }
-
-    @Nullable
-    private CompileTimeConstant<?> getCompileTimeConstFromAnnotation(PsiAnnotation value, List<Runnable> taskList) {
-        AnnotationDescriptor annotationDescriptor = resolveAnnotation(value, taskList);
-        if (annotationDescriptor != null) {
-            return new AnnotationValue(annotationDescriptor);
-        }
-        return null;
-    }
-
-    @Nullable
-    private CompileTimeConstant<?> getCompileTimeConstFromArrayExpression(
-            FqName annotationFqName,
-            Name valueName, PsiArrayInitializerMemberValue value,
-            List<Runnable> taskList
-    ) {
-        PsiAnnotationMemberValue[] initializers = value.getInitializers();
-        List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, taskList, initializers);
-
-        ClassDescriptor classDescriptor = classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
-
-        ValueParameterDescriptor valueParameterDescriptor = getValueParameterDescriptorForAnnotationParameter(valueName, classDescriptor);
-        if (valueParameterDescriptor == null) {
-            return null;
-        }
-        JetType expectedArrayType = valueParameterDescriptor.getType();
-        return new ArrayValue(values, expectedArrayType);
-    }
-
-    private List<CompileTimeConstant<?>> getCompileTimeConstantForArrayValues(
-            FqName annotationQualifiedName,
-            Name valueName,
-            List<Runnable> taskList,
-            PsiAnnotationMemberValue[] initializers
-    ) {
-        List<CompileTimeConstant<?>> values = new ArrayList<CompileTimeConstant<?>>();
-        for (PsiAnnotationMemberValue initializer : initializers) {
-            CompileTimeConstant<?> compileTimeConstant =
-                    getCompileTimeConstFromExpression(annotationQualifiedName, valueName, initializer, taskList);
-            if (compileTimeConstant == null) {
-                compileTimeConstant = NullValue.NULL;
-            }
-            values.add(compileTimeConstant);
-        }
-        return values;
-    }
-
-    @Nullable
-    private CompileTimeConstant<?> getCompileTimeConstFromReferenceExpression(PsiReferenceExpression value, List<Runnable> taskList) {
-        PsiElement resolveElement = value.resolve();
-        if (resolveElement instanceof PsiEnumConstant) {
-            PsiElement psiElement = resolveElement.getParent();
-            if (psiElement instanceof PsiClass) {
-                PsiClass psiClass = (PsiClass) psiElement;
-                String fqName = psiClass.getQualifiedName();
-                if (fqName == null) {
-                    return null;
-                }
-
-                JetScope scope;
-                ClassDescriptor classDescriptor =
-                        classResolver.resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
-                if (classDescriptor == null) {
-                    return null;
-                }
-                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-                if (classObjectDescriptor == null) {
-                    return null;
-                }
-                scope = classObjectDescriptor.getMemberScope(Lists.<TypeProjection>newArrayList());
-
-                Name identifier = Name.identifier(((PsiEnumConstant) resolveElement).getName());
-                Collection<VariableDescriptor> properties = scope.getProperties(identifier);
-                for (VariableDescriptor variableDescriptor : properties) {
-                    if (!variableDescriptor.getReceiverParameter().exists()) {
-                        return new EnumValue((PropertyDescriptor) variableDescriptor);
-                    }
-                }
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private static CompileTimeConstant<?> getCompileTimeConstFromLiteralExpression(PsiLiteralExpression value) {
-        Object literalValue = value.getValue();
-        if (literalValue instanceof String) {
-            return new StringValue((String) literalValue);
-        }
-        else if (literalValue instanceof Byte) {
-            return new ByteValue((Byte) literalValue);
-        }
-        else if (literalValue instanceof Short) {
-            return new ShortValue((Short) literalValue);
-        }
-        else if (literalValue instanceof Character) {
-            return new CharValue((Character) literalValue);
-        }
-        else if (literalValue instanceof Integer) {
-            return new IntValue((Integer) literalValue);
-        }
-        else if (literalValue instanceof Long) {
-            return new LongValue((Long) literalValue);
-        }
-        else if (literalValue instanceof Float) {
-            return new FloatValue((Float) literalValue);
-        }
-        else if (literalValue instanceof Double) {
-            return new DoubleValue((Double) literalValue);
-        }
-        else if (literalValue == null) {
-            return NullValue.NULL;
         }
         return null;
     }
