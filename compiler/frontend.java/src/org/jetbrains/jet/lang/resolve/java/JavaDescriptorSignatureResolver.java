@@ -21,11 +21,9 @@ import com.intellij.psi.*;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -55,6 +53,12 @@ public class JavaDescriptorSignatureResolver {
     @Inject
     public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
         this.semanticServices = javaSemanticServices;
+    }
+
+    private static boolean isJavaLangObject(@NotNull JetType type) {
+        ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
+        return classifierDescriptor instanceof ClassDescriptor &&
+               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(JavaDescriptorResolver.OBJECT_FQ_NAME);
     }
 
     private enum TypeParameterDescriptorOrigin {
@@ -142,7 +146,7 @@ public class JavaDescriptorSignatureResolver {
             return new JetTypeJetSignatureReader(semanticServices, JetStandardLibrary.getInstance(), typeVariableResolver) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
-                    if (JavaDescriptorResolver.isJavaLangObject(jetType)) {
+                    if (isJavaLangObject(jetType)) {
                         return;
                     }
                     upperBounds.add(jetType);

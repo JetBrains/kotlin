@@ -203,12 +203,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    static boolean isJavaLangObject(JetType type) {
-        ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
-        return classifierDescriptor instanceof ClassDescriptor &&
-               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(OBJECT_FQ_NAME);
-    }
-
 
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
