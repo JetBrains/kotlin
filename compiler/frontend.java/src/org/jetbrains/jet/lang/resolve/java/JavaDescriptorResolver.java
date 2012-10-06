@@ -109,6 +109,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private final AnnotationResolver annotationResolver = new AnnotationResolver(this);
     public final FunctionResolver functionResolver = new FunctionResolver(this);
     public final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
+    private final InnerClassResolver innerClassResolver = new InnerClassResolver(this);
 
     @Inject
     public void setProject(Project project) {
@@ -533,52 +534,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
-        if (staticMembers) {
-            return resolveInnerClassesOfClassObject(owner, psiClass);
-        }
-
-        PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
-        List<ClassDescriptor> r = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
-        for (PsiClass innerPsiClass : innerPsiClasses) {
-            if (innerPsiClass.hasModifierProperty(PsiModifier.PRIVATE)) {
-                // TODO: hack against inner classes
-                continue;
-            }
-            if (innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
-                continue;
-            }
-            if (isInnerEnum(innerPsiClass, owner)) {
-                // Inner enums will be put later into our class object
-                continue;
-            }
-            ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
-            r.add(classDescriptor);
-        }
-        return r;
-    }
-
-    private List<ClassDescriptor> resolveInnerClassesOfClassObject(DeclarationDescriptor owner, PsiClass psiClass) {
-        if (!DescriptorUtils.isClassObject(owner)) {
-            return new ArrayList<ClassDescriptor>(0);
-        }
-
-        List<ClassDescriptor> r = new ArrayList<ClassDescriptor>(0);
-        // If we're a class object, inner enums of our parent need to be put into us
-        DeclarationDescriptor containingDeclaration = owner.getContainingDeclaration();
-        for (PsiClass innerPsiClass : psiClass.getInnerClasses()) {
-            if (isInnerEnum(innerPsiClass, containingDeclaration)) {
-                ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
-                r.add(classDescriptor);
-            }
-        }
-        return r;
-    }
-
-    private ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
-        String name = innerPsiClass.getQualifiedName();
-        assert name != null : "Inner class has no qualified name";
-        ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-        assert classDescriptor != null : "Couldn't resolve class " + name;
-        return classDescriptor;
+        return innerClassResolver.resolveInnerClasses(owner, psiClass, staticMembers);
     }
 }
