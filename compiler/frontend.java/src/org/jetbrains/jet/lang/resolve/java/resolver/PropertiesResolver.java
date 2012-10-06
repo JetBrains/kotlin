@@ -43,6 +43,48 @@ import java.util.*;
 
 public final class PropertiesResolver {
 
+    public Set<VariableDescriptor> resolveFieldGroupByName(
+            @NotNull Name fieldName,
+            @NotNull ResolverScopeData scopeData
+    ) {
+
+        PsiClass psiClass = scopeData.getPsiClass();
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
+
+        NamedMembers namedMembers = scopeData.getNamedMembersMap().get(fieldName);
+        if (namedMembers == null) {
+            return Collections.emptySet();
+        }
+
+        //noinspection ConstantConditions
+        String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
+        resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
+                                    "class or namespace " + qualifiedName);
+
+        return namedMembers.getPropertyDescriptors();
+    }
+
+    @NotNull
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
+        final PsiClass psiClass = scopeData.getPsiClass();
+        assert psiClass != null;
+
+        Set<VariableDescriptor> descriptors = Sets.newHashSet();
+        Map<Name, NamedMembers> membersForProperties = scopeData.getNamedMembersMap();
+        for (Map.Entry<Name, NamedMembers> entry : membersForProperties.entrySet()) {
+            NamedMembers namedMembers = entry.getValue();
+            Name propertyName = entry.getKey();
+
+            resolveNamedGroupProperties(
+                    scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, propertyName,
+                    "class or namespace " + psiClass.getQualifiedName());
+            descriptors.addAll(namedMembers.getPropertyDescriptors());
+        }
+
+        return descriptors;
+    }
+
     private static class GroupingValue {
         PropertyAccessorData getter;
         PropertyAccessorData setter;

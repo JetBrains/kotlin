@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
@@ -44,7 +43,10 @@ import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -99,12 +101,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private PsiClassFinder psiClassFinder;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private final PropertiesResolver propertiesResolver = new PropertiesResolver(this);
-    public final ClassResolver classResolver = new ClassResolver(this);
+    private final ClassResolver classResolver = new ClassResolver(this);
     private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
     private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
     private final AnnotationResolver annotationResolver = new AnnotationResolver(this);
-    public final FunctionResolver functionResolver = new FunctionResolver(this);
-    public final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
+    private final FunctionResolver functionResolver = new FunctionResolver(this);
+    private final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
     private final InnerClassResolver innerClassResolver = new InnerClassResolver(this);
     private final ValueParameterResolver valueParameterResolver = new ValueParameterResolver(this);
 
@@ -134,16 +136,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public void setJavaDescriptorSignatureResolver(JavaDescriptorSignatureResolver javaDescriptorSignatureResolver) {
         this.javaDescriptorSignatureResolver = javaDescriptorSignatureResolver;
         this.propertiesResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
-    }
-
-
-    @Nullable
-    public ClassDescriptor resolveJavaLangObject() {
-        ClassDescriptor clazz = classResolver.resolveClass(OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-        if (clazz == null) {
-            // TODO: warning
-        }
-        return clazz;
     }
 
     @Nullable
@@ -212,6 +204,14 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return namespaceResolver.getJavaPackageScope(fqName, ns);
     }
 
+    public Set<VariableDescriptor> resolveFieldGroupByName(Name name, ResolverScopeData data) {
+        return propertiesResolver.resolveFieldGroupByName(name, data);
+    }
+
+    public Set<VariableDescriptor> resolveFieldGroup(ResolverScopeData data) {
+        return propertiesResolver.resolveFieldGroup(data);
+    }
+
     public static class ValueParameterDescriptors {
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> descriptors;
@@ -230,46 +230,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         public List<ValueParameterDescriptor> getDescriptors() {
             return descriptors;
         }
-    }
-
-    public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull Name fieldName, @NotNull ResolverScopeData scopeData) {
-
-        PsiClass psiClass = scopeData.getPsiClass();
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
-
-        NamedMembers namedMembers = scopeData.getNamedMembersMap().get(fieldName);
-        if (namedMembers == null) {
-            return Collections.emptySet();
-        }
-
-        //noinspection ConstantConditions
-        String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
-        propertiesResolver.resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
-                                                       "class or namespace " + qualifiedName);
-
-        return namedMembers.getPropertyDescriptors();
-    }
-
-    @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
-
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
-        final PsiClass psiClass = scopeData.getPsiClass();
-        assert psiClass != null;
-
-        Set<VariableDescriptor> descriptors = Sets.newHashSet();
-        Map<Name, NamedMembers> membersForProperties = scopeData.getNamedMembersMap();
-        for (Map.Entry<Name, NamedMembers> entry : membersForProperties.entrySet()) {
-            NamedMembers namedMembers = entry.getValue();
-            Name propertyName = entry.getKey();
-
-            propertiesResolver.resolveNamedGroupProperties(
-                    scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, propertyName,
-                    "class or namespace " + psiClass.getQualifiedName());
-            descriptors.addAll(namedMembers.getPropertyDescriptors());
-        }
-
-        return descriptors;
     }
 
     @NotNull

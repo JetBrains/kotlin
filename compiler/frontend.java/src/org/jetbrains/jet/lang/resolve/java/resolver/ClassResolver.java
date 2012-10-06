@@ -325,7 +325,8 @@ public class ClassResolver {
 
                 @Override
                 public JetSignatureVisitor visitSuperclass() {
-                    return new JetTypeJetSignatureReader(javaDescriptorResolver.getSemanticServices(), JetStandardLibrary.getInstance(), typeVariableResolver) {
+                    return new JetTypeJetSignatureReader(javaDescriptorResolver.getSemanticServices(), JetStandardLibrary.getInstance(),
+                                                         typeVariableResolver) {
                         @Override
                         protected void done(@NotNull JetType jetType) {
                             if (!jetType.equals(JetStandardClasses.getAnyType())) {
@@ -362,7 +363,7 @@ public class ClassResolver {
                 result.add(JetStandardClasses.getAnyType());
             }
             else {
-                ClassDescriptor object = javaDescriptorResolver.resolveJavaLangObject();
+                ClassDescriptor object = resolveJavaLangObject();
                 if (object != null) {
                     result.add(object.getDefaultType());
                 }
@@ -430,6 +431,15 @@ public class ClassResolver {
             throw new IllegalStateException("cannot resolve namespace " + fqName.parent() + ", required to be container for " + fqName);
         }
         return ns;
+    }
+
+    @Nullable
+    public ClassDescriptor resolveJavaLangObject() {
+        ClassDescriptor clazz = resolveClass(JavaDescriptorResolver.OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        if (clazz == null) {
+            // TODO: warning
+        }
+        return clazz;
     }
 
     public static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
