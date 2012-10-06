@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 
@@ -111,7 +112,7 @@ public class NamespaceResolver {
 
         lookingForPsi:
         {
-            psiClass = javaDescriptorResolver.getPsiClassForJavaPackageScope(fqName);
+            psiClass = getPsiClassForJavaPackageScope(fqName);
             psiPackage = javaDescriptorResolver.getSemanticServices().getPsiClassFinder().findPsiPackage(fqName);
             if (psiClass != null || psiPackage != null) {
                 javaDescriptorResolver.getTrace().record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.PROPER);
@@ -166,5 +167,11 @@ public class NamespaceResolver {
             throw new IllegalStateException("fqn: " + fqName);
         }
         return scope;
+    }
+
+    @Nullable
+    public PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
+        return javaDescriptorResolver.getPsiClassFinder()
+                .findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 }

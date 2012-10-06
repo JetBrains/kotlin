@@ -108,7 +108,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
     private final AnnotationResolver annotationResolver = new AnnotationResolver(this);
     private final FunctionResolver functionResolver = new FunctionResolver(this);
-    private final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
+    public final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
 
     @Inject
     public void setProject(Project project) {
@@ -248,12 +248,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Nullable
     public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
         return namespaceResolver.getJavaPackageScope(fqName, ns);
-    }
-
-    @Nullable
-    public PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        return psiClassFinder
-                .findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 
     public static class ValueParameterDescriptors {
