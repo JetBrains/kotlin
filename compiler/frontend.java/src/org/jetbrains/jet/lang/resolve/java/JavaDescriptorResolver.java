@@ -19,7 +19,10 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierListOwner;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +47,6 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -110,6 +111,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public final FunctionResolver functionResolver = new FunctionResolver(this);
     public final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
     private final InnerClassResolver innerClassResolver = new InnerClassResolver(this);
+    private final ValueParameterResolver valueParameterResolver = new ValueParameterResolver(this);
 
     @Inject
     public void setProject(Project project) {
@@ -271,108 +273,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    private enum JvmMethodParameterKind {
-        REGULAR,
-        RECEIVER,
-        TYPE_INFO,
-    }
-
-    private static class JvmMethodParameterMeaning {
-        private final JvmMethodParameterKind kind;
-        private final JetType receiverType;
-        private final ValueParameterDescriptor valueParameterDescriptor;
-
-        private JvmMethodParameterMeaning(
-                JvmMethodParameterKind kind,
-                JetType receiverType,
-                ValueParameterDescriptor valueParameterDescriptor
-        ) {
-            this.kind = kind;
-            this.receiverType = receiverType;
-            this.valueParameterDescriptor = valueParameterDescriptor;
-        }
-
-        public static JvmMethodParameterMeaning receiver(@NotNull JetType receiverType) {
-            return new JvmMethodParameterMeaning(JvmMethodParameterKind.RECEIVER, receiverType, null);
-        }
-
-        public static JvmMethodParameterMeaning regular(@NotNull ValueParameterDescriptor valueParameterDescriptor) {
-            return new JvmMethodParameterMeaning(JvmMethodParameterKind.REGULAR, null, valueParameterDescriptor);
-        }
-
-        public static JvmMethodParameterMeaning typeInfo() {
-            return new JvmMethodParameterMeaning(JvmMethodParameterKind.TYPE_INFO, null, null);
-        }
-    }
-
-    @NotNull
-    private JvmMethodParameterMeaning resolveParameterDescriptor(
-            DeclarationDescriptor containingDeclaration, int i,
-            PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver
-    ) {
-
-        if (parameter.getJetTypeParameter().isDefined()) {
-            return JvmMethodParameterMeaning.typeInfo();
-        }
-
-        PsiType psiType = parameter.getPsiParameter().getType();
-
-        // TODO: must be very slow, make it lazy?
-        Name name = Name.identifier(parameter.getPsiParameter().getName() != null ? parameter.getPsiParameter().getName() : "p" + i);
-
-        if (parameter.getJetValueParameter().name().length() > 0) {
-            name = Name.identifier(parameter.getJetValueParameter().name());
-        }
-
-        String typeFromAnnotation = parameter.getJetValueParameter().type();
-        boolean receiver = parameter.getJetValueParameter().receiver();
-        boolean hasDefaultValue = parameter.getJetValueParameter().hasDefaultValue();
-
-        JetType outType;
-        if (typeFromAnnotation.length() > 0) {
-            outType = semanticServices.getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
-        }
-        else {
-            outType = semanticServices.getTypeTransformer()
-                    .transformToType(psiType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, typeVariableResolver);
-        }
-
-        JetType varargElementType;
-        if (psiType instanceof PsiEllipsisType) {
-            varargElementType = JetStandardLibrary.getInstance().getArrayElementType(TypeUtils.makeNotNullable(outType));
-            outType = TypeUtils.makeNotNullable(outType);
-        }
-        else {
-            varargElementType = null;
-        }
-
-        if (receiver) {
-            return JvmMethodParameterMeaning.receiver(outType);
-        }
-        else {
-
-            JetType transformedType;
-            if (AnnotationResolver
-                        .findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
-                null) {
-                transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
-            }
-            else {
-                transformedType = outType;
-            }
-            return JvmMethodParameterMeaning.regular(new ValueParameterDescriptorImpl(
-                    containingDeclaration,
-                    i,
-                    Collections.<AnnotationDescriptor>emptyList(), // TODO
-                    name,
-                    false,
-                    transformedType,
-                    hasDefaultValue,
-                    varargElementType
-            ));
-        }
-    }
-
     public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull Name fieldName, @NotNull ResolverScopeData scopeData) {
 
         PsiClass psiClass = scopeData.getPsiClass();
@@ -428,29 +328,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             DeclarationDescriptor containingDeclaration,
             List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver
     ) {
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        JetType receiverType = null;
-        int indexDelta = 0;
-        for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
-            PsiParameterWrapper parameter = parameters.get(i);
-            JvmMethodParameterMeaning meaning =
-                    resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
-            if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
-                // TODO
-                --indexDelta;
-            }
-            else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
-                result.add(meaning.valueParameterDescriptor);
-            }
-            else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
-                if (receiverType != null) {
-                    throw new IllegalStateException("more than one receiver");
-                }
-                --indexDelta;
-                receiverType = meaning.receiverType;
-            }
-        }
-        return new ValueParameterDescriptors(receiverType, result);
+        return valueParameterResolver.resolveParameterDescriptors(containingDeclaration, parameters, typeVariableResolver);
     }
 
     public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
