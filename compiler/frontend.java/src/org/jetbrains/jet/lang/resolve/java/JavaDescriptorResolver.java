@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiModifierListOwner;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
@@ -34,12 +33,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
-import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiParameterWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
@@ -219,18 +214,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return null;
     }
 
-    public static boolean isKotlinClass(@NotNull PsiClass psiClass) {
-        return new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS);
-    }
-
-    public static boolean isInnerEnum(@NotNull PsiClass innerClass, DeclarationDescriptor owner) {
-        if (!innerClass.isEnum()) return false;
-        if (!(owner instanceof ClassDescriptor)) return false;
-
-        ClassKind kind = ((ClassDescriptor) owner).getKind();
-        return kind == ClassKind.CLASS || kind == ClassKind.TRAIT || kind == ClassKind.ENUM_CLASS;
-    }
-
     static boolean isJavaLangObject(JetType type) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
         return classifierDescriptor instanceof ClassDescriptor &&
@@ -276,7 +259,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull Name fieldName, @NotNull ResolverScopeData scopeData) {
 
         PsiClass psiClass = scopeData.getPsiClass();
-        getResolverScopeData(scopeData);
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
 
         NamedMembers namedMembers = scopeData.getNamedMembersMap().get(fieldName);
         if (namedMembers == null) {
@@ -294,7 +277,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
 
-        getResolverScopeData(scopeData);
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
         final PsiClass psiClass = scopeData.getPsiClass();
         assert psiClass != null;
 
@@ -311,12 +294,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
 
         return descriptors;
-    }
-
-    public static void getResolverScopeData(@NotNull ResolverScopeData scopeData) {
-        if (scopeData.getNamedMembersMap() == null) {
-            scopeData.setNamedMembersMap(JavaDescriptorResolverHelper.getNamedMembers(scopeData));
-        }
     }
 
     @NotNull
@@ -344,71 +321,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return annotationResolver.resolveAnnotation(psiAnnotation, taskList);
     }
 
-    @Nullable
-    public static ValueParameterDescriptor getValueParameterDescriptorForAnnotationParameter(
-            Name argumentName,
-            ClassDescriptor classDescriptor
-    ) {
-        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-        assert constructors.size() == 1 : "Annotation class descriptor must have only one constructor";
-        List<ValueParameterDescriptor> valueParameters = constructors.iterator().next().getValueParameters();
-
-        for (ValueParameterDescriptor parameter : valueParameters) {
-            Name parameterName = parameter.getName();
-            if (parameterName.equals(argumentName)) {
-                return parameter;
-            }
-        }
-        return null;
-    }
-
     public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
         return functionResolver.resolveMethods(scopeData);
-    }
-
-    public static Collection<JetType> getSupertypes(ResolverScopeData scope) {
-        if (scope instanceof ResolverClassData) {
-            return ((ResolverClassData) scope).getClassDescriptor().getSupertypes();
-        }
-        else if (scope instanceof ResolverNamespaceData) {
-            return Collections.emptyList();
-        }
-        else {
-            throw new IllegalStateException();
-        }
-    }
-
-    public static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
-        if (memberWrapper instanceof PsiMethodWrapper) {
-            PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
-            if (method.getJetMethod().hasForceOpenFlag()) {
-                return Modality.OPEN;
-            }
-            if (method.getJetMethod().hasForceFinalFlag()) {
-                return Modality.FINAL;
-            }
-        }
-
-        return Modality.convertFromFlags(memberWrapper.isAbstract(), !isFinal);
-    }
-
-    public static Visibility resolveVisibility(
-            PsiModifierListOwner modifierListOwner,
-            @Nullable PsiAnnotationWithFlags annotation
-    ) {
-        if (annotation != null) {
-            if (annotation.hasPrivateFlag()) {
-                return Visibilities.PRIVATE;
-            }
-            else if (annotation.hasInternalFlag()) {
-                return Visibilities.INTERNAL;
-            }
-        }
-        return modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC) ? Visibilities.PUBLIC :
-               (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibilities.PRIVATE :
-                (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibilities.PROTECTED :
-                 //Visibilities.PUBLIC));
-                 PACKAGE_VISIBILITY));
     }
 
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {

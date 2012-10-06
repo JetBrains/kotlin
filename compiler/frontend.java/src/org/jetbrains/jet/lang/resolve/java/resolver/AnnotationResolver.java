@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -103,7 +104,7 @@ public class AnnotationResolver {
                             .getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
             if (compileTimeConst != null) {
                 ValueParameterDescriptor valueParameterDescriptor =
-                        JavaDescriptorResolver.getValueParameterDescriptorForAnnotationParameter(identifier, clazz);
+                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(identifier, clazz);
                 if (valueParameterDescriptor != null) {
                     annotation.setValueArgument(valueParameterDescriptor, compileTimeConst);
                 }

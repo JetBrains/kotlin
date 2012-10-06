@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -52,7 +53,7 @@ public class InnerClassResolver {
             if (innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
                 continue;
             }
-            if (JavaDescriptorResolver.isInnerEnum(innerPsiClass, owner)) {
+            if (DescriptorResolverUtils.isInnerEnum(innerPsiClass, owner)) {
                 // Inner enums will be put later into our class object
                 continue;
             }
@@ -71,7 +72,7 @@ public class InnerClassResolver {
         // If we're a class object, inner enums of our parent need to be put into us
         DeclarationDescriptor containingDeclaration = owner.getContainingDeclaration();
         for (PsiClass innerPsiClass : psiClass.getInnerClasses()) {
-            if (JavaDescriptorResolver.isInnerEnum(innerPsiClass, containingDeclaration)) {
+            if (DescriptorResolverUtils.isInnerEnum(innerPsiClass, containingDeclaration)) {
                 ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
                 r.add(classDescriptor);
             }

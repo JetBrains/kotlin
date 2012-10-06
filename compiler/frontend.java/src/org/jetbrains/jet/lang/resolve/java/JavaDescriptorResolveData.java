@@ -87,7 +87,7 @@ public class JavaDescriptorResolveData {
             }
 
             this.staticMembers = staticMembers;
-            this.kotlin = psiClass != null && JavaDescriptorResolver.isKotlinClass(psiClass);
+            this.kotlin = psiClass != null && DescriptorResolverUtils.isKotlinClass(psiClass);
             classOrNamespaceDescriptor = descriptor;
 
             if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {

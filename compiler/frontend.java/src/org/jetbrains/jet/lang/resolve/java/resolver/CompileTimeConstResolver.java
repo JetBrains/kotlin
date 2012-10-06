@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -91,7 +92,7 @@ public class CompileTimeConstResolver {
                 javaDescriptorResolver.getClassResolver().resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
 
         ValueParameterDescriptor valueParameterDescriptor =
-                JavaDescriptorResolver.getValueParameterDescriptorForAnnotationParameter(valueName, classDescriptor);
+                DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(valueName, classDescriptor);
         if (valueParameterDescriptor == null) {
             return null;
         }

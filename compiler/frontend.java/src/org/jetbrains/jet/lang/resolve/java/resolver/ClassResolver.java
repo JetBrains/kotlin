@@ -173,7 +173,7 @@ public class ClassResolver {
 
         classData.getClassDescriptor().setTypeParameterDescriptors(typeParameters);
         classData.getClassDescriptor().setSupertypes(supertypes);
-        classData.getClassDescriptor().setVisibility(JavaDescriptorResolver.resolveVisibility(psiClass, jetClassAnnotation));
+        classData.getClassDescriptor().setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
         Modality modality;
         if (classData.getClassDescriptor().getKind() == ClassKind.ANNOTATION_CLASS) {
             modality = Modality.FINAL;
@@ -218,13 +218,13 @@ public class ClassResolver {
             return createClassObjectDescriptorForEnum(containing, psiClass);
         }
 
-        if (!JavaDescriptorResolver.isKotlinClass(psiClass)) {
+        if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
             return null;
         }
 
         // If there's at least one inner enum, we need to create a class object (to put this enum into)
         for (PsiClass innerClass : psiClass.getInnerClasses()) {
-            if (JavaDescriptorResolver.isInnerEnum(innerClass, containing)) {
+            if (DescriptorResolverUtils.isInnerEnum(innerClass, containing)) {
                 return createSyntheticClassObject(containing, psiClass);
             }
         }
@@ -415,7 +415,7 @@ public class ClassResolver {
                 throw new IllegalStateException(
                         "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
             }
-            if (JavaDescriptorResolver.isInnerEnum(psiClass, clazz) && JavaDescriptorResolver.isKotlinClass(psiClass)) {
+            if (DescriptorResolverUtils.isInnerEnum(psiClass, clazz) && DescriptorResolverUtils.isKotlinClass(psiClass)) {
                 ClassDescriptor classObjectDescriptor = clazz.getClassObjectDescriptor();
                 if (classObjectDescriptor == null) {
                     throw new IllegalStateException("Class object for a class with inner enum should've been created earlier: " + clazz);

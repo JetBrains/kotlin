@@ -24,10 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolvers;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -189,7 +186,7 @@ public class ConstructorResolver {
 
         constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
                                          valueParameterDescriptors.getDescriptors(),
-                                         JavaDescriptorResolver.resolveVisibility(psiConstructor, constructor.getJetConstructor()),
+                                         DescriptorResolverUtils.resolveVisibility(psiConstructor, constructor.getJetConstructor()),
                                          aStatic);
         javaDescriptorResolver.getTrace().record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;

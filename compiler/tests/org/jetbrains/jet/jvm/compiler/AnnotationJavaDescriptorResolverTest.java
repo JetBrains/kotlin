@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver.getValueParameterDescriptorForAnnotationParameter;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter;
 
 /**
  * @author Natalia Ukhorskaya

@@ -26,8 +26,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
@@ -82,7 +82,7 @@ public final class PropertiesResolver {
             @NotNull Name propertyName,
             @NotNull String context
     ) {
-        JavaDescriptorResolver.getResolverScopeData(scopeData);
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
 
         if (namedMembers.getPropertyDescriptors() != null) {
             return;
@@ -107,12 +107,12 @@ public final class PropertiesResolver {
 
             PropertyAccessorData characteristicMember = getCharacteristicMember(members);
 
-            Visibility visibility = JavaDescriptorResolver.resolveVisibility(characteristicMember.getMember().getPsiMember(), null);
+            Visibility visibility = DescriptorResolverUtils.resolveVisibility(characteristicMember.getMember().getPsiMember(), null);
             CallableMemberDescriptor.Kind kind = CallableMemberDescriptor.Kind.DECLARATION;
 
             if (members.getter != null && members.getter.getMember() instanceof PsiMethodWrapper) {
                 JetMethodAnnotation jetMethod = ((PsiMethodWrapper) members.getter.getMember()).getJetMethod();
-                visibility = JavaDescriptorResolver.resolveVisibility(characteristicMember.getMember().getPsiMember(), jetMethod);
+                visibility = DescriptorResolverUtils.resolveVisibility(characteristicMember.getMember().getPsiMember(), jetMethod);
                 kind = DescriptorKindUtils.flagsToKind(jetMethod.kind());
             }
 
@@ -122,7 +122,8 @@ public final class PropertiesResolver {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     realOwner,
                     javaDescriptorResolver.resolveAnnotations(characteristicMember.getMember().getPsiMember()),
-                    JavaDescriptorResolver.resolveModality(characteristicMember.getMember(), isFinal || isEnumEntry || isPropertyForNamedObject),
+                    DescriptorResolverUtils
+                            .resolveModality(characteristicMember.getMember(), isFinal || isEnumEntry || isPropertyForNamedObject),
                     visibility,
                     isVar,
                     propertyName,
@@ -157,9 +158,9 @@ public final class PropertiesResolver {
             }
 
             if (members.setter != null) {
-                Visibility setterVisibility = JavaDescriptorResolver.resolveVisibility(members.setter.getMember().getPsiMember(), null);
+                Visibility setterVisibility = DescriptorResolverUtils.resolveVisibility(members.setter.getMember().getPsiMember(), null);
                 if (members.setter.getMember() instanceof PsiMethodWrapper) {
-                    setterVisibility = JavaDescriptorResolver.resolveVisibility(
+                    setterVisibility = DescriptorResolverUtils.resolveVisibility(
                             members.setter.getMember().getPsiMember(),
                             ((PsiMethodWrapper) members.setter.getMember())
                                     .getJetMethod());
@@ -372,7 +373,7 @@ public final class PropertiesResolver {
 
     private static Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, Name propertyName) {
         Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
-        for (JetType supertype : JavaDescriptorResolver.getSupertypes(scopeData)) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData)) {
             for (VariableDescriptor property : supertype.getMemberScope().getProperties(propertyName)) {
                 r.add((PropertyDescriptor) property);
             }

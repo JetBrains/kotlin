@@ -53,7 +53,7 @@ public class FunctionResolver {
             @NotNull JavaDescriptorResolveData.ResolverScopeData scopeData
     ) {
 
-        JavaDescriptorResolver.getResolverScopeData(scopeData);
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
 
         PsiType returnPsiType = method.getReturnType();
         if (returnPsiType == null) {
@@ -121,8 +121,8 @@ public class FunctionResolver {
                 methodTypeParameters,
                 valueParameterDescriptors.getDescriptors(),
                 returnType,
-                JavaDescriptorResolver.resolveModality(method, method.isFinal()),
-                JavaDescriptorResolver.resolveVisibility(psiMethod, method.getJetMethod()),
+                DescriptorResolverUtils.resolveModality(method, method.isFinal()),
+                DescriptorResolverUtils.resolveVisibility(psiMethod, method.getJetMethod()),
                 /*isInline = */ false
         );
 
@@ -191,7 +191,7 @@ public class FunctionResolver {
     }
 
     public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, JavaDescriptorResolveData.ResolverScopeData scopeData) {
-        JavaDescriptorResolver.getResolverScopeData(scopeData);
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
 
         Map<Name, NamedMembers> namedMembersMap = scopeData.getNamedMembersMap();
 
@@ -239,7 +239,7 @@ public class FunctionResolver {
             Name methodName
     ) {
         Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
-        for (JetType supertype : JavaDescriptorResolver.getSupertypes(scopeData)) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
                 r.add((SimpleFunctionDescriptor) function);
             }
@@ -249,7 +249,7 @@ public class FunctionResolver {
 
     public List<FunctionDescriptor> resolveMethods(@NotNull JavaDescriptorResolveData.ResolverScopeData scopeData) {
 
-        JavaDescriptorResolver.getResolverScopeData(scopeData);
+        DescriptorResolverUtils.getResolverScopeData(scopeData);
 
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
 
