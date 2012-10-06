@@ -197,13 +197,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return namespaceDescriptorCacheByFqn;
     }
 
-    public static void checkPsiClassIsNotJet(PsiClass psiClass) {
-        if (psiClass instanceof JetJavaMirrorMarker) {
-            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
-        }
-    }
-
-
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         return namespaceResolver.resolveNamespace(qualifiedName, searchRule);

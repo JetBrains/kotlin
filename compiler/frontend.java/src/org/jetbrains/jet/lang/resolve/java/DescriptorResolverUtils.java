@@ -120,4 +120,10 @@ public final class DescriptorResolverUtils {
             scopeData.setNamedMembersMap(JavaDescriptorResolverHelper.getNamedMembers(scopeData));
         }
     }
+
+    public static void checkPsiClassIsNotJet(PsiClass psiClass) {
+        if (psiClass instanceof JetJavaMirrorMarker) {
+            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
+        }
+    }
 }

@@ -142,7 +142,7 @@ public class ClassResolver {
             throw new IllegalStateException(qualifiedName);
         }
 
-        JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
+        DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
         Name name = Name.identifier(psiClass.getName());
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
@@ -212,7 +212,7 @@ public class ClassResolver {
             @NotNull ClassDescriptor containing,
             @NotNull PsiClass psiClass
     ) {
-        JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
+        DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
         if (psiClass.isEnum()) {
             return createClassObjectDescriptorForEnum(containing, psiClass);

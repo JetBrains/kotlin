@@ -76,7 +76,7 @@ public class JavaDescriptorResolveData {
                 boolean staticMembers,
                 @NotNull ClassOrNamespaceDescriptor descriptor
         ) {
-            JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
+            DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
             this.psiClass = psiClass;
             this.psiPackage = psiPackage;
