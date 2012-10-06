@@ -22,12 +22,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
-import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
@@ -45,15 +43,9 @@ import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
-import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
-import org.jetbrains.jet.rt.signature.JetSignatureReader;
-import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -148,7 +140,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
 
     @Nullable
-    private ClassDescriptor resolveJavaLangObject() {
+    public ClassDescriptor resolveJavaLangObject() {
         ClassDescriptor clazz = classResolver.resolveClass(OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (clazz == null) {
             // TODO: warning
@@ -276,104 +268,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return ns;
     }
 
-    public Collection<JetType> getSupertypes(
-            PsiClassWrapper psiClass,
-            ResolverClassData classData,
-            List<TypeParameterDescriptor> typeParameters
-    ) {
-        ClassDescriptor classDescriptor = classData.getClassDescriptor();
-
-        final List<JetType> result = new ArrayList<JetType>();
-
-        String context = "class " + psiClass.getQualifiedName();
-
-        if (psiClass.getJetClass().signature().length() > 0) {
-            final TypeVariableResolver typeVariableResolver =
-                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-
-            new JetSignatureReader(psiClass.getJetClass().signature()).accept(new JetSignatureExceptionsAdapter() {
-                @Override
-                public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified) {
-                    // TODO: collect
-                    return new JetSignatureAdapter();
-                }
-
-                @Override
-                public JetSignatureVisitor visitSuperclass() {
-                    return new JetTypeJetSignatureReader(semanticServices, JetStandardLibrary.getInstance(), typeVariableResolver) {
-                        @Override
-                        protected void done(@NotNull JetType jetType) {
-                            if (!jetType.equals(JetStandardClasses.getAnyType())) {
-                                result.add(jetType);
-                            }
-                        }
-                    };
-                }
-
-                @Override
-                public JetSignatureVisitor visitInterface() {
-                    return visitSuperclass();
-                }
-            });
-        }
-        else {
-            TypeVariableResolver typeVariableResolverForSupertypes =
-                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes);
-            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes);
-        }
-
-        for (JetType supertype : result) {
-            if (ErrorUtils.isErrorType(supertype)) {
-                trace.record(BindingContext.INCOMPLETE_HIERARCHY, classDescriptor);
-            }
-        }
-
-        if (result.isEmpty()) {
-            if (classData.isKotlin()
-                || OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
-                // TODO: annotations
-                || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
-                result.add(JetStandardClasses.getAnyType());
-            }
-            else {
-                ClassDescriptor object = resolveJavaLangObject();
-                if (object != null) {
-                    result.add(object.getDefaultType());
-                }
-                else {
-                    result.add(JetStandardClasses.getAnyType());
-                }
-            }
-        }
-        return result;
-    }
-
-    private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes, TypeVariableResolver typeVariableResolver) {
-        for (PsiClassType type : extendsListTypes) {
-            PsiClass resolved = type.resolve();
-            if (resolved != null) {
-                final String qualifiedName = resolved.getQualifiedName();
-                assert qualifiedName != null;
-                if (JvmStdlibNames.JET_OBJECT.getFqName().equalsTo(qualifiedName)) {
-                    continue;
-                }
-            }
-
-            JetType transform = semanticServices.getTypeTransformer()
-                    .transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
-            if (ErrorUtils.isErrorType(transform)) {
-                continue;
-            }
-
-            result.add(TypeUtils.makeNotNullable(transform));
-        }
-    }
-
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        // First, let's check that there is no Kotlin package:
-
         return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
     }
 
