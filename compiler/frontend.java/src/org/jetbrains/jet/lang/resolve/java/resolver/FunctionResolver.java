@@ -16,29 +16,29 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolvers;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
-import java.util.List;
+import java.util.*;
 
 public class FunctionResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
@@ -134,5 +134,118 @@ public class FunctionResolver {
             throw new IllegalStateException("non-static method in subclass");
         }
         return functionDescriptorImpl;
+    }
+
+    public void resolveNamedGroupFunctions(
+            @NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
+            NamedMembers namedMembers, Name methodName, JavaDescriptorResolveData.ResolverScopeData scopeData
+    ) {
+        if (namedMembers.getFunctionDescriptors() != null) {
+            return;
+        }
+
+        final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
+
+        Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
+        for (PsiMethodWrapper method : namedMembers.getMethods()) {
+            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
+            if (function != null) {
+                functionsFromCurrent.add(function);
+            }
+        }
+
+        if (owner instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) owner;
+
+            Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
+
+            OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
+                                                              new OverrideResolver.DescriptorSink() {
+                                                                  @Override
+                                                                  public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                                                                      functions.add((FunctionDescriptor) fakeOverride);
+                                                                  }
+
+                                                                  @Override
+                                                                  public void conflict(
+                                                                          @NotNull CallableMemberDescriptor fromSuper,
+                                                                          @NotNull CallableMemberDescriptor fromCurrent
+                                                                  ) {
+                                                                      // nop
+                                                                  }
+                                                              });
+        }
+
+        OverrideResolver.resolveUnknownVisibilities(functions, javaDescriptorResolver.getTrace());
+        functions.addAll(functionsFromCurrent);
+
+        if (DescriptorUtils.isEnumClassObject(owner)) {
+            for (FunctionDescriptor functionDescriptor : Lists.newArrayList(functions)) {
+                if (isEnumSpecialMethod(functionDescriptor)) {
+                    functions.remove(functionDescriptor);
+                }
+            }
+        }
+
+        namedMembers.setFunctionDescriptors(functions);
+    }
+
+    public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, JavaDescriptorResolveData.ResolverScopeData scopeData) {
+        JavaDescriptorResolver.getResolverScopeData(scopeData);
+
+        Map<Name, NamedMembers> namedMembersMap = scopeData.getNamedMembersMap();
+
+        NamedMembers namedMembers = namedMembersMap.get(methodName);
+        if (namedMembers != null) {
+
+            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(), namedMembers,
+                                       methodName, scopeData);
+
+            return namedMembers.getFunctionDescriptors();
+        }
+        else {
+            return Collections.emptySet();
+        }
+    }
+
+    public static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
+            JavaDescriptorResolveData.ResolverScopeData scopeData,
+            Name methodName
+    ) {
+        Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
+        for (JetType supertype : JavaDescriptorResolver.getSupertypes(scopeData)) {
+            for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
+                r.add((SimpleFunctionDescriptor) function);
+            }
+        }
+        return r;
+    }
+
+    public List<FunctionDescriptor> resolveMethods(@NotNull JavaDescriptorResolveData.ResolverScopeData scopeData) {
+
+        JavaDescriptorResolver.getResolverScopeData(scopeData);
+
+        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
+
+        for (Map.Entry<Name, NamedMembers> entry : scopeData.getNamedMembersMap().entrySet()) {
+            Name methodName = entry.getKey();
+            NamedMembers namedMembers = entry.getValue();
+            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(),
+                                       namedMembers, methodName, scopeData);
+            functions.addAll(namedMembers.getFunctionDescriptors());
+        }
+
+        return functions;
+    }
+
+    public static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
+        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
+        String methodName = functionDescriptor.getName().getName();
+        JetType nullableString = TypeUtils.makeNullable(JetStandardLibrary.getInstance().getStringType());
+        if (methodName.equals("valueOf") && methodTypeParameters.size() == 1
+            && JetTypeChecker.INSTANCE.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString)) {
+            return true;
+        }
+        return (methodName.equals("values") && methodTypeParameters.isEmpty());
     }
 }

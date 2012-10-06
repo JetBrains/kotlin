@@ -120,7 +120,7 @@ public class JavaDescriptorResolveData {
 
         private Map<Name, NamedMembers> namedMembersMap;
 
-        Map<Name, NamedMembers> getNamedMembersMap() {
+        public Map<Name, NamedMembers> getNamedMembersMap() {
             return namedMembersMap;
         }
 

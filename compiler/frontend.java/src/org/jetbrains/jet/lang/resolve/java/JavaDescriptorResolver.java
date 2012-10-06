@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
@@ -31,7 +30,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
@@ -56,7 +54,6 @@ import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
@@ -100,21 +97,22 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     };
 
     // NOTE: this complexity is introduced because class descriptors do not always have valid fqnames (class objects) 
-    protected final Map<FqNameBase, ResolverClassData> classDescriptorCache = new THashMap<FqNameBase, ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
-        @Override
-        public int computeHashCode(FqNameBase o) {
-            if (o instanceof FqName) {
-                return ((FqName) o).toUnsafe().hashCode();
-            }
-            assert o instanceof FqNameUnsafe;
-            return o.hashCode();
-        }
+    protected final Map<FqNameBase, ResolverClassData> classDescriptorCache =
+            new THashMap<FqNameBase, ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
+                @Override
+                public int computeHashCode(FqNameBase o) {
+                    if (o instanceof FqName) {
+                        return ((FqName) o).toUnsafe().hashCode();
+                    }
+                    assert o instanceof FqNameUnsafe;
+                    return o.hashCode();
+                }
 
-        @Override
-        public boolean equals(FqNameBase n1, FqNameBase n2) {
-            return n1.equalsTo(n2.toString()) && n2.equalsTo(n1.toString());
-        }
-    });
+                @Override
+                public boolean equals(FqNameBase n1, FqNameBase n2) {
+                    return n1.equalsTo(n2.toString()) && n2.equalsTo(n1.toString());
+                }
+            });
     protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
     protected Project project;
@@ -238,7 +236,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     /**
      * TODO
-     //* @see #createJavaNamespaceDescriptor(PsiClass)
+     * //* @see #createJavaNamespaceDescriptor(PsiClass)
      */
     @Nullable
     public MutableClassDescriptorLite createClassObjectDescriptor(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
@@ -269,7 +267,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         FqName fqName = new FqName(qualifiedName);
         ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
                 containing, ClassKind.CLASS_OBJECT, classObjectPsiClass, fqName, this)
-                        .getResolverBinaryClassData();
+                .getResolverBinaryClassData();
 
         ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.getClassDescriptor();
         classObjectDescriptor.setSupertypes(
@@ -328,7 +326,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         classDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classDescriptor.createTypeConstructor();
         JavaClassMembersScope classMembersScope = new JavaClassMembersScope(semanticServices, data);
-        WritableScopeImpl writableScope = new WritableScopeImpl(classMembersScope, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
+        WritableScopeImpl writableScope =
+                new WritableScopeImpl(classMembersScope, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         classDescriptor.setScopeForMemberLookup(writableScope);
     }
@@ -353,7 +352,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             FqName containerFqName = new FqName(containingClassQualifiedName);
             ClassDescriptor clazz = classResolver.resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
             if (clazz == null) {
-                throw new IllegalStateException("PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
+                throw new IllegalStateException(
+                        "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
             }
             if (isInnerEnum(psiClass, clazz) && isKotlinClass(psiClass)) {
                 ClassDescriptor classObjectDescriptor = clazz.getClassObjectDescriptor();
@@ -384,8 +384,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         String context = "class " + psiClass.getQualifiedName();
 
         if (psiClass.getJetClass().signature().length() > 0) {
-            final TypeVariableResolver typeVariableResolver = TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-            
+            final TypeVariableResolver typeVariableResolver =
+                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
+
             new JetSignatureReader(psiClass.getJetClass().signature()).accept(new JetSignatureExceptionsAdapter() {
                 @Override
                 public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified) {
@@ -412,22 +413,23 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             });
         }
         else {
-            TypeVariableResolver typeVariableResolverForSupertypes = TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
+            TypeVariableResolver typeVariableResolverForSupertypes =
+                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
             transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes);
             transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes);
         }
-        
+
         for (JetType supertype : result) {
             if (ErrorUtils.isErrorType(supertype)) {
                 trace.record(BindingContext.INCOMPLETE_HIERARCHY, classDescriptor);
             }
         }
-        
+
         if (result.isEmpty()) {
             if (classData.isKotlin()
-                    || OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
-                    // TODO: annotations
-                    || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                || OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
+                // TODO: annotations
+                || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
                 result.add(JetStandardClasses.getAnyType());
             }
             else {
@@ -454,7 +456,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                 }
             }
 
-            JetType transform = semanticServices.getTypeTransformer().transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
+            JetType transform = semanticServices.getTypeTransformer()
+                    .transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
             if (ErrorUtils.isErrorType(transform)) {
                 continue;
             }
@@ -482,7 +485,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Nullable
     public PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        return psiClassFinder.findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        return psiClassFinder
+                .findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 
     public static class ValueParameterDescriptors {
@@ -510,7 +514,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         RECEIVER,
         TYPE_INFO,
     }
-    
+
     private static class JvmMethodParameterMeaning {
         private final JvmMethodParameterKind kind;
         private final JetType receiverType;
@@ -525,23 +529,25 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             this.receiverType = receiverType;
             this.valueParameterDescriptor = valueParameterDescriptor;
         }
-        
+
         public static JvmMethodParameterMeaning receiver(@NotNull JetType receiverType) {
             return new JvmMethodParameterMeaning(JvmMethodParameterKind.RECEIVER, receiverType, null);
         }
-        
+
         public static JvmMethodParameterMeaning regular(@NotNull ValueParameterDescriptor valueParameterDescriptor) {
             return new JvmMethodParameterMeaning(JvmMethodParameterKind.REGULAR, null, valueParameterDescriptor);
         }
-        
+
         public static JvmMethodParameterMeaning typeInfo() {
             return new JvmMethodParameterMeaning(JvmMethodParameterKind.TYPE_INFO, null, null);
         }
     }
 
     @NotNull
-    private JvmMethodParameterMeaning resolveParameterDescriptor(DeclarationDescriptor containingDeclaration, int i,
-            PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver) {
+    private JvmMethodParameterMeaning resolveParameterDescriptor(
+            DeclarationDescriptor containingDeclaration, int i,
+            PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver
+    ) {
 
         if (parameter.getJetTypeParameter().isDefined()) {
             return JvmMethodParameterMeaning.typeInfo();
@@ -555,7 +561,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (parameter.getJetValueParameter().name().length() > 0) {
             name = Name.identifier(parameter.getJetValueParameter().name());
         }
-        
+
         String typeFromAnnotation = parameter.getJetValueParameter().type();
         boolean receiver = parameter.getJetValueParameter().receiver();
         boolean hasDefaultValue = parameter.getJetValueParameter().hasDefaultValue();
@@ -565,7 +571,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             outType = semanticServices.getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
         }
         else {
-            outType = semanticServices.getTypeTransformer().transformToType(psiType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, typeVariableResolver);
+            outType = semanticServices.getTypeTransformer()
+                    .transformToType(psiType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, typeVariableResolver);
         }
 
         JetType varargElementType;
@@ -584,7 +591,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
             JetType transformedType;
             if (AnnotationResolver
-                        .findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+                        .findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
+                null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
             }
             else {
@@ -616,11 +624,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         //noinspection ConstantConditions
         String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
         propertiesResolver.resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
-                "class or namespace " + qualifiedName);
+                                                       "class or namespace " + qualifiedName);
 
         return namedMembers.getPropertyDescriptors();
     }
-    
+
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
 
@@ -642,67 +650,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         return descriptors;
     }
-    
-    private void resolveNamedGroupFunctions(
-            @NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
-            NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData
-    ) {
-        if (namedMembers.getFunctionDescriptors() != null) {
-            return;
-        }
-
-        final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
-
-        Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
-        for (PsiMethodWrapper method : namedMembers.getMethods()) {
-            SimpleFunctionDescriptor function = functionResolver.resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
-            if (function != null) {
-                functionsFromCurrent.add(function);
-            }
-        }
-
-        if (owner instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) owner;
-
-            Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
-
-            OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
-                                                              new OverrideResolver.DescriptorSink() {
-                @Override
-                public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                    functions.add((FunctionDescriptor) fakeOverride);
-                }
-
-                @Override
-                public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                    // nop
-                }
-            });
-        }
-
-        OverrideResolver.resolveUnknownVisibilities(functions, trace);
-        functions.addAll(functionsFromCurrent);
-
-        if (DescriptorUtils.isEnumClassObject(owner)) {
-            for (FunctionDescriptor functionDescriptor : Lists.newArrayList(functions)) {
-                if (isEnumSpecialMethod(functionDescriptor)) {
-                    functions.remove(functionDescriptor);
-                }
-            }
-        }
-
-        namedMembers.setFunctionDescriptors(functions);
-    }
-
-    private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, Name methodName) {
-        Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
-        for (JetType supertype : getSupertypes(scopeData)) {
-            for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
-                r.add((SimpleFunctionDescriptor) function);
-            }
-        }
-        return r;
-    }
 
     public static void getResolverScopeData(@NotNull ResolverScopeData scopeData) {
         if (scopeData.getNamedMembersMap() == null) {
@@ -712,21 +659,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull Name methodName, @NotNull ResolverScopeData scopeData) {
-
-        getResolverScopeData(scopeData);
-
-        Map<Name, NamedMembers> namedMembersMap = scopeData.getNamedMembersMap();
-
-        NamedMembers namedMembers = namedMembersMap.get(methodName);
-        if (namedMembers != null) {
-
-            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(), namedMembers, methodName, scopeData);
-
-            return namedMembers.getFunctionDescriptors();
-        }
-        else {
-            return Collections.emptySet();
-        }
+        return functionResolver.resolveFunctionGroup(methodName, scopeData);
     }
 
     public ValueParameterDescriptors resolveParameterDescriptors(
@@ -738,7 +671,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         int indexDelta = 0;
         for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
             PsiParameterWrapper parameter = parameters.get(i);
-            JvmMethodParameterMeaning meaning = resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
+            JvmMethodParameterMeaning meaning =
+                    resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
             if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
                 // TODO
                 --indexDelta;
@@ -757,17 +691,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return new ValueParameterDescriptors(receiverType, result);
     }
 
-    private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
-        List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        String methodName = functionDescriptor.getName().getName();
-        JetType nullableString = TypeUtils.makeNullable(JetStandardLibrary.getInstance().getStringType());
-        if (methodName.equals("valueOf") && methodTypeParameters.size() == 1
-            && JetTypeChecker.INSTANCE.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString)) {
-            return true;
-        }
-        return (methodName.equals("values") && methodTypeParameters.isEmpty());
-    }
-
     public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
         return annotationResolver.resolveAnnotations(owner, tasks);
     }
@@ -778,10 +701,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Nullable
     public AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
-
-        // Don't process internal jet annotations and jetbrains NotNull annotations
-
-
         return annotationResolver.resolveAnnotation(psiAnnotation, taskList);
     }
 
@@ -804,20 +723,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
-
-        getResolverScopeData(scopeData);
-
-        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
-
-        for (Map.Entry<Name, NamedMembers> entry : scopeData.getNamedMembersMap().entrySet()) {
-            Name methodName = entry.getKey();
-            NamedMembers namedMembers = entry.getValue();
-            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(),
-                                       namedMembers, methodName, scopeData);
-            functions.addAll(namedMembers.getFunctionDescriptors());
-        }
-
-        return functions;
+        return functionResolver.resolveMethods(scopeData);
     }
 
     public static Collection<JetType> getSupertypes(ResolverScopeData scope) {
@@ -848,7 +754,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
         }
 
-        if (AnnotationResolver.findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+        if (AnnotationResolver.findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
+            null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }
         else {
