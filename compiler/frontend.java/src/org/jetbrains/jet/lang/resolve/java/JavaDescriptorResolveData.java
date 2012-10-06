@@ -176,9 +176,9 @@ public class JavaDescriptorResolveData {
     }
 
 
-    static class ResolverSyntheticClassObjectClassData extends ResolverClassData {
+    public static class ResolverSyntheticClassObjectClassData extends ResolverClassData {
 
-        protected ResolverSyntheticClassObjectClassData(
+        public ResolverSyntheticClassObjectClassData(
                 @Nullable PsiClass psiClass,
                 @Nullable FqName fqName,
                 @NotNull ClassDescriptorFromJvmBytecode descriptor

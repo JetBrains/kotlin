@@ -29,11 +29,21 @@ import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameBase;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 public class ClassResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
@@ -96,7 +106,8 @@ public class ClassResolver {
                     javaDescriptorResolver.getPsiClassFinder().findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
             if (psiClass == null) {
                 JavaDescriptorResolveData.ResolverClassData oldValue =
-                        javaDescriptorResolver.getClassDescriptorCache().put(qualifiedName, JavaDescriptorResolveData.ResolverBinaryClassData.NEGATIVE);
+                        javaDescriptorResolver.getClassDescriptorCache()
+                                .put(qualifiedName, JavaDescriptorResolveData.ResolverBinaryClassData.NEGATIVE);
                 if (oldValue != null) {
                     throw new IllegalStateException("rewrite at " + qualifiedName);
                 }
@@ -173,8 +184,7 @@ public class ClassResolver {
         List<TypeParameterDescriptor> classTypeParameters = classData.getClassDescriptor().getTypeConstructor().getParameters();
         supertypes.addAll(javaDescriptorResolver.getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
 
-        MutableClassDescriptorLite classObject =
-                javaDescriptorResolver.createClassObjectDescriptor(classData.getClassDescriptor(), psiClass);
+        MutableClassDescriptorLite classObject = createClassObjectDescriptor(classData.getClassDescriptor(), psiClass);
         if (classObject != null) {
             classData.getClassDescriptor().getBuilder().setClassObjectDescriptor(classObject);
         }
@@ -184,6 +194,101 @@ public class ClassResolver {
         javaDescriptorResolver.getTrace().record(BindingContext.CLASS, psiClass, classData.getClassDescriptor());
 
         return classData;
+    }
+
+    @Nullable
+    public MutableClassDescriptorLite createClassObjectDescriptor(
+            @NotNull ClassDescriptor containing,
+            @NotNull PsiClass psiClass
+    ) {
+        JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
+
+        if (psiClass.isEnum()) {
+            return createClassObjectDescriptorForEnum(containing, psiClass);
+        }
+
+        if (!JavaDescriptorResolver.isKotlinClass(psiClass)) {
+            return null;
+        }
+
+        // If there's at least one inner enum, we need to create a class object (to put this enum into)
+        for (PsiClass innerClass : psiClass.getInnerClasses()) {
+            if (JavaDescriptorResolver.isInnerEnum(innerClass, containing)) {
+                return createSyntheticClassObject(containing, psiClass);
+            }
+        }
+
+        PsiClass classObjectPsiClass = JavaDescriptorResolver.getInnerClassClassObject(psiClass);
+        if (classObjectPsiClass == null) {
+            return null;
+        }
+
+        final String qualifiedName = classObjectPsiClass.getQualifiedName();
+        assert qualifiedName != null;
+        FqName fqName = new FqName(qualifiedName);
+        JavaDescriptorResolveData.ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
+                containing, ClassKind.CLASS_OBJECT, classObjectPsiClass, fqName, javaDescriptorResolver)
+                .getResolverBinaryClassData();
+
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.getClassDescriptor();
+        classObjectDescriptor.setSupertypes(
+                javaDescriptorResolver
+                        .getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData, new ArrayList<TypeParameterDescriptor>(0)));
+        setUpClassObjectDescriptor(containing, fqName, classData, getClassObjectName(containing.getName()));
+        return classObjectDescriptor;
+    }
+
+    public void setUpClassObjectDescriptor(
+            @NotNull ClassDescriptor containing,
+            @NotNull FqNameBase fqName,
+            @NotNull JavaDescriptorResolveData.ResolverClassData data,
+            @NotNull Name classObjectName
+    ) {
+        ClassDescriptorFromJvmBytecode classDescriptor = data.getClassDescriptor();
+        javaDescriptorResolver.getClassDescriptorCache().put(fqName, data);
+        classDescriptor.setName(classObjectName);
+        classDescriptor.setModality(Modality.FINAL);
+        classDescriptor.setVisibility(containing.getVisibility());
+        classDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classDescriptor.createTypeConstructor();
+        JavaClassMembersScope classMembersScope = new JavaClassMembersScope(javaDescriptorResolver.getSemanticServices(), data);
+        WritableScopeImpl writableScope =
+                new WritableScopeImpl(classMembersScope, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
+        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        classDescriptor.setScopeForMemberLookup(writableScope);
+    }
+
+    @NotNull
+    private MutableClassDescriptorLite createClassObjectDescriptorForEnum(
+            @NotNull ClassDescriptor containing,
+            @NotNull PsiClass psiClass
+    ) {
+        MutableClassDescriptorLite classObjectDescriptor = createSyntheticClassObject(containing, psiClass);
+
+        classObjectDescriptor.getBuilder()
+                .addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, javaDescriptorResolver.getTrace()));
+        classObjectDescriptor.getBuilder()
+                .addFunctionDescriptor(createEnumClassObjectValueOfMethod(classObjectDescriptor, javaDescriptorResolver.getTrace()));
+
+        return classObjectDescriptor;
+    }
+
+    @NotNull
+    private MutableClassDescriptorLite createSyntheticClassObject(
+            @NotNull ClassDescriptor containing,
+            @NotNull PsiClass psiClass
+    ) {
+        String psiClassQualifiedName = psiClass.getQualifiedName();
+        assert psiClassQualifiedName != null : "Reading java class with no qualified name";
+        FqNameUnsafe fqName = new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
+                containing, ClassKind.CLASS_OBJECT, psiClass, null, javaDescriptorResolver);
+
+        JavaDescriptorResolveData.ResolverSyntheticClassObjectClassData
+                data = new JavaDescriptorResolveData.ResolverSyntheticClassObjectClassData(psiClass, null, classObjectDescriptor);
+        setUpClassObjectDescriptor(containing, fqName, data, getClassObjectName(containing.getName().getName()));
+
+        return classObjectDescriptor;
     }
 
     public static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
