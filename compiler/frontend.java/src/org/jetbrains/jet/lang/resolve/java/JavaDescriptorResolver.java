@@ -178,7 +178,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @NotNull
     public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
-
         return constructorResolver.resolveConstructors(classData);
     }
 
@@ -202,16 +201,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         if (psiClass instanceof JetJavaMirrorMarker) {
             throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
         }
-    }
-
-    @Nullable
-    public static PsiClass getInnerClassClassObject(@NotNull PsiClass outer) {
-        for (PsiClass inner : outer.getInnerClasses()) {
-            if (inner.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
-                return inner;
-            }
-        }
-        return null;
     }
 
     static boolean isJavaLangObject(JetType type) {

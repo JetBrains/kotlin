@@ -229,7 +229,7 @@ public class ClassResolver {
             }
         }
 
-        PsiClass classObjectPsiClass = JavaDescriptorResolver.getInnerClassClassObject(psiClass);
+        PsiClass classObjectPsiClass = getInnerClassClassObject(psiClass);
         if (classObjectPsiClass == null) {
             return null;
         }
@@ -444,5 +444,15 @@ public class ClassResolver {
                 return jetClassAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT ? ClassKind.OBJECT : ClassKind.CLASS;
             }
         }
+    }
+
+    @Nullable
+    public static PsiClass getInnerClassClassObject(@NotNull PsiClass outer) {
+        for (PsiClass inner : outer.getInnerClasses()) {
+            if (inner.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
+                return inner;
+            }
+        }
+        return null;
     }
 }
