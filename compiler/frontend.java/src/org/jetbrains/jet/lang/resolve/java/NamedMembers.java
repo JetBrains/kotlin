@@ -16,36 +16,65 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
 * @author Stepan Koltsov
 */
-class NamedMembers {
-    List<PsiMethodWrapper> methods = new ArrayList<PsiMethodWrapper>(0);
+public class NamedMembers {
 
-    @Nullable
-    List<PropertyAccessorData> propertyAccessors;
+    @NotNull
+    private final List<PsiMethodWrapper> methods = Lists.newArrayList();
 
-    Set<VariableDescriptor> propertyDescriptors;
+    @NotNull
+    private final List<PropertyAccessorData> propertyAccessors = Lists.newArrayList();
+
+    private Set<VariableDescriptor> propertyDescriptors;
+
     /** Including from supertypes */
-    Set<FunctionDescriptor> functionDescriptors;
+    private Set<FunctionDescriptor> functionDescriptors;
 
-    void addMethod(PsiMethodWrapper method) {
+    void addMethod(@NotNull PsiMethodWrapper method) {
         methods.add(method);
     }
-    
-    void addPropertyAccessor(PropertyAccessorData propertyAccessorData) {
-        if (propertyAccessors == null) {
-            propertyAccessors = new ArrayList<PropertyAccessorData>();
-        }
+
+    void addPropertyAccessor(@NotNull PropertyAccessorData propertyAccessorData) {
         propertyAccessors.add(propertyAccessorData);
+    }
+
+    @NotNull
+    public List<PsiMethodWrapper> getMethods() {
+        return methods;
+    }
+
+    @NotNull
+    public List<PropertyAccessorData> getPropertyAccessors() {
+        return propertyAccessors;
+    }
+
+    @Nullable
+    public Set<VariableDescriptor> getPropertyDescriptors() {
+        return propertyDescriptors;
+    }
+
+    public void setPropertyDescriptors(@NotNull Set<VariableDescriptor> propertyDescriptors) {
+        this.propertyDescriptors = propertyDescriptors;
+    }
+
+    @Nullable
+    public Set<FunctionDescriptor> getFunctionDescriptors() {
+        return functionDescriptors;
+    }
+
+    public void setFunctionDescriptors(@NotNull Set<FunctionDescriptor> functionDescriptors) {
+        this.functionDescriptors = functionDescriptors;
     }
 }

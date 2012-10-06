@@ -941,7 +941,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         javaDescriptorPropertiesResolver.resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
                 "class or namespace " + qualifiedName);
 
-        return namedMembers.propertyDescriptors;
+        return namedMembers.getPropertyDescriptors();
     }
     
     @NotNull
@@ -960,7 +960,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             javaDescriptorPropertiesResolver.resolveNamedGroupProperties(
                     scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, propertyName,
                     "class or namespace " + psiClass.getQualifiedName());
-            descriptors.addAll(namedMembers.propertyDescriptors);
+            descriptors.addAll(namedMembers.getPropertyDescriptors());
         }
 
         return descriptors;
@@ -970,14 +970,14 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             @NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
             NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData
     ) {
-        if (namedMembers.functionDescriptors != null) {
+        if (namedMembers.getFunctionDescriptors() != null) {
             return;
         }
 
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
-        for (PsiMethodWrapper method : namedMembers.methods) {
+        for (PsiMethodWrapper method : namedMembers.getMethods()) {
             SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
             if (function != null) {
                 functionsFromCurrent.add(function);
@@ -1014,7 +1014,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
         }
 
-        namedMembers.functionDescriptors = functions;
+        namedMembers.setFunctionDescriptors(functions);
     }
 
     private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, Name methodName) {
@@ -1041,11 +1041,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         Map<Name, NamedMembers> namedMembersMap = scopeData.getNamedMembersMap();
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
-        if (namedMembers != null && namedMembers.methods != null) {
+        if (namedMembers != null) {
 
             resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(), namedMembers, methodName, scopeData);
 
-            return namedMembers.functionDescriptors;
+            return namedMembers.getFunctionDescriptors();
         }
         else {
             return Collections.emptySet();
@@ -1408,7 +1408,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             NamedMembers namedMembers = entry.getValue();
             resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(),
                                        namedMembers, methodName, scopeData);
-            functions.addAll(namedMembers.functionDescriptors);
+            functions.addAll(namedMembers.getFunctionDescriptors());
         }
 
         return functions;

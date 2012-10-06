@@ -79,15 +79,11 @@ public final class JavaDescriptorPropertiesResolver {
     ) {
         JavaDescriptorResolver.getResolverScopeData(scopeData);
 
-        if (namedMembers.propertyDescriptors != null) {
+        if (namedMembers.getPropertyDescriptors() != null) {
             return;
         }
 
-        if (namedMembers.propertyAccessors == null) {
-            namedMembers.propertyAccessors = Collections.emptyList();
-        }
-
-        Map<String, GroupingValue> map = collectGroupingValuesFromAccessors(namedMembers.propertyAccessors);
+        Map<String, GroupingValue> map = collectGroupingValuesFromAccessors(namedMembers.getPropertyAccessors());
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
 
@@ -263,7 +259,7 @@ public final class JavaDescriptorPropertiesResolver {
         OverrideResolver.resolveUnknownVisibilities(properties, trace);
         properties.addAll(propertiesFromCurrent);
 
-        namedMembers.propertyDescriptors = Sets.<VariableDescriptor>newHashSet(properties);
+        namedMembers.setPropertyDescriptors(Sets.<VariableDescriptor>newHashSet(properties));
     }
 
     private List<TypeParameterDescriptor> resolvePropertyTypeParameters(
