@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Stepan Koltsov
  */
-class TypeSource {
+public class TypeSource {
 
     @NotNull
     private final String typeString;

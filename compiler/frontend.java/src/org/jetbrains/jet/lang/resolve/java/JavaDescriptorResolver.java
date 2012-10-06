@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSign
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaDescriptorPropertiesResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
@@ -1027,7 +1028,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return r;
     }
 
-    static void getResolverScopeData(@NotNull ResolverScopeData scopeData) {
+    public static void getResolverScopeData(@NotNull ResolverScopeData scopeData) {
         if (scopeData.getNamedMembersMap() == null) {
             scopeData.setNamedMembersMap(JavaDescriptorResolverHelper.getNamedMembers(scopeData));
         }
@@ -1186,7 +1187,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return r;
     }
 
-    List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
+    public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
         List<Runnable> tasks = Lists.newArrayList();
         List<AnnotationDescriptor> annotations = resolveAnnotations(owner, tasks);
         for (Runnable task : tasks) {
@@ -1414,7 +1415,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return functions;
     }
 
-    static Collection<JetType> getSupertypes(ResolverScopeData scope) {
+    public static Collection<JetType> getSupertypes(ResolverScopeData scope) {
         if (scope instanceof ResolverClassData) {
             return ((ResolverClassData) scope).getClassDescriptor().getSupertypes();
         }
@@ -1448,7 +1449,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
+    public static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
         if (memberWrapper instanceof PsiMethodWrapper) {
             PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
             if (method.getJetMethod().hasForceOpenFlag()) {
@@ -1462,8 +1463,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return Modality.convertFromFlags(memberWrapper.isAbstract(), !isFinal);
     }
 
-    static Visibility resolveVisibility(PsiModifierListOwner modifierListOwner,
-            @Nullable PsiAnnotationWithFlags annotation) {
+    public static Visibility resolveVisibility(
+            PsiModifierListOwner modifierListOwner,
+            @Nullable PsiAnnotationWithFlags annotation
+    ) {
         if (annotation != null) {
             if (annotation.hasPrivateFlag()) {
                 return Visibilities.PRIVATE;

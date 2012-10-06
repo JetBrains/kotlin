@@ -326,9 +326,10 @@ public class JavaDescriptorSignatureResolver {
     }
 
 
-    List<TypeParameterDescriptor> resolveMethodTypeParameters(
+    public List<TypeParameterDescriptor> resolveMethodTypeParameters(
             @NotNull PsiMethodWrapper method,
-            @NotNull DeclarationDescriptor functionDescriptor) {
+            @NotNull DeclarationDescriptor functionDescriptor
+    ) {
 
         List<TypeParameterDescriptorInitialization> typeParametersIntialization;
         final PsiMethod psiMethod = method.getPsiMethod();

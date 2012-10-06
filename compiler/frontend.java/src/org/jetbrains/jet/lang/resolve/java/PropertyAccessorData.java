@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 /**
  * @author Stepan Koltsov
  */
-class PropertyAccessorData {
+public class PropertyAccessorData {
 
     @NotNull
     private final PsiMemberWrapper member;

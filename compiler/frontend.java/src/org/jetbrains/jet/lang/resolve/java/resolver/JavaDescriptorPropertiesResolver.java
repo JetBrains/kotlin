@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
@@ -54,19 +55,23 @@ public final class JavaDescriptorPropertiesResolver {
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private BindingTrace trace;
 
-    /* internal */ JavaDescriptorPropertiesResolver(JavaDescriptorResolver resolver) {
+    /* internal */
+    public JavaDescriptorPropertiesResolver(JavaDescriptorResolver resolver) {
         this.javaDescriptorResolver = resolver;
     }
 
-    /* internal */ void setSemanticServices(JavaSemanticServices semanticServices) {
+    /* internal */
+    public void setSemanticServices(JavaSemanticServices semanticServices) {
         this.semanticServices = semanticServices;
     }
 
-    /* internal */ void setTrace(BindingTrace trace) {
+    /* internal */
+    public void setTrace(BindingTrace trace) {
         this.trace = trace;
     }
 
-    /* internal */ void setJavaDescriptorSignatureResolver(JavaDescriptorSignatureResolver javaDescriptorSignatureResolver) {
+    /* internal */
+    public void setJavaDescriptorSignatureResolver(JavaDescriptorSignatureResolver javaDescriptorSignatureResolver) {
         this.javaDescriptorSignatureResolver = javaDescriptorSignatureResolver;
     }
 
