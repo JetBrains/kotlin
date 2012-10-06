@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSign
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.resolver.ClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaDescriptorPropertiesResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.PropertiesResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
@@ -123,7 +123,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private BindingTrace trace;
     private PsiClassFinder psiClassFinder;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
-    private JavaDescriptorPropertiesResolver javaDescriptorPropertiesResolver = new JavaDescriptorPropertiesResolver(this);
+    private PropertiesResolver propertiesResolver = new PropertiesResolver(this);
     private final ClassResolver classResolver = new ClassResolver(this);
 
     @Inject
@@ -134,13 +134,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Inject
     public void setSemanticServices(JavaSemanticServices semanticServices) {
         this.semanticServices = semanticServices;
-        this.javaDescriptorPropertiesResolver.setSemanticServices(semanticServices);
+        this.propertiesResolver.setSemanticServices(semanticServices);
     }
 
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
-        this.javaDescriptorPropertiesResolver.setTrace(trace);
+        this.propertiesResolver.setTrace(trace);
     }
 
     @Inject
@@ -151,7 +151,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Inject
     public void setJavaDescriptorSignatureResolver(JavaDescriptorSignatureResolver javaDescriptorSignatureResolver) {
         this.javaDescriptorSignatureResolver = javaDescriptorSignatureResolver;
-        this.javaDescriptorPropertiesResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
+        this.propertiesResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
     }
 
 
@@ -831,7 +831,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         //noinspection ConstantConditions
         String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
-        javaDescriptorPropertiesResolver.resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
+        propertiesResolver.resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
                 "class or namespace " + qualifiedName);
 
         return namedMembers.getPropertyDescriptors();
@@ -850,7 +850,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             NamedMembers namedMembers = entry.getValue();
             Name propertyName = entry.getKey();
 
-            javaDescriptorPropertiesResolver.resolveNamedGroupProperties(
+            propertiesResolver.resolveNamedGroupProperties(
                     scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, propertyName,
                     "class or namespace " + psiClass.getQualifiedName());
             descriptors.addAll(namedMembers.getPropertyDescriptors());

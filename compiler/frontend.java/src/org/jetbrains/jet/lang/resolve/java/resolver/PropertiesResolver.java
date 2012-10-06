@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.*;
 
-public final class JavaDescriptorPropertiesResolver {
+public final class PropertiesResolver {
 
     private static class GroupingValue {
         PropertyAccessorData getter;
@@ -56,7 +56,7 @@ public final class JavaDescriptorPropertiesResolver {
     private BindingTrace trace;
 
     /* internal */
-    public JavaDescriptorPropertiesResolver(JavaDescriptorResolver resolver) {
+    public PropertiesResolver(JavaDescriptorResolver resolver) {
         this.javaDescriptorResolver = resolver;
     }
 
