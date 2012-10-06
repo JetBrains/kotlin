@@ -235,39 +235,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
 
-    @NotNull
-    public ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
-        final String qualifiedName = psiClass.getQualifiedName();
-        assert qualifiedName != null;
-        FqName fqName = new FqName(qualifiedName);
-
-        PsiClass containingClass = psiClass.getContainingClass();
-        if (containingClass != null) {
-            final String containingClassQualifiedName = containingClass.getQualifiedName();
-            assert containingClassQualifiedName != null;
-            FqName containerFqName = new FqName(containingClassQualifiedName);
-            ClassDescriptor clazz = classResolver.resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
-            if (clazz == null) {
-                throw new IllegalStateException(
-                        "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
-            }
-            if (isInnerEnum(psiClass, clazz) && isKotlinClass(psiClass)) {
-                ClassDescriptor classObjectDescriptor = clazz.getClassObjectDescriptor();
-                if (classObjectDescriptor == null) {
-                    throw new IllegalStateException("Class object for a class with inner enum should've been created earlier: " + clazz);
-                }
-                return classObjectDescriptor;
-            }
-            return clazz;
-        }
-
-        NamespaceDescriptor ns = namespaceResolver.resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
-        if (ns == null) {
-            throw new IllegalStateException("cannot resolve namespace " + fqName.parent() + ", required to be container for " + fqName);
-        }
-        return ns;
-    }
-
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
