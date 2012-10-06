@@ -20,8 +20,8 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationResolver;
 
 /**
  * @author Stepan Koltsov
@@ -74,7 +74,7 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     
     public static JetValueParameterAnnotation get(PsiParameter psiParameter) {
         final PsiAnnotation annotation =
-                JavaDescriptorResolver.findAnnotation(psiParameter, JvmStdlibNames.JET_VALUE_PARAMETER.getFqName().getFqName());
+                AnnotationResolver.findAnnotation(psiParameter, JvmStdlibNames.JET_VALUE_PARAMETER.getFqName().getFqName());
         return annotation != null ? new JetValueParameterAnnotation(annotation) : NULL_ANNOTATION;
     }
 }

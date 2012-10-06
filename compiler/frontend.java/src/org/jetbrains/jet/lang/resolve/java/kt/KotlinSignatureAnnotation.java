@@ -21,8 +21,8 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationResolver;
 
 /**
  * @author Evgeny Gerashchenko
@@ -54,7 +54,7 @@ public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
     @NotNull
     public static KotlinSignatureAnnotation get(PsiModifierListOwner psiModifierListOwner) {
         final PsiAnnotation annotation =
-                JavaDescriptorResolver.findAnnotation(psiModifierListOwner, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
+                AnnotationResolver.findAnnotation(psiModifierListOwner, JvmStdlibNames.KOTLIN_SIGNATURE.getFqName().getFqName());
         return annotation != null ? new KotlinSignatureAnnotation(annotation) : NULL_ANNOTATION;
     }
 }

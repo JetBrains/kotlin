@@ -292,8 +292,8 @@ public final class PropertiesResolver {
         }
         else {
             propertyType = semanticServices.getTypeTransformer().transformToType(characteristicMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
-            if (JavaDescriptorResolver.findAnnotation(characteristicMember.getType().getPsiNotNullOwner(),
-                                                      JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+            if (AnnotationResolver.findAnnotation(characteristicMember.getType().getPsiNotNullOwner(),
+                                                  JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                 propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
             }
             else if (members.getter == null && members.setter == null && members.field.getMember().isFinal() && members.field.getMember().isStatic()) {

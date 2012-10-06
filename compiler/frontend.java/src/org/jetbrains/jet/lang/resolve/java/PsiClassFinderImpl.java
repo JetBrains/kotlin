@@ -25,6 +25,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -80,8 +81,8 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         }
 
         if ("jet".equals(qualifiedName.parent().getFqName())) {
-            PsiAnnotation assertInvisibleAnnotation = JavaDescriptorResolver
-                    .findAnnotation(original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+            PsiAnnotation assertInvisibleAnnotation =
+                    AnnotationResolver.findAnnotation(original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
             if (assertInvisibleAnnotation != null) {
                 if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
                     return null;

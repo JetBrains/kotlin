@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import gnu.trove.THashMap;
@@ -29,21 +28,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverSyntheticClassObjectClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
-import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
-import org.jetbrains.jet.lang.resolve.java.resolver.ClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.CompileTimeConstResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.ConstructorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.PropertiesResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
@@ -81,7 +77,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
  */
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
 
-    private static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
@@ -131,6 +127,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private final ClassResolver classResolver = new ClassResolver(this);
     private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
     private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
+    private final AnnotationResolver annotationResolver = new AnnotationResolver(this);
+    private final FunctionResolver functionResolver = new FunctionResolver(this);
 
     @Inject
     public void setProject(Project project) {
@@ -208,6 +206,14 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public ClassResolver getClassResolver() {
         return classResolver;
+    }
+
+    public CompileTimeConstResolver getCompileTimeConstResolver() {
+        return compileTimeConstResolver;
+    }
+
+    public AnnotationResolver getAnnotationResolver() {
+        return annotationResolver;
     }
 
     public static void checkPsiClassIsNotJet(PsiClass psiClass) {
@@ -676,7 +682,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         else {
 
             JetType transformedType;
-            if (findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+            if (AnnotationResolver
+                        .findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
             }
             else {
@@ -747,7 +754,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.getMethods()) {
-            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
+            SimpleFunctionDescriptor function = functionResolver.resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
             if (function != null) {
                 functionsFromCurrent.add(function);
             }
@@ -849,91 +856,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return new ValueParameterDescriptors(receiverType, result);
     }
 
-    @Nullable
-    private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
-            @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
-            @NotNull ResolverScopeData scopeData) {
-
-        getResolverScopeData(scopeData);
-
-        PsiType returnPsiType = method.getReturnType();
-        if (returnPsiType == null) {
-            return null;
-        }
-
-        // TODO: ugly
-        if (method.getJetMethod().hasPropertyFlag()) {
-            return null;
-        }
-
-        final PsiMethod psiMethod = method.getPsiMethod();
-        final PsiClass containingClass = psiMethod.getContainingClass();
-        if (scopeData.isKotlin()) {
-            // TODO: unless maybe class explicitly extends Object
-            assert containingClass != null;
-            String ownerClassName = containingClass.getQualifiedName();
-            if (OBJECT_FQ_NAME.getFqName().equals(ownerClassName)) {
-                return null;
-            }
-        }
-
-        if (trace.get(BindingContext.FUNCTION, psiMethod) != null) {
-            return trace.get(BindingContext.FUNCTION, psiMethod);
-        }
-
-        SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
-                scopeData.getClassOrNamespaceDescriptor(),
-                resolveAnnotations(psiMethod),
-                Name.identifier(method.getName()),
-                DescriptorKindUtils.flagsToKind(method.getJetMethod().kind())
-        );
-
-        String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
-
-        List<TypeParameterDescriptor> methodTypeParameters = javaDescriptorSignatureResolver.resolveMethodTypeParameters(method,
-                                                                                                                         functionDescriptorImpl);
-
-        TypeVariableResolver methodTypeVariableResolver = TypeVariableResolvers.typeVariableResolverFromTypeParameters(methodTypeParameters,
-                                                                                                                       functionDescriptorImpl,
-                                                                                                                       context);
-
-
-        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
-        JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
-
-        // TODO consider better place for this check
-        AlternativeMethodSignatureData alternativeMethodSignatureData =
-                new AlternativeMethodSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters);
-        if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
-            valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
-            returnType = alternativeMethodSignatureData.getReturnType();
-            methodTypeParameters = alternativeMethodSignatureData.getTypeParameters();
-        }
-        else if (alternativeMethodSignatureData.hasErrors()) {
-            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, functionDescriptorImpl, alternativeMethodSignatureData.getError());
-        }
-
-        functionDescriptorImpl.initialize(
-                valueParameterDescriptors.receiverType,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(scopeData.getClassOrNamespaceDescriptor()),
-                methodTypeParameters,
-                valueParameterDescriptors.descriptors,
-                returnType,
-                resolveModality(method, method.isFinal()),
-                resolveVisibility(psiMethod, method.getJetMethod()),
-                /*isInline = */ false
-        );
-
-        if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-            BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, psiMethod, functionDescriptorImpl);
-        }
-
-        if (containingClass != psiClass && !method.isStatic()) {
-            throw new IllegalStateException("non-static method in subclass");
-        }
-        return functionDescriptorImpl;
-    }
-
     private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         String methodName = functionDescriptor.getName().getName();
@@ -946,71 +868,20 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
-        PsiAnnotation[] psiAnnotations = getAllAnnotations(owner);
-        List<AnnotationDescriptor> r = Lists.newArrayListWithCapacity(psiAnnotations.length);
-        for (PsiAnnotation psiAnnotation : psiAnnotations) {
-            AnnotationDescriptor annotation = resolveAnnotation(psiAnnotation, tasks);
-            if (annotation != null) {
-                r.add(annotation);
-            }
-        }
-        return r;
+        return annotationResolver.resolveAnnotations(owner, tasks);
     }
 
     public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
-        List<Runnable> tasks = Lists.newArrayList();
-        List<AnnotationDescriptor> annotations = resolveAnnotations(owner, tasks);
-        for (Runnable task : tasks) {
-            task.run();
-        }
-        return annotations;
+        return annotationResolver.resolveAnnotations(owner);
     }
 
     @Nullable
     public AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
-        final AnnotationDescriptor annotation = new AnnotationDescriptor();
-        String qname = psiAnnotation.getQualifiedName();
-        if (qname == null) {
-            return null;
-        }
 
         // Don't process internal jet annotations and jetbrains NotNull annotations
-        if (qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName())) {
-            return null;
-        }
-
-        FqName annotationFqName = new FqName(qname);
-        final ClassDescriptor clazz = classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
-        if (clazz == null) {
-            return null;
-        }
-
-        taskList.add(new Runnable() {
-            @Override
-            public void run() {
-                annotation.setAnnotationType(clazz.getDefaultType());
-            }
-        });
 
 
-        PsiAnnotationParameterList parameterList = psiAnnotation.getParameterList();
-        for (PsiNameValuePair psiNameValuePair : parameterList.getAttributes()) {
-            PsiAnnotationMemberValue value = psiNameValuePair.getValue();
-            String name = psiNameValuePair.getName();
-            if (name == null) name = "value";
-            Name identifier = Name.identifier(name);
-
-            CompileTimeConstant compileTimeConst =
-                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
-            if (compileTimeConst != null) {
-                ValueParameterDescriptor valueParameterDescriptor = getValueParameterDescriptorForAnnotationParameter(identifier, clazz);
-                if (valueParameterDescriptor != null) {
-                    annotation.setValueArgument(valueParameterDescriptor, compileTimeConst);
-                }
-            }
-        }
-
-        return annotation;
+        return annotationResolver.resolveAnnotation(psiAnnotation, taskList);
     }
 
     @Nullable
@@ -1060,8 +931,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    private JetType makeReturnType(PsiType returnType, PsiMethodWrapper method,
-            @NotNull TypeVariableResolver typeVariableResolver) {
+    public JetType makeReturnType(
+            PsiType returnType, PsiMethodWrapper method,
+            @NotNull TypeVariableResolver typeVariableResolver
+    ) {
 
         String returnTypeFromAnnotation = method.getJetMethod().returnType();
 
@@ -1074,7 +947,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
         }
 
-        if (findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+        if (AnnotationResolver.findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }
         else {
@@ -1163,35 +1036,5 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         assert classDescriptor != null : "Couldn't resolve class " + name;
         return classDescriptor;
-    }
-
-    @NotNull
-    public static PsiAnnotation[] getAllAnnotations(@NotNull PsiModifierListOwner owner) {
-        List<PsiAnnotation> result = new ArrayList<PsiAnnotation>();
-
-        PsiModifierList list = owner.getModifierList();
-        if (list != null) {
-            result.addAll(Arrays.asList(list.getAnnotations()));
-        }
-
-        PsiAnnotation[] externalAnnotations = ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotations(owner);
-        if (externalAnnotations != null) {
-            result.addAll(Arrays.asList(externalAnnotations));
-        }
-
-        return result.toArray(new PsiAnnotation[result.size()]);
-    }
-
-    @Nullable
-    public static PsiAnnotation findAnnotation(@NotNull PsiModifierListOwner owner, @NotNull String fqName) {
-        PsiModifierList list = owner.getModifierList();
-        if (list != null) {
-            PsiAnnotation found = list.findAnnotation(fqName);
-            if (found != null) {
-                return found;
-            }
-        }
-
-        return ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName);
     }
 }
