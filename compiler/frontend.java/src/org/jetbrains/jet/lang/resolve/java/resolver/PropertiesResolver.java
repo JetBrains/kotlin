@@ -117,7 +117,7 @@ public final class PropertiesResolver {
         this.javaDescriptorSignatureResolver = javaDescriptorSignatureResolver;
     }
 
-    public void resolveNamedGroupProperties(
+    private void resolveNamedGroupProperties(
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull ResolverScopeData scopeData,
             @NotNull NamedMembers namedMembers,

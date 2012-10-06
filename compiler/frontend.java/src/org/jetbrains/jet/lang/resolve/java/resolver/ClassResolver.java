@@ -56,7 +56,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassO
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
-public class ClassResolver {
+public final class ClassResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     public ClassResolver(JavaDescriptorResolver javaDescriptorResolver) {
@@ -71,10 +71,6 @@ public class ClassResolver {
             task.run();
         }
         return clazz;
-    }
-
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return resolveClass(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     public ClassDescriptor resolveClass(
@@ -130,7 +126,7 @@ public class ClassResolver {
     }
 
     @NotNull
-    public JavaDescriptorResolveData.ResolverClassData createJavaClassDescriptor(
+    private JavaDescriptorResolveData.ResolverClassData createJavaClassDescriptor(
             @NotNull final PsiClass psiClass,
             List<Runnable> taskList
     ) {
@@ -208,7 +204,7 @@ public class ClassResolver {
     }
 
     @Nullable
-    public MutableClassDescriptorLite createClassObjectDescriptor(
+    private MutableClassDescriptorLite createClassObjectDescriptor(
             @NotNull ClassDescriptor containing,
             @NotNull PsiClass psiClass
     ) {
@@ -248,7 +244,7 @@ public class ClassResolver {
         return classObjectDescriptor;
     }
 
-    public void setUpClassObjectDescriptor(
+    private void setUpClassObjectDescriptor(
             @NotNull ClassDescriptor containing,
             @NotNull FqNameBase fqName,
             @NotNull JavaDescriptorResolveData.ResolverClassData data,
@@ -401,7 +397,7 @@ public class ClassResolver {
     }
 
     @NotNull
-    public ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
+    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
         final String qualifiedName = psiClass.getQualifiedName();
         assert qualifiedName != null;
         FqName fqName = new FqName(qualifiedName);
@@ -434,7 +430,7 @@ public class ClassResolver {
     }
 
     @Nullable
-    public ClassDescriptor resolveJavaLangObject() {
+    private ClassDescriptor resolveJavaLangObject() {
         ClassDescriptor clazz = resolveClass(JavaDescriptorResolver.OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (clazz == null) {
             // TODO: warning
@@ -442,7 +438,7 @@ public class ClassResolver {
         return clazz;
     }
 
-    public static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
+    private static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
         if (psiClass.isInterface()) {
             return (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT);
         }
@@ -457,7 +453,7 @@ public class ClassResolver {
     }
 
     @Nullable
-    public static PsiClass getInnerClassClassObject(@NotNull PsiClass outer) {
+    private static PsiClass getInnerClassClassObject(@NotNull PsiClass outer) {
         for (PsiClass inner : outer.getInnerClasses()) {
             if (inner.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
                 return inner;

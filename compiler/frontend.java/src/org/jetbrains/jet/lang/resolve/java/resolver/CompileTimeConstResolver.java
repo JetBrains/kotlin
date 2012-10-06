@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class CompileTimeConstResolver {
+public final class CompileTimeConstResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     public CompileTimeConstResolver(JavaDescriptorResolver javaDescriptorResolver) {
@@ -71,7 +71,7 @@ public class CompileTimeConstResolver {
     }
 
     @Nullable
-    public CompileTimeConstant<?> getCompileTimeConstFromAnnotation(PsiAnnotation value, List<Runnable> taskList) {
+    private CompileTimeConstant<?> getCompileTimeConstFromAnnotation(PsiAnnotation value, List<Runnable> taskList) {
         AnnotationDescriptor annotationDescriptor = javaDescriptorResolver.resolveAnnotation(value, taskList);
         if (annotationDescriptor != null) {
             return new AnnotationValue(annotationDescriptor);
@@ -80,7 +80,7 @@ public class CompileTimeConstResolver {
     }
 
     @Nullable
-    public CompileTimeConstant<?> getCompileTimeConstFromArrayExpression(
+    private CompileTimeConstant<?> getCompileTimeConstFromArrayExpression(
             FqName annotationFqName,
             Name valueName, PsiArrayInitializerMemberValue value,
             List<Runnable> taskList
@@ -100,7 +100,7 @@ public class CompileTimeConstResolver {
         return new ArrayValue(values, expectedArrayType);
     }
 
-    public List<CompileTimeConstant<?>> getCompileTimeConstantForArrayValues(
+    private List<CompileTimeConstant<?>> getCompileTimeConstantForArrayValues(
             FqName annotationQualifiedName,
             Name valueName,
             List<Runnable> taskList,
@@ -119,7 +119,7 @@ public class CompileTimeConstResolver {
     }
 
     @Nullable
-    public CompileTimeConstant<?> getCompileTimeConstFromReferenceExpression(PsiReferenceExpression value, List<Runnable> taskList) {
+    private CompileTimeConstant<?> getCompileTimeConstFromReferenceExpression(PsiReferenceExpression value, List<Runnable> taskList) {
         PsiElement resolveElement = value.resolve();
         if (resolveElement instanceof PsiEnumConstant) {
             PsiElement psiElement = resolveElement.getParent();
@@ -157,7 +157,7 @@ public class CompileTimeConstResolver {
     }
 
     @Nullable
-    public static CompileTimeConstant<?> getCompileTimeConstFromLiteralExpression(PsiLiteralExpression value) {
+    private static CompileTimeConstant<?> getCompileTimeConstFromLiteralExpression(PsiLiteralExpression value) {
         Object literalValue = value.getValue();
         if (literalValue instanceof String) {
             return new StringValue((String) literalValue);

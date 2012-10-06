@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InnerClassResolver {
+public final class InnerClassResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     public InnerClassResolver(JavaDescriptorResolver javaDescriptorResolver) {
@@ -63,7 +63,7 @@ public class InnerClassResolver {
         return r;
     }
 
-    public List<ClassDescriptor> resolveInnerClassesOfClassObject(DeclarationDescriptor owner, PsiClass psiClass) {
+    private List<ClassDescriptor> resolveInnerClassesOfClassObject(DeclarationDescriptor owner, PsiClass psiClass) {
         if (!DescriptorUtils.isClassObject(owner)) {
             return new ArrayList<ClassDescriptor>(0);
         }
@@ -80,7 +80,7 @@ public class InnerClassResolver {
         return r;
     }
 
-    public ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
+    private ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
         String name = innerPsiClass.getQualifiedName();
         assert name != null : "Inner class has no qualified name";
         ClassDescriptor classDescriptor =

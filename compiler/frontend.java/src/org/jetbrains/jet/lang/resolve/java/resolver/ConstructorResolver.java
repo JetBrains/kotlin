@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ConstructorResolver {
+public final class ConstructorResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     public ConstructorResolver(JavaDescriptorResolver javaDescriptorResolver) {
@@ -142,7 +142,7 @@ public class ConstructorResolver {
     }
 
     @Nullable
-    public ConstructorDescriptor resolveConstructor(
+    private ConstructorDescriptor resolveConstructor(
             PsiClass psiClass,
             JavaDescriptorResolveData.ResolverClassData classData,
             boolean aStatic,

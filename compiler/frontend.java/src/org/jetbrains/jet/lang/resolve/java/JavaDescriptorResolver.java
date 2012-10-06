@@ -145,7 +145,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return classResolver.resolveClass(qualifiedName);
+        return classResolver.resolveClass(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     public PsiClassFinder getPsiClassFinder() {

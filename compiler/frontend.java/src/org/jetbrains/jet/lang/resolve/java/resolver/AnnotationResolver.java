@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class AnnotationResolver {
+public final class AnnotationResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     public AnnotationResolver(JavaDescriptorResolver javaDescriptorResolver) {
@@ -115,7 +115,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public static PsiAnnotation[] getAllAnnotations(@NotNull PsiModifierListOwner owner) {
+    private static PsiAnnotation[] getAllAnnotations(@NotNull PsiModifierListOwner owner) {
         List<PsiAnnotation> result = new ArrayList<PsiAnnotation>();
 
         PsiModifierList list = owner.getModifierList();

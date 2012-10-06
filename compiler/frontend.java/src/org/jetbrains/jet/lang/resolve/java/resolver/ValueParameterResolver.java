@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ValueParameterResolver {
+public final class ValueParameterResolver {
 
     private final JavaDescriptorResolver javaDescriptorResolver;
 
@@ -46,7 +46,7 @@ public class ValueParameterResolver {
     }
 
     @NotNull
-    public JvmMethodParameterMeaning resolveParameterDescriptor(
+    private JvmMethodParameterMeaning resolveParameterDescriptor(
             DeclarationDescriptor containingDeclaration, int i,
             PsiParameterWrapper parameter, TypeVariableResolver typeVariableResolver
     ) {

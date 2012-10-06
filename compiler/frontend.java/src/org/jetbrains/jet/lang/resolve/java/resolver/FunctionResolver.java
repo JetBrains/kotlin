@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.*;
 
-public class FunctionResolver {
+public final class FunctionResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     public FunctionResolver(JavaDescriptorResolver javaDescriptorResolver) {
@@ -48,7 +48,7 @@ public class FunctionResolver {
     }
 
     @Nullable
-    public SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
+    private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
             @NotNull JavaDescriptorResolveData.ResolverScopeData scopeData
     ) {
@@ -136,7 +136,7 @@ public class FunctionResolver {
         return functionDescriptorImpl;
     }
 
-    public void resolveNamedGroupFunctions(
+    private void resolveNamedGroupFunctions(
             @NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
             NamedMembers namedMembers, Name methodName, JavaDescriptorResolveData.ResolverScopeData scopeData
     ) {
@@ -208,7 +208,7 @@ public class FunctionResolver {
         }
     }
 
-    public JetType makeReturnType(
+    private JetType makeReturnType(
             PsiType returnType, PsiMethodWrapper method,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
@@ -264,7 +264,7 @@ public class FunctionResolver {
         return functions;
     }
 
-    public static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
+    private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         String methodName = functionDescriptor.getName().getName();
         JetType nullableString = TypeUtils.makeNullable(JetStandardLibrary.getInstance().getStringType());

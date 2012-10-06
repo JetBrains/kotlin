@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 
-public class NamespaceResolver {
+public final class NamespaceResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     public NamespaceResolver(JavaDescriptorResolver javaDescriptorResolver) {
@@ -93,7 +93,7 @@ public class NamespaceResolver {
         return resolveNamespace(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
-    public NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {
+    private NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {
         if (fqName.isRoot()) {
             return JavaDescriptorResolver.FAKE_ROOT_MODULE;
         }
@@ -103,7 +103,7 @@ public class NamespaceResolver {
     }
 
     @Nullable
-    public JavaDescriptorResolveData.ResolverNamespaceData createNamespaceResolverScopeData(
+    private JavaDescriptorResolveData.ResolverNamespaceData createNamespaceResolverScopeData(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor ns
     ) {
@@ -170,7 +170,7 @@ public class NamespaceResolver {
     }
 
     @Nullable
-    public PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
+    private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
         return javaDescriptorResolver.getPsiClassFinder()
                 .findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
