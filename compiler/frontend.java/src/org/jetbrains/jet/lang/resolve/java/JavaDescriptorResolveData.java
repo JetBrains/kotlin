@@ -146,7 +146,7 @@ public class JavaDescriptorResolveData {
             super(negative);
         }
 
-        static final ResolverClassData NEGATIVE = new ResolverBinaryClassData(true);
+        public static final ResolverClassData NEGATIVE = new ResolverBinaryClassData(true);
     }
 
     public static class ResolverClassData extends ResolverScopeData {

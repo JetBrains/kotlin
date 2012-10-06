@@ -66,8 +66,8 @@ public class JavaDescriptorSignatureResolver {
         @NotNull
         private final TypeParameterDescriptorOrigin origin;
         @NotNull
-        final TypeParameterDescriptorImpl descriptor;
-        final PsiTypeParameter psiTypeParameter;
+        private final TypeParameterDescriptorImpl descriptor;
+        private final PsiTypeParameter psiTypeParameter;
         @Nullable
         private final List<JetType> upperBoundsForKotlin;
 
@@ -86,6 +86,11 @@ public class JavaDescriptorSignatureResolver {
             this.descriptor = descriptor;
             this.psiTypeParameter = psiTypeParameter;
             this.upperBoundsForKotlin = upperBoundsForKotlin;
+        }
+
+        @NotNull
+        public TypeParameterDescriptorImpl getDescriptor() {
+            return descriptor;
         }
     }
 
@@ -298,7 +303,11 @@ public class JavaDescriptorSignatureResolver {
         typeParameterDescriptor.setInitialized();
     }
 
-    void initializeTypeParameters(List<TypeParameterDescriptorInitialization> typeParametersInitialization, @NotNull DeclarationDescriptor typeParametersOwner, @NotNull String context) {
+    public void initializeTypeParameters(
+            List<TypeParameterDescriptorInitialization> typeParametersInitialization,
+            @NotNull DeclarationDescriptor typeParametersOwner,
+            @NotNull String context
+    ) {
         List<TypeParameterDescriptor> prevTypeParameters = Lists.newArrayList();
 
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
@@ -314,7 +323,10 @@ public class JavaDescriptorSignatureResolver {
     }
 
 
-    List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverClassData classData) {
+    public List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(
+            PsiClass psiClass,
+            ResolverClassData classData
+    ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
 
         if (jetClassAnnotation.signature().length() > 0) {
