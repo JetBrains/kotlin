@@ -580,8 +580,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     public static class ValueParameterDescriptors {
-        final JetType receiverType;
-        final List<ValueParameterDescriptor> descriptors;
+        private final JetType receiverType;
+        private final List<ValueParameterDescriptor> descriptors;
 
         public ValueParameterDescriptors(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
             this.receiverType = receiverType;
