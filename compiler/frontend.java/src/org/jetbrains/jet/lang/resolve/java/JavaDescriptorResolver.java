@@ -107,7 +107,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
     private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
     private final AnnotationResolver annotationResolver = new AnnotationResolver(this);
-    private final FunctionResolver functionResolver = new FunctionResolver(this);
+    public final FunctionResolver functionResolver = new FunctionResolver(this);
     public final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
 
     @Inject
@@ -496,31 +496,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
         else {
             throw new IllegalStateException();
-        }
-    }
-
-    public JetType makeReturnType(
-            PsiType returnType, PsiMethodWrapper method,
-            @NotNull TypeVariableResolver typeVariableResolver
-    ) {
-
-        String returnTypeFromAnnotation = method.getJetMethod().returnType();
-
-        JetType transformedType;
-        if (returnTypeFromAnnotation.length() > 0) {
-            transformedType = semanticServices.getTypeTransformer().transformToType(returnTypeFromAnnotation, typeVariableResolver);
-        }
-        else {
-            transformedType = semanticServices.getTypeTransformer().transformToType(
-                    returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
-        }
-
-        if (AnnotationResolver.findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
-            null) {
-            return TypeUtils.makeNullableAsSpecified(transformedType, false);
-        }
-        else {
-            return transformedType;
         }
     }
 

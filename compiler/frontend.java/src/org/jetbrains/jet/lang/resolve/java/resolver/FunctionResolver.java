@@ -100,7 +100,7 @@ public class FunctionResolver {
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = javaDescriptorResolver
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
-        JetType returnType = javaDescriptorResolver.makeReturnType(returnPsiType, method, methodTypeVariableResolver);
+        JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =
@@ -205,6 +205,32 @@ public class FunctionResolver {
         }
         else {
             return Collections.emptySet();
+        }
+    }
+
+    public JetType makeReturnType(
+            PsiType returnType, PsiMethodWrapper method,
+            @NotNull TypeVariableResolver typeVariableResolver
+    ) {
+
+        String returnTypeFromAnnotation = method.getJetMethod().returnType();
+
+        JetType transformedType;
+        if (returnTypeFromAnnotation.length() > 0) {
+            transformedType = javaDescriptorResolver.getSemanticServices()
+                    .getTypeTransformer().transformToType(returnTypeFromAnnotation, typeVariableResolver);
+        }
+        else {
+            transformedType = javaDescriptorResolver.getSemanticServices().getTypeTransformer().transformToType(
+                    returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
+        }
+
+        if (AnnotationResolver.findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
+            null) {
+            return TypeUtils.makeNullableAsSpecified(transformedType, false);
+        }
+        else {
+            return transformedType;
         }
     }
 
