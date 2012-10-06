@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSign
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.resolver.ClassResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.ConstructorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.PropertiesResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
@@ -69,7 +70,8 @@ import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorResolver.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
+import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 /**
@@ -125,6 +127,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private PropertiesResolver propertiesResolver = new PropertiesResolver(this);
     private final ClassResolver classResolver = new ClassResolver(this);
+    private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
 
     @Inject
     public void setProject(Project project) {
@@ -196,142 +199,16 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @NotNull
     public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
-        Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
-        PsiClass psiClass = classData.getPsiClass();
-
-        ClassDescriptorFromJvmBytecode containingClass = classData.getClassDescriptor();
-        assert psiClass != null;
-        TypeVariableResolver resolverForTypeParameters = TypeVariableResolvers.classTypeVariableResolver(
-                containingClass, "class " + psiClass.getQualifiedName());
-
-        List<TypeParameterDescriptor> typeParameters = containingClass.getTypeConstructor().getParameters();
-
-        PsiMethod[] psiConstructors = psiClass.getConstructors();
-
-        boolean isStatic = psiClass.hasModifierProperty(PsiModifier.STATIC);
-        if (containingClass.getKind() == ClassKind.OBJECT || containingClass.getKind() == ClassKind.CLASS_OBJECT) {
-            constructors.add(createPrimaryConstructorForObject(containingClass));
-        }
-        else if (psiConstructors.length == 0) {
-            if (trace.get(BindingContext.CONSTRUCTOR, psiClass) != null) {
-                constructors.add(trace.get(BindingContext.CONSTRUCTOR, psiClass));
-            }
-            else {
-                // We need to create default constructors for classes and abstract classes.
-                // Example:
-                // class Kotlin() : Java() {}
-                // abstract public class Java {}
-                if (!psiClass.isInterface()) {
-                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                            containingClass,
-                            Collections.<AnnotationDescriptor>emptyList(),
-                            false);
-                    constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), containingClass
-                            .getVisibility(), isStatic);
-                    constructors.add(constructorDescriptor);
-                    trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
-                }
-                if (psiClass.isAnnotationType()) {
-                    // A constructor for an annotation type takes all the "methods" in the @interface as parameters
-                    ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                            containingClass,
-                            Collections.<AnnotationDescriptor>emptyList(),
-                            false);
-
-                    List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
-                    PsiMethod[] methods = psiClass.getMethods();
-                    for (int i = 0; i < methods.length; i++) {
-                        PsiMethod method = methods[i];
-                        if (method instanceof PsiAnnotationMethod) {
-                            PsiAnnotationMethod annotationMethod = (PsiAnnotationMethod) method;
-                            assert annotationMethod.getParameterList().getParameters().length == 0;
-
-                            PsiType returnType = annotationMethod.getReturnType();
-
-                            // We take the following heuristical convention:
-                            // if the last method of the @interface is an array, we convert it into a vararg
-                            JetType varargElementType = null;
-                            if (i == methods.length - 1 && (returnType instanceof PsiArrayType)) {
-                                varargElementType = semanticServices.getTypeTransformer().transformToType(((PsiArrayType) returnType).getComponentType(), resolverForTypeParameters);
-                            }
-
-                            assert returnType != null;
-                            valueParameters.add(new ValueParameterDescriptorImpl(
-                                    constructorDescriptor,
-                                    i,
-                                    Collections.<AnnotationDescriptor>emptyList(),
-                                    Name.identifier(method.getName()),
-                                    false,
-                                    semanticServices.getTypeTransformer().transformToType(returnType, resolverForTypeParameters),
-                                    annotationMethod.getDefaultValue() != null,
-                                    varargElementType));
-                        }
-                    }
-
-                    constructorDescriptor.initialize(typeParameters, valueParameters, containingClass.getVisibility(), isStatic);
-                    constructors.add(constructorDescriptor);
-                    trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
-                }
-            }
-        }
-        else {
-            for (PsiMethod psiConstructor : psiConstructors) {
-                ConstructorDescriptor constructor = resolveConstructor(psiClass, classData, isStatic, psiConstructor);
-                if (constructor != null) {
-                    constructors.add(constructor);
-                }
-            }
-        }
-
-        for (ConstructorDescriptor constructor : constructors) {
-            ((ConstructorDescriptorImpl) constructor).setReturnType(containingClass.getDefaultType());
-        }
-
-        return constructors;
+        return constructorResolver.resolveConstructors(classData);
     }
 
     @Nullable
     private ConstructorDescriptor resolveConstructor(PsiClass psiClass, ResolverClassData classData, boolean aStatic, PsiMethod psiConstructor) {
-        PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 
         //noinspection deprecation
-        if (constructor.getJetConstructor().hidden()) {
-            return null;
-        }
 
-        if (trace.get(BindingContext.CONSTRUCTOR, psiConstructor) != null) {
-            return trace.get(BindingContext.CONSTRUCTOR, psiConstructor);
-        }
-
-        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                classData.getClassDescriptor(),
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
-                false);
-
-        String context = "constructor of class " + psiClass.getQualifiedName();
-        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(
-                constructorDescriptor, constructor.getParameters(),
-                TypeVariableResolvers.classTypeVariableResolver(classData.getClassDescriptor(), context));
-
-        if (valueParameterDescriptors.receiverType != null) {
-            throw new IllegalStateException();
-        }
-
-        AlternativeMethodSignatureData alternativeMethodSignatureData =
-                new AlternativeMethodSignatureData(constructor, valueParameterDescriptors, null, Collections.<TypeParameterDescriptor>emptyList());
-        if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
-            valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
-        }
-        else if (alternativeMethodSignatureData.hasErrors()) {
-            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, constructorDescriptor, alternativeMethodSignatureData.getError());
-        }
-
-        constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
-                valueParameterDescriptors.descriptors,
-                resolveVisibility(psiConstructor, constructor.getJetConstructor()), aStatic);
-        trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
-        return constructorDescriptor;
+        return constructorResolver.resolveConstructor(psiClass, classData, aStatic, psiConstructor);
     }
 
     public static void checkPsiClassIsNotJet(PsiClass psiClass) {
@@ -945,8 +822,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     }
 
-    private ValueParameterDescriptors resolveParameterDescriptors(DeclarationDescriptor containingDeclaration,
-            List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver) {
+    public ValueParameterDescriptors resolveParameterDescriptors(
+            DeclarationDescriptor containingDeclaration,
+            List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver
+    ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         JetType receiverType = null;
         int indexDelta = 0;
