@@ -44,7 +44,7 @@ from 'libraries' directory after building the compiler.
 
 The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IDEA project, you can just open it in IDEA.
 
-**Note** though that you need a recent IDEA build (e.g. [11 EAP](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)) which should **not** contain the Kotlin plugin!
+**Note** though that you need a recent IDEA build (e.g. [12 EAP](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP)) which should **not** contain the Kotlin plugin!
 
 If you want to have an IDEA installation without the Kotlin plugin which is separate to your default IDEA installation which has the Kotlin plugin [see this document](http://devnet.jetbrains.net/docs/DOC-181) which describes how to have mutliple IDEA installs using different configurations and plugin directories.
 
@@ -59,13 +59,13 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 
 You can download the latest Kotlin IDEA Plugin from the [IDEA Plugin and Tests CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
 
-Or in a recent [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP) install the Kotlin plugin:
+Or in a recent [IDEA 12 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) install the Kotlin plugin:
 
 Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
 
  * [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml](http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml)
 
-You can now open any Kotlin based projects. Its advisable you don't open the [root kotlin project](https://github.com/JetBrains/kotlin) as thats intended to be used to
+You can now open any Kotlin based projects. Its advisable you don't open the [root kotlin project](https://github.com/JetBrains/kotlin) as that's intended to be used to
 build the kotlin compiler and plugin itself; instead open the [kotlin libraries project](https://github.com/JetBrains/tree/master/kotlin/libraries)
 
 
@@ -88,7 +88,7 @@ Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/maste
 
 The Kotlin compiler is currently all written in Java (we plan to port it to Kotlin later). So the easiest way to work on the compiler or IDEA plugin is
 
-* download a clean [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)
+* download a clean [IDEA 12 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP)
 * don't install the Kotlin plugin
 * open the [root kotlin project](https://github.com/JetBrains/kotlin) in IDEA (opening the kotlin directory)
 
@@ -101,7 +101,7 @@ You can now run the various Run/Debug Configurations such as
 
 ## If you want to work on the Kotlin libraries
 
-* download a clean [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)
+* download a clean [IDEA 12 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP)
 * Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
 * [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml](http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml)
 * open the [kotlin libraries project](https://github.com/JetBrains/kotlin/tree/master/libraries)
@@ -112,7 +112,7 @@ Then build via
     mvn install
 
 
-## Submitting patchces
+## Submitting patches
 
 The best way to submit a patch is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
 [pull request](http://help.github.com/send-pull-requests/) via [github](http://github.com).
