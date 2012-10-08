@@ -113,18 +113,7 @@ public final class ClassResolver {
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
         ClassDescriptor kotlinClassDescriptor = javaDescriptorResolver.getSemanticServices().getKotlinClassDescriptor(qualifiedName);
         if (kotlinClassDescriptor != null) {
-            if (searchRule == DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN) {
-                throw new IllegalStateException("class must not be found in kotlin: " + qualifiedName);
-            }
-            else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
-                return null;
-            }
-            else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
-                return kotlinClassDescriptor;
-            }
-            else {
-                throw new IllegalStateException("unknown searchRule: " + searchRule);
-            }
+            return searchRule.processFoundInKotlin(kotlinClassDescriptor);
         }
 
         // Not let's take a descriptor of a Java class

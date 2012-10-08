@@ -16,11 +16,31 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+
 /**
  * @author Stepan Koltsov
  */
 public enum DescriptorSearchRule {
-    INCLUDE_KOTLIN,
-    IGNORE_IF_FOUND_IN_KOTLIN,
-    ERROR_IF_FOUND_IN_KOTLIN,
+    INCLUDE_KOTLIN {
+        @Override
+        public <T extends DeclarationDescriptor> T processFoundInKotlin(T foundDescriptor) {
+            return foundDescriptor;
+        }
+    },
+    IGNORE_IF_FOUND_IN_KOTLIN {
+        @Override
+        public <T extends DeclarationDescriptor> T processFoundInKotlin(T foundDescriptor) {
+            return null;
+        }
+    },
+    ERROR_IF_FOUND_IN_KOTLIN {
+        @Override
+        public <T extends DeclarationDescriptor> T processFoundInKotlin(T foundDescriptor) {
+            throw new IllegalStateException(DescriptorUtils.getFQName(foundDescriptor) + " should not be found in Kotlin.");
+        }
+    };
+
+    public abstract <T extends DeclarationDescriptor> T processFoundInKotlin(T foundDescriptor);
 }

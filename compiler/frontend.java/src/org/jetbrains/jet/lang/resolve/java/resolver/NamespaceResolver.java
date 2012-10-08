@@ -38,11 +38,14 @@ import java.util.Map;
 
 public final class NamespaceResolver {
 
+    @NotNull
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
+    @NotNull
     private final JavaDescriptorResolver javaDescriptorResolver;
+    @NotNull
     private final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
-    public NamespaceResolver(JavaDescriptorResolver javaDescriptorResolver) {
+    public NamespaceResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
         this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
@@ -52,19 +55,7 @@ public final class NamespaceResolver {
         NamespaceDescriptor kotlinNamespaceDescriptor =
                 javaDescriptorResolver.getSemanticServices().getKotlinNamespaceDescriptor(qualifiedName);
         if (kotlinNamespaceDescriptor != null) {
-            if (searchRule == DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN) {
-                throw new IllegalStateException("class must not be found in kotlin: " + qualifiedName);
-            }
-            else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
-                return null;
-            }
-            else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
-                // TODO: probably this is evil
-                return kotlinNamespaceDescriptor;
-            }
-            else {
-                throw new IllegalStateException("unknown searchRule: " + searchRule);
-            }
+            return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
         }
 
         ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(qualifiedName);
