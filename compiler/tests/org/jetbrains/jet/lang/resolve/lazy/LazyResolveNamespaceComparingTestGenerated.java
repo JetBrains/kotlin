@@ -1190,7 +1190,9 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 }
                 
                 public void testAllFilesPresentInError() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest", new File("compiler/testData/loadJava/kotlinSignature/error"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(),
+                                                                 "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest",
+                                                                 new File("compiler/testData/loadJava/kotlinSignature/error"), "kt", true);
                 }
                 
                 @TestMetadata("ExplicitFieldGettersAndSetters.kt")
@@ -1236,6 +1238,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("VarargReplacedWithNotVararg.kt")
                 public void testVarargReplacedWithNotVararg() throws Exception {
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
+                }
+                
+                @TestMetadata("WrongFieldInitializer.kt")
+                public void testWrongFieldInitializer() throws Exception {
+                    doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/WrongFieldInitializer.kt");
                 }
                 
                 @TestMetadata("WrongFieldMutability.kt")

@@ -70,11 +70,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
     }
 
     private static void checkFieldAnnotation(JetProperty altProperty, PsiFieldWrapper fieldWrapper, boolean isVar) {
-        PsiClass containingClass = fieldWrapper.getPsiField().getContainingClass();
-        String fieldLink = containingClass != null ?
-                           String.format("%s.%s", containingClass.getQualifiedName(), fieldWrapper.getName()) :
-                           fieldWrapper.getName();
-        assert (fieldLink != null);
+        String fieldLink = getFieldQualifiedName(fieldWrapper);
 
         if (!ComparatorUtil.equalsNullable(fieldWrapper.getName(), altProperty.getName())) {
             throw new AlternativeSignatureMismatchException(
@@ -99,5 +95,22 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
                     "Wrong mutability in annotation for field '%s'",
                     fieldLink);
         }
+
+        if (altProperty.getInitializer() != null) {
+            throw new AlternativeSignatureMismatchException(
+                    "Default value is not expected in annotation for field '%s'",
+                    fieldLink);
+        }
+    }
+
+    @NotNull
+    private static String getFieldQualifiedName(PsiFieldWrapper fieldWrapper) {
+        PsiClass containingClass = fieldWrapper.getPsiField().getContainingClass();
+        String fieldLink = containingClass != null ?
+                           String.format("%s.%s", containingClass.getQualifiedName(), fieldWrapper.getName()) :
+                           fieldWrapper.getName();
+        assert (fieldLink != null);
+
+        return fieldLink;
     }
 }

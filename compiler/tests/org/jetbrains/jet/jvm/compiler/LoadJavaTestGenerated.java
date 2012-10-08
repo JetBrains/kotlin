@@ -353,6 +353,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.java");
             }
             
+            @TestMetadata("WrongFieldInitializer.java")
+            public void testWrongFieldInitializer() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/WrongFieldInitializer.java");
+            }
+            
             @TestMetadata("WrongFieldMutability.java")
             public void testWrongFieldMutability() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongFieldMutability.java");
