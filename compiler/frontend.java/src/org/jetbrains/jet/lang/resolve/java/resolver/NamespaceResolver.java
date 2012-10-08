@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import com.google.common.collect.Maps;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +32,12 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
+import java.util.Map;
 
 public final class NamespaceResolver {
+
     private final JavaDescriptorResolver javaDescriptorResolver;
+    private final Map<FqName, JavaDescriptorResolveData.ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
     public NamespaceResolver(JavaDescriptorResolver javaDescriptorResolver) {
         this.javaDescriptorResolver = javaDescriptorResolver;
@@ -60,8 +64,7 @@ public final class NamespaceResolver {
             }
         }
 
-        JavaDescriptorResolveData.ResolverNamespaceData namespaceData =
-                javaDescriptorResolver.getNamespaceDescriptorCacheByFqn().get(qualifiedName);
+        JavaDescriptorResolveData.ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(qualifiedName);
         if (namespaceData != null) {
             return namespaceData.getNamespaceDescriptor();
         }
@@ -126,7 +129,7 @@ public final class NamespaceResolver {
             }
 
             JavaDescriptorResolveData.ResolverNamespaceData oldValue =
-                    javaDescriptorResolver.getNamespaceDescriptorCacheByFqn().put(fqName, JavaDescriptorResolveData.ResolverNamespaceData.NEGATIVE);
+                    namespaceDescriptorCacheByFqn.put(fqName, JavaDescriptorResolveData.ResolverNamespaceData.NEGATIVE);
             if (oldValue != null) {
                 throw new IllegalStateException("rewrite at " + fqName);
             }
@@ -139,7 +142,7 @@ public final class NamespaceResolver {
         namespaceData.setMemberScope(new JavaPackageScope(fqName, javaDescriptorResolver.getSemanticServices(), namespaceData));
 
         JavaDescriptorResolveData.ResolverNamespaceData oldValue =
-                javaDescriptorResolver.getNamespaceDescriptorCacheByFqn().put(fqName, namespaceData);
+                namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
         if (oldValue != null) {
             throw new IllegalStateException("rewrite at " + fqName);
         }
@@ -149,8 +152,7 @@ public final class NamespaceResolver {
 
     @Nullable
     public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        JavaDescriptorResolveData.ResolverNamespaceData resolverNamespaceData =
-                javaDescriptorResolver.getNamespaceDescriptorCacheByFqn().get(fqName);
+        JavaDescriptorResolveData.ResolverNamespaceData resolverNamespaceData = namespaceDescriptorCacheByFqn.get(fqName);
         if (resolverNamespaceData == null) {
             resolverNamespaceData = createNamespaceResolverScopeData(fqName, ns);
         }

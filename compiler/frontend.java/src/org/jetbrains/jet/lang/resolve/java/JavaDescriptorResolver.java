@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
@@ -30,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
@@ -43,7 +41,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -73,8 +70,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return -1;
         }
     };
-
-    protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
     protected Project project;
     protected JavaSemanticServices semanticServices;
@@ -148,10 +143,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
         return constructorResolver.resolveConstructors(classData);
-    }
-
-    public Map<FqName, ResolverNamespaceData> getNamespaceDescriptorCacheByFqn() {
-        return namespaceDescriptorCacheByFqn;
     }
 
     @Nullable
