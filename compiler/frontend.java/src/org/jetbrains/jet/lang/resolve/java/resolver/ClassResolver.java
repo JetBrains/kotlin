@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiModifier;
+import gnu.trove.THashMap;
+import gnu.trove.TObjectHashingStrategy;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,17 +49,33 @@ import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 public final class ClassResolver {
+
     private final JavaDescriptorResolver javaDescriptorResolver;
+
+    // NOTE: this complexity is introduced because class descriptors do not always have valid fqnames (class objects)
+    private final Map<FqNameBase, JavaDescriptorResolveData.ResolverClassData> classDescriptorCache =
+            new THashMap<FqNameBase, JavaDescriptorResolveData.ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
+                @Override
+                public int computeHashCode(FqNameBase o) {
+                    if (o instanceof FqName) {
+                        return ((FqName) o).toUnsafe().hashCode();
+                    }
+                    assert o instanceof FqNameUnsafe;
+                    return o.hashCode();
+                }
+
+                @Override
+                public boolean equals(FqNameBase n1, FqNameBase n2) {
+                    return n1.equalsTo(n2.toString()) && n2.equalsTo(n1.toString());
+                }
+            });
 
     public ClassResolver(JavaDescriptorResolver javaDescriptorResolver) {
         this.javaDescriptorResolver = javaDescriptorResolver;
@@ -107,13 +125,13 @@ public final class ClassResolver {
         }
 
         // Not let's take a descriptor of a Java class
-        JavaDescriptorResolveData.ResolverClassData classData = javaDescriptorResolver.getClassDescriptorCache().get(qualifiedName);
+        JavaDescriptorResolveData.ResolverClassData classData = classDescriptorCache.get(qualifiedName);
         if (classData == null) {
             PsiClass psiClass =
                     javaDescriptorResolver.getPsiClassFinder().findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
             if (psiClass == null) {
                 JavaDescriptorResolveData.ResolverClassData oldValue =
-                        javaDescriptorResolver.getClassDescriptorCache()
+                        classDescriptorCache
                                 .put(qualifiedName, JavaDescriptorResolveData.ResolverBinaryClassData.NEGATIVE);
                 if (oldValue != null) {
                     throw new IllegalStateException("rewrite at " + qualifiedName);
@@ -134,7 +152,7 @@ public final class ClassResolver {
         assert qualifiedName != null;
 
         FqName fqName = new FqName(qualifiedName);
-        if (javaDescriptorResolver.getClassDescriptorCache().containsKey(fqName)) {
+        if (classDescriptorCache.containsKey(fqName)) {
             throw new IllegalStateException(qualifiedName);
         }
 
@@ -146,7 +164,7 @@ public final class ClassResolver {
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
 
         // class may be resolved during resolution of parent
-        JavaDescriptorResolveData.ResolverClassData classData = javaDescriptorResolver.getClassDescriptorCache().get(fqName);
+        JavaDescriptorResolveData.ResolverClassData classData = classDescriptorCache.get(fqName);
         if (classData != null) {
             return classData;
         }
@@ -154,7 +172,7 @@ public final class ClassResolver {
         classData = new ClassDescriptorFromJvmBytecode(
                 containingDeclaration, kind, psiClass, fqName, javaDescriptorResolver)
                 .getResolverBinaryClassData();
-        javaDescriptorResolver.getClassDescriptorCache().put(fqName, classData);
+        classDescriptorCache.put(fqName, classData);
         classData.getClassDescriptor().setName(name);
 
         List<JetType> supertypes = new ArrayList<JetType>();
@@ -251,7 +269,7 @@ public final class ClassResolver {
             @NotNull Name classObjectName
     ) {
         ClassDescriptorFromJvmBytecode classDescriptor = data.getClassDescriptor();
-        javaDescriptorResolver.getClassDescriptorCache().put(fqName, data);
+        classDescriptorCache.put(fqName, data);
         classDescriptor.setName(classObjectName);
         classDescriptor.setModality(Modality.FINAL);
         classDescriptor.setVisibility(containing.getVisibility());

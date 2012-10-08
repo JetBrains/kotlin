@@ -22,8 +22,6 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifierListOwner;
-import gnu.trove.THashMap;
-import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -38,8 +36,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiParameterWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameBase;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -78,23 +74,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     };
 
-    // NOTE: this complexity is introduced because class descriptors do not always have valid fqnames (class objects) 
-    protected final Map<FqNameBase, ResolverClassData> classDescriptorCache =
-            new THashMap<FqNameBase, ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
-                @Override
-                public int computeHashCode(FqNameBase o) {
-                    if (o instanceof FqName) {
-                        return ((FqName) o).toUnsafe().hashCode();
-                    }
-                    assert o instanceof FqNameUnsafe;
-                    return o.hashCode();
-                }
-
-                @Override
-                public boolean equals(FqNameBase n1, FqNameBase n2) {
-                    return n1.equalsTo(n2.toString()) && n2.equalsTo(n1.toString());
-                }
-            });
     protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
     protected Project project;
@@ -152,10 +131,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public PsiClassFinder getPsiClassFinder() {
         return psiClassFinder;
-    }
-
-    public Map<FqNameBase, ResolverClassData> getClassDescriptorCache() {
-        return classDescriptorCache;
     }
 
     public JavaDescriptorSignatureResolver getJavaDescriptorSignatureResolver() {
