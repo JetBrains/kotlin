@@ -1,0 +1,6 @@
+namespace test
+
+public open class test.ExplicitFieldGettersAndSetters : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.ExplicitFieldGettersAndSetters
+    public final var foo: jet.String?
+}

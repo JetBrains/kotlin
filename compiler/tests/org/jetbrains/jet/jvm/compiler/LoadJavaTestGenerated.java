@@ -308,6 +308,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest", new File("compiler/testData/loadJava/kotlinSignature/error"), "java", true);
             }
             
+            @TestMetadata("ExplicitFieldGettersAndSetters.java")
+            public void testExplicitFieldGettersAndSetters() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.java");
+            }
+            
             @TestMetadata("ExtraUpperBound.java")
             public void testExtraUpperBound() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/ExtraUpperBound.java");
@@ -316,6 +321,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("MissingUpperBound.java")
             public void testMissingUpperBound() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/MissingUpperBound.java");
+            }
+            
+            @TestMetadata("NoFieldTypeRef.java")
+            public void testNoFieldTypeRef() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/NoFieldTypeRef.java");
             }
             
             @TestMetadata("NotVarargReplacedWithVararg.java")
@@ -336,6 +346,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("VarargReplacedWithNotVararg.java")
             public void testVarargReplacedWithNotVararg() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.java");
+            }
+            
+            @TestMetadata("WrongFieldMutability.java")
+            public void testWrongFieldMutability() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/WrongFieldMutability.java");
             }
             
             @TestMetadata("WrongFieldName.java")

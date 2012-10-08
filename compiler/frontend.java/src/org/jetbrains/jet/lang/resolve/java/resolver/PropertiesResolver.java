@@ -230,7 +230,7 @@ public final class PropertiesResolver {
 
             if (characteristicMember.isField()) {
                 AlternativeFieldSignatureData signatureData =
-                        new AlternativeFieldSignatureData((PsiFieldWrapper) characteristicMember.getMember(), propertyType);
+                        new AlternativeFieldSignatureData((PsiFieldWrapper) characteristicMember.getMember(), propertyType, isVar);
                 if (!signatureData.hasErrors()) {
                     if (signatureData.isAnnotated()) {
                         propertyType = signatureData.getReturnType();

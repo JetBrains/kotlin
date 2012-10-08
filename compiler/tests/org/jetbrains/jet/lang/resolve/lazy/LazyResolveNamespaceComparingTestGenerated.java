@@ -1193,6 +1193,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest", new File("compiler/testData/loadJava/kotlinSignature/error"), "kt", true);
                 }
                 
+                @TestMetadata("ExplicitFieldGettersAndSetters.kt")
+                public void testExplicitFieldGettersAndSetters() throws Exception {
+                    doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.kt");
+                }
+                
                 @TestMetadata("ExtraUpperBound.kt")
                 public void testExtraUpperBound() throws Exception {
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/ExtraUpperBound.kt");
@@ -1201,6 +1206,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("MissingUpperBound.kt")
                 public void testMissingUpperBound() throws Exception {
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/MissingUpperBound.kt");
+                }
+                
+                @TestMetadata("NoFieldTypeRef.kt")
+                public void testNoFieldTypeRef() throws Exception {
+                    doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/NoFieldTypeRef.kt");
                 }
                 
                 @TestMetadata("NotVarargReplacedWithVararg.kt")
@@ -1221,6 +1231,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("VarargReplacedWithNotVararg.kt")
                 public void testVarargReplacedWithNotVararg() throws Exception {
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
+                }
+                
+                @TestMetadata("WrongFieldMutability.kt")
+                public void testWrongFieldMutability() throws Exception {
+                    doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/WrongFieldMutability.kt");
                 }
                 
                 @TestMetadata("WrongFieldName.kt")

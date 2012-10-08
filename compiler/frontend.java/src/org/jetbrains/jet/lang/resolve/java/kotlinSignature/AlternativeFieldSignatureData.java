@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.PsiClass;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -34,23 +34,22 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
 
     private JetType altReturnType;
 
-    public AlternativeFieldSignatureData(@NotNull PsiFieldWrapper field, @NotNull JetType originalReturnType) {
+    public AlternativeFieldSignatureData(@NotNull PsiFieldWrapper field, @NotNull JetType originalReturnType, boolean isVar) {
         String signature = field.getSignatureAnnotation().signature();
-        JetProperty altPropertyDeclaration;
+        this.field = field;
+
         if (signature.isEmpty()) {
             setAnnotated(false);
-            this.field = null;
             return;
         }
 
         setAnnotated(true);
-        this.field = field;
         Project project = field.getPsiMember().getProject();
-        altPropertyDeclaration = JetPsiFactory.createProperty(project, signature);
+        JetProperty altPropertyDeclaration = JetPsiFactory.createProperty(project, signature);
 
         try {
             checkForSyntaxErrors(altPropertyDeclaration);
-            checkEqualNames(altPropertyDeclaration, field);
+            checkFieldAnnotation(altPropertyDeclaration, field, isVar);
             altReturnType = computeReturnType(originalReturnType, altPropertyDeclaration.getTypeRef(),
                                               new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>());
         }
@@ -70,11 +69,35 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         return field.getPsiField().getText();
     }
 
-    private static void checkEqualNames(PsiNamedElement namedElement, PsiFieldWrapper fieldWrapper) {
-        if (!ComparatorUtil.equalsNullable(fieldWrapper.getName(), namedElement.getName())) {
+    private static void checkFieldAnnotation(JetProperty altProperty, PsiFieldWrapper fieldWrapper, boolean isVar) {
+        PsiClass containingClass = fieldWrapper.getPsiField().getContainingClass();
+        String fieldLink = containingClass != null ?
+                           String.format("%s.%s", containingClass.getQualifiedName(), fieldWrapper.getName()) :
+                           fieldWrapper.getName();
+        assert (fieldLink != null);
+
+        if (!ComparatorUtil.equalsNullable(fieldWrapper.getName(), altProperty.getName())) {
             throw new AlternativeSignatureMismatchException(
                     "Field name mismatch, original: %s, alternative: %s",
-                    fieldWrapper.getName(), namedElement.getName());
+                    fieldLink, altProperty.getName());
+        }
+
+        if (altProperty.getTypeRef() == null) {
+            throw new AlternativeSignatureMismatchException(
+                    "Field annotation for '%s' shouldn't have type reference",
+                    fieldLink);
+        }
+
+        if (altProperty.getGetter() != null || altProperty.getSetter() != null) {
+            throw new AlternativeSignatureMismatchException(
+                    "Field annotation for '%s' shouldn't have getters and setters",
+                    fieldLink);
+        }
+
+        if (altProperty.isVar() != isVar) {
+            throw new AlternativeSignatureMismatchException(
+                    "Wrong mutability in annotation for field '%s'",
+                    fieldLink);
         }
     }
 }

@@ -2,6 +2,6 @@ package test
 
 import java.util.*
 
-public open class WrongFieldName : Object() {
+public open class NoFieldTypeRef : Object() {
     public var foo : String? = ""
 }
