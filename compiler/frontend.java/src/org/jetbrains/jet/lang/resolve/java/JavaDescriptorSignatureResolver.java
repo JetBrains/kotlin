@@ -58,7 +58,7 @@ public class JavaDescriptorSignatureResolver {
     private static boolean isJavaLangObject(@NotNull JetType type) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
         return classifierDescriptor instanceof ClassDescriptor &&
-               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(JavaDescriptorResolver.OBJECT_FQ_NAME);
+               DescriptorUtils.getFQName(classifierDescriptor).equalsTo(DescriptorResolverUtils.OBJECT_FQ_NAME);
     }
 
     private enum TypeParameterDescriptorOrigin {

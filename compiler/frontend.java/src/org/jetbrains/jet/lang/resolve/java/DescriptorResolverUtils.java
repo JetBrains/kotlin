@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -37,6 +38,8 @@ import java.util.List;
  * @author Pavel Talanov
  */
 public final class DescriptorResolverUtils {
+    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+
     private DescriptorResolverUtils() {
     }
 

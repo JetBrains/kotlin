@@ -371,7 +371,7 @@ public final class ClassResolver {
 
         if (result.isEmpty()) {
             if (classData.isKotlin()
-                || JavaDescriptorResolver.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
+                || DescriptorResolverUtils.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
                 // TODO: annotations
                 || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
                 result.add(JetStandardClasses.getAnyType());
@@ -449,7 +449,7 @@ public final class ClassResolver {
 
     @Nullable
     private ClassDescriptor resolveJavaLangObject() {
-        ClassDescriptor clazz = resolveClass(JavaDescriptorResolver.OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor clazz = resolveClass(DescriptorResolverUtils.OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (clazz == null) {
             // TODO: warning
         }

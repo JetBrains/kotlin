@@ -71,7 +71,7 @@ public final class FunctionResolver {
             // TODO: unless maybe class explicitly extends Object
             assert containingClass != null;
             String ownerClassName = containingClass.getQualifiedName();
-            if (JavaDescriptorResolver.OBJECT_FQ_NAME.getFqName().equals(ownerClassName)) {
+            if (DescriptorResolverUtils.OBJECT_FQ_NAME.getFqName().equals(ownerClassName)) {
                 return null;
             }
         }

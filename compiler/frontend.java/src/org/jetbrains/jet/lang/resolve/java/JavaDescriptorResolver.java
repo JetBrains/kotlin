@@ -48,11 +48,7 @@ import java.util.Set;
  */
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
 
-    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
-
     public static final Name JAVA_ROOT = Name.special("<java_root>");
-
-    public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JAVA_ROOT);
 
     public static Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 public final class NamespaceResolver {
 
+    public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final Map<FqName, JavaDescriptorResolveData.ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
@@ -98,7 +100,7 @@ public final class NamespaceResolver {
 
     private NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {
         if (fqName.isRoot()) {
-            return JavaDescriptorResolver.FAKE_ROOT_MODULE;
+            return FAKE_ROOT_MODULE;
         }
         else {
             return resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
