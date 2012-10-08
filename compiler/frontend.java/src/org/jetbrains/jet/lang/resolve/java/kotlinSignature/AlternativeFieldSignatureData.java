@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
@@ -48,6 +50,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
 
         try {
             checkForSyntaxErrors(altPropertyDeclaration);
+            checkEqualNames(altPropertyDeclaration, field);
             altReturnType = computeReturnType(originalReturnType, altPropertyDeclaration.getTypeRef(),
                                               new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>());
         }
@@ -65,5 +68,13 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
     @Override
     public String getSignature() {
         return field.getPsiField().getText();
+    }
+
+    private static void checkEqualNames(PsiNamedElement namedElement, PsiFieldWrapper fieldWrapper) {
+        if (!ComparatorUtil.equalsNullable(fieldWrapper.getName(), namedElement.getName())) {
+            throw new AlternativeSignatureMismatchException(
+                    "Field name mismatch, original: %s, alternative: %s",
+                    fieldWrapper.getName(), namedElement.getName());
+        }
     }
 }

@@ -1223,6 +1223,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
                 }
                 
+                @TestMetadata("WrongFieldName.kt")
+                public void testWrongFieldName() throws Exception {
+                    doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/WrongFieldName.kt");
+                }
+                
                 @TestMetadata("WrongMethodName.kt")
                 public void testWrongMethodName() throws Exception {
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/WrongMethodName.kt");

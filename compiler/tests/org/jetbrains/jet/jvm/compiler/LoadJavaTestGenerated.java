@@ -338,11 +338,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.java");
             }
             
+            @TestMetadata("WrongFieldName.java")
+            public void testWrongFieldName() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/WrongFieldName.java");
+            }
+            
             @TestMetadata("WrongMethodName.java")
             public void testWrongMethodName() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongMethodName.java");
             }
-
+            
             @TestMetadata("WrongReturnTypeStructure.java")
             public void testWrongReturnTypeStructure() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongReturnTypeStructure.java");

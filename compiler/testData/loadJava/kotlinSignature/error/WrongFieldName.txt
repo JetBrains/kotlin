@@ -1,0 +1,6 @@
+namespace test
+
+public open class test.WrongFieldName : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.WrongFieldName
+    public final val foo: jet.String?
+}
