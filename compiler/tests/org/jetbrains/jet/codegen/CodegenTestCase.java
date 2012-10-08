@@ -340,30 +340,32 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected String generateToText() {
-        if(alreadyGenerated == null)
-            alreadyGenerated = generateCommon(ClassBuilderFactories.TEST);
+        if (alreadyGenerated == null)
+            alreadyGenerated = generateCommon(ClassBuilderFactories.TEST, myEnvironment, myFiles);
         return alreadyGenerated.getFactory().createText();
     }
 
-    private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
-        if(alreadyGenerated != null)
-            return alreadyGenerated;
-
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                myEnvironment.getProject(),
-                myFiles.getPsiFiles(),
-                myFiles.getScriptParameterTypes(),
+    @NotNull
+    protected static GenerationState generateCommon(
+            @NotNull ClassBuilderFactory classBuilderFactory,
+            @NotNull JetCoreEnvironment environment,
+            @NotNull CodegenTestFiles files
+    ) {
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
+                environment.getProject(),
+                files.getPsiFiles(),
+                files.getScriptParameterTypes(),
                 Predicates.<PsiFile>alwaysTrue(),
                 BuiltinsScopeExtensionMode.ALL);
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        alreadyGenerated = new GenerationState(
-                myEnvironment.getProject(), classBuilderFactory, Progress.DEAF, analyzeExhaust, myFiles.getPsiFiles(),
-                myEnvironment.getConfiguration().get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
-                myEnvironment.getConfiguration().get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true)
+        GenerationState state = new GenerationState(
+                environment.getProject(), classBuilderFactory, Progress.DEAF, analyzeExhaust, files.getPsiFiles(),
+                environment.getConfiguration().get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
+                environment.getConfiguration().get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true)
         );
-        GenerationStrategy.STANDARD.compileCorrectFiles(alreadyGenerated, CompilationErrorHandler.THROW_EXCEPTION);
-        return alreadyGenerated;
+        GenerationStrategy.STANDARD.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        return state;
     }
 
     protected Class generateNamespaceClass() {
@@ -407,7 +409,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     private GenerationState generateClassesInFileGetState() {
         GenerationState generationState;
         try {
-            generationState = generateCommon(ClassBuilderFactories.TEST);
+            generationState = generateCommon(ClassBuilderFactories.TEST, myEnvironment, myFiles);
 
             if (DxChecker.RUN_DX_CHECKER) {
                 DxChecker.check(generationState.getFactory());
