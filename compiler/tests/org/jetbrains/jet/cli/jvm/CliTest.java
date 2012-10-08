@@ -125,6 +125,15 @@ public class CliTest {
     }
 
     @Test
+    public void wrongKotlinSignature() throws Exception {
+        String[] args = {
+                "-src", "compiler/testData/cli/wrongKotlinSignature.kt",
+                "-classpath", "compiler/testData/cli/wrongKotlinSignatureLib",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutput(args);
+    }
+
+    @Test
     public void help() throws Exception {
         executeCompilerCompareOutput(new String[] {"-help"});
     }

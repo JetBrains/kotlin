@@ -20,17 +20,21 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.util.PsiFormatUtil;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetIdeTemplate;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import java.util.Collection;
@@ -106,6 +110,23 @@ public final class AnalyzerWithCompilerReport {
             for (ClassDescriptor incomplete : incompletes) {
                 String fqName = DescriptorUtils.getFQName(incomplete).getFqName();
                 message.append("    ").append(fqName).append("\n");
+            }
+            messageCollectorWrapper.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
+        }
+    }
+
+    private void reportAlternativeSignatureErrors() {
+        assert analyzeExhaust != null;
+        BindingContext bc = analyzeExhaust.getBindingContext();
+        Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR);
+        if (!descriptorsWithErrors.isEmpty()) {
+            StringBuilder message = new StringBuilder("The following Java entities have annotations wrong Kotlin signatures:\n");
+            for (DeclarationDescriptor descriptor : descriptorsWithErrors) {
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, descriptor);
+                assert declaration instanceof PsiModifierListOwner;
+                String externalName = PsiFormatUtil.getExternalName((PsiModifierListOwner) declaration);
+                message.append(externalName).append(": ");
+                message.append(bc.get(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, descriptor)).append("\n");
             }
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }
@@ -191,6 +212,7 @@ public final class AnalyzerWithCompilerReport {
         analyzeExhaust = analyzer.invoke();
         reportDiagnostics(analyzeExhaust.getBindingContext(), messageCollectorWrapper);
         reportIncompleteHierarchies();
+        reportAlternativeSignatureErrors();
     }
 
 
