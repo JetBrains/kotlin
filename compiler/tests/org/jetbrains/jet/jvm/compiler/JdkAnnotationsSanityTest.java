@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.io.IOException;
@@ -78,38 +79,17 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
         final Map<DeclarationDescriptor, String> errors = Maps.newHashMap();
 
         Iterable<FqName> affectedClasses = getAffectedClasses(kotlinAnnotationsRoot);
-        for (FqName affectedClass : affectedClasses) {
-            ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(affectedClass);
-            assertNotNull("Class has annotation, but it is not found: " + affectedClass, topLevelClass);
+        AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
+        for (FqName javaClass : affectedClasses) {
+            ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
+            NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
+            assertNotNull("Class has annotation, but it is not found: " + javaClass, topLevelClass);
 
-            topLevelClass.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
-                @Override
-                public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                    for (DeclarationDescriptor member : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-                        member.acceptVoid(this);
-                    }
+            topLevelClass.acceptVoid(visitor);
 
-                    return visitDeclaration(descriptor);
-                }
-
-                @Override
-                public Void visitFunctionDescriptor(FunctionDescriptor descriptor, Void data) {
-                    return visitDeclaration(descriptor);
-                }
-
-                @Override
-                public Void visitPropertyDescriptor(PropertyDescriptor descriptor, Void data) {
-                    return visitDeclaration(descriptor);
-                }
-
-                private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
-                    String error = bindingContext.get(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, descriptor);
-                    if (error != null) {
-                        errors.put(descriptor, error);
-                    }
-                    return null;
-                }
-            });
+            if (topLevelNamespace != null) {
+                topLevelNamespace.acceptVoid(visitor);
+            }
         }
 
         if (!errors.isEmpty()) {
@@ -221,5 +201,51 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
             }
         });
         return result;
+    }
+
+    private static class AlternativeSignatureErrorFindingVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, Void> {
+        private final BindingContext bindingContext;
+        private final Map<DeclarationDescriptor, String> errors;
+
+        public AlternativeSignatureErrorFindingVisitor(BindingContext bindingContext, Map<DeclarationDescriptor, String> errors) {
+            this.bindingContext = bindingContext;
+            this.errors = errors;
+        }
+
+        @Override
+        public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+            return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
+        }
+
+        @Override
+        public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
+            return visitDeclarationRecursively(descriptor, descriptor.getDefaultType().getMemberScope());
+        }
+
+        @Override
+        public Void visitFunctionDescriptor(FunctionDescriptor descriptor, Void data) {
+            return visitDeclaration(descriptor);
+        }
+
+        @Override
+        public Void visitPropertyDescriptor(PropertyDescriptor descriptor, Void data) {
+            return visitDeclaration(descriptor);
+        }
+
+        private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
+            String error = bindingContext.get(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, descriptor);
+            if (error != null) {
+                errors.put(descriptor, error);
+            }
+            return null;
+        }
+
+        private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull JetScope memberScope) {
+            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+                member.acceptVoid(this);
+            }
+
+            return visitDeclaration(descriptor);
+        }
     }
 }
