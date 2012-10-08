@@ -84,7 +84,7 @@ public final class InnerClassResolver {
         String name = innerPsiClass.getQualifiedName();
         assert name != null : "Inner class has no qualified name";
         ClassDescriptor classDescriptor =
-                javaDescriptorResolver.getClassResolver().resolveClass(new FqName(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                javaDescriptorResolver.resolveClass(new FqName(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         assert classDescriptor != null : "Couldn't resolve class " + name;
         return classDescriptor;
     }

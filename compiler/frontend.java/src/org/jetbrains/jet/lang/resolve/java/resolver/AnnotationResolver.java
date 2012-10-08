@@ -79,7 +79,7 @@ public final class AnnotationResolver {
 
         FqName annotationFqName = new FqName(qname);
         final ClassDescriptor clazz =
-                javaDescriptorResolver.getClassResolver().resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                javaDescriptorResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
         if (clazz == null) {
             return null;
         }

@@ -89,7 +89,7 @@ public final class CompileTimeConstResolver {
         List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, taskList, initializers);
 
         ClassDescriptor classDescriptor =
-                javaDescriptorResolver.getClassResolver().resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                javaDescriptorResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
 
         ValueParameterDescriptor valueParameterDescriptor =
                 DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(valueName, classDescriptor);
@@ -132,8 +132,7 @@ public final class CompileTimeConstResolver {
 
                 JetScope scope;
                 ClassDescriptor classDescriptor =
-                        javaDescriptorResolver.getClassResolver()
-                                .resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                        javaDescriptorResolver.resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
                 if (classDescriptor == null) {
                     return null;
                 }

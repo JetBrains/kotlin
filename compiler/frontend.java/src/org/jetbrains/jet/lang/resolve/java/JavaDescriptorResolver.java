@@ -173,10 +173,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return constructorResolver.resolveConstructors(classData);
     }
 
-    public ClassResolver getClassResolver() {
-        return classResolver;
-    }
-
     public CompileTimeConstResolver getCompileTimeConstResolver() {
         return compileTimeConstResolver;
     }
@@ -210,6 +206,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public Set<VariableDescriptor> resolveFieldGroup(ResolverScopeData data) {
         return propertiesResolver.resolveFieldGroup(data);
+    }
+
+    public ClassDescriptor resolveClass(FqName name, DescriptorSearchRule searchRule, List<Runnable> list) {
+        return classResolver.resolveClass(name, searchRule, list);
     }
 
     public static class ValueParameterDescriptors {
