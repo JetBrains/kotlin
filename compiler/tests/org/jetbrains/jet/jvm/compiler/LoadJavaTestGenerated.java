@@ -343,6 +343,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/SyntaxError.java");
             }
             
+            @TestMetadata("SyntaxErrorInFieldAnnotation.java")
+            public void testSyntaxErrorInFieldAnnotation() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/SyntaxErrorInFieldAnnotation.java");
+            }
+            
             @TestMetadata("VarargReplacedWithNotVararg.java")
             public void testVarargReplacedWithNotVararg() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.java");

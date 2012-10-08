@@ -1228,6 +1228,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/SyntaxError.kt");
                 }
                 
+                @TestMetadata("SyntaxErrorInFieldAnnotation.kt")
+                public void testSyntaxErrorInFieldAnnotation() throws Exception {
+                    doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/SyntaxErrorInFieldAnnotation.kt");
+                }
+                
                 @TestMetadata("VarargReplacedWithNotVararg.kt")
                 public void testVarargReplacedWithNotVararg() throws Exception {
                     doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
