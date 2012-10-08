@@ -305,7 +305,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected File compileJava(@NotNull String filename) throws IOException {
         File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
         JetTestUtils.mkdirs(javaClassesTempDirectory);
+        String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
         List<String> options = Arrays.asList(
+                "-classpath", classPath,
                 "-d", javaClassesTempDirectory.getPath()
         );
 
