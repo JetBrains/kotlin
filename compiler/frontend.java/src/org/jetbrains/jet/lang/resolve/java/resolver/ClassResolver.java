@@ -28,6 +28,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverBinaryClassData;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverSyntheticClassObjectClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
@@ -60,8 +63,8 @@ public final class ClassResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     // NOTE: this complexity is introduced because class descriptors do not always have valid fqnames (class objects)
-    private final Map<FqNameBase, JavaDescriptorResolveData.ResolverClassData> classDescriptorCache =
-            new THashMap<FqNameBase, JavaDescriptorResolveData.ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
+    private final Map<FqNameBase, ResolverClassData> classDescriptorCache =
+            new THashMap<FqNameBase, ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
                 @Override
                 public int computeHashCode(FqNameBase o) {
                     if (o instanceof FqName) {
@@ -125,14 +128,14 @@ public final class ClassResolver {
         }
 
         // Not let's take a descriptor of a Java class
-        JavaDescriptorResolveData.ResolverClassData classData = classDescriptorCache.get(qualifiedName);
+        ResolverClassData classData = classDescriptorCache.get(qualifiedName);
         if (classData == null) {
             PsiClass psiClass =
                     javaDescriptorResolver.getPsiClassFinder().findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
             if (psiClass == null) {
-                JavaDescriptorResolveData.ResolverClassData oldValue =
+                ResolverClassData oldValue =
                         classDescriptorCache
-                                .put(qualifiedName, JavaDescriptorResolveData.ResolverBinaryClassData.NEGATIVE);
+                                .put(qualifiedName, ResolverBinaryClassData.NEGATIVE);
                 if (oldValue != null) {
                     throw new IllegalStateException("rewrite at " + qualifiedName);
                 }
@@ -144,7 +147,7 @@ public final class ClassResolver {
     }
 
     @NotNull
-    private JavaDescriptorResolveData.ResolverClassData createJavaClassDescriptor(
+    private ResolverClassData createJavaClassDescriptor(
             @NotNull final PsiClass psiClass,
             List<Runnable> taskList
     ) {
@@ -164,7 +167,7 @@ public final class ClassResolver {
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
 
         // class may be resolved during resolution of parent
-        JavaDescriptorResolveData.ResolverClassData classData = classDescriptorCache.get(fqName);
+        ResolverClassData classData = classDescriptorCache.get(fqName);
         if (classData != null) {
             return classData;
         }
@@ -251,7 +254,7 @@ public final class ClassResolver {
         final String qualifiedName = classObjectPsiClass.getQualifiedName();
         assert qualifiedName != null;
         FqName fqName = new FqName(qualifiedName);
-        JavaDescriptorResolveData.ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
+        ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
                 containing, ClassKind.CLASS_OBJECT, classObjectPsiClass, fqName, javaDescriptorResolver)
                 .getResolverBinaryClassData();
 
@@ -265,7 +268,7 @@ public final class ClassResolver {
     private void setUpClassObjectDescriptor(
             @NotNull ClassDescriptor containing,
             @NotNull FqNameBase fqName,
-            @NotNull JavaDescriptorResolveData.ResolverClassData data,
+            @NotNull ResolverClassData data,
             @NotNull Name classObjectName
     ) {
         ClassDescriptorFromJvmBytecode classDescriptor = data.getClassDescriptor();
@@ -308,8 +311,8 @@ public final class ClassResolver {
         ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
                 containing, ClassKind.CLASS_OBJECT, psiClass, null, javaDescriptorResolver);
 
-        JavaDescriptorResolveData.ResolverSyntheticClassObjectClassData
-                data = new JavaDescriptorResolveData.ResolverSyntheticClassObjectClassData(psiClass, null, classObjectDescriptor);
+        ResolverSyntheticClassObjectClassData
+                data = new ResolverSyntheticClassObjectClassData(psiClass, null, classObjectDescriptor);
         setUpClassObjectDescriptor(containing, fqName, data, getClassObjectName(containing.getName().getName()));
 
         return classObjectDescriptor;
@@ -317,7 +320,7 @@ public final class ClassResolver {
 
     public Collection<JetType> getSupertypes(
             PsiClassWrapper psiClass,
-            JavaDescriptorResolveData.ResolverClassData classData,
+            ResolverClassData classData,
             List<TypeParameterDescriptor> typeParameters
     ) {
         ClassDescriptor classDescriptor = classData.getClassDescriptor();

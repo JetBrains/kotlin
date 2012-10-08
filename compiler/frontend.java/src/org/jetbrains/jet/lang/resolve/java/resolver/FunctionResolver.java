@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -50,7 +51,7 @@ public final class FunctionResolver {
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
-            @NotNull JavaDescriptorResolveData.ResolverScopeData scopeData
+            @NotNull ResolverScopeData scopeData
     ) {
 
         DescriptorResolverUtils.getResolverScopeData(scopeData);
@@ -142,7 +143,7 @@ public final class FunctionResolver {
 
     private void resolveNamedGroupFunctions(
             @NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
-            NamedMembers namedMembers, Name methodName, JavaDescriptorResolveData.ResolverScopeData scopeData
+            NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData
     ) {
         if (namedMembers.getFunctionDescriptors() != null) {
             return;
@@ -194,7 +195,7 @@ public final class FunctionResolver {
         namedMembers.setFunctionDescriptors(functions);
     }
 
-    public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, JavaDescriptorResolveData.ResolverScopeData scopeData) {
+    public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, ResolverScopeData scopeData) {
         DescriptorResolverUtils.getResolverScopeData(scopeData);
 
         Map<Name, NamedMembers> namedMembersMap = scopeData.getNamedMembersMap();
@@ -239,7 +240,7 @@ public final class FunctionResolver {
     }
 
     public static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
-            JavaDescriptorResolveData.ResolverScopeData scopeData,
+            ResolverScopeData scopeData,
             Name methodName
     ) {
         Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
@@ -251,7 +252,7 @@ public final class FunctionResolver {
         return r;
     }
 
-    public List<FunctionDescriptor> resolveMethods(@NotNull JavaDescriptorResolveData.ResolverScopeData scopeData) {
+    public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
 
         DescriptorResolverUtils.getResolverScopeData(scopeData);
 

@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;

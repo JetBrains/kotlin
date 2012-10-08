@@ -22,6 +22,9 @@ import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
@@ -55,11 +58,11 @@ public final class DescriptorResolverUtils {
         return kind == ClassKind.CLASS || kind == ClassKind.TRAIT || kind == ClassKind.ENUM_CLASS;
     }
 
-    public static Collection<JetType> getSupertypes(JavaDescriptorResolveData.ResolverScopeData scope) {
-        if (scope instanceof JavaDescriptorResolveData.ResolverClassData) {
-            return ((JavaDescriptorResolveData.ResolverClassData) scope).getClassDescriptor().getSupertypes();
+    public static Collection<JetType> getSupertypes(ResolverScopeData scope) {
+        if (scope instanceof ResolverClassData) {
+            return ((ResolverClassData) scope).getClassDescriptor().getSupertypes();
         }
-        else if (scope instanceof JavaDescriptorResolveData.ResolverNamespaceData) {
+        else if (scope instanceof ResolverNamespaceData) {
             return Collections.emptyList();
         }
         else {
@@ -118,7 +121,7 @@ public final class DescriptorResolverUtils {
         return null;
     }
 
-    public static void getResolverScopeData(@NotNull JavaDescriptorResolveData.ResolverScopeData scopeData) {
+    public static void getResolverScopeData(@NotNull ResolverScopeData scopeData) {
         if (scopeData.getNamedMembersMap() == null) {
             scopeData.setNamedMembersMap(JavaDescriptorResolverHelper.getNamedMembers(scopeData));
         }

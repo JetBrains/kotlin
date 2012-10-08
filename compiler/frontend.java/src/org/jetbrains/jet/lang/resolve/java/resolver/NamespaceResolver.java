@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -39,7 +40,7 @@ public final class NamespaceResolver {
 
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
     private final JavaDescriptorResolver javaDescriptorResolver;
-    private final Map<FqName, JavaDescriptorResolveData.ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
+    private final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
 
     public NamespaceResolver(JavaDescriptorResolver javaDescriptorResolver) {
         this.javaDescriptorResolver = javaDescriptorResolver;
@@ -66,7 +67,7 @@ public final class NamespaceResolver {
             }
         }
 
-        JavaDescriptorResolveData.ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(qualifiedName);
+        ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(qualifiedName);
         if (namespaceData != null) {
             return namespaceData.getNamespaceDescriptor();
         }
@@ -82,7 +83,7 @@ public final class NamespaceResolver {
                 qualifiedName
         );
 
-        JavaDescriptorResolveData.ResolverNamespaceData scopeData = createNamespaceResolverScopeData(qualifiedName, ns);
+        ResolverNamespaceData scopeData = createNamespaceResolverScopeData(qualifiedName, ns);
         if (scopeData == null) {
             return null;
         }
@@ -108,7 +109,7 @@ public final class NamespaceResolver {
     }
 
     @Nullable
-    private JavaDescriptorResolveData.ResolverNamespaceData createNamespaceResolverScopeData(
+    private ResolverNamespaceData createNamespaceResolverScopeData(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor ns
     ) {
@@ -130,20 +131,20 @@ public final class NamespaceResolver {
                 break lookingForPsi;
             }
 
-            JavaDescriptorResolveData.ResolverNamespaceData oldValue =
-                    namespaceDescriptorCacheByFqn.put(fqName, JavaDescriptorResolveData.ResolverNamespaceData.NEGATIVE);
+            ResolverNamespaceData oldValue =
+                    namespaceDescriptorCacheByFqn.put(fqName, ResolverNamespaceData.NEGATIVE);
             if (oldValue != null) {
                 throw new IllegalStateException("rewrite at " + fqName);
             }
             return null;
         }
 
-        JavaDescriptorResolveData.ResolverNamespaceData namespaceData =
-                new JavaDescriptorResolveData.ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
+        ResolverNamespaceData namespaceData =
+                new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
 
         namespaceData.setMemberScope(new JavaPackageScope(fqName, javaDescriptorResolver.getSemanticServices(), namespaceData));
 
-        JavaDescriptorResolveData.ResolverNamespaceData oldValue =
+        ResolverNamespaceData oldValue =
                 namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
         if (oldValue != null) {
             throw new IllegalStateException("rewrite at " + fqName);
@@ -154,14 +155,14 @@ public final class NamespaceResolver {
 
     @Nullable
     public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        JavaDescriptorResolveData.ResolverNamespaceData resolverNamespaceData = namespaceDescriptorCacheByFqn.get(fqName);
+        ResolverNamespaceData resolverNamespaceData = namespaceDescriptorCacheByFqn.get(fqName);
         if (resolverNamespaceData == null) {
             resolverNamespaceData = createNamespaceResolverScopeData(fqName, ns);
         }
         if (resolverNamespaceData == null) {
             return null;
         }
-        if (resolverNamespaceData == JavaDescriptorResolveData.ResolverNamespaceData.NEGATIVE) {
+        if (resolverNamespaceData == ResolverNamespaceData.NEGATIVE) {
             throw new IllegalStateException(
                     "This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin: " +
                     fqName);

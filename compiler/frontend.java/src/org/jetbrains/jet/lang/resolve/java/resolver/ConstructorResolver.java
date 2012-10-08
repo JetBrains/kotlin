@@ -24,7 +24,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
+import org.jetbrains.jet.lang.resolve.java.TypeVariableResolvers;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -43,7 +47,7 @@ public final class ConstructorResolver {
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull JavaDescriptorResolveData.ResolverClassData classData) {
+    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
         PsiClass psiClass = classData.getPsiClass();
@@ -144,7 +148,7 @@ public final class ConstructorResolver {
     @Nullable
     private ConstructorDescriptor resolveConstructor(
             PsiClass psiClass,
-            JavaDescriptorResolveData.ResolverClassData classData,
+            ResolverClassData classData,
             boolean aStatic,
             PsiMethod psiConstructor
     ) {
