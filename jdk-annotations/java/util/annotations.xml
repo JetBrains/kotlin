@@ -768,7 +768,7 @@
   <item name='java.util.Arrays void sort(T[], int, int, java.util.Comparator&lt;? super T&gt;)'>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
-               val="&quot;fun &lt;T&gt; sort(a : Array&lt;T&gt;, fromIndex : Int, toIndex : Int, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
+               val="&quot;fun &lt;T&gt; sort(a : Array&lt;out T&gt;, fromIndex : Int, toIndex : Int, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
       </annotation>
   </item>
   <item name='java.util.Arrays int binarySearch(java.lang.Object[], java.lang.Object)'>
