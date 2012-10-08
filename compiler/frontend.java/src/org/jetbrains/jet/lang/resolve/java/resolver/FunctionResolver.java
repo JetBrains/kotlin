@@ -82,7 +82,7 @@ public final class FunctionResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 scopeData.getClassOrNamespaceDescriptor(),
-                javaDescriptorResolver.getAnnotationResolver().resolveAnnotations(psiMethod),
+                javaDescriptorResolver.resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
                 DescriptorKindUtils.flagsToKind(method.getJetMethod().kind())
         );

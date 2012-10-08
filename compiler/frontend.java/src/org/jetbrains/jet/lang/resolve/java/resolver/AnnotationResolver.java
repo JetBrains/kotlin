@@ -100,8 +100,7 @@ public final class AnnotationResolver {
             Name identifier = Name.identifier(name);
 
             CompileTimeConstant compileTimeConst =
-                    javaDescriptorResolver.getCompileTimeConstResolver()
-                            .getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
+                    javaDescriptorResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
             if (compileTimeConst != null) {
                 ValueParameterDescriptor valueParameterDescriptor =
                         DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(identifier, clazz);

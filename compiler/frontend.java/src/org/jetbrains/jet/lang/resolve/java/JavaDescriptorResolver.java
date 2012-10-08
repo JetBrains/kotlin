@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifierListOwner;
 import gnu.trove.THashMap;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolveData.ResolverScopeData;
@@ -173,14 +175,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return constructorResolver.resolveConstructors(classData);
     }
 
-    public CompileTimeConstResolver getCompileTimeConstResolver() {
-        return compileTimeConstResolver;
-    }
-
-    public AnnotationResolver getAnnotationResolver() {
-        return annotationResolver;
-    }
-
     public Map<FqName, ResolverNamespaceData> getNamespaceDescriptorCacheByFqn() {
         return namespaceDescriptorCacheByFqn;
     }
@@ -210,6 +204,15 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public ClassDescriptor resolveClass(FqName name, DescriptorSearchRule searchRule, List<Runnable> list) {
         return classResolver.resolveClass(name, searchRule, list);
+    }
+
+    public CompileTimeConstant getCompileTimeConstFromExpression(
+            FqName annotationName,
+            Name parameterName,
+            PsiAnnotationMemberValue value,
+            List<Runnable> taskList
+    ) {
+        return compileTimeConstResolver.getCompileTimeConstFromExpression(annotationName, parameterName, value, taskList);
     }
 
     public static class ValueParameterDescriptors {
