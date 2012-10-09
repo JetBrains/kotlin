@@ -19,20 +19,23 @@ package org.jetbrains.jet.plugin.search;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author yole
@@ -62,34 +65,17 @@ public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, 
                 Collection<JetClassOrObject> candidates = JetSuperClassIndex.getInstance().get(name, clazz.getProject(), scope);
                 for (JetClassOrObject candidate : candidates) {
                     if (!(candidate instanceof JetClass)) continue;
-                    List<JetDelegationSpecifier> specifiers = candidate.getDelegationSpecifiers();
-                    for (JetDelegationSpecifier specifier : specifiers) {
-                        JetUserType type = specifier.getTypeAsUserType();
-                        if (type != null) {
-                            JetSimpleNameExpression referenceExpression = type.getReferenceExpression();
-                            if (referenceExpression != null) {
-                                PsiReference reference = referenceExpression.getReference();
-                                PsiElement resolved = reference != null ? reference.resolve() : null;
-
-                                String resolvedFQName = null;
-                                if (resolved instanceof PsiClass) {
-                                    resolvedFQName = ((PsiClass)resolved).getQualifiedName();
-                                }
-                                else if (resolved instanceof JetClass) {
-                                    FqName fqName = JetPsiUtil.getFQName((JetClass) resolved);
-                                    if (fqName != null) {
-                                        resolvedFQName = fqName.getFqName();
-                                    }
-                                } else if (resolved instanceof PsiMethod && ((PsiMethod) resolved).isConstructor()) {
-                                    PsiClass containingClass = ((PsiMethod) resolved).getContainingClass();
-                                    resolvedFQName = containingClass.getQualifiedName();
-                                }
-
-                                if (qualifiedName.equals(resolvedFQName)) {
-                                    JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) candidate);
-                                    if (lightClass != null) {
-                                        consumer.process(lightClass);
-                                    }
+                    JetFile containingFile = (JetFile) candidate.getContainingFile();
+                    ResolveSession sessionForFile = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(containingFile);
+                    ClassDescriptor classDescriptor = (ClassDescriptor) sessionForFile.resolveToDescriptor(candidate);
+                    for (JetType type : classDescriptor.getTypeConstructor().getSupertypes()) {
+                        ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+                        if (declarationDescriptor != null) {
+                            String fqName = DescriptorUtils.getFQName(declarationDescriptor).getFqName();
+                            if (qualifiedName.equals(fqName)) {
+                                JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) candidate);
+                                if (lightClass != null) {
+                                    consumer.process(lightClass);
                                 }
                             }
                         }
