@@ -17,11 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiSubstitutor;
-import com.intellij.psi.PsiType;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -231,19 +227,6 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             altParamDescriptor.setInitialized();
             altTypeParameters.add(altParamDescriptor);
         }
-    }
-
-    @Override
-    public String getSignature() {
-        String paramsString = StringUtil.join(method.getPsiMethod().getSignature(PsiSubstitutor.EMPTY).getParameterTypes(),
-                                              new Function<PsiType, String>() {
-                                                  @Override
-                                                  public String fun(PsiType psiType) {
-                                                      return psiType.getPresentableText();
-                                                  }
-                                              }, ", ");
-
-        return String.format("%s(%s)", altFunDeclaration.getName(), paramsString);
     }
 
     @Nullable

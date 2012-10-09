@@ -63,11 +63,6 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         return altReturnType;
     }
 
-    @Override
-    public String getSignature() {
-        return field.getPsiField().getText();
-    }
-
     private static void checkFieldAnnotation(JetProperty altProperty, PsiFieldWrapper fieldWrapper, boolean isVar) {
         if (!ComparatorUtil.equalsNullable(fieldWrapper.getName(), altProperty.getName())) {
             throw new AlternativeSignatureMismatchException("Field name mismatch, original: %s, alternative: %s",

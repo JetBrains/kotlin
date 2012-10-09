@@ -66,24 +66,20 @@ public abstract class ElementAlternativeSignatureData {
         this.isAnnotated = isAnnotated;
     }
 
-    public abstract String getSignature();
-
-    protected void checkForSyntaxErrors(PsiElement namedElement) {
+    protected static void checkForSyntaxErrors(PsiElement namedElement) {
         List<PsiErrorElement> syntaxErrors = AnalyzingUtils.getSyntaxErrorRanges(namedElement);
 
         if (!syntaxErrors.isEmpty()) {
-            String textSignature = getSignature();
-
             int errorOffset = syntaxErrors.get(0).getTextOffset();
             String syntaxErrorDescription = syntaxErrors.get(0).getErrorDescription();
 
             if (syntaxErrors.size() == 1) {
-                throw new AlternativeSignatureMismatchException("Alternative signature for %s has syntax error at %d: %s",
-                                                                textSignature, errorOffset, syntaxErrorDescription);
+                throw new AlternativeSignatureMismatchException("Alternative signature has syntax error at %d: %s",
+                                                                errorOffset, syntaxErrorDescription);
             }
             else {
-                throw new AlternativeSignatureMismatchException("Alternative signature for %s has %d syntax errors, first is at %d: %s",
-                                                                textSignature, syntaxErrors.size(), errorOffset, syntaxErrorDescription);
+                throw new AlternativeSignatureMismatchException("Alternative signature has %d syntax errors, first is at %d: %s",
+                                                                syntaxErrors.size(), errorOffset, syntaxErrorDescription);
             }
         }
     }
