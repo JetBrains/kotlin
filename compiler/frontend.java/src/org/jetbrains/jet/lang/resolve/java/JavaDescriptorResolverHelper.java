@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;
@@ -212,6 +213,9 @@ class JavaDescriptorResolverHelper {
         private void processNeighborClasses() {
             for (PsiClass neighborPsiClass : psiPackage.getClasses()) {
                 if (!neighborPsiClass.isPhysical()) { // to filter out JetLightClasses
+                    continue;
+                }
+                if (JetClassAnnotation.get(neighborPsiClass).kind() != JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
                     continue;
                 }
                 PsiField instanceField = neighborPsiClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
