@@ -53,12 +53,14 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 public class PropertyCodegen extends GenerationStateAware {
     private final FunctionCodegen functionCodegen;
     private final ClassBuilder v;
+    private final CodegenContext context;
     private final OwnerKind kind;
 
     public PropertyCodegen(CodegenContext context, ClassBuilder v, FunctionCodegen functionCodegen) {
         super(functionCodegen.getState());
         this.v = v;
         this.functionCodegen = functionCodegen;
+        this.context = context;
         this.kind = context.getContextKind();
     }
 
@@ -119,20 +121,17 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateGetter(JetProperty p, PropertyDescriptor propertyDescriptor) {
-        final JetPropertyAccessor getter = p.getGetter();
-        if (getter != null) {
-            if (getter.getBodyExpression() != null) {
-                JvmPropertyAccessorSignature signature =
-                        typeMapper.mapGetterSignature(propertyDescriptor, kind);
-                functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(),
-                                               propertyDescriptor.getGetter());
-            }
-            else if (isExternallyAccessible(propertyDescriptor)) {
-                generateDefaultGetter(p);
-            }
+        JetPropertyAccessor getter = p.getGetter();
+        if (getter != null && getter.getBodyExpression() != null) {
+            JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
+            functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(),
+                                           propertyDescriptor.getGetter());
         }
         else if (isExternallyAccessible(propertyDescriptor)) {
             generateDefaultGetter(p);
+            JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
+            FunctionCodegen.generateBridgeIfNeeded(context, state, v, signature.getJvmMethodSignature().getAsmMethod(),
+                                                   propertyDescriptor.getGetter(), kind);
         }
     }
 
@@ -142,22 +141,17 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     private void generateSetter(JetProperty p, PropertyDescriptor propertyDescriptor) {
-        final JetPropertyAccessor setter = p.getSetter();
-        if (setter != null) {
-            if (setter.getBodyExpression() != null) {
-                final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-                assert setterDescriptor != null;
-                JvmPropertyAccessorSignature signature =
-                        typeMapper.mapSetterSignature(propertyDescriptor, kind);
-                functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(),
-                                               setterDescriptor);
-            }
-            else if (isExternallyAccessible(propertyDescriptor)) {
-                generateDefaultSetter(p);
-            }
+        JetPropertyAccessor setter = p.getSetter();
+        if (setter != null && setter.getBodyExpression() != null) {
+            JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
+            functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(),
+                                           propertyDescriptor.getSetter());
         }
         else if (isExternallyAccessible(propertyDescriptor) && propertyDescriptor.isVar()) {
             generateDefaultSetter(p);
+            JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
+            FunctionCodegen.generateBridgeIfNeeded(context, state, v, signature.getJvmMethodSignature().getAsmMethod(),
+                                                   propertyDescriptor.getSetter(), kind);
         }
     }
 

@@ -149,4 +149,29 @@ public class BridgeMethodGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2702.kt");
     }
+
+    public void testKt2920() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2920.kt");
+    }
+
+    public void testSubstitutionInSuperClassProperty() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/substitutionInSuperClassProperty.kt");
+    }
+
+    public void testPropertySetter() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/propertySetter.kt");
+    }
+
+    public void testPropertyDiamond() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/propertyDiamond.kt");
+    }
+
+    public void testPropertyAccessorsWithoutBody() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/propertyAccessorsWithoutBody.kt");
+    }
 }
