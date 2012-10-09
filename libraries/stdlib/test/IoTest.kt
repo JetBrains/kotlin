@@ -6,10 +6,10 @@ import kotlin.io.*
 import kotlin.util.*
 import java.io.*
 import java.util.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class IoTest() : TestCase() {
-  fun testLineIteratorWithManualClose() {
+class IoTest(){
+  test fun testLineIteratorWithManualClose() {
     val reader = sample().buffered()
     try {
       val list = reader.lineIterator().toArrayList()
@@ -23,7 +23,7 @@ class IoTest() : TestCase() {
     return StringReader("Hello\nWorld");
   }
 
-  fun testLineIterator() {
+  test fun testLineIterator() {
     // TODO we should maybe zap the useLines approach as it encourages
     // use of iterators which don't close the underlying stream
     val list1 = sample().useLines{it.toArrayList()}
@@ -33,7 +33,7 @@ class IoTest() : TestCase() {
     assertEquals(arrayList("Hello", "World"), list2)
   }
 
-  fun testForEach() {
+  test fun testForEach() {
     val list = ArrayList<String>()
     val reader = sample().buffered()
 
@@ -50,7 +50,7 @@ class IoTest() : TestCase() {
     assertEquals(arrayList("Hello", "World"), list)
   }
 
-  fun testForEachLine() {
+  test fun testForEachLine() {
     val list = ArrayList<String>()
     val reader = sample()
 
@@ -72,7 +72,7 @@ class IoTest() : TestCase() {
     assertEquals(arrayList("Hello", "World"), list)
   }
   
-  fun testListFiles() {
+  test fun testListFiles() {
     val dir = File.createTempFile("temp", System.nanoTime().toString())
     dir.delete()
     dir.mkdir()
@@ -86,4 +86,14 @@ class IoTest() : TestCase() {
     assertNotNull(result)
     assertEquals(result!!.size, 2)
   }
+
+    test fun relativePath() {
+        val file1 = File("src")
+        val file2 = File(file1, "kotlin")
+        val file3 = File("test")
+
+        assertEquals("kotlin", file1.relativePath(file2))
+        assertEquals("", file1.relativePath(file1))
+        assertEquals(file3.canonicalPath, file1.relativePath(file3))
+    }
 }
