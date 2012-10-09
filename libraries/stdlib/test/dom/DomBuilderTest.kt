@@ -117,6 +117,15 @@ class DomBuilderTest() {
         } else {
             fail("Not an Element $grandChild")
         }
+        val child = doc["child"].first
+        if (child != null) {
+            val gc1 = child.childElements("grandChild")
+            assertEquals(1, gc1.size, "Expected a single child but found $gc1")
+            val gc2 = child.childElements("grandChild2")
+            assertEquals(1, gc2.size, "Expected a single child but found $gc2")
+        } else {
+            fail("No child found!")
+        }
         val children = doc.documentElement.children()
         val xml = nodesToXmlString(children)
         println("root element has children: ${xml}")

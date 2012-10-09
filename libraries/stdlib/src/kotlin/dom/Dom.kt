@@ -90,6 +90,11 @@ inline fun Element?.childElements(): List<Element> {
     return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE }.map { it as Element }
 }
 
+/** Returns the child elements of this element with the given name */
+inline fun Element?.childElements(name: String): List<Element> {
+    return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE && it.nodeName == name }.map { it as Element }
+}
+
 /** The descendent elements of this document */
 val Document?.elements : List<Element>
 get() = this?.getElementsByTagName("*").toElementList()
@@ -109,12 +114,12 @@ inline fun Document?.elements(localName: String): List<Element> {
     return this?.getElementsByTagName(localName).toElementList()
 }
 
-/** Returns all the child elements given the namespace URI and local element name */
+/** Returns all the descendant elements given the namespace URI and local element name */
 inline fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
-/** Returns all the elements given the namespace URI and local element name */
+/** Returns all the descendant elements given the namespace URI and local element name */
 inline fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
