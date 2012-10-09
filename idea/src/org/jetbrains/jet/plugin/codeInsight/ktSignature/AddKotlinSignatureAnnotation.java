@@ -34,10 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -158,9 +155,11 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
 
     @NotNull
     private static String getDefaultSignature(@NotNull PsiField field, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver, BindingContext context) {
-        // getMemberScope(field, classFqName, javaDescriptorResolver).getProperties(Name.identifier(field.getName()));
-        // TODO: Generate default string for the field
-        return "";
+        getMemberScope(field, classFqName, javaDescriptorResolver).getProperties(Name.identifier(field.getName()));
+
+        VariableDescriptor variableDescriptor = context.get(BindingContext.VARIABLE, field);
+        assert variableDescriptor != null: "Couldn't find variable descriptor for field " + field.getName() + " in " + classFqName;
+        return RENDERER.render(variableDescriptor);
     }
 
     @NotNull
