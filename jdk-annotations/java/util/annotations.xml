@@ -951,7 +951,7 @@
       <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
         <val name="value"
-             val="&quot;fun &lt;T: Comparable<T>&gt; min(coll : Collection&lt;out T&gt;) : T&quot;"/>
+             val="&quot;fun &lt;T: Comparable<in T>&gt; min(coll : Collection&lt;out T&gt;) : T&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections T min(java.util.Collection&lt;? extends T&gt;, java.util.Comparator&lt;? super T&gt;) 0'>
@@ -974,7 +974,7 @@
       <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
         <val name="value"
-             val="&quot;fun &lt;T: Comparable<T>&gt; max(coll : Collection&lt;out T&gt;) : T&quot;"/>
+             val="&quot;fun &lt;T: Comparable<in T>&gt; max(coll : Collection&lt;out T&gt;) : T&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections T max(java.util.Collection&lt;? extends T&gt;, java.util.Comparator&lt;? super T&gt;) 0'>
