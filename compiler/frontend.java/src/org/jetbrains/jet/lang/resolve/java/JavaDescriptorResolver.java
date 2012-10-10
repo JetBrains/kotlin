@@ -76,7 +76,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private final ClassResolver classResolver = new ClassResolver(this);
     private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
     private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
-    private final AnnotationResolver annotationResolver = new AnnotationResolver(this);
+    private final JavaAnnotationResolver annotationResolver = new JavaAnnotationResolver(this);
     private final FunctionResolver functionResolver = new FunctionResolver(this);
     private final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
     private final InnerClassResolver innerClassResolver = new InnerClassResolver(this);

@@ -94,7 +94,7 @@ public final class ValueParameterResolver {
         else {
 
             JetType transformedType;
-            if (AnnotationResolver
+            if (JavaAnnotationResolver
                         .findAnnotation(parameter.getPsiParameter(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
                 null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);

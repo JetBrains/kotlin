@@ -235,7 +235,7 @@ public final class FunctionResolver {
                     returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
         }
 
-        if (AnnotationResolver.findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
+        if (JavaAnnotationResolver.findAnnotation(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=
             null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         }

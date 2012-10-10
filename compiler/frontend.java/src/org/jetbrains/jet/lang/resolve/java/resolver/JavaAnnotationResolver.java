@@ -36,10 +36,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class AnnotationResolver {
+public final class JavaAnnotationResolver {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
-    public AnnotationResolver(JavaDescriptorResolver javaDescriptorResolver) {
+    public JavaAnnotationResolver(JavaDescriptorResolver javaDescriptorResolver) {
         this.javaDescriptorResolver = javaDescriptorResolver;
     }
 

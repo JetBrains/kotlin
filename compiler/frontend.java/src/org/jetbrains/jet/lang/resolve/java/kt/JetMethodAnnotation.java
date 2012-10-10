@@ -21,7 +21,7 @@ import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 
 /**
  * @author Stepan Koltsov
@@ -73,7 +73,7 @@ public class JetMethodAnnotation extends PsiAnnotationWithFlags {
 
     public static JetMethodAnnotation get(PsiMethod psiMethod) {
         final PsiAnnotation annotation =
-                AnnotationResolver.findAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().getFqName());
+                JavaAnnotationResolver.findAnnotation(psiMethod, JvmStdlibNames.JET_METHOD.getFqName().getFqName());
         return annotation != null ? new JetMethodAnnotation(annotation) : NULL_ANNOTATION;
     }
 }
