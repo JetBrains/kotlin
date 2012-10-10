@@ -142,7 +142,7 @@ public final class FunctionResolver {
     }
 
     private void resolveNamedGroupFunctions(
-            @NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
+            @NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass,
             NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData
     ) {
         if (namedMembers.getFunctionDescriptors() != null) {
@@ -195,6 +195,7 @@ public final class FunctionResolver {
         namedMembers.setFunctionDescriptors(functions);
     }
 
+    @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, ResolverScopeData scopeData) {
         DescriptorResolverUtils.getResolverScopeData(scopeData);
 
@@ -203,10 +204,14 @@ public final class FunctionResolver {
         NamedMembers namedMembers = namedMembersMap.get(methodName);
         if (namedMembers != null) {
 
-            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(), namedMembers,
+            PsiClass psiClass = scopeData.getPsiClass();
+            assert psiClass != null;
+            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), psiClass, namedMembers,
                                        methodName, scopeData);
 
-            return namedMembers.getFunctionDescriptors();
+            Set<FunctionDescriptor> result = namedMembers.getFunctionDescriptors();
+            assert result != null;
+            return result;
         }
         else {
             return Collections.emptySet();
@@ -261,7 +266,9 @@ public final class FunctionResolver {
         for (Map.Entry<Name, NamedMembers> entry : scopeData.getNamedMembersMap().entrySet()) {
             Name methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
-            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), scopeData.getPsiClass(),
+            PsiClass psiClass = scopeData.getPsiClass();
+            assert psiClass != null;
+            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), psiClass,
                                        namedMembers, methodName, scopeData);
             functions.addAll(namedMembers.getFunctionDescriptors());
         }

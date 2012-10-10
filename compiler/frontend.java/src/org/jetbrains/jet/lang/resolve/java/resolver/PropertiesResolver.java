@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -61,7 +62,9 @@ public final class PropertiesResolver {
         resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
                                     "class or namespace " + qualifiedName);
 
-        return namedMembers.getPropertyDescriptors();
+        Set<VariableDescriptor> result = namedMembers.getPropertyDescriptors();
+        assert result != null;
+        return result;
     }
 
     @NotNull
@@ -350,6 +353,7 @@ public final class PropertiesResolver {
         return propertyType;
     }
 
+    @Nullable
     private JetType getReceiverType(
             PropertyAccessorData characteristicMember,
             TypeVariableResolver typeVariableResolverForPropertyInternals
@@ -426,7 +430,7 @@ public final class PropertiesResolver {
         return r;
     }
 
-    private static String key(TypeSource typeSource) {
+    private static String key(@Nullable TypeSource typeSource) {
         if (typeSource == null) {
             return "";
         }

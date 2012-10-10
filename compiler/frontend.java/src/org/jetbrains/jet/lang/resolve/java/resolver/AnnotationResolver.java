@@ -99,6 +99,7 @@ public final class AnnotationResolver {
             if (name == null) name = "value";
             Name identifier = Name.identifier(name);
 
+            assert value != null;
             CompileTimeConstant compileTimeConst =
                     javaDescriptorResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
             if (compileTimeConst != null) {

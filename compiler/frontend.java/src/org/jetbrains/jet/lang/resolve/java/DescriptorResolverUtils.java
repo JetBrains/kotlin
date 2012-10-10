@@ -50,7 +50,7 @@ public final class DescriptorResolverUtils {
         return new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS);
     }
 
-    public static boolean isInnerEnum(@NotNull PsiClass innerClass, DeclarationDescriptor owner) {
+    public static boolean isInnerEnum(@NotNull PsiClass innerClass, @Nullable DeclarationDescriptor owner) {
         if (!innerClass.isEnum()) return false;
         if (!(owner instanceof ClassDescriptor)) return false;
 

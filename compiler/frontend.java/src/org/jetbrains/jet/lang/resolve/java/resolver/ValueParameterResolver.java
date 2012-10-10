@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.intellij.psi.PsiEllipsisType;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptorImpl;
@@ -58,7 +59,7 @@ public final class ValueParameterResolver {
         PsiType psiType = parameter.getPsiParameter().getType();
 
         // TODO: must be very slow, make it lazy?
-        Name name = Name.identifier(parameter.getPsiParameter().getName() != null ? parameter.getPsiParameter().getName() : "p" + i);
+        Name name = Name.identifier(getParameterName(i, parameter));
 
         if (parameter.getJetValueParameter().name().length() > 0) {
             name = Name.identifier(parameter.getJetValueParameter().name());
@@ -114,6 +115,12 @@ public final class ValueParameterResolver {
         }
     }
 
+    @NotNull
+    private static String getParameterName(int number, @NotNull PsiParameterWrapper parameter) {
+        String psiParameterName = parameter.getPsiParameter().getName();
+        return psiParameterName != null ? psiParameterName : "p" + number;
+    }
+
     public JavaDescriptorResolver.ValueParameterDescriptors resolveParameterDescriptors(
             DeclarationDescriptor containingDeclaration,
             List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver
@@ -156,8 +163,8 @@ public final class ValueParameterResolver {
 
         private JvmMethodParameterMeaning(
                 JvmMethodParameterKind kind,
-                JetType receiverType,
-                ValueParameterDescriptor valueParameterDescriptor
+                @Nullable JetType receiverType,
+                @Nullable ValueParameterDescriptor valueParameterDescriptor
         ) {
             this.kind = kind;
             this.receiverType = receiverType;

@@ -164,10 +164,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return propertiesResolver.resolveFieldGroup(data);
     }
 
+    @Nullable
     public ClassDescriptor resolveClass(FqName name, DescriptorSearchRule searchRule, List<Runnable> list) {
         return classResolver.resolveClass(name, searchRule, list);
     }
 
+    @Nullable
     public CompileTimeConstant getCompileTimeConstFromExpression(
             FqName annotationName,
             Name parameterName,

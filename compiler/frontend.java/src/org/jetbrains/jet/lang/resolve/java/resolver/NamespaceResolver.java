@@ -86,10 +86,12 @@ public final class NamespaceResolver {
         return scopeData.getNamespaceDescriptor();
     }
 
+    @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
         return resolveNamespace(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
+    @Nullable
     private NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {
         if (fqName.isRoot()) {
             return FAKE_ROOT_MODULE;

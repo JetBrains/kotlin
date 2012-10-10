@@ -94,6 +94,7 @@ public final class ClassResolver {
         return clazz;
     }
 
+    @Nullable
     public ClassDescriptor resolveClass(
             @NotNull FqName qualifiedName,
             @NotNull DescriptorSearchRule searchRule,
