@@ -39,15 +39,15 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import javax.inject.Inject;
 import java.util.*;
 
-public final class FunctionResolver {
+public final class JavaFunctionResolver {
 
     private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
     private JavaDescriptorSignatureResolver signatureResolver;
-    private ValueParameterResolver parameterResolver;
+    private JavaValueParameterResolver parameterResolver;
     private JavaAnnotationResolver annotationResolver;
 
-    public FunctionResolver() {
+    public JavaFunctionResolver() {
     }
 
     @Inject
@@ -66,7 +66,7 @@ public final class FunctionResolver {
     }
 
     @Inject
-    public void setParameterResolver(ValueParameterResolver parameterResolver) {
+    public void setParameterResolver(JavaValueParameterResolver parameterResolver) {
         this.parameterResolver = parameterResolver;
     }
 
@@ -119,7 +119,7 @@ public final class FunctionResolver {
 
         List<TypeParameterDescriptor> methodTypeParameters =
                 signatureResolver.resolveMethodTypeParameters(method,
-                                                                  functionDescriptorImpl);
+                                                              functionDescriptorImpl);
 
         TypeVariableResolver methodTypeVariableResolver = TypeVariableResolvers.typeVariableResolverFromTypeParameters(methodTypeParameters,
                                                                                                                        functionDescriptorImpl,

@@ -60,7 +60,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassO
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
-public final class ClassResolver {
+public final class JavaClassResolver {
 
     // NOTE: this complexity is introduced because class descriptors do not always have valid fqnames (class objects)
     private final Map<FqNameBase, ResolverClassData> classDescriptorCache =
@@ -86,10 +86,10 @@ public final class ClassResolver {
     private JavaSemanticServices semanticServices;
     private JavaAnnotationResolver annotationResolver;
     private PsiClassFinder psiClassFinder;
-    private NamespaceResolver namespaceResolver;
+    private JavaNamespaceResolver namespaceResolver;
     private JavaTypeTransformer typeTransformer;
 
-    public ClassResolver() {
+    public JavaClassResolver() {
     }
 
     @Inject
@@ -123,7 +123,7 @@ public final class ClassResolver {
     }
 
     @Inject
-    public void setNamespaceResolver(NamespaceResolver namespaceResolver) {
+    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
         this.namespaceResolver = namespaceResolver;
     }
 

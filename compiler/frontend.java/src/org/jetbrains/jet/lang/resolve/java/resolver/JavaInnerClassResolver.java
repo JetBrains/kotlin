@@ -31,15 +31,15 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class InnerClassResolver {
+public final class JavaInnerClassResolver {
 
-    private ClassResolver classResolver;
+    private JavaClassResolver classResolver;
 
-    public InnerClassResolver() {
+    public JavaInnerClassResolver() {
     }
 
     @Inject
-    public void setClassResolver(ClassResolver classResolver) {
+    public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
     }
 

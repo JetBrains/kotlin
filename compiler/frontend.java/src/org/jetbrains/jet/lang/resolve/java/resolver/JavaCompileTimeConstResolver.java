@@ -39,11 +39,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public final class CompileTimeConstResolver {
+public final class JavaCompileTimeConstResolver {
     private JavaAnnotationResolver annotationResolver;
-    private ClassResolver classResolver;
+    private JavaClassResolver classResolver;
 
-    public CompileTimeConstResolver() {
+    public JavaCompileTimeConstResolver() {
     }
 
     @Inject
@@ -52,7 +52,7 @@ public final class CompileTimeConstResolver {
     }
 
     @Inject
-    public void setClassResolver(ClassResolver classResolver) {
+    public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
     }
 

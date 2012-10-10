@@ -38,12 +38,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public final class ConstructorResolver {
+public final class JavaConstructorResolver {
     private BindingTrace trace;
     private JavaTypeTransformer typeTransformer;
-    private ValueParameterResolver valueParameterResolver;
+    private JavaValueParameterResolver valueParameterResolver;
 
-    public ConstructorResolver() {
+    public JavaConstructorResolver() {
     }
 
     @Inject
@@ -57,7 +57,7 @@ public final class ConstructorResolver {
     }
 
     @Inject
-    public void setValueParameterResolver(ValueParameterResolver valueParameterResolver) {
+    public void setValueParameterResolver(JavaValueParameterResolver valueParameterResolver) {
         this.valueParameterResolver = valueParameterResolver;
     }
 

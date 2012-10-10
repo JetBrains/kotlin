@@ -64,12 +64,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     protected Project project;
     protected JavaSemanticServices semanticServices;
     private BindingTrace trace;
-    private PropertiesResolver propertiesResolver;
-    private ClassResolver classResolver;
-    private ConstructorResolver constructorResolver;
-    private FunctionResolver functionResolver;
-    private NamespaceResolver namespaceResolver;
-    private InnerClassResolver innerClassResolver;
+    private JavaPropertiesResolver propertiesResolver;
+    private JavaClassResolver classResolver;
+    private JavaConstructorResolver constructorResolver;
+    private JavaFunctionResolver functionResolver;
+    private JavaNamespaceResolver namespaceResolver;
+    private JavaInnerClassResolver innerClassResolver;
 
     @Inject
     public void setProject(Project project) {
@@ -87,32 +87,32 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Inject
-    public void setFunctionResolver(FunctionResolver functionResolver) {
+    public void setFunctionResolver(JavaFunctionResolver functionResolver) {
         this.functionResolver = functionResolver;
     }
 
     @Inject
-    public void setClassResolver(ClassResolver classResolver) {
+    public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
     }
 
     @Inject
-    public void setNamespaceResolver(NamespaceResolver namespaceResolver) {
+    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
         this.namespaceResolver = namespaceResolver;
     }
 
     @Inject
-    public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
+    public void setPropertiesResolver(JavaPropertiesResolver propertiesResolver) {
         this.propertiesResolver = propertiesResolver;
     }
 
     @Inject
-    public void setConstructorResolver(ConstructorResolver constructorResolver) {
+    public void setConstructorResolver(JavaConstructorResolver constructorResolver) {
         this.constructorResolver = constructorResolver;
     }
 
     @Inject
-    public void setInnerClassResolver(InnerClassResolver innerClassResolver) {
+    public void setInnerClassResolver(JavaInnerClassResolver innerClassResolver) {
         this.innerClassResolver = innerClassResolver;
     }
 

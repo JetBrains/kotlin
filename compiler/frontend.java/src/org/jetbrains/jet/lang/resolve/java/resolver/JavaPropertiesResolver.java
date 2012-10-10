@@ -43,15 +43,15 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-public final class PropertiesResolver {
+public final class JavaPropertiesResolver {
 
     private JavaSemanticServices semanticServices;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private BindingTrace trace;
     private JavaAnnotationResolver annotationResolver;
-    private ClassResolver classResolver;
+    private JavaClassResolver classResolver;
 
-    public PropertiesResolver() {
+    public JavaPropertiesResolver() {
     }
 
     @Inject
@@ -75,7 +75,7 @@ public final class PropertiesResolver {
     }
 
     @Inject
-    public void setClassResolver(ClassResolver classResolver) {
+    public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
     }
 

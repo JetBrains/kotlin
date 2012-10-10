@@ -37,19 +37,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class JavaAnnotationResolver {
-    private ClassResolver classResolver;
-    private CompileTimeConstResolver compileTimeConstResolver;
+    private JavaClassResolver classResolver;
+    private JavaCompileTimeConstResolver compileTimeConstResolver;
 
     public JavaAnnotationResolver() {
     }
 
     @Inject
-    public void setClassResolver(ClassResolver classResolver) {
+    public void setClassResolver(JavaClassResolver classResolver) {
         this.classResolver = classResolver;
     }
 
     @Inject
-    public void setCompileTimeConstResolver(CompileTimeConstResolver compileTimeConstResolver) {
+    public void setCompileTimeConstResolver(JavaCompileTimeConstResolver compileTimeConstResolver) {
         this.compileTimeConstResolver = compileTimeConstResolver;
     }
 

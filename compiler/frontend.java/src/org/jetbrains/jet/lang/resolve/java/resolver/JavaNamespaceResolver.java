@@ -38,7 +38,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
 
-public final class NamespaceResolver {
+public final class JavaNamespaceResolver {
 
     @NotNull
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
@@ -48,7 +48,7 @@ public final class NamespaceResolver {
     private BindingTrace trace;
     private JavaSemanticServices javaSemanticServices;
 
-    public NamespaceResolver() {
+    public JavaNamespaceResolver() {
     }
 
     @Inject

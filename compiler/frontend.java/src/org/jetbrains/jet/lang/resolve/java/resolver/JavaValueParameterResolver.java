@@ -39,11 +39,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class ValueParameterResolver {
+public final class JavaValueParameterResolver {
 
     private JavaTypeTransformer typeTransformer;
 
-    public ValueParameterResolver() {
+    public JavaValueParameterResolver() {
     }
 
     @NotNull
