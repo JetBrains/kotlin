@@ -17,6 +17,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="js.tests" scope="TEST" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="frontend.java" />
@@ -28,7 +29,6 @@
     <orderEntry type="module" module-name="j2k" />
     <orderEntry type="module" module-name="js.translator" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
-    <orderEntry type="module" module-name="js.tests" scope="TEST" />
   </component>
 </module>
 
