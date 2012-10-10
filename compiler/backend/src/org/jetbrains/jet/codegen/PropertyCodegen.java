@@ -40,8 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.genStubThrow;
-import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -65,24 +64,19 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public void gen(JetProperty p) {
-        final VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, p);
+        VariableDescriptor descriptor = bindingContext.get(BindingContext.VARIABLE, p);
         if (!(descriptor instanceof PropertyDescriptor)) {
             throw new UnsupportedOperationException("expect a property to have a property descriptor");
         }
-        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        if (kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL) {
-            if (kind != OwnerKind.TRAIT_IMPL) {
-                generateBackingField(p, propertyDescriptor);
-            }
-            generateGetter(p, propertyDescriptor);
-            generateSetter(p, propertyDescriptor);
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+        assert kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
+                : "Generating property with a wrong kind (" + kind + "): " + descriptor;
+
+        if (kind != OwnerKind.TRAIT_IMPL) {
+            generateBackingField(p, propertyDescriptor);
         }
-        else if (kind instanceof OwnerKind.DelegateKind) {
-            generateDefaultGetter(propertyDescriptor, ACC_PUBLIC, p);
-            if (propertyDescriptor.isVar()) {
-                generateDefaultSetter(propertyDescriptor, ACC_PUBLIC, p);
-            }
-        }
+        generateGetter(p, propertyDescriptor);
+        generateSetter(p, propertyDescriptor);
     }
 
     public void generateBackingField(PsiElement p, PropertyDescriptor propertyDescriptor) {
@@ -128,7 +122,10 @@ public class PropertyCodegen extends GenerationStateAware {
                                            propertyDescriptor.getGetter());
         }
         else if (isExternallyAccessible(propertyDescriptor)) {
-            generateDefaultGetter(p);
+            int flags = getVisibilityAccessFlag(propertyDescriptor);
+            flags |= getModalityAccessFlag(propertyDescriptor);
+            generateDefaultGetter(propertyDescriptor, flags, p);
+
             JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
             FunctionCodegen.generateBridgeIfNeeded(context, state, v, signature.getJvmMethodSignature().getAsmMethod(),
                                                    propertyDescriptor.getGetter(), kind);
@@ -148,21 +145,15 @@ public class PropertyCodegen extends GenerationStateAware {
                                            propertyDescriptor.getSetter());
         }
         else if (isExternallyAccessible(propertyDescriptor) && propertyDescriptor.isVar()) {
-            generateDefaultSetter(p);
+            PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
+            int flags = setterDescriptor == null ? getVisibilityAccessFlag(propertyDescriptor) : getVisibilityAccessFlag(setterDescriptor);
+            flags |= getModalityAccessFlag(propertyDescriptor);
+            generateDefaultSetter(propertyDescriptor, flags, p);
+
             JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
             FunctionCodegen.generateBridgeIfNeeded(context, state, v, signature.getJvmMethodSignature().getAsmMethod(),
-                                                   propertyDescriptor.getSetter(), kind);
+                                                   setterDescriptor, kind);
         }
-    }
-
-    private void generateDefaultGetter(JetProperty p) {
-        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, p);
-        assert propertyDescriptor != null;
-        int flags = getVisibilityAccessFlag(propertyDescriptor) |
-                    (propertyDescriptor.getModality() == Modality.ABSTRACT
-                     ? ACC_ABSTRACT
-                     : (propertyDescriptor.getModality() == Modality.FINAL ? ACC_FINAL : 0));
-        generateDefaultGetter(propertyDescriptor, flags, p);
     }
 
     public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
@@ -180,10 +171,6 @@ public class PropertyCodegen extends GenerationStateAware {
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
             flags |= ACC_ABSTRACT;
-        }
-
-        if (propertyDescriptor.getModality() == Modality.FINAL) {
-            flags |= ACC_FINAL;
         }
 
         JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
@@ -258,17 +245,6 @@ public class PropertyCodegen extends GenerationStateAware {
         aw.visitEnd();
     }
 
-    private void generateDefaultSetter(JetProperty p) {
-        final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, p);
-        assert propertyDescriptor != null;
-
-        int modifiers = getVisibilityAccessFlag(propertyDescriptor);
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        int flags = setter == null ? modifiers : getVisibilityAccessFlag(setter);
-        flags |= (propertyDescriptor.getModality() == Modality.ABSTRACT ? ACC_ABSTRACT : 0);
-        generateDefaultSetter(propertyDescriptor, flags, p);
-    }
-
     public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
         checkMustGenerateCode(propertyDescriptor);
 
@@ -284,10 +260,6 @@ public class PropertyCodegen extends GenerationStateAware {
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
             flags |= ACC_ABSTRACT;
-        }
-
-        if (propertyDescriptor.getModality() == Modality.FINAL) {
-            flags |= ACC_FINAL;
         }
 
         JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);

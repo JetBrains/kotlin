@@ -33,8 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.genMethodThrow;
-import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 
 /**
  * @author max
@@ -100,11 +99,10 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
                 if (propertyDescriptor != null) {
                     if (!isAnnotation) {
                         propertyCodegen.generateBackingField(p, propertyDescriptor);
-                        propertyCodegen
-                                .generateDefaultGetter(propertyDescriptor, getVisibilityAccessFlag(propertyDescriptor), p);
+                        int accessFlags = getVisibilityAccessFlag(propertyDescriptor) | getModalityAccessFlag(propertyDescriptor);
+                        propertyCodegen.generateDefaultGetter(propertyDescriptor, accessFlags, p);
                         if (propertyDescriptor.isVar()) {
-                            propertyCodegen
-                                    .generateDefaultSetter(propertyDescriptor, getVisibilityAccessFlag(propertyDescriptor), p);
+                            propertyCodegen.generateDefaultSetter(propertyDescriptor, accessFlags, p);
                         }
                     }
                     else {

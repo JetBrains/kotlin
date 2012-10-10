@@ -143,6 +143,15 @@ public class AsmUtil {
         return defaultMapping;
     }
 
+    public static int getModalityAccessFlag(@NotNull MemberDescriptor descriptor) {
+        switch (descriptor.getModality()) {
+            case ABSTRACT: return ACC_ABSTRACT;
+            case FINAL: return ACC_FINAL;
+            case OPEN: return 0;
+            default: throw new UnsupportedOperationException("Unknown modality: " + descriptor.getModality());
+        }
+    }
+
     @Nullable
     private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
