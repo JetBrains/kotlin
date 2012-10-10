@@ -30,12 +30,15 @@ import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 /**
  * @author Pavel Talanov
@@ -131,5 +134,12 @@ public final class DescriptorResolverUtils {
         if (psiClass instanceof JetJavaMirrorMarker) {
             throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
         }
+    }
+
+    @NotNull
+    public static FqNameUnsafe getFqNameForClassObject(@NotNull PsiClass psiClass) {
+        String psiClassQualifiedName = psiClass.getQualifiedName();
+        assert psiClassQualifiedName != null : "Reading java class with no qualified name";
+        return new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
     }
 }

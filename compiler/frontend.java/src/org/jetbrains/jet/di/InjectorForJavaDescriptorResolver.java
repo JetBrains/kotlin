@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassObjectResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
@@ -54,6 +55,7 @@ public class InjectorForJavaDescriptorResolver {
     private JavaClassResolver javaClassResolver;
     private JavaAnnotationResolver javaAnnotationResolver;
     private JavaCompileTimeConstResolver javaCompileTimeConstResolver;
+    private JavaClassObjectResolver javaClassObjectResolver;
     private JavaNamespaceResolver javaNamespaceResolver;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private JavaConstructorResolver javaConstructorResolver;
@@ -80,6 +82,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
+        this.javaClassObjectResolver = new JavaClassObjectResolver();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaDescriptorSignatureResolver = new JavaDescriptorSignatureResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
@@ -110,6 +113,7 @@ public class InjectorForJavaDescriptorResolver {
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
+        javaClassResolver.setClassObjectResolver(javaClassObjectResolver);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setPsiClassFinder(psiClassFinder);
@@ -123,6 +127,11 @@ public class InjectorForJavaDescriptorResolver {
 
         javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
         javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
+
+        javaClassObjectResolver.setClassResolver(javaClassResolver);
+        javaClassObjectResolver.setJavaDescriptorResolver(javaDescriptorResolver);
+        javaClassObjectResolver.setSemanticServices(javaSemanticServices);
+        javaClassObjectResolver.setTrace(bindingTrace);
 
         javaNamespaceResolver.setJavaSemanticServices(javaSemanticServices);
         javaNamespaceResolver.setPsiClassFinder(psiClassFinder);
