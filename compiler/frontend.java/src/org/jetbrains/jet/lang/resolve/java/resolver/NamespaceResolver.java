@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
 
@@ -41,19 +43,33 @@ public final class NamespaceResolver {
     @NotNull
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
     @NotNull
-    private final JavaDescriptorResolver javaDescriptorResolver;
-    @NotNull
     private final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
+    private PsiClassFinder psiClassFinder;
+    private BindingTrace trace;
+    private JavaSemanticServices javaSemanticServices;
 
-    public NamespaceResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public NamespaceResolver() {
+    }
+
+    @Inject
+    public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
+        this.psiClassFinder = psiClassFinder;
+    }
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
+    }
+
+    @Inject
+    public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
+        this.javaSemanticServices = javaSemanticServices;
     }
 
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         // First, let's check that there is no Kotlin package:
-        NamespaceDescriptor kotlinNamespaceDescriptor =
-                javaDescriptorResolver.getSemanticServices().getKotlinNamespaceDescriptor(qualifiedName);
+        NamespaceDescriptor kotlinNamespaceDescriptor = javaSemanticServices.getKotlinNamespaceDescriptor(qualifiedName);
         if (kotlinNamespaceDescriptor != null) {
             return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
         }
@@ -79,7 +95,7 @@ public final class NamespaceResolver {
             return null;
         }
 
-        javaDescriptorResolver.getTrace().record(BindingContext.NAMESPACE, scopeData.getPsiPackageOrPsiClass(), ns);
+        trace.record(BindingContext.NAMESPACE, scopeData.getPsiPackageOrPsiClass(), ns);
 
         ns.setMemberScope(scopeData.getMemberScope());
 
@@ -112,15 +128,15 @@ public final class NamespaceResolver {
         lookingForPsi:
         {
             psiClass = getPsiClassForJavaPackageScope(fqName);
-            psiPackage = javaDescriptorResolver.getSemanticServices().getPsiClassFinder().findPsiPackage(fqName);
+            psiPackage = psiClassFinder.findPsiPackage(fqName);
             if (psiClass != null || psiPackage != null) {
-                javaDescriptorResolver.getTrace().record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.PROPER);
+                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.PROPER);
                 break lookingForPsi;
             }
 
-            psiClass = javaDescriptorResolver.getPsiClassFinder().findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+            psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
             if (psiClass != null && !psiClass.isEnum()) {
-                javaDescriptorResolver.getTrace().record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.CLASS_STATICS);
+                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.CLASS_STATICS);
                 break lookingForPsi;
             }
 
@@ -135,7 +151,7 @@ public final class NamespaceResolver {
         ResolverNamespaceData namespaceData =
                 new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
 
-        namespaceData.setMemberScope(new JavaPackageScope(fqName, javaDescriptorResolver.getSemanticServices(), namespaceData));
+        namespaceData.setMemberScope(new JavaPackageScope(fqName, javaSemanticServices, namespaceData));
 
         ResolverNamespaceData oldValue =
                 namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
@@ -169,7 +185,7 @@ public final class NamespaceResolver {
 
     @Nullable
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        return javaDescriptorResolver.getPsiClassFinder()
-                .findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        return psiClassFinder.findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)),
+                                           PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 }

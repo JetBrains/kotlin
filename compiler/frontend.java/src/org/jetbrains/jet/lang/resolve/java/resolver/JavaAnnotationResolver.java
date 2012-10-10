@@ -27,20 +27,30 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public final class JavaAnnotationResolver {
-    private final JavaDescriptorResolver javaDescriptorResolver;
+    private ClassResolver classResolver;
+    private CompileTimeConstResolver compileTimeConstResolver;
 
-    public JavaAnnotationResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public JavaAnnotationResolver() {
+    }
+
+    @Inject
+    public void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = classResolver;
+    }
+
+    @Inject
+    public void setCompileTimeConstResolver(CompileTimeConstResolver compileTimeConstResolver) {
+        this.compileTimeConstResolver = compileTimeConstResolver;
     }
 
     public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
@@ -79,7 +89,7 @@ public final class JavaAnnotationResolver {
 
         FqName annotationFqName = new FqName(qname);
         final ClassDescriptor clazz =
-                javaDescriptorResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
         if (clazz == null) {
             return null;
         }
@@ -101,7 +111,7 @@ public final class JavaAnnotationResolver {
 
             assert value != null;
             CompileTimeConstant compileTimeConst =
-                    javaDescriptorResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
+                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
             if (compileTimeConst != null) {
                 ValueParameterDescriptor valueParameterDescriptor =
                         DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(identifier, clazz);

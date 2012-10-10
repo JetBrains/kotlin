@@ -23,11 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
-import org.jetbrains.jet.lang.resolve.java.TypeVariableResolvers;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
@@ -35,15 +33,32 @@ import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public final class ConstructorResolver {
-    private final JavaDescriptorResolver javaDescriptorResolver;
+    private BindingTrace trace;
+    private JavaTypeTransformer typeTransformer;
+    private ValueParameterResolver valueParameterResolver;
 
-    public ConstructorResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public ConstructorResolver() {
+    }
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
+    }
+
+    @Inject
+    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
+    }
+
+    @Inject
+    public void setValueParameterResolver(ValueParameterResolver valueParameterResolver) {
+        this.valueParameterResolver = valueParameterResolver;
     }
 
     @NotNull
@@ -66,8 +81,8 @@ public final class ConstructorResolver {
             constructors.add(DescriptorResolver.createPrimaryConstructorForObject(containingClass));
         }
         else if (psiConstructors.length == 0) {
-            if (javaDescriptorResolver.getTrace().get(BindingContext.CONSTRUCTOR, psiClass) != null) {
-                constructors.add(javaDescriptorResolver.getTrace().get(BindingContext.CONSTRUCTOR, psiClass));
+            if (trace.get(BindingContext.CONSTRUCTOR, psiClass) != null) {
+                constructors.add(trace.get(BindingContext.CONSTRUCTOR, psiClass));
             }
             else {
                 // We need to create default constructors for classes and abstract classes.
@@ -82,7 +97,7 @@ public final class ConstructorResolver {
                     constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), containingClass
                             .getVisibility(), isStatic);
                     constructors.add(constructorDescriptor);
-                    javaDescriptorResolver.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
+                    trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
                 }
                 if (psiClass.isAnnotationType()) {
                     // A constructor for an annotation type takes all the "methods" in the @interface as parameters
@@ -105,7 +120,7 @@ public final class ConstructorResolver {
                             // if the last method of the @interface is an array, we convert it into a vararg
                             JetType varargElementType = null;
                             if (i == methods.length - 1 && (returnType instanceof PsiArrayType)) {
-                                varargElementType = javaDescriptorResolver.getSemanticServices().getTypeTransformer()
+                                varargElementType = typeTransformer
                                         .transformToType(((PsiArrayType) returnType).getComponentType(), resolverForTypeParameters);
                             }
 
@@ -116,8 +131,7 @@ public final class ConstructorResolver {
                                     Collections.<AnnotationDescriptor>emptyList(),
                                     Name.identifier(method.getName()),
                                     false,
-                                    javaDescriptorResolver.getSemanticServices().getTypeTransformer()
-                                            .transformToType(returnType, resolverForTypeParameters),
+                                    typeTransformer.transformToType(returnType, resolverForTypeParameters),
                                     annotationMethod.getDefaultValue() != null,
                                     varargElementType));
                         }
@@ -125,7 +139,7 @@ public final class ConstructorResolver {
 
                     constructorDescriptor.initialize(typeParameters, valueParameters, containingClass.getVisibility(), isStatic);
                     constructors.add(constructorDescriptor);
-                    javaDescriptorResolver.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
+                    trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
                 }
             }
         }
@@ -159,8 +173,8 @@ public final class ConstructorResolver {
             return null;
         }
 
-        if (javaDescriptorResolver.getTrace().get(BindingContext.CONSTRUCTOR, psiConstructor) != null) {
-            return javaDescriptorResolver.getTrace().get(BindingContext.CONSTRUCTOR, psiConstructor);
+        if (trace.get(BindingContext.CONSTRUCTOR, psiConstructor) != null) {
+            return trace.get(BindingContext.CONSTRUCTOR, psiConstructor);
         }
 
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
@@ -169,7 +183,7 @@ public final class ConstructorResolver {
                 false);
 
         String context = "constructor of class " + psiClass.getQualifiedName();
-        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = javaDescriptorResolver.resolveParameterDescriptors(
+        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
                 constructorDescriptor, constructor.getParameters(),
                 TypeVariableResolvers.classTypeVariableResolver(classData.getClassDescriptor(), context));
 
@@ -184,15 +198,15 @@ public final class ConstructorResolver {
             valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
         }
         else if (alternativeMethodSignatureData.hasErrors()) {
-            javaDescriptorResolver.getTrace().record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, constructorDescriptor,
-                                                     alternativeMethodSignatureData.getError());
+            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, constructorDescriptor,
+                         alternativeMethodSignatureData.getError());
         }
 
         constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
                                          valueParameterDescriptors.getDescriptors(),
                                          DescriptorResolverUtils.resolveVisibility(psiConstructor, constructor.getJetConstructor()),
                                          aStatic);
-        javaDescriptorResolver.getTrace().record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
+        trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;
     }
 }

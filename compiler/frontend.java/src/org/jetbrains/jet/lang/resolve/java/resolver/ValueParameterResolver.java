@@ -34,16 +34,16 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public final class ValueParameterResolver {
 
-    private final JavaDescriptorResolver javaDescriptorResolver;
+    private JavaTypeTransformer typeTransformer;
 
-    public ValueParameterResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public ValueParameterResolver() {
     }
 
     @NotNull
@@ -71,12 +71,11 @@ public final class ValueParameterResolver {
 
         JetType outType;
         if (typeFromAnnotation.length() > 0) {
-            outType = javaDescriptorResolver.getSemanticServices().getTypeTransformer()
-                    .transformToType(typeFromAnnotation, typeVariableResolver);
+            outType = getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
         }
         else {
-            outType = javaDescriptorResolver.getSemanticServices().getTypeTransformer()
-                    .transformToType(psiType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT, typeVariableResolver);
+            outType = getTypeTransformer().transformToType(psiType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT,
+                                                           typeVariableResolver);
         }
 
         JetType varargElementType;
@@ -113,6 +112,16 @@ public final class ValueParameterResolver {
                     varargElementType
             ));
         }
+    }
+
+    @NotNull
+    private JavaTypeTransformer getTypeTransformer() {
+        return typeTransformer;
+    }
+
+    @Inject
+    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
     }
 
     @NotNull

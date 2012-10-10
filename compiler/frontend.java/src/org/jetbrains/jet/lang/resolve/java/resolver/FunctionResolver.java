@@ -24,10 +24,7 @@ import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
@@ -39,13 +36,43 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
+import javax.inject.Inject;
 import java.util.*;
 
 public final class FunctionResolver {
-    private final JavaDescriptorResolver javaDescriptorResolver;
 
-    public FunctionResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    private JavaTypeTransformer typeTransformer;
+    private BindingTrace trace;
+    private JavaDescriptorSignatureResolver signatureResolver;
+    private ValueParameterResolver parameterResolver;
+    private JavaAnnotationResolver annotationResolver;
+
+    public FunctionResolver() {
+    }
+
+    @Inject
+    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
+    }
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
+    }
+
+    @Inject
+    public void setSignatureResolver(JavaDescriptorSignatureResolver signatureResolver) {
+        this.signatureResolver = signatureResolver;
+    }
+
+    @Inject
+    public void setParameterResolver(ValueParameterResolver parameterResolver) {
+        this.parameterResolver = parameterResolver;
+    }
+
+    @Inject
+    public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
     }
 
     @Nullable
@@ -77,13 +104,13 @@ public final class FunctionResolver {
             }
         }
 
-        if (javaDescriptorResolver.getTrace().get(BindingContext.FUNCTION, psiMethod) != null) {
-            return javaDescriptorResolver.getTrace().get(BindingContext.FUNCTION, psiMethod);
+        if (trace.get(BindingContext.FUNCTION, psiMethod) != null) {
+            return trace.get(BindingContext.FUNCTION, psiMethod);
         }
 
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 scopeData.getClassOrNamespaceDescriptor(),
-                javaDescriptorResolver.resolveAnnotations(psiMethod),
+                annotationResolver.resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
                 DescriptorKindUtils.flagsToKind(method.getJetMethod().kind())
         );
@@ -91,15 +118,15 @@ public final class FunctionResolver {
         String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
 
         List<TypeParameterDescriptor> methodTypeParameters =
-                javaDescriptorResolver.getJavaDescriptorSignatureResolver().resolveMethodTypeParameters(method,
-                                                                                                        functionDescriptorImpl);
+                signatureResolver.resolveMethodTypeParameters(method,
+                                                                  functionDescriptorImpl);
 
         TypeVariableResolver methodTypeVariableResolver = TypeVariableResolvers.typeVariableResolverFromTypeParameters(methodTypeParameters,
                                                                                                                        functionDescriptorImpl,
                                                                                                                        context);
 
 
-        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = javaDescriptorResolver
+        JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
@@ -112,8 +139,8 @@ public final class FunctionResolver {
             methodTypeParameters = alternativeMethodSignatureData.getTypeParameters();
         }
         else if (alternativeMethodSignatureData.hasErrors()) {
-            javaDescriptorResolver.getTrace().record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, functionDescriptorImpl,
-                                                     alternativeMethodSignatureData.getError());
+            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, functionDescriptorImpl,
+                         alternativeMethodSignatureData.getError());
         }
 
         functionDescriptorImpl.initialize(
@@ -128,11 +155,11 @@ public final class FunctionResolver {
         );
 
         if (functionDescriptorImpl.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-            BindingContextUtils.recordFunctionDeclarationToDescriptor(javaDescriptorResolver.getTrace(), psiMethod, functionDescriptorImpl);
+            BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, psiMethod, functionDescriptorImpl);
         }
 
         if (!scopeData.isKotlin()) {
-            javaDescriptorResolver.getTrace().record(BindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
+            trace.record(BindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
         }
 
         if (containingClass != psiClass && !method.isStatic()) {
@@ -181,7 +208,7 @@ public final class FunctionResolver {
                                                               });
         }
 
-        OverrideResolver.resolveUnknownVisibilities(functions, javaDescriptorResolver.getTrace());
+        OverrideResolver.resolveUnknownVisibilities(functions, trace);
         functions.addAll(functionsFromCurrent);
 
         if (DescriptorUtils.isEnumClassObject(owner)) {
@@ -227,11 +254,10 @@ public final class FunctionResolver {
 
         JetType transformedType;
         if (returnTypeFromAnnotation.length() > 0) {
-            transformedType = javaDescriptorResolver.getSemanticServices()
-                    .getTypeTransformer().transformToType(returnTypeFromAnnotation, typeVariableResolver);
+            transformedType = typeTransformer.transformToType(returnTypeFromAnnotation, typeVariableResolver);
         }
         else {
-            transformedType = javaDescriptorResolver.getSemanticServices().getTypeTransformer().transformToType(
+            transformedType = typeTransformer.transformToType(
                     returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
         }
 

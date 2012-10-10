@@ -28,22 +28,32 @@ import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public final class CompileTimeConstResolver {
-    private final JavaDescriptorResolver javaDescriptorResolver;
+    private JavaAnnotationResolver annotationResolver;
+    private ClassResolver classResolver;
 
-    public CompileTimeConstResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public CompileTimeConstResolver() {
+    }
+
+    @Inject
+    public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = classResolver;
     }
 
     @Nullable
@@ -72,7 +82,7 @@ public final class CompileTimeConstResolver {
 
     @Nullable
     private CompileTimeConstant<?> getCompileTimeConstFromAnnotation(PsiAnnotation value, List<Runnable> taskList) {
-        AnnotationDescriptor annotationDescriptor = javaDescriptorResolver.resolveAnnotation(value, taskList);
+        AnnotationDescriptor annotationDescriptor = annotationResolver.resolveAnnotation(value, taskList);
         if (annotationDescriptor != null) {
             return new AnnotationValue(annotationDescriptor);
         }
@@ -89,7 +99,7 @@ public final class CompileTimeConstResolver {
         List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, taskList, initializers);
 
         ClassDescriptor classDescriptor =
-                javaDescriptorResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
 
         ValueParameterDescriptor valueParameterDescriptor =
                 DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(valueName, classDescriptor);
@@ -131,8 +141,7 @@ public final class CompileTimeConstResolver {
                 }
 
                 JetScope scope;
-                ClassDescriptor classDescriptor =
-                        javaDescriptorResolver.resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
+                ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(fqName), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
                 if (classDescriptor == null) {
                     return null;
                 }

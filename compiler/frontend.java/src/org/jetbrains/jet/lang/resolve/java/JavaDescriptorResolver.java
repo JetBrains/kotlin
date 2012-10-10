@@ -17,22 +17,16 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiParameterWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
@@ -70,17 +64,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     protected Project project;
     protected JavaSemanticServices semanticServices;
     private BindingTrace trace;
-    private PsiClassFinder psiClassFinder;
-    private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
-    private final PropertiesResolver propertiesResolver = new PropertiesResolver(this);
-    private final ClassResolver classResolver = new ClassResolver(this);
-    private final ConstructorResolver constructorResolver = new ConstructorResolver(this);
-    private final CompileTimeConstResolver compileTimeConstResolver = new CompileTimeConstResolver(this);
-    private final JavaAnnotationResolver annotationResolver = new JavaAnnotationResolver(this);
-    private final FunctionResolver functionResolver = new FunctionResolver(this);
-    private final NamespaceResolver namespaceResolver = new NamespaceResolver(this);
-    private final InnerClassResolver innerClassResolver = new InnerClassResolver(this);
-    private final ValueParameterResolver valueParameterResolver = new ValueParameterResolver(this);
+    private PropertiesResolver propertiesResolver;
+    private ClassResolver classResolver;
+    private ConstructorResolver constructorResolver;
+    private FunctionResolver functionResolver;
+    private NamespaceResolver namespaceResolver;
+    private InnerClassResolver innerClassResolver;
 
     @Inject
     public void setProject(Project project) {
@@ -90,24 +79,41 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Inject
     public void setSemanticServices(JavaSemanticServices semanticServices) {
         this.semanticServices = semanticServices;
-        this.propertiesResolver.setSemanticServices(semanticServices);
     }
 
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
-        this.propertiesResolver.setTrace(trace);
     }
 
     @Inject
-    public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
-        this.psiClassFinder = psiClassFinder;
+    public void setFunctionResolver(FunctionResolver functionResolver) {
+        this.functionResolver = functionResolver;
     }
 
     @Inject
-    public void setJavaDescriptorSignatureResolver(JavaDescriptorSignatureResolver javaDescriptorSignatureResolver) {
-        this.javaDescriptorSignatureResolver = javaDescriptorSignatureResolver;
-        this.propertiesResolver.setJavaDescriptorSignatureResolver(javaDescriptorSignatureResolver);
+    public void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = classResolver;
+    }
+
+    @Inject
+    public void setNamespaceResolver(NamespaceResolver namespaceResolver) {
+        this.namespaceResolver = namespaceResolver;
+    }
+
+    @Inject
+    public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
+        this.propertiesResolver = propertiesResolver;
+    }
+
+    @Inject
+    public void setConstructorResolver(ConstructorResolver constructorResolver) {
+        this.constructorResolver = constructorResolver;
+    }
+
+    @Inject
+    public void setInnerClassResolver(InnerClassResolver innerClassResolver) {
+        this.innerClassResolver = innerClassResolver;
     }
 
     @Nullable
@@ -117,19 +123,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return classResolver.resolveClass(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-    }
-
-    public PsiClassFinder getPsiClassFinder() {
-        return psiClassFinder;
-    }
-
-    public JavaDescriptorSignatureResolver getJavaDescriptorSignatureResolver() {
-        return javaDescriptorSignatureResolver;
-    }
-
-    public JavaSemanticServices getSemanticServices() {
-        return semanticServices;
+        return classResolver.resolveClass(qualifiedName);
     }
 
     public BindingTrace getTrace() {
@@ -169,16 +163,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return classResolver.resolveClass(name, searchRule, list);
     }
 
-    @Nullable
-    public CompileTimeConstant getCompileTimeConstFromExpression(
-            FqName annotationName,
-            Name parameterName,
-            PsiAnnotationMemberValue value,
-            List<Runnable> taskList
-    ) {
-        return compileTimeConstResolver.getCompileTimeConstFromExpression(annotationName, parameterName, value, taskList);
-    }
-
     public static class ValueParameterDescriptors {
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> descriptors;
@@ -202,26 +186,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull Name methodName, @NotNull ResolverScopeData scopeData) {
         return functionResolver.resolveFunctionGroup(methodName, scopeData);
-    }
-
-    public ValueParameterDescriptors resolveParameterDescriptors(
-            DeclarationDescriptor containingDeclaration,
-            List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver
-    ) {
-        return valueParameterResolver.resolveParameterDescriptors(containingDeclaration, parameters, typeVariableResolver);
-    }
-
-    public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
-        return annotationResolver.resolveAnnotations(owner, tasks);
-    }
-
-    public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
-        return annotationResolver.resolveAnnotations(owner);
-    }
-
-    @Nullable
-    public AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
-        return annotationResolver.resolveAnnotation(psiAnnotation, taskList);
     }
 
     public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {

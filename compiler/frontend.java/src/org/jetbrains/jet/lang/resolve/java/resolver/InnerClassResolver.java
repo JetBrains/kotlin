@@ -24,18 +24,23 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class InnerClassResolver {
-    private final JavaDescriptorResolver javaDescriptorResolver;
 
-    public InnerClassResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    private ClassResolver classResolver;
+
+    public InnerClassResolver() {
+    }
+
+    @Inject
+    public void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = classResolver;
     }
 
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
@@ -83,8 +88,7 @@ public final class InnerClassResolver {
     private ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
         String name = innerPsiClass.getQualifiedName();
         assert name != null : "Inner class has no qualified name";
-        ClassDescriptor classDescriptor =
-                javaDescriptorResolver.resolveClass(new FqName(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         assert classDescriptor != null : "Couldn't resolve class " + name;
         return classDescriptor;
     }
