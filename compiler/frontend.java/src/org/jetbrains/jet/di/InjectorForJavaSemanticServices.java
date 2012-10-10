@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassObjectResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypesResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
@@ -56,6 +57,7 @@ public class InjectorForJavaSemanticServices {
     private JavaAnnotationResolver javaAnnotationResolver;
     private JavaCompileTimeConstResolver javaCompileTimeConstResolver;
     private JavaClassObjectResolver javaClassObjectResolver;
+    private JavaSupertypesResolver javaSupertypesResolver;
     private JavaNamespaceResolver javaNamespaceResolver;
     private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
     private JavaConstructorResolver javaConstructorResolver;
@@ -81,6 +83,7 @@ public class InjectorForJavaSemanticServices {
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaCompileTimeConstResolver = new JavaCompileTimeConstResolver();
         this.javaClassObjectResolver = new JavaClassObjectResolver();
+        this.javaSupertypesResolver = new JavaSupertypesResolver();
         this.javaNamespaceResolver = new JavaNamespaceResolver();
         this.javaDescriptorSignatureResolver = new JavaDescriptorSignatureResolver();
         this.javaConstructorResolver = new JavaConstructorResolver();
@@ -117,8 +120,8 @@ public class InjectorForJavaSemanticServices {
         javaClassResolver.setPsiClassFinder(psiClassFinder);
         javaClassResolver.setSemanticServices(javaSemanticServices);
         javaClassResolver.setSignatureResolver(javaDescriptorSignatureResolver);
+        javaClassResolver.setSupertypesResolver(javaSupertypesResolver);
         javaClassResolver.setTrace(bindingTrace);
-        javaClassResolver.setTypeTransformer(javaTypeTransformer);
 
         javaAnnotationResolver.setClassResolver(javaClassResolver);
         javaAnnotationResolver.setCompileTimeConstResolver(javaCompileTimeConstResolver);
@@ -126,10 +129,15 @@ public class InjectorForJavaSemanticServices {
         javaCompileTimeConstResolver.setAnnotationResolver(javaAnnotationResolver);
         javaCompileTimeConstResolver.setClassResolver(javaClassResolver);
 
-        javaClassObjectResolver.setClassResolver(javaClassResolver);
         javaClassObjectResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassObjectResolver.setSemanticServices(javaSemanticServices);
+        javaClassObjectResolver.setSupertypesResolver(javaSupertypesResolver);
         javaClassObjectResolver.setTrace(bindingTrace);
+
+        javaSupertypesResolver.setClassResolver(javaClassResolver);
+        javaSupertypesResolver.setSemanticServices(javaSemanticServices);
+        javaSupertypesResolver.setTrace(bindingTrace);
+        javaSupertypesResolver.setTypeTransformer(javaTypeTransformer);
 
         javaNamespaceResolver.setJavaSemanticServices(javaSemanticServices);
         javaNamespaceResolver.setPsiClassFinder(psiClassFinder);

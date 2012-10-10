@@ -18,11 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiModifier;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectHashingStrategy;
-import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -39,19 +37,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
-import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
-import org.jetbrains.jet.rt.signature.JetSignatureReader;
-import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -82,8 +70,8 @@ public final class JavaClassResolver {
     private JavaAnnotationResolver annotationResolver;
     private PsiClassFinder psiClassFinder;
     private JavaNamespaceResolver namespaceResolver;
-    private JavaTypeTransformer typeTransformer;
     private JavaClassObjectResolver classObjectResolver;
+    private JavaSupertypesResolver supertypesResolver;
 
     public JavaClassResolver() {
     }
@@ -129,8 +117,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
-        this.typeTransformer = typeTransformer;
+    public void setSupertypesResolver(JavaSupertypesResolver supertypesResolver) {
+        this.supertypesResolver = supertypesResolver;
     }
 
     @Nullable
@@ -247,7 +235,7 @@ public final class JavaClassResolver {
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
-        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
+        supertypes.addAll(supertypesResolver.getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
 
         ResolverClassData classObjectData = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
         classDescriptorCache.put(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectData);
@@ -278,8 +266,8 @@ public final class JavaClassResolver {
             return Modality.FINAL;
         }
         return Modality.convertFromFlags(
-                    psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
-                    !psiClass.hasModifierProperty(PsiModifier.FINAL));
+                psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
+                !psiClass.hasModifierProperty(PsiModifier.FINAL));
     }
 
     void checkFqNamesAreConsistent(@NotNull PsiClass psiClass, @NotNull FqName desiredFqName) {
@@ -290,105 +278,6 @@ public final class JavaClassResolver {
         assert fqName.equals(desiredFqName);
         if (classDescriptorCache.containsKey(fqName)) {
             throw new IllegalStateException(qualifiedName);
-        }
-    }
-
-    public Collection<JetType> getSupertypes(
-            @NotNull PsiClassWrapper psiClass,
-            @NotNull ResolverClassData classData,
-            @NotNull List<TypeParameterDescriptor> typeParameters
-    ) {
-        ClassDescriptor classDescriptor = classData.getClassDescriptor();
-
-        final List<JetType> result = new ArrayList<JetType>();
-
-        String context = "class " + psiClass.getQualifiedName();
-
-        if (psiClass.getJetClass().signature().length() > 0) {
-            final TypeVariableResolver typeVariableResolver =
-                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-
-            new JetSignatureReader(psiClass.getJetClass().signature()).accept(new JetSignatureExceptionsAdapter() {
-                @Override
-                public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified) {
-                    // TODO: collect
-                    return new JetSignatureAdapter();
-                }
-
-                @Override
-                public JetSignatureVisitor visitSuperclass() {
-                    return new JetTypeJetSignatureReader(semanticServices, JetStandardLibrary.getInstance(),
-                                                         typeVariableResolver) {
-                        @Override
-                        protected void done(@NotNull JetType jetType) {
-                            if (!jetType.equals(JetStandardClasses.getAnyType())) {
-                                result.add(jetType);
-                            }
-                        }
-                    };
-                }
-
-                @Override
-                public JetSignatureVisitor visitInterface() {
-                    return visitSuperclass();
-                }
-            });
-        }
-        else {
-            TypeVariableResolver typeVariableResolverForSupertypes =
-                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
-            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes);
-            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes);
-        }
-
-        for (JetType supertype : result) {
-            if (ErrorUtils.isErrorType(supertype)) {
-                trace.record(BindingContext.INCOMPLETE_HIERARCHY, classDescriptor);
-            }
-        }
-
-        if (result.isEmpty()) {
-            if (classData.isKotlin()
-                || DescriptorResolverUtils.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
-                // TODO: annotations
-                || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
-                result.add(JetStandardClasses.getAnyType());
-            }
-            else {
-                ClassDescriptor object = resolveJavaLangObject();
-                if (object != null) {
-                    result.add(object.getDefaultType());
-                }
-                else {
-                    result.add(JetStandardClasses.getAnyType());
-                }
-            }
-        }
-        return result;
-    }
-
-    private void transformSupertypeList(
-            List<JetType> result,
-            PsiClassType[] extendsListTypes,
-            TypeVariableResolver typeVariableResolver
-    ) {
-        for (PsiClassType type : extendsListTypes) {
-            PsiClass resolved = type.resolve();
-            if (resolved != null) {
-                final String qualifiedName = resolved.getQualifiedName();
-                assert qualifiedName != null;
-                if (JvmStdlibNames.JET_OBJECT.getFqName().equalsTo(qualifiedName)) {
-                    continue;
-                }
-            }
-
-            JetType transform = typeTransformer
-                    .transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
-            if (ErrorUtils.isErrorType(transform)) {
-                continue;
-            }
-
-            result.add(TypeUtils.makeNotNullable(transform));
         }
     }
 
@@ -423,15 +312,6 @@ public final class JavaClassResolver {
             throw new IllegalStateException("cannot resolve namespace " + fqName.parent() + ", required to be container for " + fqName);
         }
         return ns;
-    }
-
-    @Nullable
-    private ClassDescriptor resolveJavaLangObject() {
-        ClassDescriptor clazz = resolveClass(DescriptorResolverUtils.OBJECT_FQ_NAME, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-        if (clazz == null) {
-            // TODO: warning
-        }
-        return clazz;
     }
 
     private static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {

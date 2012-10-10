@@ -48,14 +48,14 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
 public final class JavaClassObjectResolver {
 
-    private JavaClassResolver classResolver;
     private JavaDescriptorResolver javaDescriptorResolver;
     private BindingTrace trace;
     private JavaSemanticServices semanticServices;
+    private JavaSupertypesResolver supertypesResolver;
 
     @Inject
-    public void setClassResolver(JavaClassResolver classResolver) {
-        this.classResolver = classResolver;
+    public void setSupertypesResolver(JavaSupertypesResolver supertypesResolver) {
+        this.supertypesResolver = supertypesResolver;
     }
 
     @Inject
@@ -108,8 +108,8 @@ public final class JavaClassObjectResolver {
                 .getResolverBinaryClassData();
 
         ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.getClassDescriptor();
-        classObjectDescriptor.setSupertypes(classResolver.getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData,
-                                                                        new ArrayList<TypeParameterDescriptor>(0)));
+        classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData,
+                                                                             new ArrayList<TypeParameterDescriptor>(0)));
         setUpClassObjectDescriptor(containing, fqName, classData, getClassObjectName(containing.getName()));
         return classObjectDescriptor.getResolverBinaryClassData();
     }
