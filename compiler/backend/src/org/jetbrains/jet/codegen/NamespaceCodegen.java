@@ -296,8 +296,10 @@ public class NamespaceCodegen extends MemberCodegen {
             substringTo = name.length();
         }
 
+        int pathHashCode = FileUtil.toSystemDependentName(file.getVirtualFile().getCanonicalPath()).hashCode();
+
         // dollar sign in the end is to prevent synthetic class from having "Test" or other parseable suffix
         // path hashCode to prevent same name / different path collision
-        return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo) + "$" + file.getVirtualFile().getCanonicalPath().hashCode();
+        return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo) + "$" + pathHashCode;
     }
 }
