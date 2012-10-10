@@ -79,7 +79,16 @@ public class PropertyCodegen extends GenerationStateAware {
         generateSetter(p, propertyDescriptor);
     }
 
-    public void generateBackingField(PsiElement p, PropertyDescriptor propertyDescriptor) {
+    public void generatePrimaryConstructorProperty(JetParameter p, PropertyDescriptor descriptor) {
+        generateBackingField(p, descriptor);
+        int accessFlags = getVisibilityAccessFlag(descriptor) | getModalityAccessFlag(descriptor);
+        generateDefaultGetter(descriptor, accessFlags, p);
+        if (descriptor.isVar()) {
+            generateDefaultSetter(descriptor, accessFlags, p);
+        }
+    }
+
+    private void generateBackingField(PsiElement p, PropertyDescriptor propertyDescriptor) {
         //noinspection ConstantConditions
         if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
             DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
@@ -125,10 +134,6 @@ public class PropertyCodegen extends GenerationStateAware {
             int flags = getVisibilityAccessFlag(propertyDescriptor);
             flags |= getModalityAccessFlag(propertyDescriptor);
             generateDefaultGetter(propertyDescriptor, flags, p);
-
-            JvmPropertyAccessorSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
-            FunctionCodegen.generateBridgeIfNeeded(context, state, v, signature.getJvmMethodSignature().getAsmMethod(),
-                                                   propertyDescriptor.getGetter(), kind);
         }
     }
 
@@ -149,14 +154,10 @@ public class PropertyCodegen extends GenerationStateAware {
             int flags = setterDescriptor == null ? getVisibilityAccessFlag(propertyDescriptor) : getVisibilityAccessFlag(setterDescriptor);
             flags |= getModalityAccessFlag(propertyDescriptor);
             generateDefaultSetter(propertyDescriptor, flags, p);
-
-            JvmPropertyAccessorSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
-            FunctionCodegen.generateBridgeIfNeeded(context, state, v, signature.getJvmMethodSignature().getAsmMethod(),
-                                                   setterDescriptor, kind);
         }
     }
 
-    public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+    private void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
         checkMustGenerateCode(propertyDescriptor);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
@@ -225,6 +226,8 @@ public class PropertyCodegen extends GenerationStateAware {
             }
         }
         FunctionCodegen.endVisit(mv, "getter", origin);
+
+        FunctionCodegen.generateBridgeIfNeeded(context, state, v, jvmMethodSignature.getAsmMethod(), getter, kind);
     }
 
     public static void generateJetPropertyAnnotation(
@@ -245,7 +248,7 @@ public class PropertyCodegen extends GenerationStateAware {
         aw.visitEnd();
     }
 
-    public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+    private void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
         checkMustGenerateCode(propertyDescriptor);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
@@ -315,6 +318,8 @@ public class PropertyCodegen extends GenerationStateAware {
                 }
             }
             FunctionCodegen.endVisit(mv, "setter", origin);
+
+            FunctionCodegen.generateBridgeIfNeeded(context, state, v, jvmMethodSignature.getAsmMethod(), setter, kind);
         }
     }
 

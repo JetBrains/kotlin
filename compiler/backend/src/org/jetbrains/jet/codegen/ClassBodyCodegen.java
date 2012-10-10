@@ -98,12 +98,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
                     if (!isAnnotation) {
-                        propertyCodegen.generateBackingField(p, propertyDescriptor);
-                        int accessFlags = getVisibilityAccessFlag(propertyDescriptor) | getModalityAccessFlag(propertyDescriptor);
-                        propertyCodegen.generateDefaultGetter(propertyDescriptor, accessFlags, p);
-                        if (propertyDescriptor.isVar()) {
-                            propertyCodegen.generateDefaultSetter(propertyDescriptor, accessFlags, p);
-                        }
+                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
                     }
                     else {
                         Type type = state.getTypeMapper().mapType(propertyDescriptor);

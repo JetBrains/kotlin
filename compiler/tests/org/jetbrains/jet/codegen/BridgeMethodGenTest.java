@@ -174,4 +174,14 @@ public class BridgeMethodGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("bridges/propertyAccessorsWithoutBody.kt");
     }
+
+    public void testPropertyInConstructor() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/propertyInConstructor.kt");
+    }
+
+    public void testKt2833() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("regressions/kt2833.kt");
+    }
 }
