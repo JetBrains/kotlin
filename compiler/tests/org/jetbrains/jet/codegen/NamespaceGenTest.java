@@ -32,7 +32,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
     }
 
     public void testPSVM() throws Exception {
@@ -475,6 +475,10 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testCheckCast() throws Exception {
         blackBoxFile("checkCast.jet");
+    }
+
+    public void testTypeCastException() throws Exception {
+        blackBoxFile("typeCastException.jet");
     }
 
     public void testPutBooleanAsVoid() throws Exception {

@@ -57,6 +57,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
@@ -3156,7 +3157,9 @@ The "returned" value of try expression with no finally is either the last expres
                             v.dup();
                             Label nonnull = new Label();
                             v.ifnonnull(nonnull);
-                            throwNewException(CLASS_TYPE_CAST_EXCEPTION);
+                            throwNewException(CLASS_TYPE_CAST_EXCEPTION, DescriptorRenderer.TEXT.renderType(leftType) +
+                                                                         " cannot be cast to " +
+                                                                         DescriptorRenderer.TEXT.renderType(rightType));
                             v.mark(nonnull);
                         }
                     }
@@ -3376,10 +3379,20 @@ The "returned" value of try expression with no finally is either the last expres
         return false;
     }
 
-    private void throwNewException(final String className) {
+    private void throwNewException(@NotNull final String className) {
+        throwNewException(className, null);
+    }
+
+    private void throwNewException(@NotNull final String className, @Nullable final String message) {
         v.anew(Type.getObjectType(className));
         v.dup();
-        v.invokespecial(className, "<init>", "()V");
+        if (message != null) {
+            v.visitLdcInsn(message);
+            v.invokespecial(className, "<init>", "(Ljava/lang/String;)V");
+        }
+        else {
+            v.invokespecial(className, "<init>", "()V");
+        }
         v.athrow();
     }
 
