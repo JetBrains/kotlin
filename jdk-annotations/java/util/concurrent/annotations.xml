@@ -150,4 +150,232 @@
     <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;, long, java.util.concurrent.TimeUnit) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+  <item name='java.util.concurrent.ExecutorService boolean awaitTermination(long, java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun awaitTermination(timeout : Long, unit : TimeUnit) : Boolean&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;T&gt; submit(java.util.concurrent.Callable&lt;T&gt;)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;T&gt; submit(task : Callable&lt;T&gt;) : Future&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;T&gt; submit(java.lang.Runnable, T)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun &lt;T&gt; submit(task : Runnable, result : T) : Future&lt;T&gt;&quot;"/>
+      </annotation>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.ExecutorService java.util.concurrent.Future&lt;?&gt; submit(java.lang.Runnable)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun submit(task : Runnable) : Future&lt;out Any?&gt;&quot;"/>
+      </annotation>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.CountDownLatch boolean await(long, java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun await(timeout : Long, unit : TimeUnit) : Boolean&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.CountDownLatch boolean await(long, java.util.concurrent.TimeUnit) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.Delayed long getDelay(java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getDelay(unit : TimeUnit) : Long&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Delayed long getDelay(java.util.concurrent.TimeUnit) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.CompletionService java.util.concurrent.Future&lt;V&gt; submit(java.util.concurrent.Callable&lt;V&gt;)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun submit(task : Callable&lt;V&gt;) : Future&lt;V&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.CompletionService java.util.concurrent.Future&lt;V&gt; submit(java.lang.Runnable, V)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun submit(task : Runnable, result : V) : Future&lt;V&gt;&quot;"/>
+      </annotation>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.CompletionService java.util.concurrent.Future&lt;V&gt; submit(java.lang.Runnable, V) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.CompletionService java.util.concurrent.Future&lt;V&gt; poll()'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun poll() : Future&lt;V&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue boolean offer(E)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun offer(e : E) : Boolean&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue boolean offer(E) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue E poll(long, java.util.concurrent.TimeUnit) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue E poll(long, java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun poll(timeout : Long, unit : TimeUnit) : E&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;, int) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun drainTo(c : Collection&lt;in E&gt;) : Int&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;, int)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun drainTo(c : Collection&lt;in E&gt;, maxElements : Int) : Int&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newFixedThreadPool(int)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun newFixedThreadPool(nThreads : Int) : ExecutorService&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newFixedThreadPool(int, java.util.concurrent.ThreadFactory)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun newFixedThreadPool(nThreads : Int, threadFactory : ThreadFactory) : ExecutorService&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newSingleThreadExecutor(java.util.concurrent.ThreadFactory)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun newSingleThreadExecutor(threadFactory : ThreadFactory) : ExecutorService&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService newCachedThreadPool(java.util.concurrent.ThreadFactory)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun newCachedThreadPool(threadFactory : ThreadFactory) : ExecutorService&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService newSingleThreadScheduledExecutor(java.util.concurrent.ThreadFactory)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun newSingleThreadScheduledExecutor(threadFactory : ThreadFactory) : ScheduledExecutorService&quot;"/>
+      </annotation>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService newScheduledThreadPool(int, java.util.concurrent.ThreadFactory)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun newScheduledThreadPool(corePoolSize : Int, threadFactory : ThreadFactory) : ScheduledExecutorService&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ExecutorService unconfigurableExecutorService(java.util.concurrent.ExecutorService)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun unconfigurableExecutorService(executor : ExecutorService) : ExecutorService&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService unconfigurableScheduledExecutorService(java.util.concurrent.ScheduledExecutorService)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun unconfigurableScheduledExecutorService(executor : ScheduledExecutorService) : ScheduledExecutorService&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;java.lang.Object&gt; callable(java.lang.Runnable)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun callable(task : Runnable) : Callable&lt;Any?&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;java.lang.Object&gt; callable(java.security.PrivilegedAction&lt;?&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun callable(action : PrivilegedAction&lt;out Any?&gt;) : Callable&lt;Any?&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;java.lang.Object&gt; callable(java.security.PrivilegedExceptionAction&lt;?&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun callable(action : PrivilegedExceptionAction&lt;out Any?&gt;) : Callable&lt;Any?&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;T&gt; privilegedCallable(java.util.concurrent.Callable&lt;T&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;T&gt; privilegedCallable(callable : Callable&lt;T&gt;) : Callable&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;T&gt; privilegedCallableUsingCurrentClassLoader(java.util.concurrent.Callable&lt;T&gt;)'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;T&gt; privilegedCallableUsingCurrentClassLoader(callable : Callable&lt;T&gt;) : Callable&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Future V get(long, java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun get(timeout : Long, unit : TimeUnit) : V&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Future V get(long, java.util.concurrent.TimeUnit) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.FutureTask V get(long, java.util.concurrent.TimeUnit) 1'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.FutureTask V get(long, java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun get(timeout : Long, unit : TimeUnit) : V&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.ThreadFactory java.lang.Thread newThread(java.lang.Runnable)'>
+      <annotation name='org.jetbrains.annotations.Nullable'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun newThread(r : Runnable) : Thread?&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.ThreadFactory java.lang.Thread newThread(java.lang.Runnable) 0'>
+      <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;out Callable&lt;T&gt;&gt;) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.CompletionService java.util.concurrent.Future&lt;V&gt; poll(long, java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun poll(timeout : Long, unit : TimeUnit) : Future&lt;V&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue boolean offer(E, long, java.util.concurrent.TimeUnit)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun offer(e : E, timeout : Long, unit : TimeUnit) : Boolean&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.concurrent.Executors java.util.concurrent.Callable&lt;T&gt; callable(java.lang.Runnable, T)'>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;T&gt; callable(task : Runnable, result : T) : Callable&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
 </root>

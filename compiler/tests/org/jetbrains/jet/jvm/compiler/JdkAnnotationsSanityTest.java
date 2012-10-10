@@ -118,6 +118,7 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
 
         for (FqName classFqName : getAffectedClasses(ideaAnnotationsRoot)) {
             if (new FqName("org.jdom").equals(classFqName.parent())) continue; // filter unrelated jdom annotations
+            if (new FqName("java.util.concurrent.TransferQueue").equals(classFqName)) continue; // filter JDK7-specific class
 
             PsiClass psiClass = javaPsiFacade.findClass(classFqName.getFqName(), allScope);
             assertNotNull("Class has annotation, but it is not found: " + classFqName, psiClass);

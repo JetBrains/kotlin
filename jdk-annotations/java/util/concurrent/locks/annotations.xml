@@ -1,29 +1,45 @@
 <root>
-    <item name='java.util.concurrent.locks.ReentrantReadWriteLock java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock writeLock()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.ReadWriteLock java.util.concurrent.locks.Lock readLock()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.ReadWriteLock java.util.concurrent.locks.Lock writeLock()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.ReentrantReadWriteLock java.lang.Thread getOwner()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.Lock java.util.concurrent.locks.Condition newCondition()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.Condition boolean await(long, java.util.concurrent.TimeUnit) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.ReentrantLock java.util.concurrent.locks.Condition newCondition()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.ReentrantLock java.lang.Thread getOwner()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.locks.ReentrantReadWriteLock java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock readLock()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
+  <item name='java.util.concurrent.locks.ReentrantReadWriteLock java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock writeLock()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.ReadWriteLock java.util.concurrent.locks.Lock readLock()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.ReadWriteLock java.util.concurrent.locks.Lock writeLock()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.ReentrantReadWriteLock java.lang.Thread getOwner()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.Lock java.util.concurrent.locks.Condition newCondition()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.Condition boolean await(long, java.util.concurrent.TimeUnit) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.ReentrantLock java.util.concurrent.locks.Condition newCondition()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.ReentrantLock java.lang.Thread getOwner()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.ReentrantReadWriteLock java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock readLock()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.Condition boolean awaitUntil(java.util.Date)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun awaitUntil(deadline : Date) : Boolean&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.concurrent.locks.Condition boolean awaitUntil(java.util.Date) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.Lock boolean tryLock(long, java.util.concurrent.TimeUnit) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.concurrent.locks.Lock boolean tryLock(long, java.util.concurrent.TimeUnit)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun tryLock(time : Long, unit : TimeUnit) : Boolean&quot;"/>
+    </annotation>
+  </item>
 </root>
