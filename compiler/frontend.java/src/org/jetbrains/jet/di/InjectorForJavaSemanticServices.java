@@ -96,10 +96,7 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
         this.javaDescriptorResolver.setInnerClassResolver(javaInnerClassResolver);
         this.javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
-        this.javaDescriptorResolver.setProject(project);
         this.javaDescriptorResolver.setPropertiesResolver(javaPropertiesResolver);
-        this.javaDescriptorResolver.setSemanticServices(javaSemanticServices);
-        this.javaDescriptorResolver.setTrace(bindingTrace);
 
         javaBridgeConfiguration.setBuiltinsScopeExtensionMode(builtinsScopeExtensionMode);
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);

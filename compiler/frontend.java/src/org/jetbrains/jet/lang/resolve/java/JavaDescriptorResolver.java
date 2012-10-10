@@ -16,12 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
@@ -61,30 +59,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     };
 
-    protected Project project;
-    protected JavaSemanticServices semanticServices;
-    private BindingTrace trace;
     private JavaPropertiesResolver propertiesResolver;
     private JavaClassResolver classResolver;
     private JavaConstructorResolver constructorResolver;
     private JavaFunctionResolver functionResolver;
     private JavaNamespaceResolver namespaceResolver;
     private JavaInnerClassResolver innerClassResolver;
-
-    @Inject
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    @Inject
-    public void setSemanticServices(JavaSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
-    }
-
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
-    }
 
     @Inject
     public void setFunctionResolver(JavaFunctionResolver functionResolver) {
@@ -124,10 +104,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
         return classResolver.resolveClass(qualifiedName);
-    }
-
-    public BindingTrace getTrace() {
-        return trace;
     }
 
     @NotNull

@@ -257,7 +257,7 @@ public final class JavaClassResolver {
 
         classData.getClassDescriptor().setAnnotations(annotationResolver.resolveAnnotations(psiClass, taskList));
 
-        javaDescriptorResolver.getTrace().record(BindingContext.CLASS, psiClass, classData.getClassDescriptor());
+        trace.record(BindingContext.CLASS, psiClass, classData.getClassDescriptor());
 
         return classData;
     }

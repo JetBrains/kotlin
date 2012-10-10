@@ -194,10 +194,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
         javaDescriptorResolver.setInnerClassResolver(javaInnerClassResolver);
         javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
-        javaDescriptorResolver.setProject(project);
         javaDescriptorResolver.setPropertiesResolver(javaPropertiesResolver);
-        javaDescriptorResolver.setSemanticServices(javaSemanticServices);
-        javaDescriptorResolver.setTrace(bindingTrace);
 
         psiClassFinder.setProject(project);
 
