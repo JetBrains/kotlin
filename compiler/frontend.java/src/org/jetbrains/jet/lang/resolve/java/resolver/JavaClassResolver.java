@@ -148,13 +148,11 @@ public final class JavaClassResolver {
             @NotNull DescriptorSearchRule searchRule,
             @NotNull List<Runnable> tasks
     ) {
-        if (qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
-            // TODO: only if -$$TImpl class is created by Kotlin
+        if (isTraitImplementation(qualifiedName)) {
             return null;
         }
 
-        ClassDescriptor builtinClassDescriptor =
-                semanticServices.getKotlinBuiltinClassDescriptor(qualifiedName);
+        ClassDescriptor builtinClassDescriptor = semanticServices.getKotlinBuiltinClassDescriptor(qualifiedName);
         if (builtinClassDescriptor != null) {
             return builtinClassDescriptor;
         }
@@ -167,99 +165,129 @@ public final class JavaClassResolver {
 
         // Not let's take a descriptor of a Java class
         ResolverClassData classData = classDescriptorCache.get(qualifiedName);
-        if (classData == null) {
-            PsiClass psiClass =
-                    psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
-            if (psiClass == null) {
-                ResolverClassData oldValue =
-                        classDescriptorCache
-                                .put(qualifiedName, ResolverBinaryClassData.NEGATIVE);
-                if (oldValue != null) {
-                    throw new IllegalStateException("rewrite at " + qualifiedName);
-                }
-                return null;
-            }
-            classData = createJavaClassDescriptor(psiClass, tasks);
+        if (classData != null) {
+            return classData.getClassDescriptor();
         }
+
+        return doResolveClass(qualifiedName, tasks);
+    }
+
+    @Nullable
+    private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, List<Runnable> tasks) {
+        PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
+        if (psiClass == null) {
+            cacheValue(qualifiedName);
+            return null;
+        }
+        ResolverClassData classData = createJavaClassDescriptor(qualifiedName, psiClass, tasks);
         return classData.getClassDescriptor();
+    }
+
+    private void cacheValue(@NotNull FqName qualifiedName) {
+        ResolverClassData oldValue = classDescriptorCache.put(qualifiedName, ResolverBinaryClassData.NEGATIVE);
+        if (oldValue != null) {
+            throw new IllegalStateException("rewrite at " + qualifiedName);
+        }
+    }
+
+    private static boolean isTraitImplementation(@NotNull FqName qualifiedName) {
+        // TODO: only if -$$TImpl class is created by Kotlin
+        return qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX);
     }
 
     @NotNull
     private ResolverClassData createJavaClassDescriptor(
-            @NotNull final PsiClass psiClass,
+            @NotNull FqName fqName, @NotNull final PsiClass psiClass,
             List<Runnable> taskList
     ) {
-        final String qualifiedName = psiClass.getQualifiedName();
-        assert qualifiedName != null;
 
-        FqName fqName = new FqName(qualifiedName);
-        if (classDescriptorCache.containsKey(fqName)) {
-            throw new IllegalStateException(qualifiedName);
-        }
-
+        checkFqNamesAreConsistent(psiClass, fqName);
         DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
-        Name name = Name.identifier(psiClass.getName());
-        JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
-        ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
-
         // class may be resolved during resolution of parent
         ResolverClassData classData = classDescriptorCache.get(fqName);
         if (classData != null) {
             return classData;
         }
 
-        classData = new ClassDescriptorFromJvmBytecode(
-                containingDeclaration, kind, psiClass, fqName, javaDescriptorResolver)
-                .getResolverBinaryClassData();
-        classDescriptorCache.put(fqName, classData);
-        classData.getClassDescriptor().setName(name);
+        return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);
+    }
 
-        List<JetType> supertypes = new ArrayList<JetType>();
+    @NotNull
+    private ResolverClassData doCreateClassDescriptor(
+            @NotNull FqName fqName,
+            @NotNull PsiClass psiClass,
+            @NotNull List<Runnable> taskList,
+            @NotNull ClassOrNamespaceDescriptor containingDeclaration
+    ) {
+        JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
+        ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
+        ClassDescriptorFromJvmBytecode classDescriptor
+                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, psiClass, fqName, javaDescriptorResolver);
+
+        ResolverClassData classData = classDescriptor.getResolverBinaryClassData();
+        classDescriptorCache.put(fqName, classData);
+        classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
                 = signatureResolver.createUninitializedClassTypeParameters(psiClass, classData);
 
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>();
+        classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
+        List<JetType> supertypes = Lists.newArrayList();
+        classDescriptor.setSupertypes(supertypes);
+        classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
+        classDescriptor.setModality(resolveModality(psiClass, classData));
+        classDescriptor.createTypeConstructor();
+        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
+
+        String context = "class " + psiClass.getQualifiedName();
+        signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);
+
+        // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
+        List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
+        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
+
+        MutableClassDescriptorLite classObject = createClassObjectDescriptor(classDescriptor, psiClass);
+        if (classObject != null) {
+            classDescriptor.getBuilder().setClassObjectDescriptor(classObject);
+        }
+
+        classDescriptor.setAnnotations(annotationResolver.resolveAnnotations(psiClass, taskList));
+
+        trace.record(BindingContext.CLASS, psiClass, classDescriptor);
+
+        return classData;
+    }
+
+    @NotNull
+    private static List<TypeParameterDescriptor> getTypeParametersDescriptors(List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations) {
+        List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         for (JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization typeParameter : typeParameterDescriptorInitializations) {
             typeParameters.add(typeParameter.getDescriptor());
         }
+        return typeParameters;
+    }
 
-        classData.getClassDescriptor().setTypeParameterDescriptors(typeParameters);
-        classData.getClassDescriptor().setSupertypes(supertypes);
-        classData.getClassDescriptor().setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
-        Modality modality;
+    @NotNull
+    private static Modality resolveModality(@NotNull PsiClass psiClass, @NotNull ResolverClassData classData) {
         if (classData.getClassDescriptor().getKind() == ClassKind.ANNOTATION_CLASS) {
-            modality = Modality.FINAL;
+            return Modality.FINAL;
         }
-        else {
-            modality = Modality.convertFromFlags(
+        return Modality.convertFromFlags(
                     psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
                     !psiClass.hasModifierProperty(PsiModifier.FINAL));
+    }
+
+    void checkFqNamesAreConsistent(@NotNull PsiClass psiClass, @NotNull FqName desiredFqName) {
+        final String qualifiedName = psiClass.getQualifiedName();
+        assert qualifiedName != null;
+
+        FqName fqName = new FqName(qualifiedName);
+        assert fqName.equals(desiredFqName);
+        if (classDescriptorCache.containsKey(fqName)) {
+            throw new IllegalStateException(qualifiedName);
         }
-        classData.getClassDescriptor().setModality(modality);
-        classData.getClassDescriptor().createTypeConstructor();
-        classData.getClassDescriptor()
-                .setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
-
-        signatureResolver
-                .initializeTypeParameters(typeParameterDescriptorInitializations, classData.getClassDescriptor(), "class " + qualifiedName);
-
-        // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
-        List<TypeParameterDescriptor> classTypeParameters = classData.getClassDescriptor().getTypeConstructor().getParameters();
-        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
-
-        MutableClassDescriptorLite classObject = createClassObjectDescriptor(classData.getClassDescriptor(), psiClass);
-        if (classObject != null) {
-            classData.getClassDescriptor().getBuilder().setClassObjectDescriptor(classObject);
-        }
-
-        classData.getClassDescriptor().setAnnotations(annotationResolver.resolveAnnotations(psiClass, taskList));
-
-        trace.record(BindingContext.CLASS, psiClass, classData.getClassDescriptor());
-
-        return classData;
     }
 
     @Nullable
