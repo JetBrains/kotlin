@@ -1,16 +1,15 @@
 package kotlin
 
-object Assertions {
-    // TODO make private once KT-1528 is fixed.
-    val _ENABLED = (javaClass<java.lang.System>()).desiredAssertionStatus()
-}
+
+private object _Assertions
+private val ASSERTIONS_ENABLED = _Assertions.javaClass.desiredAssertionStatus()
 
 /**
 * Throws an [[AssertionError]] with an optional *message* if the *value* is false
 * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
 */
 public inline fun assert(value: Boolean, message: Any = "Assertion failed") {
-    if (Assertions._ENABLED) {
+    if (ASSERTIONS_ENABLED) {
         if (!value) {
             throw AssertionError(message)
         }
@@ -22,7 +21,7 @@ public inline fun assert(value: Boolean, message: Any = "Assertion failed") {
  * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
  */
 public inline fun assert(value: Boolean, lazyMessage: () -> String) {
-    if (Assertions._ENABLED) {
+    if (ASSERTIONS_ENABLED) {
         if (!value) {
             val message = lazyMessage()
             throw AssertionError(message)
