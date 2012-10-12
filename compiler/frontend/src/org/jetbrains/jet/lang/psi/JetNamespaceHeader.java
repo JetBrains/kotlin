@@ -33,6 +33,8 @@ import java.util.List;
  * @author abreslav
  */
 public class JetNamespaceHeader extends JetReferenceExpression {
+    private String qualifiedNameCache = null;
+
     public JetNamespaceHeader(@NotNull ASTNode node) {
         super(node);
     }
@@ -104,9 +106,14 @@ public class JetNamespaceHeader extends JetReferenceExpression {
 
     @NotNull
     public String getQualifiedName() {
-        return getQualifiedNameParentOf(null);
+        if (qualifiedNameCache == null) {
+            qualifiedNameCache = getQualifiedNameParentOf(null);
+        }
+
+        return qualifiedNameCache;
     }
 
+    @NotNull
     private String getQualifiedNameParentOf(@Nullable JetReferenceExpression nameExpression) {
         StringBuilder builder = new StringBuilder();
         for (JetSimpleNameExpression e : findChildrenByClass(JetSimpleNameExpression.class)) {
