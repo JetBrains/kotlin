@@ -23,8 +23,11 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -35,6 +38,7 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
+import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 /**
@@ -100,8 +104,14 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         if (openingBracketIndex == -1) {
             // Insert ()/{} if it's not already exist
             if (braces) {
-                document.insertString(endOffset, " {}");
-                openingBracketIndex = endOffset + 1;
+                if (isInsertSpacesInOneLineFunctionEnabled(offsetElement.getProject())) {
+                    document.insertString(endOffset, " {  }");
+                    openingBracketIndex = endOffset + 2;
+                }
+                else {
+                    document.insertString(endOffset, " {}");
+                    openingBracketIndex = endOffset + 1;
+                }
             }
             else {
                 document.insertString(endOffset, "()");
@@ -123,6 +133,13 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         }
 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
+    }
+
+    private static boolean isInsertSpacesInOneLineFunctionEnabled(Project project) {
+        CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(project);
+        JetCodeStyleSettings jetSettings = settings.getCustomSettings(JetCodeStyleSettings.class);
+
+        return jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD;
     }
 
     private static void addImport(final InsertionContext context, final @NotNull LookupElement item) {

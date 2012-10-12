@@ -23,9 +23,12 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import junit.framework.Assert;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 
 import java.io.File;
 
@@ -74,6 +77,18 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
 
     public void testExtFunction() {
         doTest();
+    }
+
+    public void testFunctionLiteralInsertWhenNoSpacesForBraces() {
+        CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
+        JetCodeStyleSettings jetSettings = settings.getCustomSettings(JetCodeStyleSettings.class);
+
+        try {
+            jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = false;
+            doTest();
+        } finally {
+            jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = true;
+        }
     }
 
     public void testHigherOrderFunction() {
