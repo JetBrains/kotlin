@@ -57,6 +57,10 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
     private final BracketType bracketType;
 
     public JetFunctionInsertHandler(CaretPosition caretPosition, BracketType bracketType) {
+        if (caretPosition == CaretPosition.AFTER_BRACKETS && bracketType == BracketType.BRACES) {
+            throw new IllegalArgumentException("CaretPosition.AFTER_BRACKETS with bracketType == BracketType.BRACES combination is not supported");
+        }
+
         this.caretPosition = caretPosition;
         this.bracketType = bracketType;
     }
@@ -73,66 +77,80 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
             return;
         }
 
-        if (shouldAddParenthesis(element)) {
-            addParenthesis(context, item, element);
+        if (shouldAddBrackets(element)) {
+            addBrackets(context, element);
         }
 
         addImport(context, item);
     }
 
-    private static boolean shouldAddParenthesis(PsiElement element) {
+    private static boolean shouldAddBrackets(PsiElement element) {
         return PsiTreeUtil.getParentOfType(element, JetImportDirective.class) == null;
     }
 
-    private void addParenthesis(InsertionContext context, LookupElement item, PsiElement offsetElement) {
-        int startOffset = context.getStartOffset();
-
-        int lookupStringLength = item.getLookupString().length();
-        int endOffset = startOffset + lookupStringLength;
+    private void addBrackets(InsertionContext context, PsiElement offsetElement) {
+        int offset = context.getSelectionEndOffset();
         Document document = context.getDocument();
 
-        boolean bothParentheses = false;
         String documentText = document.getText();
 
         boolean braces = bracketType == BracketType.BRACES && context.getCompletionChar() != '(';
         char openingBracket = braces ? '{' : '(';
         char closingBracket = braces ? '}' : ')';
-        int openingBracketIndex = documentText.indexOf(openingBracket, endOffset);
-        if (openingBracketIndex != -1 && documentText.substring(endOffset, openingBracketIndex).trim().length() != 0) {
-            openingBracketIndex = -1; // opening bracket is too far
-        }
+
+        int openingBracketIndex = indexOfSkippingSpace(documentText, openingBracket, offset);
+        int inBracketsShift = 0;
+
         if (openingBracketIndex == -1) {
             // Insert ()/{} if it's not already exist
             if (braces) {
                 if (isInsertSpacesInOneLineFunctionEnabled(offsetElement.getProject())) {
-                    document.insertString(endOffset, " {  }");
-                    openingBracketIndex = endOffset + 2;
+                    document.insertString(offset, " {  }");
+                    inBracketsShift = 1;
                 }
                 else {
-                    document.insertString(endOffset, " {}");
-                    openingBracketIndex = endOffset + 1;
+                    document.insertString(offset, " {}");
                 }
             }
             else {
-                document.insertString(endOffset, "()");
-                openingBracketIndex = endOffset;
+                document.insertString(offset, "()");
             }
-            bothParentheses = true;
-        }
-        else if (openingBracketIndex + 1 < documentText.length() && documentText.charAt(openingBracketIndex + 1) == closingBracket) {
-            bothParentheses = true;
+
+            PsiDocumentManager.getInstance(context.getProject()).commitDocument(document);
+            documentText = document.getText();
         }
 
+        openingBracketIndex = indexOfSkippingSpace(documentText, openingBracket, offset);
+        assert openingBracketIndex != -1 : "If there wasn't open bracket it should already have been inserted";
+
+        // CaretPosition.AFTER_BRACKETS mode cannot work when there are some non-empty chars between open and close bracket
+        int closeBracketIndex = indexOfSkippingSpace(documentText, closingBracket, openingBracketIndex + 1);
+
         Editor editor = context.getEditor();
-        if (caretPosition == CaretPosition.IN_BRACKETS || !bothParentheses) {
-            editor.getCaretModel().moveToOffset(openingBracketIndex + 1);
+        if (caretPosition == CaretPosition.IN_BRACKETS || closeBracketIndex == -1) {
+            editor.getCaretModel().moveToOffset(openingBracketIndex + 1 + inBracketsShift);
             AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, offsetElement);
         }
         else {
-            editor.getCaretModel().moveToOffset(openingBracketIndex + 2);
+            editor.getCaretModel().moveToOffset(closeBracketIndex + 1);
         }
 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
+    }
+
+    private static int indexOfSkippingSpace(String str, char ch, int startIndex) {
+        for (int i = startIndex; i < str.length(); i++) {
+            char currentChar = str.charAt(i);
+            if (ch == currentChar) {
+                return i;
+            }
+
+            if (!Character.isWhitespace(currentChar)) {
+                return -1;
+            }
+        }
+
+        return -1;
     }
 
     private static boolean isInsertSpacesInOneLineFunctionEnabled(Project project) {
