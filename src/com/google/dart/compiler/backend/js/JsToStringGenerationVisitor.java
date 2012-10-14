@@ -858,8 +858,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         JsBlock finallyBlock = x.getFinallyBlock();
         if (finallyBlock != null) {
-            spaceOpt();
-            _finally();
+            p.print(CHARS_FINALLY);
             spaceOpt();
             accept(finallyBlock);
         }
@@ -1123,10 +1122,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     private void _false() {
         p.print(CHARS_FALSE);
-    }
-
-    private void _finally() {
-        p.print(CHARS_FINALLY);
     }
 
     private void _for() {
