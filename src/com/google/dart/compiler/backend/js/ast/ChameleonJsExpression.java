@@ -52,12 +52,12 @@ public class ChameleonJsExpression implements JsExpression {
     }
 
     @Override
-    public SourceInfo getSourceInfo() {
+    public Object getSourceInfo() {
         return expression.getSourceInfo();
     }
 
     @Override
-    public void setSourceInfo(SourceInfo info) {
+    public void setSourceInfo(Object info) {
         expression.setSourceInfo(info);
     }
 }

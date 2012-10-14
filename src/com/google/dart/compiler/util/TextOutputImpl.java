@@ -24,6 +24,10 @@ public class TextOutputImpl implements TextOutput {
         this(false);
     }
 
+    public boolean isCompact() {
+        return compact;
+    }
+
     public TextOutputImpl(boolean compact) {
         this.compact = compact;
         out = new StringBuilder();
@@ -75,13 +79,6 @@ public class TextOutputImpl implements TextOutput {
         line++;
         column = 0;
         justNewlined = true;
-    }
-
-    @Override
-    public void newlineOpt() {
-        if (!compact) {
-            newline();
-        }
     }
 
     @Override

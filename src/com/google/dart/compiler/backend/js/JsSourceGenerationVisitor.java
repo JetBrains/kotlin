@@ -4,18 +4,17 @@
 
 package com.google.dart.compiler.backend.js;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
-import com.google.dart.compiler.backend.js.ast.JsContext;
-import com.google.dart.compiler.backend.js.ast.JsProgram;
-import com.google.dart.compiler.backend.js.ast.JsProgramFragment;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.TextOutput;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.js.compiler.SourceMapBuilder;
 
 /**
  * Generates JavaScript source from an AST.
  */
 public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor {
-    public JsSourceGenerationVisitor(TextOutput out) {
-        super(out);
+    public JsSourceGenerationVisitor(TextOutput out, @Nullable SourceMapBuilder sourceMapBuilder) {
+        super(out, sourceMapBuilder);
     }
 
     @Override

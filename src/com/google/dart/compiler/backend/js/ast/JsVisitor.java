@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Implemented by nodes that will visit child nodes.
  */
-public class JsVisitor {
+abstract public class JsVisitor {
     protected static final JsContext LVALUE_CONTEXT = new JsContext() {
         @Override
         public boolean canInsert() {
@@ -427,7 +427,7 @@ public class JsVisitor {
         }
     }
 
-    protected void doTraverse(JsVisitable node, JsContext ctx) {
-        node.traverse(this, ctx);
+    protected void doTraverse(JsVisitable node, JsContext context) {
+        node.traverse(this, context);
     }
 }

@@ -7,9 +7,14 @@ package com.google.dart.compiler.backend.js;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import com.google.dart.compiler.util.TextOutput;
-import gnu.trove.TIntArrayList;
+import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.js.compiler.SourceMapBuilder;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.dart.compiler.backend.js.ast.JsNumberLiteral.JsDoubleLiteral;
 import static com.google.dart.compiler.backend.js.ast.JsNumberLiteral.JsIntLiteral;
@@ -194,13 +199,19 @@ public class JsToStringGenerationVisitor extends JsVisitor {
      * because the statements designated by statementEnds and statementStarts are
      * those that appear directly within these global blocks.
      */
-    private Set<JsBlock> globalBlocks = new HashSet<JsBlock>();
+    private Set<JsBlock> globalBlocks = new THashSet<JsBlock>();
     private final TextOutput p;
-    private TIntArrayList statementEnds = new TIntArrayList();
-    private TIntArrayList statementStarts = new TIntArrayList();
+
+    @Nullable
+    private final SourceMapBuilder sourceMapBuilder;
 
     public JsToStringGenerationVisitor(TextOutput out) {
+        this(out, null);
+    }
+
+    public JsToStringGenerationVisitor(TextOutput out, @Nullable SourceMapBuilder sourceMapBuilder) {
         p = out;
+        this.sourceMapBuilder = sourceMapBuilder;
     }
 
     @Override
@@ -963,12 +974,17 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         return false;
     }
 
-    protected void newline() {
+    protected final void newline() {
+        if (sourceMapBuilder != null) {
+            sourceMapBuilder.newLine();
+        }
         p.newline();
     }
 
-    protected void newlineOpt() {
-        p.newlineOpt();
+    protected final void newlineOpt() {
+        if (!p.isCompact()) {
+            newline();
+        }
     }
 
     protected void printJsBlock(JsBlock x, boolean truncate, boolean finalNewline) {
@@ -998,7 +1014,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             }
 
             needSemi = true;
-            boolean shouldRecordPositions = isGlobal && !(statement instanceof JsBlock);
             boolean stmtIsGlobalBlock = false;
             if (isGlobal) {
                 if (statement instanceof JsBlock) {
@@ -1007,9 +1022,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                     globalBlocks.add((JsBlock) statement);
                 }
             }
-            if (shouldRecordPositions) {
-                statementStarts.add(p.getPosition());
-            }
+
             accept(statement);
             if (stmtIsGlobalBlock) {
                 //noinspection SuspiciousMethodCalls
@@ -1045,10 +1058,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                     }
                     newlineOpt();
                 }
-            }
-            if (shouldRecordPositions) {
-                assert (statementStarts.size() == statementEnds.size() + 1);
-                statementEnds.add(p.getPosition());
             }
             ++count;
         }
@@ -1351,5 +1360,27 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     private void printStringLiteral(String value) {
         p.print(javaScriptString(value));
+    }
+
+    @Override
+    protected void doTraverse(JsVisitable node, JsContext context) {
+        super.doTraverse(node, context);
+
+        if (sourceMapBuilder == null) {
+            return;
+        }
+
+        Object sourceInfo = node.getSourceInfo();
+        if (sourceInfo != null) {
+            sourceMapBuilder.processSourceInfo(sourceInfo);
+        }
+    }
+
+    @Override
+    public void endVisit(JsProgram x, JsContext context) {
+        super.endVisit(x, context);
+        if (sourceMapBuilder != null) {
+            sourceMapBuilder.addLink();
+        }
     }
 }

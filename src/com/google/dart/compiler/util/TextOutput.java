@@ -8,31 +8,33 @@ package com.google.dart.compiler.util;
  * Interface used for printing text output.
  */
 public interface TextOutput {
-  int getPosition();
+    int getPosition();
 
-  int getLine();
+    int getLine();
 
-  int getColumn();
+    int getColumn();
 
-  void indentIn();
+    void indentIn();
 
-  void indentOut();
+    void indentOut();
 
-  void newline();
+    void newline();
 
-  void newlineOpt();
+    void print(char c);
 
-  void print(char c);
-  void print(int v);
-  void print(double v);
+    void print(int v);
 
-  void print(char[] s);
+    void print(double v);
 
-  void print(CharSequence s);
+    void print(char[] s);
 
-  void printOpt(char c);
+    void print(CharSequence s);
 
-  void printOpt(char[] s);
+    void printOpt(char c);
 
-  void printOpt(String s);
+    void printOpt(char[] s);
+
+    void printOpt(String s);
+
+    boolean isCompact();
 }

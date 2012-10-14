@@ -8,11 +8,11 @@ public interface HasSourceInfo {
   /**
    * Return the source info associated with this object.
    */
-  SourceInfo getSourceInfo();
+  Object getSourceInfo();
 
   /**
    * Set the source info associated with this object.
    * @param info
    */
-  void setSourceInfo(SourceInfo info);
+  void setSourceInfo(Object info);
 }

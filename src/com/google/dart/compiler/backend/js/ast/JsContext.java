@@ -10,7 +10,6 @@ package com.google.dart.compiler.backend.js.ast;
  * node.
  */
 public interface JsContext {
-
   boolean canInsert();
 
   boolean canRemove();

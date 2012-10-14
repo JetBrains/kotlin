@@ -4,7 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public interface JsVisitable {
+import com.google.dart.compiler.common.HasSourceInfo;
+
+public interface JsVisitable extends HasSourceInfo {
   /**
    * Causes this object to have the visitor visit itself and its children.
    * 

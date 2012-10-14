@@ -5,7 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 /**
- * Represnts a JavaScript block in the global scope.
+ * Represents a JavaScript block in the global scope.
  */
 public class JsGlobalBlock extends JsBlock {
 
