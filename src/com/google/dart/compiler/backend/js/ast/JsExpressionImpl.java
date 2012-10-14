@@ -22,6 +22,6 @@ abstract class JsExpressionImpl extends JsNodeImpl implements JsExpression {
 
     @Override
     public JsStatement makeStmt() {
-        return new JsExprStmt(this);
+        return new JsExpressionStatement(this);
     }
 }

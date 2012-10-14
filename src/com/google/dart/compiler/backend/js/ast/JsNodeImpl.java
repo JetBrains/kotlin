@@ -1,30 +1,20 @@
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.backend.js.JsToStringGenerationVisitor;
-import com.google.dart.compiler.common.AbstractNode;
 import com.google.dart.compiler.common.SourceInfo;
-import com.google.dart.compiler.util.TextOutputImpl;
 
-abstract class JsNodeImpl extends AbstractNode implements JsNode {
+abstract class JsNodeImpl extends AbstractNode {
+    private SourceInfo sourceInfo;
+
     protected JsNodeImpl() {
     }
 
     @Override
-    public String toString() {
-        TextOutputImpl out = new TextOutputImpl();
-        new JsToStringGenerationVisitor(out).accept(this);
-        return out.toString();
+    public SourceInfo getSourceInfo() {
+        return sourceInfo;
     }
 
     @Override
-    public SourceInfo getSourceInfo() {
-        return this;
-    }
-
-    public JsNode setSourceRef(SourceInfo info) {
-        if (info != null) {
-            setSourceInfo(info);
-        }
-        return this;
+    public void setSourceInfo(SourceInfo info) {
+        sourceInfo = info;
     }
 }

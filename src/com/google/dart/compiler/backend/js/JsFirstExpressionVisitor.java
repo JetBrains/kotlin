@@ -4,22 +4,8 @@
 
 package com.google.dart.compiler.backend.js;
 
-import com.google.dart.compiler.backend.js.ast.JsArrayAccess;
-import com.google.dart.compiler.backend.js.ast.JsArrayLiteral;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsConditional;
-import com.google.dart.compiler.backend.js.ast.JsContext;
-import com.google.dart.compiler.backend.js.ast.JsExprStmt;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsNew;
-import com.google.dart.compiler.backend.js.ast.JsObjectLiteral;
-import com.google.dart.compiler.backend.js.ast.JsPostfixOperation;
-import com.google.dart.compiler.backend.js.ast.JsPrefixOperation;
-import com.google.dart.compiler.backend.js.ast.JsRegExp;
-import com.google.dart.compiler.backend.js.ast.JsVisitor;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpressionStatement;
 
 /**
  * Determines if an expression statement needs to be surrounded by parentheses.
@@ -45,7 +31,7 @@ import com.google.dart.compiler.backend.js.ast.JsVisitor;
  * </ul>
  */
 public class JsFirstExpressionVisitor extends JsVisitor {
-    public static boolean exec(JsExprStmt statement) {
+    public static boolean exec(JsExpressionStatement statement) {
         JsExpression expression = statement.getExpression();
         // Pure function declarations do not need parentheses
         if (expression instanceof JsFunction) {

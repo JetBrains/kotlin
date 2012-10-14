@@ -1,9 +1,8 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.common.HasSourceInfo;
-import com.google.dart.compiler.common.SourceInfo;
 
-public interface JsExpression extends JsNode, SourceInfo, HasSourceInfo, JsVisitable {
+public interface JsExpression extends JsNode, HasSourceInfo, JsVisitable {
     /**
      * Determines whether the expression can cause side effects.
      */

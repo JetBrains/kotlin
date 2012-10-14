@@ -121,7 +121,7 @@ class JsPrecedenceVisitor extends JsVisitor {
   }
 
   @Override
-  public boolean visit(JsExprStmt x, JsContext ctx) {
+  public boolean visit(JsExpressionStatement x, JsContext ctx) {
     throw new RuntimeException("Only expressions have precedence.");
   }
 

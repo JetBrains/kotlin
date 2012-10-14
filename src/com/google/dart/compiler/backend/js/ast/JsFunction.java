@@ -4,7 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.common.SourceInfo;
 import com.google.dart.compiler.common.Symbol;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,7 @@ public final class JsFunction extends JsLiteral implements HasName {
 
     private JsFunction(JsScope parentScope, @Nullable JsName name) {
         this.name = name;
-        this.scope = new JsScope(parentScope, name == null ? null : name.getIdent());
+        scope = new JsScope(parentScope, name == null ? null : name.getIdent());
     }
 
     public JsBlock getBody() {
@@ -97,12 +96,6 @@ public final class JsFunction extends JsLiteral implements HasName {
             body = v.accept(body);
         }
         v.endVisit(this, context);
-    }
-
-    @Override
-    public JsFunction setSourceRef(SourceInfo info) {
-        super.setSourceRef(info);
-        return this;
     }
 
     @Override

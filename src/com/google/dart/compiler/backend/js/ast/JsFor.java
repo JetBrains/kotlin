@@ -4,8 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.common.SourceInfo;
-
 /**
  * A <code>for</code> statement. If specified at all, the initializer part is
  * either a declaration of one or more variables, in which case
@@ -84,12 +82,6 @@ public class JsFor extends JsNodeImpl implements JsStatement {
             body = v.accept(body);
         }
         v.endVisit(this, context);
-    }
-
-    @Override
-    public JsFor setSourceRef(SourceInfo info) {
-        super.setSourceRef(info);
-        return this;
     }
 
     @Override

@@ -145,7 +145,7 @@ public class JsVisitor {
     public void endVisit(JsEmpty x, JsContext ctx) {
     }
 
-    public void endVisit(JsExprStmt x, JsContext ctx) {
+    public void endVisit(JsExpressionStatement x, JsContext ctx) {
     }
 
     public void endVisit(JsFor x, JsContext ctx) {
@@ -285,7 +285,7 @@ public class JsVisitor {
         return true;
     }
 
-    public boolean visit(JsExprStmt x, JsContext ctx) {
+    public boolean visit(JsExpressionStatement x, JsContext ctx) {
         return true;
     }
 

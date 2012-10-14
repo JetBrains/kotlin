@@ -4,25 +4,8 @@
 
 package com.google.dart.compiler.backend.js;
 
-import com.google.dart.compiler.backend.js.ast.JsBlock;
-import com.google.dart.compiler.backend.js.ast.JsBreak;
-import com.google.dart.compiler.backend.js.ast.JsContext;
-import com.google.dart.compiler.backend.js.ast.JsDebugger;
-import com.google.dart.compiler.backend.js.ast.JsDoWhile;
-import com.google.dart.compiler.backend.js.ast.JsEmpty;
-import com.google.dart.compiler.backend.js.ast.JsExprStmt;
-import com.google.dart.compiler.backend.js.ast.JsFor;
-import com.google.dart.compiler.backend.js.ast.JsForIn;
-import com.google.dart.compiler.backend.js.ast.JsIf;
-import com.google.dart.compiler.backend.js.ast.JsLabel;
-import com.google.dart.compiler.backend.js.ast.JsReturn;
-import com.google.dart.compiler.backend.js.ast.JsStatement;
-import com.google.dart.compiler.backend.js.ast.JsSwitch;
-import com.google.dart.compiler.backend.js.ast.JsThrow;
-import com.google.dart.compiler.backend.js.ast.JsTry;
-import com.google.dart.compiler.backend.js.ast.JsVars;
-import com.google.dart.compiler.backend.js.ast.JsVisitor;
-import com.google.dart.compiler.backend.js.ast.JsWhile;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpressionStatement;
 
 /**
  * Determines if a statement at the end of a block requires a semicolon.
@@ -78,7 +61,7 @@ public class JsRequiresSemiVisitor extends JsVisitor {
   }
 
   @Override
-  public boolean visit(JsExprStmt x, JsContext ctx) {
+  public boolean visit(JsExpressionStatement x, JsContext ctx) {
     return false;
   }
 

@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * Abstracts the idea that a class can be traversed.
- */
 public interface JsVisitable {
   /**
    * Causes this object to have the visitor visit itself and its children.

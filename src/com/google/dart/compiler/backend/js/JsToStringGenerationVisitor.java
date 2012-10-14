@@ -459,7 +459,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public boolean visit(JsExprStmt x, JsContext ctx) {
+    public boolean visit(JsExpressionStatement x, JsContext ctx) {
         boolean surroundWithParentheses = JsFirstExpressionVisitor.exec(x);
         if (surroundWithParentheses) {
             leftParen();
@@ -1022,7 +1022,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                 * a newline instead of a semi.
                 */
                 boolean functionStmt =
-                        statement instanceof JsExprStmt && ((JsExprStmt) statement).getExpression() instanceof JsFunction;
+                        statement instanceof JsExpressionStatement && ((JsExpressionStatement) statement).getExpression() instanceof JsFunction;
                 /*
                 * Special treatment of the last statement in a block: only a few
                 * statements at the end of a block require semicolons.

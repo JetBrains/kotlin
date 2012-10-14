@@ -4,7 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.common.SourceInfo;
 import com.google.dart.compiler.common.Symbol;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.Nullable;
@@ -89,12 +88,6 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
                 }
             }
             v.endVisit(this, context);
-        }
-
-        @Override
-        public JsVar setSourceRef(SourceInfo info) {
-            super.setSourceRef(info);
-            return this;
         }
 
         @Override

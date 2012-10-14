@@ -4,23 +4,23 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public final class JsExprStmt extends JsNodeImpl implements JsStatement {
-    private JsExpression expr;
+import com.google.dart.compiler.common.SourceInfo;
 
-    public JsExprStmt(JsExpression expr) {
-        super();
-        this.expr = expr;
-        this.setSourceInfo(expr);
+public final class JsExpressionStatement extends AbstractNode implements JsStatement {
+    private JsExpression expression;
+
+    public JsExpressionStatement(JsExpression expression) {
+        this.expression = expression;
     }
 
     public JsExpression getExpression() {
-        return expr;
+        return expression;
     }
 
     @Override
     public void traverse(JsVisitor v, JsContext context) {
         if (v.visit(this, context)) {
-            expr = v.accept(expr);
+            expression = v.accept(expression);
         }
         v.endVisit(this, context);
     }
@@ -28,5 +28,15 @@ public final class JsExprStmt extends JsNodeImpl implements JsStatement {
     @Override
     public NodeKind getKind() {
         return NodeKind.EXPRESSION_STMT;
+    }
+
+    @Override
+    public SourceInfo getSourceInfo() {
+        return expression.getSourceInfo();
+    }
+
+    @Override
+    public void setSourceInfo(SourceInfo info) {
+        expression.setSourceInfo(info);
     }
 }
