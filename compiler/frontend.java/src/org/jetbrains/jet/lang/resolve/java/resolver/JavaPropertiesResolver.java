@@ -46,7 +46,7 @@ import java.util.*;
 public final class JavaPropertiesResolver {
 
     private JavaSemanticServices semanticServices;
-    private JavaDescriptorSignatureResolver javaDescriptorSignatureResolver;
+    private JavaSignatureResolver javaSignatureResolver;
     private BindingTrace trace;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassResolver classResolver;
@@ -65,8 +65,8 @@ public final class JavaPropertiesResolver {
     }
 
     @Inject
-    public void setJavaDescriptorSignatureResolver(JavaDescriptorSignatureResolver javaDescriptorSignatureResolver) {
-        this.javaDescriptorSignatureResolver = javaDescriptorSignatureResolver;
+    public void setJavaSignatureResolver(JavaSignatureResolver javaSignatureResolver) {
+        this.javaSignatureResolver = javaSignatureResolver;
     }
 
     @Inject
@@ -333,7 +333,7 @@ public final class JavaPropertiesResolver {
         // TODO: Can't get type parameters from field - only from accessors
         if (characteristicMember == members.setter || characteristicMember == members.getter) {
             PsiMethodWrapper method = (PsiMethodWrapper) characteristicMember.getMember();
-            return javaDescriptorSignatureResolver.resolveMethodTypeParameters(method, propertyDescriptor);
+            return javaSignatureResolver.resolveMethodTypeParameters(method, propertyDescriptor);
         }
 
         return Collections.emptyList();

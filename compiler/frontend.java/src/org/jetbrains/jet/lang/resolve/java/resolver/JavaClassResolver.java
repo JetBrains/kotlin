@@ -65,7 +65,7 @@ public final class JavaClassResolver {
 
     private BindingTrace trace;
     private JavaDescriptorResolver javaDescriptorResolver;
-    private JavaDescriptorSignatureResolver signatureResolver;
+    private JavaSignatureResolver signatureResolver;
     private JavaSemanticServices semanticServices;
     private JavaAnnotationResolver annotationResolver;
     private PsiClassFinder psiClassFinder;
@@ -87,7 +87,7 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setSignatureResolver(JavaDescriptorSignatureResolver signatureResolver) {
+    public void setSignatureResolver(JavaSignatureResolver signatureResolver) {
         this.signatureResolver = signatureResolver;
     }
 
@@ -217,7 +217,7 @@ public final class JavaClassResolver {
         classDescriptorCache.put(fqName, classData);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
-        List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
+        List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
                 = signatureResolver.createUninitializedClassTypeParameters(psiClass, classData);
 
         classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
@@ -251,10 +251,10 @@ public final class JavaClassResolver {
 
     @NotNull
     private static List<TypeParameterDescriptor> getTypeParametersDescriptors(
-            @NotNull List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
+            @NotNull List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
     ) {
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
-        for (JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization typeParameter : typeParameterDescriptorInitializations) {
+        for (JavaSignatureResolver.TypeParameterDescriptorInitialization typeParameter : typeParameterDescriptorInitializations) {
             typeParameters.add(typeParameter.getDescriptor());
         }
         return typeParameters;

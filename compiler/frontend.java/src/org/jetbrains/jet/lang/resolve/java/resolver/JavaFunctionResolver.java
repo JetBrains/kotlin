@@ -43,7 +43,7 @@ public final class JavaFunctionResolver {
 
     private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
-    private JavaDescriptorSignatureResolver signatureResolver;
+    private JavaSignatureResolver signatureResolver;
     private JavaValueParameterResolver parameterResolver;
     private JavaAnnotationResolver annotationResolver;
 
@@ -61,7 +61,7 @@ public final class JavaFunctionResolver {
     }
 
     @Inject
-    public void setSignatureResolver(JavaDescriptorSignatureResolver signatureResolver) {
+    public void setSignatureResolver(JavaSignatureResolver signatureResolver) {
         this.signatureResolver = signatureResolver;
     }
 
