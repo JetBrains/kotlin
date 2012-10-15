@@ -752,7 +752,7 @@ public abstract trait jet.List</*0*/ out E : jet.Any?> : jet.Collection<E> {
     public abstract override /*1*/ fun toArray(): jet.Array<jet.Any?>
     public abstract override /*1*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ a: jet.Array<out T>): jet.Array<T>
 }
-public abstract trait jet.ListIterator</*0*/ T : jet.Any?> : jet.Iterator<T> {
+public abstract trait jet.ListIterator</*0*/ out T : jet.Any?> : jet.Iterator<T> {
     public abstract override /*1*/ fun hasNext(): jet.Boolean
     public abstract fun hasPrevious(): jet.Boolean
     public abstract override /*1*/ fun next(): T

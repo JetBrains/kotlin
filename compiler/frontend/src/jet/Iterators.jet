@@ -75,7 +75,7 @@ public fun FloatIterator.iterator() : FloatIterator
 
 public fun LongIterator.iterator() : LongIterator
 
-public trait ListIterator<T> : Iterator<T> {
+public trait ListIterator<out T> : Iterator<T> {
     // Query Operations
     override fun hasNext() : Boolean
     override fun next() : T
