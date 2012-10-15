@@ -74,7 +74,7 @@ public final class JavaNamespaceResolver {
             return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
         }
 
-        ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(qualifiedName);
+        ResolverNamespaceData namespaceData = lookUpCache(qualifiedName);
         if (namespaceData != null) {
             return namespaceData.getNamespaceDescriptor();
         }
@@ -102,13 +102,17 @@ public final class JavaNamespaceResolver {
         return scopeData.getNamespaceDescriptor();
     }
 
+    private ResolverNamespaceData lookUpCache(FqName qualifiedName) {
+        return namespaceDescriptorCacheByFqn.get(qualifiedName);
+    }
+
     @Nullable
     public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
         return resolveNamespace(qualifiedName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     @Nullable
-    private NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {
+    private NamespaceDescriptorParent resolveParentNamespace(@NotNull FqName fqName) {
         if (fqName.isRoot()) {
             return FAKE_ROOT_MODULE;
         }
@@ -140,31 +144,29 @@ public final class JavaNamespaceResolver {
                 break lookingForPsi;
             }
 
-            ResolverNamespaceData oldValue =
-                    namespaceDescriptorCacheByFqn.put(fqName, ResolverNamespaceData.NEGATIVE);
-            if (oldValue != null) {
-                throw new IllegalStateException("rewrite at " + fqName);
-            }
+            cache(fqName, ResolverNamespaceData.NEGATIVE);
             return null;
         }
 
-        ResolverNamespaceData namespaceData =
-                new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
 
         namespaceData.setMemberScope(new JavaPackageScope(fqName, javaSemanticServices, namespaceData));
 
-        ResolverNamespaceData oldValue =
-                namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
-        if (oldValue != null) {
-            throw new IllegalStateException("rewrite at " + fqName);
-        }
+        cache(fqName, namespaceData);
 
         return namespaceData;
     }
 
+    private void cache(@NotNull FqName fqName, @NotNull ResolverNamespaceData namespaceData) {
+        ResolverNamespaceData oldValue = namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
+        if (oldValue != null) {
+            throw new IllegalStateException("rewrite at " + fqName);
+        }
+    }
+
     @Nullable
     public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        ResolverNamespaceData resolverNamespaceData = namespaceDescriptorCacheByFqn.get(fqName);
+        ResolverNamespaceData resolverNamespaceData = lookUpCache(fqName);
         if (resolverNamespaceData == null) {
             resolverNamespaceData = createNamespaceResolverScopeData(fqName, ns);
         }
