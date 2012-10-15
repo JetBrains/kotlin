@@ -47,7 +47,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     // File scopes - package scope extended with imports
     protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
 
-    public final Map<JetDeclarationContainer, WithDeferredResolve> forDeferredResolver = Maps.newHashMap();
+    public final Map<JetDeclarationContainer, DeclarationDescriptor> forDeferredResolver = Maps.newHashMap();
 
     public final Map<JetDeclarationContainer, JetScope> normalScope = Maps.newHashMap();
 

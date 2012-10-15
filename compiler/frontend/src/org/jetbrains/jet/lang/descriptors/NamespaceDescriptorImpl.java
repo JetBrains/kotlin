@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl implements WithDeferredResolve {
+public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
     private WritableScope memberScope;
 
@@ -101,15 +101,5 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
         }
 
         return builder;
-    }
-
-    @Override
-    public void forceResolve() {
-
-    }
-
-    @Override
-    public boolean isAlreadyResolved() {
-        return false;
     }
 }

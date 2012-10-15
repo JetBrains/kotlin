@@ -37,8 +37,7 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
-        implements WithDeferredResolve {
+public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     private List<AnnotationDescriptor> annotations = Lists.newArrayList();
 
@@ -66,16 +65,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase
                                       @NotNull ClassKind kind) {
         this.containingDeclaration = containingDeclaration;
         this.kind = kind;
-    }
-
-    @Override
-    public void forceResolve() {
-
-    }
-
-    @Override
-    public boolean isAlreadyResolved() {
-        return false;
     }
 
     @NotNull

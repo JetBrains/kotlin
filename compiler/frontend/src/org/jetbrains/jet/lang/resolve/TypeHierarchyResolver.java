@@ -112,7 +112,7 @@ public class TypeHierarchyResolver {
                 JetDeclarationContainer declarationContainer = forDeferredResolve.poll();
                 assert declarationContainer != null;
 
-                WithDeferredResolve descriptorForDeferredResolve = context.forDeferredResolver.get(declarationContainer);
+                DeclarationDescriptor descriptorForDeferredResolve = context.forDeferredResolver.get(declarationContainer);
                 JetScope scope = context.normalScope.get(declarationContainer);
 
                 // Even more temp code
@@ -668,12 +668,12 @@ public class TypeHierarchyResolver {
 
         private void prepareForDeferredCall(
                 @NotNull JetScope outerScope,
-                @NotNull WithDeferredResolve withDeferredResolve,
+                @NotNull DeclarationDescriptor descriptorForDeferredResolve,
                 @NotNull JetDeclarationContainer container
         ) {
             forDeferredResolve.add(container);
             context.normalScope.put(container, outerScope);
-            context.forDeferredResolver.put(container, withDeferredResolve);
+            context.forDeferredResolver.put(container, descriptorForDeferredResolve);
         }
 
         @Nullable
