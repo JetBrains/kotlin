@@ -123,11 +123,9 @@ public final class JavaClassResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        List<Runnable> tasks = Lists.newArrayList();
-        ClassDescriptor clazz = resolveClass(qualifiedName, searchRule, tasks);
-        for (Runnable task : tasks) {
-            task.run();
-        }
+        PostponedTasks postponedTasks = new PostponedTasks();
+        ClassDescriptor clazz = resolveClass(qualifiedName, searchRule, postponedTasks);
+        postponedTasks.performTasks();
         return clazz;
     }
 
@@ -135,7 +133,7 @@ public final class JavaClassResolver {
     public ClassDescriptor resolveClass(
             @NotNull FqName qualifiedName,
             @NotNull DescriptorSearchRule searchRule,
-            @NotNull List<Runnable> tasks
+            @NotNull PostponedTasks tasks
     ) {
         if (isTraitImplementation(qualifiedName)) {
             return null;
@@ -162,7 +160,7 @@ public final class JavaClassResolver {
     }
 
     @Nullable
-    private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, List<Runnable> tasks) {
+    private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
         PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
         if (psiClass == null) {
             cacheValue(qualifiedName);
@@ -187,7 +185,7 @@ public final class JavaClassResolver {
     @NotNull
     private ResolverClassData createJavaClassDescriptor(
             @NotNull FqName fqName, @NotNull final PsiClass psiClass,
-            List<Runnable> taskList
+            @NotNull PostponedTasks taskList
     ) {
 
         checkFqNamesAreConsistent(psiClass, fqName);
@@ -207,7 +205,7 @@ public final class JavaClassResolver {
     private ResolverClassData doCreateClassDescriptor(
             @NotNull FqName fqName,
             @NotNull PsiClass psiClass,
-            @NotNull List<Runnable> taskList,
+            @NotNull PostponedTasks taskList,
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);

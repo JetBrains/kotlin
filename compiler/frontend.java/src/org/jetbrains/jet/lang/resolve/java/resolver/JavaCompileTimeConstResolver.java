@@ -59,29 +59,29 @@ public final class JavaCompileTimeConstResolver {
     @Nullable
     public CompileTimeConstant<?> getCompileTimeConstFromExpression(
             FqName annotationFqName, Name parameterName,
-            PsiAnnotationMemberValue value, List<Runnable> taskList
+            PsiAnnotationMemberValue value, PostponedTasks postponedTasks
     ) {
         if (value instanceof PsiLiteralExpression) {
             return getCompileTimeConstFromLiteralExpression((PsiLiteralExpression) value);
         }
         // Enum
         else if (value instanceof PsiReferenceExpression) {
-            return getCompileTimeConstFromReferenceExpression((PsiReferenceExpression) value, taskList);
+            return getCompileTimeConstFromReferenceExpression((PsiReferenceExpression) value, postponedTasks);
         }
         // Array
         else if (value instanceof PsiArrayInitializerMemberValue) {
             return getCompileTimeConstFromArrayExpression(annotationFqName, parameterName, (PsiArrayInitializerMemberValue) value,
-                                                          taskList);
+                                                          postponedTasks);
         }
         // Annotation
         else if (value instanceof PsiAnnotation) {
-            return getCompileTimeConstFromAnnotation((PsiAnnotation) value, taskList);
+            return getCompileTimeConstFromAnnotation((PsiAnnotation) value, postponedTasks);
         }
         return null;
     }
 
     @Nullable
-    private CompileTimeConstant<?> getCompileTimeConstFromAnnotation(PsiAnnotation value, List<Runnable> taskList) {
+    private CompileTimeConstant<?> getCompileTimeConstFromAnnotation(PsiAnnotation value, PostponedTasks taskList) {
         AnnotationDescriptor annotationDescriptor = annotationResolver.resolveAnnotation(value, taskList);
         if (annotationDescriptor != null) {
             return new AnnotationValue(annotationDescriptor);
@@ -93,7 +93,7 @@ public final class JavaCompileTimeConstResolver {
     private CompileTimeConstant<?> getCompileTimeConstFromArrayExpression(
             FqName annotationFqName,
             Name valueName, PsiArrayInitializerMemberValue value,
-            List<Runnable> taskList
+            PostponedTasks taskList
     ) {
         PsiAnnotationMemberValue[] initializers = value.getInitializers();
         List<CompileTimeConstant<?>> values = getCompileTimeConstantForArrayValues(annotationFqName, valueName, taskList, initializers);
@@ -101,6 +101,7 @@ public final class JavaCompileTimeConstResolver {
         ClassDescriptor classDescriptor =
                 classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
 
+        //TODO: nullability issues
         ValueParameterDescriptor valueParameterDescriptor =
                 DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(valueName, classDescriptor);
         if (valueParameterDescriptor == null) {
@@ -113,7 +114,7 @@ public final class JavaCompileTimeConstResolver {
     private List<CompileTimeConstant<?>> getCompileTimeConstantForArrayValues(
             FqName annotationQualifiedName,
             Name valueName,
-            List<Runnable> taskList,
+            PostponedTasks taskList,
             PsiAnnotationMemberValue[] initializers
     ) {
         List<CompileTimeConstant<?>> values = new ArrayList<CompileTimeConstant<?>>();
@@ -129,7 +130,7 @@ public final class JavaCompileTimeConstResolver {
     }
 
     @Nullable
-    private CompileTimeConstant<?> getCompileTimeConstFromReferenceExpression(PsiReferenceExpression value, List<Runnable> taskList) {
+    private CompileTimeConstant<?> getCompileTimeConstFromReferenceExpression(PsiReferenceExpression value, PostponedTasks taskList) {
         PsiElement resolveElement = value.resolve();
         if (resolveElement instanceof PsiEnumConstant) {
             PsiElement psiElement = resolveElement.getParent();

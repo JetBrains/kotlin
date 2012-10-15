@@ -135,8 +135,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(FqName name, DescriptorSearchRule searchRule, List<Runnable> list) {
-        return classResolver.resolveClass(name, searchRule, list);
+    public ClassDescriptor resolveClass(@NotNull FqName name, @NotNull DescriptorSearchRule searchRule, @NotNull PostponedTasks tasks) {
+        return classResolver.resolveClass(name, searchRule, tasks);
     }
 
     public static class ValueParameterDescriptors {

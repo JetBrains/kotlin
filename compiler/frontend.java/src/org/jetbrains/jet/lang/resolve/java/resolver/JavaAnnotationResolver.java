@@ -53,7 +53,8 @@ public final class JavaAnnotationResolver {
         this.compileTimeConstResolver = compileTimeConstResolver;
     }
 
-    public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
+    @NotNull
+    public List<AnnotationDescriptor> resolveAnnotations(@NotNull PsiModifierListOwner owner, @NotNull PostponedTasks tasks) {
         PsiAnnotation[] psiAnnotations = getAllAnnotations(owner);
         List<AnnotationDescriptor> r = Lists.newArrayListWithCapacity(psiAnnotations.length);
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
@@ -65,17 +66,16 @@ public final class JavaAnnotationResolver {
         return r;
     }
 
-    public List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
-        List<Runnable> tasks = Lists.newArrayList();
-        List<AnnotationDescriptor> annotations = resolveAnnotations(owner, tasks);
-        for (Runnable task : tasks) {
-            task.run();
-        }
+    @NotNull
+    public List<AnnotationDescriptor> resolveAnnotations(@NotNull PsiModifierListOwner owner) {
+        PostponedTasks postponedTasks = new PostponedTasks();
+        List<AnnotationDescriptor> annotations = resolveAnnotations(owner, postponedTasks);
+        postponedTasks.performTasks();
         return annotations;
     }
 
     @Nullable
-    public AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
+    public AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull PostponedTasks postponedTasks) {
         final AnnotationDescriptor annotation = new AnnotationDescriptor();
         String qname = psiAnnotation.getQualifiedName();
         if (qname == null) {
@@ -88,16 +88,16 @@ public final class JavaAnnotationResolver {
         }
 
         FqName annotationFqName = new FqName(qname);
-        final ClassDescriptor clazz =
-                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
-        if (clazz == null) {
+        final ClassDescriptor annotationClass =
+                classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, postponedTasks);
+        if (annotationClass == null) {
             return null;
         }
 
-        taskList.add(new Runnable() {
+        postponedTasks.addTask(new Runnable() {
             @Override
             public void run() {
-                annotation.setAnnotationType(clazz.getDefaultType());
+                annotation.setAnnotationType(annotationClass.getDefaultType());
             }
         });
 
@@ -111,10 +111,10 @@ public final class JavaAnnotationResolver {
 
             assert value != null;
             CompileTimeConstant compileTimeConst =
-                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, taskList);
+                    compileTimeConstResolver.getCompileTimeConstFromExpression(annotationFqName, identifier, value, postponedTasks);
             if (compileTimeConst != null) {
                 ValueParameterDescriptor valueParameterDescriptor =
-                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(identifier, clazz);
+                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(identifier, annotationClass);
                 if (valueParameterDescriptor != null) {
                     annotation.setValueArgument(valueParameterDescriptor, compileTimeConst);
                 }
