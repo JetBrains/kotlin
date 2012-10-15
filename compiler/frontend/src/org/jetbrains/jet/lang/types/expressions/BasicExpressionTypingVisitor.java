@@ -73,7 +73,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // TODO : type substitutions???
         JetTypeInfo typeInfo = getSelectorReturnTypeInfo(NO_RECEIVER, null, expression, context);
         JetType type = DataFlowUtils.checkType(typeInfo.getType(), expression, context);
-        ExpressionTypingUtils.checkWrappingInRef(expression, context);
+        ExpressionTypingUtils.checkWrappingInRef(expression, context.trace, context.scope);
         return JetTypeInfo.create(type, typeInfo.getDataFlowInfo()); // TODO : Extensions to this
     }
 

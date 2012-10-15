@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -148,6 +149,8 @@ public class CallResolver {
         if (calleeExpression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
             functionReference = expression;
+
+            ExpressionTypingUtils.checkWrappingInRef(expression, context.trace, context.scope);
 
             Name name = expression.getReferencedNameAsName();
             if (name == null) return checkArgumentTypesAndFail(context);
