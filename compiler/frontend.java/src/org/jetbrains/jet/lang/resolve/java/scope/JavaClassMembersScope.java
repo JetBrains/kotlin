@@ -23,16 +23,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Class static of instance members.
@@ -68,17 +67,6 @@ public class JavaClassMembersScope extends JavaBaseScope {
         return classifierDescriptor;
     }
 
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
-        return Collections.emptySet();
-    }
-
     private ClassifierDescriptor doGetClassifierDescriptor(Name name) {
         // TODO : suboptimal, walk the list only once
         for (PsiClass innerClass : resolverScopeData.getPsiClass().getAllInnerClasses()) {
@@ -92,21 +80,5 @@ public class JavaClassMembersScope extends JavaBaseScope {
             }
         }
         return null;
-    }
-
-    @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public ReceiverDescriptor getImplicitReceiver() {
-        return ReceiverDescriptor.NO_RECEIVER; // Should never occur, we don't sit in a Java class...
-    }
-
-    @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
-        // we cannot really be scoped inside here
     }
 }

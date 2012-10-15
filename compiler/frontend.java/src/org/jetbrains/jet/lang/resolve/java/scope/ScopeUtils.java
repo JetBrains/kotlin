@@ -37,7 +37,7 @@ public final class ScopeUtils {
     }
 
     @NotNull
-    static Collection<DeclarationDescriptor> computeAllPackageDeclarations(
+    public static Collection<DeclarationDescriptor> computeAllPackageDeclarations(
             PsiPackage psiPackage,
             JavaSemanticServices javaSemanticServices,
             FqName packageFqName
@@ -81,7 +81,7 @@ public final class ScopeUtils {
     }
 
     @NotNull
-    static Collection<DeclarationDescriptor> computeAllClassDeclarations(
+    public static Collection<DeclarationDescriptor> computeAllClassDeclarations(
             @NotNull PsiClass psiClass,
             @NotNull JavaSemanticServices javaSemanticServices,
             @NotNull ResolverScopeData scopeData,
