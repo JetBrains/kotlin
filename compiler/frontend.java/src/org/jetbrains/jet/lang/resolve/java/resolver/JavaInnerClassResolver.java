@@ -45,11 +45,17 @@ public final class JavaInnerClassResolver {
         this.classResolver = classResolver;
     }
 
-    public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
+    @NotNull
+    public List<ClassDescriptor> resolveInnerClasses(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass, boolean staticMembers) {
         if (staticMembers) {
             return resolveInnerClassesOfClassObject(owner, psiClass);
         }
 
+        return resolveInnerClasses(owner, psiClass);
+    }
+
+    @NotNull
+    private List<ClassDescriptor> resolveInnerClasses(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass) {
         PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
         for (PsiClass innerPsiClass : innerPsiClasses) {
@@ -69,14 +75,14 @@ public final class JavaInnerClassResolver {
                 || DescriptorResolverUtils.isInnerEnum(innerPsiClass, owner);
     }
 
-    private List<ClassDescriptor> resolveInnerClassesOfClassObject(DeclarationDescriptor owner, PsiClass psiClass) {
-        if (!DescriptorUtils.isClassObject(owner)) {
+    private List<ClassDescriptor> resolveInnerClassesOfClassObject(@NotNull DeclarationDescriptor classObject, @NotNull PsiClass psiClass) {
+        if (!DescriptorUtils.isClassObject(classObject)) {
             return Collections.emptyList();
         }
 
         List<ClassDescriptor> result = Lists.newArrayList();
         // If we're a class object, inner enums of our parent need to be put into us
-        DeclarationDescriptor containingDeclaration = owner.getContainingDeclaration();
+        DeclarationDescriptor containingDeclaration = classObject.getContainingDeclaration();
         for (PsiClass innerPsiClass : psiClass.getInnerClasses()) {
             if (DescriptorResolverUtils.isInnerEnum(innerPsiClass, containingDeclaration)) {
                 ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
@@ -86,6 +92,7 @@ public final class JavaInnerClassResolver {
         return result;
     }
 
+    @NotNull
     private ClassDescriptor resolveInnerClass(@NotNull PsiClass innerPsiClass) {
         String name = innerPsiClass.getQualifiedName();
         assert name != null : "Inner class has no qualified name";
