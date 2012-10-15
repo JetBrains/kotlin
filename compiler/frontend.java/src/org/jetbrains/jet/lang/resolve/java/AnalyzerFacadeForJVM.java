@@ -136,7 +136,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull
             @Override
             public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-                return PlatformToKotlinClassMap.EMPTY;
+                return JavaToKotlinClassMap.getInstance();
             }
         };
 
