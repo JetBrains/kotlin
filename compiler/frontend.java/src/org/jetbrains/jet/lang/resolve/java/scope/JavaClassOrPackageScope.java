@@ -47,7 +47,8 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     protected JavaClassOrPackageScope(
             @NotNull JavaSemanticServices semanticServices,
-            @NotNull ResolverScopeData resolverScopeData) {
+            @NotNull ResolverScopeData resolverScopeData
+    ) {
         this.semanticServices = semanticServices;
         this.resolverScopeData = resolverScopeData;
     }
@@ -73,68 +74,93 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
+        if (allDescriptors != null) {
+            return allDescriptors;
+        }
 
-            if (resolverScopeData.getPsiClass() != null) {
+        allDescriptors = Sets.newHashSet();
 
-                ProgressIndicatorProvider.checkCanceled();
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
+        PsiClass psiClass = resolverScopeData.getPsiClass();
+        if (psiClass != null) {
+            allDescriptors.addAll(computeAllClassDeclarations(psiClass, semanticServices, resolverScopeData, getContainingDeclaration()));
+        }
 
-                ProgressIndicatorProvider.checkCanceled();
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
-
-                // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
-                if (getContainingDeclaration() instanceof JavaNamespaceDescriptor) {
-                    allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                            resolverScopeData.getClassOrNamespaceDescriptor(), resolverScopeData.getPsiClass(), false));
-                }
-                else {
-                    allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                            resolverScopeData.getClassOrNamespaceDescriptor(), resolverScopeData.getPsiClass(),
-                            resolverScopeData.isStaticMembers()));
-                }
-            }
-
-            if (resolverScopeData.getPsiPackage() != null) {
-                FqName packageFqName = resolverScopeData.getFqName();
-                boolean isKotlinNamespace = packageFqName != null && semanticServices.getKotlinNamespaceDescriptor(packageFqName) != null;
-                final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
-
-                for (PsiPackage psiSubPackage : resolverScopeData.getPsiPackage().getSubPackages()) {
-                    NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(
-                            new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                    if (childNs != null) {
-                        allDescriptors.add(childNs);
-                    }
-                }
-
-                for (PsiClass psiClass : resolverScopeData.getPsiPackage().getClasses()) {
-                    if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        continue;
-                    }
-
-                    if (psiClass instanceof JetJavaMirrorMarker) {
-                        continue;
-                    }
-
-                    // TODO: Temp hack for collection function descriptors from java
-                    if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        continue;
-                    }
-
-                    if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
-                        ProgressIndicatorProvider.checkCanceled();
-                        ClassDescriptor classDescriptor = descriptorResolver
-                                .resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                        if (classDescriptor != null) {
-                            allDescriptors.add(classDescriptor);
-                        }
-                    }
-                }
-            }
+        PsiPackage psiPackage = resolverScopeData.getPsiPackage();
+        if (psiPackage != null) {
+            allDescriptors.addAll(computeAllPackageDeclarations(psiPackage, semanticServices, resolverScopeData.getFqName()));
         }
 
         return allDescriptors;
+    }
+
+    @NotNull
+    private static Collection<DeclarationDescriptor> computeAllPackageDeclarations(
+            PsiPackage psiPackage,
+            JavaSemanticServices javaSemanticServices,
+            FqName packageFqName
+    ) {
+        Collection<DeclarationDescriptor> result = Sets.newHashSet();
+        boolean isKotlinNamespace = packageFqName != null && javaSemanticServices.getKotlinNamespaceDescriptor(packageFqName) != null;
+        final JavaDescriptorResolver descriptorResolver = javaSemanticServices.getDescriptorResolver();
+
+        for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
+            NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(
+                    new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+            if (childNs != null) {
+                result.add(childNs);
+            }
+        }
+
+        for (PsiClass psiClass : psiPackage.getClasses()) {
+            if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+                continue;
+            }
+
+            if (psiClass instanceof JetJavaMirrorMarker) {
+                continue;
+            }
+
+            // TODO: Temp hack for collection function descriptors from java
+            if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+                continue;
+            }
+
+            if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
+                ProgressIndicatorProvider.checkCanceled();
+                ClassDescriptor classDescriptor = descriptorResolver
+                        .resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                if (classDescriptor != null) {
+                    result.add(classDescriptor);
+                }
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    private static Collection<DeclarationDescriptor> computeAllClassDeclarations(
+            @NotNull PsiClass psiClass,
+            @NotNull JavaSemanticServices javaSemanticServices,
+            @NotNull ResolverScopeData scopeData,
+            @NotNull DeclarationDescriptor containingDeclaration
+    ) {
+        Collection<DeclarationDescriptor> result = Sets.newHashSet();
+        ProgressIndicatorProvider.checkCanceled();
+        result.addAll(javaSemanticServices.getDescriptorResolver().resolveMethods(scopeData));
+
+        ProgressIndicatorProvider.checkCanceled();
+        result.addAll(javaSemanticServices.getDescriptorResolver().resolveFieldGroup(scopeData));
+
+        // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
+        if (containingDeclaration instanceof JavaNamespaceDescriptor) {
+            result.addAll(javaSemanticServices.getDescriptorResolver().resolveInnerClasses(
+                    scopeData.getClassOrNamespaceDescriptor(), psiClass, false));
+        }
+        else {
+            result.addAll(javaSemanticServices.getDescriptorResolver().resolveInnerClasses(
+                    scopeData.getClassOrNamespaceDescriptor(), psiClass,
+                    scopeData.isStaticMembers()));
+        }
+        return result;
     }
 }
