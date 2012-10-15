@@ -155,7 +155,9 @@ public final class JavaSupertypesResolver {
                 result.add(object.getDefaultType());
             }
             else {
-                throw new IllegalStateException("Could not resolve java.lang.Object");
+                //TODO: hack here
+                result.add(JetStandardClasses.getAnyType());
+               // throw new IllegalStateException("Could not resolve java.lang.Object");
             }
         }
     }
