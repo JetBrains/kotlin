@@ -28,10 +28,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.Collection;
 
-/**
- * @author Stepan Koltsov
- */
-public abstract class JavaClassOrPackageScope extends JetScopeImpl {
+public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     protected final JavaSemanticServices semanticServices;
@@ -41,7 +38,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     // cache
     private Collection<DeclarationDescriptor> allDescriptors;
 
-    protected JavaClassOrPackageScope(
+    protected JavaBaseScope(
             @NotNull JavaSemanticServices semanticServices,
             @NotNull ResolverScopeData resolverScopeData
     ) {

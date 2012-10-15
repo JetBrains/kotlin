@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 /**
  * @author abreslav
  */
-public class JavaPackageScope extends JavaClassOrPackageScope {
+public class JavaPackageScope extends JavaBaseScope {
 
     @NotNull
     private final FqName packageFQN;

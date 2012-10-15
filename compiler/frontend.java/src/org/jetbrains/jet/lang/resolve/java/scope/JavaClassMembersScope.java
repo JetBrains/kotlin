@@ -39,7 +39,7 @@ import java.util.*;
  *
  * @author abreslav
  */
-public class JavaClassMembersScope extends JavaClassOrPackageScope {
+public class JavaClassMembersScope extends JavaBaseScope {
     private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
 
     public JavaClassMembersScope(
