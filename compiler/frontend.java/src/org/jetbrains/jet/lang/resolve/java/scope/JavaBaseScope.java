@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
@@ -28,6 +29,9 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
 import java.util.Collection;
 
+import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllClassDeclarations;
+import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllPackageDeclarations;
+
 public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
@@ -35,8 +39,8 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     protected final ResolverScopeData resolverScopeData;
 
-    // cache
-    private Collection<DeclarationDescriptor> allDescriptors;
+    @Nullable
+    private Collection<DeclarationDescriptor> allDescriptors = null;
 
     protected JavaBaseScope(
             @NotNull JavaSemanticServices semanticServices,
@@ -71,19 +75,23 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             return allDescriptors;
         }
 
-        allDescriptors = Sets.newHashSet();
+        allDescriptors = computeAllDescriptors();
 
+        return allDescriptors;
+    }
+
+    @NotNull
+    private Collection<DeclarationDescriptor> computeAllDescriptors() {
+        Collection<DeclarationDescriptor> result = Sets.newHashSet();
         PsiClass psiClass = resolverScopeData.getPsiClass();
         if (psiClass != null) {
-            allDescriptors.addAll(
-                    ScopeUtils.computeAllClassDeclarations(psiClass, semanticServices, resolverScopeData, getContainingDeclaration()));
+            result.addAll(computeAllClassDeclarations(psiClass, semanticServices, resolverScopeData, getContainingDeclaration()));
         }
 
         PsiPackage psiPackage = resolverScopeData.getPsiPackage();
         if (psiPackage != null) {
-            allDescriptors.addAll(ScopeUtils.computeAllPackageDeclarations(psiPackage, semanticServices, resolverScopeData.getFqName()));
+            result.addAll(computeAllPackageDeclarations(psiPackage, semanticServices, resolverScopeData.getFqName()));
         }
-
-        return allDescriptors;
+        return result;
     }
 }
