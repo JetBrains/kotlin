@@ -60,8 +60,8 @@ public class DefaultErrorMessages {
 
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", TO_STRING);
 
-        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'' in ''{1}''", NAME, NAME);
-        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'' in ''{1}''", NAME, NAME);
+        MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
+        MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", NAME);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", NAME);

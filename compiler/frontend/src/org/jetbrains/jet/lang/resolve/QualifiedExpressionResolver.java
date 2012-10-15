@@ -420,7 +420,7 @@ public class QualifiedExpressionResolver {
             @NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope scopeToCheckVisibility) {
 
         if (!Visibilities.isVisible(descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
-            trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.getContainingDeclaration()));
+            trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.getVisibility(), descriptor.getContainingDeclaration()));
         }
     }
 
