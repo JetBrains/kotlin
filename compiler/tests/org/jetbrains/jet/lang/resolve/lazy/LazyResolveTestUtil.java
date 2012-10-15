@@ -90,7 +90,6 @@ public class LazyResolveTestUtil {
             }
         });
 
-        //ModuleConfiguration moduleConfiguration = getEagerInjectorForTopDownAnalyzer().getModuleConfiguration();
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
             @Override
             public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
