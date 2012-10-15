@@ -36,7 +36,7 @@ which will build the binaries of the compiler and put them into the 'dist' direc
 
 Maven distribution is built separately, run
 
-    mvn install
+    mvn package
 
 from 'libraries' directory after building the compiler.
 
