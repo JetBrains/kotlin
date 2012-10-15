@@ -42,6 +42,9 @@ LOG=/tmp/kotlin-build-`date +%Y%m%d-%H%M%S`.log
 echo "*** Writing build log to $LOG"
 
 (
+export MAVEN_OPTS=-Xmx1024m
+export ANT_OPTS=-Xmx1024m
+
 set -x -e
 
 rm -rfv ~/.m2/repository/org/jetbrains/kotlin
