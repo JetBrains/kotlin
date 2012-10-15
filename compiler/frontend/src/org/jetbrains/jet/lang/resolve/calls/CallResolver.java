@@ -378,9 +378,7 @@ public class CallResolver {
 
 
         if (!constraintSystem.isSuccessful()) {
-            if (constraintSystemWithoutExpectedTypeConstraint.isSuccessful()) {
-                resolvedCall.setResultingSubstitutor(constraintSystemWithoutExpectedTypeConstraint.getResultingSubstitutor());
-            }
+            resolvedCall.setResultingSubstitutor(constraintSystemWithoutExpectedTypeConstraint.getResultingSubstitutor());
             List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, resolvedCall.getTrace()).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
             context.tracing.typeInferenceFailed(resolvedCall.getTrace(),

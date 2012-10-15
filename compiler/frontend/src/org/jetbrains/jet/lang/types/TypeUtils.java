@@ -472,4 +472,14 @@ public class TypeUtils {
         }
         return false;
     }
+
+    public static boolean identityEqualsOrContainsAsArgument(@Nullable JetType type, @NotNull JetType argumentType) {
+        if (type == null) return false;
+        if (type == argumentType) return true;
+        if (type instanceof NamespaceType) return false;
+        for (TypeProjection projection : type.getArguments()) {
+            if (identityEqualsOrContainsAsArgument(projection.getType(), argumentType)) return true;
+        }
+        return false;
+    }
 }
