@@ -91,7 +91,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     }
 
     private static FqName getJavaClassFqName(@NotNull Class<?> javaClass) {
-        return new FqName(javaClass.getName().replace("$", "."));
+        return new FqName(javaClass.getName().replace('$', '.'));
     }
 
     @Override
