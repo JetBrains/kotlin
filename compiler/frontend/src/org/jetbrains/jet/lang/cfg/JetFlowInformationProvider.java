@@ -255,10 +255,12 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private boolean checkValReassignment(@NotNull VariableDescriptor variableDescriptor,
-                                         @NotNull JetExpression expression,
-                                         @NotNull VariableInitState enterInitState,
-                                         @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated) {
+    private boolean checkValReassignment(
+            @NotNull VariableDescriptor variableDescriptor,
+            @NotNull JetExpression expression,
+            @NotNull VariableInitState enterInitState,
+            @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated
+    ) {
         boolean isInitializedNotHere = enterInitState.isInitialized;
         if (expression.getParent() instanceof JetProperty && ((JetProperty)expression).getInitializer() != null) {
             isInitializedNotHere = false;
@@ -266,6 +268,14 @@ public class JetFlowInformationProvider {
         boolean hasBackingField = true;
         if (variableDescriptor instanceof PropertyDescriptor) {
             hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor);
+        }
+        if (variableDescriptor.isVar() && variableDescriptor instanceof PropertyDescriptor) {
+            DeclarationDescriptor descriptor = BindingContextUtils.getEnclosingDescriptor(trace.getBindingContext(), expression);
+            PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) variableDescriptor).getSetter();
+            if (Visibilities.isVisible(variableDescriptor, descriptor) && !Visibilities.isVisible(setterDescriptor, descriptor) && setterDescriptor != null) {
+                trace.report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.getVisibility(), variableDescriptor.getContainingDeclaration()));
+                return true;
+            }
         }
         if ((isInitializedNotHere || !hasBackingField) && !variableDescriptor.isVar() && !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
             boolean hasReassignMethodReturningUnit = false;
@@ -365,9 +375,7 @@ public class JetFlowInformationProvider {
         }
         if (insideSelfAccessors) return false;
 
-        JetNamedDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
-        DeclarationDescriptor declarationDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, parentDeclaration);
-        if (declarationDescriptor == null) return false;
+        DeclarationDescriptor declarationDescriptor = BindingContextUtils.getEnclosingDescriptor(trace.getBindingContext(), element);
 
         DeclarationDescriptor containingDeclaration = variableDescriptor.getContainingDeclaration();
         if ((containingDeclaration instanceof ClassDescriptor) && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {

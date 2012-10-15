@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
 /**
  * @author abreslav
@@ -225,5 +228,16 @@ public class BindingContextUtils {
             throw new IllegalStateException(messageIfNull);
         }
         return value;
+    }
+
+    @NotNull
+    public static DeclarationDescriptor getEnclosingDescriptor(@NotNull BindingContext context, @NotNull JetElement element) {
+        JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
+        if (declaration instanceof JetFunctionLiteral) {
+            return getEnclosingDescriptor(context, declaration);
+        }
+        DeclarationDescriptor descriptor = context.get(DECLARATION_TO_DESCRIPTOR, declaration);
+        assert descriptor != null : "No descriptor for named declaration: " + declaration.getText() + "\n(of type " + declaration.getClass() + ")";
+        return descriptor;
     }
 }

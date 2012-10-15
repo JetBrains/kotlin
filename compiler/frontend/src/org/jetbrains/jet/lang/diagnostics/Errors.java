@@ -173,6 +173,7 @@ public interface Errors {
     SimpleDiagnosticFactory<JetFunctionLiteralExpression> UNUSED_FUNCTION_LITERAL = SimpleDiagnosticFactory.create(WARNING);
 
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> VAL_REASSIGNMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory3<JetExpression, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_SETTER = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_BEFORE_DECLARATION = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> VARIABLE_EXPECTED = SimpleDiagnosticFactory.create(ERROR);
 
