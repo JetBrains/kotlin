@@ -252,7 +252,9 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private static List<TypeParameterDescriptor> getTypeParametersDescriptors(List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations) {
+    private static List<TypeParameterDescriptor> getTypeParametersDescriptors(
+            @NotNull List<JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
+    ) {
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         for (JavaDescriptorSignatureResolver.TypeParameterDescriptorInitialization typeParameter : typeParameterDescriptorInitializations) {
             typeParameters.add(typeParameter.getDescriptor());
@@ -283,48 +285,66 @@ public final class JavaClassResolver {
 
     @NotNull
     private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
-        final String qualifiedName = psiClass.getQualifiedName();
-        assert qualifiedName != null;
-        FqName fqName = new FqName(qualifiedName);
-
-        PsiClass containingClass = psiClass.getContainingClass();
-        if (containingClass != null) {
-            final String containingClassQualifiedName = containingClass.getQualifiedName();
-            assert containingClassQualifiedName != null;
-            FqName containerFqName = new FqName(containingClassQualifiedName);
-            ClassDescriptor clazz = resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
-            if (clazz == null) {
-                throw new IllegalStateException(
-                        "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
-            }
-            if (DescriptorResolverUtils.isInnerEnum(psiClass, clazz) && DescriptorResolverUtils.isKotlinClass(psiClass)) {
-                ClassDescriptor classObjectDescriptor = clazz.getClassObjectDescriptor();
-                if (classObjectDescriptor == null) {
-                    throw new IllegalStateException("Class object for a class with inner enum should've been created earlier: " + clazz);
-                }
-                return classObjectDescriptor;
-            }
-            return clazz;
+        if (isContainedInClass(psiClass)) {
+            return resolveParentClass(psiClass);
         }
-
-        NamespaceDescriptor ns = namespaceResolver.resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
-        if (ns == null) {
-            throw new IllegalStateException("cannot resolve namespace " + fqName.parent() + ", required to be container for " + fqName);
+        else {
+            return resolveParentNamespace(psiClass);
         }
-        return ns;
     }
 
+    @NotNull
+    private static FqName getFqName(@NotNull PsiClass psiClass) {
+        final String qualifiedName = psiClass.getQualifiedName();
+        assert qualifiedName != null;
+        return new FqName(qualifiedName);
+    }
+
+    private static boolean isContainedInClass(@NotNull PsiClass psiClass) {
+        return psiClass.getContainingClass() != null;
+    }
+
+    @NotNull
+    private ClassOrNamespaceDescriptor resolveParentClass(@NotNull PsiClass psiClass) {
+        PsiClass containingClass = psiClass.getContainingClass();
+        assert containingClass != null;
+        FqName containerFqName = getFqName(containingClass);
+        ClassDescriptor parentClass = resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+        if (parentClass == null) {
+            throw new IllegalStateException(
+                    "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + getFqName(psiClass));
+        }
+        if (DescriptorResolverUtils.isInnerEnum(psiClass, parentClass) && DescriptorResolverUtils.isKotlinClass(psiClass)) {
+            ClassDescriptor classObjectDescriptor = parentClass.getClassObjectDescriptor();
+            if (classObjectDescriptor == null) {
+                throw new IllegalStateException("Class object for a class with inner enum should've been created earlier: " + parentClass);
+            }
+            return classObjectDescriptor;
+        }
+        return parentClass;
+    }
+
+    @NotNull
+    private ClassOrNamespaceDescriptor resolveParentNamespace(@NotNull PsiClass psiClass) {
+        FqName namespaceFqName = getFqName(psiClass).parent();
+        NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(namespaceFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+        if (parentNamespace == null) {
+            throw new IllegalStateException("cannot resolve namespace " + namespaceFqName +
+                                            ", required to be container for " + getFqName(psiClass));
+        }
+        return parentNamespace;
+    }
+
+    @NotNull
     private static ClassKind getClassKind(@NotNull PsiClass psiClass, @NotNull JetClassAnnotation jetClassAnnotation) {
         if (psiClass.isInterface()) {
             return (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT);
         }
+        if (psiClass.isEnum()) {
+            return ClassKind.ENUM_CLASS;
+        }
         else {
-            if (psiClass.isEnum()) {
-                return ClassKind.ENUM_CLASS;
-            }
-            else {
-                return jetClassAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT ? ClassKind.OBJECT : ClassKind.CLASS;
-            }
+            return jetClassAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT ? ClassKind.OBJECT : ClassKind.CLASS;
         }
     }
 

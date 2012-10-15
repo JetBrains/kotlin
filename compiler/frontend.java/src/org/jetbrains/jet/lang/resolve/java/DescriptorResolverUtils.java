@@ -61,7 +61,7 @@ public final class DescriptorResolverUtils {
         return kind == ClassKind.CLASS || kind == ClassKind.TRAIT || kind == ClassKind.ENUM_CLASS;
     }
 
-    public static Collection<JetType> getSupertypes(ResolverScopeData scope) {
+    public static Collection<JetType> getSupertypes(@NotNull ResolverScopeData scope) {
         if (scope instanceof ResolverClassData) {
             return ((ResolverClassData) scope).getClassDescriptor().getSupertypes();
         }
@@ -88,7 +88,7 @@ public final class DescriptorResolverUtils {
     }
 
     public static Visibility resolveVisibility(
-            PsiModifierListOwner modifierListOwner,
+            @NotNull PsiModifierListOwner modifierListOwner,
             @Nullable PsiAnnotationWithFlags annotation
     ) {
         if (annotation != null) {
@@ -130,7 +130,7 @@ public final class DescriptorResolverUtils {
         }
     }
 
-    public static void checkPsiClassIsNotJet(PsiClass psiClass) {
+    public static void checkPsiClassIsNotJet(@Nullable PsiClass psiClass) {
         if (psiClass instanceof JetJavaMirrorMarker) {
             throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());
         }
