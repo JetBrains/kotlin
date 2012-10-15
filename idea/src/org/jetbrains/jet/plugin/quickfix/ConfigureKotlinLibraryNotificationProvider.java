@@ -257,11 +257,9 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
-        for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
-            if (root.findChild("pom.xml") != null) return true;
-        }
-
-        return false;
+        // This constant could be acquired from MavenProjectsManager, but we don't want to depend on the Maven plugin...
+        // See MavenProjectsManager.isMavenizedModule()
+        return "true".equals(module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule"));
     }
 
     private static class ChoosePathDialog extends DialogWrapper {
