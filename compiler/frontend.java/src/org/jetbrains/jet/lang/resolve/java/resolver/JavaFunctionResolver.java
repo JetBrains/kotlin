@@ -80,9 +80,6 @@ public final class JavaFunctionResolver {
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
             @NotNull ResolverScopeData scopeData
     ) {
-
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
-
         PsiType returnPsiType = method.getReturnType();
         if (returnPsiType == null) {
             return null;
@@ -224,9 +221,7 @@ public final class JavaFunctionResolver {
 
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, ResolverScopeData scopeData) {
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
-
-        Map<Name, NamedMembers> namedMembersMap = scopeData.getNamedMembersMap();
+        MembersByNameCache namedMembersMap = scopeData.getMembersCache();
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
         if (namedMembers != null) {
@@ -284,12 +279,9 @@ public final class JavaFunctionResolver {
     }
 
     public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
-
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
-
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
 
-        for (Map.Entry<Name, NamedMembers> entry : scopeData.getNamedMembersMap().entrySet()) {
+        for (Map.Entry<Name, NamedMembers> entry : scopeData.getMembersCache().entrySet()) {
             Name methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
             PsiClass psiClass = scopeData.getPsiClass();

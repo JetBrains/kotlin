@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
@@ -28,11 +29,41 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Stepan Koltsov
- */
-class JavaDescriptorResolverHelper {
-    private JavaDescriptorResolverHelper() {
+public final class MembersByNameCache {
+
+    @NotNull
+    private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
+
+    @Nullable
+    public NamedMembers get(@NotNull Name name) {
+        return namedMembersMap.get(name);
+    }
+
+    public Iterable<? extends Map.Entry<Name, NamedMembers>> entrySet() {
+        return namedMembersMap.entrySet();
+    }
+
+    @NotNull
+    private NamedMembers getOrCreateEmpty(@NotNull Name name) {
+        NamedMembers r = namedMembersMap.get(name);
+        if (r == null) {
+            r = new NamedMembers();
+            namedMembersMap.put(name, r);
+        }
+        return r;
+    }
+
+    @NotNull
+    public static MembersByNameCache buildMembersByNameCache(
+            @Nullable PsiClass psiClass,
+            @Nullable PsiPackage psiPackage,
+            boolean staticMembers,
+            boolean isKotlin
+    ) {
+        PsiClassWrapper classWrapper = psiClass == null ? null : new PsiClassWrapper(psiClass);
+        Builder builder = new Builder(classWrapper, psiPackage, staticMembers, isKotlin);
+        builder.build();
+        return builder.cache;
     }
 
     private static class Builder {
@@ -40,33 +71,25 @@ class JavaDescriptorResolverHelper {
         private final PsiPackage psiPackage;
         private final boolean staticMembers;
         private final boolean kotlin;
-        
-        private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
-        private Builder(PsiClassWrapper psiClass, PsiPackage psiPackage, boolean staticMembers, boolean kotlin) {
+        private final MembersByNameCache cache = new MembersByNameCache();
+
+        private Builder(@Nullable PsiClassWrapper psiClass, @Nullable PsiPackage psiPackage, boolean staticMembers, boolean kotlin) {
             this.psiClass = psiClass;
             this.psiPackage = psiPackage;
             this.staticMembers = staticMembers;
             this.kotlin = kotlin;
         }
 
-        public void run() {
+        @NotNull
+        public MembersByNameCache build() {
             if (psiClass != null) {
                 processFields();
                 processMethods();
             }
             processObjectClasses();
         }
-        
-        private NamedMembers getNamedMembers(Name name) {
-            NamedMembers r = namedMembersMap.get(name);
-            if (r == null) {
-                r = new NamedMembers();
-                namedMembersMap.put(name, r);
-            }
-            return r;
-        }
-        
+
         private boolean includeMember(PsiMemberWrapper member) {
             if (psiClass.getPsiClass().isEnum() && staticMembers) {
                 return member.isStatic();
@@ -79,14 +102,14 @@ class JavaDescriptorResolverHelper {
             if (member.getPsiMember().getContainingClass() != psiClass.getPsiClass()) {
                 return false;
             }
-            
+
             if (member.isPrivate()) {
                 return false;
             }
 
             return true;
         }
-        
+
         private void processFields() {
             // Hack to load static members for enum class loaded from class file
             if (kotlin && !psiClass.getPsiClass().isEnum()) {
@@ -96,7 +119,7 @@ class JavaDescriptorResolverHelper {
                 PsiFieldWrapper field = new PsiFieldWrapper(field0);
 
                 // group must be created even for excluded field
-                NamedMembers namedMembers = getNamedMembers(Name.identifier(field.getName()));
+                NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(field.getName()));
 
                 if (!includeMember(field)) {
                     continue;
@@ -109,18 +132,18 @@ class JavaDescriptorResolverHelper {
 
         private void processMethods() {
             for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
-                getNamedMembers(Name.identifier(method.getName()));
+                createEmptyEntry(Name.identifier(method.getName()));
 
                 PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
                 if (propertyParseResult != null) {
-                    getNamedMembers(Name.identifier(propertyParseResult.getPropertyName()));
+                    cache.getOrCreateEmpty(Name.identifier(propertyParseResult.getPropertyName()));
                 }
             }
 
-            
+
             for (PsiMethod method0 : psiClass.getPsiClass().getMethods()) {
                 PsiMethodWrapper method = new PsiMethodWrapper(method0);
-                
+
                 if (!includeMember(method)) {
                     continue;
                 }
@@ -131,7 +154,7 @@ class JavaDescriptorResolverHelper {
                 if (propertyParseResult != null && propertyParseResult.isGetter()) {
 
                     String propertyName = propertyParseResult.getPropertyName();
-                    NamedMembers members = getNamedMembers(Name.identifier(propertyName));
+                    NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
 
                     // TODO: some java properties too
                     if (method.getJetMethod().hasPropertyFlag()) {
@@ -169,7 +192,7 @@ class JavaDescriptorResolverHelper {
                 else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
 
                     String propertyName = propertyParseResult.getPropertyName();
-                    NamedMembers members = getNamedMembers(Name.identifier(propertyName));
+                    NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
 
                     if (method.getJetMethod().hasPropertyFlag()) {
                         if (method.getParameters().size() == 0) {
@@ -200,14 +223,18 @@ class JavaDescriptorResolverHelper {
                         members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
                     }
                 }
-                
+
                 if (!method.getJetMethod().hasPropertyFlag()) {
-                    NamedMembers namedMembers = getNamedMembers(Name.identifier(method.getName()));
+                    NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(method.getName()));
                     namedMembers.addMethod(method);
                 }
             }
         }
 
+        private void createEmptyEntry(@NotNull Name identifier) {
+            cache.getOrCreateEmpty(identifier);
+        }
+        
         private void processObjectClasses() {
             PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getPsiClass().getInnerClasses();
             for (PsiClass psiClass : classes) {
@@ -219,7 +246,7 @@ class JavaDescriptorResolverHelper {
                 }
                 PsiField instanceField = psiClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
                 if (instanceField != null) {
-                    NamedMembers namedMembers = getNamedMembers(Name.identifier(psiClass.getName()));
+                    NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(psiClass.getName()));
 
                     TypeSource type = new TypeSource("", instanceField.getType(), instanceField);
                     namedMembers.addPropertyAccessor(new PropertyAccessorData(new PsiFieldWrapper(instanceField), type, null));
@@ -227,15 +254,4 @@ class JavaDescriptorResolverHelper {
             }
         }
     }
-
-
-    @NotNull
-    static Map<Name, NamedMembers> getNamedMembers(@NotNull ResolverScopeData resolverScopeData) {
-        PsiClassWrapper aClass = resolverScopeData.getPsiClass() != null ? new PsiClassWrapper(resolverScopeData.getPsiClass()) : null;
-        Builder builder = new Builder(aClass, resolverScopeData.getPsiPackage(), resolverScopeData.isStaticMembers(), resolverScopeData.isKotlin());
-        builder.run();
-        return builder.namedMembersMap;
-    }
-
-
 }

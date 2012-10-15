@@ -85,9 +85,8 @@ public final class JavaPropertiesResolver {
     ) {
 
         PsiClass psiClass = scopeData.getPsiClass();
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
 
-        NamedMembers namedMembers = scopeData.getNamedMembersMap().get(fieldName);
+        NamedMembers namedMembers = scopeData.getMembersCache().get(fieldName);
         if (namedMembers == null) {
             return Collections.emptySet();
         }
@@ -104,12 +103,11 @@ public final class JavaPropertiesResolver {
 
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
         final PsiClass psiClass = scopeData.getPsiClass();
         assert psiClass != null;
 
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
-        Map<Name, NamedMembers> membersForProperties = scopeData.getNamedMembersMap();
+        MembersByNameCache membersForProperties = scopeData.getMembersCache();
         for (Map.Entry<Name, NamedMembers> entry : membersForProperties.entrySet()) {
             NamedMembers namedMembers = entry.getValue();
             Name propertyName = entry.getKey();
@@ -136,8 +134,6 @@ public final class JavaPropertiesResolver {
             @NotNull Name propertyName,
             @NotNull String context
     ) {
-        DescriptorResolverUtils.getResolverScopeData(scopeData);
-
         if (namedMembers.getPropertyDescriptors() != null) {
             return;
         }
