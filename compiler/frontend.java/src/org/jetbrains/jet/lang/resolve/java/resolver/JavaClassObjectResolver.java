@@ -39,12 +39,12 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.isInnerEnum;
 
 public final class JavaClassObjectResolver {
 
@@ -88,19 +88,21 @@ public final class JavaClassObjectResolver {
             return null;
         }
 
-        // If there's at least one inner enum, we need to create a class object (to put this enum into)
-        for (PsiClass innerClass : psiClass.getInnerClasses()) {
-            if (DescriptorResolverUtils.isInnerEnum(innerClass, containing)) {
-                return createSyntheticClassObject(containing, psiClass).getResolverBinaryClassData();
-            }
+        if (hasInnerEnums(containing, psiClass)) {
+            return createSyntheticClassObject(containing, psiClass).getResolverBinaryClassData();
         }
 
-        PsiClass classObjectPsiClass = getInnerClassClassObject(psiClass);
+        PsiClass classObjectPsiClass = getClassObjectPsiClass(psiClass);
         if (classObjectPsiClass == null) {
             return null;
         }
 
-        final String qualifiedName = classObjectPsiClass.getQualifiedName();
+        return createClassObjectFromPsi(containing, classObjectPsiClass);
+    }
+
+    @NotNull
+    private ResolverClassData createClassObjectFromPsi(@NotNull ClassDescriptor containing, @NotNull PsiClass classObjectPsiClass) {
+        String qualifiedName = classObjectPsiClass.getQualifiedName();
         assert qualifiedName != null;
         FqName fqName = new FqName(qualifiedName);
         ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
@@ -109,9 +111,18 @@ public final class JavaClassObjectResolver {
 
         ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.getClassDescriptor();
         classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData,
-                                                                             new ArrayList<TypeParameterDescriptor>(0)));
+                                                                             Collections.<TypeParameterDescriptor>emptyList()));
         setUpClassObjectDescriptor(containing, fqName, classData, getClassObjectName(containing.getName()));
         return classObjectDescriptor.getResolverBinaryClassData();
+    }
+
+    private static boolean hasInnerEnums(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
+        for (PsiClass innerClass : psiClass.getInnerClasses()) {
+            if (isInnerEnum(innerClass, containing)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NotNull
@@ -164,8 +175,8 @@ public final class JavaClassObjectResolver {
 
 
     @Nullable
-    private static PsiClass getInnerClassClassObject(@NotNull PsiClass outer) {
-        for (PsiClass inner : outer.getInnerClasses()) {
+    private static PsiClass getClassObjectPsiClass(@NotNull PsiClass ownerClass) {
+        for (PsiClass inner : ownerClass.getInnerClasses()) {
             if (inner.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
                 return inner;
             }
