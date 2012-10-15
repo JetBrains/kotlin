@@ -34,7 +34,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
-import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.InTextDirectivesUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;

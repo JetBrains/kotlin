@@ -27,7 +27,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
-import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 /**

@@ -25,7 +25,7 @@ import com.intellij.util.ArrayUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.InTextDirectivesUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

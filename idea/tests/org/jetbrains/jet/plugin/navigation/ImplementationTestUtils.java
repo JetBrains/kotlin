@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.util.Arrays;

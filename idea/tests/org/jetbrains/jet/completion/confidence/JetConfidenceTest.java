@@ -24,7 +24,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.InTextDirectivesUtils;
 
 import java.io.File;
 

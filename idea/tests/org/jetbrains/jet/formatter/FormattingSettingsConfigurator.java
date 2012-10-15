@@ -20,7 +20,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
-import org.jetbrains.jet.testing.InTextDirectivesUtils;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.junit.Assert;
 
 import java.lang.reflect.Field;
