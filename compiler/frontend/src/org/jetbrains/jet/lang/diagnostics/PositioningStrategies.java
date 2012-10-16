@@ -322,4 +322,19 @@ public class PositioningStrategies {
             return super.mark(element);
         }
     };
+
+    public static PositioningStrategy<JetElement> VALUE_ARGUMENTS = new PositioningStrategy<JetElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetElement element) {
+            if (element instanceof JetValueArgumentList) {
+                PsiElement rightParenthesis = ((JetValueArgumentList) element).getRightParenthesis();
+                if (rightParenthesis != null) {
+                    return markElement(rightParenthesis);
+                }
+
+            }
+            return super.mark(element);
+        }
+    };
 }

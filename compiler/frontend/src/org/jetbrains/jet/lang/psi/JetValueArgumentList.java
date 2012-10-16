@@ -17,8 +17,11 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -43,4 +46,10 @@ public class JetValueArgumentList extends JetElementImpl {
     public List<JetValueArgument> getArguments() {
         return findChildrenByType(JetNodeTypes.VALUE_ARGUMENT);
     }
+
+    @Nullable
+    public PsiElement getRightParenthesis() {
+        return findChildByType(JetTokens.RPAR);
+    }
+
 }

@@ -22,7 +22,7 @@ fun fooT2<T>() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    args.foo1()<!NO_VALUE_FOR_PARAMETER!>()<!>
+    args.foo1()(<!NO_VALUE_FOR_PARAMETER!>)<!>
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()()
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
@@ -71,7 +71,7 @@ fun main1() {
 }
 
 fun test() {
-    {(x : Int) -> 1}<!NO_VALUE_FOR_PARAMETER!>()<!>;
+    {(x : Int) -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
     <!MISSING_RECEIVER!>{Int.() -> 1}<!>()
     <!TYPE_MISMATCH!>"sd"<!>.{Int.() -> 1}()
     val i : Int? = null

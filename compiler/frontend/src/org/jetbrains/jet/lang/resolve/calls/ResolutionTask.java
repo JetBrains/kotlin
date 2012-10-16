@@ -133,7 +133,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
 
         @Override
         public void noValueForParameter(@NotNull BindingTrace trace, @NotNull ValueParameterDescriptor valueParameter) {
-            PsiElement reportOn;
+            JetElement reportOn;
             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
             if (valueArgumentList != null) {
                 reportOn = valueArgumentList;
