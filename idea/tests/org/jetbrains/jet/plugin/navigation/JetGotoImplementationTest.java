@@ -48,7 +48,7 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
 
     protected void doTest() {
         configureByFile(getTestName(false) + ".kt");
-        GotoTargetHandler.GotoData gotoData = ImplementationTestUtils.invokeGotoImplementations(getEditor(), getFile());
-        ImplementationTestUtils.assertGotoImplementations(getEditor(), gotoData);
+        GotoTargetHandler.GotoData gotoData = NavigationTestUtils.invokeGotoImplementations(getEditor(), getFile());
+        NavigationTestUtils.assertGotoImplementations(getEditor(), gotoData);
     }
 }

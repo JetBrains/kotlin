@@ -48,6 +48,6 @@ public class JetGotoSymbolTest extends LightCodeInsightFixtureTestCase {
         String fileName = getTestName(true) + ".kt";
         myFixture.configureByFile(fileName);
 
-        ImplementationTestUtils.assertGotoSymbol(getProject(), myFixture.getEditor());
+        NavigationTestUtils.assertGotoSymbol(getProject(), myFixture.getEditor());
     }
 }

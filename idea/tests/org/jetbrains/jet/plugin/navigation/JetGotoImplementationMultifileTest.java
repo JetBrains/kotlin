@@ -40,8 +40,8 @@ public class JetGotoImplementationMultifileTest extends CodeInsightTestCase {
 
     private void doMultifileTest(String ... fileNames) throws Exception {
         configureByFiles(null, fileNames);
-        GotoTargetHandler.GotoData gotoData = ImplementationTestUtils.invokeGotoImplementations(getEditor(), getFile());
-        ImplementationTestUtils.assertGotoImplementations(getEditor(), gotoData);
+        GotoTargetHandler.GotoData gotoData = NavigationTestUtils.invokeGotoImplementations(getEditor(), getFile());
+        NavigationTestUtils.assertGotoImplementations(getEditor(), gotoData);
     }
 
     @Override
