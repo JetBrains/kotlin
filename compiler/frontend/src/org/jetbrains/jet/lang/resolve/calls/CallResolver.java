@@ -52,6 +52,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl.MAP_TO_RESULT;
+import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -779,7 +780,7 @@ public class CallResolver {
         ResolutionStatus argumentsStatus = checkingResult.status;
         List<JetType> argumentTypes = checkingResult.argumentTypes;
         JetType receiverType = candidateCall.getReceiverArgument().exists() ? candidateCall.getReceiverArgument().getType() : null;
-        InferenceErrorData inferenceErrorData = InferenceErrorData
+        ExtendedInferenceErrorData inferenceErrorData = InferenceErrorData
                 .create(candidate, constraintSystemWithRightTypeParameters, argumentTypes, receiverType, context.expectedType);
         if (hasContradiction) {
             context.tracing.typeInferenceFailed(candidateCall.getTrace(), inferenceErrorData, constraintSystemWithRightTypeParameters);

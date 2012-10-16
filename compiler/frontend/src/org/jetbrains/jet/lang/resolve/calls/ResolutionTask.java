@@ -238,7 +238,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         }
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData data, @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint) {
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData.ExtendedInferenceErrorData data, @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint) {
             ConstraintSystem constraintSystem = data.constraintSystem;
             assert !constraintSystem.isSuccessful();
             if (constraintSystem.hasErrorInConstrainingTypes()) {
@@ -252,6 +252,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
                     returnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(returnType, Variance.INVARIANT);
                     assert returnType != null;
                 }
+                assert data.expectedType != null;
                 trace.report(TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(reference, returnType, data.expectedType));
             }
             else if (constraintSystem.hasTypeConstructorMismatch()) {

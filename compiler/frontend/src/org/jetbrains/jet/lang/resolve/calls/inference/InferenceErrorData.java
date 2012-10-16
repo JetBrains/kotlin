@@ -30,26 +30,36 @@ import java.util.List;
 public class InferenceErrorData {
     public final CallableDescriptor descriptor;
     public final ConstraintSystem constraintSystem;
-    public final JetType receiverArgumentType;
-    public final JetType expectedType;
-    public final List<JetType> valueArgumentsTypes;
 
-    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
-            @Nullable List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @Nullable JetType expectedType) {
+    private InferenceErrorData(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem) {
         this.descriptor = descriptor;
         this.constraintSystem = constraintSystem;
-        this.receiverArgumentType = receiverArgumentType;
-        this.valueArgumentsTypes = valueArgumentsTypes;
-        this.expectedType = expectedType;
     }
 
-    public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
+    public static class ExtendedInferenceErrorData extends InferenceErrorData {
+        public final JetType receiverArgumentType;
+        public final JetType expectedType;
+
+        public final List<JetType> valueArgumentsTypes;
+
+        private ExtendedInferenceErrorData(
+                @NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
+                @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @Nullable JetType expectedType
+        ) {
+            super(descriptor, constraintSystem);
+            this.receiverArgumentType = receiverArgumentType;
+            this.valueArgumentsTypes = valueArgumentsTypes;
+            this.expectedType = expectedType;
+        }
+    }
+
+    public static ExtendedInferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
             @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @Nullable JetType expectedType) {
-        return new InferenceErrorData(descriptor, constraintSystem, valueArgumentsTypes, receiverArgumentType,
+        return new ExtendedInferenceErrorData(descriptor, constraintSystem, valueArgumentsTypes, receiverArgumentType,
                                       expectedType != TypeUtils.NO_EXPECTED_TYPE ? expectedType : null);
     }
 
     public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem) {
-        return new InferenceErrorData(descriptor, constraintSystem, null, null, null);
+        return new InferenceErrorData(descriptor, constraintSystem);
     }
 }

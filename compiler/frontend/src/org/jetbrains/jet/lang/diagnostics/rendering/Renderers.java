@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
+import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -130,29 +131,29 @@ public class Renderers {
         };
     }
 
-    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
-            new Renderer<InferenceErrorData>() {
+    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
+            new Renderer<ExtendedInferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
+                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
                     return renderConflictingSubstitutionsInferenceError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
-            new Renderer<InferenceErrorData>() {
+    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
+            new Renderer<ExtendedInferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
+                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
                     return renderTypeConstructorMismatchError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
 
-    public static final Renderer<InferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
-            new Renderer<InferenceErrorData>() {
+    public static final Renderer<ExtendedInferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
+            new Renderer<ExtendedInferenceErrorData>() {
                 @NotNull
                 @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
+                public String render(@NotNull ExtendedInferenceErrorData inferenceErrorData) {
                     return renderNoInformationForParameterError(inferenceErrorData, TabledDescriptorRenderer.create()).toString();
                 }
             };
@@ -166,7 +167,7 @@ public class Renderers {
                 }
             };
 
-    public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(ExtendedInferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
         assert inferenceErrorData.constraintSystem.hasConflictingConstraints();
 
@@ -224,7 +225,7 @@ public class Renderers {
         return result;
     }
 
-    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final InferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderTypeConstructorMismatchError(final ExtendedInferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
             @Override
@@ -242,7 +243,7 @@ public class Renderers {
                                               isErrorPosition));
     }
 
-    public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
+    public static TabledDescriptorRenderer renderNoInformationForParameterError(ExtendedInferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer renderer) {
         TypeParameterDescriptor firstUnknownParameter = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {

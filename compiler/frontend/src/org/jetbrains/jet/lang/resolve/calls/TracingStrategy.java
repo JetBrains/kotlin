@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
+
 /**
 * @author abreslav
 */
@@ -85,7 +87,7 @@ import java.util.List;
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {}
 
         @Override
-        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData,
+        public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData,
                 @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint) {}
 
         @Override
@@ -124,7 +126,7 @@ import java.util.List;
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 
-    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData,
+    void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull ExtendedInferenceErrorData inferenceErrorData,
             @NotNull ConstraintSystem systemWithoutExpectedTypeConstraint);
 
     void upperBoundViolated(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
