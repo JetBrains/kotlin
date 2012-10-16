@@ -42,8 +42,8 @@ import java.util.List;
 /**
  * @author Nikolay Krasko
  */
-public final class ImplementationTestUtils {
-    private ImplementationTestUtils() {
+public final class NavigationTestUtils {
+    private NavigationTestUtils() {
     }
 
     public static GotoTargetHandler.GotoData invokeGotoImplementations(Editor editor, PsiFile psiFile) {
