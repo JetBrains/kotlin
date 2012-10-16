@@ -38,6 +38,7 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.CodegenUtil.isDeprecated;
 
 public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisitor {
 
@@ -61,7 +62,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
         if (resolvedCall != null && resolvedCall instanceof VariableAsFunctionResolvedCall) {
             // Deprecated for invoke()
             JetCallExpression parent = PsiTreeUtil.getParentOfType(expression, JetCallExpression.class);
-            if (parent != null && isDeprecated(resolvedCall.getResultingDescriptor().getAnnotations())) {
+            if (parent != null && isDeprecated(resolvedCall.getResultingDescriptor())) {
                 reportAnnotation(parent, resolvedCall.getResultingDescriptor(), true);
             }
         }
@@ -94,7 +95,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     private void checkFunctionDescriptor(JetExpression expression, DeclarationDescriptor target) {
         // Deprecated for Function
-        if (isDeprecated(target.getAnnotations())) {
+        if (isDeprecated(target)) {
             reportAnnotation(expression, target, expression instanceof JetArrayAccessExpression);
         }
     }
@@ -103,7 +104,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
         // Deprecated for Class and for Constructor
         DeclarationDescriptor containingDeclaration = target.getContainingDeclaration();
         if (containingDeclaration != null) {
-            if (isDeprecated(containingDeclaration.getAnnotations()) || isDeprecated(target.getAnnotations())) {
+            if (isDeprecated(containingDeclaration) || isDeprecated(target)) {
                 reportAnnotation(expression, containingDeclaration);
             }
         }
@@ -111,13 +112,13 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     private void checkClassDescriptor(@NotNull JetExpression expression, @NotNull ClassDescriptor target) {
         // Deprecated for Class, for ClassObject (if reference isn't in UserType or in ModifierList (trait))
-        if (isDeprecated(target.getAnnotations())) {
+        if (isDeprecated(target)) {
             reportAnnotation(expression, target);
         }
         else if (PsiTreeUtil.getParentOfType(expression, JetUserType.class) == null &&
                  PsiTreeUtil.getParentOfType(expression, JetModifierList.class) == null) {
             ClassDescriptor classObjectDescriptor = target.getClassObjectDescriptor();
-            if (classObjectDescriptor != null && isDeprecated(classObjectDescriptor.getAnnotations())) {
+            if (classObjectDescriptor != null && isDeprecated(classObjectDescriptor)) {
                 reportAnnotation(expression, classObjectDescriptor);
             }
         }
@@ -128,7 +129,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
         // Deprecated for Property
-        if (isDeprecated(propertyDescriptor.getAnnotations())) {
+        if (isDeprecated(propertyDescriptor)) {
             reportAnnotation(expression, propertyDescriptor, propertyDescriptor.isVar());
             return;
         }
@@ -191,7 +192,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             @NotNull PropertyAccessorDescriptor accessor,
             @NotNull JetExpression expression, boolean isVar
     ) {
-        if (isDeprecated(accessor.getAnnotations())) {
+        if (isDeprecated(accessor)) {
             reportAnnotation(expression, accessor, isVar);
         }
     }
@@ -199,7 +200,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
     private void checkDeprecatedForOperations(@NotNull JetReferenceExpression expression) {
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (target != null) {
-            if (isDeprecated(target.getAnnotations())) {
+            if (isDeprecated(target)) {
                 reportAnnotation(expression, target, true);
             }
         }
@@ -218,18 +219,6 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             holder.createInfoAnnotation(element, "'" + renderName(descriptor) + "' is deprecated")
                     .setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES);
         }
-    }
-
-    private static boolean isDeprecated(List<AnnotationDescriptor> list) {
-        for (AnnotationDescriptor annotation : list) {
-            ClassDescriptor descriptor = TypeUtils.getClassDescriptor(annotation.getType());
-            if (descriptor != null) {
-                if (DescriptorUtils.getFQName(descriptor).getFqName().equals(CommonClassNames.JAVA_LANG_DEPRECATED)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private static String renderName(DeclarationDescriptor descriptor) {

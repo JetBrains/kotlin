@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.*;
@@ -56,6 +58,18 @@ public class CodegenUtil {
         if (descriptor instanceof ClassDescriptor) {
             final ClassKind kind = ((ClassDescriptor) descriptor).getKind();
             return kind == ClassKind.TRAIT || kind == ClassKind.ANNOTATION_CLASS;
+        }
+        return false;
+    }
+
+    public static boolean isDeprecated(DeclarationDescriptor descriptor) {
+        for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
+            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(annotation.getType());
+            if (classDescriptor != null) {
+                if (DescriptorUtils.getFQName(classDescriptor).getFqName().equals(CommonClassNames.JAVA_LANG_DEPRECATED)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
