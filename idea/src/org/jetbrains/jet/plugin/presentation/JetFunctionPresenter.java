@@ -18,20 +18,16 @@ package org.jetbrains.jet.plugin.presentation;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.JetIconProvider;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-import javax.swing.*;
 import java.util.Collection;
 
 /**
@@ -40,12 +36,7 @@ import java.util.Collection;
 public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFunction> {
     @Override
     public ItemPresentation getPresentation(final JetNamedFunction function) {
-        return new ColoredItemPresentation() {
-            @Override
-            public TextAttributesKey getTextAttributesKey() {
-                return null;
-            }
-
+        return new JetDefaultNamedDeclarationPresentation(function) {
             @Override
             public String getPresentableText() {
                 StringBuilder presentation = new StringBuilder(function.getName());
@@ -81,11 +72,6 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
                 }
 
                 return "";
-            }
-
-            @Override
-            public Icon getIcon(boolean unused) {
-                return JetIconProvider.INSTANCE.getIcon(function, 0);
             }
         };
     }

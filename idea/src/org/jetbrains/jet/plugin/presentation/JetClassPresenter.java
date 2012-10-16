@@ -16,49 +16,16 @@
 
 package org.jetbrains.jet.plugin.presentation;
 
-import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.JetIconProvider;
-
-import javax.swing.*;
 
 /**
  * @author Nikolay Krasko
  */
 public class JetClassPresenter implements ItemPresentationProvider<JetClass> {
-
     @Override
     public ItemPresentation getPresentation(final JetClass item) {
-        return new ColoredItemPresentation() {
-            @Override
-            public TextAttributesKey getTextAttributesKey() {
-                return null;
-            }
-
-            @Override
-            public String getPresentableText() {
-                return item.getName();
-            }
-
-            @Override
-            public String getLocationString() {
-                FqName name = JetPsiUtil.getFQName(item);
-                if (name != null) {
-                    return "(" + name.parent().toString() + ")";
-                }
-
-                return null;
-            }
-
-            @Override
-            public Icon getIcon(boolean unused) {
-                return JetIconProvider.INSTANCE.getIcon(item, 0);
-            }
-        };
+        return new JetDefaultNamedDeclarationPresentation(item);
     }
 }
