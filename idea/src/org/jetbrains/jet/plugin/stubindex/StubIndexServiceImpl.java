@@ -81,11 +81,16 @@ public class StubIndexServiceImpl implements StubIndexService {
 
     @Override
     public void indexProperty(PsiJetPropertyStub stub, IndexSink sink) {
-        if (stub.isTopLevel()) {
-            FqName topFQName = stub.getTopFQName();
-            if (topFQName != null) {
-                sink.occurrence(JetIndexKeys.TOP_LEVEL_PROPERTY_FQN_NAME_KEY, topFQName.toString());
+        String propertyName = stub.getName();
+        if (propertyName != null) {
+            if (stub.isTopLevel()) {
+                FqName topFQName = stub.getTopFQName();
+                if (topFQName != null) {
+                    sink.occurrence(JetIndexKeys.TOP_LEVEL_PROPERTY_FQN_NAME_KEY, topFQName.toString());
+                }
             }
+
+            sink.occurrence(JetIndexKeys.PROPERTIES_SHORT_NAME_KEY, propertyName);
         }
     }
 

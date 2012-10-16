@@ -21,15 +21,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
+import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.progress.util.ProgressIndicatorBase;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -66,5 +71,37 @@ public final class ImplementationTestUtils {
         else {
             UsefulTestCase.assertEmpty(expectedReferences);
         }
+    }
+
+    public static void assertGotoSymbol(@NotNull Project project, @NotNull Editor editor) {
+
+        List<String> searchTextList = InTextDirectivesUtils.findListWithPrefix("// SEARCH_TEXT:", editor.getDocument().getText());
+        Assert.assertFalse("There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
+                           searchTextList.isEmpty());
+
+        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefix("// REF:", editor.getDocument().getText());
+
+        String searchText = searchTextList.get(0);
+
+        List<Object> elementsByName = new ArrayList<Object>();
+
+        GotoSymbolModel2 model = new GotoSymbolModel2(project);
+        String[] names = model.getNames(false);
+        for (String name : names) {
+            if (name != null && name.startsWith(searchText)) {
+                elementsByName.addAll(Arrays.asList(model.getElementsByName(name, false, name + "*", new ProgressIndicatorBase())));
+            }
+        }
+
+        List<String> renderedElements = Lists.transform(elementsByName, new Function<Object, String>() {
+            @Override
+            public String apply(@Nullable Object element) {
+                Assert.assertNotNull(element);
+                Assert.assertTrue(element instanceof PsiElement);
+                return ReferenceUtils.renderAsGotoImplementation((PsiElement) element);
+            }
+        });
+
+        UsefulTestCase.assertOrderedEquals(Ordering.natural().sortedCopy(renderedElements), expectedReferences);
     }
 }

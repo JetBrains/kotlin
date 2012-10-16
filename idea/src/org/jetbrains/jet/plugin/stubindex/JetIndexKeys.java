@@ -44,6 +44,7 @@ public interface JetIndexKeys {
             StubIndexKey.createIndexKey("jet.top.level.property.fqn.name");
 
     StubIndexKey<String, JetNamedFunction> FUNCTIONS_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.functions.short.name");
+    StubIndexKey<String, JetProperty> PROPERTIES_SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.properties.short.name");
 
     StubIndexKey<String, JetAnnotationEntry> ANNOTATIONS_KEY = StubIndexKey.createIndexKey("jet.annotations");
 }

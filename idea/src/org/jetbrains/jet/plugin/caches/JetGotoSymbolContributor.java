@@ -38,19 +38,26 @@ public class JetGotoSymbolContributor implements ChooseByNameContributor {
     @NotNull
     @Override
     public String[] getNames(Project project, boolean includeNonProjectItems) {
-        final Collection<String> items = StubIndex.getInstance().getAllKeys(JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, project);
+        Collection<String> items = StubIndex.getInstance().getAllKeys(JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, project);
+        items.addAll(StubIndex.getInstance().getAllKeys(JetIndexKeys.PROPERTIES_SHORT_NAME_KEY, project));
+
         return ArrayUtil.toStringArray(items);
     }
 
     @NotNull
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
-        final GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
+        GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
 
-        final Collection<? extends NavigationItem> functions = StubIndex.getInstance().get(
+        Collection<? extends NavigationItem> functions = StubIndex.getInstance().get(
                 JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, name, project, scope);
 
+        Collection<? extends NavigationItem> properties = StubIndex.getInstance().get(
+                JetIndexKeys.PROPERTIES_SHORT_NAME_KEY, name, project, scope);
+
         final List<NavigationItem> items = new ArrayList<NavigationItem>(Collections2.filter(functions, Predicates.notNull()));
+        items.addAll(properties);
+
         return ArrayUtil.toObjectArray(items, NavigationItem.class);
     }
 }
