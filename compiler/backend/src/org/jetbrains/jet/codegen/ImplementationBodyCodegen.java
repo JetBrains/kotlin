@@ -149,6 +149,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isAnnotation) {
             access |= ACC_ANNOTATION;
         }
+        if (CodegenUtil.isDeprecated(descriptor)) {
+            access |= ACC_DEPRECATED;
+        }
         if (isEnum) {
             for (JetDeclaration declaration : myClass.getDeclarations()) {
                 if (declaration instanceof JetEnumEntry) {

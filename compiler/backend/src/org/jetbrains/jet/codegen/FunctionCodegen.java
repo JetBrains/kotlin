@@ -385,6 +385,10 @@ public class FunctionCodegen extends GenerationStateAware {
         }
 
         if (isAbstract) flags |= ACC_ABSTRACT;
+
+        if (CodegenUtil.isDeprecated(functionDescriptor)) {
+            flags |= ACC_DEPRECATED;
+        }
         return flags;
     }
 

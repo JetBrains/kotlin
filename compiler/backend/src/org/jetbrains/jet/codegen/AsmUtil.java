@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.jet.codegen.CodegenUtil.isDeprecated;
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
@@ -150,6 +151,18 @@ public class AsmUtil {
             case OPEN: return 0;
             default: throw new UnsupportedOperationException("Unknown modality: " + descriptor.getModality());
         }
+    }
+
+    public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            return isDeprecated(descriptor)
+                     ? ACC_DEPRECATED
+                     : getDeprecatedAccessFlag(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
+        }
+        else if (isDeprecated(descriptor)) {
+            return ACC_DEPRECATED;
+        }
+        return 0;
     }
 
     @Nullable
