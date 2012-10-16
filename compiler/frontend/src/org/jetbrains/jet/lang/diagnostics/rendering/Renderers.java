@@ -196,9 +196,10 @@ public class Renderers {
             JetType receiverType = substitutedDescriptor.getReceiverParameter().exists() ? substitutedDescriptor.getReceiverParameter().getType() : null;
 
             final Collection<ConstraintPosition> errorPositions = Sets.newHashSet();
-            List<JetType> valueArgumentTypes = Lists.newArrayList();
+            List<JetType> parameterTypes = Lists.newArrayList();
             for (ValueParameterDescriptor valueParameterDescriptor : substitutedDescriptor.getValueParameters()) {
-                valueArgumentTypes.add(valueParameterDescriptor.getType());
+                parameterTypes.add(valueParameterDescriptor.getType());
+                if (valueParameterDescriptor.getIndex() >= inferenceErrorData.valueArgumentsTypes.size()) continue;
                 JetType actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.getIndex());
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
                     errorPositions.add(ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
@@ -216,7 +217,7 @@ public class Renderers {
                     return errorPositions.contains(constraintPosition);
                 }
             };
-            table.functionArgumentTypeList(receiverType, valueArgumentTypes, isErrorPosition);
+            table.functionArgumentTypeList(receiverType, parameterTypes, isErrorPosition);
         }
 
         table.text("can be applied to")

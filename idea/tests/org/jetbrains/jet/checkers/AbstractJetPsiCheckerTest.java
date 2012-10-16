@@ -60,6 +60,7 @@ public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestC
                 Arrays.asList(
                         new SimpleTestClassModel(new File("idea/testData/checker"), false, "jet", "doTest"),
                         new SimpleTestClassModel(new File("idea/testData/checker/regression"), true, "jet", "doTest"),
+                        new SimpleTestClassModel(new File("idea/testData/checker/rendering"), true, "kt", "doTest"),
                         new SimpleTestClassModel(new File("idea/testData/checker/infos"), true, "jet", "doTestWithInfos")
                 ),
                 thisClass
