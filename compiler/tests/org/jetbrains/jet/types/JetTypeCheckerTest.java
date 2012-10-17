@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -117,15 +117,15 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("\"d\"", library.getStringType());
         assertType("\"\"\"d\"\"\"", library.getStringType());
 
-        assertType("#()", JetStandardClasses.getUnitType());
+        assertType("#()", KotlinBuiltIns.getInstance().getUnitType());
 
-        assertType("null", JetStandardClasses.getNullableNothingType());
+        assertType("null", KotlinBuiltIns.getInstance().getNullableNothingType());
     }
 
     public void testTupleConstants() throws Exception {
-        assertType("#()", JetStandardClasses.getUnitType());
+        assertType("#()", KotlinBuiltIns.getInstance().getUnitType());
 
-        assertType("#(1, 'a')", JetStandardClasses.getTupleType(library.getIntType(), library.getCharType()));
+        assertType("#(1, 'a')", KotlinBuiltIns.getInstance().getTupleType(library.getIntType(), library.getCharType()));
     }
 
     public void testTypeInfo() throws Exception {
@@ -135,9 +135,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testJumps() throws Exception {
-        assertType("throw java.lang.Exception()", JetStandardClasses.getNothingType());
-        assertType("continue", JetStandardClasses.getNothingType());
-        assertType("break", JetStandardClasses.getNothingType());
+        assertType("throw java.lang.Exception()", KotlinBuiltIns.getInstance().getNothingType());
+        assertType("continue", KotlinBuiltIns.getInstance().getNothingType());
+        assertType("break", KotlinBuiltIns.getInstance().getNothingType());
     }
 
     public void testIf() throws Exception {
@@ -713,7 +713,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
             // TODO : assuming that the hierarchy is acyclic
             Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
-                    ? Collections.singleton(JetStandardClasses.getAnyType())
+                    ? Collections.singleton(KotlinBuiltIns.getInstance().getAnyType())
                     : descriptorResolver.resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver, JetTestUtils.DUMMY_TRACE, true);
     //        for (JetType supertype: supertypes) {
     //            if (supertype.getConstructor().isSealed()) {

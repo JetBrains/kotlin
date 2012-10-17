@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 import java.util.Map;
@@ -141,7 +141,7 @@ public class TypeSubstitutor {
         assertRecursionDepth(recursionDepth, originalProjection, substitution);
         // The type is within the substitution range, i.e. T or T?
         JetType type = originalProjection.getType();
-        if (JetStandardClasses.isNothing(type) || ErrorUtils.isErrorType(type)) return originalProjection;
+        if (KotlinBuiltIns.getInstance().isNothing(type) || ErrorUtils.isErrorType(type)) return originalProjection;
 
         TypeProjection replacement = substitution.get(type.getConstructor());
 

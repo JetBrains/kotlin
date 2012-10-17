@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
@@ -70,7 +70,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(
                     primitiveType));
         }
-        primitiveTypesMap.put("void", JetStandardClasses.getUnitType());
+        primitiveTypesMap.put("void", KotlinBuiltIns.getInstance().getUnitType());
     }
 
     @Nullable

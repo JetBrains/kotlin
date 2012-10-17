@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
@@ -88,7 +88,7 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     @NotNull
     @Override
     public JetType getReturnType() {
-        return JetStandardClasses.getUnitType();
+        return KotlinBuiltIns.getInstance().getUnitType();
     }
 
     @Override

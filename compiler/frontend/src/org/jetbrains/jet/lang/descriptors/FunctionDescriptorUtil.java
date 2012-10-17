@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -123,12 +123,12 @@ public class FunctionDescriptorUtil {
     public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType, @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull Modality modality, @NotNull Visibility visibility) {
 
-        assert JetStandardClasses.isFunctionType(functionType);
-        functionDescriptor.initialize(JetStandardClasses.getReceiverType(functionType),
+        assert KotlinBuiltIns.getInstance().isFunctionType(functionType);
+        functionDescriptor.initialize(KotlinBuiltIns.getInstance().getReceiverType(functionType),
                                       expectedThisObject,
                                       Collections.<TypeParameterDescriptorImpl>emptyList(),
-                                      JetStandardClasses.getValueParameters(functionDescriptor, functionType),
-                                      JetStandardClasses.getReturnTypeFromFunctionType(functionType),
+                                      KotlinBuiltIns.getInstance().getValueParameters(functionDescriptor, functionType),
+                                      KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(functionType),
                                       modality,
                                       visibility);
     }
@@ -138,7 +138,7 @@ public class FunctionDescriptorUtil {
     }
 
     public static FunctionDescriptor getInvokeFunction(@NotNull JetType functionType) {
-        assert JetStandardClasses.isFunctionType(functionType);
+        assert KotlinBuiltIns.getInstance().isFunctionType(functionType);
 
         ClassifierDescriptor classDescriptorForFunction = functionType.getConstructor().getDeclarationDescriptor();
         assert classDescriptorForFunction instanceof ClassDescriptor;

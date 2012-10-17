@@ -23,7 +23,7 @@ import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.J2KConverterFlags;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +62,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
         final IdentifierImpl identifier = new IdentifierImpl(name);
 
         if (name.equals("void")) {
-            myResult = new PrimitiveType(new IdentifierImpl(JetStandardClasses.UNIT_ALIAS.getName()));
+            myResult = new PrimitiveType(new IdentifierImpl(KotlinBuiltIns.getInstance().UNIT_ALIAS.getName()));
         }
         else if (Node.PRIMITIVE_TYPES.contains(name)) {
             myResult = new PrimitiveType(new IdentifierImpl(AstUtil.upperFirstCharacter(name)));

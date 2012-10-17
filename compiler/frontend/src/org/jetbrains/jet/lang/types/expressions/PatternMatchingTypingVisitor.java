@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Collections;
@@ -294,7 +294,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // check if the pattern is essentially a 'null' expression
-        if (type == JetStandardClasses.getNullableNothingType() && !subjectType.isNullable()) {
+        if (type == KotlinBuiltIns.getInstance().getNullableNothingType() && !subjectType.isNullable()) {
             context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn));
         }
     }

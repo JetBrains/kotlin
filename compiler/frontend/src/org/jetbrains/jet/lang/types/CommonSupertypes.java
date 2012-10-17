@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
 
 import java.util.*;
@@ -47,7 +47,7 @@ public class CommonSupertypes {
         for (Iterator<JetType> iterator = typeSet.iterator(); iterator.hasNext();) {
             JetType type = iterator.next();
             assert type != null;
-            if (JetStandardClasses.isNothingOrNullableNothing(type)) {
+            if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type)) {
                 iterator.remove();
             }
             nullable |= type.isNullable();
@@ -56,7 +56,7 @@ public class CommonSupertypes {
         // Everything deleted => it's Nothing or Nothing?
         if (typeSet.isEmpty()) {
             // TODO : attributes
-            return nullable ? JetStandardClasses.getNullableNothingType() : JetStandardClasses.getNothingType();
+            return nullable ? KotlinBuiltIns.getInstance().getNullableNothingType() : KotlinBuiltIns.getInstance().getNothingType();
         }
 
         if (typeSet.size() == 1) {
@@ -199,7 +199,7 @@ public class CommonSupertypes {
         }
 
         // TODO : attributes?
-        JetScope newScope = JetStandardClasses.STUB;
+        JetScope newScope = KotlinBuiltIns.getInstance().STUB;
         DeclarationDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
         if (declarationDescriptor instanceof ClassDescriptor) {
             newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);

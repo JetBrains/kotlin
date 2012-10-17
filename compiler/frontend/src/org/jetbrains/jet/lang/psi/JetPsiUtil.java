@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -306,7 +306,7 @@ public class JetPsiUtil {
             return false;
         }
 
-        return JetStandardClasses.UNIT_ALIAS.getName().equals(typeReference.getText());
+        return KotlinBuiltIns.getInstance().UNIT_ALIAS.getName().equals(typeReference.getText());
     }
 
     public static boolean isSafeCall(@NotNull Call call) {

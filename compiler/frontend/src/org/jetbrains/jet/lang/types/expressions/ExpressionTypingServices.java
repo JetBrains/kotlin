@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.types.CommonSupertypes;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
@@ -142,7 +142,7 @@ public class ExpressionTypingServices {
         Map<JetExpression, JetType> typeMap = collectReturnedExpressionsWithTypes(trace, outerScope, function, functionDescriptor);
         Collection<JetType> types = typeMap.values();
         return types.isEmpty()
-               ? JetStandardClasses.getNothingType()
+               ? KotlinBuiltIns.getInstance().getNothingType()
                : CommonSupertypes.commonSupertype(types);
     }
 
@@ -200,7 +200,7 @@ public class ExpressionTypingServices {
 
         JetTypeInfo r;
         if (block.isEmpty()) {
-            r = DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context, context.dataFlowInfo);
+            r = DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, context, context.dataFlowInfo);
         }
         else {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
@@ -272,7 +272,7 @@ public class ExpressionTypingServices {
     @SuppressWarnings("SuspiciousMethodCalls")
     JetTypeInfo getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         if (block.isEmpty()) {
-            return JetTypeInfo.create(JetStandardClasses.getUnitType(), context.dataFlowInfo);
+            return JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
         }
 
         ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(scope);
@@ -289,7 +289,7 @@ public class ExpressionTypingServices {
             //TODO constructor assert context.expectedType != FORBIDDEN : ""
             if (!iterator.hasNext()) {
                 if (context.expectedType != NO_EXPECTED_TYPE) {
-                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && JetStandardClasses.isUnit(context.expectedType)) {
+                    if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType)) {
                         // This implements coercion to Unit
                         TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace);
                         final boolean[] mismatch = new boolean[1];
@@ -334,8 +334,8 @@ public class ExpressionTypingServices {
                         }
                         if (mightBeUnit) {
                             // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
-                            assert result.getType() == null || JetStandardClasses.isUnit(result.getType());
-                            result = JetTypeInfo.create(JetStandardClasses.getUnitType(), newContext.dataFlowInfo);
+                            assert result.getType() == null || KotlinBuiltIns.getInstance().isUnit(result.getType());
+                            result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), newContext.dataFlowInfo);
                         }
                     }
                 }

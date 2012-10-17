@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -78,7 +78,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     private boolean mustAddReturnToGeneratedFunctionBody() {
         JetType functionReturnType = descriptor.getReturnType();
         assert functionReturnType != null : "Function return typed type must be resolved.";
-        return (!declaration.hasBlockBody()) && (!JetStandardClasses.isUnit(functionReturnType));
+        return (!declaration.hasBlockBody()) && (!KotlinBuiltIns.getInstance().isUnit(functionReturnType));
     }
 
     @NotNull

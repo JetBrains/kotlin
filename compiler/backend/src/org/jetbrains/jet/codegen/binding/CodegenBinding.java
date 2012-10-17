@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -125,7 +125,7 @@ public class CodegenBinding {
         classDescriptor.initialize(
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singletonList(JetStandardClasses.getAnyType()),
+                Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()),
                 JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>emptySet(),
                 null);

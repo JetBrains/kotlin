@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -177,7 +177,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                     boolean firstUpperBound = true;
                     for (JetType upperBound : upperBounds) {
                         String upperBoundText = " : " + renderType(upperBound);
-                        if (upperBound != JetStandardClasses.getDefaultBound()) {
+                        if (upperBound != KotlinBuiltIns.getInstance().getDefaultBound()) {
                             if (firstUpperBound) {
                                 bodyBuilder.append(upperBoundText);
                             } else {

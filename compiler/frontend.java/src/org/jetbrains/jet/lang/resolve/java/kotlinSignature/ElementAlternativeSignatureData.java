@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetTypeElement;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
@@ -89,7 +89,7 @@ public abstract class ElementAlternativeSignatureData {
             @Nullable JetTypeReference altReturnTypeReference,
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters) {
         if (altReturnTypeReference == null) {
-            if (JetStandardClasses.isUnit(originalType)) {
+            if (KotlinBuiltIns.getInstance().isUnit(originalType)) {
                 return originalType;
             }
             else {

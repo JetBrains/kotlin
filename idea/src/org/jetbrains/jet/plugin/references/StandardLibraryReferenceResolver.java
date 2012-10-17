@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.references;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -41,7 +40,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.net.URL;
@@ -54,7 +53,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
 
     private final Object lock = new Object();
-    private static final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(JetStandardClasses.getTuple(0)).toSafe();
+    private static final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(KotlinBuiltIns.getInstance().getTuple(0)).toSafe();
 
     public StandardLibraryReferenceResolver(Project project) {
         super(project);
@@ -78,7 +77,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
 
             BindingTraceContext context = new BindingTraceContext();
             FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
-            context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetStandardClasses.STANDARD_CLASSES_FQNAME, jetNamespace);
+            context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
 
             WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
                                                             "Builtin classes scope");
@@ -92,7 +91,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
                                           "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            scope.addClassifierAlias(JetStandardClasses.UNIT_ALIAS, tuple0);
+            scope.addClassifierAlias(KotlinBuiltIns.getInstance().UNIT_ALIAS, tuple0);
             jetNamespace.setMemberScope(scope);
 
             TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet"));
@@ -145,7 +144,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         }
         for (DeclarationDescriptor member : descriptors) {
             if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
-                                                                                       JetStandardClasses.UNIT_ALIAS.getName()))) {
+                                                                                       KotlinBuiltIns.getInstance().UNIT_ALIAS.getName()))) {
                 return member;
             }
         }
@@ -211,7 +210,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             super(new NamespaceDescriptorImpl(new ModuleDescriptor(Name.special("<fake_module>")),
                                               Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")),
                   Collections.<AnnotationDescriptor>emptyList(),
-                  JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getName());
+                  KotlinBuiltIns.getInstance().getBuiltInsPackage().getName());
         }
 
         void setMemberScope(WritableScope memberScope) {

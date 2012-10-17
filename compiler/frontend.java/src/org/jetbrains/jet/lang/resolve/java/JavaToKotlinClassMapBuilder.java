@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.lang.annotation.Annotation;
@@ -32,7 +32,7 @@ public abstract class JavaToKotlinClassMapBuilder {
     /*package*/ void init() {
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
 
-        register(Object.class, JetStandardClasses.getAny());
+        register(Object.class, KotlinBuiltIns.getInstance().getAny());
         register(String.class, standardLibrary.getString());
         register(CharSequence.class, standardLibrary.getCharSequence());
         register(Throwable.class, standardLibrary.getThrowable());

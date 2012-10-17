@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -104,7 +104,7 @@ public class TypeUtils {
     @Nullable
     public static JetType intersect(@NotNull JetTypeChecker typeChecker, @NotNull Set<JetType> types) {
         if (types.isEmpty()) {
-            return JetStandardClasses.getNullableAnyType();
+            return KotlinBuiltIns.getInstance().getNullableAnyType();
         }
 
         if (types.size() == 1) {
@@ -117,13 +117,13 @@ public class TypeUtils {
         boolean nothingTypePresent = false;
         List<JetType> nullabilityStripped = Lists.newArrayList();
         for (JetType type : types) {
-            nothingTypePresent |= JetStandardClasses.isNothingOrNullableNothing(type);
+            nothingTypePresent |= KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type);
             allNullable &= type.isNullable();
             nullabilityStripped.add(makeNotNullable(type));
         }
         
         if (nothingTypePresent) {
-            return allNullable ? JetStandardClasses.getNullableNothingType() : JetStandardClasses.getNothingType();
+            return allNullable ? KotlinBuiltIns.getInstance().getNullableNothingType() : KotlinBuiltIns.getInstance().getNothingType();
         }
 
         // Now we remove types that have subtypes in the list

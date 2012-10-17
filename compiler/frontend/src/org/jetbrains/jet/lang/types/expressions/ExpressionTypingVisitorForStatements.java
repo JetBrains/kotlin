@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -69,7 +69,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Nullable
     private JetType checkAssignmentType(@Nullable JetType assignmentType, @NotNull JetBinaryExpression expression, @NotNull ExpressionTypingContext context) {
-        if (assignmentType != null && !JetStandardClasses.isUnit(assignmentType) && context.expectedType != TypeUtils.NO_EXPECTED_TYPE &&
+        if (assignmentType != null && !KotlinBuiltIns.getInstance().isUnit(assignmentType) && context.expectedType != TypeUtils.NO_EXPECTED_TYPE &&
             TypeUtils.equalTypes(context.expectedType, assignmentType)) {
             context.trace.report(Errors.ASSIGNMENT_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
@@ -243,7 +243,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
         else if (assignmentOperationType != null) {
             assignmentOperationTrace.commit();
-            if (!JetStandardClasses.isUnit(assignmentOperationType)) {
+            if (!KotlinBuiltIns.getInstance().isUnit(assignmentOperationType)) {
                 context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
             }
         }

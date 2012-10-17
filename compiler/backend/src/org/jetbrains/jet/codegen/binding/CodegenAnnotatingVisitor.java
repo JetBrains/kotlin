@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,8 +65,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
                 Collections.singleton((funDescriptor.getReceiverParameter().exists()
-                                       ? JetStandardClasses.getReceiverFunction(arity)
-                                       : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY,
+                                       ? KotlinBuiltIns.getInstance().getExtensionFunction(arity)
+                                       : KotlinBuiltIns.getInstance().getFunction(arity)).getDefaultType()), JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>emptySet(), null);
 
         assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingContext, funDescriptor, classDescriptor);

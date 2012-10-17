@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -369,14 +369,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         for (JetExpression entry : entries) {
             types.add(context.expressionTypingServices.safeGetType(context.scope, entry, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace)); // TODO
         }
-        if (context.expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isTupleType(context.expectedType)) {
+        if (context.expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isTupleType(context.expectedType)) {
             List<JetType> enrichedTypes = checkArgumentTypes(types, entries, context.expectedType.getArguments(), context);
             if (enrichedTypes != types) {
-                return JetTypeInfo.create(JetStandardClasses.getTupleType(enrichedTypes), context.dataFlowInfo);
+                return JetTypeInfo.create(KotlinBuiltIns.getInstance().getTupleType(enrichedTypes), context.dataFlowInfo);
             }
         }
         // TODO : labels
-        return DataFlowUtils.checkType(JetStandardClasses.getTupleType(types), expression, context, context.dataFlowInfo);
+        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getTupleType(types), expression, context, context.dataFlowInfo);
     }
 
     @NotNull
@@ -481,7 +481,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 else {
                     // supertypes may be empty when all the supertypes are error types (are not resolved, for example)
                     JetType type = supertypes.isEmpty()
-                                   ? JetStandardClasses.getAnyType()
+                                   ? KotlinBuiltIns.getInstance().getAnyType()
                                    : supertypes.iterator().next();
                     result = substitutor.substitute(type, Variance.INVARIANT);
                 }
@@ -565,7 +565,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         //TODO move further
         if (!(receiverType instanceof NamespaceType) && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
-            if (selectorReturnType != null && !selectorReturnType.isNullable() && !JetStandardClasses.isUnit(selectorReturnType)) {
+            if (selectorReturnType != null && !selectorReturnType.isNullable() && !KotlinBuiltIns.getInstance().isUnit(selectorReturnType)) {
                 if (receiverType.isNullable()) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
                 }
@@ -847,8 +847,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType returnType = resolutionResults.getResultingDescriptor().getReturnType();
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
-                result = ErrorUtils.createErrorType(JetStandardClasses.UNIT_ALIAS.getName());
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, KotlinBuiltIns.getInstance().getUnitType())) {
+                result = ErrorUtils.createErrorType(KotlinBuiltIns.getInstance().UNIT_ALIAS.getName());
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
@@ -994,7 +994,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
                     OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
                             receiver, name,
-                            Collections.singletonList(JetStandardClasses.getNullableAnyType()));
+                            Collections.singletonList(KotlinBuiltIns.getInstance().getNullableAnyType()));
                     if (resolutionResults.isSuccess()) {
                         FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
                         context.trace.record(REFERENCE_TARGET, operationSign, equals);

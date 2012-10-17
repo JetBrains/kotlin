@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
@@ -85,7 +85,7 @@ public final class DescriptorLookupConverter {
             }
             else {
                 if (functionDescriptor.getValueParameters().size() == 1
-                        && JetStandardClasses.isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
+                        && KotlinBuiltIns.getInstance().isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
                     element = element.withInsertHandler(PARAMS_BRACES_FUNCTION_HANDLER);
                 } else {
                     element = element.withInsertHandler(PARAMS_PARENTHESIS_FUNCTION_HANDLER);

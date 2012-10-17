@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
@@ -314,7 +314,7 @@ public class CompileTimeConstantResolver {
     }
 
     private boolean noExpectedType(JetType expectedType) {
-        return expectedType == TypeUtils.NO_EXPECTED_TYPE || JetStandardClasses.isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
+        return expectedType == TypeUtils.NO_EXPECTED_TYPE || KotlinBuiltIns.getInstance().isUnit(expectedType) || ErrorUtils.isErrorType(expectedType);
     }
 
 }

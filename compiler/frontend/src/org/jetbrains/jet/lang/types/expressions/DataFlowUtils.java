@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -168,11 +168,11 @@ public class DataFlowUtils {
 
     @Nullable
     public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
-        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
+        if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !KotlinBuiltIns.getInstance().isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
         }
-        return JetStandardClasses.getUnitType();
+        return KotlinBuiltIns.getInstance().getUnitType();
     }
 
     @NotNull
@@ -183,7 +183,7 @@ public class DataFlowUtils {
     @Nullable
     public static JetType checkImplicitCast(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, boolean isStatement) {
         if (expressionType != null && context.expectedType == TypeUtils.NO_EXPECTED_TYPE && !isStatement &&
-            (JetStandardClasses.isUnit(expressionType) || JetStandardClasses.isAny(expressionType))) {
+            (KotlinBuiltIns.getInstance().isUnit(expressionType) || KotlinBuiltIns.getInstance().isAny(expressionType))) {
             context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
 
         }

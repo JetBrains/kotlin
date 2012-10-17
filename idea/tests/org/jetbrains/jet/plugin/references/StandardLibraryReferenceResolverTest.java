@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
 
     public void testAllReferencesResolved() {
         StandardLibraryReferenceResolver referenceResolver = getProject().getComponent(StandardLibraryReferenceResolver.class);
-        for (DeclarationDescriptor descriptor : getAllStandardDescriptors(JetStandardClasses.STANDARD_CLASSES_NAMESPACE)) {
+        for (DeclarationDescriptor descriptor : getAllStandardDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackage())) {
             if (descriptor instanceof NamespaceDescriptor && "jet".equals(descriptor.getName().getName())) continue;
             assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveStandardLibrarySymbol(descriptor));
         }

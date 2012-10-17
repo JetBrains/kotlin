@@ -49,9 +49,10 @@ public enum PrimitiveType {
         this.typeName = Name.identifier(typeName);
         this.arrayTypeName = Name.identifier(typeName + "Array");
         this.rangeTypeName = Name.identifier(typeName + "Range");
-        this.className = JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.typeName);
-        this.arrayClassName = JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.arrayTypeName);
-        this.rangeClassName = JetStandardClasses.STANDARD_CLASSES_FQNAME.child(this.rangeTypeName);
+        FqName builtInsPackageFqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+        this.className = builtInsPackageFqName.child(this.typeName);
+        this.arrayClassName = builtInsPackageFqName.child(this.arrayTypeName);
+        this.rangeClassName = builtInsPackageFqName.child(this.rangeTypeName);
     }
 
     @NotNull

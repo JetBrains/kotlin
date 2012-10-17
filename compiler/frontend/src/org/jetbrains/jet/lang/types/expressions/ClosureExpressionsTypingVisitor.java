@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -97,7 +97,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (bodyExpression == null) return null;
 
         JetType expectedType = context.expectedType;
-        boolean functionTypeExpected = expectedType != TypeUtils.NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(expectedType);
+        boolean functionTypeExpected = expectedType != TypeUtils.NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionType(expectedType);
 
         SimpleFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
 
@@ -120,7 +120,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (functionTypeExpected) {
-                returnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
+                returnType = KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(expectedType);
             }
             returnType = context.expressionTypingServices.getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
                     context.replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace).getType();
@@ -136,14 +136,14 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         functionDescriptor.setReturnType(safeReturnType);
 
         if (!functionLiteral.hasDeclaredReturnType() && functionTypeExpected) {
-            JetType expectedReturnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
-            if (JetStandardClasses.isUnit(expectedReturnType)) {
-                functionDescriptor.setReturnType(JetStandardClasses.getUnitType());
-                return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, JetStandardClasses.getUnitType()), expression, context, context.dataFlowInfo);
+            JetType expectedReturnType = KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(expectedType);
+            if (KotlinBuiltIns.getInstance().isUnit(expectedReturnType)) {
+                functionDescriptor.setReturnType(KotlinBuiltIns.getInstance().getUnitType());
+                return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, KotlinBuiltIns.getInstance().getUnitType()), expression, context, context.dataFlowInfo);
             }
 
         }
-        return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, safeReturnType), expression, context, context.dataFlowInfo);
+        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, safeReturnType), expression, context, context.dataFlowInfo);
     }
 
     private SimpleFunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
@@ -157,7 +157,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType effectiveReceiverType;
         if (receiverTypeRef == null) {
             if (functionTypeExpected) {
-                effectiveReceiverType = JetStandardClasses.getReceiverType(context.expectedType);
+                effectiveReceiverType = KotlinBuiltIns.getInstance().getReceiverType(context.expectedType);
             }
             else {
                 effectiveReceiverType = null;
@@ -185,7 +185,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         List<JetParameter> declaredValueParameters = functionLiteral.getValueParameters();
 
         List<ValueParameterDescriptor> expectedValueParameters =  (functionTypeExpected)
-                                                          ? JetStandardClasses.getValueParameters(functionDescriptor, context.expectedType)
+                                                          ? KotlinBuiltIns.getInstance().getValueParameters(functionDescriptor, context.expectedType)
                                                           : null;
 
         boolean hasDeclaredValueParameters = functionLiteral.getValueParameterList() != null;

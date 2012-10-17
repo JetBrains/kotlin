@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
@@ -94,7 +94,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Nullable
     public static JetLightClass create(PsiManager manager, JetFile file, FqName qualifiedName) {
-        return JetStandardClasses.isStandardClass(qualifiedName) ? null : new JetLightClass(manager, file, qualifiedName);
+        return KotlinBuiltIns.getInstance().isStandardClass(qualifiedName) ? null : new JetLightClass(manager, file, qualifiedName);
     }
 
     @Override

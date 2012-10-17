@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -113,13 +113,13 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         else if (ErrorUtils.isErrorType(type)) {
             return escape(type.toString());
         }
-        else if (JetStandardClasses.isUnit(type)) {
-            return escape(JetStandardClasses.UNIT_ALIAS + (type.isNullable() ? "?" : ""));
+        else if (KotlinBuiltIns.getInstance().isUnit(type)) {
+            return escape(KotlinBuiltIns.getInstance().UNIT_ALIAS + (type.isNullable() ? "?" : ""));
         }
-        else if (JetStandardClasses.isTupleType(type)) {
+        else if (KotlinBuiltIns.getInstance().isTupleType(type)) {
             return escape(renderTupleType(type, shortNamesOnly));
         }
-        else if (JetStandardClasses.isFunctionType(type)) {
+        else if (KotlinBuiltIns.getInstance().isFunctionType(type)) {
             return escape(renderFunctionType(type, shortNamesOnly));
         }
         else {
@@ -196,7 +196,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     protected String renderTupleType(JetType type, boolean shortNamesOnly) {
         StringBuilder sb = new StringBuilder("#(");
-        appendTypes(sb, JetStandardClasses.getTupleElementTypes(type), shortNamesOnly);
+        appendTypes(sb, KotlinBuiltIns.getInstance().getTupleElementTypes(type), shortNamesOnly);
         sb.append(")");
 
         if (type.isNullable()) {
@@ -209,16 +209,16 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     private String renderFunctionType(JetType type, boolean shortNamesOnly) {
         StringBuilder sb = new StringBuilder();
 
-        JetType receiverType = JetStandardClasses.getReceiverType(type);
+        JetType receiverType = KotlinBuiltIns.getInstance().getReceiverType(type);
         if (receiverType != null) {
             sb.append(renderType(receiverType, shortNamesOnly));
             sb.append(".");
         }
 
         sb.append("(");
-        appendTypeProjections(sb, JetStandardClasses.getParameterTypeProjectionsFromFunctionType(type), shortNamesOnly);
+        appendTypeProjections(sb, KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type), shortNamesOnly);
         sb.append(") -> ");
-        sb.append(renderType(JetStandardClasses.getReturnTypeFromFunctionType(type), shortNamesOnly));
+        sb.append(renderType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type), shortNamesOnly));
 
         if (type.isNullable()) {
             return "(" + sb + ")?";
@@ -565,9 +565,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 renderName(descriptor, builder);
                 renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
             }
-            if (!descriptor.equals(JetStandardClasses.getNothing())) {
+            if (!descriptor.equals(KotlinBuiltIns.getInstance().getNothing())) {
                 Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-                if (supertypes.isEmpty() || supertypes.size() == 1 && JetStandardClasses.isAny(supertypes.iterator().next())) {
+                if (supertypes.isEmpty() || supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAny(supertypes.iterator().next())) {
                 }
                 else {
                     builder.append(" : ");
@@ -599,14 +599,14 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             renderName(descriptor, builder);
             if (descriptor.getUpperBounds().size() == 1) {
                 JetType upperBound = descriptor.getUpperBounds().iterator().next();
-                if (upperBound != JetStandardClasses.getDefaultBound()) {
+                if (upperBound != KotlinBuiltIns.getInstance().getDefaultBound()) {
                     builder.append(" : ").append(renderType(upperBound));
                 }
             }
             else if (topLevel) {
                 boolean first = true;
                 for (JetType upperBound : descriptor.getUpperBounds()) {
-                    if (upperBound.equals(JetStandardClasses.getDefaultBound())) {
+                    if (upperBound.equals(KotlinBuiltIns.getInstance().getDefaultBound())) {
                         continue;
                     }
                     if (first) {

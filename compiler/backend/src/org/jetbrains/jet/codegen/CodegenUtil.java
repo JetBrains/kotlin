@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -81,7 +81,7 @@ public class CodegenUtil {
     public static SimpleFunctionDescriptor createInvoke(FunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
         SimpleFunctionDescriptorImpl invokeDescriptor = new SimpleFunctionDescriptorImpl(
-                fd.getExpectedThisObject().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity),
+                fd.getExpectedThisObject().exists() ? KotlinBuiltIns.getInstance().getExtensionFunction(arity) : KotlinBuiltIns.getInstance().getFunction(arity),
                 Collections.<AnnotationDescriptor>emptyList(),
                 Name.identifier("invoke"),
                 CallableMemberDescriptor.Kind.DECLARATION);
@@ -196,7 +196,7 @@ public class CodegenUtil {
                 return descriptor.getDefaultType();
             }
         }
-        return JetStandardClasses.getAnyType();
+        return KotlinBuiltIns.getInstance().getAnyType();
     }
 
     public static <T extends CallableMemberDescriptor> T unwrapFakeOverride(T member) {

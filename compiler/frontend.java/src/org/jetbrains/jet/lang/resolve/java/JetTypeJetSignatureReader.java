@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureVariance;
@@ -61,7 +61,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
                 }
             }
             if (descriptor == 'V') {
-                return JetStandardClasses.getUnitType();
+                return KotlinBuiltIns.getInstance().getUnitType();
             }
         }
         else {
@@ -119,12 +119,12 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         // TODO: this is the worst code in Kotlin project
         Matcher functionMatcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName.getFqName());
         if (functionMatcher.matches()) {
-            return JetStandardClasses.getFunction(Integer.parseInt(functionMatcher.group(1)));
+            return KotlinBuiltIns.getInstance().getFunction(Integer.parseInt(functionMatcher.group(1)));
         }
 
         Matcher patternMatcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName.getFqName());
         if (patternMatcher.matches()) {
-            return JetStandardClasses.getTuple(Integer.parseInt(patternMatcher.group(1)));
+            return KotlinBuiltIns.getInstance().getTuple(Integer.parseInt(patternMatcher.group(1)));
         }
 
 

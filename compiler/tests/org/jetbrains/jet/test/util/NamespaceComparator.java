@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
@@ -732,7 +732,7 @@ public class NamespaceComparator {
                 sb.append(">");
             }
 
-            if (JetStandardClasses.getNothing() != klass && !klass.getTypeConstructor().getSupertypes().isEmpty()) {
+            if (KotlinBuiltIns.getInstance().getNothing() != klass && !klass.getTypeConstructor().getSupertypes().isEmpty()) {
                 sb.append(" : ");
                 new TypeSerializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
             }

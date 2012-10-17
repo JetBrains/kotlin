@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -235,7 +235,7 @@ public class CallResolver {
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
                 JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace); // We are actually expecting a function, but there seems to be no easy way of expressing this
 
-                if (!JetStandardClasses.isFunctionType(calleeType)) {
+                if (!KotlinBuiltIns.getInstance().isFunctionType(calleeType)) {
 //                    checkTypesWithNoCallee(trace, scope, call);
                     if (!ErrorUtils.isErrorType(calleeType)) {
                         context.trace.report(CALLEE_NOT_A_FUNCTION.on(calleeExpression, calleeType));

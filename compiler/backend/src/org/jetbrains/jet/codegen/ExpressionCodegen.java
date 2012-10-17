@@ -54,7 +54,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -2474,7 +2474,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             JetType type = ((FunctionDescriptor) op).getReturnType();
             assert type != null;
-            final boolean keepReturnValue = !type.equals(JetStandardClasses.getUnitType());
+            final boolean keepReturnValue = !type.equals(KotlinBuiltIns.getInstance().getUnitType());
             callAugAssignMethod(expression, (CallableMethod) callable, lhsType, keepReturnValue);
         }
 

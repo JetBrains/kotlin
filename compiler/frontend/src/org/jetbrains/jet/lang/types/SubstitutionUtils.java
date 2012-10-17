@@ -21,7 +21,7 @@ import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public class SubstitutionUtils {
                 fullSubstitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
             }
         }
-        if (JetStandardClasses.isNothingOrNullableNothing(context)) return;
+        if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(context)) return;
         for (JetType supertype : context.getConstructor().getSupertypes()) {
             fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
         }

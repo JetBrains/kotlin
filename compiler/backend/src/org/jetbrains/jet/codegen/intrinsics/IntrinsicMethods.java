@@ -23,10 +23,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import javax.annotation.PostConstruct;
@@ -119,16 +120,17 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("get"), 1, new StringGetChar());
 
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("name"), 0, new EnumName());
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("ordinal"), 0, new EnumOrdinal());
+        FqName builtInsPackageFqName = KotlinBuiltIns.getInstance().getBuiltInsPackageFqName();
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("name"), 0, new EnumName());
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("ordinal"), 0, new EnumOrdinal());
 
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("toString"), 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("equals"), 1, EQUALS);
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("plus"), 1, STRING_PLUS);
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("arrayOfNulls"), 1, new NewArray());
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("synchronized"), 2, new StupidSync());
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME, Name.identifier("iterator"), 0, new IteratorIterator());
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("toString"), 0, TO_STRING);
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("equals"), 1, EQUALS);
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("plus"), 1, STRING_PLUS);
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("arrayOfNulls"), 1, new NewArray());
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("synchronized"), 2, new StupidSync());
+        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("iterator"), 0, new IteratorIterator());
 
 
         declareIntrinsicFunction(Name.identifier("ByteIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
@@ -148,7 +150,7 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
-        Name tuple0Name = JetStandardClasses.getTuple(0).getName();
+        Name tuple0Name = KotlinBuiltIns.getInstance().getTuple(0).getName();
         intrinsicsMap.registerIntrinsic(
                 getClassObjectFqName(tuple0Name),
                 Name.identifier("VALUE"), -1, new UnitValue());
@@ -164,7 +166,7 @@ public class IntrinsicMethods {
 
     @NotNull
     private static FqNameUnsafe getClassObjectFqName(@NotNull Name builtinClassName) {
-        return JetStandardClasses.STANDARD_CLASSES_FQNAME.child(builtinClassName).toUnsafe().child(getClassObjectName(builtinClassName));
+        return KotlinBuiltIns.getInstance().getBuiltInsPackageFqName().child(builtinClassName).toUnsafe().child(getClassObjectName(builtinClassName));
     }
 
     private void declareArrayMethods() {
@@ -201,11 +203,11 @@ public class IntrinsicMethods {
     }
 
     private void declareIntrinsicProperty(Name className, Name methodName, IntrinsicMethod implementation) {
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(className), methodName, -1, implementation);
+        intrinsicsMap.registerIntrinsic(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName().child(className), methodName, -1, implementation);
     }
 
     private void declareIntrinsicFunction(Name className, Name functionName, int arity, IntrinsicMethod implementation) {
-        intrinsicsMap.registerIntrinsic(JetStandardClasses.STANDARD_CLASSES_FQNAME.child(className), functionName, arity, implementation);
+        intrinsicsMap.registerIntrinsic(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName().child(className), functionName, arity, implementation);
     }
 
     @Nullable

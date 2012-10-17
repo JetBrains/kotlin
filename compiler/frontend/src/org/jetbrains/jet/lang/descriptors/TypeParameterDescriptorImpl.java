@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
@@ -44,7 +44,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
             @NotNull Name name,
             int index) {
         TypeParameterDescriptorImpl typeParameterDescriptor = createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index);
-        typeParameterDescriptor.addUpperBound(JetStandardClasses.getDefaultBound());
+        typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getDefaultBound());
         typeParameterDescriptor.setInitialized();
         return typeParameterDescriptor;
     }
@@ -142,7 +142,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
         checkUninitialized();
 
         if (upperBounds.isEmpty()) {
-            doAddUpperBound(JetStandardClasses.getDefaultBound());
+            doAddUpperBound(KotlinBuiltIns.getInstance().getDefaultBound());
         }
     }
 
@@ -162,7 +162,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
             assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
             upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
             if (upperBoundsAsType == null) {
-                upperBoundsAsType = JetStandardClasses.getNothingType();
+                upperBoundsAsType = KotlinBuiltIns.getInstance().getNothingType();
             }
         }
         return upperBoundsAsType;
@@ -172,14 +172,14 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
     @NotNull
     public Set<JetType> getLowerBounds() {
         //checkInitialized();
-        return Collections.singleton(JetStandardClasses.getNothingType());
+        return Collections.singleton(KotlinBuiltIns.getInstance().getNothingType());
     }
 
     @Override
     @NotNull
     public JetType getLowerBoundsAsType() {
         checkInitialized();
-        return JetStandardClasses.getNothingType();
+        return KotlinBuiltIns.getInstance().getNothingType();
     }
     
     
@@ -240,7 +240,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
         if (classObjectBoundsAsType == null) {
             classObjectBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, classObjectUpperBounds);
             if (classObjectBoundsAsType == null) {
-                classObjectBoundsAsType = JetStandardClasses.getNothingType();
+                classObjectBoundsAsType = KotlinBuiltIns.getInstance().getNothingType();
             }
         }
         return classObjectBoundsAsType;

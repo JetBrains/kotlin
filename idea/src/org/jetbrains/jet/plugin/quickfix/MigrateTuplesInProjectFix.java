@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
@@ -119,7 +119,7 @@ public class MigrateTuplesInProjectFix extends JetIntentionAction<PsiElement> {
                     if (containingDeclaration == null) return;
 
                     ImmutableSet<ClassDescriptor> supportedTupleClasses =
-                            ImmutableSet.of(JetStandardClasses.getTuple(2), JetStandardClasses.getTuple(3));
+                            ImmutableSet.of(KotlinBuiltIns.getInstance().getTuple(2), KotlinBuiltIns.getInstance().getTuple(3));
                     //noinspection SuspiciousMethodCalls
                     if (!supportedTupleClasses.contains(containingDeclaration)) return;
 

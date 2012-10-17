@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class TypeCheckingProcedure {
 
     private static JetType getInType(TypeParameterDescriptor parameter, TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == OUT_VARIANCE || parameter.getVariance() == OUT_VARIANCE;
-        return isOutProjected ? JetStandardClasses.getNothingType() : argument.getType();
+        return isOutProjected ? KotlinBuiltIns.getInstance().getNothingType() : argument.getType();
     }
 
     private final TypingConstraints constraints;
@@ -164,7 +164,7 @@ public class TypeCheckingProcedure {
         }
         subtype = TypeUtils.makeNotNullable(subtype);
         supertype = TypeUtils.makeNotNullable(supertype);
-        if (JetStandardClasses.isNothingOrNullableNothing(subtype)) {
+        if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(subtype)) {
             return true;
         }
         @Nullable JetType closestSupertype = findCorrespondingSupertype(subtype, supertype);

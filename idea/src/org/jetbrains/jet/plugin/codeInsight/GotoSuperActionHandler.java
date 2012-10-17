@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
@@ -99,7 +99,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
         List<PsiElement> superDeclarations = ContainerUtil.mapNotNull(superDescriptors, new Function<DeclarationDescriptor, PsiElement>() {
             @Override
             public PsiElement fun(DeclarationDescriptor descriptor) {
-                if (JetStandardClasses.getAny() == descriptor) {
+                if (KotlinBuiltIns.getInstance().getAny() == descriptor) {
                     return null;
                 }
                 return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);

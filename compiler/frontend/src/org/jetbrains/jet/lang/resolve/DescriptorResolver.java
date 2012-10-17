@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.lazy.LazyValue;
@@ -183,7 +183,7 @@ public class DescriptorResolver {
         else if (jetClass instanceof JetClass && ((JetClass) jetClass).isAnnotation()) {
             return JetStandardLibrary.getInstance().getAnnotationType();
         }
-        return JetStandardClasses.getAnyType();
+        return KotlinBuiltIns.getInstance().getAnyType();
     }
 
     public Collection<JetType> resolveDelegationSpecifiers(
@@ -267,7 +267,7 @@ public class DescriptorResolver {
             returnType = typeResolver.resolveType(innerScope, returnTypeRef, trace, true);
         }
         else if (function.hasBlockBody()) {
-            returnType = JetStandardClasses.getUnitType();
+            returnType = KotlinBuiltIns.getInstance().getUnitType();
         }
         else {
             final JetExpression bodyExpression = function.getBodyExpression();
@@ -574,7 +574,7 @@ public class DescriptorResolver {
 
             parameter.setInitialized();
 
-            if (JetStandardClasses.isNothing(parameter.getUpperBoundsAsType())) {
+            if (KotlinBuiltIns.getInstance().isNothing(parameter.getUpperBoundsAsType())) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
                 if (nameIdentifier != null) {
                     trace.report(CONFLICTING_UPPER_BOUNDS.on(nameIdentifier, parameter));
@@ -582,7 +582,7 @@ public class DescriptorResolver {
             }
 
             JetType classObjectType = parameter.getClassObjectType();
-            if (classObjectType != null && JetStandardClasses.isNothing(classObjectType)) {
+            if (classObjectType != null && KotlinBuiltIns.getInstance().isNothing(classObjectType)) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
                 if (nameIdentifier != null) {
                     trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(nameIdentifier, parameter));

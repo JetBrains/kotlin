@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Collection;
@@ -58,13 +58,13 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(JetStandardClasses.STANDARD_CLASSES_FQNAME)) {
+        if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName())) {
             switch (builtinsScopeExtensionMode) {
                 case ALL:
                     namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
                     break;
                 case ONLY_STANDARD_CLASSES:
-                    namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
+                    namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                     break;
             }
 

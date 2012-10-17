@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -121,7 +121,7 @@ public class ExpressionTypingUtils {
             return JetStandardLibrary.getInstance().getCharType();
         }
         else if (constantType == JetNodeTypes.NULL) {
-            return JetStandardClasses.getNullableNothingType();
+            return KotlinBuiltIns.getInstance().getNullableNothingType();
         }
         else {
             throw new IllegalArgumentException("Unsupported constant type: " + constantType);

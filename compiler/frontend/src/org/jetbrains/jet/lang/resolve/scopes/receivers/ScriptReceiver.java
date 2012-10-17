@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 /**
  * @author Stepan Koltsov
@@ -45,7 +45,7 @@ public class ScriptReceiver implements ThisReceiverDescriptor {
     @Override
     public JetType getType() {
         // not sure
-        return JetStandardClasses.getAnyType();
+        return KotlinBuiltIns.getInstance().getAnyType();
     }
 
     @Override

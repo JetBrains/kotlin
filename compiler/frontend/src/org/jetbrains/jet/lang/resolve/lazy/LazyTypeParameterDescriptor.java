@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
@@ -103,7 +103,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
             }
 
             if (upperBounds.isEmpty()) {
-                upperBounds.add(JetStandardClasses.getDefaultBound());
+                upperBounds.add(KotlinBuiltIns.getInstance().getDefaultBound());
             }
         }
         return upperBounds;
@@ -155,7 +155,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
             assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
             upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
             if (upperBoundsAsType == null) {
-                upperBoundsAsType = JetStandardClasses.getNothingType();
+                upperBoundsAsType = KotlinBuiltIns.getInstance().getNothingType();
             }
         }
         return upperBoundsAsType;
@@ -170,7 +170,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public JetType getLowerBoundsAsType() {
-        return JetStandardClasses.getNothingType();
+        return KotlinBuiltIns.getInstance().getNothingType();
     }
 
     @NotNull

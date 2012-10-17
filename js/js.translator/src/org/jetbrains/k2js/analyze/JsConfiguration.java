@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Arrays;
@@ -51,7 +51,7 @@ public class JsConfiguration implements ModuleConfiguration {
     public static final List<ImportPath> DEFAULT_IMPORT_PATHS = Arrays.asList(
             new ImportPath("js.*"),
             new ImportPath("java.lang.*"),
-            new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true),
+            new ImportPath(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), true),
             new ImportPath("kotlin.*"));
 
     @NotNull

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
@@ -70,13 +70,13 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     @Override
     public JetType visitFunctionType(JetFunctionType type, Void data) {
         return visitCommonType(type.getReceiverTypeRef() == null
-                ? JetStandardClasses.getFunction(type.getParameters().size())
-                : JetStandardClasses.getReceiverFunction(type.getParameters().size()), type);
+                ? KotlinBuiltIns.getInstance().getFunction(type.getParameters().size())
+                : KotlinBuiltIns.getInstance().getExtensionFunction(type.getParameters().size()), type);
     }
 
     @Override
     public JetType visitTupleType(JetTupleType type, Void data) {
-        return visitCommonType(JetStandardClasses.getTuple(type.getComponentTypeRefs().size()), type);
+        return visitCommonType(KotlinBuiltIns.getInstance().getTuple(type.getComponentTypeRefs().size()), type);
     }
 
     @Override
@@ -87,8 +87,8 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         String shortName = type.getReferenceExpression().getReferencedName();
         String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
 
-        if (JetStandardClasses.UNIT_ALIAS.getName().equals(longName)) {
-            return visitCommonType(JetStandardClasses.getTuple(0), type);
+        if (KotlinBuiltIns.getInstance().UNIT_ALIAS.getName().equals(longName)) {
+            return visitCommonType(KotlinBuiltIns.getInstance().getTuple(0), type);
         }
 
         return visitCommonType(longName, type);

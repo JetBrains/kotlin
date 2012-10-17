@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -196,7 +196,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
         switch (constraintKind) {
             case SUPER_TYPE: {
-                if (JetStandardClasses.isNothingOrNullableNothing(constrainingType)) break;
+                if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(constrainingType)) break;
                 JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
                 if (correspondingSupertype != null) {
                     constrainingType = correspondingSupertype;
@@ -204,7 +204,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 break;
             }
             case SUB_TYPE: {
-                if (JetStandardClasses.isNothingOrNullableNothing(subjectType)) break;
+                if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(subjectType)) break;
                 JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
                 if (correspondingSupertype != null) {
                     subjectType = correspondingSupertype;

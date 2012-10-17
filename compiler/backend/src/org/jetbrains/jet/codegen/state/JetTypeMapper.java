@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
@@ -173,19 +173,19 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     private Type mapReturnType(@NotNull final JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        if (jetType.equals(JetStandardClasses.getUnitType())) {
+        if (jetType.equals(KotlinBuiltIns.getInstance().getUnitType())) {
             if (signatureVisitor != null) {
                 signatureVisitor.writeAsmType(Type.VOID_TYPE, false);
             }
             return Type.VOID_TYPE;
         }
-        else if (jetType.equals(JetStandardClasses.getNothingType())) {
+        else if (jetType.equals(KotlinBuiltIns.getInstance().getNothingType())) {
             if (signatureVisitor != null) {
                 signatureVisitor.writeNothing(false);
             }
             return Type.VOID_TYPE;
         }
-        if (jetType.equals(JetStandardClasses.getNullableNothingType())) {
+        if (jetType.equals(KotlinBuiltIns.getInstance().getNullableNothingType())) {
             if (signatureVisitor != null) {
                 signatureVisitor.writeNothing(true);
             }

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.types.JetType;
  */
 public class DataFlowValue {
     
-    public static final DataFlowValue NULL = new DataFlowValue(new Object(), JetStandardClasses.getNullableNothingType(), false, Nullability.NULL);
-    public static final DataFlowValue NULLABLE = new DataFlowValue(new Object(), JetStandardClasses.getNullableAnyType(), false, Nullability.UNKNOWN);
+    public static final DataFlowValue NULL = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableNothingType(), false, Nullability.NULL);
+    public static final DataFlowValue NULLABLE = new DataFlowValue(new Object(), KotlinBuiltIns.getInstance().getNullableAnyType(), false, Nullability.UNKNOWN);
 
     private final boolean stableIdentifier;
     private final JetType type;

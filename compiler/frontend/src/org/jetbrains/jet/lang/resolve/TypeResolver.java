@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
 import javax.inject.Inject;
@@ -188,7 +188,7 @@ public class TypeResolver {
                     }
 
                     // TODO labels
-                    result[0] = JetStandardClasses.getTupleType(resolveTypes(scope, type.getComponentTypeRefs(), trace, checkBounds));
+                    result[0] = KotlinBuiltIns.getInstance().getTupleType(resolveTypes(scope, type.getComponentTypeRefs(), trace, checkBounds));
                 }
 
                 @Override
@@ -207,9 +207,9 @@ public class TypeResolver {
                         returnType = resolveType(scope, returnTypeRef, trace, checkBounds);
                     }
                     else {
-                        returnType = JetStandardClasses.getUnitType();
+                        returnType = KotlinBuiltIns.getInstance().getUnitType();
                     }
-                    result[0] = JetStandardClasses.getFunctionType(annotations, receiverType, parameterTypes, returnType);
+                    result[0] = KotlinBuiltIns.getInstance().getFunctionType(annotations, receiverType, parameterTypes, returnType);
                 }
 
                 @Override

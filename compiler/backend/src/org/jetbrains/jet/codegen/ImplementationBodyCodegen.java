@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -441,7 +441,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateDataClassEqualsIfNeeded(List<PropertyDescriptor> properties) {
         ClassDescriptor booleanClass = JetStandardLibrary.getInstance().getBoolean();
-        ClassDescriptor anyClass = JetStandardClasses.getAny();
+        ClassDescriptor anyClass = KotlinBuiltIns.getInstance().getAny();
         FunctionDescriptor equalsFunction = getDeclaredFunctionByRawSignature(descriptor, Name.identifier("equals"), booleanClass, anyClass);
         if (equalsFunction == null) {
             generateDataClassEqualsMethod(properties);

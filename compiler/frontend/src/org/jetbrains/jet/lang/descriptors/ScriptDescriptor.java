@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -76,7 +76,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
         classDescriptor.initialize(
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singletonList(JetStandardClasses.getAnyType()),
+                Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()),
                 classScope,
                 new HashSet<ConstructorDescriptor>(),
                 null);

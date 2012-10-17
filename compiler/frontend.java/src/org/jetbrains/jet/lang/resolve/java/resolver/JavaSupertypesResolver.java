@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
@@ -123,7 +123,7 @@ public final class JavaSupertypesResolver {
                                                      typeVariableResolver) {
                     @Override
                     protected void done(@NotNull JetType jetType) {
-                        if (!jetType.equals(JetStandardClasses.getAnyType())) {
+                        if (!jetType.equals(KotlinBuiltIns.getInstance().getAnyType())) {
                             result.add(jetType);
                         }
                     }
@@ -147,7 +147,7 @@ public final class JavaSupertypesResolver {
             || DescriptorResolverUtils.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
             // TODO: annotations
             || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
-            result.add(JetStandardClasses.getAnyType());
+            result.add(KotlinBuiltIns.getInstance().getAnyType());
         }
         else {
             ClassDescriptor object = resolveJavaLangObject();
@@ -156,7 +156,7 @@ public final class JavaSupertypesResolver {
             }
             else {
                 //TODO: hack here
-                result.add(JetStandardClasses.getAnyType());
+                result.add(KotlinBuiltIns.getInstance().getAnyType());
                // throw new IllegalStateException("Could not resolve java.lang.Object");
             }
         }
