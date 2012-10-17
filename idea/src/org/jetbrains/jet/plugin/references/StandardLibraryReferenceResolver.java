@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.JetStandardLibraryInitializer;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.net.URL;
@@ -53,9 +54,13 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
 
     private final Object lock = new Object();
-    private static final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(KotlinBuiltIns.getInstance().getTuple(0)).toSafe();
+    private final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(KotlinBuiltIns.getInstance().getTuple(0)).toSafe();
 
-    public StandardLibraryReferenceResolver(Project project) {
+    public StandardLibraryReferenceResolver(
+            Project project,
+            // This parameter is needed to initialize built-ins before this component
+            JetStandardLibraryInitializer makeSureStandardLibraryIsInitialized
+    ) {
         super(project);
     }
 
