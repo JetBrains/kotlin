@@ -63,7 +63,6 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
     public void testJetStandardLibrary() throws Exception {
         List<JetFile> files = Lists.newArrayList();
         addJetFilesFromDir(files, new File("compiler/frontend/src/jet"));
-        addJetFilesFromDir(files, new File("compiler/frontend/src/jet.src"));
 
         final Map<FqName, Name> aliases = ImmutableMap.<FqName, Name>builder()
                 .put(new FqName("jet.Unit"), Name.identifier("Tuple0"))
