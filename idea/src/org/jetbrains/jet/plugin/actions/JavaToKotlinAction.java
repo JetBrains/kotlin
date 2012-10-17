@@ -38,11 +38,11 @@ import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.*;
 public class JavaToKotlinAction extends AnAction {
     @Override
     public void actionPerformed(final AnActionEvent e) {
-        final Converter converter = new Converter();
         VirtualFile[] virtualFiles = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
-        final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
         assert virtualFiles != null;
+        final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
         assert project != null;
+        final Converter converter = new Converter(project);
         int result = Messages.showYesNoCancelDialog(project,
                                                     "Would you like to backup Java files?",
                                                     "Backup",

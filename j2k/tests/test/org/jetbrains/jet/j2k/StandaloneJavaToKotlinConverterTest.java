@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k;
 
-import com.intellij.core.JavaCoreProjectEnvironment;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
@@ -26,6 +26,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,10 +37,27 @@ import java.io.IOException;
 * @author ignatov
 */
 public class StandaloneJavaToKotlinConverterTest extends TestCase {
+    private static final JetCoreEnvironment jetCoreEnvironment;
+
+    static {
+        CompilerConfiguration config = new CompilerConfiguration();
+
+        config.add(JVMConfigurationKeys.CLASSPATH_KEY, JavaToKotlinTranslator.findRtJar());
+        File annotations = JavaToKotlinTranslator.findAnnotations();
+        if (annotations != null && annotations.exists()) {
+            config.add(JVMConfigurationKeys.CLASSPATH_KEY, annotations);
+        }
+
+        Disposable disposable = new Disposable() {
+            @Override
+            public void dispose() {
+            }
+        };
+        jetCoreEnvironment = new JetCoreEnvironment(disposable, config);
+    }
+
     private final String myDataPath;
     private final String myName;
-    @NotNull
-    private final static JavaCoreProjectEnvironment myJavaCoreEnvironment = JavaToKotlinTranslator.setUpJavaCoreEnvironment();
 
     public StandaloneJavaToKotlinConverterTest(String dataPath, String name) {
         myDataPath = dataPath;
@@ -46,7 +66,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        Converter converter = new Converter();
+        Converter converter = new Converter(jetCoreEnvironment.getProject());
         String javaPath = "j2k/tests/testData/" + getTestFilePath();
         String kotlinPath = javaPath.replace(".jav", ".kt");
 
@@ -122,7 +142,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
 
     @NotNull
     private String fileToKotlin(Converter converter, @NotNull String text) {
-        return generateKotlinCode(converter, JavaToKotlinTranslator.createFile(myJavaCoreEnvironment, text));
+        return generateKotlinCode(converter, JavaToKotlinTranslator.createFile(jetCoreEnvironment.getProject(), text));
     }
 
     @NotNull

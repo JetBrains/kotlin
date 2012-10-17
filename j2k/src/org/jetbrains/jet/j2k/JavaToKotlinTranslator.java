@@ -19,6 +19,7 @@ import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.core.JavaCoreProjectEnvironment;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -46,8 +47,6 @@ public class JavaToKotlinTranslator {
         }
     };
 
-    private static final Converter CONVERTER = new Converter();
-
     private JavaToKotlinTranslator() {
     }
 
@@ -60,8 +59,8 @@ public class JavaToKotlinTranslator {
     }
 
     @Nullable
-    static PsiFile createFile(@NotNull JavaCoreProjectEnvironment javaCoreEnvironment, @NotNull String text) {
-        return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
+    static PsiFile createFile(@NotNull Project project, @NotNull String text) {
+        return PsiFileFactory.getInstance(project).createFileFromText(
                 "test.java", JavaLanguage.INSTANCE, text
         );
     }
@@ -96,7 +95,7 @@ public class JavaToKotlinTranslator {
     }
 
     @Nullable
-    private static File findRtJar() {
+    public static File findRtJar() {
         String javaHome = System.getenv("JAVA_HOME");
         File rtJar;
         if (javaHome == null) {
@@ -135,7 +134,7 @@ public class JavaToKotlinTranslator {
     }
 
     @Nullable
-    private static File findAnnotations() {
+    public static File findAnnotations() {
         ClassLoader classLoader = JavaToKotlinTranslator.class.getClassLoader();
         while (classLoader != null) {
             if (classLoader instanceof URLClassLoader) {
@@ -192,8 +191,9 @@ public class JavaToKotlinTranslator {
     static String generateKotlinCode(@NotNull String javaCode) {
         PsiFile file = createFile(javaCode);
         if (file != null && file instanceof PsiJavaFile) {
-            setClassIdentifiers(CONVERTER, file);
-            return prettify(CONVERTER.fileToFile((PsiJavaFile) file).toKotlin());
+            Converter converter = new Converter(file.getProject());
+            setClassIdentifiers(converter, file);
+            return prettify(converter.fileToFile((PsiJavaFile) file).toKotlin());
         }
         return "";
     }
@@ -202,8 +202,9 @@ public class JavaToKotlinTranslator {
     static String generateKotlinCodeWithCompatibilityImport(@NotNull String javaCode) {
         PsiFile file = createFile(javaCode);
         if (file != null && file instanceof PsiJavaFile) {
-            setClassIdentifiers(CONVERTER, file);
-            return prettify(CONVERTER.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());
+            Converter converter = new Converter(file.getProject());
+            setClassIdentifiers(converter, file);
+            return prettify(converter.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());
         }
         return "";
     }

@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,7 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 import org.jetbrains.jet.j2k.visitors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -59,7 +61,8 @@ public class Converter {
     @NotNull
     private final Set<J2KConverterFlags> flags = Sets.newHashSet();
 
-    public Converter() {
+    public Converter(@NotNull Project project) {
+        KotlinBuiltIns.initialize(project);
     }
 
     public boolean addFlag(@NotNull J2KConverterFlags flag) {
