@@ -293,7 +293,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // check if the pattern is essentially a 'null' expression
-        if (type == KotlinBuiltIns.getInstance().getNullableNothingType() && !subjectType.isNullable()) {
+        if (KotlinBuiltIns.getInstance().isNullableNothing(type) && !subjectType.isNullable()) {
             context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn));
         }
     }
