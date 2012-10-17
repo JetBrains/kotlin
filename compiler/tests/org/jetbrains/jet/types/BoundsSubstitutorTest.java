@@ -43,12 +43,12 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
 
     public void testSimpleSubstitution() throws Exception {
         doTest("fun <T> f(l: List<T>): T",
-               "fun <T : jet.Any?> f(l : jet.List<jet.Any?>) : jet.Any?");
+               "fun <T> f(l : jet.List<jet.Any?>) : jet.Any?");
     }
 
     public void testParameterInBound() throws Exception {
         doTest("fun <T, R : List<T>> f(l: List<R>): R",
-               "fun <T : jet.Any?, R : jet.List<jet.Any?>> f(l : jet.List<jet.List<jet.Any?>>) : jet.List<jet.Any?>");
+               "fun <T, R : jet.List<jet.Any?>> f(l : jet.List<jet.List<jet.Any?>>) : jet.List<jet.Any?>");
     }
 
     public void testWithWhere() throws Exception {

@@ -7,7 +7,7 @@ package testData.libraries
 
 [public final val jet.String.exProp : jet.String] /* compiled code */
 
-[public final val <T : jet.Any?>testData.libraries.Pair<T, T>.exProp : jet.String] /* compiled code */
+[public final val <T>testData.libraries.Pair<T, T>.exProp : jet.String] /* compiled code */
 
 [public final val globalVal : testData.libraries.Pair<jet.Int, jet.String>] /* compiled code */
 
@@ -23,4 +23,4 @@ package testData.libraries
 
 [public final fun main(args : jet.Array<jet.String>) : Unit { /* compiled code */ }]
 
-[public final fun <T : jet.Any?> T.filter(predicate : (T) -> jet.Boolean) : T? { /* compiled code */ }]
+[public final fun <T> T.filter(predicate : (T) -> jet.Boolean) : T? { /* compiled code */ }]

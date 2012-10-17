@@ -176,7 +176,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                     boolean firstUpperBound = true;
                     for (JetType upperBound : upperBounds) {
                         String upperBoundText = " : " + renderType(upperBound);
-                        if (upperBound != KotlinBuiltIns.getInstance().getDefaultBound()) {
+                        if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
                             if (firstUpperBound) {
                                 bodyBuilder.append(upperBoundText);
                             } else {

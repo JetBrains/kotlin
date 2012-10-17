@@ -599,7 +599,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             renderName(descriptor, builder);
             if (descriptor.getUpperBounds().size() == 1) {
                 JetType upperBound = descriptor.getUpperBounds().iterator().next();
-                if (upperBound != KotlinBuiltIns.getInstance().getDefaultBound()) {
+                if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
                     builder.append(" : ").append(renderType(upperBound));
                 }
             }
