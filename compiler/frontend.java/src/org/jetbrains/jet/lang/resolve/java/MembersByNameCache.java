@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
@@ -62,34 +61,61 @@ public final class MembersByNameCache {
             boolean staticMembers,
             boolean isKotlin
     ) {
-        PsiClassWrapper classWrapper = psiClass == null ? null : new PsiClassWrapper(psiClass);
-        Builder builder = new Builder(classWrapper, psiPackage, staticMembers, isKotlin);
-        builder.build();
-        return builder.cache;
+        MembersByNameCache cache = new MembersByNameCache();
+        if (psiClass != null) {
+            cache.new ClassProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
+        }
+        PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getInnerClasses();
+        cache.new ObjectClassProcessor(classes).process();
+        return cache;
     }
 
-    private static class Builder {
+    private class ObjectClassProcessor {
+        @NotNull
+        private final PsiClass[] psiClasses;
+
+        private ObjectClassProcessor(@NotNull PsiClass[] classes) {
+            psiClasses = classes;
+        }
+
+        private void process() {
+            for (PsiClass psiClass : psiClasses) {
+                if (!psiClass.isPhysical()) { // to filter out JetLightClasses
+                    continue;
+                }
+                if (JetClassAnnotation.get(psiClass).kind() != JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
+                    continue;
+                }
+                processObjectClass(psiClass);
+            }
+        }
+
+        private void processObjectClass(@NotNull PsiClass psiClass) {
+            PsiField instanceField = psiClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
+            if (instanceField != null) {
+                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(psiClass.getName()));
+
+                TypeSource type = new TypeSource("", instanceField.getType(), instanceField);
+                namedMembers.addPropertyAccessor(new PropertyAccessorData(new PsiFieldWrapper(instanceField), type, null));
+            }
+        }
+    }
+
+    private class ClassProcessor {
+        @NotNull
         private final PsiClassWrapper psiClass;
-        private final PsiPackage psiPackage;
         private final boolean staticMembers;
         private final boolean kotlin;
 
-        private final MembersByNameCache cache = new MembersByNameCache();
-
-        private Builder(@Nullable PsiClassWrapper psiClass, @Nullable PsiPackage psiPackage, boolean staticMembers, boolean kotlin) {
+        private ClassProcessor(@NotNull PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
             this.psiClass = psiClass;
-            this.psiPackage = psiPackage;
             this.staticMembers = staticMembers;
             this.kotlin = kotlin;
         }
 
-        @NotNull
-        public MembersByNameCache build() {
-            if (psiClass != null) {
-                processFields();
-                processMethods();
-            }
-            processObjectClasses();
+        public void process() {
+            processFields();
+            processMethods();
         }
 
         private boolean includeMember(PsiMemberWrapper member) {
@@ -121,7 +147,7 @@ public final class MembersByNameCache {
                 PsiFieldWrapper fieldWrapper = new PsiFieldWrapper(field);
 
                 // group must be created even for excluded field
-                NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(fieldWrapper.getName()));
+                NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(fieldWrapper.getName()));
 
                 if (!includeMember(fieldWrapper)) {
                     continue;
@@ -156,7 +182,7 @@ public final class MembersByNameCache {
                 }
 
                 if (!method.getJetMethod().hasPropertyFlag()) {
-                    NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(method.getName()));
+                    NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
                     namedMembers.addMethod(method);
                 }
             }
@@ -164,7 +190,7 @@ public final class MembersByNameCache {
 
         private void processSetter(PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
             String propertyName = propertyParseResult.getPropertyName();
-            NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
+            NamedMembers members = getOrCreateEmpty(Name.identifier(propertyName));
 
             if (method.getJetMethod().hasPropertyFlag()) {
                 if (method.getParameters().size() == 0) {
@@ -190,7 +216,9 @@ public final class MembersByNameCache {
                 }
 
                 PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
-                TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(), propertyTypeParameter.getPsiParameter());
+                TypeSource propertyType =
+                        new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(),
+                                       propertyTypeParameter.getPsiParameter());
 
                 members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
             }
@@ -198,7 +226,7 @@ public final class MembersByNameCache {
 
         private void processGetter(PsiMethod ownMethod, PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
             String propertyName = propertyParseResult.getPropertyName();
-            NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
+            NamedMembers members = getOrCreateEmpty(Name.identifier(propertyName));
 
             // TODO: some java properties too
             if (method.getJetMethod().hasPropertyFlag()) {
@@ -208,7 +236,9 @@ public final class MembersByNameCache {
                 TypeSource receiverType;
                 if (i < method.getParameters().size() && method.getParameter(i).getJetValueParameter().receiver()) {
                     PsiParameterWrapper receiverParameter = method.getParameter(i);
-                    receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(), receiverParameter.getPsiParameter());
+                    receiverType =
+                            new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(),
+                                           receiverParameter.getPsiParameter());
                     ++i;
                 }
                 else {
@@ -240,32 +270,13 @@ public final class MembersByNameCache {
 
                 PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
                 if (propertyParseResult != null) {
-                    cache.getOrCreateEmpty(Name.identifier(propertyParseResult.getPropertyName()));
+                    createEmptyEntry(Name.identifier(propertyParseResult.getPropertyName()));
                 }
             }
         }
 
         private void createEmptyEntry(@NotNull Name identifier) {
-            cache.getOrCreateEmpty(identifier);
-        }
-        
-        private void processObjectClasses() {
-            PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getPsiClass().getInnerClasses();
-            for (PsiClass psiClass : classes) {
-                if (!psiClass.isPhysical()) { // to filter out JetLightClasses
-                    continue;
-                }
-                if (JetClassAnnotation.get(psiClass).kind() != JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
-                    continue;
-                }
-                PsiField instanceField = psiClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
-                if (instanceField != null) {
-                    NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(psiClass.getName()));
-
-                    TypeSource type = new TypeSource("", instanceField.getType(), instanceField);
-                    namedMembers.addPropertyAccessor(new PropertyAccessorData(new PsiFieldWrapper(instanceField), type, null));
-                }
-            }
+            getOrCreateEmpty(identifier);
         }
     }
 }
