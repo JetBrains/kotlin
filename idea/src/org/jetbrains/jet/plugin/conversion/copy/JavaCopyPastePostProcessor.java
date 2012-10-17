@@ -55,7 +55,7 @@ public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBl
             StringBuilder result = new StringBuilder();
 
             for (PsiElement e : buffer) {
-                String converted = new Converter().elementToKotlin(e);
+                String converted = new Converter(file.getProject()).elementToKotlin(e);
                 if (!converted.isEmpty()) {
                     result.append(converted).append(eol);
                 }
