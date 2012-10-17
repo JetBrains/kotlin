@@ -126,10 +126,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return namespaceResolver.getJavaPackageScope(fqName, ns);
     }
 
+    @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(Name name, ResolverScopeData data) {
         return propertiesResolver.resolveFieldGroupByName(name, data);
     }
 
+    @NotNull
     public Set<VariableDescriptor> resolveFieldGroup(ResolverScopeData data) {
         return propertiesResolver.resolveFieldGroup(data);
     }
@@ -164,10 +166,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return functionResolver.resolveFunctionGroup(methodName, scopeData);
     }
 
+    @NotNull
     public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
         return functionResolver.resolveMethods(scopeData);
     }
 
+    @NotNull
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
         return innerClassResolver.resolveInnerClasses(owner, psiClass, staticMembers);
     }
