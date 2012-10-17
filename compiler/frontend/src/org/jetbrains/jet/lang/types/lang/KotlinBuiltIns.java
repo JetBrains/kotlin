@@ -21,6 +21,7 @@ import com.google.common.collect.*;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
@@ -218,8 +219,9 @@ public class KotlinBuiltIns {
             }
 
             //noinspection IOResourceOpenedButNotSafelyClosed
+            String text = FileUtil.loadTextAndClose(new InputStreamReader(stream));
             JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(path,
-                    JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));
+                    JetFileType.INSTANCE, StringUtil.convertLineSeparators(text));
             files.add(file);
         }
         return files;
