@@ -37,7 +37,10 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class JavaFunctionResolver {
 
@@ -165,14 +168,11 @@ public final class JavaFunctionResolver {
         return functionDescriptorImpl;
     }
 
-    private void resolveNamedGroupFunctions(
+    @NotNull
+    private Set<FunctionDescriptor> resolveNamedGroupFunctions(
             @NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass,
             NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData
     ) {
-        if (namedMembers.getFunctionDescriptors() != null) {
-            return;
-        }
-
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
@@ -216,7 +216,7 @@ public final class JavaFunctionResolver {
             }
         }
 
-        namedMembers.setFunctionDescriptors(functions);
+        return functions;
     }
 
     @NotNull
@@ -224,22 +224,15 @@ public final class JavaFunctionResolver {
         MembersByNameCache namedMembersMap = scopeData.getMembersCache();
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
-        if (namedMembers != null) {
-
-            PsiClass psiClass = scopeData.getPsiClass();
-            assert psiClass != null;
-            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), psiClass, namedMembers,
-                                       methodName, scopeData);
-
-            Set<FunctionDescriptor> result = namedMembers.getFunctionDescriptors();
-            assert result != null;
-            return result;
-        }
-        else {
+        if (namedMembers == null) {
             return Collections.emptySet();
         }
+        PsiClass psiClass = scopeData.getPsiClass();
+        assert psiClass != null;
+        return resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), psiClass, namedMembers, methodName, scopeData);
     }
 
+    @NotNull
     private JetType makeReturnType(
             PsiType returnType, PsiMethodWrapper method,
             @NotNull TypeVariableResolver typeVariableResolver
@@ -265,6 +258,7 @@ public final class JavaFunctionResolver {
         }
     }
 
+    @NotNull
     private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
             ResolverScopeData scopeData,
             Name methodName
@@ -276,20 +270,6 @@ public final class JavaFunctionResolver {
             }
         }
         return r;
-    }
-
-    public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
-        List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
-
-        for (NamedMembers member : scopeData.getMembersCache().allMembers()) {
-            PsiClass psiClass = scopeData.getPsiClass();
-            assert psiClass != null;
-            resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), psiClass,
-                                       member, member.getName(), scopeData);
-            functions.addAll(member.getFunctionDescriptors());
-        }
-
-        return functions;
     }
 
     private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {

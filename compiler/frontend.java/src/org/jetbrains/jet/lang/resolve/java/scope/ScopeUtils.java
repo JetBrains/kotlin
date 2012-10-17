@@ -26,8 +26,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -76,33 +74,6 @@ public final class ScopeUtils {
                     result.add(classDescriptor);
                 }
             }
-        }
-        return result;
-    }
-
-    @NotNull
-    public static Collection<DeclarationDescriptor> computeAllClassDeclarations(
-            @NotNull PsiClass psiClass,
-            @NotNull JavaSemanticServices javaSemanticServices,
-            @NotNull ResolverScopeData scopeData,
-            @NotNull DeclarationDescriptor containingDeclaration
-    ) {
-        Collection<DeclarationDescriptor> result = Sets.newHashSet();
-        ProgressIndicatorProvider.checkCanceled();
-        result.addAll(javaSemanticServices.getDescriptorResolver().resolveMethods(scopeData));
-
-        ProgressIndicatorProvider.checkCanceled();
-        result.addAll(javaSemanticServices.getDescriptorResolver().resolveFieldGroup(scopeData));
-
-        // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
-        if (containingDeclaration instanceof JavaNamespaceDescriptor) {
-            result.addAll(javaSemanticServices.getDescriptorResolver().resolveInnerClasses(
-                    scopeData.getClassOrNamespaceDescriptor(), psiClass, false));
-        }
-        else {
-            result.addAll(javaSemanticServices.getDescriptorResolver().resolveInnerClasses(
-                    scopeData.getClassOrNamespaceDescriptor(), psiClass,
-                    scopeData.isStaticMembers()));
         }
         return result;
     }

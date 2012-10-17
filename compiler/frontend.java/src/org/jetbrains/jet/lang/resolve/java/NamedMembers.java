@@ -18,19 +18,12 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
-import java.util.Set;
 
-/**
-* @author Stepan Koltsov
-*/
-public class NamedMembers {
+public final class NamedMembers {
 
     public NamedMembers(@NotNull Name name) {
         this.name = name;
@@ -44,11 +37,6 @@ public class NamedMembers {
 
     @NotNull
     private final List<PropertyAccessorData> propertyAccessors = Lists.newArrayList();
-
-    private Set<VariableDescriptor> propertyDescriptors;
-
-    /** Including from supertypes */
-    private Set<FunctionDescriptor> functionDescriptors;
 
     void addMethod(@NotNull PsiMethodWrapper method) {
         methods.add(method);
@@ -71,23 +59,5 @@ public class NamedMembers {
     @NotNull
     public List<PropertyAccessorData> getPropertyAccessors() {
         return propertyAccessors;
-    }
-
-    @Nullable
-    public Set<VariableDescriptor> getPropertyDescriptors() {
-        return propertyDescriptors;
-    }
-
-    public void setPropertyDescriptors(@NotNull Set<VariableDescriptor> propertyDescriptors) {
-        this.propertyDescriptors = propertyDescriptors;
-    }
-
-    @Nullable
-    public Set<FunctionDescriptor> getFunctionDescriptors() {
-        return functionDescriptors;
-    }
-
-    public void setFunctionDescriptors(@NotNull Set<FunctionDescriptor> functionDescriptors) {
-        this.functionDescriptors = functionDescriptors;
     }
 }

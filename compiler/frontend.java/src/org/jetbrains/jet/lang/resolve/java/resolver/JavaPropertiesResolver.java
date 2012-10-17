@@ -79,6 +79,7 @@ public final class JavaPropertiesResolver {
         this.classResolver = classResolver;
     }
 
+    @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name fieldName,
             @NotNull ResolverScopeData scopeData
@@ -93,30 +94,10 @@ public final class JavaPropertiesResolver {
 
         //noinspection ConstantConditions
         String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
-        resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
+        return resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
                                     "class or namespace " + qualifiedName);
-
-        Set<VariableDescriptor> result = namedMembers.getPropertyDescriptors();
-        assert result != null;
-        return result;
     }
 
-    @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
-        final PsiClass psiClass = scopeData.getPsiClass();
-        assert psiClass != null;
-
-        Set<VariableDescriptor> descriptors = Sets.newHashSet();
-        MembersByNameCache membersForProperties = scopeData.getMembersCache();
-        for (NamedMembers members : membersForProperties.allMembers()) {
-            resolveNamedGroupProperties(
-                    scopeData.getClassOrNamespaceDescriptor(), scopeData, members, members.getName(),
-                    "class or namespace " + psiClass.getQualifiedName());
-            descriptors.addAll(members.getPropertyDescriptors());
-        }
-
-        return descriptors;
-    }
     private static class GroupingValue {
         PropertyAccessorData getter;
         PropertyAccessorData setter;
@@ -124,17 +105,14 @@ public final class JavaPropertiesResolver {
         boolean ext;
     }
 
-    private void resolveNamedGroupProperties(
+    @NotNull
+    private Set<VariableDescriptor> resolveNamedGroupProperties(
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull ResolverScopeData scopeData,
             @NotNull NamedMembers namedMembers,
             @NotNull Name propertyName,
             @NotNull String context
     ) {
-        if (namedMembers.getPropertyDescriptors() != null) {
-            return;
-        }
-
         Map<String, GroupingValue> map = collectGroupingValuesFromAccessors(namedMembers.getPropertyAccessors());
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
@@ -315,7 +293,7 @@ public final class JavaPropertiesResolver {
         OverrideResolver.resolveUnknownVisibilities(properties, trace);
         properties.addAll(propertiesFromCurrent);
 
-        namedMembers.setPropertyDescriptors(Sets.<VariableDescriptor>newHashSet(properties));
+        return Sets.<VariableDescriptor>newHashSet(properties);
     }
 
     private List<TypeParameterDescriptor> resolvePropertyTypeParameters(
