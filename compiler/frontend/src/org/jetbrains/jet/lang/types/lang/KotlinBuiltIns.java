@@ -291,15 +291,7 @@ public class KotlinBuiltIns {
     @NotNull
     public Collection<DeclarationDescriptor> getAllBuiltInClasses() {
         // TODO: used once, but incorrectly in JetShortNamesCache
-        return getStandardClassesScope().getAllDescriptors();
-    }
-
-    @Deprecated
-    @NotNull
-    public JetScope getStandardClassesScope() {
-        // TODO: this is more than standard classes
-        // TODO: the only usage makes no sense for lazily loaded library
-        return getBuiltInsScope();
+        return getBuiltInsScope().getAllDescriptors();
     }
 
     @NotNull
