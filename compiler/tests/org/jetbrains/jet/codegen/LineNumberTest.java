@@ -31,12 +31,15 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -242,5 +245,32 @@ public class LineNumberTest extends TestCaseWithTmpdir {
 
     public void testWhile() {
         doTest();
+    }
+
+    public void testStaticDelegate() {
+        JetFile foo = createPsiFile("staticDelegate/foo.kt");
+        JetFile bar = createPsiFile("staticDelegate/bar.kt");
+        GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(foo.getProject(), Arrays.asList(foo, bar));
+        ClassReader reader = new ClassReader(state.getFactory().asBytes(JvmAbi.PACKAGE_CLASS + ".class"));
+
+        // There must be exactly one line number attribute for each static delegate in namespace.class, and it should point to the first
+        // line. There are two static delegates in this test, hence the [1, 1]
+        List<Integer> expectedLineNumbers = Arrays.asList(1, 1);
+
+        final List<Integer> actualLineNumbers = new ArrayList<Integer>();
+
+        reader.accept(new ClassVisitor(Opcodes.ASM4) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, final String desc, final String signature, String[] exceptions) {
+                return new MethodVisitor(Opcodes.ASM4) {
+                    @Override
+                    public void visitLineNumber(int line, Label label) {
+                        actualLineNumbers.add(line);
+                    }
+                };
+            }
+        }, ClassReader.SKIP_FRAMES);
+
+        assertSameElements(actualLineNumbers, expectedLineNumbers);
     }
 }
