@@ -20,7 +20,7 @@ import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -48,8 +48,8 @@ public class IntValue implements CompileTimeConstant<Integer> {
 
     @NotNull
     @Override
-    public JetType getType(@NotNull JetStandardLibrary standardLibrary) {
-        return standardLibrary.getIntType();
+    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
+        return kotlinBuiltIns.getIntType();
     }
 
     @Override

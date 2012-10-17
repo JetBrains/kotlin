@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
@@ -115,7 +115,7 @@ public class PropertyCodegen extends GenerationStateAware {
                 modifiers |= ACC_FINAL;
             }
             modifiers |= getDeprecatedAccessFlag(propertyDescriptor);
-            if (JetStandardLibrary.getInstance().isVolatile(propertyDescriptor)) {
+            if (KotlinBuiltIns.getInstance().isVolatile(propertyDescriptor)) {
                 modifiers |= ACC_VOLATILE;
             }
             Type type = typeMapper.mapType(propertyDescriptor);

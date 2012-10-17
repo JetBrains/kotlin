@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -143,7 +142,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT_WITH_MODIFIERS.renderTypeWithShortNames(
                 descriptor.getType()));
-        String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
+        String initializer = defaultInitializer(descriptor.getType(), KotlinBuiltIns.getInstance());
         if (initializer != null) {
             bodyBuilder.append(" = ").append(initializer);
         }
@@ -227,9 +226,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             delegationBuilder.append(")");
         }
         final JetType returnType = descriptor.getReturnType();
-        final JetStandardLibrary stdlib = JetStandardLibrary.getInstance();
+        final KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
-        boolean returnsNotUnit = returnType != null && !stdlib.getTuple0Type().equals(returnType);
+        boolean returnsNotUnit = returnType != null && !builtIns.getUnitType().equals(returnType);
         if (returnsNotUnit) {
             bodyBuilder.append(" : ").append(renderType(returnType));
         }
@@ -248,16 +247,16 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
     }
 
-    private static String defaultInitializer(JetType returnType, JetStandardLibrary stdlib) {
+    private static String defaultInitializer(JetType returnType, KotlinBuiltIns builtIns) {
         if (returnType.isNullable()) {
             return "null";
         }
-        else if (returnType.equals(stdlib.getIntType()) || returnType.equals(stdlib.getLongType()) ||
-                 returnType.equals(stdlib.getShortType()) || returnType.equals(stdlib.getByteType()) ||
-                 returnType.equals(stdlib.getFloatType()) || returnType.equals(stdlib.getDoubleType())) {
+        else if (returnType.equals(builtIns.getIntType()) || returnType.equals(builtIns.getLongType()) ||
+                 returnType.equals(builtIns.getShortType()) || returnType.equals(builtIns.getByteType()) ||
+                 returnType.equals(builtIns.getFloatType()) || returnType.equals(builtIns.getDoubleType())) {
             return "0";
         }
-        else if (returnType.equals(stdlib.getBooleanType())) {
+        else if (returnType.equals(builtIns.getBooleanType())) {
             return "false";
         }
 

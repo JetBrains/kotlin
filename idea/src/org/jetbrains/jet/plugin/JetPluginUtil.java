@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.LinkedList;
 
@@ -64,8 +63,7 @@ public class JetPluginUtil {
             return true;
         }
 
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-        JetScope libraryScope = standardLibrary.getLibraryScope();
+        JetScope libraryScope = KotlinBuiltIns.getInstance().getBuiltInsScope();
 
         DeclarationDescriptor declaration = type.getMemberScope().getContainingDeclaration();
         if (ErrorUtils.isError(declaration)) {

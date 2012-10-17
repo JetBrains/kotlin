@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -39,8 +39,8 @@ public class CharValue implements CompileTimeConstant<Character> {
 
     @NotNull
     @Override
-    public JetType getType(@NotNull JetStandardLibrary standardLibrary) {
-        return standardLibrary.getCharType();
+    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
+        return kotlinBuiltIns.getCharType();
     }
 
     @Override

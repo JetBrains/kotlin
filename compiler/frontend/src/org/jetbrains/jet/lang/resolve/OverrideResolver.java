@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -741,7 +741,7 @@ public class OverrideResolver {
 
     @NotNull
     private JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
-        ClassDescriptor stdDataClassAnnotation = JetStandardLibrary.getInstance().getDataClassAnnotation();
+        ClassDescriptor stdDataClassAnnotation = KotlinBuiltIns.getInstance().getDataClassAnnotation();
         for (AnnotationDescriptor annotation : dataClass.getAnnotations()) {
             if (stdDataClassAnnotation.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
                 return BindingContextUtils.getNotNull(trace.getBindingContext(),

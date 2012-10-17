@@ -23,11 +23,9 @@ import org.jetbrains.jet.lang.psi.JetEscapeStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetLiteralStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 
@@ -37,10 +35,10 @@ import java.util.List;
 public class CompileTimeConstantResolver {
     public static final ErrorValue OUT_OF_RANGE = new ErrorValue("The value is out of range");
 
-    private final JetStandardLibrary standardLibrary;
+    private final KotlinBuiltIns builtIns;
 
     public CompileTimeConstantResolver() {
-        this.standardLibrary = JetStandardLibrary.getInstance();
+        this.builtIns = KotlinBuiltIns.getInstance();
     }
 
     @NotNull
@@ -60,30 +58,30 @@ public class CompileTimeConstantResolver {
         long lowerBound;
         long upperBound;
         TypeConstructor constructor = expectedType.getConstructor();
-        if (constructor == standardLibrary.getInt().getTypeConstructor()) {
+        if (constructor == builtIns.getInt().getTypeConstructor()) {
             create = IntValue.CREATE;
             lowerBound = Integer.MIN_VALUE;
             upperBound = Integer.MAX_VALUE;
         }
-        else if (constructor == standardLibrary.getLong().getTypeConstructor()) {
+        else if (constructor == builtIns.getLong().getTypeConstructor()) {
             create = LongValue.CREATE;
             lowerBound = Long.MIN_VALUE;
             upperBound = Long.MAX_VALUE;
         }
-        else if (constructor == standardLibrary.getShort().getTypeConstructor()) {
+        else if (constructor == builtIns.getShort().getTypeConstructor()) {
             create = ShortValue.CREATE;
             lowerBound = Short.MIN_VALUE;
             upperBound = Short.MAX_VALUE;
         }
-        else if (constructor == standardLibrary.getByte().getTypeConstructor()) {
+        else if (constructor == builtIns.getByte().getTypeConstructor()) {
             create = ByteValue.CREATE;
             lowerBound = Byte.MIN_VALUE;
             upperBound = Byte.MAX_VALUE;
         }
         else  {
             JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
-            JetType intType = standardLibrary.getIntType();
-            JetType longType = standardLibrary.getLongType();
+            JetType intType = builtIns.getIntType();
+            JetType longType = builtIns.getLongType();
             if (typeChecker.isSubtypeOf(intType, expectedType)) {
                 return getIntegerValue(text, intType);
             }
@@ -127,7 +125,7 @@ public class CompileTimeConstantResolver {
     @NotNull
     public CompileTimeConstant<?> getFloatValue(@NotNull String text, @NotNull JetType expectedType) {
         if (noExpectedType(expectedType)
-            || JetTypeChecker.INSTANCE.isSubtypeOf(standardLibrary.getDoubleType(), expectedType)) {
+            || JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getDoubleType(), expectedType)) {
             try {
                 return new DoubleValue(Double.parseDouble(text));
             }
@@ -135,7 +133,7 @@ public class CompileTimeConstantResolver {
                 return OUT_OF_RANGE;
             }
         }
-        else if (JetTypeChecker.INSTANCE.isSubtypeOf(standardLibrary.getFloatType(), expectedType)) {
+        else if (JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getFloatType(), expectedType)) {
             try {
                 return new DoubleValue(Float.parseFloat(text));
             }
@@ -159,7 +157,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getBooleanValue(@NotNull String text, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "boolean", standardLibrary.getBooleanType());
+        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "boolean", builtIns.getBooleanType());
         if (error != null) {
             return error;
         }
@@ -174,7 +172,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getCharValue(@NotNull String text, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "character", standardLibrary.getCharType());
+        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "character", builtIns.getCharType());
         if (error != null) {
             return error;
         }
@@ -260,7 +258,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getRawStringValue(@NotNull String unescapedText, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType("\"\"\"...\"\"\"", expectedType, "string", standardLibrary.getStringType());
+        CompileTimeConstant<?> error = checkNativeType("\"\"\"...\"\"\"", expectedType, "string", builtIns.getStringType());
         if (error != null) {
             return error;
         }
@@ -270,7 +268,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getEscapedStringValue(@NotNull List<JetStringTemplateEntry> entries, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType("\"...\"", expectedType, "string", standardLibrary.getStringType());
+        CompileTimeConstant<?> error = checkNativeType("\"...\"", expectedType, "string", builtIns.getStringType());
         if (error != null) {
             return error;
         }

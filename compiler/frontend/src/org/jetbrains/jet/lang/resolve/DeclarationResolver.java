@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.inject.Inject;
@@ -224,7 +224,7 @@ public class DeclarationResolver {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
-            if (jetClass.hasPrimaryConstructor() && JetStandardLibrary.isData(classDescriptor)) {
+            if (jetClass.hasPrimaryConstructor() && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
                 createComponentFunctions(classDescriptor);
             }
         }

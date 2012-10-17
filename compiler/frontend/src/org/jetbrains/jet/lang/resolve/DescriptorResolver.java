@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.lazy.LazyValue;
 import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
@@ -140,7 +139,7 @@ public class DescriptorResolver {
         }
 
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && !containsClass(supertypes)) {
-            supertypes.add(0, JetStandardLibrary.getInstance().getEnumType(classDescriptor.getDefaultType()));
+            supertypes.add(0, KotlinBuiltIns.getInstance().getEnumType(classDescriptor.getDefaultType()));
         }
 
         if (supertypes.isEmpty()) {
@@ -181,7 +180,7 @@ public class DescriptorResolver {
             }
         }
         else if (jetClass instanceof JetClass && ((JetClass) jetClass).isAnnotation()) {
-            return JetStandardLibrary.getInstance().getAnnotationType();
+            return KotlinBuiltIns.getInstance().getAnnotationType();
         }
         return KotlinBuiltIns.getInstance().getAnyType();
     }
@@ -425,12 +424,12 @@ public class DescriptorResolver {
     }
 
     private JetType getVarargParameterType(JetType type) {
-        JetType arrayType = JetStandardLibrary.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(type);
+        JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(type);
         if (arrayType != null) {
             return arrayType;
         }
         else {
-            return JetStandardLibrary.getInstance().getArrayType(type);
+            return KotlinBuiltIns.getInstance().getArrayType(type);
         }
     }
 
@@ -1179,7 +1178,7 @@ public class DescriptorResolver {
         JetType type = DeferredType.create(trace, new LazyValue<JetType>() {
             @Override
             protected JetType compute() {
-                return JetStandardLibrary.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
+                return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
             }
         });
         values.initialize(null, classReceiver, Collections.<TypeParameterDescriptor>emptyList(),
@@ -1213,7 +1212,7 @@ public class DescriptorResolver {
                 Collections.<AnnotationDescriptor>emptyList(),
                 Name.identifier("value"),
                 false,
-                JetStandardLibrary.getInstance().getStringType(),
+                KotlinBuiltIns.getInstance().getStringType(),
                 false,
                 null);
         values.initialize(null, classReceiver,

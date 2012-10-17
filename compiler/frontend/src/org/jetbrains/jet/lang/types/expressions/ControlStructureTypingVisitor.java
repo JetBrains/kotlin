@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.ArrayList;
@@ -408,7 +407,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (catchParameter != null) {
                 VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
                         context.scope.getContainingDeclaration(), context.scope, catchParameter, context.trace);
-                JetType throwableType = JetStandardLibrary.getInstance().getThrowable().getDefaultType();
+                JetType throwableType = KotlinBuiltIns.getInstance().getThrowable().getDefaultType();
                 DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
                     WritableScope catchScope = newWritableScopeImpl(context, "Catch scope");
@@ -439,7 +438,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitThrowExpression(JetThrowExpression expression, ExpressionTypingContext context) {
         JetExpression thrownExpression = expression.getThrownExpression();
         if (thrownExpression != null) {
-            JetType throwableType = JetStandardLibrary.getInstance().getThrowable().getDefaultType();
+            JetType throwableType = KotlinBuiltIns.getInstance().getThrowable().getDefaultType();
             facade.getTypeInfo(thrownExpression, context.replaceExpectedType(throwableType).replaceScope(context.scope));
         }
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);

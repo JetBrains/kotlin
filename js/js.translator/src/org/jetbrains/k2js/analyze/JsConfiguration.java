@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -82,7 +81,7 @@ public class JsConfiguration implements ModuleConfiguration {
 
         // Extend root namespace with standard classes
         if (namespaceDescriptor.getQualifiedName().shortNameOrSpecial().equals(FqNameUnsafe.ROOT_NAME)) {
-            namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+            namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
         }
 
         if (hasPreanalyzedContextForTests()) {

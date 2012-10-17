@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.IOException;
 
@@ -162,7 +162,7 @@ public class AllInjectorsGenerator {
         generator.addPublicField(ExpressionTypingServices.class);
         generator.addPublicField(TypeResolver.class);
         generator.addPublicField(CallResolver.class);
-        generator.addField(true, JetStandardLibrary.class, null, new GivenExpression("JetStandardLibrary.getInstance()"));
+        generator.addField(true, KotlinBuiltIns.class, null, new GivenExpression("KotlinBuiltIns.getInstance()"));
         generator.addField(false, ModuleConfiguration.class, null, new GivenExpression("ModuleConfiguration.EMPTY"));
 
         // Parameters

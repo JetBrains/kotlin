@@ -55,7 +55,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -79,7 +78,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
     private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
-    public static final Set<DeclarationDescriptor> INTEGRAL_RANGES = JetStandardLibrary.getInstance().getIntegralRanges();
+    public static final Set<DeclarationDescriptor> INTEGRAL_RANGES = KotlinBuiltIns.getInstance().getIntegralRanges();
 
     private int myLastLineNumber = -1;
 
@@ -651,7 +650,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), hasNextCall);
 
             JetType type = hasNextCall.getResultingDescriptor().getReturnType();
-            assert type != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, JetStandardLibrary.getInstance().getBooleanType());
+            assert type != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, KotlinBuiltIns.getInstance().getBooleanType());
 
             Type asmType = asmType(type);
             StackValue.coerce(asmType, Type.BOOLEAN_TYPE, v);
@@ -723,7 +722,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected void assignToLoopParameter(int parameterIndex) {
             Type arrayElParamType;
             Type asmElementType = asmType(elementType);
-            if (JetStandardLibrary.getInstance().isArray(loopRangeType)) {
+            if (KotlinBuiltIns.getInstance().isArray(loopRangeType)) {
                 arrayElParamType = boxType(asmElementType);
             }
             else {
@@ -2873,7 +2872,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         args.addAll(expression.getFunctionLiteralArguments());
 
-        boolean isArray = JetStandardLibrary.getInstance().isArray(arrayType);
+        boolean isArray = KotlinBuiltIns.getInstance().isArray(arrayType);
         if (isArray) {
             //            if (args.size() != 2 && !arrayType.getArguments().get(0).getType().isNullable()) {
             //                throw new CompilationException("array constructor of non-nullable type requires two arguments");
@@ -2943,13 +2942,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert operationDescriptor != null;
         if (arrayType.getSort() == Type.ARRAY &&
             indices.size() == 1 &&
-            operationDescriptor.getValueParameters().get(0).getType().equals(JetStandardLibrary.getInstance().getIntType())) {
+            operationDescriptor.getValueParameters().get(0).getType().equals(KotlinBuiltIns.getInstance().getIntType())) {
             gen(array, arrayType);
             for (JetExpression index : indices) {
                 gen(index, Type.INT_TYPE);
             }
             assert type != null;
-            if (JetStandardLibrary.getInstance().isArray(type)) {
+            if (KotlinBuiltIns.getInstance().isArray(type)) {
                 JetType elementType = type.getArguments().get(0).getType();
                 Type notBoxed = asmType(elementType);
                 return StackValue.arrayElement(notBoxed, true);

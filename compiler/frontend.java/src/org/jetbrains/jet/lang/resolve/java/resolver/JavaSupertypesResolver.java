@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
@@ -119,7 +118,7 @@ public final class JavaSupertypesResolver {
 
             @Override
             public JetSignatureVisitor visitSuperclass() {
-                return new JetTypeJetSignatureReader(semanticServices, JetStandardLibrary.getInstance(),
+                return new JetTypeJetSignatureReader(semanticServices, KotlinBuiltIns.getInstance(),
                                                      typeVariableResolver) {
                     @Override
                     protected void done(@NotNull JetType jetType) {

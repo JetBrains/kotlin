@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.utils.PathUtil;
@@ -283,7 +283,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
     private static void checkSimpleCompileTimeConstant(@NotNull CompileTimeConstant<?> actual, @NotNull String expectedType, @NotNull String expectedValue) {
         assertEquals(expectedValue, actual.toString());
-        compareJetTypeWithClass(actual.getType(JetStandardLibrary.getInstance()), expectedType);
+        compareJetTypeWithClass(actual.getType(KotlinBuiltIns.getInstance()), expectedType);
     }
 
     private void checkAnnotationCompileTimeConstant(
@@ -293,7 +293,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
             @NotNull String expectedParameterType,
             @NotNull String expectedParameterValue
     ) {
-        compareJetTypeWithClass(actual.getType(JetStandardLibrary.getInstance()), expectedType);
+        compareJetTypeWithClass(actual.getType(KotlinBuiltIns.getInstance()), expectedType);
         CompileTimeConstant<?> innerAnnotation = getCompileTimeConstant(actual.getValue(), expectedType, parameterName);
         checkSimpleCompileTimeConstant(innerAnnotation, expectedParameterType, expectedParameterValue);
     }
@@ -304,7 +304,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
             @NotNull String expectedArgumentType,
             @NotNull String[] expectedValues
     ) {
-        JetType actualType = actual.getType(JetStandardLibrary.getInstance());
+        JetType actualType = actual.getType(KotlinBuiltIns.getInstance());
         compareJetTypeWithClass(actualType, expectedType);
 
         List<CompileTimeConstant<?>> arrayValuesCompileTimeConst = actual.getValue();

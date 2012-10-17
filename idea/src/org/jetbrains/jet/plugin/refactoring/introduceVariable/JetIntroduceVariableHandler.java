@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
@@ -139,7 +139,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             return;
         }
         if (expressionType != null &&
-            JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.getInstance().getTuple0Type(), expressionType)) {
+            JetTypeChecker.INSTANCE.equalTypes(KotlinBuiltIns.getInstance().getUnitType(), expressionType)) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
             return;
         }

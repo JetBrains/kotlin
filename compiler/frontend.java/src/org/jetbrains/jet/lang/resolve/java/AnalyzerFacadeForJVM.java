@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -124,7 +124,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             ) {
                 FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
                 if (new FqName("jet").equals(fqName)) {
-                    namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+                    namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                 }
                 if (psiClassFinder.findPsiPackage(fqName) != null) {
                     JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);

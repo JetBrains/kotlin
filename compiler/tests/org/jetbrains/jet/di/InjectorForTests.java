@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -37,7 +37,7 @@ public class InjectorForTests {
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
     private CallResolver callResolver;
-    private JetStandardLibrary jetStandardLibrary;
+    private KotlinBuiltIns kotlinBuiltIns;
     private ModuleConfiguration moduleConfiguration;
     private final Project project;
     private AnnotationResolver annotationResolver;
@@ -51,7 +51,7 @@ public class InjectorForTests {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.callResolver = new CallResolver();
-        this.jetStandardLibrary = JetStandardLibrary.getInstance();
+        this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.moduleConfiguration = ModuleConfiguration.EMPTY;
         this.project = project;
         this.annotationResolver = new AnnotationResolver();
@@ -102,8 +102,8 @@ public class InjectorForTests {
         return this.callResolver;
     }
 
-    public JetStandardLibrary getJetStandardLibrary() {
-        return this.jetStandardLibrary;
+    public KotlinBuiltIns getKotlinBuiltIns() {
+        return this.kotlinBuiltIns;
     }
 
     public Project getProject() {

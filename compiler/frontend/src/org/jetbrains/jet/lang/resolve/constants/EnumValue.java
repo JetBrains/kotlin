@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 /**
  * @author Natalia.Ukhorskaya
@@ -41,7 +41,7 @@ public  class EnumValue implements CompileTimeConstant<PropertyDescriptor> {
 
     @NotNull
     @Override
-    public JetType getType(@NotNull JetStandardLibrary standardLibrary) {
+    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
         return value.getType();
     }
 

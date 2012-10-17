@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
@@ -79,65 +79,65 @@ public class JetNameSuggester {
     }
     
     private static void addNamesForType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
         if (ErrorUtils.containsErrorType(jetType)) return;
-        if (typeChecker.equalTypes(standardLibrary.getBooleanType(), jetType)) {
+        if (typeChecker.equalTypes(builtIns.getBooleanType(), jetType)) {
             addName(result, "b", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getIntType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getIntType(), jetType)) {
             addName(result, "i", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getByteType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getByteType(), jetType)) {
             addName(result, "byte", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getLongType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getLongType(), jetType)) {
             addName(result, "l", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getFloatType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getFloatType(), jetType)) {
             addName(result, "fl", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getDoubleType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getDoubleType(), jetType)) {
             addName(result, "d", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getShortType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getShortType(), jetType)) {
             addName(result, "sh", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getCharType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getCharType(), jetType)) {
             addName(result, "c", validator);
         }
-        else if (typeChecker.equalTypes(standardLibrary.getStringType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getStringType(), jetType)) {
             addName(result, "s", validator);
         }
         else {
             if (jetType.getArguments().size() == 1) {
                 JetType argument = jetType.getArguments().get(0).getType();
-                if (typeChecker.equalTypes(standardLibrary.getArrayType(argument), jetType)) {
-                    if (typeChecker.equalTypes(standardLibrary.getBooleanType(), argument)) {
+                if (typeChecker.equalTypes(builtIns.getArrayType(argument), jetType)) {
+                    if (typeChecker.equalTypes(builtIns.getBooleanType(), argument)) {
                         addName(result, "booleans", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getIntType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getIntType(), argument)) {
                         addName(result, "ints", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getByteType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getByteType(), argument)) {
                         addName(result, "bytes", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getLongType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getLongType(), argument)) {
                         addName(result, "longs", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getFloatType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getFloatType(), argument)) {
                         addName(result, "floats", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getDoubleType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getDoubleType(), argument)) {
                         addName(result, "doubles", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getShortType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getShortType(), argument)) {
                         addName(result, "shorts", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getCharType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getCharType(), argument)) {
                         addName(result, "chars", validator);
                     }
-                    else if (typeChecker.equalTypes(standardLibrary.getStringType(), argument)) {
+                    else if (typeChecker.equalTypes(builtIns.getStringType(), argument)) {
                         addName(result, "strings", validator);
                     }
                     else {

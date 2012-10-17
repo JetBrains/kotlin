@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
@@ -158,7 +157,7 @@ public final class JsDescriptorUtils {
         if (namespace == null) {
             return false;
         }
-        return namespace.equals(JetStandardLibrary.getInstance().getLibraryScope().getContainingDeclaration());
+        return namespace.equals(KotlinBuiltIns.getInstance().getBuiltInsScope().getContainingDeclaration());
     }
 
     @Nullable

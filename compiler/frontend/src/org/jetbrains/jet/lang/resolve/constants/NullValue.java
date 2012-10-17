@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -39,7 +38,7 @@ public class NullValue implements CompileTimeConstant<Void> {
 
     @NotNull
     @Override
-    public JetType getType(@NotNull JetStandardLibrary standardLibrary) {
+    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
         return KotlinBuiltIns.getInstance().getNullableNothingType();
     }
 

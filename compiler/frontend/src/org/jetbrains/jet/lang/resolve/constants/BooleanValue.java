@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -42,8 +42,8 @@ public class BooleanValue implements CompileTimeConstant<Boolean> {
 
     @NotNull
     @Override
-    public JetType getType(@NotNull JetStandardLibrary standardLibrary) {
-        return standardLibrary.getBooleanType();
+    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
+        return kotlinBuiltIns.getBooleanType();
     }
 
     @Override

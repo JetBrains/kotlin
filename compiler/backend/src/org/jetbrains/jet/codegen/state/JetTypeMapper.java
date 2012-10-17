@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -269,7 +268,7 @@ public class JetTypeMapper extends BindingTraceAware {
             return asmType;
         }
 
-        if (mapBuiltinsToJava && descriptor instanceof ClassDescriptor && JetStandardLibrary.getInstance().isArray(jetType)) {
+        if (mapBuiltinsToJava && descriptor instanceof ClassDescriptor && KotlinBuiltIns.getInstance().isArray(jetType)) {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
@@ -768,10 +767,10 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (containingDeclaration.getKind() == ClassKind.ENUM_CLASS || containingDeclaration.getKind() == ClassKind.ENUM_ENTRY) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_NAME);
-            mapType(JetStandardLibrary.getInstance().getStringType(), signatureWriter, JetTypeMapperMode.VALUE);
+            mapType(KotlinBuiltIns.getInstance().getStringType(), signatureWriter, JetTypeMapperMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
             signatureWriter.writeParameterType(JvmMethodParameterKind.ENUM_ORDINAL);
-            mapType(JetStandardLibrary.getInstance().getIntType(), signatureWriter, JetTypeMapperMode.VALUE);
+            mapType(KotlinBuiltIns.getInstance().getIntType(), signatureWriter, JetTypeMapperMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
@@ -870,7 +869,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
 
     private static boolean isGenericsArray(JetType type) {
-        return JetStandardLibrary.getInstance().isArray(type) &&
+        return KotlinBuiltIns.getInstance().isArray(type) &&
                type.getArguments().get(0).getType().getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
     }
 

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 
 import javax.inject.Inject;
@@ -87,7 +87,7 @@ public class JavaTypeTransformer {
     @NotNull
     public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
         final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, JetStandardLibrary.getInstance(), typeVariableResolver) {
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, KotlinBuiltIns.getInstance(), typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 r[0] = jetType;
@@ -218,7 +218,7 @@ public class JavaTypeTransformer {
                 }
 
                 JetType type = transformToType(componentType, typeVariableResolver);
-                return TypeUtils.makeNullable(JetStandardLibrary.getInstance().getArrayType(variance, type));
+                return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(variance, type));
             }
 
             @Override

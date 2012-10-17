@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 /**
  * This project component initializes JetStandardLibrary so that throwing a ProcessCanceledException while
@@ -32,7 +32,7 @@ public class JetStandardLibraryInitializer {
         ProgressManager.getInstance().executeNonCancelableSection(new Runnable() {
             @Override
             public void run() {
-                JetStandardLibrary.initialize(project);
+                KotlinBuiltIns.initialize(project);
             }
         });
     }

@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -55,13 +55,13 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_T
  */
 public class AsmUtil {
     private static final Set<ClassDescriptor> PRIMITIVE_NUMBER_CLASSES = Sets.newHashSet(
-            JetStandardLibrary.getInstance().getByte(),
-            JetStandardLibrary.getInstance().getShort(),
-            JetStandardLibrary.getInstance().getInt(),
-            JetStandardLibrary.getInstance().getLong(),
-            JetStandardLibrary.getInstance().getFloat(),
-            JetStandardLibrary.getInstance().getDouble(),
-            JetStandardLibrary.getInstance().getChar()
+            KotlinBuiltIns.getInstance().getByte(),
+            KotlinBuiltIns.getInstance().getShort(),
+            KotlinBuiltIns.getInstance().getInt(),
+            KotlinBuiltIns.getInstance().getLong(),
+            KotlinBuiltIns.getInstance().getFloat(),
+            KotlinBuiltIns.getInstance().getDouble(),
+            KotlinBuiltIns.getInstance().getChar()
     );
 
     private static final int NO_FLAG_LOCAL = 0;

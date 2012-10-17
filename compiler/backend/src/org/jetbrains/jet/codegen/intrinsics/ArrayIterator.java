@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.List;
@@ -56,14 +56,14 @@ public class ArrayIterator implements IntrinsicMethod {
                 .get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call.getCalleeExpression());
         assert funDescriptor != null;
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
-        if (containingDeclaration.equals(JetStandardLibrary.getInstance().getArray())) {
+        if (containingDeclaration.equals(KotlinBuiltIns.getInstance().getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
             return StackValue.onStack(AsmTypeConstants.JET_ITERATOR_TYPE);
         }
         else {
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                ClassDescriptor arrayClass = JetStandardLibrary.getInstance().getPrimitiveArrayClassDescriptor(primitiveType);
+                ClassDescriptor arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType);
                 if (containingDeclaration.equals(arrayClass)) {
                     String methodSignature = "([" + jvmPrimitiveType.getJvmLetter() + ")" + jvmPrimitiveType.getIterator().getDescriptor();
                     v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);

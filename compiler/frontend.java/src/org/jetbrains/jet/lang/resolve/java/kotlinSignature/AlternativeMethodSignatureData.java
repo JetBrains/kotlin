@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,7 +152,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
                 alternativeVarargElementType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParamVarargElementType,
                                                                                    originalToAltTypeParameters);
-                alternativeType = JetStandardLibrary.getInstance().getArrayType(alternativeVarargElementType);
+                alternativeType = KotlinBuiltIns.getInstance().getArrayType(alternativeVarargElementType);
             }
 
             altParamDescriptors.add(new ValueParameterDescriptorImpl(

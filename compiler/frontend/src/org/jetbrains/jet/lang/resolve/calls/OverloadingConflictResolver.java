@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 import java.util.Set;
@@ -200,13 +200,13 @@ public class OverloadingConflictResolver {
     }
 
     private boolean numericTypeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-        JetType _double = standardLibrary.getDoubleType();
-        JetType _float = standardLibrary.getFloatType();
-        JetType _long = standardLibrary.getLongType();
-        JetType _int = standardLibrary.getIntType();
-        JetType _byte = standardLibrary.getByteType();
-        JetType _short = standardLibrary.getShortType();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        JetType _double = builtIns.getDoubleType();
+        JetType _float = builtIns.getFloatType();
+        JetType _long = builtIns.getLongType();
+        JetType _int = builtIns.getIntType();
+        JetType _byte = builtIns.getByteType();
+        JetType _short = builtIns.getShortType();
 
         if (TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float)) return true;
         if (TypeUtils.equalTypes(specific, _int)) {

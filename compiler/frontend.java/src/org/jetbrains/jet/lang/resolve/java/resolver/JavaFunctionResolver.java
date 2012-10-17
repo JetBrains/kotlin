@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -305,7 +305,7 @@ public final class JavaFunctionResolver {
     private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
         String methodName = functionDescriptor.getName().getName();
-        JetType nullableString = TypeUtils.makeNullable(JetStandardLibrary.getInstance().getStringType());
+        JetType nullableString = TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getStringType());
         if (methodName.equals("valueOf") && methodTypeParameters.size() == 1
             && JetTypeChecker.INSTANCE.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString)) {
             return true;

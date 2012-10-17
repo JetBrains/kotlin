@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Collections;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo newDataFlowInfo = checkTypeForIs(context, knownType, expression.getTypeRef(), dataFlowValue).thenInfo;
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo);
         }
-        return DataFlowUtils.checkType(JetStandardLibrary.getInstance().getBooleanType(), expression, contextWithExpectedType, context.dataFlowInfo);
+        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getBooleanType(), expression, contextWithExpectedType, context.dataFlowInfo);
     }
 
     @Override
@@ -230,7 +229,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             return noChange(context);
         }
         if (conditionExpected) {
-            JetType booleanType = JetStandardLibrary.getInstance().getBooleanType();
+            JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
             if (!JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type));
             }

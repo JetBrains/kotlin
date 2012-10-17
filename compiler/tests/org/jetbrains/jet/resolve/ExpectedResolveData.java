@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
@@ -153,7 +153,7 @@ public abstract class ExpectedResolveData {
         }
         final Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         Project project = files.iterator().next().getProject();
-        JetStandardLibrary lib = JetStandardLibrary.getInstance();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
                 Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), BuiltinsScopeExtensionMode.ALL);
@@ -259,7 +259,7 @@ public abstract class ExpectedResolveData {
 
                 JetType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
-                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(Name.identifier(name.substring(STANDARD_PREFIX.length())));
+                ClassifierDescriptor expectedClass = builtIns.getBuiltInsScope().getClassifier(Name.identifier(name.substring(STANDARD_PREFIX.length())));
                 assertNotNull("Expected class not found: " + name);
                 assertSame("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
                 continue;
@@ -317,7 +317,7 @@ public abstract class ExpectedResolveData {
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith(STANDARD_PREFIX)) {
                 String name = typeName.substring(STANDARD_PREFIX.length());
-                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(Name.identifier(name));
+                ClassifierDescriptor expectedClass = builtIns.getBuiltInsScope().getClassifier(Name.identifier(name));
 
                 assertNotNull("Expected class not found: " + typeName, expectedClass);
                 expectedTypeConstructor = expectedClass.getTypeConstructor();

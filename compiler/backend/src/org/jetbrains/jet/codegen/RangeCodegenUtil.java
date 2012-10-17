@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
@@ -34,20 +34,20 @@ import static org.jetbrains.jet.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
  */
 public class RangeCodegenUtil {
     private static final ImmutableMap<String, JetType> RANGE_TO_ELEMENT_TYPE = ImmutableMap.<String, JetType>builder()
-            .put("ByteRange", JetStandardLibrary.getInstance().getByteType())
-            .put("ShortRange", JetStandardLibrary.getInstance().getShortType())
-            .put("IntRange", JetStandardLibrary.getInstance().getIntType())
-            .put("LongRange", JetStandardLibrary.getInstance().getLongType())
-            .put("FloatRange", JetStandardLibrary.getInstance().getFloatType())
-            .put("DoubleRange", JetStandardLibrary.getInstance().getDoubleType())
-            .put("CharRange", JetStandardLibrary.getInstance().getCharType())
+            .put("ByteRange", KotlinBuiltIns.getInstance().getByteType())
+            .put("ShortRange", KotlinBuiltIns.getInstance().getShortType())
+            .put("IntRange", KotlinBuiltIns.getInstance().getIntType())
+            .put("LongRange", KotlinBuiltIns.getInstance().getLongType())
+            .put("FloatRange", KotlinBuiltIns.getInstance().getFloatType())
+            .put("DoubleRange", KotlinBuiltIns.getInstance().getDoubleType())
+            .put("CharRange", KotlinBuiltIns.getInstance().getCharType())
             .build();
 
     private RangeCodegenUtil() {}
 
     public static boolean isIntRange(JetType rangeType) {
         return !rangeType.isNullable()
-               && JetStandardLibrary.getInstance().getIntType().equals(getPrimitiveRangeElementType(rangeType));
+               && KotlinBuiltIns.getInstance().getIntType().equals(getPrimitiveRangeElementType(rangeType));
     }
 
     @Nullable
@@ -84,7 +84,7 @@ public class RangeCodegenUtil {
     public static JetType getPrimitiveRangeElementType(JetType rangeType) {
         ClassifierDescriptor declarationDescriptor = rangeType.getConstructor().getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        if (declarationDescriptor != JetStandardLibrary.getInstance().getLibraryScope().getClassifier(declarationDescriptor.getName())) {
+        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(declarationDescriptor.getName())) {
             // Must be a standard library class
             return null;
         }

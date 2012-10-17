@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.*;
 
@@ -292,7 +291,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isIteratorWithoutRemoveImpl(@NotNull ClassDescriptor classDescriptor) {
-        ClassDescriptor iteratorOfT = JetStandardLibrary.getInstance().getIterator();
+        ClassDescriptor iteratorOfT = KotlinBuiltIns.getInstance().getIterator();
         JetType iteratorOfAny = TypeUtils.substituteParameters(iteratorOfT, Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()));
         boolean isIterator = JetTypeChecker.INSTANCE.isSubtypeOf(classDescriptor.getDefaultType(), iteratorOfAny);
         boolean hasRemove = hasMethod(classDescriptor, Name.identifier("remove"));

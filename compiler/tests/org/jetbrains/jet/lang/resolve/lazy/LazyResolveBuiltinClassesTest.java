@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.junit.Test;
 
 import java.io.File;
@@ -84,7 +84,7 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
                 Predicates.in(Sets.newHashSet(new FqNameUnsafe("jet.Any"), new FqNameUnsafe("jet.Nothing"))));
 
         NamespaceDescriptor jetNamespaceFromJSL =
-                (NamespaceDescriptor) JetStandardLibrary.getInstance().getInt().getContainingDeclaration();
+                (NamespaceDescriptor) KotlinBuiltIns.getInstance().getInt().getContainingDeclaration();
         NamespaceDescriptor jetNamespaceFromLazy = lazyModule.getRootNamespace().getMemberScope().getNamespace(
                 jetNamespaceFromJSL.getName());
 

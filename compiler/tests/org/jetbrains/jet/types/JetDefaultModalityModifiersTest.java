@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,9 +63,9 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
         public void setUp() throws Exception {
             InjectorForTests injector = new InjectorForTests(getProject());
-            JetStandardLibrary library = injector.getJetStandardLibrary();
+            KotlinBuiltIns builtIns = injector.getKotlinBuiltIns();
             descriptorResolver = injector.getDescriptorResolver();
-            scope = createScope(library.getLibraryScope());
+            scope = createScope(builtIns.getBuiltInsScope());
         }
 
         private JetScope createScope(JetScope libraryScope) {

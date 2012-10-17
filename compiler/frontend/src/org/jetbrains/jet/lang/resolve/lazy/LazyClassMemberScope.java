@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
 import java.util.*;
@@ -151,7 +151,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void generateDataClassMethods(@NotNull Collection<FunctionDescriptor> result, @NotNull Name name) {
-        if (!JetStandardLibrary.isData(thisDescriptor)) return;
+        if (!KotlinBuiltIns.getInstance().isData(thisDescriptor)) return;
 
         ConstructorDescriptor constructor = getPrimaryConstructor();
         if (constructor == null) return;
@@ -294,7 +294,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void addDataClassMethods() {
-        if (!JetStandardLibrary.isData(thisDescriptor)) return;
+        if (!KotlinBuiltIns.getInstance().isData(thisDescriptor)) return;
 
         ConstructorDescriptor constructor = getPrimaryConstructor();
         if (constructor == null) return;

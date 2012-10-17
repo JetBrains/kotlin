@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
 /**
@@ -38,8 +38,8 @@ public class FloatValue implements CompileTimeConstant<Float> {
 
     @NotNull
     @Override
-    public JetType getType(@NotNull JetStandardLibrary standardLibrary) {
-        return standardLibrary.getFloatType();
+    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
+        return kotlinBuiltIns.getFloatType();
     }
 
     @Override

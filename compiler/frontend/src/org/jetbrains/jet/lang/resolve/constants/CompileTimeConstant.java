@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 /**
  * @author abreslav
@@ -28,7 +28,7 @@ public interface CompileTimeConstant<T> {
     T getValue();
 
     @NotNull
-    JetType getType(@NotNull JetStandardLibrary standardLibrary);
+    JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns);
 
     <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data);
 }

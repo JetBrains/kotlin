@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Collection;
 
@@ -61,7 +60,7 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
         if (DescriptorUtils.getFQName(namespaceDescriptor).equalsTo(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName())) {
             switch (builtinsScopeExtensionMode) {
                 case ALL:
-                    namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+                    namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                     break;
                 case ONLY_STANDARD_CLASSES:
                     namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());

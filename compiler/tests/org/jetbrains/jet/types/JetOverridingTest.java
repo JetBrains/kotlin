@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 /**
  * @author abreslav
@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 public class JetOverridingTest extends JetLiteFixture {
 
     private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
-    private JetStandardLibrary library;
+    private KotlinBuiltIns builtIns;
     private DescriptorResolver descriptorResolver;
 
     @Override
@@ -49,7 +49,7 @@ public class JetOverridingTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
         InjectorForTests injector = new InjectorForTests(getProject());
-        library = injector.getJetStandardLibrary();
+        builtIns = injector.getKotlinBuiltIns();
         descriptorResolver = injector.getDescriptorResolver();
     }
 
@@ -168,6 +168,6 @@ public class JetOverridingTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
-        return descriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function, JetTestUtils.DUMMY_TRACE);
+        return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsScope(), function, JetTestUtils.DUMMY_TRACE);
     }
 }
