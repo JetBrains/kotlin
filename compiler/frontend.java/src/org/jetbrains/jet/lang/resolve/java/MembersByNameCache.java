@@ -117,34 +117,29 @@ public final class MembersByNameCache {
             if (kotlin && !psiClass.getPsiClass().isEnum()) {
                 return;
             }
-            for (PsiField field0 : psiClass.getPsiClass().getAllFields()) {
-                PsiFieldWrapper field = new PsiFieldWrapper(field0);
+            for (PsiField field : psiClass.getPsiClass().getAllFields()) {
+                PsiFieldWrapper fieldWrapper = new PsiFieldWrapper(field);
 
                 // group must be created even for excluded field
-                NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(field.getName()));
+                NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(fieldWrapper.getName()));
 
-                if (!includeMember(field)) {
+                if (!includeMember(fieldWrapper)) {
                     continue;
                 }
 
-                TypeSource type = new TypeSource("", field.getType(), field0);
-                namedMembers.addPropertyAccessor(new PropertyAccessorData(field, type, null));
+                TypeSource type = new TypeSource("", fieldWrapper.getType(), field);
+                namedMembers.addPropertyAccessor(new PropertyAccessorData(fieldWrapper, type, null));
             }
         }
 
         private void processMethods() {
-            for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
-                createEmptyEntry(Name.identifier(method.getName()));
+            parseAllMethodsAsProperties();
+            processOwnMethods();
+        }
 
-                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
-                if (propertyParseResult != null) {
-                    cache.getOrCreateEmpty(Name.identifier(propertyParseResult.getPropertyName()));
-                }
-            }
-
-
-            for (PsiMethod method0 : psiClass.getPsiClass().getMethods()) {
-                PsiMethodWrapper method = new PsiMethodWrapper(method0);
+        private void processOwnMethods() {
+            for (PsiMethod ownMethod : psiClass.getPsiClass().getMethods()) {
+                PsiMethodWrapper method = new PsiMethodWrapper(ownMethod);
 
                 if (!includeMember(method)) {
                     continue;
@@ -154,81 +149,98 @@ public final class MembersByNameCache {
 
                 // TODO: remove getJavaClass
                 if (propertyParseResult != null && propertyParseResult.isGetter()) {
-
-                    String propertyName = propertyParseResult.getPropertyName();
-                    NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
-
-                    // TODO: some java properties too
-                    if (method.getJetMethod().hasPropertyFlag()) {
-
-                        int i = 0;
-
-                        TypeSource receiverType;
-                        if (i < method.getParameters().size() && method.getParameter(i).getJetValueParameter().receiver()) {
-                            PsiParameterWrapper receiverParameter = method.getParameter(i);
-                            receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(), receiverParameter.getPsiParameter());
-                            ++i;
-                        }
-                        else {
-                            receiverType = null;
-                        }
-
-                        while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
-                            // TODO: store is reified
-                            ++i;
-                        }
-
-                        if (i != method.getParameters().size()) {
-                            // TODO: report error properly
-                            throw new IllegalStateException("something is wrong with method " + method0);
-                        }
-
-                        // TODO: what if returnType == null?
-                        final PsiType returnType = method.getReturnType();
-                        assert returnType != null;
-                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), returnType, method.getPsiMethod());
-
-                        members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
-                    }
+                    processGetter(ownMethod, method, propertyParseResult);
                 }
                 else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
-
-                    String propertyName = propertyParseResult.getPropertyName();
-                    NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
-
-                    if (method.getJetMethod().hasPropertyFlag()) {
-                        if (method.getParameters().size() == 0) {
-                            // TODO: report error properly
-                            throw new IllegalStateException();
-                        }
-
-                        int i = 0;
-
-                        TypeSource receiverType = null;
-                        PsiParameterWrapper p1 = method.getParameter(0);
-                        if (p1.getJetValueParameter().receiver()) {
-                            receiverType = new TypeSource(p1.getJetValueParameter().type(), p1.getPsiParameter().getType(), p1.getPsiParameter());
-                            ++i;
-                        }
-
-                        while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
-                            ++i;
-                        }
-
-                        if (i + 1 != method.getParameters().size()) {
-                            throw new IllegalStateException();
-                        }
-
-                        PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
-                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(), propertyTypeParameter.getPsiParameter());
-
-                        members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
-                    }
+                    processSetter(method, propertyParseResult);
                 }
 
                 if (!method.getJetMethod().hasPropertyFlag()) {
                     NamedMembers namedMembers = cache.getOrCreateEmpty(Name.identifier(method.getName()));
                     namedMembers.addMethod(method);
+                }
+            }
+        }
+
+        private void processSetter(PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
+            String propertyName = propertyParseResult.getPropertyName();
+            NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
+
+            if (method.getJetMethod().hasPropertyFlag()) {
+                if (method.getParameters().size() == 0) {
+                    // TODO: report error properly
+                    throw new IllegalStateException();
+                }
+
+                int i = 0;
+
+                TypeSource receiverType = null;
+                PsiParameterWrapper p1 = method.getParameter(0);
+                if (p1.getJetValueParameter().receiver()) {
+                    receiverType = new TypeSource(p1.getJetValueParameter().type(), p1.getPsiParameter().getType(), p1.getPsiParameter());
+                    ++i;
+                }
+
+                while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
+                    ++i;
+                }
+
+                if (i + 1 != method.getParameters().size()) {
+                    throw new IllegalStateException();
+                }
+
+                PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
+                TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(), propertyTypeParameter.getPsiParameter());
+
+                members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
+            }
+        }
+
+        private void processGetter(PsiMethod ownMethod, PsiMethodWrapper method, PropertyParseResult propertyParseResult) {
+            String propertyName = propertyParseResult.getPropertyName();
+            NamedMembers members = cache.getOrCreateEmpty(Name.identifier(propertyName));
+
+            // TODO: some java properties too
+            if (method.getJetMethod().hasPropertyFlag()) {
+
+                int i = 0;
+
+                TypeSource receiverType;
+                if (i < method.getParameters().size() && method.getParameter(i).getJetValueParameter().receiver()) {
+                    PsiParameterWrapper receiverParameter = method.getParameter(i);
+                    receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(), receiverParameter.getPsiParameter());
+                    ++i;
+                }
+                else {
+                    receiverType = null;
+                }
+
+                while (i < method.getParameters().size() && method.getParameter(i).getJetTypeParameter().isDefined()) {
+                    // TODO: store is reified
+                    ++i;
+                }
+
+                if (i != method.getParameters().size()) {
+                    // TODO: report error properly
+                    throw new IllegalStateException("something is wrong with method " + ownMethod);
+                }
+
+                // TODO: what if returnType == null?
+                final PsiType returnType = method.getReturnType();
+                assert returnType != null;
+                TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), returnType, method.getPsiMethod());
+
+                members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
+            }
+        }
+
+        private void parseAllMethodsAsProperties() {
+            for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
+                createEmptyEntry(Name.identifier(method.getName()));
+
+                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
+                if (propertyParseResult != null) {
+                    cache.getOrCreateEmpty(Name.identifier(propertyParseResult.getPropertyName()));
                 }
             }
         }
