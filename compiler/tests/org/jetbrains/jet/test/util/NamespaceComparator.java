@@ -23,7 +23,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -52,12 +51,12 @@ import java.util.*;
 public class NamespaceComparator {
 
     public static void compareNamespaces(
-            @NotNull NamespaceDescriptor nsa,
-            @NotNull NamespaceDescriptor nsb,
+            @NotNull NamespaceDescriptor expectedNamespace,
+            @NotNull NamespaceDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @NotNull File txtFile
     ) {
-        String serializedFormWithDemarkedNames = assertNamespacesEqual(nsa, nsb, configuration);
+        String serializedFormWithDemarkedNames = assertNamespacesEqual(expectedNamespace, actualNamespace, configuration);
         // The serializer puts "!" in front of the name because it allows for speedy sorting of members
         // see MemberComparator.normalize()
         String serialized = serializedFormWithDemarkedNames.replace("!", "");
@@ -77,12 +76,12 @@ public class NamespaceComparator {
     }
 
     public static String assertNamespacesEqual(
-            NamespaceDescriptor nsa,
-            NamespaceDescriptor nsb,
+            NamespaceDescriptor expectedNamespace,
+            NamespaceDescriptor actualNamespace,
             @NotNull Configuration configuration
     ) {
         NamespaceComparator comparator = new NamespaceComparator(configuration);
-        String serialized = comparator.doCompareNamespaces(nsa, nsb);
+        String serialized = comparator.doCompareNamespaces(expectedNamespace, actualNamespace);
         comparator.deferred.throwFailures();
         return serialized;
     }
@@ -119,20 +118,20 @@ public class NamespaceComparator {
         this.conf = conf;
     }
 
-    private String doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
+    private String doCompareNamespaces(@NotNull NamespaceDescriptor expectedNamespace, @NotNull NamespaceDescriptor actualNamespace) {
         StringBuilder sb = new StringBuilder();
-        deferred.assertEquals(nsa.getName(), nsb.getName());
+        deferred.assertEquals(expectedNamespace.getName(), actualNamespace.getName());
 
-        sb.append("namespace " + nsa.getName() + "\n\n");
+        sb.append("namespace " + expectedNamespace.getName() + "\n\n");
 
-        //deferred.assertTrue("namespace " + nsa.getName() + " is empty", !nsa.getMemberScope().getAllDescriptors().isEmpty());
+        //deferred.assertTrue("namespace " + expectedNamespace.getName() + " is empty", !expectedNamespace.getMemberScope().getAllDescriptors().isEmpty());
 
         Set<Name> classifierNames = Sets.newHashSet();
         Set<Name> propertyNames = Sets.newHashSet();
         Set<Name> functionNames = Sets.newHashSet();
         Set<Name> objectNames = Sets.newHashSet();
 
-        for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor ad : expectedNamespace.getMemberScope().getAllDescriptors()) {
             if (ad instanceof ClassifierDescriptor) {
                 classifierNames.add(ad.getName());
             }
@@ -145,7 +144,7 @@ public class NamespaceComparator {
             else if (ad instanceof NamespaceDescriptor) {
                 if (conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(ad))) {
                     NamespaceDescriptor namespaceDescriptorA = (NamespaceDescriptor) ad;
-                    NamespaceDescriptor namespaceDescriptorB = nsb.getMemberScope().getNamespace(namespaceDescriptorA.getName());
+                    NamespaceDescriptor namespaceDescriptorB = actualNamespace.getMemberScope().getNamespace(namespaceDescriptorA.getName());
                     //deferred.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
                     if (namespaceDescriptorB == null) {
                         System.err.println("Namespace not found: " + namespaceDescriptorA.getQualifiedName());
@@ -165,43 +164,43 @@ public class NamespaceComparator {
             }
         }
 
-        for (ClassDescriptor objectDescriptor : nsa.getMemberScope().getObjectDescriptors()) {
+        for (ClassDescriptor objectDescriptor : expectedNamespace.getMemberScope().getObjectDescriptors()) {
             objectNames.add(objectDescriptor.getName());
         }
 
         for (Name name : sorted(classifierNames)) {
-            ClassifierDescriptor ca = nsa.getMemberScope().getClassifier(name);
-            ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
-            deferred.assertTrue("Classifier not found in " + nsa + ": " + name, ca != null);
-            deferred.assertTrue("Classifier not found in " + nsb + ": " + name, cb != null);
+            ClassifierDescriptor ca = expectedNamespace.getMemberScope().getClassifier(name);
+            ClassifierDescriptor cb = actualNamespace.getMemberScope().getClassifier(name);
+            deferred.assertTrue("Classifier not found in " + expectedNamespace + ": " + name, ca != null);
+            deferred.assertTrue("Classifier not found in " + actualNamespace + ": " + name, cb != null);
             if (ca != null && cb != null) {
                 compareClassifiers(ca, cb, sb);
             }
         }
 
         for (Name name : sorted(objectNames)) {
-            ClassifierDescriptor ca = nsa.getMemberScope().getObjectDescriptor(name);
-            ClassifierDescriptor cb = nsb.getMemberScope().getObjectDescriptor(name);
-            deferred.assertTrue("Object not found in " + nsa + ": " + name, ca != null);
-            deferred.assertTrue("Object not found in " + nsb + ": " + name, cb != null);
+            ClassifierDescriptor ca = expectedNamespace.getMemberScope().getObjectDescriptor(name);
+            ClassifierDescriptor cb = actualNamespace.getMemberScope().getObjectDescriptor(name);
+            deferred.assertTrue("Object not found in " + expectedNamespace + ": " + name, ca != null);
+            deferred.assertTrue("Object not found in " + actualNamespace + ": " + name, cb != null);
             if (ca != null && cb != null) {
                 compareClassifiers(ca, cb, sb);
             }
         }
 
         for (Name name : sorted(propertyNames)) {
-            Collection<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
-            Collection<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
-            compareDeclarationSets("Properties in package " + nsa, pa, pb, sb);
+            Collection<VariableDescriptor> pa = expectedNamespace.getMemberScope().getProperties(name);
+            Collection<VariableDescriptor> pb = actualNamespace.getMemberScope().getProperties(name);
+            compareDeclarationSets("Properties in package " + expectedNamespace, pa, pb, sb);
 
-            deferred.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
-            deferred.assertTrue(nsb.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.setterName(name))).isEmpty());
+            deferred.assertTrue(actualNamespace.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
+            deferred.assertTrue(actualNamespace.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.setterName(name))).isEmpty());
         }
 
         for (Name name : sorted(functionNames)) {
-            Collection<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
-            Collection<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
-            compareDeclarationSets("Functions in package " + nsa, fa, fb, sb);
+            Collection<FunctionDescriptor> fa = expectedNamespace.getMemberScope().getFunctions(name);
+            Collection<FunctionDescriptor> fb = actualNamespace.getMemberScope().getFunctions(name);
+            compareDeclarationSets("Functions in package " + expectedNamespace, fa, fb, sb);
         }
 
         return sb.toString();
