@@ -38,7 +38,6 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -319,9 +318,8 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getProject(),
                                 environment.getSourceFiles(),
                                 scriptParameters,
-                                filesToAnalyzeCompletely,
-                                environment.getConfiguration().get(JVMConfigurationKeys.BUILTINS_SCOPE_EXTENSION_MODE_KEY,
-                                                                   BuiltinsScopeExtensionMode.ALL));
+                                filesToAnalyzeCompletely
+                        );
                     }
                 }, environment.getSourceFiles()
         );

@@ -20,7 +20,6 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -47,7 +46,6 @@ public class InjectorForJavaDescriptorResolver {
     private final Project project;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
-    private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private JavaSemanticServices javaSemanticServices;
     private JavaDescriptorResolver javaDescriptorResolver;
@@ -69,13 +67,11 @@ public class InjectorForJavaDescriptorResolver {
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptor moduleDescriptor,
-        @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode
+        @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.project = project;
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
-        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.javaSemanticServices = new JavaSemanticServices();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
@@ -94,7 +90,6 @@ public class InjectorForJavaDescriptorResolver {
         this.javaInnerClassResolver = new JavaInnerClassResolver();
         this.javaPropertiesResolver = new JavaPropertiesResolver();
 
-        javaBridgeConfiguration.setBuiltinsScopeExtensionMode(builtinsScopeExtensionMode);
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
         javaBridgeConfiguration.setProject(project);
 

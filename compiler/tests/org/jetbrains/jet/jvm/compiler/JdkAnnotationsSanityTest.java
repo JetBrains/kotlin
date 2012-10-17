@@ -36,7 +36,6 @@ import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CoreExternalAnnotationsManager;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -70,8 +69,7 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
     }
 
     public void testNoErrorsInAlternativeSignatures() {
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL,
-                                                                                       getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject());
 
         final BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();

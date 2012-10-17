@@ -18,7 +18,6 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicates;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -43,7 +42,7 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 getProject(), jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue(), BuiltinsScopeExtensionMode.ALL).getBindingContext();
+                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
 
         boolean ok = true;
 

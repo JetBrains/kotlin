@@ -27,7 +27,6 @@ import jet.runtime.typeinfo.JetClass;
 import jet.runtime.typeinfo.JetMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -61,7 +60,7 @@ class DecompiledDataFactory {
     private DecompiledDataFactory(ClsFileImpl clsFile) {
         this.clsFile = clsFile;
         Project project = this.clsFile.getProject();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(BuiltinsScopeExtensionMode.ALL, project);
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
         bindingContext = injector.getBindingTrace().getBindingContext();
         javaDescriptorResolver = injector.getJavaDescriptorResolver();
     }

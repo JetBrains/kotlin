@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -46,7 +45,6 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     private Project project;
     private JavaSemanticServices javaSemanticServices;
     private ModuleConfiguration delegateConfiguration;
-    private BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -58,14 +56,9 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
         this.javaSemanticServices = javaSemanticServices;
     }
 
-    @Inject
-    public void setBuiltinsScopeExtensionMode(@NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode) {
-        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
-    }
-
     @PostConstruct
     public void init() {
-        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project, builtinsScopeExtensionMode);
+        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project);
     }
 
 

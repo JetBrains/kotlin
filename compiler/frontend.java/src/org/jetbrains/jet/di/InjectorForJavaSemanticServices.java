@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
@@ -50,7 +49,6 @@ public class InjectorForJavaSemanticServices {
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private PsiClassFinderImpl psiClassFinder;
     private ModuleDescriptor moduleDescriptor;
-    private final BuiltinsScopeExtensionMode builtinsScopeExtensionMode;
     private final Project project;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaClassResolver javaClassResolver;
@@ -67,7 +65,6 @@ public class InjectorForJavaSemanticServices {
     private JavaPropertiesResolver javaPropertiesResolver;
 
     public InjectorForJavaSemanticServices(
-        @NotNull BuiltinsScopeExtensionMode builtinsScopeExtensionMode,
         @NotNull Project project
     ) {
         this.javaSemanticServices = new JavaSemanticServices();
@@ -76,7 +73,6 @@ public class InjectorForJavaSemanticServices {
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"));
-        this.builtinsScopeExtensionMode = builtinsScopeExtensionMode;
         this.project = project;
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaClassResolver = new JavaClassResolver();
@@ -104,7 +100,6 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver.setNamespaceResolver(javaNamespaceResolver);
         this.javaDescriptorResolver.setPropertiesResolver(javaPropertiesResolver);
 
-        javaBridgeConfiguration.setBuiltinsScopeExtensionMode(builtinsScopeExtensionMode);
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
         javaBridgeConfiguration.setProject(project);
 

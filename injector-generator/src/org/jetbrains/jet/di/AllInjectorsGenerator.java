@@ -21,7 +21,6 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -99,7 +98,6 @@ public class AllInjectorsGenerator {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generator.implementInterface(InjectorForTopDownAnalyzer.class);
         generateInjectorForTopDownAnalyzerCommon(generator);
-        generator.addParameter(BuiltinsScopeExtensionMode.class);
         generator.addField(true, ModuleConfiguration.class, null, new InstantiateType(JavaBridgeConfiguration.class));
         generator.addField(JavaDescriptorResolver.class);
         generator.addField(PsiClassFinderImpl.class);
@@ -114,7 +112,6 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(BindingTrace.class);
         generator.addPublicParameter(ModuleDescriptor.class);
-        generator.addParameter(BuiltinsScopeExtensionMode.class);
 
         // Fields
         generator.addField(JavaBridgeConfiguration.class);
@@ -184,7 +181,6 @@ public class AllInjectorsGenerator {
         generator.addField(false, ModuleDescriptor.class, null,
                            new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(" +
                                                "org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
-        generator.addParameter(BuiltinsScopeExtensionMode.class);
 
         // Parameters
         generator.addPublicParameter(Project.class);

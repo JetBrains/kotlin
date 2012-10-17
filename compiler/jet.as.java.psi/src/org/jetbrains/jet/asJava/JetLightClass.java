@@ -44,7 +44,6 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
@@ -200,9 +199,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
         // must be loaded from .class files
         AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
-            JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file),
-                // TODO: wrong environment // stepan.koltsov@ 2012-04-09
-                BuiltinsScopeExtensionMode.ALL);
+            JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file));
 
         if (context.isError()) {
             throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());

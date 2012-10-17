@@ -36,7 +36,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.BuiltinsScopeExtensionMode;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
@@ -358,8 +357,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 environment.getProject(),
                 files.getPsiFiles(),
                 files.getScriptParameterTypes(),
-                Predicates.<PsiFile>alwaysTrue(),
-                BuiltinsScopeExtensionMode.ALL);
+                Predicates.<PsiFile>alwaysTrue());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
