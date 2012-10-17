@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 import org.jetbrains.jet.lang.resolve.java.wrapper.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,15 +40,16 @@ public final class MembersByNameCache {
         return namedMembersMap.get(name);
     }
 
-    public Iterable<? extends Map.Entry<Name, NamedMembers>> entrySet() {
-        return namedMembersMap.entrySet();
+    @NotNull
+    public Collection<NamedMembers> allMembers() {
+        return namedMembersMap.values();
     }
 
     @NotNull
     private NamedMembers getOrCreateEmpty(@NotNull Name name) {
         NamedMembers r = namedMembersMap.get(name);
         if (r == null) {
-            r = new NamedMembers();
+            r = new NamedMembers(name);
             namedMembersMap.put(name, r);
         }
         return r;

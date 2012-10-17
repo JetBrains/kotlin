@@ -265,7 +265,7 @@ public final class JavaFunctionResolver {
         }
     }
 
-    public static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
+    private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
             ResolverScopeData scopeData,
             Name methodName
     ) {
@@ -281,14 +281,12 @@ public final class JavaFunctionResolver {
     public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
 
-        for (Map.Entry<Name, NamedMembers> entry : scopeData.getMembersCache().entrySet()) {
-            Name methodName = entry.getKey();
-            NamedMembers namedMembers = entry.getValue();
+        for (NamedMembers member : scopeData.getMembersCache().allMembers()) {
             PsiClass psiClass = scopeData.getPsiClass();
             assert psiClass != null;
             resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), psiClass,
-                                       namedMembers, methodName, scopeData);
-            functions.addAll(namedMembers.getFunctionDescriptors());
+                                       member, member.getName(), scopeData);
+            functions.addAll(member.getFunctionDescriptors());
         }
 
         return functions;

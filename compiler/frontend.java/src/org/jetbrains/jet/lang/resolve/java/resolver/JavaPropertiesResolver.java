@@ -108,14 +108,11 @@ public final class JavaPropertiesResolver {
 
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
         MembersByNameCache membersForProperties = scopeData.getMembersCache();
-        for (Map.Entry<Name, NamedMembers> entry : membersForProperties.entrySet()) {
-            NamedMembers namedMembers = entry.getValue();
-            Name propertyName = entry.getKey();
-
+        for (NamedMembers members : membersForProperties.allMembers()) {
             resolveNamedGroupProperties(
-                    scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, propertyName,
+                    scopeData.getClassOrNamespaceDescriptor(), scopeData, members, members.getName(),
                     "class or namespace " + psiClass.getQualifiedName());
-            descriptors.addAll(namedMembers.getPropertyDescriptors());
+            descriptors.addAll(members.getPropertyDescriptors());
         }
 
         return descriptors;

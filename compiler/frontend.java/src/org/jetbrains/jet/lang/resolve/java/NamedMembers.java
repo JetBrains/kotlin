@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,13 @@ import java.util.Set;
 * @author Stepan Koltsov
 */
 public class NamedMembers {
+
+    public NamedMembers(@NotNull Name name) {
+        this.name = name;
+    }
+
+    @NotNull
+    private final Name name;
 
     @NotNull
     private final List<PsiMethodWrapper> methods = Lists.newArrayList();
@@ -53,6 +61,11 @@ public class NamedMembers {
     @NotNull
     public List<PsiMethodWrapper> getMethods() {
         return methods;
+    }
+
+    @NotNull
+    public Name getName() {
+        return name;
     }
 
     @NotNull
