@@ -287,7 +287,6 @@
                     <fileset dir="${output}/kotlin-compiler.exploded">
                         <include name="**/*.class"/>
                         <include name="**/*.jet"/>
-                        <include name="**/*.jet.src"/>
                         <include name="**/*.kt"/>
                         <include name="META-INF/services/**"/>
                         <include name="messages/**"/>
