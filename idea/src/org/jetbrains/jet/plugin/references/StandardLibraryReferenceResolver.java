@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.references;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -89,7 +91,14 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             jetNamespace.setMemberScope(scope);
 
-            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet.src"));
+            Predicate<JetFile> jetFilesIndependentOfUnit = new Predicate<JetFile>() {
+                @Override
+                public boolean apply(@Nullable JetFile file) {
+                    return "Unit.jet".equals(file.getName());
+                }
+            };
+            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
+                                                            getJetFiles("jet", jetFilesIndependentOfUnit));
 
             ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
             assert tuple0 != null;
@@ -99,14 +108,16 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             scope.addClassifierAlias(KotlinBuiltIns.getInstance().UNIT_ALIAS, tuple0);
             jetNamespace.setMemberScope(scope);
 
-            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet"));
+            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
+                                                            getJetFiles("jet", Predicates.not(jetFilesIndependentOfUnit)));
+
             AnalyzingUtils.throwExceptionOnErrors(context.getBindingContext());
 
             bindingContext = context.getBindingContext();
         }
     }
 
-    private List<JetFile> getJetFiles(String dir) {
+    private List<JetFile> getJetFiles(String dir, final Predicate<JetFile> filter) {
         URL url = StandardLibraryReferenceResolver.class.getResource("/" + dir + "/");
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null;
@@ -116,7 +127,11 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         return ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
             @Override
             public JetFile fun(PsiFile file) {
-                return file instanceof JetFile ? (JetFile) file : null;
+                if (file instanceof JetFile) {
+                    JetFile jetFile = (JetFile) file;
+                    return filter.apply(jetFile) ? jetFile : null;
+                }
+                return null;
             }
         });
     }
