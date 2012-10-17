@@ -31,8 +31,9 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl implements NamespaceDescriptor {
+public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl implements LazyDescriptor, NamespaceDescriptor {
     private final JetScope memberScope;
+    private final JetScope lazyScope;
 
     public LazyPackageDescriptor(
             @NotNull NamespaceDescriptorParent containingDeclaration,
@@ -46,9 +47,9 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
         resolveSession.getModuleConfiguration().extendNamespaceScope(resolveSession.getTrace(), this, scope);
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
-        LazyPackageMemberScope lazyPackageMemberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
+        this.lazyScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
 
-        this.memberScope = new ChainedScope(containingDeclaration, lazyPackageMemberScope, scope);
+        this.memberScope = new ChainedScope(this, lazyScope, scope);
     }
 
     @NotNull
@@ -66,5 +67,10 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public void forceResolveAllContents() {
+        ForceResolveUtil.forceResolveAllContents(lazyScope);
     }
 }

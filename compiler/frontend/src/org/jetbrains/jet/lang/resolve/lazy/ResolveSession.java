@@ -278,4 +278,44 @@ public class ResolveSession {
         }
         return actualName;
     }
+
+    /**
+     * Forces all descriptors to be resolved.
+     *
+     * Use this method when laziness plays against you, e.g. when lazy descriptors may be accessed in a multi-threaded setting
+     */
+    public void forceResolveAll() {
+        rootPackage.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
+
+            @Override
+            public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(descriptor);
+                return null;
+            }
+
+            @Override
+            public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(descriptor);
+                return null;
+            }
+
+            @Override
+            public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(descriptor);
+                return null;
+            }
+
+            @Override
+            public Void visitModuleDeclaration(ModuleDescriptor descriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(descriptor);
+                return null;
+            }
+
+            @Override
+            public Void visitScriptDescriptor(ScriptDescriptor scriptDescriptor, Void data) {
+                ForceResolveUtil.forceResolveAllContents(scriptDescriptor);
+                return null;
+            }
+        });
+    }
 }

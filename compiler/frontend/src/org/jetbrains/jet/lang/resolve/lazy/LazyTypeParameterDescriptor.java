@@ -43,7 +43,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
+public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyDescriptor {
     private final ResolveSession resolveSession;
 
     private final SmartPsiElementPointer<JetTypeParameter> jetTypeParameterSmartPsiElementPointer;
@@ -285,5 +285,21 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor {
     @Override
     public String toString() {
         return getName().toString();
+    }
+
+    @Override
+    public void forceResolveAllContents() {
+        getAnnotations();
+        getClassObjectType();
+        getContainingDeclaration();
+        getDefaultType();
+        getIndex();
+        getLowerBounds();
+        getLowerBoundsAsType();
+        getOriginal();
+        getTypeConstructor();
+        getUpperBounds();
+        getUpperBoundsAsType();
+        getVariance();
     }
 }

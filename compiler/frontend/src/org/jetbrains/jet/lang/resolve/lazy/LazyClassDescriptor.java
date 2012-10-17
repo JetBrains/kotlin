@@ -49,7 +49,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 /**
  * @author abreslav
  */
-public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorFromSource {
+public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDescriptor, ClassDescriptorFromSource {
 
     private static final Predicate<Object> ONLY_ENUM_ENTRIES = Predicates.instanceOf(JetEnumEntry.class);
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
@@ -65,7 +65,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private final Name name;
     private final DeclarationDescriptor containingDeclaration;
-    private final TypeConstructor typeConstructor;
+    private final LazyClassTypeConstructor typeConstructor;
     private final Modality modality;
     private final Visibility visibility;
     private final ClassKind kind;
@@ -308,7 +308,30 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return "lazy class " + getName().toString();
     }
 
-    private class LazyClassTypeConstructor implements TypeConstructor {
+    @Override
+    public void forceResolveAllContents() {
+        getAnnotations();
+        getClassObjectDescriptor();
+        getClassObjectType();
+        getConstructors();
+        getContainingDeclaration();
+        getImplicitReceiver();
+        getKind();
+        getModality();
+        getName();
+        getOriginal();
+        getScopeForClassHeaderResolution();
+        getScopeForMemberDeclarationResolution();
+        ForceResolveUtil.forceResolveAllContents(getScopeForMemberLookup());
+        getScopeForPropertyInitializerResolution();
+        getUnsubstitutedInnerClassesScope();
+        ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
+        getUnsubstitutedPrimaryConstructor();
+        getVisibility();
+        isClassObjectAValue();
+    }
+
+    private class LazyClassTypeConstructor implements LazyDescriptor, TypeConstructor {
         private Collection<JetType> supertypes = null;
         private List<TypeParameterDescriptor> parameters = null;
 
@@ -394,6 +417,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         @Override
         public String toString() {
             return LazyClassDescriptor.this.getName().toString();
+        }
+
+        @Override
+        public void forceResolveAllContents() {
+            getAnnotations();
+            getSupertypes();
+            getParameters();
         }
     }
 
