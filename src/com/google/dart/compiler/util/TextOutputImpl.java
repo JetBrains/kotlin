@@ -6,9 +6,6 @@ package com.google.dart.compiler.util;
 
 import java.util.Arrays;
 
-/**
- * An abstract base type to build TextOutput implementations.
- */
 public class TextOutputImpl implements TextOutput {
     private final boolean compact;
     private int identLevel = 0;
@@ -19,6 +16,8 @@ public class TextOutputImpl implements TextOutput {
     private int position = 0;
     private int line = 0;
     private int column = 0;
+
+    private OutListener outListener;
 
     public TextOutputImpl() {
         this(false);
@@ -107,30 +106,24 @@ public class TextOutputImpl implements TextOutput {
     private void movePosition(int l) {
         position += l;
         column += l;
-        justNewlined = false;
     }
 
     @Override
     public void print(char[] s) {
         maybeIndent();
         printAndCount(s);
-        justNewlined = false;
     }
 
     @Override
     public void print(CharSequence s) {
         maybeIndent();
         printAndCount(s);
-        justNewlined = false;
     }
 
     @Override
     public void printOpt(char c) {
         if (!compact) {
-            maybeIndent();
-            out.append(c);
-            position++;
-            column++;
+            print(c);
         }
     }
 
@@ -154,6 +147,9 @@ public class TextOutputImpl implements TextOutput {
         if (justNewlined && !compact) {
             printAndCount(indents[identLevel]);
             justNewlined = false;
+            if (outListener != null) {
+                outListener.indentedAfterNewLine();
+            }
         }
     }
 
@@ -167,5 +163,15 @@ public class TextOutputImpl implements TextOutput {
         position += chars.length;
         column += chars.length;
         out.append(chars);
+    }
+
+    @Override
+    public boolean isJustNewlined() {
+        return justNewlined && !compact;
+    }
+
+    @Override
+    public void setOutListener(OutListener outListener) {
+        this.outListener = outListener;
     }
 }

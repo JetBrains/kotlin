@@ -4,8 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.common.SourceInfo;
-
 public final class JsExpressionStatement extends AbstractNode implements JsStatement {
     private JsExpression expression;
 
@@ -32,11 +30,11 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
 
     @Override
     public Object getSourceInfo() {
-        return expression.getSourceInfo();
+        return null;
     }
 
     @Override
     public void setSourceInfo(Object info) {
-        expression.setSourceInfo(info);
+        throw new IllegalStateException("You must not set source info for JsExpressionStatement, set for expression");
     }
 }

@@ -31,7 +31,7 @@ public class JsConstructExpressionVisitor extends JsVisitor {
    */
   @Override
   public boolean visit(JsArrayAccess x, JsContext ctx) {
-    accept(x.getArrayExpr());
+    accept(x.getArrayExpression());
     return false;
   }
 
@@ -85,13 +85,12 @@ public class JsConstructExpressionVisitor extends JsVisitor {
    * We only look at nodes that would not normally be surrounded by parentheses.
    */
   @Override
-  protected <T extends JsVisitable> T doAccept(T node) {
+  public <T extends JsVisitable> T accept(T node) {
     // Assign to Object to prevent 'inconvertible types' compile errors due
     // to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436
     // reproducible in jdk1.6.0_02.
-    Object o = node;
-    if (o instanceof JsExpression) {
-      JsExpression expression = (JsExpression) o;
+      if (node instanceof JsExpression) {
+      JsExpression expression = (JsExpression) node;
       int precedence = JsPrecedenceVisitor.exec(expression);
       // Only visit expressions that won't automatically be surrounded by
       // parentheses
@@ -99,6 +98,6 @@ public class JsConstructExpressionVisitor extends JsVisitor {
         return node;
       }
     }
-    return super.doAccept(node);
+    return super.accept(node);
   }
 }

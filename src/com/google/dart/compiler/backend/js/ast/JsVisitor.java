@@ -87,20 +87,26 @@ abstract public class JsVisitor {
         }
     };
 
-    public final <T extends JsVisitable> T accept(T node) {
-        return doAccept(node);
+    public <T extends JsVisitable> T accept(T node) {
+        doTraverse(node, UNMODIFIABLE_CONTEXT);
+        return node;
     }
 
     public final <T extends JsVisitable> void acceptList(List<T> collection) {
-        doAcceptList(collection);
+        for (T node : collection) {
+            doTraverse(node, UNMODIFIABLE_CONTEXT);
+        }
     }
 
     public JsExpression acceptLvalue(JsExpression expr) {
-        return doAcceptLvalue(expr);
+        doTraverse(expr, LVALUE_CONTEXT);
+        return expr;
     }
 
     public final <T extends JsVisitable> void acceptWithInsertRemove(List<T> collection) {
-        doAcceptWithInsertRemove(collection);
+        for (T node : collection) {
+            doTraverse(node, UNMODIFIABLE_CONTEXT);
+        }
     }
 
     public void endVisit(JsArrayAccess x, JsContext ctx) {
@@ -403,28 +409,6 @@ abstract public class JsVisitor {
 
     public boolean visit(JsDocComment x, JsContext context) {
         return true;
-    }
-
-    protected <T extends JsVisitable> T doAccept(T node) {
-        doTraverse(node, UNMODIFIABLE_CONTEXT);
-        return node;
-    }
-
-    protected <T extends JsVisitable> void doAcceptList(List<T> collection) {
-        for (T node : collection) {
-            doTraverse(node, UNMODIFIABLE_CONTEXT);
-        }
-    }
-
-    protected JsExpression doAcceptLvalue(JsExpression expr) {
-        doTraverse(expr, LVALUE_CONTEXT);
-        return expr;
-    }
-
-    protected <T extends JsVisitable> void doAcceptWithInsertRemove(List<T> collection) {
-        for (T node : collection) {
-            doTraverse(node, UNMODIFIABLE_CONTEXT);
-        }
     }
 
     protected void doTraverse(JsVisitable node, JsContext context) {

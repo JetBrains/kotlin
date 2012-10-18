@@ -37,4 +37,14 @@ public interface TextOutput {
     void printOpt(String s);
 
     boolean isCompact();
+
+    boolean isJustNewlined();
+
+    void setOutListener(OutListener outListener);
+
+    public interface OutListener {
+        void newLined();
+
+        void indentedAfterNewLine();
+    }
 }

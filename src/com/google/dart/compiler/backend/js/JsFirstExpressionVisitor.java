@@ -50,7 +50,7 @@ public class JsFirstExpressionVisitor extends JsVisitor {
 
     @Override
     public boolean visit(JsArrayAccess x, JsContext ctx) {
-        accept(x.getArrayExpr());
+        accept(x.getArrayExpression());
         return false;
     }
 

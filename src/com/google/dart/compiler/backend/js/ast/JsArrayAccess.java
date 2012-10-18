@@ -8,30 +8,29 @@ package com.google.dart.compiler.backend.js.ast;
  * Represents a javascript expression for array access.
  */
 public final class JsArrayAccess extends JsExpressionImpl {
-
-  private JsExpression arrayExpr;
-  private JsExpression indexExpr;
+  private JsExpression arrayExpression;
+  private JsExpression indexExpression;
 
   public JsArrayAccess() {
     super();
   }
 
-  public JsArrayAccess(JsExpression arrayExpr, JsExpression indexExpr) {
-    this.arrayExpr = arrayExpr;
-    this.indexExpr = indexExpr;
+  public JsArrayAccess(JsExpression arrayExpression, JsExpression indexExpression) {
+    this.arrayExpression = arrayExpression;
+    this.indexExpression = indexExpression;
   }
 
-  public JsExpression getArrayExpr() {
-    return arrayExpr;
+  public JsExpression getArrayExpression() {
+    return arrayExpression;
   }
 
-  public JsExpression getIndexExpr() {
-    return indexExpr;
+  public JsExpression getIndexExpression() {
+    return indexExpression;
   }
 
   @Override
   public boolean hasSideEffects() {
-    return arrayExpr.hasSideEffects() || indexExpr.hasSideEffects();
+    return arrayExpression.hasSideEffects() || indexExpression.hasSideEffects();
   }
 
   @Override
@@ -44,19 +43,19 @@ public final class JsArrayAccess extends JsExpressionImpl {
     return false;
   }
 
-  public void setArrayExpr(JsExpression arrayExpr) {
-    this.arrayExpr = arrayExpr;
+  public void setArrayExpression(JsExpression arrayExpression) {
+    this.arrayExpression = arrayExpression;
   }
 
-  public void setIndexExpr(JsExpression indexExpr) {
-    this.indexExpr = indexExpr;
+  public void setIndexExpression(JsExpression indexExpression) {
+    this.indexExpression = indexExpression;
   }
 
   @Override
   public void traverse(JsVisitor v, JsContext context) {
     if (v.visit(this, context)) {
-      arrayExpr = v.accept(arrayExpr);
-      indexExpr = v.accept(indexExpr);
+      arrayExpression = v.accept(arrayExpression);
+      indexExpression = v.accept(indexExpression);
     }
     v.endVisit(this, context);
   }
