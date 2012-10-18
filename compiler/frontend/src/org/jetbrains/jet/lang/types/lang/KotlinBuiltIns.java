@@ -253,7 +253,9 @@ public class KotlinBuiltIns {
 
     private void makePrimitive(PrimitiveType primitiveType) {
         ClassDescriptor clazz = (ClassDescriptor) getBuiltInsScope().getClassifier(primitiveType.getTypeName());
+        assert clazz != null : "ClassDescriptor not found for " + primitiveType;
         ClassDescriptor arrayClazz = (ClassDescriptor) getBuiltInsScope().getClassifier(primitiveType.getArrayTypeName());
+        assert arrayClazz != null : "Array ClassDescriptor not found for " + primitiveType;
         JetTypeImpl type = new JetTypeImpl(clazz);
         JetTypeImpl arrayType = new JetTypeImpl(arrayClazz);
 
@@ -507,12 +509,16 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getMapEntry() {
-        return DescriptorUtils.getInnerClassByName(getBuiltInClassByName("Map"), "Entry");
+        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getBuiltInClassByName("Map"), "Entry");
+        assert classDescriptor != null : "Can't find Map.Entry";
+        return classDescriptor;
     }
 
     @NotNull
     public ClassDescriptor getMutableMapEntry() {
-        return DescriptorUtils.getInnerClassByName(getBuiltInClassByName("MutableMap"), "MutableEntry");
+        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getBuiltInClassByName("MutableMap"), "MutableEntry");
+        assert classDescriptor != null : "Can't find MutableMap.MutableEntry";
+        return classDescriptor;
     }
 
     @NotNull
