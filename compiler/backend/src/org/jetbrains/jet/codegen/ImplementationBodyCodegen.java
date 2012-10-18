@@ -148,7 +148,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isAnnotation) {
             access |= ACC_ANNOTATION;
         }
-        if (CodegenUtil.isDeprecated(descriptor)) {
+        if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
             access |= ACC_DEPRECATED;
         }
         if (isEnum) {

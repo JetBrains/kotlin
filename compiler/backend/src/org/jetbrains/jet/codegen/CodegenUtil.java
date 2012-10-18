@@ -62,18 +62,6 @@ public class CodegenUtil {
         return false;
     }
 
-    public static boolean isDeprecated(DeclarationDescriptor descriptor) {
-        for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
-            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(annotation.getType());
-            if (classDescriptor != null) {
-                if (DescriptorUtils.getFQName(classDescriptor).getFqName().equals(CommonClassNames.JAVA_LANG_DEPRECATED)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static boolean isInterface(JetType type) {
         return isInterface(type.getConstructor().getDeclarationDescriptor());
     }

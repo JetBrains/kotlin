@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -392,7 +393,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         if (isAbstract) flags |= ACC_ABSTRACT;
 
-        if (CodegenUtil.isDeprecated(functionDescriptor)) {
+        if (KotlinBuiltIns.getInstance().isDeprecated(functionDescriptor)) {
             flags |= ACC_DEPRECATED;
         }
         return flags;

@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.isDeprecated;
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
@@ -155,11 +154,11 @@ public class AsmUtil {
 
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
-            return isDeprecated(descriptor)
+            return KotlinBuiltIns.getInstance().isDeprecated(descriptor)
                      ? ACC_DEPRECATED
                      : getDeprecatedAccessFlag(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
         }
-        else if (isDeprecated(descriptor)) {
+        else if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
             return ACC_DEPRECATED;
         }
         return 0;
