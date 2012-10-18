@@ -87,19 +87,25 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     @Override
     /*package*/ void register(
             @NotNull Class<?> javaClass,
-            @NotNull ClassDescriptor kotlinDescriptor
+            @NotNull ClassDescriptor kotlinDescriptor,
+            @NotNull Direction direction
     ) {
-        register(kotlinDescriptor, AsmTypeConstants.getType(javaClass));
+        if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
+            register(kotlinDescriptor, AsmTypeConstants.getType(javaClass));
+        }
     }
 
     @Override
     /*package*/ void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
-            @NotNull ClassDescriptor kotlinMutableDescriptor
+            @NotNull ClassDescriptor kotlinMutableDescriptor,
+            @NotNull Direction direction
     ) {
-        register(javaClass, kotlinDescriptor);
-        register(javaClass, kotlinMutableDescriptor);
+        if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
+            register(javaClass, kotlinDescriptor);
+            register(javaClass, kotlinMutableDescriptor);
+        }
     }
 
     private void register(@NotNull ClassDescriptor kotlinDescriptor, @NotNull Type javaType) {

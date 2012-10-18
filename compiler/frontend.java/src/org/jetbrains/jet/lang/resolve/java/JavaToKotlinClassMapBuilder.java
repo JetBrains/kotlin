@@ -28,6 +28,12 @@ import java.util.*;
  */
 public abstract class JavaToKotlinClassMapBuilder {
 
+    public enum Direction {
+        JAVA_TO_KOTLIN,
+        KOTLIN_TO_JAVA,
+        BOTH
+    }
+
     /*package*/ void init() {
         KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
 
@@ -50,7 +56,13 @@ public abstract class JavaToKotlinClassMapBuilder {
         register(ListIterator.class, kotlinBuiltIns.getListIterator(), kotlinBuiltIns.getMutableListIterator());
     }
 
-    /*package*/ abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor);
+    /*package*/ void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
+        register(javaClass, kotlinDescriptor, Direction.BOTH);
+    }
+    /*package*/ abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction);
 
-    /*package*/ abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor);
+    /*package*/ void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor) {
+         register(javaClass, kotlinDescriptor, kotlinMutableDescriptor, Direction.BOTH);
+    }
+    /*package*/ abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor, @NotNull Direction direction);
 }
