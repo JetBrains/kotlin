@@ -173,9 +173,6 @@ public class KotlinBuiltIns {
         catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        catch (ProcessCanceledException e) {
-            throw e;
-        }
     }
 
     private void initialize() {
