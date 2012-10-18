@@ -136,7 +136,7 @@ public class KotlinBuiltIns {
     private final ResolveSession resolveSession;
     private final ModuleDescriptor builtInsModule;
 
-    private ImmutableSet<ClassDescriptor> nonPhysicalClasses;
+    private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
     private final ImmutableSet<ClassDescriptor> functionClassesSet;
 
