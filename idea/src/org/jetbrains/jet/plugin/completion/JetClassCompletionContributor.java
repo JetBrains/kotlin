@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
@@ -58,7 +59,7 @@ public class JetClassCompletionContributor extends CompletionContributor {
     ) {
         CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
 
-        final Collection<DeclarationDescriptor> jetOnlyClasses = JetShortNamesCache.getJetOnlyTypes();
+        final Collection<ClassDescriptor> jetOnlyClasses = KotlinBuiltIns.getInstance().getNonPhysicalClasses();
         for (DeclarationDescriptor jetOnlyClass : jetOnlyClasses) {
             consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, jetContext, jetOnlyClass));
         }

@@ -135,6 +135,8 @@ public class KotlinBuiltIns {
     private final ResolveSession resolveSession;
     private final ModuleDescriptor builtInsModule;
 
+    private ImmutableSet<ClassDescriptor> nonPhysicalClasses;
+
     private final ImmutableList<ClassDescriptor> functionClasses;
     private final ImmutableSet<ClassDescriptor> functionClassesSet;
 
@@ -183,6 +185,8 @@ public class KotlinBuiltIns {
     }
 
     private void initialize() {
+        nonPhysicalClasses = computeNonPhysicalClasses();
+
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
@@ -539,6 +543,63 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getMutableListIterator() {
         return getBuiltInClassByName("MutableListIterator");
+    }
+
+    /**
+     * Classes that only exist for the Kotlin compiler: they are erased at runtime.
+     * As a consequence they, for example, shouldn't be referred to by other languages
+     * (e.g. Java).
+     */
+    @NotNull
+    public Set<ClassDescriptor> getNonPhysicalClasses() {
+        return nonPhysicalClasses;
+    }
+
+    @NotNull
+    private ImmutableSet<ClassDescriptor> computeNonPhysicalClasses() {
+        ImmutableSet.Builder<ClassDescriptor> nonPhysical = ImmutableSet.builder();
+        nonPhysical.add(
+                getAny(),
+                getNothing(),
+
+                getNumber(),
+                getString(),
+                getCharSequence(),
+                getThrowable(),
+                getBuiltInClassByName("Hashable"),
+
+                getIterator(),
+                getIterable(),
+                getCollection(),
+                getList(),
+                getListIterator(),
+                getSet(),
+                getMap(),
+                getMapEntry(),
+
+                getMutableIterator(),
+                getMutableIterable(),
+                getMutableCollection(),
+                getMutableList(),
+                getMutableListIterator(),
+                getMutableSet(),
+                getMutableMap(),
+                getMutableMapEntry(),
+
+                getVolatileAnnotationClass(),
+                getDataClassAnnotation(),
+                getAnnotation(),
+                getComparable(),
+                getEnum(),
+                getArray()
+        );
+
+        for (PrimitiveType primitiveType : values()) {
+            nonPhysical.add(getPrimitiveClassDescriptor(primitiveType));
+            nonPhysical.add(getPrimitiveArrayClassDescriptor(primitiveType));
+        }
+
+        return nonPhysical.build();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

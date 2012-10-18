@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.caches;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -29,7 +27,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -44,7 +41,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
@@ -111,25 +107,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @Override
     public void getAllClassNames(@NotNull HashSet<String> destination) {
         destination.addAll(Arrays.asList(getAllClassNames()));
-    }
-
-    /**
-     * Types that should be visible in completion from kotlin but should be absent in java.
-     * @return
-     */
-    @NotNull
-    public static Collection<DeclarationDescriptor> getJetOnlyTypes() {
-        Collection<DeclarationDescriptor> standardTypes =
-                Collections2.transform(KotlinBuiltIns.getInstance().getAllBuiltInClasses(),
-                                       new Function<DeclarationDescriptor, DeclarationDescriptor>() {
-                                           @Override
-                                           public DeclarationDescriptor apply(@Nullable DeclarationDescriptor classDescriptor) {
-                                               assert classDescriptor != null;
-                                               return classDescriptor;
-                                           }
-                                       });
-
-        return standardTypes;
     }
 
     /**
