@@ -202,7 +202,7 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    private List<JetFile> loadResourcesAsJetFiles(@NotNull Project project, @NotNull List<String> libraryFiles)
+    private static List<JetFile> loadResourcesAsJetFiles(@NotNull Project project, @NotNull List<String> libraryFiles)
             throws IOException, ProcessCanceledException
     {
         List<JetFile> files = new LinkedList<JetFile>();
@@ -774,7 +774,7 @@ public class KotlinBuiltIns {
         return new JetTypeImpl(annotations, constructor, false, arguments, classDescriptor.getMemberScope(arguments));
     }
 
-    private TypeProjection defaultProjection(JetType returnType) {
+    private static TypeProjection defaultProjection(JetType returnType) {
         return new TypeProjection(Variance.INVARIANT, returnType);
     }
 
@@ -887,7 +887,7 @@ public class KotlinBuiltIns {
         return containsAnnotation(declarationDescriptor, getDeprecatedAnnotation());
     }
 
-    private boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
+    private static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
         if (annotations != null) {
             for (AnnotationDescriptor annotation : annotations) {
