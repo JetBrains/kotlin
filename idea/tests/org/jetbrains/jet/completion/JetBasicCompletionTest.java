@@ -76,6 +76,26 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testExtensionWithAdditionalTypeParameters() {
+        doTest();
+    }
+
+    public void testExtensionWithGenericParamInReceiver() {
+        doTest();
+    }
+
+    public void testExtensionWithGenericReceiver() {
+        doTest();
+    }
+
+    public void testExtensionWithInternalGenericParameters() {
+        doTest();
+    }
+
+    public void testExtensionWithManyTypeParamsInReceiver() {
+        doTest();
+    }
+
     public void testExtensionForProperty() {
         doTest();
     }

@@ -46,10 +46,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -231,23 +228,45 @@ public class ExpressionTypingUtils {
     private static boolean checkReceiverResolution (
             @NotNull ReceiverDescriptor expectedReceiver,
             @NotNull JetType receiverType,
-            @NotNull CallableDescriptor receiverArgument
+            @NotNull CallableDescriptor callableDescriptor
     ) {
-        ConstraintSystem constraintSystem = new ConstraintSystemImpl();
-        for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
-            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
+        ReceiverDescriptor callReceiver = callableDescriptor.getReceiverParameter();
+
+        if (!expectedReceiver.exists() && !callReceiver.exists()) {
+            // Both receivers do not exist
+            return true;
         }
 
-        ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
-        if (expectedReceiver.exists() && receiverParameter.exists()) {
-            constraintSystem.addSupertypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
-        }
-        else if (expectedReceiver.exists() || receiverParameter.exists()) {
-            // Only one of receivers exist
+        if (!(expectedReceiver.exists() && callReceiver.exists())) {
             return false;
         }
 
+        Set<Name> typeNamesInReceiver = collectUsedTypeNames(callReceiver.getType());
+
+        ConstraintSystem constraintSystem = new ConstraintSystemImpl();
+        for (TypeParameterDescriptor typeParameterDescriptor : callableDescriptor.getTypeParameters()) {
+            if (typeNamesInReceiver.contains(typeParameterDescriptor.getName())) {
+                constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
+            }
+        }
+
+        constraintSystem.addSupertypeConstraint(callReceiver.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
         return constraintSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem);
+    }
+
+    private static Set<Name> collectUsedTypeNames(@NotNull JetType jetType) {
+        Set<Name> typeNames = new HashSet<Name>();
+
+        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+        if (descriptor != null) {
+            typeNames.add(descriptor.getName());
+        }
+
+        for (TypeProjection argument : jetType.getArguments()) {
+            typeNames.addAll(collectUsedTypeNames(argument.getType()));
+        }
+
+        return typeNames;
     }
 
     @NotNull
