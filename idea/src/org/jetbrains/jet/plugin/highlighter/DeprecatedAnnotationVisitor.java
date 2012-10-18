@@ -18,12 +18,12 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
-import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -32,13 +32,13 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
-
-import java.util.List;
-
 
 public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisitor {
 
@@ -62,8 +62,8 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
         if (resolvedCall != null && resolvedCall instanceof VariableAsFunctionResolvedCall) {
             // Deprecated for invoke()
             JetCallExpression parent = PsiTreeUtil.getParentOfType(expression, JetCallExpression.class);
-            if (parent != null && KotlinBuiltIns.getInstance().isDeprecated(resolvedCall.getResultingDescriptor())) {
-                reportAnnotation(parent, resolvedCall.getResultingDescriptor(), true);
+            if (parent != null) {
+                reportAnnotationIfNeeded(parent, resolvedCall.getResultingDescriptor(), true);
             }
         }
         if (expression.getNode().getElementType() == JetNodeTypes.OPERATION_REFERENCE) {
@@ -95,31 +95,28 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     private void checkFunctionDescriptor(JetExpression expression, DeclarationDescriptor target) {
         // Deprecated for Function
-        if (KotlinBuiltIns.getInstance().isDeprecated(target)) {
-            reportAnnotation(expression, target, expression instanceof JetArrayAccessExpression);
-        }
+        reportAnnotationIfNeeded(expression, target, expression instanceof JetArrayAccessExpression);
     }
 
     private void checkConstructorDescriptor(@NotNull JetExpression expression, @NotNull DeclarationDescriptor target) {
         // Deprecated for Class and for Constructor
         DeclarationDescriptor containingDeclaration = target.getContainingDeclaration();
         if (containingDeclaration != null) {
-            if (KotlinBuiltIns.getInstance().isDeprecated(containingDeclaration) || KotlinBuiltIns.getInstance().isDeprecated(target)) {
-                reportAnnotation(expression, containingDeclaration);
+            if (!reportAnnotationIfNeeded(expression, containingDeclaration)) {
+                reportAnnotationIfNeeded(expression, target);
             }
         }
     }
 
     private void checkClassDescriptor(@NotNull JetExpression expression, @NotNull ClassDescriptor target) {
         // Deprecated for Class, for ClassObject (if reference isn't in UserType or in ModifierList (trait))
-        if (KotlinBuiltIns.getInstance().isDeprecated(target)) {
-            reportAnnotation(expression, target);
-        }
-        else if (PsiTreeUtil.getParentOfType(expression, JetUserType.class) == null &&
-                 PsiTreeUtil.getParentOfType(expression, JetModifierList.class) == null) {
-            ClassDescriptor classObjectDescriptor = target.getClassObjectDescriptor();
-            if (classObjectDescriptor != null && KotlinBuiltIns.getInstance().isDeprecated(classObjectDescriptor)) {
-                reportAnnotation(expression, classObjectDescriptor);
+        if (!reportAnnotationIfNeeded(expression, target)) {
+            if (PsiTreeUtil.getParentOfType(expression, JetUserType.class) == null &&
+                PsiTreeUtil.getParentOfType(expression, JetModifierList.class) == null) {
+                ClassDescriptor classObjectDescriptor = target.getClassObjectDescriptor();
+                if (classObjectDescriptor != null) {
+                    reportAnnotationIfNeeded(expression, classObjectDescriptor);
+                }
             }
         }
     }
@@ -129,8 +126,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
         // Deprecated for Property
-        if (KotlinBuiltIns.getInstance().isDeprecated(propertyDescriptor)) {
-            reportAnnotation(expression, propertyDescriptor, propertyDescriptor.isVar());
+        if (reportAnnotationIfNeeded(expression, propertyDescriptor, propertyDescriptor.isVar())) {
             return;
         }
 
@@ -192,33 +188,46 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             @NotNull PropertyAccessorDescriptor accessor,
             @NotNull JetExpression expression, boolean isVar
     ) {
-        if (KotlinBuiltIns.getInstance().isDeprecated(accessor)) {
-            reportAnnotation(expression, accessor, isVar);
-        }
+        reportAnnotationIfNeeded(expression, accessor, isVar);
     }
 
     private void checkDeprecatedForOperations(@NotNull JetReferenceExpression expression) {
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (target != null) {
-            if (KotlinBuiltIns.getInstance().isDeprecated(target)) {
-                reportAnnotation(expression, target, true);
+            reportAnnotationIfNeeded(expression, target, true);
+        }
+    }
+
+    private boolean reportAnnotationIfNeeded(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
+        return reportAnnotationIfNeeded(element, descriptor, false);
+    }
+
+    private boolean reportAnnotationIfNeeded(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor, boolean isWarning) {
+        AnnotationDescriptor deprecated = getDeprecated(descriptor);
+        if (deprecated != null) {
+            if (isWarning) {
+            holder.createInfoAnnotation(element, "'" + renderName(descriptor) + "' is deprecated")
+                        .setTextAttributes(CodeInsightColors.WARNINGS_ATTRIBUTES);
+            }
+            else {
+            holder.createInfoAnnotation(element, "'" + renderName(descriptor) + "' is deprecated")
+                        .setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Nullable
+    private static AnnotationDescriptor getDeprecated(DeclarationDescriptor descriptor) {
+        for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
+            ClassDescriptor jetDeprecated = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
+            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(annotation.getType());
+            if (jetDeprecated.equals(classDescriptor)) {
+                return annotation;
             }
         }
-    }
-
-    private void reportAnnotation(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
-        reportAnnotation(element, descriptor, false);
-    }
-
-    private void reportAnnotation(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor, boolean isWarning) {
-        if (isWarning) {
-            holder.createInfoAnnotation(element, "'" + renderName(descriptor) + "' is deprecated")
-                    .setTextAttributes(CodeInsightColors.WARNINGS_ATTRIBUTES);
-        }
-        else {
-            holder.createInfoAnnotation(element, "'" + renderName(descriptor) + "' is deprecated")
-                    .setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES);
-        }
+        return null;
     }
 
     private static String renderName(DeclarationDescriptor descriptor) {
