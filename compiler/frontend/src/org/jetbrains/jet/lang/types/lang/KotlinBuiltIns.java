@@ -432,6 +432,11 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getDeprecatedAnnotation() {
+        return getBuiltInClassByName("deprecated");
+    }
+
+    @NotNull
     public ClassDescriptor getString() {
         return getBuiltInClassByName("String");
     }
@@ -829,6 +834,10 @@ public class KotlinBuiltIns {
 
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {
         return containsAnnotation(classDescriptor, getDataClassAnnotation());
+    }
+
+    public boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
+        return containsAnnotation(declarationDescriptor, getDeprecatedAnnotation());
     }
 
     private boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {

@@ -1454,6 +1454,9 @@ public final annotation class jet.atomic : jet.Annotation {
 public final annotation class jet.data : jet.Annotation {
     public final /*constructor*/ fun <init>(): jet.data
 }
+public final annotation class jet.deprecated : jet.Annotation {
+    public final /*constructor*/ fun <init>(/*0*/ value: jet.String): jet.deprecated
+}
 public final annotation class jet.volatile : jet.Annotation {
     public final /*constructor*/ fun <init>(): jet.volatile
 }
