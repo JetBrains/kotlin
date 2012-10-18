@@ -78,6 +78,9 @@ public class TextOutputImpl implements TextOutput {
         line++;
         column = 0;
         justNewlined = true;
+        if (outListener != null) {
+            outListener.newLined();
+        }
     }
 
     @Override
