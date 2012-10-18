@@ -1,6 +1,6 @@
 class MyRunnable() {}
 
-Deprecated fun MyRunnable.invoke() {
+deprecated("'fun invoke()' is deprecated") fun MyRunnable.invoke() {
 }
 
 fun test() {

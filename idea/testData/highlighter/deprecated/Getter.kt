@@ -9,11 +9,11 @@ fun test() {
 
 class MyClass() {
     <info>public</info> val <info>test1</info>: String = ""
-      [Deprecated] <info descr="null">get</info>
+      [deprecated("'getter for test1' is deprecated")] <info>get</info>
 
     <info>public</info> var <info>test2</info>: String = ""
-      [Deprecated] <info descr="null">get</info>
+      [deprecated("'getter for test2' is deprecated")] <info>get</info>
 
-    Deprecated <info>public</info> val <info>test3</info>: String = ""
-      [Deprecated] <info>get</info>
+    deprecated("'val test3' is deprecated") <info>public</info> val <info>test3</info>: String = ""
+      [deprecated("'getter for test3' is deprecated")] <info>get</info>
 }

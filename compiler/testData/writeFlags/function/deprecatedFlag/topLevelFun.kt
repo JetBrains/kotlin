@@ -1,4 +1,4 @@
-Deprecated fun test() {}
+deprecated("") fun test() {}
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: namespace, test

@@ -19,8 +19,8 @@ fun test() {
 
 class MyClass() {
     <info>public</info> var <info>test1</info>: Int = 0
-      [Deprecated] <info>set</info>
+      [deprecated("'setter for test1' is deprecated")] <info>set</info>
 }
 
 <info>public</info> var <info>test2</info>: Int = 0
-      [Deprecated] <info>set</info>
+      [deprecated("'setter for test2' is deprecated")] <info>set</info>

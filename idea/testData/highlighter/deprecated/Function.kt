@@ -6,13 +6,13 @@ fun test() {
     <info descr="'fun test4(x : jet.Int, y : jet.Int)' is deprecated">test4</info>(1, 2)
 }
 
-Deprecated fun test1() { }
-Deprecated fun test4(x: Int, y: Int) { }
+deprecated("'fun test1()' is deprecated") fun test1() { }
+deprecated("'fun test4(x : jet.Int, y : jet.Int)' is deprecated") fun test4(x: Int, y: Int) { }
 
 class MyClass() {
-    Deprecated fun test2() {}
+    deprecated("'fun test2()' is deprecated") fun test2() {}
 
     class object {
-        Deprecated fun test3() {}
+        deprecated("'fun test3()' is deprecated") fun test3() {}
     }
 }

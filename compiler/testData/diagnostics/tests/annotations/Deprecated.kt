@@ -1,6 +1,5 @@
+import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Deprecated<!> as deprecated
 
-import java.lang.Deprecated as deprecated
+<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Deprecated<!> fun foo() {}
 
-Deprecated fun foo() {}
-
-deprecated fun foo1() {}
+<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>deprecated<!> fun foo1() {}

@@ -1,6 +1,6 @@
 class MyClass() {
     var test = 1
-        [Deprecated] set(i: Int) { test = i }
+        [deprecated("")] set(i: Int) { test = i }
 }
 
 

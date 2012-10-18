@@ -1,5 +1,5 @@
 class MyClass() {
-    Deprecated fun test() {}
+    deprecated("") fun test() {}
 }
 
 // TESTED_OBJECT_KIND: function

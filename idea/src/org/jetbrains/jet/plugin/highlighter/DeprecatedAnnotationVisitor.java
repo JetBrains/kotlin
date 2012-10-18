@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -38,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisitor {
 
@@ -206,11 +204,11 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
         AnnotationDescriptor deprecated = getDeprecated(descriptor);
         if (deprecated != null) {
             if (isWarning) {
-            holder.createInfoAnnotation(element, "'" + renderName(descriptor) + "' is deprecated")
+                holder.createInfoAnnotation(element, getMessage(deprecated))
                         .setTextAttributes(CodeInsightColors.WARNINGS_ATTRIBUTES);
             }
             else {
-            holder.createInfoAnnotation(element, "'" + renderName(descriptor) + "' is deprecated")
+                holder.createInfoAnnotation(element, getMessage(deprecated))
                         .setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES);
             }
             return true;
@@ -230,30 +228,14 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
         return null;
     }
 
-    private static String renderName(DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor) {
-            return DescriptorUtils.getFQName(descriptor).getFqName();
-        }
-        else if (descriptor instanceof ConstructorDescriptor) {
-            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-            assert containingDeclaration != null;
-            return "constructor for " + containingDeclaration.getName();
-        }
-        else if (descriptor instanceof PropertyGetterDescriptor) {
-            return "getter for " + ((PropertyGetterDescriptor) descriptor).getCorrespondingProperty().getName();
-        }
-        else if (descriptor instanceof PropertySetterDescriptor) {
-            return "setter for " + ((PropertySetterDescriptor) descriptor).getCorrespondingProperty().getName();
-        }
-        else if (descriptor instanceof PropertyDescriptor) {
-            if (((PropertyDescriptor) descriptor).isVar()) {
-                return "var " + descriptor.getName();
-            }
-            return "val " + descriptor.getName();
-        }
-        else if (descriptor instanceof FunctionDescriptor) {
-            return "fun " + descriptor.getName() + DescriptorRenderer.TEXT.renderFunctionParameters((FunctionDescriptor) descriptor);
-        }
-        return DescriptorRenderer.TEXT.render(descriptor);
+    private static String getMessage(AnnotationDescriptor descriptor) {
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType());
+        assert classDescriptor != null : "ClassDescriptor for jet.deprecated mustn't be null";
+        ValueParameterDescriptor parameterDescriptor =
+                DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(Name.identifier("value"), classDescriptor);
+        assert parameterDescriptor != null : "jet.deprecated must have one parameter called value";
+        CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameterDescriptor);
+        assert valueArgument != null : "jet.deprecated must have value argument";
+        return (String) valueArgument.getValue();
     }
 }

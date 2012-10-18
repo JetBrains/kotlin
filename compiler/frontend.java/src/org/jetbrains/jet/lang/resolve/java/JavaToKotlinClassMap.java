@@ -17,11 +17,13 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.*;
+import com.intellij.psi.CommonClassNames;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -87,6 +89,15 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
             }
         }
         return classDescriptorMap.get(fqName);
+    }
+
+    @Nullable
+    public AnnotationDescriptor mapToAnnotationClass(@NotNull FqName fqName) {
+        ClassDescriptor classDescriptor = classDescriptorMap.get(fqName);
+        if (classDescriptor != null && fqName.getFqName().equals(CommonClassNames.JAVA_LANG_DEPRECATED)) {
+            return DescriptorResolverUtils.getAnnotationDescriptorForJavaLangDeprecated(classDescriptor);
+        }
+        return null;
     }
 
     private static FqName getJavaClassFqName(@NotNull Class<?> javaClass) {

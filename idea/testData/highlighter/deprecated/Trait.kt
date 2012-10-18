@@ -1,4 +1,4 @@
-Deprecated trait MyTrait { }
+deprecated("'MyTrait' is deprecated") trait MyTrait { }
 
 fun test() {
    val a: <info descr="'MyTrait' is deprecated">MyTrait</info>? = null

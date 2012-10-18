@@ -1,6 +1,6 @@
 class MyClass() {
     val test = ""
-        [Deprecated] get
+        [deprecated("")] get
 }
 
 // TESTED_OBJECT_KIND: function

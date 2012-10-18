@@ -1,6 +1,6 @@
 class MyClass {}
 
-Deprecated fun MyClass.inc(): MyClass { return MyClass() }
+deprecated("'fun inc()' is deprecated") fun MyClass.inc(): MyClass { return MyClass() }
 
 fun test() {
     var x3 = MyClass()

@@ -1,18 +1,18 @@
 class MyClass {}
 
-Deprecated fun MyClass.minus(i: MyClass) { }
-Deprecated fun MyClass.div(i: MyClass) { }
-Deprecated fun MyClass.times(i: MyClass) { }
+deprecated("'fun minus(i : MyClass)' is deprecated") fun MyClass.minus(i: MyClass) { }
+deprecated("'fun div(i : MyClass)' is deprecated") fun MyClass.div(i: MyClass) { }
+deprecated("'fun times(i : MyClass)' is deprecated") fun MyClass.times(i: MyClass) { }
 
-Deprecated fun MyClass.not() { }
-Deprecated fun MyClass.plus() { }
+deprecated("'fun not()' is deprecated") fun MyClass.not() { }
+deprecated("'fun plus()' is deprecated") fun MyClass.plus() { }
 
-Deprecated fun MyClass.contains(i: MyClass): Boolean { return false }
+deprecated("'fun contains(i : MyClass)' is deprecated") fun MyClass.contains(i: MyClass): Boolean { return false }
 
-Deprecated fun MyClass.plusAssign(i: MyClass) { }
+deprecated("'fun plusAssign(i : MyClass)' is deprecated") fun MyClass.plusAssign(i: MyClass) { }
 
-Deprecated fun MyClass.equals(i: Any?): Boolean { return false }
-Deprecated fun MyClass.compareTo(i: MyClass): Int { return 0 }
+deprecated("'fun equals(i : jet.Any?)' is deprecated") fun MyClass.equals(i: Any?): Boolean { return false }
+deprecated("'fun compareTo(i : MyClass)' is deprecated") fun MyClass.compareTo(i: MyClass): Int { return 0 }
 
 fun test() {
     val x1 = MyClass()

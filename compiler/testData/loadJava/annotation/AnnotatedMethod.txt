@@ -2,5 +2,5 @@ namespace test
 
 public open class test.AnnotatedMethod : java.lang.Object {
     public final /*constructor*/ fun <init>(): test.AnnotatedMethod
-    public open java.lang.Deprecated() fun f(): jet.Tuple0
+    public open jet.deprecated(value = "Deprecated in Java") fun f(): jet.Tuple0
 }

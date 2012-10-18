@@ -1,5 +1,5 @@
 class MyClass {
-    Deprecated class object {
+    deprecated("") class object {
 
     }
 }

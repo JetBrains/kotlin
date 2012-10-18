@@ -7,13 +7,13 @@ fun test() {
 }
 
 class MyClass(): MyTrait {
-    Deprecated class object {
+    deprecated("'MyClass.<class-object-for-MyClass>' is deprecated") class object {
         val <info>test</info>: String = ""
     }
 }
 
 trait MyTrait {
-    Deprecated class object {
+    deprecated("'MyTrait.<class-object-for-MyTrait>' is deprecated") class object {
         val <info>test</info>: String = ""
     }
 }

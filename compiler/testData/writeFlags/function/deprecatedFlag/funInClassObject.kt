@@ -1,6 +1,6 @@
 class MyClass() {
     class object {
-        Deprecated fun test() {}
+        deprecated("") fun test() {}
     }
 }
 

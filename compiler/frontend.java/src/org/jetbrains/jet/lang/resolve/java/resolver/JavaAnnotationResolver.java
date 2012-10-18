@@ -24,10 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -88,6 +86,12 @@ public final class JavaAnnotationResolver {
         }
 
         FqName annotationFqName = new FqName(qname);
+
+        AnnotationDescriptor mappedClassDescriptor = JavaToKotlinClassMap.getInstance().mapToAnnotationClass(annotationFqName);
+        if (mappedClassDescriptor != null) {
+            return mappedClassDescriptor;
+        }
+
         final ClassDescriptor annotationClass =
                 classResolver.resolveClass(annotationFqName, DescriptorSearchRule.INCLUDE_KOTLIN, postponedTasks);
         if (annotationClass == null) {

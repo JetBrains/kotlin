@@ -8,15 +8,15 @@ fun test() {
     MyClass.<info descr="'var test6' is deprecated">test6</info>
 }
 
-Deprecated val <info>test1</info>: String = ""
-Deprecated var <info>test4</info>: String = ""
+deprecated("'val test1' is deprecated") val <info>test1</info>: String = ""
+deprecated("'var test4' is deprecated") var <info>test4</info>: String = ""
 
 class MyClass() {
-    Deprecated val <info>test2</info>: String = ""
-    Deprecated var <info>test5</info>: String = ""
+    deprecated("'val test2' is deprecated") val <info>test2</info>: String = ""
+    deprecated("'var test5' is deprecated") var <info>test5</info>: String = ""
 
     class object {
-         Deprecated val <info>test3</info>: String = ""
-         Deprecated var <info>test6</info>: String = ""
+         deprecated("'val test3' is deprecated") val <info>test3</info>: String = ""
+         deprecated("'var test6' is deprecated") var <info>test6</info>: String = ""
     }
 }

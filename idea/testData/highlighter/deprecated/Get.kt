@@ -1,6 +1,6 @@
 class MyClass {}
 
-Deprecated fun MyClass.get(i: MyClass): MyClass { return MyClass() }
+deprecated("'fun get(i : MyClass)' is deprecated") fun MyClass.get(i: MyClass): MyClass { return MyClass() }
 
 fun test() {
   val x1 = MyClass()

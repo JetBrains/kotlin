@@ -1,4 +1,4 @@
-Deprecated val test: Int = 0
+deprecated("") val test: Int = 0
 
 // TESTED_OBJECT_KIND: property
 // TESTED_OBJECTS: namespace, test

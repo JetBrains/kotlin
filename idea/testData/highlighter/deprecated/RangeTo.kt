@@ -1,6 +1,6 @@
 class MyClass { }
 
-Deprecated fun MyClass.rangeTo(i: MyClass): IntIterator {
+deprecated("'fun rangeTo(i : MyClass)' is deprecated") fun MyClass.rangeTo(i: MyClass): IntIterator {
     throw Exception()
 }
 

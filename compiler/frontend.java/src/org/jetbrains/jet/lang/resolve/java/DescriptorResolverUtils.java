@@ -22,6 +22,8 @@ import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
@@ -141,5 +143,15 @@ public final class DescriptorResolverUtils {
         String psiClassQualifiedName = psiClass.getQualifiedName();
         assert psiClassQualifiedName != null : "Reading java class with no qualified name";
         return new FqNameUnsafe(psiClassQualifiedName + "." + getClassObjectName(psiClass.getName()).getName());
+    }
+
+    @NotNull
+    public static AnnotationDescriptor getAnnotationDescriptorForJavaLangDeprecated(ClassDescriptor classDescriptor) {
+        AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
+        annotationDescriptor.setAnnotationType(classDescriptor.getDefaultType());
+        ValueParameterDescriptor value = getValueParameterDescriptorForAnnotationParameter(Name.identifier("value"), classDescriptor);
+        assert value != null : "jet.deprecated must have one parameter called value";
+        annotationDescriptor.setValueArgument(value, new StringValue("Deprecated in Java"));
+        return annotationDescriptor;
     }
 }
