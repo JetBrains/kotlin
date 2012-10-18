@@ -120,7 +120,7 @@ public class KotlinBuiltIns {
     public static KotlinBuiltIns getInstance() {
         if (initializing) {
             synchronized (KotlinBuiltIns.class) {
-                assert instance != null : "We are under the same lock as initializing and instance";
+                assert instance != null : "Built-ins are not initialized (note: We are under the same lock as initializing and instance)";
                 return instance;
             }
         }
