@@ -804,14 +804,13 @@ public class KotlinBuiltIns {
     }
 
     public boolean isFunctionType(@NotNull JetType type) {
-        DeclarationDescriptor constructor = type.getConstructor().getDeclarationDescriptor();
-        return functionClassesSet.contains(constructor) || extensionFunctionClassesSet.contains(constructor);
+        return setContainsClassOf(functionClassesSet, type) || setContainsClassOf(extensionFunctionClassesSet, type);
     }
 
     @Nullable
     public JetType getReceiverType(@NotNull JetType type) {
         assert isFunctionType(type) : type;
-        if (extensionFunctionClassesSet.contains(type.getConstructor().getDeclarationDescriptor())) {
+        if (setContainsClassOf(extensionFunctionClassesSet, type)) {
             return type.getArguments().get(0).getType();
         }
         return null;
@@ -843,7 +842,7 @@ public class KotlinBuiltIns {
     public List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull JetType type) {
         assert isFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
-        int first = extensionFunctionClassesSet.contains(type.getConstructor().getDeclarationDescriptor()) ? 1 : 0;
+        int first = setContainsClassOf(extensionFunctionClassesSet, type) ? 1 : 0;
         int last = arguments.size() - 2;
         List<TypeProjection> parameterTypes = Lists.newArrayList();
         for (int i = first; i <= last; i++) {
@@ -936,7 +935,7 @@ public class KotlinBuiltIns {
 
     @Deprecated
     public boolean isTupleType(@NotNull JetType type) {
-        return tupleClassesSet.contains(type.getConstructor().getDeclarationDescriptor());
+        return setContainsClassOf(tupleClassesSet, type);
     }
 
     @NotNull
@@ -961,11 +960,16 @@ public class KotlinBuiltIns {
         return new JetTypeImpl(annotations, tuple.getTypeConstructor(), false, typeArguments, tuple.getMemberScope(typeArguments));
     }
 
-    private List<TypeProjection> toProjections(List<JetType> arguments) {
+    private static List<TypeProjection> toProjections(List<JetType> arguments) {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (JetType argument : arguments) {
             result.add(new TypeProjection(Variance.OUT_VARIANCE, argument));
         }
         return result;
+    }
+
+    private static boolean setContainsClassOf(ImmutableSet<ClassDescriptor> set, JetType type) {
+        //noinspection SuspiciousMethodCalls
+        return set.contains(type.getConstructor().getDeclarationDescriptor());
     }
 }
