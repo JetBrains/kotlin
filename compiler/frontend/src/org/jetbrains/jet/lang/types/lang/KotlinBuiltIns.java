@@ -58,25 +58,26 @@ public class KotlinBuiltIns {
     public static final Name UNIT_ALIAS = Name.identifier("Unit");
     public static final JetScope STUB = JetScope.EMPTY;
 
+    public static final String BUILT_INS_DIR = "jet";
     private static final String BUILT_INS_PACKAGE_NAME_STRING = "jet";
     private static final Name BUILT_INS_PACKAGE_NAME = Name.identifier(BUILT_INS_PACKAGE_NAME_STRING);
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
 
     private static final List<String> LIBRARY_FILES = Arrays.asList(
-            "jet/Library.jet",
-            "jet/Numbers.jet",
-            "jet/Ranges.jet",
-            "jet/Iterables.jet",
-            "jet/Iterators.jet",
-            "jet/Arrays.jet",
-            "jet/Enum.jet",
-            "jet/Collections.jet",
-            "jet/Any.jet",
-            "jet/ExtensionFunctions.jet",
-            "jet/Functions.jet",
-            "jet/Nothing.jet",
-            "jet/Tuples.jet",
-            "jet/Unit.jet"
+            BUILT_INS_DIR + "/Library.jet",
+            BUILT_INS_DIR + "/Numbers.jet",
+            BUILT_INS_DIR + "/Ranges.jet",
+            BUILT_INS_DIR + "/Iterables.jet",
+            BUILT_INS_DIR + "/Iterators.jet",
+            BUILT_INS_DIR + "/Arrays.jet",
+            BUILT_INS_DIR + "/Enum.jet",
+            BUILT_INS_DIR + "/Collections.jet",
+            BUILT_INS_DIR + "/Any.jet",
+            BUILT_INS_DIR + "/ExtensionFunctions.jet",
+            BUILT_INS_DIR + "/Functions.jet",
+            BUILT_INS_DIR + "/Nothing.jet",
+            BUILT_INS_DIR + "/Tuples.jet",
+            BUILT_INS_DIR + "/Unit.jet"
     );
 
     private static final Map<FqName, Name> ALIASES = ImmutableMap.<FqName, Name>builder()
@@ -295,19 +296,8 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public Collection<DeclarationDescriptor> getAllBuiltInClasses() {
-        // TODO: used once, but incorrectly in JetShortNamesCache
-        return getBuiltInsScope().getAllDescriptors();
-    }
-
-    @NotNull
     public JetScope getBuiltInsScope() {
         return getBuiltInsPackage().getMemberScope();
-    }
-
-    public boolean isStandardClass(@NotNull FqName fqName) {
-        // TODO: this seems to be wrong for ranges, and will certainly be wrong upon renaming jet -> kotlin
-        return getBuiltInsPackageFqName().equals(fqName.parent());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

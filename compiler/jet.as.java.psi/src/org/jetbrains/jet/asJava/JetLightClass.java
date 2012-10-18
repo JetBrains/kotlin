@@ -21,9 +21,12 @@ package org.jetbrains.jet.asJava;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
@@ -50,13 +53,14 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
 import java.util.Collections;
 
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
+    private static final Logger LOG = Logger.getInstance(JetLightClass.class);
+
     static class JetBadWrapperException extends RuntimeException {
         private final String context;
 
@@ -92,8 +96,11 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
 
     @Nullable
-    public static JetLightClass create(PsiManager manager, JetFile file, FqName qualifiedName) {
-        return KotlinBuiltIns.getInstance().isStandardClass(qualifiedName) ? null : new JetLightClass(manager, file, qualifiedName);
+    public static JetLightClass create(@NotNull PsiManager manager, @NotNull JetFile file, @NotNull FqName qualifiedName) {
+        if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
+            return null;
+        }
+        return new JetLightClass(manager, file, qualifiedName);
     }
 
     @Override
@@ -167,6 +174,12 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
 
     private PsiJavaFileStub calcStub() {
+        if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
+            // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
+            // If it fails later, there will be an exception logged
+            logErrorWithOSInfo(null);
+        }
+
         final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file).getFqName(), true);
         final Project project = getProject();
 
@@ -205,13 +218,30 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());
         }
 
-        final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file));
-        final GenerationStrategy strategy = new LightClassGenerationStrategy(this, stubStack, answer);
+        try {
+            GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file));
+            GenerationStrategy strategy = new LightClassGenerationStrategy(this, stubStack, answer);
 
-        strategy.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
-        state.getFactory().files();
+            strategy.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+            state.getFactory().files();
+        }
+        catch (ProcessCanceledException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            logErrorWithOSInfo(e);
+            throw e;
+        }
 
         return answer;
+    }
+
+    private void logErrorWithOSInfo(@Nullable Throwable cause) {
+        LOG.error(
+                "Could not generate JetLightClass for " + qualifiedName + " declared in " + file.getVirtualFile().getPath() + "\n" +
+                "built-ins dir URL is " + LightClassUtil.getBuiltInsDirResourceUrl() + "\n" +
+                "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
+                cause);
     }
 
     @Override
