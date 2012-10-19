@@ -63,7 +63,7 @@ public final class MembersCache {
     ) {
         MembersCache cache = new MembersCache();
         if (psiClass != null) {
-            cache.new ClassProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
+            cache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
         }
         PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getInnerClasses();
         cache.new ObjectClassProcessor(classes).process();
@@ -101,13 +101,13 @@ public final class MembersCache {
         }
     }
 
-    private class ClassProcessor {
+    private class ClassMemberProcessor {
         @NotNull
         private final PsiClassWrapper psiClass;
         private final boolean staticMembers;
         private final boolean kotlin;
 
-        private ClassProcessor(@NotNull PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
+        private ClassMemberProcessor(@NotNull PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
             this.psiClass = psiClass;
             this.staticMembers = staticMembers;
             this.kotlin = kotlin;
