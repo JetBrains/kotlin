@@ -18,125 +18,125 @@ public val defaultCharset: Charset = Charset.forName("UTF-8")!!
 
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Any?) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Int) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Long) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Byte) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Short) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Char) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Boolean) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Float) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : Double) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
 public inline fun print(message : CharArray) {
-    System.out?.print(message)
+    System.out.print(message)
 }
 
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Any?) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Int) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Long) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Byte) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Short) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Char) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Boolean) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Float) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : Double) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
 public inline fun println(message : CharArray) {
-    System.out?.println(message)
+    System.out.println(message)
 }
 /** Prints a newline t[[System.out]] */
 public inline fun println() {
-    System.out?.println()
+    System.out.println()
 }
 
 private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : InputStream() {
     public override fun read() : Int {
-        return System.`in`?.read() ?: -1
+        return System.`in`.read()
     }
 
     public override fun reset() {
-        System.`in`?.reset()
+        System.`in`.reset()
     }
 
     public override fun read(b: ByteArray): Int {
-        return System.`in`?.read(b) ?: -1
+        return System.`in`.read(b)
     }
 
     public override fun close() {
-        System.`in`?.close()
+        System.`in`.close()
     }
 
     public override fun mark(readlimit: Int) {
-        System.`in`?.mark(readlimit)
+        System.`in`.mark(readlimit)
     }
 
     public override fun skip(n: Long): Long {
-        return System.`in`?.skip(n) ?: -1.toLong()
+        return System.`in`.skip(n)
     }
 
     public override fun available(): Int {
-        return System.`in`?.available() ?: 0
+        return System.`in`.available()
     }
 
     public override fun markSupported(): Boolean {
-        return System.`in`?.markSupported() ?: false
+        return System.`in`.markSupported()
     }
 
     public override fun read(b: ByteArray, off: Int, len: Int): Int {
-        return System.`in`?.read(b, off, len) ?: -1
+        return System.`in`.read(b, off, len)
     }
 }))
 
@@ -266,7 +266,7 @@ class LineIterator(val reader: BufferedReader) : Iterator<String> {
 public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteArray {
     val buffer = ByteArrayOutputStream(estimatedSize)
     this.copyTo(buffer)
-    return buffer.toByteArray()!!
+    return buffer.toByteArray()
 }
 
 /**
@@ -277,7 +277,7 @@ public fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteAr
 public fun Reader.readText(): String {
     val buffer = StringWriter()
     copyTo(buffer)
-    return buffer.toString()!!
+    return buffer.toString()
 }
 
 /**

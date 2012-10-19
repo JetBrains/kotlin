@@ -69,10 +69,8 @@ public inline fun <T: Any, R> T?.flatMap(transform: (T)-> MutableCollection<R>):
 public inline fun <T: Any, R> T?.flatMapTo(result: MutableCollection<R>, transform: (T)-> MutableCollection<R>): Collection<R> {
     if (this != null) {
         val coll = transform(this)
-        if (coll != null) {
-            for (r in coll) {
-                result.add(r)
-            }
+        for (r in coll) {
+            result.add(r)
         }
     }
     return result
@@ -124,7 +122,6 @@ public inline fun <T: Any, K> T?.groupBy(result: MutableMap<K, MutableList<T>> =
 /** Creates a String from the nullable or item with the given prefix and postfix if supplied */
 public inline fun <T: Any> T?.makeString(separator: String = ", ", prefix: String = "", postfix: String = ""): String {
     val buffer = StringBuilder(prefix)
-    var first = true
     if (this != null) {
         buffer.append(this)
     }

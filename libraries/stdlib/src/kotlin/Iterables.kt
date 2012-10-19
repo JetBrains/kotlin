@@ -123,9 +123,7 @@ public inline fun <T, C: MutableCollection<in T>> Iterable<T?>?.filterNotNullTo(
 public inline fun <T, R> Iterable<T>.flatMapTo(result: MutableCollection<R>, transform: (T) -> Collection<R>) : Collection<R> {
     for (element in this) {
         val list = transform(element)
-        if (list != null) {
-            for (r in list) result.add(r)
-        }
+        for (r in list) result.add(r)
     }
     return result
 }
@@ -163,7 +161,7 @@ public inline fun <T,R> Iterable<T>.foldRight(initial: R, operation: (T, R) -> R
  * @includeFunctionBody ../../test/CollectionTest.kt reduce
  */
 public inline fun <T> Iterable<T>.reduce(operation: (T, T) -> T): T {
-    val iterator = this.iterator()!!
+    val iterator = this.iterator()
     if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
@@ -217,7 +215,7 @@ public inline fun <T, K> Iterable<T>.groupByTo(result: MutableMap<K, MutableList
 public inline fun <T> Iterable<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()!!
+    return buffer.toString()
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */

@@ -26,8 +26,8 @@ class PairTest {
         assertTrue(p == Pair(1, "a"))
         assertTrue(p != Pair(2, "a"))
         assertTrue(p != Pair(1, "b"))
-        assertTrue(!(p as Object).equals(null))
-        assertTrue((p as Any) != "")
+        assertTrue(!(p : Object).equals(null))
+        assertTrue((p : Any) != "")
     }
 
     test fun pairHashCode() {
@@ -70,8 +70,8 @@ class TripleTest {
         assertTrue(t != Triple(2, "a", 0.0))
         assertTrue(t != Triple(1, "b", 0.0))
         assertTrue(t != Triple(1, "a", 0.1))
-        assertTrue(!(t as Object).equals(null))
-        assertTrue((t as Any) != "")
+        assertTrue(!(t : Object).equals(null))
+        assertTrue((t : Any) != "")
     }
 
     test fun tripleHashCode() {

@@ -14,9 +14,7 @@ public fun File.recurse(block: (File) -> Unit): Unit {
     block(this)
     if (this.isDirectory()) {
         for (child in this.listFiles()!!) {
-            if (child != null) {
-                child.recurse(block)
-            }
+            child.recurse(block)
         }
     }
 }
@@ -31,19 +29,19 @@ get() = if (this.isDirectory()) this else this.getParentFile()!!
  * Returns the canoncial path of the file
  */
 inline val File.canonicalPath: String
-get() = getCanonicalPath() ?: ""
+get() = getCanonicalPath()
 
 /**
  * Returns the file name or "" for an empty name
  */
 inline val File.name: String
-get() = getName() ?: ""
+get() = getName()
 
 /**
  * Returns the file path or "" for an empty name
  */
 inline val File.path: String
-get() = getPath() ?: ""
+get() = getPath()
 
 /**
  * Returns true if the file ends with the given extension
@@ -212,4 +210,4 @@ fun File.listFiles(filter : (file : File) -> Boolean) : Array<File>? = listFiles
     object : FileFilter {
         override fun accept(file: File) = filter(file)
     }
-) as Array<File>?
+)

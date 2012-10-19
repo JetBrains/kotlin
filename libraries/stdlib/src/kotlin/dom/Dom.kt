@@ -11,8 +11,8 @@ import java.lang.IndexOutOfBoundsException
 
 // Properties
 
-private fun emptyElementList(): List<Element> = Collections.emptyList<Element>()!!
-private fun emptyNodeList(): List<Node> = Collections.emptyList<Node>()!!
+private fun emptyElementList(): List<Element> = Collections.emptyList<Element>()
+private fun emptyNodeList(): List<Node> = Collections.emptyList<Node>()
 
 var Node.text : String
 get() {
@@ -26,23 +26,21 @@ var Element.childrenText: String
     get() {
         val buffer = StringBuilder()
         val nodeList = this.childNodes
-        if (nodeList != null) {
-            var i = 0
-            val size = nodeList.length
-            while (i < size) {
-                val node = nodeList.item(i)
-                if (node != null) {
-                    if (node.isText()) {
-                        buffer.append(node.nodeValue)
-                    }
+        var i = 0
+        val size = nodeList.length
+        while (i < size) {
+            val node = nodeList.item(i)
+            if (node != null) {
+                if (node.isText()) {
+                    buffer.append(node.nodeValue)
                 }
-                i++
             }
+            i++
         }
-        return buffer.toString()!!
+        return buffer.toString()
     }
     set(value) {
-        val element = this as Element
+        val element = this
         // lets remove all the previous text nodes first
         for (node in element.children()) {
             if (node.isText()) {
@@ -74,9 +72,7 @@ set(value) {
 /** Returns true if the element has the given CSS class style in its 'class' attribute */
 fun Element.hasClass(cssClass: String): Boolean {
     val c = this.classes
-    return if (c != null)
-        c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
-    else false
+    return c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
 }
 
 
@@ -341,7 +337,7 @@ public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = fal
     for (n in nodes) {
         builder.append(n.toXmlString(xmlDeclaration))
     }
-    return builder.toString()!!
+    return builder.toString()
 }
 
 // Syntax sugar

@@ -23,20 +23,20 @@ public inline fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
 
 /** Returns the key of the entry */
 val <K,V> Map.Entry<K,V>.key : K
-    get() = getKey()!!
+    get() = getKey()
 
 /** Returns the value of the entry */
 val <K,V> Map.Entry<K,V>.value : V
-    get() = getValue()!!
+    get() = getValue()
 
 /** Returns the key of the entry */
 fun <K,V> Map.Entry<K,V>.component1() : K {
-    return getKey()!!
+    return getKey()
 }
 
 /** Returns the value of the entry */
 fun <K,V> Map.Entry<K,V>.component2() : V {
-    return getValue()!!
+    return getValue()
 }
 
 /**
@@ -74,8 +74,8 @@ public inline fun <K,V> MutableMap<K,V>.getOrPut(key: K, defaultValue: ()-> V) :
  * @includeFunctionBody ../../test/MapTest.kt iterateWithProperties
  */
 public inline fun <K,V> Map<K,V>.iterator(): Iterator<Map.Entry<K,V>> {
-    val entrySet = this.entrySet()!!
-    return entrySet.iterator()!!
+    val entrySet = this.entrySet()
+    return entrySet.iterator()
 }
 
 /**

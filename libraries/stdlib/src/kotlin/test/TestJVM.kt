@@ -65,7 +65,6 @@ class DefaultAsserter() : Asserter {
         }
     }
     public override fun fail(message : String) {
-        // TODO work around compiler bug as it should never try call the private constructor
-        throw AssertionError(message as Any)
+        throw AssertionError(message)
     }
 }

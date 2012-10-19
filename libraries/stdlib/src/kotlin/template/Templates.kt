@@ -18,7 +18,7 @@ class StringTemplate(val values : Array<Any?>) {
     public fun toString() : String {
         val out = StringBuilder()
         forEach{ out.append(it) }
-        return out.toString() ?: ""
+        return out.toString()
     }
 
     /**
@@ -41,7 +41,7 @@ class StringTemplate(val values : Array<Any?>) {
 public fun StringTemplate.toString(formatter : Formatter) : String {
     val buffer = StringBuilder()
     append(buffer, formatter)
-    return buffer.toString() ?: ""
+    return buffer.toString()
 }
 
 /**
@@ -56,9 +56,7 @@ public fun StringTemplate.append(out : Appendable, formatter : Formatter) : Unit
                 throw IllegalStateException("No constant checks should be null");
             } else {
                 val text = it.toString()
-                if (text != null) {
-                    out.append(text)
-                }
+                out.append(text)
             }
         } else {
             formatter.format(out, it)

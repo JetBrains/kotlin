@@ -54,7 +54,7 @@ val Node.ownerDocument: Document?
 get() = getOwnerDocument()
 
 val Document.documentElement: Element?
-get() = if (this != null) this.getDocumentElement() else null
+get() = this.getDocumentElement()
 
 val Node.namespaceURI: String
 get() = getNamespaceURI() ?: ""
@@ -123,7 +123,7 @@ get() {
     val answer = LinkedHashSet<String>()
     val array = this.classes.split("""\s""")
     for (s in array) {
-        if (s != null && s.size > 0) {
+        if (s.size > 0) {
             answer.add(s)
         }
     }
@@ -225,7 +225,7 @@ public fun Node.toXmlString(): String = toXmlString(false)
 public fun Node.toXmlString(xmlDeclaration: Boolean): String {
     val writer = StringWriter()
     writeXmlString(writer, xmlDeclaration)
-    return writer.toString()!!
+    return writer.toString()
 }
 
 /** Converts the node to an XML String and writes it to the given [[Writer]] */

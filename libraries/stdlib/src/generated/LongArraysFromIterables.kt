@@ -132,9 +132,7 @@ public inline fun <C: MutableCollection<Long>> LongArray?.filterNotNullTo(result
 public inline fun <R> LongArray.flatMapTo(result: MutableCollection<R>, transform: (Long) -> Collection<R>) : Collection<R> {
     for (element in this) {
         val list = transform(element)
-        if (list != null) {
-            for (r in list) result.add(r)
-        }
+        for (r in list) result.add(r)
     }
     return result
 }
@@ -172,7 +170,7 @@ public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R)
  * @includeFunctionBody ../../test/CollectionTest.kt reduce
  */
 public inline fun LongArray.reduce(operation: (Long, Long) -> Long): Long {
-    val iterator = this.iterator()!!
+    val iterator = this.iterator()
     if (!iterator.hasNext()) {
         throw UnsupportedOperationException("Empty iterable can't be reduced")
     }
@@ -226,7 +224,7 @@ public inline fun <K> LongArray.groupByTo(result: MutableMap<K, MutableList<Long
 public inline fun LongArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()!!
+    return buffer.toString()
 }
 
 /** Returns a list containing the everything but the first elements that satisfy the given *predicate* */

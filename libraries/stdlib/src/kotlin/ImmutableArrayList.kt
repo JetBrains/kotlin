@@ -32,7 +32,7 @@ private class ImmutableArrayList<T>(
         return index + offset
     }
 
-    public override fun get(index: Int): T = array[indexInArray(index)] as T
+    public override fun get(index: Int): T = array[indexInArray(index)]
 
     public override fun size() : Int = length
 

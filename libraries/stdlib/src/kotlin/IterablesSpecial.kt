@@ -40,7 +40,7 @@ public inline fun <T> Iterable<T>.first() : T {
     return this.get(0)
   }
 
-  return this.iterator()!!.next()
+  return this.iterator().next()
 }
 
 /**
@@ -60,7 +60,7 @@ public fun <T> Iterable<T>.last() : T {
     return this.get(this.size() - 1)
   }
 
-  val iterator = this.iterator()!!
+  val iterator = this.iterator()
   var last : T = iterator.next()
 
   while (iterator.hasNext()) {

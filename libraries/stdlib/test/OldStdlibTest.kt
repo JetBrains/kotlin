@@ -11,13 +11,13 @@ import junit.framework.TestCase
 class OldStdlibTest() : TestCase() {
     fun testCollectionEmpty() {
         assertNot {
-            Arrays.asList(0, 1, 2)?.empty ?: false
+            Arrays.asList(0, 1, 2).empty
         }
     }
 
     fun testCollectionSize() {
         assertTrue {
-            Arrays.asList(0, 1, 2)?.size == 3
+            Arrays.asList(0, 1, 2).size == 3
         }
     }
 
@@ -29,7 +29,7 @@ class OldStdlibTest() : TestCase() {
         }
 
         for(b in x.inputStream) {
-           System.out?.println(b)
+            System.out.println(b)
         }
     }
 }
