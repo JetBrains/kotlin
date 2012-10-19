@@ -284,17 +284,15 @@ public class KotlinBuiltIns {
     }
 
     private void makePrimitive(PrimitiveType primitiveType) {
-        ClassDescriptor clazz = (ClassDescriptor) getBuiltInsScope().getClassifier(primitiveType.getTypeName());
-        assert clazz != null : "ClassDescriptor not found for " + primitiveType;
-        ClassDescriptor arrayClazz = (ClassDescriptor) getBuiltInsScope().getClassifier(primitiveType.getArrayTypeName());
-        assert arrayClazz != null : "Array ClassDescriptor not found for " + primitiveType;
-        JetTypeImpl type = new JetTypeImpl(clazz);
-        JetTypeImpl arrayType = new JetTypeImpl(arrayClazz);
+        ClassDescriptor theClass = getBuiltInClassByName(primitiveType.getTypeName().getName());
+        JetType type = new JetTypeImpl(theClass);
+        ClassDescriptor arrayClass = getBuiltInClassByName(primitiveType.getArrayTypeName().getName());
+        JetType arrayType = new JetTypeImpl(arrayClass);
 
-        primitiveTypeToClass.put(primitiveType, clazz);
+        primitiveTypeToClass.put(primitiveType, theClass);
         primitiveTypeToJetType.put(primitiveType, type);
         primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));
-        primitiveTypeToArrayClass.put(primitiveType, arrayClazz);
+        primitiveTypeToArrayClass.put(primitiveType, arrayClass);
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveJetTypeToJetArrayType.put(type, arrayType);
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
