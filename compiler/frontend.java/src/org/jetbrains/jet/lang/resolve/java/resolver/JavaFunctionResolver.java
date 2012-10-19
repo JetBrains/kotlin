@@ -221,7 +221,7 @@ public final class JavaFunctionResolver {
 
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, ResolverScopeData scopeData) {
-        MembersByNameCache namedMembersMap = scopeData.getMembersCache();
+        MembersCache namedMembersMap = scopeData.getMembersCache();
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
         if (namedMembers == null) {

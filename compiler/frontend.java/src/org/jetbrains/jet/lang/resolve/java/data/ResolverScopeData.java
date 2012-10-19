@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.MembersByNameCache;
+import org.jetbrains.jet.lang.resolve.java.MembersCache;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -118,12 +118,12 @@ public abstract class ResolverScopeData {
         }
     }
 
-    private MembersByNameCache membersCache = null;
+    private MembersCache membersCache = null;
 
     @NotNull
-    public MembersByNameCache getMembersCache() {
+    public MembersCache getMembersCache() {
         if (membersCache == null) {
-            membersCache = MembersByNameCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers, kotlin);
+            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers, kotlin);
         }
         return membersCache;
     }

@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class MembersByNameCache {
+public final class MembersCache {
 
     @NotNull
     private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
@@ -55,13 +55,13 @@ public final class MembersByNameCache {
     }
 
     @NotNull
-    public static MembersByNameCache buildMembersByNameCache(
+    public static MembersCache buildMembersByNameCache(
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
             boolean staticMembers,
             boolean isKotlin
     ) {
-        MembersByNameCache cache = new MembersByNameCache();
+        MembersCache cache = new MembersCache();
         if (psiClass != null) {
             cache.new ClassProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
         }
