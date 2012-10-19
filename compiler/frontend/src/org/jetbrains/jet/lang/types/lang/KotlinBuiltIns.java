@@ -153,6 +153,20 @@ public class KotlinBuiltIns {
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
+    private final ClassDescriptor nothingClass;
+    private final ClassDescriptor arrayClass;
+    private final ClassDescriptor deprecatedAnnotationClass;
+    private final ClassDescriptor dataAnnotationClass;
+    private final ClassDescriptor[] functionClasses;
+
+    private volatile JetType anyType;
+    private volatile JetType nullableAnyType;
+    private volatile JetType nothingType;
+    private volatile JetType nullableNothingType;
+    private volatile JetType unitType;
+    private volatile JetType stringType;
+    private volatile JetType annotationType;
+
     private KotlinBuiltIns(@NotNull Project project) {
         try {
             this.builtInsModule = new ModuleDescriptor(Name.special("<built-ins lazy module>"));
@@ -169,6 +183,15 @@ public class KotlinBuiltIns {
             this.primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
             this.primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
             this.jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
+
+            this.nothingClass = getBuiltInClassByName("Nothing");
+            this.arrayClass = getBuiltInClassByName("Array");
+            this.deprecatedAnnotationClass = getBuiltInClassByName("deprecated");
+            this.dataAnnotationClass = getBuiltInClassByName("data");
+            this.functionClasses = new ClassDescriptor[getFunctionTraitCount()];
+            for (int i = 0; i < functionClasses.length; i++) {
+                functionClasses[i] = getBuiltInClassByName("Function" + i);
+            }
         }
         catch (IOException e) {
             throw new IllegalStateException(e);
@@ -176,11 +199,20 @@ public class KotlinBuiltIns {
     }
 
     private void initialize() {
-        nonPhysicalClasses = computeNonPhysicalClasses();
+        anyType = getBuiltInTypeByClassName("Any");
+        nullableAnyType = TypeUtils.makeNullable(anyType);
+        nothingType = getBuiltInTypeByClassName("Nothing");
+        nullableNothingType = TypeUtils.makeNullable(nothingType);
+        unitType = getBuiltInTypeByClassName("Tuple0");
+        stringType = getBuiltInTypeByClassName("String");
+        annotationType = getBuiltInTypeByClassName("Annotation");
 
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
+
+        nonPhysicalClasses = computeNonPhysicalClasses();
+
         resolveSession.forceResolveAll();
     }
 
