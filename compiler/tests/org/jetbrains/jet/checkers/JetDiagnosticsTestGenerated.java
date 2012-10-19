@@ -2288,6 +2288,24 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/nullableTypes")
+        public static class NullableTypes extends AbstractDiagnosticsTestWithEagerResolve {
+            public void testAllFilesPresentInNullableTypes() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/nullableTypes"), "kt", true);
+            }
+            
+            @TestMetadata("redundantNullable.kt")
+            public void testRedundantNullable() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullableTypes/redundantNullable.kt");
+            }
+            
+            @TestMetadata("redundantNullableInSupertype.kt")
+            public void testRedundantNullableInSupertype() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullableTypes/redundantNullableInSupertype.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/objects")
         public static class Objects extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInObjects() throws Exception {

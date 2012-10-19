@@ -77,7 +77,7 @@ public class TypeResolver {
         final List<AnnotationDescriptor> annotations = annotationResolver.getResolvedAnnotations(typeReference.getAnnotations(), trace);
 
         JetTypeElement typeElement = typeReference.getTypeElement();
-        JetType type = resolveTypeElement(scope, annotations, typeElement, false, trace, checkBounds);
+        JetType type = resolveTypeElement(scope, annotations, typeElement, trace, checkBounds);
         trace.record(BindingContext.TYPE, typeReference, type);
         trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, scope);
 
@@ -86,7 +86,7 @@ public class TypeResolver {
 
     @NotNull
     private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations,
-            JetTypeElement typeElement, final boolean nullable, final BindingTrace trace, final boolean checkBounds) {
+            JetTypeElement typeElement, final BindingTrace trace, final boolean checkBounds) {
 
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
@@ -118,7 +118,7 @@ public class TypeResolver {
                             result[0] = new JetTypeImpl(
                                     annotations,
                                     typeParameterDescriptor.getTypeConstructor(),
-                                    nullable || TypeUtils.hasNullableLowerBound(typeParameterDescriptor),
+                                    TypeUtils.hasNullableLowerBound(typeParameterDescriptor),
                                     Collections.<TypeProjection>emptyList(),
                                     scopeForTypeParameter
                             );
@@ -151,7 +151,7 @@ public class TypeResolver {
                                 result[0] = new JetTypeImpl(
                                         annotations,
                                         typeConstructor,
-                                        nullable,
+                                        false,
                                         arguments,
                                         classDescriptor.getMemberScope(arguments)
                                 );
@@ -174,7 +174,11 @@ public class TypeResolver {
 
                 @Override
                 public void visitNullableType(JetNullableType nullableType) {
-                    result[0] = resolveTypeElement(scope, annotations, nullableType.getInnerType(), true, trace, checkBounds);
+                    JetType baseType = resolveTypeElement(scope, annotations, nullableType.getInnerType(), trace, checkBounds);
+                    if (baseType.isNullable()) {
+                        trace.report(REDUNDANT_NULLABLE.on(nullableType));
+                    }
+                    result[0] = TypeUtils.makeNullable(baseType);
                 }
 
                 @Override
@@ -221,9 +225,6 @@ public class TypeResolver {
         }
         if (result[0] == null) {
             return ErrorUtils.createErrorType(typeElement == null ? "No type element" : typeElement.getText());
-        }
-        if (nullable) {
-            return TypeUtils.makeNullable(result[0]);
         }
         return result[0];
     }

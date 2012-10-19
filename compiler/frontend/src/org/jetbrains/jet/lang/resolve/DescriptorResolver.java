@@ -200,27 +200,39 @@ public class DescriptorResolver {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
                 result.add(resolver.resolveType(extensibleScope, typeReference, trace, checkBounds));
-                JetTypeElement typeElement = typeReference.getTypeElement();
-                while (typeElement instanceof JetNullableType) {
-                    JetNullableType nullableType = (JetNullableType) typeElement;
-                    trace.report(NULLABLE_SUPERTYPE.on(nullableType));
-                    typeElement = nullableType.getInnerType();
-                }
-                if (typeElement instanceof JetUserType) {
-                    JetUserType userType = (JetUserType) typeElement;
-                    List<JetTypeProjection> typeArguments = userType.getTypeArguments();
-                    for (JetTypeProjection typeArgument : typeArguments) {
-                        if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-                            trace.report(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.on(typeArgument));
-                        }
-                    }
-                }
+                JetTypeElement bareSuperType = checkNullableSupertypeAndStripQuestionMarks(trace, typeReference.getTypeElement());
+                checkProjectionsInImmediateArguments(trace, bareSuperType);
             }
             else {
                 result.add(ErrorUtils.createErrorType("No type reference"));
             }
         }
         return result;
+    }
+
+    @Nullable
+    private static JetTypeElement checkNullableSupertypeAndStripQuestionMarks(@NotNull BindingTrace trace, @Nullable JetTypeElement typeElement) {
+        while (typeElement instanceof JetNullableType) {
+            JetNullableType nullableType = (JetNullableType) typeElement;
+            typeElement = nullableType.getInnerType();
+            // report only for innermost '?', the rest gets a 'redundant' warning
+            if (!(typeElement instanceof JetNullableType)) {
+                trace.report(NULLABLE_SUPERTYPE.on(nullableType));
+            }
+        }
+        return typeElement;
+    }
+
+    private static void checkProjectionsInImmediateArguments(@NotNull BindingTrace trace, @Nullable JetTypeElement typeElement) {
+        if (typeElement instanceof JetUserType) {
+            JetUserType userType = (JetUserType) typeElement;
+            List<JetTypeProjection> typeArguments = userType.getTypeArguments();
+            for (JetTypeProjection typeArgument : typeArguments) {
+                if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
+                    trace.report(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.on(typeArgument));
+                }
+            }
+        }
     }
 
     @NotNull
