@@ -18,12 +18,16 @@ package org.jetbrains.jet.plugin.structureView;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
+import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.colors.CodeInsightColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.PsiIconUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -80,7 +84,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
 
     @Override
     public ItemPresentation getPresentation() {
-        return new ItemPresentation() {
+        return new ColoredItemPresentation() {
             @Override
             public String getPresentableText() {
                 if (elementText == null) {
@@ -101,6 +105,15 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                     return PsiIconUtil.getProvidersIcon(myElement, 0);
                 }
 
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public TextAttributesKey getTextAttributesKey() {
+                if (myElement instanceof JetModifierListOwner && JetPsiUtil.isDeprecated((JetModifierListOwner) myElement)) {
+                    return CodeInsightColors.DEPRECATED_ATTRIBUTES;
+                }
                 return null;
             }
         };
