@@ -117,4 +117,8 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
     public void testTrait() {
         doTest();
     }
+
+    public void testTwoClasses() {
+        doTest();
+    }
 }

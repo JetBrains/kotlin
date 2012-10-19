@@ -122,8 +122,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
         for (int i = 0; i < lines.length; i++) {
             Matcher matcher = BREAKPOINT_PATTERN.matcher(lines[i]);
             if (matcher.matches()) {
-                // Line breakpoint numbers are 1-based
-                breakpoints.add(new Breakpoint(file, i + 1, matcher.group(1)));
+                breakpoints.add(new Breakpoint(file, i, matcher.group(1)));
             }
         }
 
@@ -168,7 +167,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
 
     private static class Breakpoint {
         private final JetFile file;
-        private final int lineNumber;
+        private final int lineNumber; // 0-based
         private final String className;
 
         private Breakpoint(JetFile file, int lineNumber, String className) {
