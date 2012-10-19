@@ -31,6 +31,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.testFramework.PsiTestUtil;
+import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -104,8 +105,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
             public void run() {
                 try {
                     for (Breakpoint breakpoint : breakpoints) {
-                        SourcePosition position = SourcePosition.createFromLine(breakpoint.file, breakpoint.lineNumber);
-                        assertPositionIsValid(position, breakpoint.className, positionManager);
+                        assertBreakpointIsHandledCorrectly(breakpoint, positionManager);
                     }
                 }
                 catch (NoDataException e) {
@@ -154,15 +154,25 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
         return events;
     }
 
-    private static void assertPositionIsValid(SourcePosition position, String className, PositionManager positionManager) throws NoDataException {
+    private static void assertBreakpointIsHandledCorrectly(Breakpoint breakpoint, PositionManager positionManager) throws NoDataException {
+        SourcePosition position = SourcePosition.createFromLine(breakpoint.file, breakpoint.lineNumber);
         List<ReferenceType> classes = positionManager.getAllClasses(position);
         assertNotNull(classes);
         assertEquals(1, classes.size());
         ReferenceType type = classes.get(0);
-        if (!className.contains("$src$")) // don't want to deal with hashCodes in test
-            assertEquals(className, type.name());
+        if (!breakpoint.className.contains("$src$")) // don't want to deal with hashCodes in test
+            assertEquals(breakpoint.className, type.name());
         else
-            assertTrue(type.name().startsWith(className));
+            assertTrue(type.name().startsWith(breakpoint.className));
+
+        // JDI names are of form "package.Class$InnerClass"
+        ReferenceType typeWithFqName = new MockReferenceType(type.name().replace('/', '.'));
+        Location location = new MockLocation(typeWithFqName, breakpoint.file.getName(), breakpoint.lineNumber + 1);
+
+        SourcePosition actualPosition = positionManager.getSourcePosition(location);
+        assertNotNull(actualPosition);
+        assertEquals(position.getFile(), actualPosition.getFile());
+        assertEquals(position.getLine(), actualPosition.getLine());
     }
 
     private static class Breakpoint {
