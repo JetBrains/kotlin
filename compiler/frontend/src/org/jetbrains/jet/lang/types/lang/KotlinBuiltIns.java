@@ -138,14 +138,10 @@ public class KotlinBuiltIns {
 
     private ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
-    private final ImmutableList<ClassDescriptor> functionClasses;
     private final ImmutableSet<ClassDescriptor> functionClassesSet;
 
-    private final ImmutableList<ClassDescriptor> extensionFunctionClasses;
     private final ImmutableSet<ClassDescriptor> extensionFunctionClassesSet;
 
-    @Deprecated
-    private final ImmutableList<ClassDescriptor> tupleClasses;
     @Deprecated
     private final ImmutableSet<ClassDescriptor> tupleClassesSet;
 
@@ -162,12 +158,9 @@ public class KotlinBuiltIns {
             this.builtInsModule = new ModuleDescriptor(Name.special("<built-ins lazy module>"));
             this.resolveSession = createLazyResolveSession(project);
 
-            this.functionClasses = computeIndexedClasses("Function", getFunctionTraitCount());
-            this.functionClassesSet = ImmutableSet.copyOf(functionClasses);
-            this.extensionFunctionClasses = computeIndexedClasses("ExtensionFunction", getFunctionTraitCount());
-            this.extensionFunctionClassesSet = ImmutableSet.copyOf(extensionFunctionClasses);
-            this.tupleClasses = computeIndexedClasses("Tuple", getFunctionTraitCount());
-            this.tupleClassesSet = ImmutableSet.copyOf(tupleClasses);
+            this.functionClassesSet = computeIndexedClasses("Function", getFunctionTraitCount());
+            this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", getFunctionTraitCount());
+            this.tupleClassesSet = computeIndexedClasses("Tuple", getFunctionTraitCount());
 
             this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
             this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
@@ -799,8 +792,8 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    private ImmutableList<ClassDescriptor> computeIndexedClasses(@NotNull String prefix, int count) {
-        ImmutableList.Builder<ClassDescriptor> builder = ImmutableList.builder();
+    private ImmutableSet<ClassDescriptor> computeIndexedClasses(@NotNull String prefix, int count) {
+        ImmutableSet.Builder<ClassDescriptor> builder = ImmutableSet.builder();
         for (int i = 0; i < count; i++) {
             builder.add(getBuiltInClassByName(prefix + i));
         }
