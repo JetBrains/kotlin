@@ -74,7 +74,7 @@ public final class JavaClassResolver {
     private PsiClassFinder psiClassFinder;
     private JavaNamespaceResolver namespaceResolver;
     private JavaClassObjectResolver classObjectResolver;
-    private JavaSupertypesResolver supertypesResolver;
+    private JavaSupertypeResolver supertypesResolver;
 
     public JavaClassResolver() {
     }
@@ -120,7 +120,7 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setSupertypesResolver(JavaSupertypesResolver supertypesResolver) {
+    public void setSupertypesResolver(JavaSupertypeResolver supertypesResolver) {
         this.supertypesResolver = supertypesResolver;
     }
 

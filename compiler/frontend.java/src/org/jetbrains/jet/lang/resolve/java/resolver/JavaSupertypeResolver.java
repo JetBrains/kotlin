@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public final class JavaSupertypesResolver {
+public final class JavaSupertypeResolver {
 
     private BindingTrace trace;
     private JavaSemanticServices semanticServices;

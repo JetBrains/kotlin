@@ -19,7 +19,10 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -51,10 +54,10 @@ public final class JavaClassObjectResolver {
     private JavaDescriptorResolver javaDescriptorResolver;
     private BindingTrace trace;
     private JavaSemanticServices semanticServices;
-    private JavaSupertypesResolver supertypesResolver;
+    private JavaSupertypeResolver supertypesResolver;
 
     @Inject
-    public void setSupertypesResolver(JavaSupertypesResolver supertypesResolver) {
+    public void setSupertypesResolver(JavaSupertypeResolver supertypesResolver) {
         this.supertypesResolver = supertypesResolver;
     }
 
