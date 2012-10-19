@@ -29,4 +29,61 @@ public class TypedHandlerTest extends LightCodeInsightTestCase {
         EditorTestUtil.performTypingAction(getEditor(), '{');
         checkResultByText("val x = \"${}\"");
     }
+
+    public void testTypeLtInFunDeclaration() throws Exception {
+        doLtGtTest("fun <caret>");
+    }
+
+    public void testTypeLtInOngoingConstructorCall() throws Exception {
+        doLtGtTest("fun test() { Collection<caret> }");
+    }
+
+    public void testTypeLtInClassDeclaration() throws Exception {
+        doLtGtTest("class Some<caret> {}");
+    }
+
+    public void testTypeLtInPropertyType() throws Exception {
+        doLtGtTest("val a: List<caret> ");
+    }
+
+    public void testTypeLtInExtensionFunctionReceiver() throws Exception {
+        doLtGtTest("fun <T> Collection<caret> ");
+    }
+
+    public void testTypeLtInFunParam() throws Exception {
+        doLtGtTest("fun some(a : HashSet<caret>)");
+    }
+
+    public void testTypeLtInFun() throws Exception {
+        doLtGtTestNoAutoClose("fun some() { <<caret> }");
+    }
+
+    public void testTypeLtInLess() throws Exception {
+        doLtGtTestNoAutoClose("fun some() { val a = 12; a <<caret> }");
+    }
+
+    public void testMoveThroughGT() throws Exception {
+        configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>");
+        EditorTestUtil.performTypingAction(getEditor(), '>');
+        EditorTestUtil.performTypingAction(getEditor(), '>');
+        checkResultByText("val a: List<Set<Int>><caret>");
+    }
+
+    private void doLtGtTestNoAutoClose(String initText) throws Exception {
+        doLtGtTest(initText, false);
+    }
+
+    private void doLtGtTest(String initText, boolean shouldCloseBeInsert) throws Exception {
+        configureFromFileText("a.kt", initText);
+
+        EditorTestUtil.performTypingAction(getEditor(), '<');
+        checkResultByText(shouldCloseBeInsert ? initText.replace("<caret>", "<<caret>>") : initText.replace("<caret>", "<<caret>"));
+
+        EditorTestUtil.performTypingAction(getEditor(), EditorTestUtil.BACKSPACE_FAKE_CHAR);
+        checkResultByText(initText);
+    }
+
+    private void doLtGtTest(String initText) throws Exception {
+        doLtGtTest(initText, true);
+    }
 }

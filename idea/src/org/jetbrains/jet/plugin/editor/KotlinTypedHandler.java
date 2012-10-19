@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.editor;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -33,8 +34,34 @@ import org.jetbrains.jet.lexer.JetTokens;
  * @since 7/16/12
  */
 public class KotlinTypedHandler extends TypedHandlerDelegate {
+
+    private boolean jetLTTyped;
+
+    @Override
+    public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
+        jetLTTyped = '<' == c &&
+                     file instanceof JetFile && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
+                     JetLtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
+
+        if ('>' == c) {
+            if (file instanceof JetFile && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
+                if (JetLtGtTypingUtils.handleJetGTInsert(editor)) {
+                    return Result.STOP;
+                }
+            }
+        }
+
+        return super.beforeCharTyped(c, project, editor, file, fileType);
+    }
+
     @Override
     public Result charTyped(char c, Project project, Editor editor, @NotNull PsiFile file) {
+        if (jetLTTyped) {
+            jetLTTyped = false;
+            JetLtGtTypingUtils.handleJetAutoCloseLT(editor);
+            return Result.STOP;
+        }
+
         if (!(file instanceof JetFile) || !CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
             return Result.CONTINUE;
         }
