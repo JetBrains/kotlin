@@ -1101,10 +1101,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     private void checkSenselessComparisonWithNull(@NotNull JetBinaryExpression expression, @NotNull JetExpression left, @NotNull JetExpression right, @NotNull ExpressionTypingContext context) {
         JetExpression expr;
-        if (left instanceof JetConstantExpression && left.getNode().getElementType() == JetNodeTypes.NULL) {
+        if (JetPsiUtil.isNullConstant(left)) {
             expr = right;
         }
-        else if (right instanceof JetConstantExpression && right.getNode().getElementType() == JetNodeTypes.NULL) {
+        else if (JetPsiUtil.isNullConstant(right)) {
             expr = left;
         }
         else return;
