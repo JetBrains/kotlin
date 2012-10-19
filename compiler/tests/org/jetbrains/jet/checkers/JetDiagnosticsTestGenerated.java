@@ -2286,6 +2286,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/SenselessNullInWhen.kt");
             }
             
+            @TestMetadata("senslessComparisonWithNullOnTypeParameters.kt")
+            public void testSenslessComparisonWithNullOnTypeParameters() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/senslessComparisonWithNullOnTypeParameters.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/nullableTypes")
