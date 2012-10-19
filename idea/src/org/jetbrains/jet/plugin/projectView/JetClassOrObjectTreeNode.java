@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.plugin.JetIconProvider;
 
 import java.util.Collection;
@@ -73,6 +74,11 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
                 }
             }
         }
+    }
+
+    @Override
+    protected boolean isDeprecated() {
+        return JetPsiUtil.isDeprecated(getValue());
     }
 
     @Override

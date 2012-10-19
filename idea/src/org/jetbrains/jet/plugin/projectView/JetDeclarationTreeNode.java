@@ -105,4 +105,9 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
             data.setPresentableText(text);
         }
     }
+
+    @Override
+    protected boolean isDeprecated() {
+        return JetPsiUtil.isDeprecated(getValue());
+    }
 }

@@ -23,6 +23,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.psi.JetClassObject;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 
 import java.util.Collection;
 
@@ -59,5 +60,10 @@ public class JetClassObjectTreeNode extends AbstractPsiBasedNode<JetClassObject>
         }
 
         return super.canRepresent(element) || canRepresentPsiElement(getValue(), element, getSettings());
+    }
+
+    @Override
+    protected boolean isDeprecated() {
+        return JetPsiUtil.isDeprecated(getValue());
     }
 }

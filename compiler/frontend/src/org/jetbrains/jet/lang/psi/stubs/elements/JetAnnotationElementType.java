@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetAnnotationStubImpl;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.IOException;
 
@@ -48,18 +49,9 @@ public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotatio
 
     @Override
     public PsiJetAnnotationStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
-        JetTypeReference typeReference = psi.getTypeReference();
-        assert typeReference != null : "Annotation entry hasn't typeReference " + psi.getText();
-        JetTypeElement typeElement = typeReference.getTypeElement();
-        String shortName = null;
-        if (typeElement instanceof JetUserType) {
-            JetUserType userType = (JetUserType) typeElement;
-            shortName = userType.getReferencedName();
-        }
-        if (shortName == null) {
-            shortName = psi.getText();
-        }
-        return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, shortName);
+        Name shortName = JetPsiUtil.getShortName(psi);
+        String resultName = shortName != null ? shortName.getName() : psi.getText();
+        return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, resultName);
     }
 
     @Override
