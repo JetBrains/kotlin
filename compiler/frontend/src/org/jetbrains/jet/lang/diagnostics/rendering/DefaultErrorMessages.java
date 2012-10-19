@@ -307,6 +307,9 @@ public class DefaultErrorMessages {
         MAP.put(ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR, "Anonymous initializers are only allowed in the presence of a primary constructor");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
         MAP.put(REDUNDANT_NULLABLE, "Redundant '?'");
+        MAP.put(BASE_WITH_NULLABLE_UPPER_BOUND, "''{0}'' has a nullable upper bound. " +
+                                                "This means that a value of this type may be null. " +
+                                                "Using ''{0}?'' is likely to mislead the reader", RENDER_TYPE);
         MAP.put(UNSAFE_CALL, "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type {0}", RENDER_TYPE);
         MAP.put(AMBIGUOUS_LABEL, "Ambiguous label");
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", TO_STRING);

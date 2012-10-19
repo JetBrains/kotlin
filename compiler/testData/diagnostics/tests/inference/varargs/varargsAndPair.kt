@@ -1,4 +1,4 @@
-fun foo<T>(vararg <!UNUSED_PARAMETER!>ts<!>: T): T? = null
+fun foo<T: Any>(vararg <!UNUSED_PARAMETER!>ts<!>: T): T? = null
 
 class Pair<A>(a: A)
 

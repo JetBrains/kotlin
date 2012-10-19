@@ -6,8 +6,8 @@ trait MyType {}
 class MyClass<T> : MyType {}
 
 public open class HttpResponse() {
-    public open fun parseAs<T>(dataClass : MyClass<T>) : T? {
-        return null
+    public open fun parseAs<T>(dataClass : MyClass<T>) : T {
+        throw Exception()
     }
     public open fun parseAs(dataType : MyType) : Any? {
         return null
@@ -16,5 +16,5 @@ public open class HttpResponse() {
 
 fun test<R> (httpResponse: HttpResponse, rtype: MyClass<R>) {
     val res = httpResponse.parseAs( rtype )
-    res : R? //type mismatch: required R?, found T?
+    res : R //type mismatch: required R, found T
 }

@@ -385,6 +385,15 @@ public class TypeUtils {
         return false;
     }
 
+    public static boolean hasNullableSuperType(@NotNull JetType type) {
+        for (JetType supertype : getAllSupertypes(type)) {
+            if (supertype.isNullable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean equalClasses(@NotNull JetType type1, @NotNull JetType type2) {
         DeclarationDescriptor declarationDescriptor1 = type1.getConstructor().getDeclarationDescriptor();
         if (declarationDescriptor1 == null) return false; // No class, classes are not equal

@@ -178,6 +178,9 @@ public class TypeResolver {
                     if (baseType.isNullable()) {
                         trace.report(REDUNDANT_NULLABLE.on(nullableType));
                     }
+                    else if (TypeUtils.hasNullableSuperType(baseType)) {
+                        trace.report(BASE_WITH_NULLABLE_UPPER_BOUND.on(nullableType, baseType));
+                    }
                     result[0] = TypeUtils.makeNullable(baseType);
                 }
 

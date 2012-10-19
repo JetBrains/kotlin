@@ -86,6 +86,6 @@ fun <T> joinG(x : Int, vararg a : T) : String {
     return b.toString()
 }
 
-fun <T> joinT(<!UNUSED_PARAMETER!>x<!> : Int, vararg <!UNUSED_PARAMETER!>a<!> : T) : T? {
+fun <T: Any> joinT(<!UNUSED_PARAMETER!>x<!> : Int, vararg <!UNUSED_PARAMETER!>a<!> : T) : T? {
     return null
 }
