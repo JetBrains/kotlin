@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-public final class JavaPropertiesResolver {
+public final class JavaPropertyResolver {
 
     private JavaSemanticServices semanticServices;
     private JavaSignatureResolver javaSignatureResolver;
@@ -51,7 +51,7 @@ public final class JavaPropertiesResolver {
     private JavaAnnotationResolver annotationResolver;
     private JavaClassResolver classResolver;
 
-    public JavaPropertiesResolver() {
+    public JavaPropertyResolver() {
     }
 
     @Inject

@@ -59,7 +59,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     };
 
-    private JavaPropertiesResolver propertiesResolver;
+    private JavaPropertyResolver propertiesResolver;
     private JavaClassResolver classResolver;
     private JavaConstructorResolver constructorResolver;
     private JavaFunctionResolver functionResolver;
@@ -82,7 +82,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Inject
-    public void setPropertiesResolver(JavaPropertiesResolver propertiesResolver) {
+    public void setPropertiesResolver(JavaPropertyResolver propertiesResolver) {
         this.propertiesResolver = propertiesResolver;
     }
 
