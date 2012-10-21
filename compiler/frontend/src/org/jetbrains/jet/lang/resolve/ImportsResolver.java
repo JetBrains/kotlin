@@ -111,7 +111,8 @@ public class ImportsResolver {
         Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
         configuration.addDefaultImports(defaultImportDirectives);
         for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
-            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
+            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
+                    trace, "transient trace to resolve default imports"); //not to trace errors of default imports
             qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter,
                                                                temporaryTrace, configuration, onlyClasses);
         }

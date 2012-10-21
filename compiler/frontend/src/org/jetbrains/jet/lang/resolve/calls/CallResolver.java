@@ -283,12 +283,13 @@ public class CallResolver {
                 return cachedResults;
             }
         }
-        TemporaryBindingTrace delegatingBindingTrace = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace delegatingBindingTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve call", context.call);
         BasicResolutionContext newContext = context.replaceTrace(delegatingBindingTrace);
         OverloadResolutionResults<F> results = doResolveCall(newContext,
                                                              prioritizedTasks,
                                                              callTransformer, reference);
-        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(new BindingTraceContext().getBindingContext());
+        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
+                new BindingTraceContext().getBindingContext(), "delta trace for caching resolve of", context.call);
         delegatingBindingTrace.addAllMyDataTo(cloneDelta);
         cacheResults(resolutionResultsSlice, context, results, cloneDelta);
 
@@ -465,7 +466,7 @@ public class CallResolver {
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
         OverloadResolutionResultsImpl<F> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D, F> task : prioritizedTasks) {
-            TemporaryBindingTrace taskTrace = TemporaryBindingTrace.create(context.trace);
+            TemporaryBindingTrace taskTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.reference);
             OverloadResolutionResultsImpl<F> results = performResolutionGuardedForExtraFunctionLiteralArguments(task.withTrace(taskTrace),
                                                                                                                 callTransformer, context.trace);
             if (results.isSuccess() || results.isAmbiguity()) {
@@ -530,8 +531,9 @@ public class CallResolver {
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps
-            ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(task.getCandidates(), task.reference, TemporaryBindingTrace.create(task.trace), task.scope,
-                                                                    new DelegatingCall(task.call) {
+            ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(task.getCandidates(), task.reference,
+                        TemporaryBindingTrace.create(task.trace, "trace for resolution guarded for extra function literal arguments"),
+                        task.scope, new DelegatingCall(task.call) {
                             @NotNull
                             @Override
                             public List<JetExpression> getFunctionLiteralArguments() {
@@ -554,7 +556,8 @@ public class CallResolver {
             @NotNull BindingTrace traceForResolutionCache) {
 
         for (ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
-            TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(task.trace);
+            TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(
+                    task.trace, "trace to resolve candidate", resolutionCandidate);
             Collection<CallResolutionContext<D, F>> contexts = callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace);
             for (CallResolutionContext<D, F> context : contexts) {
 
@@ -799,14 +802,17 @@ public class CallResolver {
             @NotNull ResolutionContext context) {
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
-        TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(context.trace);
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
-        JetType type = argumentExpression != null
-                       ? expressionTypingServices.getType(
-                            context.scope, argumentExpression,
-                            substitutor.substitute(effectiveExpectedType, Variance.INVARIANT),
-                            context.dataFlowInfo, traceForUnknown)
-                       : null;
+        JetType type;
+        if (argumentExpression != null) {
+            TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(
+                    context.trace, "transient trace to resolve argument", argumentExpression);
+            type = expressionTypingServices.getType(context.scope, argumentExpression,
+                    substitutor.substitute(effectiveExpectedType, Variance.INVARIANT), context.dataFlowInfo, traceForUnknown);
+        }
+        else {
+            type = null;
+        }
         constraintSystem.addSupertypeConstraint(effectiveExpectedType, type, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         //todo no return
@@ -1149,7 +1155,7 @@ public class CallResolver {
         List<ResolutionCandidate<FunctionDescriptor>> candidates = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);
 
         BindingTraceContext trace = new BindingTraceContext();
-        TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(trace);
+        TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(trace, "trace for resolve exact signature call", name);
         Set<ResolvedCallWithTrace<FunctionDescriptor>> calls = Sets.newLinkedHashSet();
         for (ResolutionCandidate<FunctionDescriptor> candidate : candidates) {
             ResolvedCallImpl<FunctionDescriptor> call = ResolvedCallImpl.create(candidate, temporaryBindingTrace);

@@ -101,7 +101,7 @@ public class MigrateTuplesInProjectFix extends JetIntentionAction<PsiElement> {
                 initialFile.getProject(),
                 Collections.<AnalyzerScriptParameter>emptyList(),
                 Predicates.<PsiFile>alwaysTrue(),
-                new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext()),
+                new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(), "trace in migrate tuples fix"),
                 context,
                 moduleConfiguration);
     }

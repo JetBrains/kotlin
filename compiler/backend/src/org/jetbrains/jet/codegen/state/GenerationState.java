@@ -91,7 +91,7 @@ public class GenerationState {
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
 
-        bindingTrace = new DelegatingBindingTrace(exhaust.getBindingContext());
+        bindingTrace = new DelegatingBindingTrace(exhaust.getBindingContext(), "trace in GenerationState");
         bindingContext = bindingTrace.getBindingContext();
 
         this.typeMapper = new JetTypeMapper(bindingTrace, builtinToJavaTypesMapping == BuiltinToJavaTypesMapping.ENABLED, classBuilderMode);

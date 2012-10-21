@@ -287,7 +287,7 @@ public class ExpressionTypingUtils {
             @NotNull Name name
     ) {
         final JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fake");
-        TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace, "trace for resolve fake call for", name);
         Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
         OverloadResolutionResults<FunctionDescriptor> results =
                 context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name);

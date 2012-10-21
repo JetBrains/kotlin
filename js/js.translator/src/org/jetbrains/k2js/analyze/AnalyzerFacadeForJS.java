@@ -88,7 +88,7 @@ public final class AnalyzerFacadeForJS {
         BindingContext libraryBindingContext = config.getLibraryBindingContext();
         BindingTrace trace = libraryBindingContext == null ?
                              new ObservableBindingTrace(new BindingTraceContext()) :
-                             new DelegatingBindingTrace(libraryBindingContext);
+                             new DelegatingBindingTrace(libraryBindingContext, "trace for analyzing library in js");
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
                 project, topDownAnalysisParameters, trace, owner,
                 new JsConfiguration(project, libraryBindingContext));

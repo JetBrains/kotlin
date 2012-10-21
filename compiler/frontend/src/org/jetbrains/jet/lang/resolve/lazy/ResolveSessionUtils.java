@@ -100,7 +100,8 @@ public class ResolveSessionUtils {
             @NotNull final ResolveSession resolveSession,
             @NotNull JetExpression expression
     ) {
-        final DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext());
+        final DelegatingBindingTrace trace = new DelegatingBindingTrace(
+                resolveSession.getBindingContext(), "trace to resolve expression", expression);
         JetFile file = (JetFile) expression.getContainingFile();
 
         @SuppressWarnings("unchecked")
@@ -225,7 +226,8 @@ public class ResolveSessionUtils {
     }
 
     public static JetScope getExpressionMemberScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
-        DelegatingBindingTrace trace = new DelegatingBindingTrace(resolveSession.getBindingContext());
+        DelegatingBindingTrace trace = new DelegatingBindingTrace(
+                resolveSession.getBindingContext(), "trace to resolve a member scope of expression", expression);
 
         if (expression instanceof JetReferenceExpression) {
             QualifiedExpressionResolver qualifiedExpressionResolver = resolveSession.getInjector().getQualifiedExpressionResolver();

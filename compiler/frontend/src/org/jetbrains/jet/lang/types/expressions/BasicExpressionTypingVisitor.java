@@ -99,7 +99,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         JetType[] result = new JetType[1];
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
+                context.trace, "trace for namespace/class object lookup of name", referencedName);
         if (furtherNameLookup(expression, referencedName, result, context.replaceBindingTrace(temporaryTrace))) {
             temporaryTrace.commit();
             return DataFlowUtils.checkType(result[0], expression, context);
@@ -201,7 +202,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             boolean tryWithNoExpectedType = true;
             if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
-                TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
+                TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(
+                        context.trace, "trace for resolve RHSExpression", expression);
                 ExpressionTypingContext contextWithTemporaryTrace = context.replaceBindingTrace(temporaryTraceWithExpectedType).replaceExpectedType(targetType);
                 JetTypeInfo typeInfo = facade.getTypeInfo(left, contextWithTemporaryTrace);
                 if (typeInfo.getType() != null && checkBinaryWithTypeRHS(expression, contextWithTemporaryTrace, targetType, typeInfo.getType())) {
@@ -633,7 +635,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverDescriptor receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result) {
 
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
+                context.trace, "trace to resolve as local variable or property", nameExpression);
         OverloadResolutionResults<VariableDescriptor> resolutionResult = context.replaceBindingTrace(traceForVariable).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
         if (!resolutionResult.isNothing()) {
             traceForVariable.commit();
@@ -645,7 +648,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext newContext = receiver.exists()
                                              ? context.replaceScope(receiver.getType().getMemberScope())
                                              : context;
-        TemporaryBindingTrace traceForNamespaceOrClassObject = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace traceForNamespaceOrClassObject = TemporaryBindingTrace.create(
+                context.trace, "trace to resolve as namespace or class object", nameExpression);
         JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedNameAsName(), newContext.replaceBindingTrace(traceForNamespaceOrClassObject));
         if (jetType != null) {
             traceForNamespaceOrClassObject.commit();
@@ -693,7 +697,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         boolean[] result = new boolean[1];
 
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace, "trace to resolve as variable", nameExpression);
         JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceBindingTrace(traceForVariable), result);
         if (result[0]) {
             traceForVariable.commit();
@@ -701,7 +705,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", nameExpression);
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(call, nameExpression, receiver, context, result);
         if (result[0]) {
             traceForFunction.commit();
@@ -722,7 +726,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         boolean[] result = new boolean[1];
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
 
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call", callExpression);
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(call, callExpression, receiver,
                                                                       context.replaceBindingTrace(traceForFunction), result);
         if (result[0]) {
@@ -753,7 +757,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression instanceof JetSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
-            TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace);
+            TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
+                    context.trace, "trace to resolve as variable with 'invoke' call", callExpression);
             JetType type = getVariableType((JetSimpleNameExpression) calleeExpression, receiver, callOperationNode,
                                            context.replaceBindingTrace(traceForVariable), result);
             if (result[0]) {
@@ -828,7 +833,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), type, context.trace);
             resolveArrayAccessSetMethod((JetArrayAccessExpression) baseExpression,
                                         stubExpression,
-                                        context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(TemporaryBindingTrace.create(context.trace)),
+                                        context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(
+                                                TemporaryBindingTrace.create(context.trace, "trace to resolve array access set method for unary expression", expression)),
                                         context.trace);
         }
 

@@ -115,7 +115,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
         private CallResolutionContext<CallableDescriptor, FunctionDescriptor> createContextWithChainedTrace(ResolutionCandidate<CallableDescriptor> candidate,
                 Call call, TemporaryBindingTrace temporaryTrace, ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
 
-            ChainedTemporaryBindingTrace chainedTrace = ChainedTemporaryBindingTrace.create(temporaryTrace);
+            ChainedTemporaryBindingTrace chainedTrace = ChainedTemporaryBindingTrace.create(temporaryTrace, "chained trace to resolve candidate", candidate);
             ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace);
             return CallResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call);
         }

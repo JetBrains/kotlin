@@ -291,13 +291,13 @@ public class ExpressionTypingServices {
                 if (context.expectedType != NO_EXPECTED_TYPE) {
                     if (coercionStrategyForLastExpression == CoercionStrategy.COERCION_TO_UNIT && KotlinBuiltIns.getInstance().isUnit(context.expectedType)) {
                         // This implements coercion to Unit
-                        TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace);
+                        TemporaryBindingTrace temporaryTraceExpectingUnit = TemporaryBindingTrace.create(trace, "trace to resolve coercion to unit with expected type");
                         final boolean[] mismatch = new boolean[1];
                         ObservableBindingTrace errorInterceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceExpectingUnit, statementExpression, mismatch);
                         newContext = createContext(newContext, errorInterceptingTrace, scope, newContext.dataFlowInfo, context.expectedType);
                         result = blockLevelVisitor.getTypeInfo(statementExpression, newContext, true);
                         if (mismatch[0]) {
-                            TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace);
+                            TemporaryBindingTrace temporaryTraceNoExpectedType = TemporaryBindingTrace.create(trace, "trace to resolve coercion to unit without expected type");
                             mismatch[0] = false;
                             ObservableBindingTrace interceptingTrace = makeTraceInterceptingTypeMismatch(temporaryTraceNoExpectedType, statementExpression, mismatch);
                             newContext = createContext(newContext, interceptingTrace, scope, newContext.dataFlowInfo, NO_EXPECTED_TYPE);

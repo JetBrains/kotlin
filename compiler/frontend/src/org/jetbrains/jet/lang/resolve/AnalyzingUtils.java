@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -72,4 +73,14 @@ public class AnalyzingUtils {
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
+
+    public static String formDebugNameForBindingTrace(@NotNull String debugName, @Nullable Object resolutionSubjectForMessage) {
+        if (resolutionSubjectForMessage instanceof PsiElement) {
+            resolutionSubjectForMessage = ((PsiElement) resolutionSubjectForMessage).getText();
+        }
+        if (resolutionSubjectForMessage != null) {
+            return debugName + " '" + resolutionSubjectForMessage + "'";
+        }
+        return debugName;
+    }
 }

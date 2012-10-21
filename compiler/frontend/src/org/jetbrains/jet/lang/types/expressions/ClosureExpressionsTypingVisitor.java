@@ -58,7 +58,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             return DataFlowUtils.checkType(type, expression, context, context.dataFlowInfo);
         }
         final JetType[] result = new JetType[1];
-        final TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
+        final TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve object literal expression", expression);
         ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler = new ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor>() {
 
             @Override
@@ -83,7 +83,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         TopDownAnalyzer.processClassOrObject(context.expressionTypingServices.getProject(), traceAdapter, context.scope,
                                              context.scope.getContainingDeclaration(), expression.getObjectDeclaration());
 
-        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(new BindingTraceContext().getBindingContext());
+        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
+                new BindingTraceContext().getBindingContext(), "cached delta trace for object literal expression resolve", expression);
         temporaryTrace.addAllMyDataTo(cloneDelta);
         context.trace.record(TRACE_DELTAS_CACHE, expression.getObjectDeclaration(), cloneDelta);
         temporaryTrace.commit();
@@ -112,7 +113,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType returnType = TypeUtils.NO_EXPECTED_TYPE;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve function literal expression", expression);
         if (returnTypeRef != null) {
             returnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
             context.expressionTypingServices.checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).

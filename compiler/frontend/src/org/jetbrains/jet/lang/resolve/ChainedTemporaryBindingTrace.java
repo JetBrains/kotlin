@@ -16,17 +16,19 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author svtk
  */
 public class ChainedTemporaryBindingTrace extends TemporaryBindingTrace {
 
-    public static ChainedTemporaryBindingTrace create(TemporaryBindingTrace trace) {
-        return new ChainedTemporaryBindingTrace(trace);
+    public static ChainedTemporaryBindingTrace create(TemporaryBindingTrace trace, String debugName, @Nullable Object resolutionSubjectForMessage) {
+        return new ChainedTemporaryBindingTrace(trace, AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage));
     }
 
-    private ChainedTemporaryBindingTrace(TemporaryBindingTrace trace) {
-        super(trace);
+    private ChainedTemporaryBindingTrace(TemporaryBindingTrace trace, String debugName) {
+        super(trace, debugName);
     }
 
     @Override

@@ -203,7 +203,7 @@ public final class PsiCodegenPredictor {
     ) {
         final Ref<DeclarationDescriptor> resultingDescriptor = Ref.create();
 
-        DelegatingBindingTrace trace = new DelegatingBindingTrace(context) {
+        DelegatingBindingTrace trace = new DelegatingBindingTrace(context, "trace in PsiCodegenPredictor") {
             @Override
             public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
                 super.record(slice, key, value);

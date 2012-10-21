@@ -110,7 +110,7 @@ public final class CallBuilder {
             resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, descriptor.getExpectedThisObject(),
                                                                               descriptor.getReceiverParameter(),
                                                                               ExplicitReceiverKind.THIS_OBJECT, false),
-                                                   TemporaryBindingTrace.create(new BindingTraceContext()));
+                                                   TemporaryBindingTrace.create(new BindingTraceContext(), "trace to resolve call (in js)"));
         }
         if (descriptor == null) {
             descriptor = resolvedCall.getCandidateDescriptor().getOriginal();

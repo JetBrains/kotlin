@@ -106,7 +106,7 @@ public final class AnalyzerFacadeWithCache {
                                             file.getProject(),
                                             Collections.<AnalyzerScriptParameter>emptyList(),
                                             new JetFilesProvider.SameJetFilePredicate(file),
-                                            new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext()),
+                                            new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(), "trace to resolve bodies in file", file.getName()),
                                             context,
                                             moduleConfiguration);
 

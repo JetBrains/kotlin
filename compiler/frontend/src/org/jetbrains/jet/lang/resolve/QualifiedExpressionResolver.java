@@ -112,7 +112,7 @@ public class QualifiedExpressionResolver {
         if (descriptors.size() == 1) {
             return canImportMembersFrom(descriptors.iterator().next(), reference, trace, onlyClasses);
         }
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace, "trace to find out if members can be imported from", reference);
         boolean canImport = false;
         for (DeclarationDescriptor descriptor : descriptors) {
             canImport |= canImportMembersFrom(descriptor, reference, temporaryTrace, onlyClasses);

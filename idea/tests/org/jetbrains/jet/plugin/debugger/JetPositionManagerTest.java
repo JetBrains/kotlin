@@ -51,7 +51,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         JetPositionManager positionManager = (JetPositionManager) jetPositionManagerFactory.createPositionManager(process);
         assertNotNull(positionManager);
 
-        DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(state.getBindingContext());
+        DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(state.getBindingContext(), "trace created in JetPositionManagerTest");
         JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, true, ClassBuilderMode.FULL);
         //noinspection unchecked
         CodegenBinding.initTrace(bindingTrace, files);
