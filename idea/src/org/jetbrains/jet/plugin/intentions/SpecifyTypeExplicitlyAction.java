@@ -133,7 +133,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         if (ErrorUtils.isErrorType(getTypeForDeclaration(declaration))) {
             return false;
         }
-        return !isDisabledForError() || !hasPublicMemberDiagnostic(declaration);
+        return !hasPublicMemberDiagnostic(declaration);
     }
 
 
@@ -149,7 +149,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     @NotNull
-    private static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
+    protected static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
         BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile) declaration.getContainingFile());
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
@@ -165,10 +165,6 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         }
 
         return type == null ? ErrorUtils.createErrorType("null type") : type;
-    }
-
-    protected boolean isDisabledForError() {
-        return true;
     }
 
     public static void addTypeAnnotation(Project project, JetProperty property, @NotNull JetType exprType) {

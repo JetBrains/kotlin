@@ -16,8 +16,17 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 /**
@@ -26,14 +35,26 @@ import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
  */
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class SpecifyTypeExplicitlyFix extends SpecifyTypeExplicitlyAction {
-    @NotNull
     @Override
-    public String getText() {
-        return StringUtil.capitalize(super.getText().toLowerCase());
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        //noinspection unchecked
+        JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetProperty.class, JetNamedFunction.class);
+        if (declaration instanceof JetProperty) {
+            setText(getQuickFixText(JetBundle.message("specify.type.explicitly.add.action.name")));
+        }
+        else if (declaration instanceof JetNamedFunction) {
+            setText(getQuickFixText(JetBundle.message("specify.type.explicitly.add.return.type.action.name")));
+        }
+        else {
+            assert false : "Couldn't find property or function";
+        }
+
+        return !ErrorUtils.isErrorType(getTypeForDeclaration(declaration));
     }
 
-    @Override
-    protected boolean isDisabledForError() {
-        return false;
+    // There is an implicit rule that quick fix text has only first letter capitalized, while intention text
+    @NotNull
+    private static String getQuickFixText(@NotNull String intentionText) {
+        return StringUtil.capitalize(intentionText.toLowerCase());
     }
 }
