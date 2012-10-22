@@ -1026,6 +1026,9 @@ public class CallResolver {
 
         if (successfulCandidates.size() > 0) {
             OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulCandidates, true);
+            if (results.isSingleResult()) {
+                results.getResultingCall().getTrace().moveAllMyDataTo(trace);
+            }
             if (results.isAmbiguity()) {
                 // This check is needed for the following case:
                 //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
@@ -1051,7 +1054,7 @@ public class CallResolver {
                     if (!thisLevel.isEmpty()) {
                         OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
                         if (results.isSingleResult()) {
-                            results.getResultingCall().getTrace().commit();
+                            results.getResultingCall().getTrace().moveAllMyDataTo(trace);
                             return OverloadResolutionResultsImpl.singleFailedCandidate(results.getResultingCall());
                         }
 
@@ -1074,7 +1077,7 @@ public class CallResolver {
             }
 
             ResolvedCallWithTrace<D> failed = failedCandidates.iterator().next();
-            failed.getTrace().commit();
+            failed.getTrace().moveAllMyDataTo(trace);
             return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
         }
         else {
@@ -1090,7 +1093,10 @@ public class CallResolver {
         return true;
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(Set<ResolvedCallWithTrace<D>> candidates, boolean discriminateGenerics) {
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
+            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
+            boolean discriminateGenerics
+    ) {
         if (candidates.size() != 1) {
             Set<ResolvedCallWithTrace<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
             for (Iterator<ResolvedCallWithTrace<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
@@ -1121,9 +1127,6 @@ public class CallResolver {
         }
         else {
             ResolvedCallWithTrace<D> result = candidates.iterator().next();
-
-            TemporaryBindingTrace temporaryTrace = result.getTrace();
-            temporaryTrace.commit();
 
             return OverloadResolutionResultsImpl.success(result);
         }

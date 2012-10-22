@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -40,7 +41,10 @@ import java.util.Set;
 public class OverloadingConflictResolver {
 
     @Nullable
-    public <D extends CallableDescriptor> ResolvedCallWithTrace<D> findMaximallySpecific(Set<ResolvedCallWithTrace<D>> candidates, boolean discriminateGenericDescriptors) {
+    public <D extends CallableDescriptor> ResolvedCallWithTrace<D> findMaximallySpecific(
+            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
+            boolean discriminateGenericDescriptors
+    ) {
         // Different autocasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
         Set<ResolvedCallWithTrace<D>> maximallySpecific = new THashSet<ResolvedCallWithTrace<D>>(new TObjectHashingStrategy<ResolvedCallWithTrace<D>>() {
                     @Override
@@ -65,12 +69,7 @@ public class OverloadingConflictResolver {
             }
             maximallySpecific.add(candidateCall);
         }
-        if (maximallySpecific.size() == 1) {
-            ResolvedCallWithTrace<D> result = maximallySpecific.iterator().next();
-            result.getTrace().commit();
-            return result;
-        }
-        return null;
+        return maximallySpecific.size() == 1 ? maximallySpecific.iterator().next() : null;
     }
 
     /**

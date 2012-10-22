@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -112,7 +113,7 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     }
 
     @Override
-    public TemporaryBindingTrace getTrace() {
+    public DelegatingBindingTrace getTrace() {
         //functionCall.trace is temporary trace above variableCall.trace and is committed already
         return variableCall.getTrace();
     }

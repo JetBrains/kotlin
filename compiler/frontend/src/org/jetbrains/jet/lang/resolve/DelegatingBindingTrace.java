@@ -124,6 +124,11 @@ public class DelegatingBindingTrace implements BindingTrace {
         addAllMyDataTo(trace, null, true);
     }
 
+    public void moveAllMyDataTo(@NotNull BindingTrace trace) {
+        addAllMyDataTo(trace, null, true);
+        clear();
+    }
+
     public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics) {
         for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : map) {
             SlicedMapKey slicedMapKey = entry.getKey();

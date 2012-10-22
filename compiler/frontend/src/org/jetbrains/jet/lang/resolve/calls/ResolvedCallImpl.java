@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -55,7 +56,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     };
 
     @NotNull
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
         return new ResolvedCallImpl<D>(candidate, trace);
     }
 
@@ -70,12 +71,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private boolean someArgumentHasNoType = false;
-    private TemporaryBindingTrace trace;
+    private DelegatingBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
 
-    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
+    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
         this.candidateDescriptor = candidate.getDescriptor();
         this.thisObject = candidate.getThisObject();
         this.receiverArgument = candidate.getReceiverArgument();
@@ -105,7 +106,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Override
     @NotNull
-    public TemporaryBindingTrace getTrace() {
+    public DelegatingBindingTrace getTrace() {
         return trace;
     }
 
