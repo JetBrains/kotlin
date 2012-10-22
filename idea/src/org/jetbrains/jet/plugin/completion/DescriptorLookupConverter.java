@@ -109,7 +109,7 @@ public final class DescriptorLookupConverter {
 
         element = element.withTailText(tailText, tailTextGrayed).withTypeText(typeText).withPresentableText(presentableText);
         element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
-
+        element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor));
         return element;
     }
 
