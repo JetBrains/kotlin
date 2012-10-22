@@ -123,7 +123,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
             final FqName packageName = JetPsiUtil.getFQName(file);
             if (packageName != null && qualifiedName.getFqName().startsWith(packageName.getFqName())) {
                 String packageInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(packageName).getInternalName();
-                String multiFileNamespaceInternalName = NamespaceCodegen.getMultiFileNamespaceInternalName(packageInternalName, file);
+                String multiFileNamespaceInternalName = NamespaceCodegen.getNamespacePartInternalName(file);
                 if (multiFileNamespaceInternalName.equals(internalNameUnsafe) ||
                         (packageInternalName.equals(internalNameUnsafe) && NamespaceCodegen.shouldGenerateNSClass(Arrays.asList(file)))) {
                     JetLightClass lightClass = JetLightClass.create(psiManager, file, qualifiedName);

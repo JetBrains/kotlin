@@ -286,7 +286,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    public static String getMultiFileNamespaceInternalName(String namespaceInternalName, PsiFile file) {
+    private static String getMultiFileNamespaceInternalName(@NotNull String namespaceInternalName, @NotNull PsiFile file) {
         String name = FileUtil.toSystemDependentName(file.getName());
 
         int substringFrom = name.lastIndexOf(File.separator) + 1;
@@ -301,5 +301,13 @@ public class NamespaceCodegen extends MemberCodegen {
         // dollar sign in the end is to prevent synthetic class from having "Test" or other parseable suffix
         // path hashCode to prevent same name / different path collision
         return namespaceInternalName + "$src$" + name.substring(substringFrom, substringTo) + "$" + pathHashCode;
+    }
+
+    @NotNull
+    public static String getNamespacePartInternalName(@NotNull JetFile file) {
+        FqName fqName = JetPsiUtil.getFQName(file);
+        JvmClassName namespaceJvmClassName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName);
+        String namespaceInternalName = namespaceJvmClassName.getInternalName();
+        return NamespaceCodegen.getMultiFileNamespaceInternalName(namespaceInternalName, file);
     }
 }

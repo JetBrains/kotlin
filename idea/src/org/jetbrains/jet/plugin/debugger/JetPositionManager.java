@@ -163,12 +163,11 @@ public class JetPositionManager implements PositionManager {
                 if (result.isNull()) {
                     FqName fqName = JetPsiUtil.getFQName(namespace);
                     boolean multiFileNamespace = isMultiFileNamespace(typeMapper.getBindingContext(), fqName);
-                    String namespaceInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName();
                     if (multiFileNamespace) {
-                        result.set(NamespaceCodegen.getMultiFileNamespaceInternalName(namespaceInternalName, namespace));
+                        result.set(NamespaceCodegen.getNamespacePartInternalName(namespace));
                     }
                     else {
-                        result.set(namespaceInternalName);
+                        result.set(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName());
                     }
                 }
             }
