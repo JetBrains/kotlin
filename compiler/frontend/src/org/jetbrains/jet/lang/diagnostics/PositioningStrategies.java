@@ -264,6 +264,14 @@ public class PositioningStrategies {
         }
     };
 
+    public static PositioningStrategy<JetProperty> VAL_OR_VAR_NODE = new PositioningStrategy<JetProperty>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetProperty property) {
+            return markNode(property.getValOrVarNode());
+        }
+    };
+
     public static PositioningStrategy<JetWhenEntry> ELSE_ENTRY = new PositioningStrategy<JetWhenEntry>() {
         @NotNull
         @Override

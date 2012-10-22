@@ -314,13 +314,7 @@ public interface Errors {
             DiagnosticFactory2.create(ERROR, DECLARATION_RETURN_TYPE);
 
     DiagnosticFactory2<JetProperty, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
-            DiagnosticFactory2.create(ERROR, new PositioningStrategy<JetProperty>() {
-                @NotNull
-                @Override
-                public List<TextRange> mark(@NotNull JetProperty property) {
-                    return markNode(property.getValOrVarNode());
-                }
-            });
+            DiagnosticFactory2.create(ERROR, VAL_OR_VAR_NODE);
 
     DiagnosticFactory2<PsiElement, JetClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED =
             DiagnosticFactory2.create(ERROR);
