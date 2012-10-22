@@ -154,11 +154,6 @@ public class DefaultErrorMessages {
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");
         MAP.put(SUPERTYPE_NOT_INITIALIZED_DEFAULT, "Constructor invocation should be explicitly specified");
-        MAP.put(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY, "A secondary constructor may appear only in a class that has a primary constructor");
-        MAP.put(SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST, "Secondary constructors must have an initializer list");
-        MAP.put(BY_IN_SECONDARY_CONSTRUCTOR, "'by'-clause is only supported for primary constructors");
-        MAP.put(INITIALIZER_WITH_NO_ARGUMENTS, "Constructor arguments required");
-        MAP.put(MANY_CALLS_TO_THIS, "Only one call to 'this(...)' is allowed");
         MAP.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", NAME);
         MAP.put(VIRTUAL_MEMBER_HIDDEN, "''{0}'' hides member of supertype ''{2}'' and needs ''override'' modifier", NAME, NAME, NAME);
 
@@ -192,8 +187,6 @@ public class DefaultErrorMessages {
                 "This property has a custom setter, so initialization using backing field required", NAME);
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER,
                 "Setter of this property can be overridden, so initialization using backing field required", NAME);
-
-        MAP.put(FUNCTION_PARAMETERS_OF_INLINE_FUNCTION, "Function parameters of inline function can only be invoked", NAME);
 
         MAP.put(UNREACHABLE_CODE, "Unreachable code");
 
