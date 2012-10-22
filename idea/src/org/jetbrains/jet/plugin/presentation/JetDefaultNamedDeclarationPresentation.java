@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.presentation;
 
 import com.intellij.navigation.ColoredItemPresentation;
+import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
@@ -34,6 +35,9 @@ public class JetDefaultNamedDeclarationPresentation implements ColoredItemPresen
 
     @Override
     public TextAttributesKey getTextAttributesKey() {
+        if (JetPsiUtil.isDeprecated(declaration)) {
+            return CodeInsightColors.DEPRECATED_ATTRIBUTES;
+        }
         return null;
     }
 
