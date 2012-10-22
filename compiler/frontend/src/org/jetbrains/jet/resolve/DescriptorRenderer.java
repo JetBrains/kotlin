@@ -114,7 +114,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return escape(type.toString());
         }
         else if (KotlinBuiltIns.getInstance().isUnit(type)) {
-            return escape(KotlinBuiltIns.getInstance().UNIT_ALIAS + (type.isNullable() ? "?" : ""));
+            return escape(KotlinBuiltIns.UNIT_ALIAS + (type.isNullable() ? "?" : ""));
         }
         else if (KotlinBuiltIns.getInstance().isTupleType(type)) {
             return escape(renderTupleType(type, shortNamesOnly));

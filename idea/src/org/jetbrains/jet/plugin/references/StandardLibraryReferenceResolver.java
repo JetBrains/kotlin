@@ -105,7 +105,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
                                           "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            scope.addClassifierAlias(KotlinBuiltIns.getInstance().UNIT_ALIAS, tuple0);
+            scope.addClassifierAlias(KotlinBuiltIns.UNIT_ALIAS, tuple0);
             jetNamespace.setMemberScope(scope);
 
             TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
@@ -164,7 +164,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         }
         for (DeclarationDescriptor member : descriptors) {
             if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
-                                                                                       KotlinBuiltIns.getInstance().UNIT_ALIAS.getName()))) {
+                                                                                       KotlinBuiltIns.UNIT_ALIAS.getName()))) {
                 return member;
             }
         }
