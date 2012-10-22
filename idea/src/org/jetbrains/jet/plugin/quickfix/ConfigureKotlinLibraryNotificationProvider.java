@@ -65,23 +65,25 @@ import java.io.IOException;
 
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 
+// TODO change "implements" to "extends" on updating to IDEA 122.598+
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
     public static final String LIBRARY_NAME = "KotlinRuntime";
     public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
     private final Project myProject;
 
+    public ConfigureKotlinLibraryNotificationProvider(Project project) {
+        myProject = project;
+    }
+
     @Override
     public Key<EditorNotificationPanel> getKey() {
         return KEY;
     }
 
-    public ConfigureKotlinLibraryNotificationProvider(Project project) {
-        myProject = project;
-    }
-
-
     @Override
+    // TODO change signature on updating to IDEA 122.598+
+    //public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
     public EditorNotificationPanel createNotificationPanel(VirtualFile file) {
         try {
             if (file.getFileType() != JetFileType.INSTANCE) return null;
