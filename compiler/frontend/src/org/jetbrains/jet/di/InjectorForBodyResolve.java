@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
@@ -52,6 +53,7 @@ public class InjectorForBodyResolve {
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private ResolutionResultsHandler resolutionResultsHandler;
     private OverloadingConflictResolver overloadingConflictResolver;
     private ControlFlowAnalyzer controlFlowAnalyzer;
     private DeclarationsChecker declarationsChecker;
@@ -77,6 +79,7 @@ public class InjectorForBodyResolve {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.resolutionResultsHandler = new ResolutionResultsHandler();
         this.overloadingConflictResolver = new OverloadingConflictResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
@@ -95,7 +98,7 @@ public class InjectorForBodyResolve {
 
         callResolver.setDescriptorResolver(descriptorResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setOverloadingConflictResolver(overloadingConflictResolver);
+        callResolver.setResolutionResultsHandler(resolutionResultsHandler);
         callResolver.setTypeResolver(typeResolver);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -114,6 +117,8 @@ public class InjectorForBodyResolve {
         typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
+
+        resolutionResultsHandler.setOverloadingConflictResolver(overloadingConflictResolver);
 
         controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         controlFlowAnalyzer.setTrace(bindingTrace);

@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
@@ -68,6 +69,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private ResolutionResultsHandler resolutionResultsHandler;
     private OverloadingConflictResolver overloadingConflictResolver;
     private ImportsResolver importsResolver;
     private ScriptHeaderResolver scriptHeaderResolver;
@@ -102,6 +104,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.resolutionResultsHandler = new ResolutionResultsHandler();
         this.overloadingConflictResolver = new OverloadingConflictResolver();
         this.importsResolver = new ImportsResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
@@ -158,7 +161,7 @@ public class InjectorForTopDownAnalyzerForJs {
 
         callResolver.setDescriptorResolver(descriptorResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setOverloadingConflictResolver(overloadingConflictResolver);
+        callResolver.setResolutionResultsHandler(resolutionResultsHandler);
         callResolver.setTypeResolver(typeResolver);
 
         expressionTypingServices.setCallResolver(callResolver);
@@ -170,6 +173,8 @@ public class InjectorForTopDownAnalyzerForJs {
         typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
+
+        resolutionResultsHandler.setOverloadingConflictResolver(overloadingConflictResolver);
 
         importsResolver.setConfiguration(moduleConfiguration);
         importsResolver.setContext(topDownAnalysisContext);

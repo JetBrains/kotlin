@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -40,6 +41,7 @@ public class InjectorForMacros {
     private AnnotationResolver annotationResolver;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private ResolutionResultsHandler resolutionResultsHandler;
     private OverloadingConflictResolver overloadingConflictResolver;
 
     public InjectorForMacros(
@@ -54,6 +56,7 @@ public class InjectorForMacros {
         this.annotationResolver = new AnnotationResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.resolutionResultsHandler = new ResolutionResultsHandler();
         this.overloadingConflictResolver = new OverloadingConflictResolver();
 
         this.expressionTypingServices.setCallResolver(callResolver);
@@ -63,7 +66,7 @@ public class InjectorForMacros {
 
         callResolver.setDescriptorResolver(descriptorResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setOverloadingConflictResolver(overloadingConflictResolver);
+        callResolver.setResolutionResultsHandler(resolutionResultsHandler);
         callResolver.setTypeResolver(typeResolver);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -77,6 +80,8 @@ public class InjectorForMacros {
         typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
+
+        resolutionResultsHandler.setOverloadingConflictResolver(overloadingConflictResolver);
 
     }
 

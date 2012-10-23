@@ -61,8 +61,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
-import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_CANDIDATE;
-import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_RESULT;
 import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -74,7 +72,7 @@ public class CallResolver {
     private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
 
     @NotNull
-    private OverloadingConflictResolver overloadingConflictResolver;
+    private ResolutionResultsHandler resolutionResultsHandler;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
@@ -82,10 +80,9 @@ public class CallResolver {
     @NotNull
     private DescriptorResolver descriptorResolver;
 
-
     @Inject
-    public void setOverloadingConflictResolver(@NotNull OverloadingConflictResolver overloadingConflictResolver) {
-        this.overloadingConflictResolver = overloadingConflictResolver;
+    public void setResolutionResultsHandler(@NotNull ResolutionResultsHandler resolutionResultsHandler) {
+        this.resolutionResultsHandler = resolutionResultsHandler;
     }
 
     @Inject
@@ -342,7 +339,8 @@ public class CallResolver {
             }
             completeTypeInferenceDependentOnExpectedTypeForCall(CallResolutionContext.create(context, tracing, resolvedCall), successful, failed);
         }
-        OverloadResolutionResultsImpl<D> results = computeResultAndReportErrors(context.trace, tracing, successful, failed);
+        OverloadResolutionResultsImpl<D> results = resolutionResultsHandler.computeResultAndReportErrors(context.trace, tracing, successful,
+                                                                                                         failed);
         if (!results.isSingleResult()) {
             checkTypesWithNoCallee(context);
         }
@@ -612,8 +610,9 @@ public class CallResolver {
             }
         }
         
-        OverloadResolutionResultsImpl<F> results = computeResultAndReportErrors(task.trace, task.tracing, successfulCandidates,
-                                                                                failedCandidates);
+        OverloadResolutionResultsImpl<F> results = resolutionResultsHandler.computeResultAndReportErrors(task.trace, task.tracing,
+                                                                                                         successfulCandidates,
+                                                                                                         failedCandidates);
         if (!results.isSingleResult() && !results.isIncomplete()) {
             checkTypesWithNoCallee(task.toBasic());
         }
@@ -1033,122 +1032,6 @@ public class CallResolver {
         }
     }
 
-    @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
-            @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing,
-            @NotNull Set<ResolvedCallWithTrace<D>> successfulCandidates,
-            @NotNull Set<ResolvedCallWithTrace<D>> failedCandidates) {
-        // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
-
-        if (successfulCandidates.size() > 0) {
-            OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulCandidates, true);
-            if (results.isSingleResult()) {
-                results.getResultingCall().getTrace().moveAllMyDataTo(trace);
-            }
-            if (results.isAmbiguity()) {
-                // This check is needed for the following case:
-                //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
-                if (allClean(results.getResultingCalls())) {
-                    tracing.ambiguity(trace, results.getResultingCalls());
-                }
-                tracing.recordAmbiguity(trace, results.getResultingCalls());
-            }
-            return results;
-        }
-        else if (!failedCandidates.isEmpty()) {
-            if (failedCandidates.size() != 1) {
-                // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
-                // and some are not OK at all. In this case we'd like to say "unsafe call" rather than "none applicable"
-                // Used to be: weak errors. Generalized for future extensions
-                for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
-                    Set<ResolvedCallWithTrace<D>> thisLevel = Sets.newLinkedHashSet();
-                    for (ResolvedCallWithTrace<D> candidate : failedCandidates) {
-                        if (severityLevel.contains(candidate.getStatus())) {
-                            thisLevel.add(candidate);
-                        }
-                    }
-                    if (!thisLevel.isEmpty()) {
-                        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false);
-                        if (results.isSingleResult()) {
-                            results.getResultingCall().getTrace().moveAllMyDataTo(trace);
-                            return OverloadResolutionResultsImpl.singleFailedCandidate(results.getResultingCall());
-                        }
-
-                        tracing.noneApplicable(trace, results.getResultingCalls());
-                        tracing.recordAmbiguity(trace, results.getResultingCalls());
-                        return OverloadResolutionResultsImpl.manyFailedCandidates(results.getResultingCalls());
-                    }
-                }
-
-                assert false : "Should not be reachable, cause every status must belong to some level";
-
-                Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
-                if (noOverrides.size() != 1) {
-                    tracing.noneApplicable(trace, noOverrides);
-                    tracing.recordAmbiguity(trace, noOverrides);
-                    return OverloadResolutionResultsImpl.manyFailedCandidates(noOverrides);
-                }
-
-                failedCandidates = noOverrides;
-            }
-
-            ResolvedCallWithTrace<D> failed = failedCandidates.iterator().next();
-            failed.getTrace().moveAllMyDataTo(trace);
-            return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
-        }
-        else {
-            tracing.unresolvedReference(trace);
-            return OverloadResolutionResultsImpl.nameNotFound();
-        }
-    }
-
-    private static <D extends CallableDescriptor> boolean allClean(Collection<ResolvedCallWithTrace<D>> results) {
-        for (ResolvedCallWithTrace<D> result : results) {
-            if (result.isDirty()) return false;
-        }
-        return true;
-    }
-
-    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
-            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
-            boolean discriminateGenerics
-    ) {
-        if (candidates.size() != 1) {
-            Set<ResolvedCallWithTrace<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
-            for (Iterator<ResolvedCallWithTrace<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
-                ResolvedCallWithTrace<D> candidate = iterator.next();
-                if (candidate.isDirty()) {
-                    iterator.remove();
-                }
-            }
-
-            if (cleanCandidates.isEmpty()) {
-                cleanCandidates = candidates;
-            }
-            ResolvedCallWithTrace<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, false);
-            if (maximallySpecific != null) {
-                return OverloadResolutionResultsImpl.success(maximallySpecific);
-            }
-
-            if (discriminateGenerics) {
-                ResolvedCallWithTrace<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
-                if (maximallySpecificGenericsDiscriminated != null) {
-                    return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
-                }
-            }
-
-            Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOverrides(candidates, MAP_TO_RESULT);
-
-            return OverloadResolutionResultsImpl.ambiguity(noOverrides);
-        }
-        else {
-            ResolvedCallWithTrace<D> result = candidates.iterator().next();
-
-            return OverloadResolutionResultsImpl.success(result);
-        }
-    }
-
     private void checkGenericBoundsInAFunctionCall(List<JetTypeProjection> jetTypeArguments, List<JetType> typeArguments, CallableDescriptor functionDescriptor, BindingTrace trace) {
         Map<TypeConstructor, TypeProjection> context = Maps.newHashMap();
 
@@ -1181,7 +1064,8 @@ public class CallResolver {
             ResolvedCallImpl<FunctionDescriptor> call = ResolvedCallImpl.create(candidate, temporaryBindingTrace);
             calls.add(call);
         }
-        return computeResultAndReportErrors(trace, TracingStrategy.EMPTY, calls, Collections.<ResolvedCallWithTrace<FunctionDescriptor>>emptySet());
+        return resolutionResultsHandler.computeResultAndReportErrors(trace, TracingStrategy.EMPTY, calls,
+                                                                     Collections.<ResolvedCallWithTrace<FunctionDescriptor>>emptySet());
     }
 
     private List<ResolutionCandidate<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver,
