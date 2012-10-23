@@ -23,12 +23,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @NotNull
     public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
-        return new ResolvedCallImpl<D>(candidate, trace);
+        return new ResolvedCallImpl<D>(candidate.getDescriptor(), candidate.getThisObject(), candidate.getReceiverArgument(), candidate.getExplicitReceiverKind(), candidate.isSafeCall(), trace);
     }
 
     private final D candidateDescriptor;
@@ -71,17 +71,24 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private boolean someArgumentHasNoType = false;
-    private DelegatingBindingTrace trace;
+    private final DelegatingBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
 
-    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
-        this.candidateDescriptor = candidate.getDescriptor();
-        this.thisObject = candidate.getThisObject();
-        this.receiverArgument = candidate.getReceiverArgument();
-        this.explicitReceiverKind = candidate.getExplicitReceiverKind();
-        this.isSafeCall = candidate.isSafeCall();
+    private ResolvedCallImpl(
+            @NotNull D candidateDescriptor,
+            @NotNull ReceiverDescriptor thisObject,
+            @NotNull ReceiverDescriptor receiverArgument,
+            @NotNull ExplicitReceiverKind explicitReceiverKind,
+            boolean isSafeCall,
+            @NotNull DelegatingBindingTrace trace
+    ) {
+        this.candidateDescriptor = candidateDescriptor;
+        this.thisObject = thisObject;
+        this.receiverArgument = receiverArgument;
+        this.explicitReceiverKind = explicitReceiverKind;
+        this.isSafeCall = isSafeCall;
         this.trace = trace;
     }
 
@@ -229,5 +236,24 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     public boolean isSafeCall() {
         return isSafeCall;
+    }
+
+    public ResolvedCallImpl<D> copy(@NotNull ResolutionContext context) {
+        ResolvedCallImpl<D> resolvedCall = new ResolvedCallImpl<D>(
+                candidateDescriptor, thisObject, receiverArgument, explicitReceiverKind, isSafeCall,
+                TemporaryBindingTrace.create(context.trace, this.trace + "(copy)"));
+        this.trace.addAllMyDataTo(resolvedCall.trace);
+        resolvedCall.trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), resolvedCall);
+
+        resolvedCall.someArgumentHasNoType = this.someArgumentHasNoType;
+        resolvedCall.hasUnknownTypeParameters = this.hasUnknownTypeParameters;
+        if (constraintSystem != null) {
+            resolvedCall.constraintSystem = this.constraintSystem.copy();
+        }
+        resolvedCall.typeArguments.putAll(this.typeArguments);
+        resolvedCall.valueArguments.putAll(this.valueArguments);
+        resolvedCall.autoCasts.putAll(this.autoCasts);
+        assert this.resultingDescriptor == null;
+        return resolvedCall;
     }
 }
