@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;

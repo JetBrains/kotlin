@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;

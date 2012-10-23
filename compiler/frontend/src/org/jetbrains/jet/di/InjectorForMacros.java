@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 

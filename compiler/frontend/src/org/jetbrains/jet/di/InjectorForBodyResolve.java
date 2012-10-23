@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;

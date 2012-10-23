@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.results;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 
 import java.util.Collection;
@@ -27,7 +28,7 @@ import java.util.Collections;
 /**
 * @author abreslav
 */
-/*package*/ class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
+public class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallWithTrace<D> candidate) {
         if (candidate.hasUnknownTypeParameters()) {
