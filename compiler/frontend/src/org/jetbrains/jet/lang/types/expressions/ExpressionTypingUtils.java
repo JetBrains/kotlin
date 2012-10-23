@@ -252,7 +252,7 @@ public class ExpressionTypingUtils {
             }
         }
 
-        constraintSystem.addSupertypeConstraint(callReceiver.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
+        constraintSystem.addSubtypeConstraint(callReceiver.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
         return constraintSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem);
     }
 

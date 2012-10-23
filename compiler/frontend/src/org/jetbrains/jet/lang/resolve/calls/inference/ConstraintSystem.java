@@ -42,22 +42,22 @@ public interface ConstraintSystem {
     Set<TypeParameterDescriptor> getTypeVariables();
 
     /**
-     * Adds a constraint that the subject type is a supertype of the constraining type.<p/>
+     * Adds a constraint that the constraining type is a subtype of the subject type.<p/>
      * Asserts that only subject type may contain registered type variables. <p/>
      *
      * For example, for {@code "fun <T> id(t: T) {}"} to infer <tt>T</tt> in invocation <tt>"id(1)"</tt>
-     * should be generated a constraint <tt>"T is a supertype of Int"</tt> where T is a subject type, and Int is a constraining type.
+     * should be generated a constraint <tt>"Int is a subtype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    void addSupertypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
+    void addSubtypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
     /**
-     * Adds a constraint that subject type is a subtype of constraining type. <p/>
+     * Adds a constraint that the constraining type is a supertype of the subject type. <p/>
      * Asserts that only subject type may contain registered type variables. <p/>
      *
      * For example, for {@code "fun <T> create() : T"} to infer <tt>T</tt> in invocation <tt>"val i: Int = create()"</tt>
-     * should be generated a constraint <tt>"T is a subtype of Int"</tt> where T is a subject type, and Int is a constraining type.
+     * should be generated a constraint <tt>"Int is a supertype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    void addSubtypingConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
+    void addSupertypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
 
     /**
      * Returns <tt>true</tt> if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).

@@ -374,8 +374,8 @@ public class CallResolver {
         }
 
         ConstraintSystem constraintSystemWithoutExpectedTypeConstraint = constraintSystem.copy();
-        constraintSystem.addSubtypingConstraint(descriptor.getReturnType(), context.expectedType,
-                                                 ConstraintPosition.EXPECTED_TYPE_POSITION);
+        constraintSystem.addSupertypeConstraint(descriptor.getReturnType(), context.expectedType,
+                                                ConstraintPosition.EXPECTED_TYPE_POSITION);
 
 
         if (!constraintSystem.isSuccessful()) {
@@ -761,8 +761,8 @@ public class CallResolver {
         ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
         ReceiverDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
         if (receiverArgument.exists() && receiverParameter.exists()) {
-            constraintsSystem.addSupertypeConstraint(receiverParameter.getType(), receiverArgument.getType(),
-                                                     ConstraintPosition.RECEIVER_POSITION);
+            constraintsSystem.addSubtypeConstraint(receiverParameter.getType(), receiverArgument.getType(),
+                                                   ConstraintPosition.RECEIVER_POSITION);
         }
 
         ConstraintSystem constraintSystemWithRightTypeParameters = constraintsSystem.replaceTypeVariables(new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
@@ -816,7 +816,7 @@ public class CallResolver {
         else {
             type = null;
         }
-        constraintSystem.addSupertypeConstraint(effectiveExpectedType, type, ConstraintPosition.getValueParameterPosition(
+        constraintSystem.addSubtypeConstraint(effectiveExpectedType, type, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         //todo no return
         if (isErrorType != null) {
