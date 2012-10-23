@@ -3,7 +3,7 @@ package js.dom.html5
 import js.native
 import js.noImpl
 import js.dom.html.HTMLElement
-import js.dom.core.Element
+import org.w3c.dom.Element
 
 public native trait HTMLCanvasElement : HTMLElement {
     public native var width: Double = js.noImpl

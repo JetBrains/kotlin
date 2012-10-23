@@ -1,15 +1,17 @@
 package js.dom.html
 
-import js.native
-import js.noImpl
-import js.dom.core.*
+import org.w3c.dom.*
+
+native
+public val window: Window = noImpl
+
+native
+public var document: HTMLDocument = noImpl
 
 public native trait Object {
-
 }
 
 public native trait Image : HTMLImageElement {
-
 }
 
 public native trait Navigator {
@@ -82,16 +84,11 @@ public native trait Selection {
 
 }
 
-public native trait document {
-    public native var styleSheets: Array<Stylesheet> = js.noImpl
-}
-
 public native trait CSSRule {
     public native var selectorText: String = js.noImpl
 }
 
 public native trait Stylesheet {
-
 }
 
 public native trait History {
