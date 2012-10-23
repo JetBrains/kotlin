@@ -38,7 +38,7 @@ import java.io.File;
 public class CompletionHandlerTest extends LightCompletionTestCase {
 
     public void testClassCompletionImport() {
-        doTest(CompletionType.BASIC, 2, "SortedSet", null);
+        doTest(CompletionType.BASIC, 2, "SortedSet", null, '\n');
     }
 
     public void testDoNotInsertImportForAlreadyImported() {
@@ -46,7 +46,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void testNonStandardArray() {
-        doTest(CompletionType.BASIC, 2, "Array", "java.lang.reflect");
+        doTest(CompletionType.BASIC, 2, "Array", "java.lang.reflect", '\n');
     }
 
     public void testNoParamsFunction() {
@@ -79,6 +79,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testFunctionLiteralInsertOnSpace() {
+        doTest(' ');
+    }
+
     public void testFunctionLiteralInsertWhenNoSpacesForBraces() {
         CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
         JetCodeStyleSettings jetSettings = settings.getCustomSettings(JetCodeStyleSettings.class);
@@ -96,14 +100,18 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void testHigherOrderFunctionWithArg() {
-        doTest(CompletionType.BASIC, 2, "filterNot", null);
+        doTest(CompletionType.BASIC, 2, "filterNot", null, '\n');
     }
 
     public void doTest() {
-        doTest(CompletionType.BASIC, 2, null, null);
+        doTest('\n');
     }
 
-    public void doTest(CompletionType type, int time, @Nullable String lookupString, @Nullable String tailText) {
+    public void doTest(char completionChar) {
+        doTest(CompletionType.BASIC, 2, null, null, completionChar);
+    }
+
+    public void doTest(CompletionType type, int time, @Nullable String lookupString, @Nullable String tailText, char completionChar) {
         try {
             configureByFileNoComplete(getBeforeFileName());
             setType(type);
@@ -113,7 +121,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
 
                 LookupElement item = getExistentLookupElement(lookupString, tailText);
                 if (item != null) {
-                    selectItem(item, '\n');
+                    selectItem(item, completionChar);
                 }
             }
             else {

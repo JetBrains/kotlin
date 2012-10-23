@@ -104,6 +104,10 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         if (openingBracketIndex == -1) {
             // Insert ()/{} if it's not already exist
             if (braces) {
+                if (context.getCompletionChar() == ' ') {
+                    context.setAddCompletionChar(false);
+                }
+
                 if (isInsertSpacesInOneLineFunctionEnabled(offsetElement.getProject())) {
                     document.insertString(offset, " {  }");
                     inBracketsShift = 1;
