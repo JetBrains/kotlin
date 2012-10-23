@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.Call.CallType;
 
 /**
@@ -30,7 +31,8 @@ public class CallKey {
         this.element = element;
     }
 
-    public static CallKey create(CallType callType, JetExpression element) {
+    @NotNull
+    public static CallKey create(@NotNull CallType callType, @NotNull JetExpression element) {
         return new CallKey(callType, element);
     }
 
