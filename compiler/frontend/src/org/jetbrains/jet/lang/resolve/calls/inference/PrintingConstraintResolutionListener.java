@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.ResolutionDebugInfo;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Set;

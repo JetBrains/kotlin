@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.ResolutionStatus;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 
 /**
  * @author svtk
