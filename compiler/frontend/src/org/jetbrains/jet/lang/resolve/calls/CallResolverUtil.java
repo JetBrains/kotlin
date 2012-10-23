@@ -1,0 +1,60 @@
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet.lang.resolve.calls;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.types.JetType;
+
+import java.util.Map;
+
+public class CallResolverUtil {
+
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> copy(@NotNull ResolvedCallImpl<D> call, @NotNull ResolutionContext context) {
+        ResolutionCandidate<D> candidate = ResolutionCandidate.create(call.getCandidateDescriptor(), call.getThisObject(),
+                                                                      call.getReceiverArgument(), call.getExplicitReceiverKind(),
+                                                                      call.isSafeCall());
+
+        TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, call.getTrace().toString() + "(copy)");
+        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, trace);
+
+        call.getTrace().addAllMyDataTo(trace);
+        trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);
+
+        if (call.isDirty()) {
+            copy.argumentHasNoType();
+        }
+        copy.setHasUnknownTypeParameters(call.hasUnknownTypeParameters());
+        ConstraintSystem constraintSystem = call.getConstraintSystem();
+        if (constraintSystem != null) {
+            copy.setConstraintSystem(constraintSystem.copy());
+        }
+        for (Map.Entry<TypeParameterDescriptor, JetType> entry : call.getTypeArguments().entrySet()) {
+            copy.recordTypeArgument(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
+            copy.recordValueArgument(entry.getKey(), entry.getValue());
+        }
+        return copy;
+    }
+
+}

@@ -320,7 +320,7 @@ public class CallResolver {
         Set<ResolvedCallWithTrace<D>> failed = Sets.newLinkedHashSet();
         for (ResolvedCall<? extends D> call : resultsWithIncompleteTypeInference.getResultingCalls()) {
             if (!(call instanceof ResolvedCallImpl)) continue;
-            ResolvedCallImpl<D> resolvedCall = ((ResolvedCallImpl<D>) call).copy(context);
+            ResolvedCallImpl<D> resolvedCall = CallResolverUtil.copy((ResolvedCallImpl<D>) call, context);
             if (!resolvedCall.hasUnknownTypeParameters()) {
                 if (resolvedCall.getStatus().isSuccess()) {
                     successful.add(resolvedCall);

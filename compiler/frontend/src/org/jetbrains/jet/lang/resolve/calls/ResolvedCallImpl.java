@@ -57,7 +57,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @NotNull
     public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
-        return new ResolvedCallImpl<D>(candidate.getDescriptor(), candidate.getThisObject(), candidate.getReceiverArgument(), candidate.getExplicitReceiverKind(), candidate.isSafeCall(), trace);
+        return new ResolvedCallImpl<D>(candidate, trace);
     }
 
     private final D candidateDescriptor;
@@ -76,19 +76,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
 
-    private ResolvedCallImpl(
-            @NotNull D candidateDescriptor,
-            @NotNull ReceiverDescriptor thisObject,
-            @NotNull ReceiverDescriptor receiverArgument,
-            @NotNull ExplicitReceiverKind explicitReceiverKind,
-            boolean isSafeCall,
-            @NotNull DelegatingBindingTrace trace
-    ) {
-        this.candidateDescriptor = candidateDescriptor;
-        this.thisObject = thisObject;
-        this.receiverArgument = receiverArgument;
-        this.explicitReceiverKind = explicitReceiverKind;
-        this.isSafeCall = isSafeCall;
+    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
+        this.candidateDescriptor = candidate.getDescriptor();
+        this.thisObject = candidate.getThisObject();
+        this.receiverArgument = candidate.getReceiverArgument();
+        this.explicitReceiverKind = candidate.getExplicitReceiverKind();
+        this.isSafeCall = candidate.isSafeCall();
         this.trace = trace;
     }
 
@@ -236,24 +229,5 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     public boolean isSafeCall() {
         return isSafeCall;
-    }
-
-    public ResolvedCallImpl<D> copy(@NotNull ResolutionContext context) {
-        ResolvedCallImpl<D> resolvedCall = new ResolvedCallImpl<D>(
-                candidateDescriptor, thisObject, receiverArgument, explicitReceiverKind, isSafeCall,
-                TemporaryBindingTrace.create(context.trace, this.trace + "(copy)"));
-        this.trace.addAllMyDataTo(resolvedCall.trace);
-        resolvedCall.trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), resolvedCall);
-
-        resolvedCall.someArgumentHasNoType = this.someArgumentHasNoType;
-        resolvedCall.hasUnknownTypeParameters = this.hasUnknownTypeParameters;
-        if (constraintSystem != null) {
-            resolvedCall.constraintSystem = this.constraintSystem.copy();
-        }
-        resolvedCall.typeArguments.putAll(this.typeArguments);
-        resolvedCall.valueArguments.putAll(this.valueArguments);
-        resolvedCall.autoCasts.putAll(this.autoCasts);
-        assert this.resultingDescriptor == null;
-        return resolvedCall;
     }
 }
