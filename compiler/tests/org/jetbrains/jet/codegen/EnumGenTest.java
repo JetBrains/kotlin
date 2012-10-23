@@ -164,6 +164,10 @@ public class EnumGenTest extends CodegenTestCase {
         blackBoxFile("enum/inner.kt");
     }
 
+    public void testInFunction() {
+        blackBoxFile("enum/inFunction.kt");
+    }
+
     public void testInnerWithExistingClassObject() {
         blackBoxFile("enum/innerWithExistingClassObject.kt");
     }

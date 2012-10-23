@@ -91,13 +91,16 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     }
 
     private static boolean isStatic(ClassDescriptor declarationClassDescriptor) {
+        if (declarationClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+            return true;
+        }
         DeclarationDescriptor containingDescriptor = declarationClassDescriptor.getContainingDeclaration();
         if (containingDescriptor instanceof NamespaceDescriptor) {
             return true;
         }
         else if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor containingClassDescriptor = (ClassDescriptor) containingDescriptor;
-            return containingClassDescriptor.getKind().isObject() || declarationClassDescriptor.getKind() == ClassKind.ENUM_CLASS;
+            return containingClassDescriptor.getKind().isObject();
         }
         else {
             return false;
