@@ -157,6 +157,10 @@ public class TypeInfoTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testKt2811() throws Exception {
+        blackBoxFile("typeInfo/kt2811.kt");
+    }
+
     public void testInheritance() throws Exception {
         blackBoxFile("typeInfo/inheritance.jet");
 //        System.out.println(generateToText());

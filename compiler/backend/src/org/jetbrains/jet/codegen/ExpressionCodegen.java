@@ -1911,9 +1911,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else if (descriptor instanceof AutoCastReceiver) {
             AutoCastReceiver autoCastReceiver = (AutoCastReceiver) descriptor;
-            Type intermediateType = asmType(autoCastReceiver.getType());
-            generateFromResolvedCall(autoCastReceiver.getOriginal(), intermediateType);
-            StackValue.onStack(intermediateType).put(type, v);
+            Type originalType = asmType(autoCastReceiver.getOriginal().getType());
+            generateFromResolvedCall(autoCastReceiver.getOriginal(), originalType);
+            StackValue.onStack(originalType).put(type, v);
         }
         else {
             throw new UnsupportedOperationException("Unsupported receiver type: " + descriptor);
