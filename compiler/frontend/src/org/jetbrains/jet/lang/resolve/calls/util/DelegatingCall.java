@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.util;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
