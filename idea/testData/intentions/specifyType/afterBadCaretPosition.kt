@@ -1,2 +1,2 @@
-// "Specify Type Explicitly" "false"
+// "Specify type explicitly" "false"
 val x = "<caret>"

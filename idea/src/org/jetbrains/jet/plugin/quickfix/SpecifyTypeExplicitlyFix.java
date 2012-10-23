@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -40,21 +39,15 @@ public class SpecifyTypeExplicitlyFix extends SpecifyTypeExplicitlyAction {
         //noinspection unchecked
         JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetProperty.class, JetNamedFunction.class);
         if (declaration instanceof JetProperty) {
-            setText(getQuickFixText(JetBundle.message("specify.type.explicitly.add.action.name")));
+            setText(JetBundle.message("specify.type.explicitly.add.action.name"));
         }
         else if (declaration instanceof JetNamedFunction) {
-            setText(getQuickFixText(JetBundle.message("specify.type.explicitly.add.return.type.action.name")));
+            setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
         else {
             assert false : "Couldn't find property or function";
         }
 
         return !ErrorUtils.isErrorType(getTypeForDeclaration(declaration));
-    }
-
-    // There is an implicit rule that quick fix text has only first letter capitalized, while intention text
-    @NotNull
-    private static String getQuickFixText(@NotNull String intentionText) {
-        return StringUtil.capitalize(intentionText.toLowerCase());
     }
 }
