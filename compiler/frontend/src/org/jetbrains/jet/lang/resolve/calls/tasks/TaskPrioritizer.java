@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -46,7 +47,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-/*package*/ abstract class TaskPrioritizer {
+public abstract class TaskPrioritizer {
 
     public static <D extends CallableDescriptor> void splitLexicallyLocalDescriptors(
             @NotNull Collection<ResolutionCandidate<D>> allDescriptors,
@@ -65,7 +66,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
     }
 
     @Nullable
-    /*package*/ static JetSuperExpression getReceiverSuper(@NotNull ReceiverDescriptor receiver) {
+    public static JetSuperExpression getReceiverSuper(@NotNull ReceiverDescriptor receiver) {
         if (receiver instanceof ExpressionReceiver) {
             ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiver;
             JetExpression expression = expressionReceiver.getExpression();

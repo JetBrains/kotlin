@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.psi.Call;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.calls.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
@@ -50,11 +47,11 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     }
 
     /*package*/ static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor) {
-        return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER, NO_EXPLICIT_RECEIVER, null);
+        return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, boolean isSafeCall) {
-        return create(descriptor, NO_RECEIVER, NO_RECEIVER, NO_EXPLICIT_RECEIVER, isSafeCall);
+        return create(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, isSafeCall);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ReceiverDescriptor thisObject,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -33,7 +33,7 @@ import java.util.*;
  */
 public class CallableDescriptorCollectors {
 
-    /*package*/ static CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS = new CallableDescriptorCollector<FunctionDescriptor>() {
+    public static CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS = new CallableDescriptorCollector<FunctionDescriptor>() {
 
         @NotNull
         @Override
@@ -78,7 +78,7 @@ public class CallableDescriptorCollectors {
         }
     };
 
-    /*package*/ static CallableDescriptorCollector<VariableDescriptor> VARIABLES = new CallableDescriptorCollector<VariableDescriptor>() {
+    public static CallableDescriptorCollector<VariableDescriptor> VARIABLES = new CallableDescriptorCollector<VariableDescriptor>() {
 
         @NotNull
         @Override
@@ -116,7 +116,7 @@ public class CallableDescriptorCollectors {
         }
     };
     
-    /*package*/ static CallableDescriptorCollector<VariableDescriptor> PROPERTIES = new CallableDescriptorCollector<VariableDescriptor>() {
+    public static CallableDescriptorCollector<VariableDescriptor> PROPERTIES = new CallableDescriptorCollector<VariableDescriptor>() {
         private Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
             ArrayList<VariableDescriptor> properties = Lists.newArrayList();
             for (VariableDescriptor descriptor : variableDescriptors) {
@@ -151,6 +151,6 @@ public class CallableDescriptorCollectors {
         }
     };
 
-    /*package*/ static List<CallableDescriptorCollector<? extends CallableDescriptor>> FUNCTIONS_AND_VARIABLES = Lists.newArrayList(
+    public static List<CallableDescriptorCollector<? extends CallableDescriptor>> FUNCTIONS_AND_VARIABLES = Lists.newArrayList(
             FUNCTIONS, VARIABLES);
 }

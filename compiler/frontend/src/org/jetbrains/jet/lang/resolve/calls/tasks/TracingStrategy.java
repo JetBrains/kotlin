@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -36,7 +36,7 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.
 /**
 * @author abreslav
 */
-/*package*/ interface TracingStrategy {
+public interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
 
         @Override

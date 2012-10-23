@@ -26,11 +26,11 @@ import org.jetbrains.jet.lang.types.JetType;
 * @author abreslav
 */
 public abstract class ResolutionContext {
-    /*package*/ final BindingTrace trace;
-    /*package*/ final JetScope scope;
-    /*package*/ final Call call;
-    /*package*/ final JetType expectedType;
-    /*package*/ final DataFlowInfo dataFlowInfo;
+    public final BindingTrace trace;
+    public final JetScope scope;
+    public final Call call;
+    public final JetType expectedType;
+    public final DataFlowInfo dataFlowInfo;
 
     protected ResolutionContext(BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo) {
         this.trace = trace;
