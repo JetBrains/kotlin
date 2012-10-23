@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -291,9 +292,21 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitPrefixExpression(@NotNull JetPrefixExpression expression,
-            @NotNull TranslationContext context) {
-        return UnaryOperationTranslator.translate(expression, context);
+    public JsNode visitPrefixExpression(
+            @NotNull JetPrefixExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        JetSimpleNameExpression operationReference = expression.getOperationReference();
+        IElementType operationToken = operationReference.getReferencedNameElementType();
+        if (JetTokens.LABELS.contains(operationToken)) {
+            JetExpression baseExpression = expression.getBaseExpression();
+            assert baseExpression != null;
+            return source(new JsLabel(context.scope().declareName(getReferencedName(operationReference)),
+                                      convertToStatement(baseExpression.accept(this, context))), expression);
+        }
+        else {
+            return UnaryOperationTranslator.translate(expression, context);
+        }
     }
 
     @Override
@@ -343,18 +356,35 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return TranslationUtils.sure(jsExpression, context);
     }
 
+    private static String getReferencedName(JetSimpleNameExpression expression) {
+        String name = expression.getReferencedName();
+        return name.charAt(0) == '@' ? name.substring(1) + '$' : name;
+    }
+
+    private static String getTargetLabel(JetLabelQualifiedExpression expression, TranslationContext context) {
+        JetSimpleNameExpression labelElement = expression.getTargetLabel();
+        if (labelElement == null) {
+            return null;
+        }
+        else {
+            JsName name = context.scope().findName(getReferencedName(labelElement));
+            assert name != null;
+            return name.getIdent();
+        }
+    }
+
     @Override
     @NotNull
     public JsNode visitBreakExpression(@NotNull JetBreakExpression expression,
             @NotNull TranslationContext context) {
-        return new JsBreak();
+        return new JsBreak(getTargetLabel(expression, context));
     }
 
     @Override
     @NotNull
     public JsNode visitContinueExpression(@NotNull JetContinueExpression expression,
             @NotNull TranslationContext context) {
-        return new JsContinue();
+        return new JsContinue(getTargetLabel(expression, context));
     }
 
     @Override

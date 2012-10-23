@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.utils;
 
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -119,14 +118,6 @@ public final class PsiUtils {
             return ((JetClass) classDeclaration).getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
-    }
-
-    @NotNull
-    public static JetObjectDeclaration getObjectDeclarationForName(@NotNull JetObjectDeclarationName name) {
-        PsiElement parent = name.getParent();
-        assert parent instanceof JetObjectDeclaration :
-                "ObjectDeclarationName should have a parent of type ObjectDeclaration.";
-        return (JetObjectDeclaration) parent;
     }
 
     @NotNull

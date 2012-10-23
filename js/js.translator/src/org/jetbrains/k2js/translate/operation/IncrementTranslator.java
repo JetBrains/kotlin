@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.util.AstUtil;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
@@ -41,8 +42,9 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.hasCorrespondi
 // TODO: provide better increment translator logic
 public abstract class IncrementTranslator extends AbstractTranslator {
 
-    public static boolean isIncrement(@NotNull JetUnaryExpression expression) {
-        return OperatorConventions.INCREMENT_OPERATIONS.contains(getOperationToken(expression));
+    public static boolean isIncrement(IElementType operationToken) {
+        //noinspection SuspiciousMethodCalls
+        return OperatorConventions.INCREMENT_OPERATIONS.contains(operationToken);
     }
 
     @NotNull

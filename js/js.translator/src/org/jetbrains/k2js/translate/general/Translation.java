@@ -46,7 +46,6 @@ import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.plugin.JetMainDetector.getMainFunction;
@@ -175,23 +174,10 @@ public final class Translation {
         if (mainFunction == null) {
             return null;
         }
-        JsInvocation translatedCall = generateInvocation(context, mainFunction);
-        setArguments(context, arguments, translatedCall);
-        return translatedCall.makeStmt();
-    }
-
-
-    @NotNull
-    private static JsInvocation generateInvocation(@NotNull TranslationContext context, @NotNull JetNamedFunction mainFunction) {
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), mainFunction);
-        JsExpression translatedCall = CallBuilder.build(context).descriptor(functionDescriptor).translate();
-        assert translatedCall instanceof JsInvocation;
-        return (JsInvocation) translatedCall;
-    }
-
-    private static void setArguments(@NotNull TranslationContext context, @NotNull List<String> arguments,
-            @NotNull JsInvocation translatedCall) {
-        JsArrayLiteral arrayLiteral = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
-        JsAstUtils.setArguments(translatedCall, Collections.<JsExpression>singletonList(arrayLiteral));
+        return CallBuilder.build(context)
+                .args(new JsArrayLiteral(toStringLiteralList(arguments, context.program())))
+                .descriptor(functionDescriptor)
+                .translate().makeStmt();
     }
 }

@@ -165,12 +165,6 @@ public final class JsAstUtils {
         return new JsVars(new JsVars.JsVar(name, expr));
     }
 
-    public static void setArguments(@NotNull JsInvocation invocation, @NotNull List<JsExpression> newArgs) {
-        List<JsExpression> arguments = invocation.getArguments();
-        assert arguments.isEmpty() : "Arguments already set.";
-        arguments.addAll(newArgs);
-    }
-
     public static void setArguments(@NotNull HasArguments invocation, @NotNull List<JsExpression> newArgs) {
         List<JsExpression> arguments = invocation.getArguments();
         assert arguments.isEmpty() : "Arguments already set.";
