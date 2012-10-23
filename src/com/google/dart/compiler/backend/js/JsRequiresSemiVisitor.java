@@ -100,7 +100,7 @@ public class JsRequiresSemiVisitor extends JsVisitor {
 
   @Override
   public boolean visit(JsLabel x, JsContext ctx) {
-    if (x.getStmt() instanceof JsEmpty) {
+    if (x.getStatement() instanceof JsEmpty) {
       needsSemicolon = true;
     }
     return false;

@@ -12,7 +12,7 @@ public final class JsBreak extends JsContinue {
         super(null);
     }
 
-    public JsBreak(JsNameRef label) {
+    public JsBreak(String label) {
         super(label);
     }
 
@@ -23,11 +23,7 @@ public final class JsBreak extends JsContinue {
 
     @Override
     public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            if (label != null) {
-                v.accept(label);
-            }
-        }
+        v.visit(this, context);
         v.endVisit(this, context);
     }
 }

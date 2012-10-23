@@ -312,10 +312,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     private void continueOrBreakLabel(JsContinue x) {
-        JsNameRef label = x.getLabel();
+        String label = x.getLabel();
         if (label != null) {
             space();
-            _nameRef(label);
+            p.print(label);
         }
     }
 
@@ -475,8 +475,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         // The init expressions or var decl.
         //
-        if (x.getInitExpr() != null) {
-            accept(x.getInitExpr());
+        if (x.getInitExpression() != null) {
+            accept(x.getInitExpression());
         }
         else if (x.getInitVars() != null) {
             accept(x.getInitVars());
@@ -495,9 +495,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         // The incr expression.
         //
-        if (x.getIncrExpr() != null) {
+        if (x.getIncrementExpression() != null) {
             spaceOpt();
-            accept(x.getIncrExpr());
+            accept(x.getIncrementExpression());
         }
 
         rightParen();
@@ -619,7 +619,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         nameOf(x);
         _colon();
         spaceOpt();
-        accept(x.getStmt());
+        accept(x.getStatement());
         return false;
     }
 

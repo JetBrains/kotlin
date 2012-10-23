@@ -10,28 +10,24 @@ import org.jetbrains.annotations.Nullable;
  * Represents the JavaScript continue statement.
  */
 public class JsContinue extends JsNodeImpl implements JsStatement {
-    protected final JsNameRef label;
+    protected final String label;
 
     public JsContinue() {
         this(null);
     }
 
-    public JsContinue(@Nullable JsNameRef label) {
+    public JsContinue(@Nullable String label) {
         super();
         this.label = label;
     }
 
-    public JsNameRef getLabel() {
+    public String getLabel() {
         return label;
     }
 
     @Override
     public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            if (label != null) {
-                v.accept(label);
-            }
-        }
+        v.visit(this, context);
         v.endVisit(this, context);
     }
 

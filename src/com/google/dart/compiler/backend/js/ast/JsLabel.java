@@ -10,43 +10,47 @@ import com.google.dart.compiler.common.Symbol;
  * Represents a JavaScript label statement.
  */
 public class JsLabel extends JsNodeImpl implements JsStatement, HasName {
+    private final JsName label;
 
-  private final JsName label;
+    private JsStatement statement;
 
-  private JsStatement stmt;
-
-  public JsLabel(JsName label) {
-    this.label = label;
-  }
-
-  @Override
-  public JsName getName() {
-    return label;
-  }
-
-  @Override
-  public Symbol getSymbol() {
-    return label;
-  }
-
-  public JsStatement getStmt() {
-    return stmt;
-  }
-
-  public void setStmt(JsStatement stmt) {
-    this.stmt = stmt;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      stmt = v.accept(stmt);
+    public JsLabel(JsName label) {
+        this.label = label;
     }
-    v.endVisit(this, context);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.LABEL;
-  }
+    public JsLabel(JsName label, JsStatement statement) {
+        this.label = label;
+        this.statement = statement;
+    }
+
+    @Override
+    public JsName getName() {
+        return label;
+    }
+
+    @Override
+    public Symbol getSymbol() {
+        return label;
+    }
+
+    public JsStatement getStatement() {
+        return statement;
+    }
+
+    public void setStatement(JsStatement statement) {
+        this.statement = statement;
+    }
+
+    @Override
+    public void traverse(JsVisitor v, JsContext context) {
+        if (v.visit(this, context)) {
+            statement = v.accept(statement);
+        }
+        v.endVisit(this, context);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.LABEL;
+    }
 }
