@@ -377,14 +377,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitBreakExpression(@NotNull JetBreakExpression expression,
             @NotNull TranslationContext context) {
-        return new JsBreak(getTargetLabel(expression, context));
+        return source(new JsBreak(getTargetLabel(expression, context)), expression);
     }
 
     @Override
     @NotNull
     public JsNode visitContinueExpression(@NotNull JetContinueExpression expression,
             @NotNull TranslationContext context) {
-        return new JsContinue(getTargetLabel(expression, context));
+        return source(new JsContinue(getTargetLabel(expression, context)), expression);
     }
 
     @Override
@@ -424,14 +424,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitForExpression(@NotNull JetForExpression expression,
             @NotNull TranslationContext context) {
-        return ForTranslator.translate(expression, context);
+        return source(ForTranslator.translate(expression, context), expression);
     }
 
     @Override
     @NotNull
     public JsNode visitTryExpression(@NotNull JetTryExpression expression,
             @NotNull TranslationContext context) {
-        return TryTranslator.translate(expression, context);
+        return source(TryTranslator.translate(expression, context), expression);
     }
 
     @Override

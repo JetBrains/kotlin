@@ -151,16 +151,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsFor generateForExpression(@NotNull JsVars initExpression,
-            @NotNull JsExpression condition,
-            @NotNull JsExpression incrementExpression,
-            @NotNull JsStatement body) {
-        JsFor result = new JsFor(initExpression, condition, incrementExpression);
-        result.setBody(body);
-        return result;
-    }
-
-    @NotNull
     public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
         return new JsVars(new JsVars.JsVar(name, expr));
     }
