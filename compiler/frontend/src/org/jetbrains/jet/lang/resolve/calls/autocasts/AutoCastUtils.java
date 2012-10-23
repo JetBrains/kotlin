@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.AutoCastReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 

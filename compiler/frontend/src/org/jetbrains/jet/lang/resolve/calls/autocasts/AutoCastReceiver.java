@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.AbstractReceiverDescriptor;
