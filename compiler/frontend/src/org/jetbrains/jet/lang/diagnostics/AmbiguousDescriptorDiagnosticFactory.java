@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 
 import java.util.Collection;
 

@@ -14,43 +14,42 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.model;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 /**
 * @author abreslav
 */
-public class VarargValueArgument implements ResolvedValueArgument {
-    private final List<ValueArgument> arguments = Lists.newArrayList();
+public class ExpressionValueArgument implements ResolvedValueArgument {
+    private final ValueArgument valueArgument;
 
-    public void addArgument(@NotNull ValueArgument argument) {
-        arguments.add(argument);
+    public ExpressionValueArgument(@Nullable ValueArgument valueArgument) {
+        this.valueArgument = valueArgument;
     }
 
-    @Override
+    // Nullable when something like f(a, , b) was in the source code
+    @Nullable
+    public ValueArgument getValueArgument() {
+        return valueArgument;
+    }
+
     @NotNull
+    @Override
     public List<ValueArgument> getArguments() {
-        return arguments;
+        if (valueArgument == null) return Collections.emptyList();
+        return Collections.singletonList(valueArgument);
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("vararg:{");
-        for (Iterator<ValueArgument> iterator = arguments.iterator(); iterator.hasNext(); ) {
-            ValueArgument valueArgument = iterator.next();
-            JetExpression expression = valueArgument.getArgumentExpression();
-            builder.append(expression == null ? "no expression" : expression.getText());
-            if (iterator.hasNext()) {
-                builder.append(", ");
-            }
-        }
-        return builder.append("}").toString();
+        JetExpression expression = valueArgument.getArgumentExpression();
+        return expression == null ? "no expression" : expression.getText();
     }
 }

@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.calls;
+package org.jetbrains.jet.lang.resolve.calls.model;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.psi.ValueArgument;
+
+import java.util.List;
 
 /**
- * @author svtk
- */
-public interface ResolvedCallWithTrace<D extends CallableDescriptor> extends ResolvedCall<D>  {
-
+* @author abreslav
+*/
+public interface ResolvedValueArgument {
     @NotNull
-    ResolutionStatus getStatus();
+    List<ValueArgument> getArguments();
 
-    boolean hasUnknownTypeParameters();
-
-    boolean isDirty();
-
-    DelegatingBindingTrace getTrace();
 }

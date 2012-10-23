@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetContainerNode;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
