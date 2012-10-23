@@ -32,7 +32,8 @@ public final class JetCompletionSorting {
         CompletionSorter sorter = CompletionSorter.defaultSorter(parameters, result.getPrefixMatcher());
         sorter = sorter.weighAfter("negativeStats",
                                    new JetLocalPreferableWeigher(),
-                                   new JetExplicitlyImportedWeigher((JetFile)parameters.getOriginalFile()));
+                                   new JetExplicitlyImportedWeigher((JetFile)parameters.getOriginalFile()),
+                                   new JetAccessibleWeigher());
         return result.withRelevanceSorter(sorter);
     }
 }

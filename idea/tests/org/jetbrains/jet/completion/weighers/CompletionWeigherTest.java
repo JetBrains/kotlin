@@ -34,6 +34,10 @@ public class CompletionWeigherTest extends CompletionAutoPopupTestCase {
         doTest("va", "val ... = ...", "var ... = ...", "vararg", "values", "variables");
     }
 
+    public void testDeprecatedFun() {
+        doTest("foo", "foo1", "foo3", "foo2");
+    }
+
     public void doTest(String type, @NonNls String... expected) {
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
