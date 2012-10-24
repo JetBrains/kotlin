@@ -124,6 +124,31 @@
                     </systemProperties>
                 </configuration>
             </plugin>
+            <!--
+              the build doesn't work in JDK 7 yet so lets enforce 1.6 with meaningful errors to avoid confusion
+               see: http://youtrack.jetbrains.com/issue/KT-2988 for more details
+              -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-enforcer-plugin</artifactId>
+              <version>1.0.1</version>
+              <executions>
+                <execution>
+                  <id>enforce-versions</id>
+                  <phase>validate</phase>
+                  <goals>
+                    <goal>enforce</goal>
+                  </goals>
+                  <configuration>
+                    <rules>
+                      <requireJavaVersion>
+                        <version>[1.6,1.7)</version>
+                      </requireJavaVersion>
+                    </rules>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
