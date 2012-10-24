@@ -59,6 +59,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescrip
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_ARRAY_GENERIC_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 
 /**
  * @author max
@@ -803,21 +804,25 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     public void genDelegate(FunctionDescriptor functionDescriptor, CallableMemberDescriptor overriddenDescriptor, StackValue field) {
-        JvmMethodSignature jvmMethodSignature =
-                state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor);
-        genDelegate(functionDescriptor, overriddenDescriptor, field, jvmMethodSignature);
+        genDelegate(functionDescriptor, overriddenDescriptor, field,
+                    state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor),
+                    state.getTypeMapper().mapSignature(overriddenDescriptor.getName(), (FunctionDescriptor)overriddenDescriptor.getOriginal())
+        );
     }
 
     public void genDelegate(
             CallableMemberDescriptor functionDescriptor,
             CallableMemberDescriptor overriddenDescriptor,
             StackValue field,
+            JvmMethodSignature jvmDelegateMethodSignature,
             JvmMethodSignature jvmMethodSignature
     ) {
         Method method = jvmMethodSignature.getAsmMethod();
+        Method functionMethod = jvmDelegateMethodSignature.getAsmMethod();
+
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
-        final MethodVisitor mv = v.newMethod(null, flags, method.getName(), method.getDescriptor(), null, null);
+        final MethodVisitor mv = v.newMethod(null, flags, functionMethod.getName(), functionMethod.getDescriptor(), null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
@@ -851,7 +856,12 @@ public class FunctionCodegen extends GenerationStateAware {
             else {
                 iv.invokevirtual(internalName, method.getName(), method.getDescriptor());
             }
-            iv.areturn(method.getReturnType());
+
+            if (!functionMethod.getReturnType().equals(method.getReturnType()) && !Type.VOID_TYPE.equals(method.getReturnType())) {
+                iv.checkcast(functionMethod.getReturnType());
+            }
+
+            iv.areturn(functionMethod.getReturnType());
             endVisit(mv, "delegate method", descriptorToDeclaration(bindingContext, functionDescriptor));
         }
     }
