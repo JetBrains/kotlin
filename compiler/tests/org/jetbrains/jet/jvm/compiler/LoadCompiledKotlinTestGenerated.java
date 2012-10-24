@@ -140,6 +140,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTest("compiler/testData/loadKotlin/class/NamedObject.kt");
         }
         
+        @TestMetadata("NamedObjectInNamedObject.kt")
+        public void testNamedObjectInNamedObject() throws Exception {
+            doTest("compiler/testData/loadKotlin/class/NamedObjectInNamedObject.kt");
+        }
+        
         @TestMetadata("NamedObjectWithAnotherTopLevelProperty.kt")
         public void testNamedObjectWithAnotherTopLevelProperty() throws Exception {
             doTest("compiler/testData/loadKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");

@@ -55,9 +55,7 @@ class JavaDescriptorResolverHelper {
                 processFields();
                 processMethods();
             }
-            if (psiPackage != null) {
-                processNeighborClasses();
-            }
+            processObjectClasses();
         }
         
         private NamedMembers getNamedMembers(Name name) {
@@ -210,17 +208,18 @@ class JavaDescriptorResolverHelper {
             }
         }
 
-        private void processNeighborClasses() {
-            for (PsiClass neighborPsiClass : psiPackage.getClasses()) {
-                if (!neighborPsiClass.isPhysical()) { // to filter out JetLightClasses
+        private void processObjectClasses() {
+            PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getPsiClass().getInnerClasses();
+            for (PsiClass psiClass : classes) {
+                if (!psiClass.isPhysical()) { // to filter out JetLightClasses
                     continue;
                 }
-                if (JetClassAnnotation.get(neighborPsiClass).kind() != JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
+                if (JetClassAnnotation.get(psiClass).kind() != JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
                     continue;
                 }
-                PsiField instanceField = neighborPsiClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
+                PsiField instanceField = psiClass.findFieldByName(JvmAbi.INSTANCE_FIELD, false);
                 if (instanceField != null) {
-                    NamedMembers namedMembers = getNamedMembers(Name.identifier(neighborPsiClass.getName()));
+                    NamedMembers namedMembers = getNamedMembers(Name.identifier(psiClass.getName()));
 
                     TypeSource type = new TypeSource("", instanceField.getType(), instanceField);
                     namedMembers.addPropertyAccessor(new PropertyAccessorData(new PsiFieldWrapper(instanceField), type, null));

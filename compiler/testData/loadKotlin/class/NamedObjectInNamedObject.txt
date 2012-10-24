@@ -1,0 +1,12 @@
+namespace test
+
+public final object test.Outer : jet.Any {
+    private final /*constructor*/ fun <init>(): test.Outer
+    public final val Obj: test.Outer.Obj
+    public final object test.Outer.Obj : jet.Any {
+        private final /*constructor*/ fun <init>(): test.Outer.Obj
+        public final fun f(): jet.String
+        public final val v: jet.String
+    }
+}
+public final val Outer: test.Outer
