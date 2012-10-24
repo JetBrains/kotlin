@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.binding;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,9 +35,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -229,7 +228,23 @@ public class CodegenBinding {
             if (jetFiles != null)
                 answer.addAll(jetFiles);
         }
-        return answer;
+
+        List<JetFile> sortedAnswer = new ArrayList<JetFile>(answer);
+        Collections.sort(sortedAnswer, new Comparator<JetFile>() {
+            @NotNull
+            private String path(JetFile file) {
+                VirtualFile virtualFile = file.getVirtualFile();
+                assert virtualFile != null : "VirtualFile is null for JetFile: " + file.getName();
+                return virtualFile.getPath();
+            }
+
+            @Override
+            public int compare(JetFile first, JetFile second) {
+                return path(first).compareTo(path(second));
+            }
+        });
+
+        return sortedAnswer;
     }
 
     public static boolean isMultiFileNamespace(BindingContext bindingContext, FqName fqName) {
