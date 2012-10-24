@@ -23,16 +23,26 @@ public class JsFor extends JsNodeImpl implements JsStatement {
     private JsVars initVars;
 
     public JsFor(JsVars initVars, JsExpression condition, JsExpression incrementExpression) {
+        this(initVars, condition, incrementExpression, null);
+    }
+
+    public JsFor(JsVars initVars, JsExpression condition, JsExpression incrementExpression, JsStatement body) {
         this.initVars = initVars;
         this.incrementExpression = incrementExpression;
         this.condition = condition;
+        this.body = body;
         initExpression = null;
     }
 
     public JsFor(JsExpression initExpression, JsExpression condition, JsExpression incrementExpression) {
+        this(initExpression, condition, incrementExpression, null);
+    }
+
+    public JsFor(JsExpression initExpression, JsExpression condition, JsExpression incrementExpression, JsStatement body) {
         this.initExpression = initExpression;
         this.incrementExpression = incrementExpression;
         this.condition = condition;
+        this.body = body;
         initVars = null;
     }
 
