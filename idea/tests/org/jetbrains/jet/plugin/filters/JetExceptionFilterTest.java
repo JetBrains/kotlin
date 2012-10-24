@@ -110,4 +110,10 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         doTest("a.kt", "namespace$a$f$1", 3);
         doTest("main.kt", "namespace$main$f$1", 3);
     }
+
+    public void testMultiSameName() {
+        // The order and the exact names do matter here
+        doTest("1/foo.kt", "multiSameName.namespace$foo$f$1", 4);
+        doTest("2/foo.kt", "multiSameName.namespace$foo$f$2", 4);
+    }
 }
