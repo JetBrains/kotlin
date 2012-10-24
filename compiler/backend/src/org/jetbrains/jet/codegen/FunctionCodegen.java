@@ -803,28 +803,32 @@ public class FunctionCodegen extends GenerationStateAware {
     }
 
     public void genDelegate(FunctionDescriptor functionDescriptor, CallableMemberDescriptor overriddenDescriptor, StackValue field) {
-        JvmMethodSignature jvmMethodSignature =
-                state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor);
-        genDelegate(functionDescriptor, overriddenDescriptor, field, jvmMethodSignature);
+        genDelegate(functionDescriptor, overriddenDescriptor, field,
+                    typeMapper.mapSignature(functionDescriptor.getName(), functionDescriptor),
+                    typeMapper.mapSignature(overriddenDescriptor.getName(), (FunctionDescriptor) overriddenDescriptor.getOriginal())
+        );
     }
 
     public void genDelegate(
             CallableMemberDescriptor functionDescriptor,
             CallableMemberDescriptor overriddenDescriptor,
             StackValue field,
-            JvmMethodSignature jvmMethodSignature
+            JvmMethodSignature jvmDelegateMethodSignature,
+            JvmMethodSignature jvmOverriddenMethodSignature
     ) {
-        Method method = jvmMethodSignature.getAsmMethod();
+        Method overriddenMethod = jvmOverriddenMethodSignature.getAsmMethod();
+        Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
+
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
-        final MethodVisitor mv = v.newMethod(null, flags, method.getName(), method.getDescriptor(), null, null);
+        final MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
-            Type[] argTypes = method.getArgumentTypes();
+            Type[] argTypes = overriddenMethod.getArgumentTypes();
             InstructionAdapter iv = new InstructionAdapter(mv);
             iv.load(0, OBJECT_TYPE);
             field.put(field.type, iv);
@@ -832,10 +836,10 @@ public class FunctionCodegen extends GenerationStateAware {
                 Type argType = argTypes[i];
                 iv.load(reg, argType);
                 if (argType.getSort() == Type.OBJECT) {
-                    StackValue.onStack(OBJECT_TYPE).put(method.getArgumentTypes()[i], iv);
+                    StackValue.onStack(OBJECT_TYPE).put(overriddenMethod.getArgumentTypes()[i], iv);
                 }
                 else if (argType.getSort() == Type.ARRAY) {
-                    StackValue.onStack(JAVA_ARRAY_GENERIC_TYPE).put(method.getArgumentTypes()[i], iv);
+                    StackValue.onStack(JAVA_ARRAY_GENERIC_TYPE).put(overriddenMethod.getArgumentTypes()[i], iv);
                 }
 
                 //noinspection AssignmentToForLoopParameter
@@ -846,12 +850,15 @@ public class FunctionCodegen extends GenerationStateAware {
             String internalName =
                     state.getTypeMapper().mapType(classDescriptor).getInternalName();
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                iv.invokeinterface(internalName, method.getName(), method.getDescriptor());
+                iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
             }
             else {
-                iv.invokevirtual(internalName, method.getName(), method.getDescriptor());
+                iv.invokevirtual(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
             }
-            iv.areturn(method.getReturnType());
+
+            StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
+
+            iv.areturn(delegateMethod.getReturnType());
             endVisit(mv, "delegate method", descriptorToDeclaration(bindingContext, functionDescriptor));
         }
     }

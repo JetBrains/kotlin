@@ -342,13 +342,14 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public void genDelegate(PropertyDescriptor declaration, PropertyDescriptor overriddenDescriptor, StackValue field) {
-        JvmPropertyAccessorSignature jvmPropertyAccessorSignature =
-                typeMapper.mapGetterSignature(declaration, OwnerKind.IMPLEMENTATION);
-        functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
+        JvmMethodSignature getterSignature =
+                typeMapper.mapGetterSignature(declaration.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature();
+        functionCodegen.genDelegate(declaration, overriddenDescriptor, field, getterSignature, getterSignature);
 
         if (declaration.isVar()) {
-            jvmPropertyAccessorSignature = typeMapper.mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
-            functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
+            JvmMethodSignature setterSignature =
+                    typeMapper.mapSetterSignature(declaration.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature();
+            functionCodegen.genDelegate(declaration, overriddenDescriptor, field, setterSignature, setterSignature);
         }
     }
 }
