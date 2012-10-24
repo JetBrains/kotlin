@@ -117,10 +117,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         
         {
             VariableDescriptor olderVariable = scope.getLocalVariable(propertyDescriptor.getName());
-            if (olderVariable != null && DescriptorUtils.isLocal(propertyDescriptor.getContainingDeclaration(), olderVariable)) {
-                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), propertyDescriptor);
-                context.trace.report(Errors.NAME_SHADOWING.on(declaration, propertyDescriptor.getName().getName()));
-            }
+            ExpressionTypingUtils.checkVariableShadowing(context, propertyDescriptor, olderVariable);
         }
 
         scope.addVariableDescriptor(propertyDescriptor);

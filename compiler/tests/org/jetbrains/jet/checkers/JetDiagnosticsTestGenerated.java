@@ -3386,6 +3386,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/shadowing"), "kt", true);
             }
             
+            @TestMetadata("ShadowMultiDeclarationWithFunParameter.kt")
+            public void testShadowMultiDeclarationWithFunParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/shadowing/ShadowMultiDeclarationWithFunParameter.kt");
+            }
+            
             @TestMetadata("ShadowParameterInFunctionBody.kt")
             public void testShadowParameterInFunctionBody() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/shadowing/ShadowParameterInFunctionBody.kt");

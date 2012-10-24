@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
@@ -341,7 +343,19 @@ public class ExpressionTypingUtils {
             VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().
                 resolveLocalVariableDescriptorWithType(writableScope.getContainingDeclaration(), entry, componentType, context.trace);
 
+            VariableDescriptor olderVariable = writableScope.getLocalVariable(variableDescriptor.getName());
+            checkVariableShadowing(context, variableDescriptor, olderVariable);
+
             writableScope.addVariableDescriptor(variableDescriptor);
+        }
+    }
+
+    public static void checkVariableShadowing(@NotNull ExpressionTypingContext context, @NotNull VariableDescriptor variableDescriptor, VariableDescriptor oldDescriptor) {
+        if (oldDescriptor != null && DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
+            PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
+            if (declaration != null) {
+                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().getName()));
+            }
         }
     }
 
