@@ -1,9 +1,9 @@
 class MyRunnable() {}
 
-deprecated("'fun invoke()' is deprecated") fun MyRunnable.invoke() {
+deprecated("Use A instead") fun MyRunnable.invoke() {
 }
 
 fun test() {
   val m = MyRunnable()
-  <info descr="'fun invoke()' is deprecated">m()</info>
+  <info descr="'fun invoke()' is deprecated. Use A instead">m()</info>
 }
