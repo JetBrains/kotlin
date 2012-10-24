@@ -120,10 +120,13 @@ public class AnnotationResolver {
             List<ValueArgument> valueArguments = descriptorToArgument.getValue().getArguments();
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
             for (ValueArgument argument : valueArguments) {
-                CompileTimeConstant<?> compileTimeConstant =
-                        resolveAnnotationArgument(argument.getArgumentExpression(), parameterDescriptor.getType(), trace);
-                if (compileTimeConstant != null) {
-                    descriptor.setValueArgument(parameterDescriptor, compileTimeConstant);
+                JetExpression argumentExpression = argument.getArgumentExpression();
+                if (argumentExpression != null) {
+                    CompileTimeConstant<?> compileTimeConstant =
+                            resolveAnnotationArgument(argumentExpression, parameterDescriptor.getType(), trace);
+                    if (compileTimeConstant != null) {
+                        descriptor.setValueArgument(parameterDescriptor, compileTimeConstant);
+                    }
                 }
             }
         }
