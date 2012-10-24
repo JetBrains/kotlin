@@ -105,4 +105,9 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
     public void testSimple() {
         doTest("simple.kt", "namespace", 2);
     }
+
+    public void testKt2489() {
+        doTest("a.kt", "namespace$a$f$1", 3);
+        doTest("main.kt", "namespace$main$f$1", 3);
+    }
 }
