@@ -22,12 +22,10 @@ import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.ProjectScope;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.*;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
@@ -38,25 +36,32 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.filters.JetExceptionFilter;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.util.DebuggerUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.WeakHashMap;
 
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.isMultiFileNamespace;
 
 /**
  * @author yole
  * @author alex.tkachman
+ * @author udalov
  */
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
@@ -73,6 +78,9 @@ public class JetPositionManager implements PositionManager {
             throw new NoDataException();
         }
         PsiFile psiFile = getPsiFileByLocation(location);
+        if (psiFile == null) {
+            throw new NoDataException();
+        }
 
         int lineNumber;
         try {
@@ -89,31 +97,22 @@ public class JetPositionManager implements PositionManager {
         throw new NoDataException();
     }
 
-    private PsiFile getPsiFileByLocation(Location location) throws NoDataException {
+    @Nullable
+    private PsiFile getPsiFileByLocation(@NotNull Location location) {
+        String sourceName;
         try {
-            final String sourceName = location.sourceName();
-            final Project project = myDebugProcess.getProject();
-            final PsiFile[] files = FilenameIndex.getFilesByName(project, sourceName, ProjectScope.getAllScope(project));
-            if (files.length == 1 && files[0] instanceof JetFile) {
-                return files[0];
-            }
+            sourceName = location.sourceName();
         }
         catch (AbsentInformationException e) {
-            throw new NoDataException();
-        }
-
-
-        /* TODO
-
-        final ReferenceType referenceType = location.declaringType();
-        if (referenceType == null) {
             return null;
         }
 
-        // TODO
-        return null;
-        */
-        throw new NoDataException();
+        // JDI names are of form "package.Class$InnerClass"
+        String referenceFqName = location.declaringType().name();
+        String referenceInternalName = referenceFqName.replace('.', '/');
+        JvmClassName className = JvmClassName.byInternalName(referenceInternalName);
+
+        return DebuggerUtils.findSourceFileForClass(GlobalSearchScope.allScope(myDebugProcess.getProject()), className, sourceName);
     }
 
     @NotNull

@@ -66,6 +66,10 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         doMultiTest();
     }
 
+    public void testMultiFileSameName() {
+        doMultiTest();
+    }
+
     public void testAnonymousFunction() {
         doTest();
     }
