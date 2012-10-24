@@ -19,9 +19,9 @@ package org.jetbrains.jet.plugin.debugger;
 import com.intellij.debugger.engine.DebugProcess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
@@ -37,7 +37,12 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
     @Override
     @NotNull
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/debugger";
+        return PluginTestCaseBase.getTestDataPathBase();
+    }
+
+    @Override
+    protected String getTestRoot() {
+        return "/debugger/";
     }
 
     @Override
@@ -46,7 +51,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         JetPositionManager positionManager = (JetPositionManager) jetPositionManagerFactory.createPositionManager(process);
         assertNotNull(positionManager);
 
-        final DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(state.getBindingContext());
+        DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(state.getBindingContext());
         JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, true, ClassBuilderMode.FULL);
         //noinspection unchecked
         CodegenBinding.initTrace(bindingTrace, files);
@@ -58,7 +63,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
     }
 
     public void testMultiFileNamespace() {
-        doMultiTest("multiFileNamespace/a.kt", "multiFileNamespace/b.kt");
+        doMultiTest();
     }
 
     public void testAnonymousFunction() {
