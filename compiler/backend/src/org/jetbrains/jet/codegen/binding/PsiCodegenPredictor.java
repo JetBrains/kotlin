@@ -16,19 +16,26 @@
 
 package org.jetbrains.jet.codegen.binding;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
+
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
@@ -174,5 +181,43 @@ public final class PsiCodegenPredictor {
         }
 
         return null;
+    }
+
+    @Nullable
+    public static JetFile getFileForNamespacePartName(@NotNull List<JetFile> allNamespaceFiles, @NotNull JvmClassName className) {
+        for (JetFile file : allNamespaceFiles) {
+            String internalName = NamespaceCodegen.getNamespacePartInternalName(file);
+            JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
+            if (jvmClassName.equals(className)) {
+                return file;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static JetFile getFileForCodegenNamedClass(
+            @NotNull BindingContext context,
+            @NotNull List<JetFile> allNamespaceFiles,
+            @NotNull final JvmClassName className
+    ) {
+        final Ref<DeclarationDescriptor> resultingDescriptor = Ref.create();
+
+        DelegatingBindingTrace trace = new DelegatingBindingTrace(context) {
+            @Override
+            public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+                super.record(slice, key, value);
+                if (slice == CodegenBinding.FQN && key instanceof DeclarationDescriptor) {
+                    if (className.equals(value)) {
+                        resultingDescriptor.set((DeclarationDescriptor) key);
+                    }
+                }
+            }
+        };
+
+        CodegenBinding.initTrace(trace, allNamespaceFiles);
+
+        return resultingDescriptor.isNull() ? null
+               : BindingContextUtils.getContainingFile(trace.getBindingContext(), resultingDescriptor.get());
     }
 }

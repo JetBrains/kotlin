@@ -187,7 +187,7 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
                             return;
                         }
 
-                        if (DescriptorUtils.isTopLevelFunction(functionDescriptor)) {
+                        if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) {
                             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                                 @Override
                                 public void run() {

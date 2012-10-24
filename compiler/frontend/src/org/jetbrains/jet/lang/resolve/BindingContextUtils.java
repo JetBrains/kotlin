@@ -112,6 +112,19 @@ public class BindingContextUtils {
         return null;
     }
 
+    @Nullable
+    public static JetFile getContainingFile(@NotNull BindingContext context, @NotNull DeclarationDescriptor declarationDescriptor) {
+        // declarationDescriptor may describe a synthesized element which doesn't have PSI
+        // To workaround that, we find a top-level parent (which is inside a NamespaceDescriptor), which is guaranteed to have PSI
+        DeclarationDescriptor descriptor = DescriptorUtils.findTopLevelParent(declarationDescriptor);
+        if (descriptor == null) return null;
+
+        PsiElement declaration = descriptorToDeclaration(context, descriptor);
+        if (declaration == null) return null;
+
+        return (JetFile) declaration.getContainingFile();
+    }
+
     // TODO these helper methods are added as a workaround to some compiler bugs in Kotlin...
 
     // NOTE this is used by KDoc

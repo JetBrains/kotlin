@@ -129,8 +129,17 @@ public class DescriptorUtils {
         return getFQName(containingDeclaration).child(descriptor.getName());
     }
 
-    public static boolean isTopLevelFunction(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        return functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+    public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+    }
+
+    @Nullable
+    public static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
+        DeclarationDescriptor descriptor = declarationDescriptor;
+        while (!(descriptor == null || isTopLevelDeclaration(descriptor))) {
+            descriptor = descriptor.getContainingDeclaration();
+        }
+        return descriptor;
     }
 
     @Nullable
