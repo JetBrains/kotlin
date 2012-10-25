@@ -21,4 +21,9 @@ public abstract class JsSwitchMember extends JsNodeImpl {
     public List<JsStatement> getStatements() {
         return statements;
     }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        visitor.acceptWithInsertRemove(statements);
+    }
 }

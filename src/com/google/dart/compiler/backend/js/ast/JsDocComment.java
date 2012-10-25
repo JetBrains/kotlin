@@ -28,8 +28,13 @@ public class JsDocComment extends JsExpressionImpl {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
+    public void accept(JsVisitor v, JsContext context) {
         v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+
     }
 
     @Override

@@ -13,12 +13,16 @@ public class JsDebugger extends JsNodeImpl implements JsStatement {
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext context) {
+  public void accept(JsVisitor v, JsContext context) {
     v.visit(this, context);
-    v.endVisit(this, context);
   }
 
-  @Override
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+
+    }
+
+    @Override
   public NodeKind getKind() {
     return NodeKind.DEBUGGER;
   }

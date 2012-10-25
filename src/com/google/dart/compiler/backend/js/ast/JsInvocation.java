@@ -13,17 +13,16 @@ import java.util.List;
 /**
  * Represents a JavaScript invocation.
  */
-public final class JsInvocation extends JsExpressionImpl implements HasArguments {
-    private final List<JsExpression> arguments;
+public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArguments {
     private JsExpression qualifier;
 
     public JsInvocation() {
-        arguments = new SmartList<JsExpression>();
+        super(new SmartList<JsExpression>());
     }
 
     public JsInvocation(JsExpression qualifier, List<JsExpression> arguments) {
+        super(arguments);
         this.qualifier = qualifier;
-        this.arguments = arguments;
     }
 
     public JsInvocation(JsExpression qualifier, JsExpression arg) {
@@ -68,12 +67,14 @@ public final class JsInvocation extends JsExpressionImpl implements HasArguments
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            qualifier = v.accept(qualifier);
-            v.acceptList(arguments);
-        }
-        v.endVisit(this, context);
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        qualifier = visitor.accept(qualifier);
+        visitor.acceptList(arguments);
     }
 
     @Override

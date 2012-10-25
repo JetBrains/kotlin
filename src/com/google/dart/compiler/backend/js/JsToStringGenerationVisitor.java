@@ -323,7 +323,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     public boolean visit(JsCase x, JsContext ctx) {
         p.print(CHARS_CASE);
         space();
-        accept(x.getCaseExpr());
+        accept(x.getCaseExpression());
         _colon();
         newlineOpt();
 
@@ -450,8 +450,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public boolean visit(JsEmpty x, JsContext ctx) {
-        return false;
+    public void visit(JsEmpty x, JsContext ctx) {
     }
 
     @Override
@@ -650,12 +649,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(CHARS_NEW);
         space();
 
-        JsExpression ctorExpr = x.getConstructorExpression();
-        boolean needsParens = JsConstructExpressionVisitor.exec(ctorExpr);
+        JsExpression constructorExpression = x.getConstructorExpression();
+        boolean needsParens = JsConstructExpressionVisitor.exec(constructorExpression);
         if (needsParens) {
             leftParen();
         }
-        accept(ctorExpr);
+        accept(constructorExpression);
         if (needsParens) {
             rightParen();
         }
@@ -668,21 +667,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public boolean visit(JsNullLiteral x, JsContext ctx) {
+    public void visit(JsNullLiteral x, JsContext ctx) {
         p.print(CHARS_NULL);
-        return false;
     }
 
     @Override
-    public boolean visit(JsIntLiteral x, JsContext ctx) {
+    public void visit(JsIntLiteral x, JsContext ctx) {
         p.print(x.value);
-        return false;
     }
 
     @Override
-    public boolean visit(JsDoubleLiteral x, JsContext ctx) {
+    public void visit(JsDoubleLiteral x, JsContext ctx) {
         p.print(x.value);
-        return false;
     }
 
     @Override
@@ -788,7 +784,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public boolean visit(JsRegExp x, JsContext ctx) {
+    public void visit(JsRegExp x, JsContext ctx) {
         _slash();
         p.print(x.getPattern());
         _slash();
@@ -796,13 +792,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (flags != null) {
             p.print(flags);
         }
-        return false;
     }
 
     @Override
     public boolean visit(JsReturn x, JsContext ctx) {
         p.print(CHARS_RETURN);
-        JsExpression expr = x.getExpr();
+        JsExpression expr = x.getExpression();
         if (expr != null) {
             space();
             accept(expr);
@@ -811,9 +806,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public boolean visit(JsStringLiteral x, JsContext ctx) {
+    public void visit(JsStringLiteral x, JsContext ctx) {
         p.print(javaScriptString(x.getValue()));
-        return false;
     }
 
     @Override

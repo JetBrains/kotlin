@@ -36,12 +36,14 @@ public class JsWhile extends JsNodeImpl implements JsStatement {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            condition = v.accept(condition);
-            body = v.accept(body);
-        }
-        v.endVisit(this, context);
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        condition = visitor.accept(condition);
+        body = visitor.accept(body);
     }
 
     @Override

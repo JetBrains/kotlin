@@ -81,13 +81,15 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
         }
 
         @Override
-        public void traverse(JsVisitor v, JsContext context) {
-            if (v.visit(this, context)) {
-                if (initExpression != null) {
-                    initExpression = v.accept(initExpression);
-                }
+        public void accept(JsVisitor v, JsContext context) {
+            v.visit(this, context);
+        }
+
+        @Override
+        public void acceptChildren(JsVisitor visitor, JsContext context) {
+            if (initExpression != null) {
+                initExpression = visitor.accept(initExpression);
             }
-            v.endVisit(this, context);
         }
 
         @Override
@@ -116,11 +118,13 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            v.acceptWithInsertRemove(vars);
-        }
-        v.endVisit(this, context);
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        visitor.acceptWithInsertRemove(vars);
     }
 
     @Override

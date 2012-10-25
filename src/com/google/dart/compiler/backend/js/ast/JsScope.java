@@ -67,8 +67,8 @@ public class JsScope {
 
     protected JsScope(@Nullable String description) {
         this.description = description;
-        this.parent = null;
-        this.scopeId = null;
+        parent = null;
+        scopeId = null;
     }
 
     /**

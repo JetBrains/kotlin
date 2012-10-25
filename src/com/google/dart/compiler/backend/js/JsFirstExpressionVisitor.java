@@ -112,9 +112,4 @@ public class JsFirstExpressionVisitor extends JsVisitor {
     public boolean visit(JsPrefixOperation x, JsContext ctx) {
         return false;
     }
-
-    @Override
-    public boolean visit(JsRegExp x, JsContext ctx) {
-        return false;
-    }
 }

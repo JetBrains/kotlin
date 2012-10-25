@@ -8,27 +8,28 @@ package com.google.dart.compiler.backend.js.ast;
  * One independently loadable fragment of a {@link JsProgram}.
  */
 public class JsProgramFragment extends JsNodeImpl {
+    private final JsGlobalBlock globalBlock;
 
-  private final JsGlobalBlock globalBlock;
-
-  public JsProgramFragment() {
-    this.globalBlock = new JsGlobalBlock();
-  }
-
-  public JsBlock getGlobalBlock() {
-    return globalBlock;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      v.accept(globalBlock);
+    public JsProgramFragment() {
+        globalBlock = new JsGlobalBlock();
     }
-    v.endVisit(this, context);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.PROGRAM_FRAGMENT;
-  }
+    public JsBlock getGlobalBlock() {
+        return globalBlock;
+    }
+
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        visitor.accept(globalBlock);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.PROGRAM_FRAGMENT;
+    }
 }

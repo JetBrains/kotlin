@@ -71,27 +71,29 @@ public class JsFor extends JsNodeImpl implements JsStatement {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            assert (!(initExpression != null && initVars != null));
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
 
-            if (initExpression != null) {
-                initExpression = v.accept(initExpression);
-            }
-            else if (initVars != null) {
-                initVars = v.accept(initVars);
-            }
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        assert (!(initExpression != null && initVars != null));
 
-            if (condition != null) {
-                condition = v.accept(condition);
-            }
-
-            if (incrementExpression != null) {
-                incrementExpression = v.accept(incrementExpression);
-            }
-            body = v.accept(body);
+        if (initExpression != null) {
+            initExpression = visitor.accept(initExpression);
         }
-        v.endVisit(this, context);
+        else if (initVars != null) {
+            initVars = visitor.accept(initVars);
+        }
+
+        if (condition != null) {
+            condition = visitor.accept(condition);
+        }
+
+        if (incrementExpression != null) {
+            incrementExpression = visitor.accept(incrementExpression);
+        }
+        body = visitor.accept(body);
     }
 
     @Override

@@ -18,7 +18,7 @@ import static com.google.dart.compiler.backend.js.ast.JsNumberLiteral.JsIntLiter
  * A JavaScript program.
  */
 public final class JsProgram extends JsNodeImpl {
-    private final JsEmpty emptyStmt;
+    private final JsEmpty emptyStatement;
 
     private JsProgramFragment[] fragments;
 
@@ -29,19 +29,16 @@ public final class JsProgram extends JsNodeImpl {
     private final Map<String, JsStringLiteral> stringLiteralMap = new THashMap<String, JsStringLiteral>();
     private final JsScope topScope;
 
-    /**
-     * Constructs a JavaScript program object.
-     */
     public JsProgram(String unitId) {
         rootScope = new JsRootScope(this);
         topScope = new JsScope(rootScope, "Global", unitId);
         setFragmentCount(1);
 
-        emptyStmt = new JsEmpty();
+        emptyStatement = new JsEmpty();
     }
 
-    public JsEmpty getEmptyStmt() {
-        return emptyStmt;
+    public JsEmpty getEmptyStatement() {
+        return emptyStatement;
     }
 
     public JsBlock getFragmentBlock(int fragment) {
@@ -112,13 +109,15 @@ public final class JsProgram extends JsNodeImpl {
     }
 
     @Override
-    public void traverse(JsVisitor v, @Nullable JsContext context) {
-        if (v.visit(this, context)) {
-            for (JsProgramFragment fragment : fragments) {
-                v.accept(fragment);
-            }
+    public void accept(JsVisitor v, @Nullable JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        for (JsProgramFragment fragment : fragments) {
+            visitor.accept(fragment);
         }
-        v.endVisit(this, context);
     }
 
     @Override

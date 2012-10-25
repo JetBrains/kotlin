@@ -8,32 +8,33 @@ package com.google.dart.compiler.backend.js.ast;
  * Represents the JavaScript case statement.
  */
 public final class JsCase extends JsSwitchMember {
+    private JsExpression caseExpression;
 
-  private JsExpression caseExpr;
-
-  public JsCase() {
-    super();
-  }
-
-  public JsExpression getCaseExpr() {
-    return caseExpr;
-  }
-
-  public void setCaseExpr(JsExpression caseExpr) {
-    this.caseExpr = caseExpr;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      caseExpr = v.accept(caseExpr);
-      v.acceptWithInsertRemove(statements);
+    public JsCase() {
+        super();
     }
-    v.endVisit(this, context);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.CASE;
-  }
+    public JsExpression getCaseExpression() {
+        return caseExpression;
+    }
+
+    public void setCaseExpression(JsExpression caseExpression) {
+        this.caseExpression = caseExpression;
+    }
+
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        caseExpression = visitor.accept(caseExpression);
+        super.acceptChildren(visitor, context);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.CASE;
+    }
 }

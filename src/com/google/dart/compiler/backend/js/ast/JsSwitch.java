@@ -12,36 +12,38 @@ import java.util.List;
  */
 public class JsSwitch extends JsNodeImpl implements JsStatement {
 
-  private final List<JsSwitchMember> cases = new ArrayList<JsSwitchMember>();
-  private JsExpression expr;
+    private final List<JsSwitchMember> cases = new ArrayList<JsSwitchMember>();
+    private JsExpression expr;
 
-  public JsSwitch() {
-    super();
-  }
-
-  public List<JsSwitchMember> getCases() {
-    return cases;
-  }
-
-  public JsExpression getExpr() {
-    return expr;
-  }
-
-  public void setExpr(JsExpression expr) {
-    this.expr = expr;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      expr = v.accept(expr);
-      v.acceptWithInsertRemove(cases);
+    public JsSwitch() {
+        super();
     }
-    v.endVisit(this, context);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.SWITCH;
-  }
+    public List<JsSwitchMember> getCases() {
+        return cases;
+    }
+
+    public JsExpression getExpr() {
+        return expr;
+    }
+
+    public void setExpr(JsExpression expr) {
+        this.expr = expr;
+    }
+
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        expr = visitor.accept(expr);
+        visitor.acceptWithInsertRemove(cases);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.SWITCH;
+    }
 }

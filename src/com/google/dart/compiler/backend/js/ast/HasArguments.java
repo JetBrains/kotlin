@@ -10,6 +10,5 @@ import java.util.List;
  * Implemented by JavaScript objects that accept arguments.
  */
 public interface HasArguments extends JsExpression {
-
   List<JsExpression> getArguments();
 }

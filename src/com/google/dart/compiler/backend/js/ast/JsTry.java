@@ -40,7 +40,7 @@ public class JsTry extends JsNodeImpl implements JsStatement {
     }
 
     public void setFinallyBlock(JsBlock block) {
-        this.finallyBlock = block;
+        finallyBlock = block;
     }
 
     public void setTryBlock(JsBlock block) {
@@ -48,15 +48,17 @@ public class JsTry extends JsNodeImpl implements JsStatement {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            tryBlock = v.accept(tryBlock);
-            v.acceptWithInsertRemove(catches);
-            if (finallyBlock != null) {
-                finallyBlock = v.accept(finallyBlock);
-            }
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        tryBlock = visitor.accept(tryBlock);
+        visitor.acceptWithInsertRemove(catches);
+        if (finallyBlock != null) {
+            finallyBlock = visitor.accept(finallyBlock);
         }
-        v.endVisit(this, context);
     }
 
     @Override

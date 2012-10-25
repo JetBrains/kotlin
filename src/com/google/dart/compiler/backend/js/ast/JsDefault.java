@@ -8,17 +8,9 @@ package com.google.dart.compiler.backend.js.ast;
  * Represents the default option in a JavaScript swtich statement.
  */
 public final class JsDefault extends JsSwitchMember {
-
-  public JsDefault() {
-    super();
-  }
-
   @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      v.acceptWithInsertRemove(statements);
-    }
-    v.endVisit(this, context);
+  public void accept(JsVisitor v, JsContext context) {
+    v.visit(this, context);
   }
 
   @Override

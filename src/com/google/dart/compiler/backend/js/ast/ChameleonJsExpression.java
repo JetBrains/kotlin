@@ -1,7 +1,5 @@
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.common.SourceInfo;
-
 public class ChameleonJsExpression implements JsExpression {
     private JsExpression expression;
 
@@ -47,8 +45,13 @@ public class ChameleonJsExpression implements JsExpression {
     }
 
     @Override
-    public void traverse(JsVisitor visitor, JsContext context) {
-        expression.traverse(visitor, context);
+    public void accept(JsVisitor visitor, JsContext context) {
+        expression.accept(visitor, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        expression.acceptChildren(visitor, context);
     }
 
     @Override

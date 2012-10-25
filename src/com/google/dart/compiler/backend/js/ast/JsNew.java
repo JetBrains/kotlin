@@ -8,29 +8,20 @@ import com.intellij.util.SmartList;
 
 import java.util.List;
 
-/**
- * Represents the JavaScript new expression.
- */
-public final class JsNew extends JsExpressionImpl implements HasArguments {
-    private final List<JsExpression> arguments;
-    private JsExpression ctorExpression;
+public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
+    private JsExpression constructorExpression;
 
-    public JsNew(JsExpression ctorExpression) {
-        this(ctorExpression, new SmartList<JsExpression>());
+    public JsNew(JsExpression constructorExpression) {
+        this(constructorExpression, new SmartList<JsExpression>());
     }
 
-    public JsNew(JsExpression ctorExpression, List<JsExpression> arguments) {
-        this.ctorExpression = ctorExpression;
-        this.arguments = arguments;
-    }
-
-    @Override
-    public List<JsExpression> getArguments() {
-        return arguments;
+    public JsNew(JsExpression constructorExpression, List<JsExpression> arguments) {
+        super(arguments);
+        this.constructorExpression = constructorExpression;
     }
 
     public JsExpression getConstructorExpression() {
-        return ctorExpression;
+        return constructorExpression;
     }
 
     @Override
@@ -51,12 +42,14 @@ public final class JsNew extends JsExpressionImpl implements HasArguments {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            ctorExpression = v.accept(ctorExpression);
-            v.acceptList(arguments);
-        }
-        v.endVisit(this, context);
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        constructorExpression = visitor.accept(constructorExpression);
+        visitor.acceptList(arguments);
     }
 
     @Override

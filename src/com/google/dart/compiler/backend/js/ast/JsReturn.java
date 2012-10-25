@@ -8,36 +8,37 @@ package com.google.dart.compiler.backend.js.ast;
  * A JavaScript return statement.
  */
 public final class JsReturn extends JsNodeImpl implements JsStatement {
+    private JsExpression expression;
 
-  private JsExpression expr;
-
-  public JsReturn() {
-  }
-
-  public JsReturn(JsExpression expr) {
-    this.expr = expr;
-  }
-
-  public JsExpression getExpr() {
-    return expr;
-  }
-
-  public void setExpr(JsExpression expr) {
-    this.expr = expr;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      if (expr != null) {
-        expr = v.accept(expr);
-      }
+    public JsReturn() {
     }
-    v.endVisit(this, context);
-  }
+
+    public JsReturn(JsExpression expression) {
+        this.expression = expression;
+    }
+
+    public JsExpression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(JsExpression expression) {
+        this.expression = expression;
+    }
 
     @Override
-  public NodeKind getKind() {
-    return NodeKind.RETURN;
-  }
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        if (expression != null) {
+                        expression = visitor.accept(expression);
+                    }
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.RETURN;
+    }
 }

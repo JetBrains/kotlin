@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public abstract class JsNumberLiteral extends JsValueLiteral {
+public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
     @Override
     public boolean isDefinitelyNotNull() {
         return true;
@@ -38,9 +38,8 @@ public abstract class JsNumberLiteral extends JsValueLiteral {
         }
 
         @Override
-        public void traverse(JsVisitor v, JsContext context) {
+        public void accept(JsVisitor v, JsContext context) {
             v.visit(this, context);
-            v.endVisit(this, context);
         }
 
         public String toString() {
@@ -66,9 +65,8 @@ public abstract class JsNumberLiteral extends JsValueLiteral {
         }
 
         @Override
-        public void traverse(JsVisitor v, JsContext context) {
+        public void accept(JsVisitor v, JsContext context) {
             v.visit(this, context);
-            v.endVisit(this, context);
         }
 
         public String toString() {

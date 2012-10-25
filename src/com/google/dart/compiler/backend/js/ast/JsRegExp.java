@@ -7,58 +7,56 @@ package com.google.dart.compiler.backend.js.ast;
 /**
  * A JavaScript regular expression.
  */
-public final class JsRegExp extends JsValueLiteral {
+public final class JsRegExp extends JsLiteral.JsValueLiteral {
+    private String flags;
+    private String pattern;
 
-  private String flags;
-  private String pattern;
+    public JsRegExp() {
+    }
 
-  public JsRegExp() {
-  }
+    public String getFlags() {
+        return flags;
+    }
 
-  public String getFlags() {
-    return flags;
-  }
+    public String getPattern() {
+        return pattern;
+    }
 
-  public String getPattern() {
-    return pattern;
-  }
+    @Override
+    public boolean isBooleanFalse() {
+        return false;
+    }
 
-  @Override
-  public boolean isBooleanFalse() {
-    return false;
-  }
+    @Override
+    public boolean isBooleanTrue() {
+        return true;
+    }
 
-  @Override
-  public boolean isBooleanTrue() {
-    return true;
-  }
+    @Override
+    public boolean isDefinitelyNotNull() {
+        return true;
+    }
 
-  @Override
-  public boolean isDefinitelyNotNull() {
-    return true;
-  }
+    @Override
+    public boolean isDefinitelyNull() {
+        return false;
+    }
 
-  @Override
-  public boolean isDefinitelyNull() {
-    return false;
-  }
+    public void setFlags(String suffix) {
+        flags = suffix;
+    }
 
-  public void setFlags(String suffix) {
-    this.flags = suffix;
-  }
+    public void setPattern(String re) {
+        pattern = re;
+    }
 
-  public void setPattern(String re) {
-    this.pattern = re;
-  }
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
 
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    v.visit(this, context);
-    v.endVisit(this, context);
-  }
-
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.REGEXP;
-  }
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.REGEXP;
+    }
 }

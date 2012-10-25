@@ -51,15 +51,17 @@ public final class JsIf extends JsNodeImpl implements JsStatement {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            ifExpression = v.accept(ifExpression);
-            thenStatement = v.accept(thenStatement);
-            if (elseStatement != null) {
-                elseStatement = v.accept(elseStatement);
-            }
-        }
-        v.endVisit(this, context);
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        ifExpression = visitor.accept(ifExpression);
+                    thenStatement = visitor.accept(thenStatement);
+                    if (elseStatement != null) {
+                        elseStatement = visitor.accept(elseStatement);
+                    }
     }
 
     @Override

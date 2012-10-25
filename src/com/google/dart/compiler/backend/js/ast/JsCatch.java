@@ -9,58 +9,60 @@ package com.google.dart.compiler.backend.js.ast;
  */
 public class JsCatch extends JsNodeImpl implements HasCondition {
 
-  protected final JsCatchScope scope;
-  private JsBlock body;
-  private JsExpression condition;
-  private JsParameter param;
+    protected final JsCatchScope scope;
+    private JsBlock body;
+    private JsExpression condition;
+    private JsParameter param;
 
-  public JsCatch(JsScope parent, String ident) {
-    super();
-    assert (parent != null);
-    scope = new JsCatchScope(parent, ident);
-    param = new JsParameter(scope.findName(ident));
-  }
-
-  public JsBlock getBody() {
-    return body;
-  }
-
-  @Override
-  public JsExpression getCondition() {
-    return condition;
-  }
-
-  public JsParameter getParameter() {
-    return param;
-  }
-
-  public JsScope getScope() {
-    return scope;
-  }
-
-  public void setBody(JsBlock body) {
-    this.body = body;
-  }
-
-  @Override
-  public void setCondition(JsExpression condition) {
-    this.condition = condition;
-  }
-
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      param = v.accept(param);
-      if (condition != null) {
-        condition = v.accept(condition);
-      }
-      body = v.accept(body);
+    public JsCatch(JsScope parent, String ident) {
+        super();
+        assert (parent != null);
+        scope = new JsCatchScope(parent, ident);
+        param = new JsParameter(scope.findName(ident));
     }
-    v.endVisit(this, context);
-  }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.CATCH;
-  }
+    public JsBlock getBody() {
+        return body;
+    }
+
+    @Override
+    public JsExpression getCondition() {
+        return condition;
+    }
+
+    public JsParameter getParameter() {
+        return param;
+    }
+
+    public JsScope getScope() {
+        return scope;
+    }
+
+    public void setBody(JsBlock body) {
+        this.body = body;
+    }
+
+    @Override
+    public void setCondition(JsExpression condition) {
+        this.condition = condition;
+    }
+
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        param = visitor.accept(param);
+        if (condition != null) {
+            condition = visitor.accept(condition);
+        }
+        body = visitor.accept(body);
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.CATCH;
+    }
 }

@@ -4,22 +4,21 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * Represents an empty statement in JavaScript.
- */
 public class JsEmpty extends JsNodeImpl implements JsStatement {
-  // Interned by JsProgram
-  JsEmpty() {
-  }
+    JsEmpty() {
+    }
 
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    v.visit(this, context);
-    v.endVisit(this, context);
-  }
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.EMPTY;
-  }
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.EMPTY;
+    }
 }

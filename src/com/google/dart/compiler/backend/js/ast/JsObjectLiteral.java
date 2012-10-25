@@ -69,11 +69,13 @@ public final class JsObjectLiteral extends JsLiteral {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            v.acceptWithInsertRemove(properties);
-        }
-        v.endVisit(this, context);
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        visitor.acceptWithInsertRemove(properties);
     }
 
     @Override

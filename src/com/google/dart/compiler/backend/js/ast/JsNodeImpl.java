@@ -1,7 +1,5 @@
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.common.SourceInfo;
-
 abstract class JsNodeImpl extends AbstractNode {
     private Object sourceInfo;
 

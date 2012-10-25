@@ -10,30 +10,34 @@ import com.google.dart.compiler.common.Symbol;
  * A JavaScript parameter.
  */
 public final class JsParameter extends JsNodeImpl implements HasName {
-  private final JsName name;
+    private final JsName name;
 
-  public JsParameter(JsName name) {
-    this.name = name;
-  }
+    public JsParameter(JsName name) {
+        this.name = name;
+    }
 
-  @Override
-  public JsName getName() {
-    return name;
-  }
+    @Override
+    public JsName getName() {
+        return name;
+    }
 
-  @Override
-  public Symbol getSymbol() {
-    return name;
-  }
+    @Override
+    public Symbol getSymbol() {
+        return name;
+    }
 
-  @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    v.visit(this, context);
-    v.endVisit(this, context);
-  }
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
 
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.PARAMETER;
-  }
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+
+    }
+
+    @Override
+    public NodeKind getKind() {
+        return NodeKind.PARAMETER;
+    }
 }

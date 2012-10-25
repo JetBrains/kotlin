@@ -8,10 +8,7 @@ import com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 
 import java.util.List;
 
-/**
- * Implemented by nodes that will visit child nodes.
- */
-abstract public class JsVisitor {
+public abstract class JsVisitor {
     protected static final JsContext LVALUE_CONTEXT = new JsContext() {
         @Override
         public boolean canInsert() {
@@ -24,12 +21,12 @@ abstract public class JsVisitor {
         }
 
         @Override
-        public void insertAfter(JsVisitable node) {
+        public void insertAfter(JsNode node) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void insertBefore(JsVisitable node) {
+        public void insertBefore(JsNode node) {
             throw new UnsupportedOperationException();
         }
 
@@ -44,13 +41,12 @@ abstract public class JsVisitor {
         }
 
         @Override
-        public void replaceMe(JsVisitable node) {
+        public void replaceMe(JsNode node) {
             throw new UnsupportedOperationException();
         }
     };
 
     protected static final JsContext UNMODIFIABLE_CONTEXT = new JsContext() {
-
         @Override
         public boolean canInsert() {
             return false;
@@ -62,12 +58,12 @@ abstract public class JsVisitor {
         }
 
         @Override
-        public void insertAfter(JsVisitable node) {
+        public void insertAfter(JsNode node) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void insertBefore(JsVisitable node) {
+        public void insertBefore(JsNode node) {
             throw new UnsupportedOperationException();
         }
 
@@ -82,17 +78,17 @@ abstract public class JsVisitor {
         }
 
         @Override
-        public void replaceMe(JsVisitable node) {
+        public void replaceMe(JsNode node) {
             throw new UnsupportedOperationException();
         }
     };
 
-    public <T extends JsVisitable> T accept(T node) {
+    public <T extends JsNode> T accept(T node) {
         doTraverse(node, UNMODIFIABLE_CONTEXT);
         return node;
     }
 
-    public final <T extends JsVisitable> void acceptList(List<T> collection) {
+    public final <T extends JsNode> void acceptList(List<T> collection) {
         for (T node : collection) {
             doTraverse(node, UNMODIFIABLE_CONTEXT);
         }
@@ -103,136 +99,10 @@ abstract public class JsVisitor {
         return expr;
     }
 
-    public final <T extends JsVisitable> void acceptWithInsertRemove(List<T> collection) {
+    public final <T extends JsNode> void acceptWithInsertRemove(List<T> collection) {
         for (T node : collection) {
             doTraverse(node, UNMODIFIABLE_CONTEXT);
         }
-    }
-
-    public void endVisit(JsArrayAccess x, JsContext ctx) {
-    }
-
-    public void endVisit(JsArrayLiteral x, JsContext ctx) {
-    }
-
-    public void endVisit(JsBinaryOperation x, JsContext ctx) {
-    }
-
-    public void endVisit(JsBlock x, JsContext ctx) {
-    }
-
-    public void endVisit(JsLiteral.JsBooleanLiteral x, JsContext ctx) {
-    }
-
-    public void endVisit(JsBreak x, JsContext ctx) {
-    }
-
-    public void endVisit(JsCase x, JsContext ctx) {
-    }
-
-    public void endVisit(JsCatch x, JsContext ctx) {
-    }
-
-    public void endVisit(JsConditional x, JsContext ctx) {
-    }
-
-    public void endVisit(JsContinue x, JsContext ctx) {
-    }
-
-    public void endVisit(JsDebugger x, JsContext ctx) {
-    }
-
-    public void endVisit(JsDefault x, JsContext ctx) {
-    }
-
-    public void endVisit(JsDoWhile x, JsContext ctx) {
-    }
-
-    public void endVisit(JsEmpty x, JsContext ctx) {
-    }
-
-    public void endVisit(JsExpressionStatement x, JsContext ctx) {
-    }
-
-    public void endVisit(JsFor x, JsContext ctx) {
-    }
-
-    public void endVisit(JsForIn x, JsContext ctx) {
-    }
-
-    public void endVisit(JsFunction x, JsContext ctx) {
-    }
-
-    public void endVisit(JsIf x, JsContext ctx) {
-    }
-
-    public void endVisit(JsInvocation x, JsContext ctx) {
-    }
-
-    public void endVisit(JsLabel x, JsContext ctx) {
-    }
-
-    public void endVisit(JsNameRef x, JsContext ctx) {
-    }
-
-    public void endVisit(JsNew x, JsContext ctx) {
-    }
-
-    public void endVisit(JsNullLiteral x, JsContext ctx) {
-    }
-
-    public void endVisit(JsNumberLiteral x, JsContext ctx) {
-    }
-
-    public void endVisit(JsObjectLiteral x, JsContext ctx) {
-    }
-
-    public void endVisit(JsParameter x, JsContext ctx) {
-    }
-
-    public void endVisit(JsPostfixOperation x, JsContext ctx) {
-    }
-
-    public void endVisit(JsPrefixOperation x, JsContext ctx) {
-    }
-
-    public void endVisit(JsProgram x, JsContext ctx) {
-    }
-
-    public void endVisit(JsProgramFragment x, JsContext ctx) {
-    }
-
-    public void endVisit(JsPropertyInitializer x, JsContext ctx) {
-    }
-
-    public void endVisit(JsRegExp x, JsContext ctx) {
-    }
-
-    public void endVisit(JsReturn x, JsContext ctx) {
-    }
-
-    public void endVisit(JsStringLiteral x, JsContext ctx) {
-    }
-
-    public void endVisit(JsSwitch x, JsContext ctx) {
-    }
-
-    public void endVisit(JsLiteral.JsThisRef x, JsContext ctx) {
-    }
-
-    public void endVisit(JsThrow x, JsContext ctx) {
-    }
-
-    public void endVisit(JsTry x, JsContext ctx) {
-    }
-
-    public void endVisit(JsVar x, JsContext ctx) {
-    }
-
-    public void endVisit(JsVars x, JsContext ctx) {
-    }
-
-    public void endVisit(JsWhile x, JsContext ctx) {
     }
 
     public boolean visit(JsArrayAccess x, JsContext ctx) {
@@ -287,8 +157,7 @@ abstract public class JsVisitor {
         return true;
     }
 
-    public boolean visit(JsEmpty x, JsContext ctx) {
-        return true;
+    public void visit(JsEmpty x, JsContext ctx) {
     }
 
     public boolean visit(JsExpressionStatement x, JsContext ctx) {
@@ -327,16 +196,13 @@ abstract public class JsVisitor {
         return true;
     }
 
-    public boolean visit(JsNullLiteral x, JsContext ctx) {
-        return true;
+    public void visit(JsNullLiteral x, JsContext ctx) {
     }
 
-    public boolean visit(JsNumberLiteral.JsIntLiteral x, JsContext ctx) {
-        return true;
+    public void visit(JsNumberLiteral.JsIntLiteral x, JsContext ctx) {
     }
 
-    public boolean visit(JsNumberLiteral.JsDoubleLiteral x, JsContext ctx) {
-        return true;
+    public void visit(JsNumberLiteral.JsDoubleLiteral x, JsContext ctx) {
     }
 
     public boolean visit(JsObjectLiteral x, JsContext ctx) {
@@ -367,16 +233,14 @@ abstract public class JsVisitor {
         return true;
     }
 
-    public boolean visit(JsRegExp x, JsContext ctx) {
-        return true;
+    public void visit(JsRegExp x, JsContext ctx) {
     }
 
     public boolean visit(JsReturn x, JsContext ctx) {
         return true;
     }
 
-    public boolean visit(JsStringLiteral x, JsContext ctx) {
-        return true;
+    public void visit(JsStringLiteral x, JsContext ctx) {
     }
 
     public boolean visit(JsSwitch x, JsContext ctx) {
@@ -411,7 +275,7 @@ abstract public class JsVisitor {
         return true;
     }
 
-    protected void doTraverse(JsVisitable node, JsContext context) {
-        node.traverse(this, context);
+    protected void doTraverse(JsNode node, JsContext context) {
+        node.accept(this, context);
     }
 }

@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import java.util.List;
+
 abstract class JsExpressionImpl extends JsNodeImpl implements JsExpression {
     protected JsExpressionImpl() {
     }
@@ -23,5 +25,18 @@ abstract class JsExpressionImpl extends JsNodeImpl implements JsExpression {
     @Override
     public JsStatement makeStmt() {
         return new JsExpressionStatement(this);
+    }
+
+    protected abstract static class JsExpressionHasArguments extends JsExpressionImpl implements HasArguments {
+        protected final List<JsExpression> arguments;
+
+        public JsExpressionHasArguments(List<JsExpression> arguments) {
+            this.arguments = arguments;
+        }
+
+        @Override
+        public List<JsExpression> getArguments() {
+            return arguments;
+        }
     }
 }

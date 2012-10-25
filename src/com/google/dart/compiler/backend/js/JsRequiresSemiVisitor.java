@@ -56,11 +56,6 @@ public class JsRequiresSemiVisitor extends JsVisitor {
   }
 
   @Override
-  public boolean visit(JsEmpty x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
   public boolean visit(JsExpressionStatement x, JsContext ctx) {
     return false;
   }

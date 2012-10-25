@@ -4,6 +4,16 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public interface JsNode extends JsVisitable {
+public interface JsNode {
     NodeKind getKind();
+
+    /**
+     * Causes this object to have the visitor visit itself and its children.
+     *
+     * @param visitor the visitor that should traverse this node
+     * @param context the context of an existing traversal
+     */
+    void accept(JsVisitor visitor, JsContext context);
+
+    void acceptChildren(JsVisitor visitor, JsContext context);
 }

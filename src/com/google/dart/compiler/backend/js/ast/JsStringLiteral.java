@@ -7,7 +7,7 @@ package com.google.dart.compiler.backend.js.ast;
 /**
  * A JavaScript string literal expression.
  */
-public final class JsStringLiteral extends JsValueLiteral {
+public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
 
   private final String value;
 
@@ -41,9 +41,8 @@ public final class JsStringLiteral extends JsValueLiteral {
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext context) {
+  public void accept(JsVisitor v, JsContext context) {
     v.visit(this, context);
-    v.endVisit(this, context);
   }
 
   @Override

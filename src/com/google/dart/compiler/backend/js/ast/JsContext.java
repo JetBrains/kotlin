@@ -14,13 +14,13 @@ public interface JsContext {
 
   boolean canRemove();
 
-  void insertAfter(JsVisitable node);
+  void insertAfter(JsNode node);
 
-  void insertBefore(JsVisitable node);
+  void insertBefore(JsNode node);
 
   boolean isLvalue();
 
   void removeMe();
 
-  void replaceMe(JsVisitable node);
+  void replaceMe(JsNode node);
 }

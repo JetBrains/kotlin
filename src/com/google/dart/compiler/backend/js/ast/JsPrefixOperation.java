@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * A JavaScript prefix operation.
- */
 public final class JsPrefixOperation extends JsUnaryOperation implements CanBooleanEval {
 
   public JsPrefixOperation(JsUnaryOperator op) {
@@ -35,18 +32,12 @@ public final class JsPrefixOperation extends JsUnaryOperation implements CanBool
       CanBooleanEval eval = (CanBooleanEval) getArg();
       return eval.isBooleanFalse();
     }
-    if (getOperator() == JsUnaryOperator.TYPEOF) {
-      return true;
-    }
-    return false;
+      return getOperator() == JsUnaryOperator.TYPEOF;
   }
 
   @Override
   public boolean isDefinitelyNotNull() {
-    if (getOperator() == JsUnaryOperator.TYPEOF) {
-      return true;
-    }
-    return getOperator() != JsUnaryOperator.VOID;
+      return getOperator() == JsUnaryOperator.TYPEOF || getOperator() != JsUnaryOperator.VOID;
   }
 
   @Override
@@ -55,11 +46,8 @@ public final class JsPrefixOperation extends JsUnaryOperation implements CanBool
   }
 
   @Override
-  public void traverse(JsVisitor v, JsContext context) {
-    if (v.visit(this, context)) {
-      super.traverse(v, context);
-    }
-    v.endVisit(this, context);
+  public void accept(JsVisitor v, JsContext context) {
+    v.visit(this, context);
   }
 
   @Override

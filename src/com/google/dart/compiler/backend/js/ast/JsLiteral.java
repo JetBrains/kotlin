@@ -43,9 +43,8 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
         }
 
         @Override
-        public void traverse(JsVisitor v, JsContext context) {
+        public void accept(JsVisitor v, JsContext context) {
             v.visit(this, context);
-            v.endVisit(this, context);
         }
 
         @Override
@@ -87,14 +86,35 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
       }
 
       @Override
-      public void traverse(JsVisitor v, JsContext context) {
+      public void accept(JsVisitor v, JsContext context) {
         v.visit(this, context);
-        v.endVisit(this, context);
       }
 
       @Override
       public NodeKind getKind() {
         return NodeKind.BOOLEAN;
       }
+    }
+
+    /**
+     * A JavaScript string literal expression.
+     */
+    public abstract static class JsValueLiteral extends JsLiteral {
+        protected JsValueLiteral() {
+        }
+
+        @Override
+        public final boolean hasSideEffects() {
+            return false;
+        }
+
+        @Override
+        public final boolean isLeaf() {
+            return true;
+        }
+
+        @Override
+        public void acceptChildren(JsVisitor visitor, JsContext context) {
+        }
     }
 }

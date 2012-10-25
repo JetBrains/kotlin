@@ -56,14 +56,7 @@ public final class JsNameRef extends JsExpressionImpl implements CanBooleanEval,
 
     @Override
     public boolean hasSideEffects() {
-        if (qualifier == null) {
-            return false;
-        }
-        if (!qualifier.isDefinitelyNotNull()) {
-            // Could trigger NPE.
-            return true;
-        }
-        return qualifier.hasSideEffects();
+        return qualifier != null && (!qualifier.isDefinitelyNotNull() || qualifier.hasSideEffects());
     }
 
     @Override
@@ -83,25 +76,17 @@ public final class JsNameRef extends JsExpressionImpl implements CanBooleanEval,
 
     @Override
     public boolean isDefinitelyNull() {
-        if (name != null) {
-            return (JsLiteral.UNDEFINED.getName() == name);
-        }
-        return false;
+        return name != null && (JsLiteral.UNDEFINED.getName() == name);
     }
 
     @Override
     public boolean isLeaf() {
-        if (qualifier == null) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return qualifier == null;
     }
 
     public void resolve(JsName name) {
         this.name = name;
-        this.ident = null;
+        ident = null;
     }
 
     public void setQualifier(JsExpression qualifier) {
@@ -109,13 +94,15 @@ public final class JsNameRef extends JsExpressionImpl implements CanBooleanEval,
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            if (qualifier != null) {
-                qualifier = v.accept(qualifier);
-            }
-        }
-        v.endVisit(this, context);
+    public void accept(JsVisitor v, JsContext context) {
+        v.visit(this, context);
+    }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        if (qualifier != null) {
+                        qualifier = visitor.accept(qualifier);
+                    }
     }
 
     @Override

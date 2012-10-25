@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public final class JsNullLiteral extends JsValueLiteral {
+public final class JsNullLiteral extends JsLiteral.JsValueLiteral {
     JsNullLiteral() {
     }
 
@@ -29,9 +29,8 @@ public final class JsNullLiteral extends JsValueLiteral {
     }
 
     @Override
-    public void traverse(JsVisitor v, JsContext context) {
+    public void accept(JsVisitor v, JsContext context) {
         v.visit(this, context);
-        v.endVisit(this, context);
     }
 
     @Override
