@@ -145,16 +145,16 @@ public abstract class JsVisitor {
         visitElement(x, ctx);
     }
 
-    public void visitDebugger(JsDebugger x, JsContext ctx) {
-        visitElement(x, ctx);
+    public void visitDebugger(JsDebugger x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public void visitDefault(JsDefault x, JsContext ctx) {
-        visitElement(x, ctx);
+    public void visitDefault(JsDefault x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public void visitDoWhile(JsDoWhile x, JsContext ctx) {
-        visitElement(x, ctx);
+    public void visitDoWhile(JsDoWhile x, JsContext context) {
+        visitElement(x, context);
     }
 
     public void visitEmpty(JsEmpty x, JsContext ctx) {

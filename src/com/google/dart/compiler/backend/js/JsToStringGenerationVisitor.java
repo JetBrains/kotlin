@@ -388,12 +388,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitDebugger(JsDebugger x, JsContext ctx) {
+    public void visitDebugger(JsDebugger x, JsContext context) {
         p.print(CHARS_DEBUGGER);
     }
 
     @Override
-    public void visitDefault(JsDefault x, JsContext ctx) {
+    public void visitDefault(JsDefault x, JsContext context) {
         p.print(CHARS_DEFAULT);
         _colon();
 
@@ -413,7 +413,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitDoWhile(JsDoWhile x, JsContext ctx) {
+    public void visitDoWhile(JsDoWhile x, JsContext context) {
         p.print(CHARS_DO);
         _nestedPush(x.getBody());
         accept(x.getBody());
@@ -499,23 +499,23 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             space();
             nameDef(x.getIterVarName());
 
-            if (x.getIterExpr() != null) {
+            if (x.getIterExpression() != null) {
                 spaceOpt();
                 assignment();
                 spaceOpt();
-                accept(x.getIterExpr());
+                accept(x.getIterExpression());
             }
         }
         else {
             // Just a name ref.
             //
-            accept(x.getIterExpr());
+            accept(x.getIterExpression());
         }
 
         space();
         p.print(CHARS_IN);
         space();
-        accept(x.getObjExpr());
+        accept(x.getObjectExpression());
 
         rightParen();
         _nestedPush(x.getBody());
@@ -734,7 +734,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitProgram(JsProgram x, JsContext ctx) {
+    public void visitProgram(JsProgram x, JsContext context) {
         p.print("<JsProgram>");
     }
 

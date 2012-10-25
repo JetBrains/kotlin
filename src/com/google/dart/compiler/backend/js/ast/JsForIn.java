@@ -9,8 +9,8 @@ package com.google.dart.compiler.backend.js.ast;
  */
 public class JsForIn extends JsNodeImpl implements JsStatement {
     private JsStatement body;
-    private JsExpression iterExpr;
-    private JsExpression objExpr;
+    private JsExpression iterExpression;
+    private JsExpression objectExpression;
 
     // Optional: the name of a new iterator variable to introduce
     private final JsName iterVarName;
@@ -27,28 +27,28 @@ public class JsForIn extends JsNodeImpl implements JsStatement {
         return body;
     }
 
-    public JsExpression getIterExpr() {
-        return iterExpr;
+    public JsExpression getIterExpression() {
+        return iterExpression;
     }
 
     public JsName getIterVarName() {
         return iterVarName;
     }
 
-    public JsExpression getObjExpr() {
-        return objExpr;
+    public JsExpression getObjectExpression() {
+        return objectExpression;
     }
 
     public void setBody(JsStatement body) {
         this.body = body;
     }
 
-    public void setIterExpr(JsExpression iterExpr) {
-        this.iterExpr = iterExpr;
+    public void setIterExpression(JsExpression iterExpression) {
+        this.iterExpression = iterExpression;
     }
 
-    public void setObjExpr(JsExpression objExpr) {
-        this.objExpr = objExpr;
+    public void setObjectExpression(JsExpression objectExpression) {
+        this.objectExpression = objectExpression;
     }
 
     @Override
@@ -58,10 +58,10 @@ public class JsForIn extends JsNodeImpl implements JsStatement {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        if (iterExpr != null) {
-            iterExpr = visitor.acceptLvalue(iterExpr);
+        if (iterExpression != null) {
+            iterExpression = visitor.acceptLvalue(iterExpression);
         }
-        objExpr = visitor.accept(objExpr);
+        objectExpression = visitor.accept(objectExpression);
         body = visitor.accept(body);
     }
 

@@ -4,7 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public interface JsNode {
+import com.google.dart.compiler.common.HasSourceInfo;
+
+public interface JsNode extends HasSourceInfo {
     NodeKind getKind();
 
     /**
