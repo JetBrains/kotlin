@@ -21,6 +21,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
+import java.util.List;
+
 /**
  * Compiles Kotlin test sources
  *
@@ -38,6 +40,42 @@ public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
      */
     private boolean skip;
 
+
+    // TODO it would be nice to avoid using 2 injected fields for sources
+    // but I've not figured out how to have a defaulted parameter value
+    // which is also customisable inside an <execution> in a maven pom.xml
+    // so for now lets just use 2 fields
+
+    /**
+     * The default source directories containing the sources to be compiled.
+     *
+     * @parameter default-value="${project.testCompileSourceRoots}"
+     * @required
+     */
+    private List<String> defaultSourceDirs;
+
+    /**
+     * The source directories containing the sources to be compiled.
+     *
+     * @parameter
+     */
+    private List<String> sourceDirs;
+
+    @Override
+    public List<String> getSources() {
+        if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
+        return defaultSourceDirs;
+    }
+
+    /**
+     * The source directories containing the sources to be compiled for tests.
+     *
+     * @parameter default-value="${project.testCompileSourceRoots}"
+     * @required
+     * @readonly
+     */
+    private List<String> defaultSourceDir;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("Test compilation is skipped");
@@ -52,7 +90,7 @@ public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
         if (arguments instanceof K2JVMCompilerArguments) {
             configureBaseCompilerArguments(
                     getLog(), (K2JVMCompilerArguments) arguments,
-                    testModule, testSources, testClasspath, testOutput);
+                    testModule, getSources(), testClasspath, testOutput);
         }
     }
 }

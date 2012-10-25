@@ -32,7 +32,7 @@ public class KotlinCompileMojo extends KotlinCompileMojoBase {
     @Override
     protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
         if (arguments instanceof K2JVMCompilerArguments) {
-            configureBaseCompilerArguments(getLog(), (K2JVMCompilerArguments) arguments, module, sources, classpath, output);
+            configureBaseCompilerArguments(getLog(), (K2JVMCompilerArguments) arguments, module, getSources(), classpath, output);
         }
     }
 }

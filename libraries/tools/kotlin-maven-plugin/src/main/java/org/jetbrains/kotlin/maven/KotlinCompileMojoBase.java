@@ -39,17 +39,32 @@ import java.util.List;
 import static org.jetbrains.jet.internal.com.intellij.openapi.util.text.StringUtil.join;
 
 public abstract class KotlinCompileMojoBase extends AbstractMojo {
+
+
+    // TODO it would be nice to avoid using 2 injected fields for sources
+    // but I've not figured out how to have a defaulted parameter value
+    // which is also customisable inside an <execution> in a maven pom.xml
+    // so for now lets just use 2 fields
+
     /**
-     * The source directories containing the sources to be compiled.
+     * The default source directories containing the sources to be compiled.
      *
      * @parameter default-value="${project.compileSourceRoots}"
      * @required
-     * @readonly
      */
-    public List<String> sources;
+    private List<String> defaultSourceDirs;
 
-    // TODO not sure why this doesn't work :(
-    // * @parameter default-value="$(project.basedir}/src/main/resources"
+    /**
+     * The source directories containing the sources to be compiled.
+     *
+     * @parameter
+     */
+    private List<String> sourceDirs;
+
+    public List<String> getSources() {
+        if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
+        return defaultSourceDirs;
+    }
 
     /**
      * The directories used to scan for annotation.xml files for Kotlin annotations
@@ -58,14 +73,10 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      */
     public List<String> annotationPaths;
 
-    /**
-     * The source directories containing the sources to be compiled for tests.
-     *
-     * @parameter default-value="${project.testCompileSourceRoots}"
-     * @required
-     * @readonly
-     */
-    protected List<String> testSources;
+    // TODO not sure why this doesn't work :(
+    // * @parameter default-value="$(project.basedir}/src/main/resources"
+
+
 
     /**
      * Project classpath.
@@ -120,6 +131,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // Check sources
+        List<String> sources = getSources();
         if (sources != null && sources.size() > 0) {
             boolean sourcesExists = false;
 
