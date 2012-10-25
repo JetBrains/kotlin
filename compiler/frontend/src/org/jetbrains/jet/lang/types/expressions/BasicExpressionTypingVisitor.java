@@ -28,7 +28,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.*;
+import org.jetbrains.jet.lang.resolve.calls.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
@@ -918,15 +920,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     private boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
         JetType type = context.trace.get(EXPRESSION_TYPE, expression);
         assert type != null : "This method is only supposed to be called when the type is not null";
-        if (!type.isNullable()) return true;
-        List<JetType> possibleTypes = context.dataFlowInfo
-            .getPossibleTypes(DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext()));
-        for (JetType possibleType : possibleTypes) {
-            if (!possibleType.isNullable()) {
-                return true;
-            }
-        }
-        return false;
+        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext());
+        return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
     }
 
     public void checkLValue(BindingTrace trace, JetExpression expression) {

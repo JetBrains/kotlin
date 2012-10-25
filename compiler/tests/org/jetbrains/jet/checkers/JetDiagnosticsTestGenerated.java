@@ -2304,6 +2304,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullableTypes/baseWithNullableUpperBound.kt");
             }
             
+            @TestMetadata("nullAssertOnTypeWithNullableUpperBound.kt")
+            public void testNullAssertOnTypeWithNullableUpperBound() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullableTypes/nullAssertOnTypeWithNullableUpperBound.kt");
+            }
+            
             @TestMetadata("redundantNullable.kt")
             public void testRedundantNullable() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/nullableTypes/redundantNullable.kt");
