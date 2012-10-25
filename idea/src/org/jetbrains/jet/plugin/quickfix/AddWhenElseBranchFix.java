@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,13 +28,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetWhenEntry;
 import org.jetbrains.jet.lang.psi.JetWhenExpression;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> {
+    private static final String ELSE_ENTRY_TEXT = "else -> {}";
+
     public AddWhenElseBranchFix(@NotNull JetWhenExpression element) {
         super(element);
     }
+
 
     @NotNull
     @Override
@@ -53,11 +59,19 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        PsiElement insertBeforeAnchor = element.getCloseBraceNode();
-        if (insertBeforeAnchor != null) {
-            PsiElement insertedBranch = element.addBefore(JetPsiFactory.createElseWhenEntry(project), insertBeforeAnchor);
-            element.addAfter(JetPsiFactory.createNewLine(project), insertedBranch);
-        }
+        PsiElement whenCloseBrace = element.getCloseBraceNode();
+        assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
+
+        JetWhenEntry entry = JetPsiFactory.createWhenEntry(project, ELSE_ENTRY_TEXT);
+
+        PsiElement insertedBranch = element.addBefore(entry, whenCloseBrace);
+        element.addAfter(JetPsiFactory.createNewLine(project), insertedBranch);
+
+        JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
+        final TextRange textRange = insertedWhenEntry.getTextRange();
+
+        int indexOfOpenBrace = insertedWhenEntry.getText().indexOf('{');
+        editor.getCaretModel().moveToOffset(textRange.getStartOffset() + indexOfOpenBrace + 1);
     }
 
     public static JetIntentionActionFactory createFactory() {

@@ -2,7 +2,7 @@
 fun test() {
     val a = 12
     when (a) {
-        else -> {
+        else -> {<caret>
         }
     }
 }

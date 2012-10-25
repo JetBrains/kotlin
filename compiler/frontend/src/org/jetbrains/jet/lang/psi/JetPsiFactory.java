@@ -152,9 +152,15 @@ public class JetPsiFactory {
         return function.getValueParameters().get(0);
     }
 
-    public static JetWhenEntry createElseWhenEntry(Project project) {
-        JetNamedFunction function = createFunction(project, "fun foo() { when(12) { else -> { } } }");
-        return PsiTreeUtil.findChildOfType(function, JetWhenEntry.class);
+    @NotNull
+    public static JetWhenEntry createWhenEntry(@NotNull Project project, @NotNull String entryText) {
+        JetNamedFunction function = createFunction(project, "fun foo() { when(12) { " + entryText + " } }");
+        JetWhenEntry whenEntry = PsiTreeUtil.findChildOfType(function, JetWhenEntry.class);
+
+        assert whenEntry != null : "Couldn't generate when entry";
+        assert entryText.equals(whenEntry.getText()) : "Generate when entry text differs from the given text";
+
+        return whenEntry;
     }
 
     @NotNull
