@@ -15,4 +15,8 @@ abstract class JsNodeImpl extends AbstractNode {
     public void setSourceInfo(Object info) {
         sourceInfo = info;
     }
+
+    @Override
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    }
 }

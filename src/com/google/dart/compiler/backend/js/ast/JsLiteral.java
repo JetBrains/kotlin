@@ -102,9 +102,5 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
         public final boolean isLeaf() {
             return true;
         }
-
-        @Override
-        public void acceptChildren(JsVisitor visitor, JsContext context) {
-        }
     }
 }

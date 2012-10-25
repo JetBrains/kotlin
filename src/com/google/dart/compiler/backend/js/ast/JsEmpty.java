@@ -12,8 +12,4 @@ public class JsEmpty extends JsNodeImpl implements JsStatement {
     public void accept(JsVisitor v, JsContext context) {
         v.visitEmpty(this, context);
     }
-
-    @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
-    }
 }

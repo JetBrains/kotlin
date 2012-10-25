@@ -28,10 +28,6 @@ public class JsDocComment extends JsExpressionImpl {
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
-    }
-
-    @Override
     public boolean hasSideEffects() {
         return false;
     }

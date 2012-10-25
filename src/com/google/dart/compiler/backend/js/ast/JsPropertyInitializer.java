@@ -46,6 +46,6 @@ public class JsPropertyInitializer extends JsNodeImpl {
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         labelExpr = visitor.accept(labelExpr);
-                    valueExpr = visitor.accept(valueExpr);
+        valueExpr = visitor.accept(valueExpr);
     }
 }

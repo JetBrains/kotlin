@@ -30,9 +30,4 @@ public final class JsParameter extends JsNodeImpl implements HasName {
     public void accept(JsVisitor v, JsContext context) {
         v.visitParameter(this, context);
     }
-
-    @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
-
-    }
 }

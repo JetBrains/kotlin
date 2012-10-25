@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * Represents a JavaScript conditional expression.
- */
 public final class JsConditional extends JsExpressionImpl {
     private JsExpression testExpression;
     private JsExpression elseExpression;
