@@ -100,7 +100,7 @@ public final class K2JSTranslator {
     ) throws TranslationException {
         JsProgram program = generateProgram(files, mainCallParameters);
         JsSourceGenerationVisitor sourceGenerator = new JsSourceGenerationVisitor(output, sourceMapBuilder);
-        program.traverse(sourceGenerator, null);
+        program.accept(sourceGenerator, null);
         return output.toString();
     }
 

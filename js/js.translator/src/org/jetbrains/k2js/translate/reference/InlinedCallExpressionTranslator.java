@@ -177,7 +177,7 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
         @Override
         public JsNode mutate(@NotNull JsNode node) {
             if (node instanceof JsReturn) {
-                JsExpression returnedExpression = ((JsReturn)node).getExpr();
+                JsExpression returnedExpression = ((JsReturn)node).getExpression();
                 return JsAstUtils.assignment(toAssignTo.name().makeRef(), returnedExpression);
             }
             return node;

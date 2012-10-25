@@ -89,7 +89,7 @@ public final class TryTranslator extends AbstractTranslator {
     private JsBlock translateCatchBody(@NotNull JetCatchClause catchClause) {
         JetExpression catchBody = catchClause.getCatchBody();
         if (catchBody == null) {
-            return convertToBlock(program().getEmptyStmt());
+            return convertToBlock(program().getEmptyStatement());
         }
         return convertToBlock(Translation.translateAsStatement(catchBody, context()));
     }

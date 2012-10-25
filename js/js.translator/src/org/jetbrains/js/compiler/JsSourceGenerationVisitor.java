@@ -34,20 +34,13 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
     }
 
     @Override
-    public boolean visit(JsProgram program, JsContext ctx) {
-        return true;
+    public void visitProgramFragment(JsProgramFragment x, JsContext context) {
+        x.acceptChildren(this, context);
     }
 
     @Override
-    public boolean visit(JsProgramFragment x, JsContext ctx) {
-        // Descend naturally.
-        return true;
-    }
-
-    @Override
-    public boolean visit(JsBlock x, JsContext ctx) {
+    public void visitBlock(JsBlock x, JsContext ctx) {
         printJsBlock(x, false, true);
-        return false;
     }
 
     @Override
@@ -67,7 +60,7 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
     }
 
     @Override
-    protected void doTraverse(JsVisitable node, JsContext context) {
+    protected void doAccept(JsNode node, JsContext context) {
         if (sourceMapBuilder != null) {
             Object sourceInfo = node.getSourceInfo();
             if (sourceInfo != null) {
@@ -80,12 +73,12 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
                 }
             }
         }
-        super.doTraverse(node, context);
+        super.doAccept(node, context);
     }
 
     @Override
-    public void endVisit(JsProgram x, JsContext context) {
-        super.endVisit(x, context);
+    public void visitProgram(JsProgram program, JsContext context) {
+        program.acceptChildren(this, context);
         if (sourceMapBuilder != null) {
             sourceMapBuilder.addLink();
         }
