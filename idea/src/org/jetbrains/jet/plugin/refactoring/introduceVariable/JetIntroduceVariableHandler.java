@@ -38,7 +38,9 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -262,12 +264,12 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                        commonContainer instanceof JetClassInitializer);
                 if (!needBraces) {
                     property = (JetProperty)commonContainer.addBefore(property, anchor);
-                    commonContainer.addBefore(JetPsiFactory.createWhiteSpace(project, "\n"), anchor);
+                    commonContainer.addBefore(JetPsiFactory.createNewLine(project), anchor);
                 }
                 else {
                     JetExpression emptyBody = JetPsiFactory.createEmptyBody(project);
                     PsiElement firstChild = emptyBody.getFirstChild();
-                    emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                    emptyBody.addAfter(JetPsiFactory.createNewLine(project), firstChild);
                     if (replaceOccurrence && commonContainer != null) {
                         for (JetExpression replace : allReplaces) {
                             boolean isActualExpression = expression == replace;
@@ -316,9 +318,9 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                         if (elem != null) {
                             reference.set((JetExpression)elem);
                         }
-                        emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                        emptyBody.addAfter(JetPsiFactory.createNewLine(project), firstChild);
                         property = (JetProperty)emptyBody.addAfter(property, firstChild);
-                        emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                        emptyBody.addAfter(JetPsiFactory.createNewLine(project), firstChild);
                         actualExpression = reference.get();
                         diff = actualExpression.getTextRange().getStartOffset() - emptyBody.getTextRange().getStartOffset();
                         actualExpressionText = actualExpression.getText();
@@ -334,7 +336,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     }
                     else {
                         property = (JetProperty)emptyBody.addAfter(property, firstChild);
-                        emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                        emptyBody.addAfter(JetPsiFactory.createNewLine(project), firstChild);
                         emptyBody = (JetExpression)anchor.replace(emptyBody);
                     }
                     for (PsiElement child : emptyBody.getChildren()) {
@@ -358,7 +360,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                 PsiElement nextnext = next.getNextSibling();
                                 if (nextnext != null && nextnext.getNode().getElementType() == JetTokens.ELSE_KEYWORD) {
                                     if (next instanceof PsiWhiteSpace) {
-                                        next.replace(JetPsiFactory.createWhiteSpace(project, " "));
+                                        next.replace(JetPsiFactory.createWhiteSpace(project));
                                     }
                                 }
                             }

@@ -24,9 +24,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -93,7 +93,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                             jetFile.deleteChildRange(firstForDelete, lastForDelete);
 
                             if (elementBeforeImports != null) {
-                                jetFile.addAfter(JetPsiFactory.createWhiteSpace(jetFile.getProject(), "\n"), elementBeforeImports);
+                                jetFile.addAfter(JetPsiFactory.createNewLine(jetFile.getProject()), elementBeforeImports);
                             }
                         }
 

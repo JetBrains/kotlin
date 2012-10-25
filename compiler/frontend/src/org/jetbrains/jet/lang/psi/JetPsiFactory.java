@@ -78,12 +78,12 @@ public class JetPsiFactory {
         return createWhiteSpace(project, " ");
     }
 
-    public static PsiElement createWhiteSpace(Project project, String text) {
+    private static PsiElement createWhiteSpace(Project project, String text) {
         JetProperty property = createProperty(project, "val" + text + "x");
         return property.findElementAt(3);
     }
 
-    public static PsiElement createNewLineWhiteSpace(Project project) {
+    public static PsiElement createNewLine(Project project) {
         return createWhiteSpace(project, "\n");
     }
 

@@ -56,7 +56,7 @@ public class AddWhenElseBranchFix extends JetIntentionAction<JetWhenExpression> 
         PsiElement insertBeforeAnchor = element.getCloseBraceNode();
         if (insertBeforeAnchor != null) {
             PsiElement insertedBranch = element.addBefore(JetPsiFactory.createElseWhenEntry(project), insertBeforeAnchor);
-            element.addAfter(JetPsiFactory.createNewLineWhiteSpace(project), insertedBranch);
+            element.addAfter(JetPsiFactory.createNewLine(project), insertedBranch);
         }
     }
 
