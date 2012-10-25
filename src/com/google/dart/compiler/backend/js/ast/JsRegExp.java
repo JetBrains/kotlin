@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * A JavaScript regular expression.
- */
 public final class JsRegExp extends JsLiteral.JsValueLiteral {
     private String flags;
     private String pattern;
@@ -31,7 +28,7 @@ public final class JsRegExp extends JsLiteral.JsValueLiteral {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitRegExp(this, context);
+    public void accept(JsVisitor v) {
+        v.visitRegExp(this);
     }
 }

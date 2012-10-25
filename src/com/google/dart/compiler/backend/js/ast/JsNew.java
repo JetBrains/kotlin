@@ -25,12 +25,12 @@ public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitNew(this, context);
+    public void accept(JsVisitor v) {
+        v.visitNew(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(constructorExpression);
         visitor.acceptList(arguments);
     }

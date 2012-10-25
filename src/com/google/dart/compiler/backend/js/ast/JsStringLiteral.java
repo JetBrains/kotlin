@@ -18,7 +18,7 @@ public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
   }
 
   @Override
-  public void accept(JsVisitor v, JsContext context) {
-    v.visitString(this, context);
+  public void accept(JsVisitor v) {
+    v.visitString(this);
   }
 }

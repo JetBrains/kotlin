@@ -71,12 +71,12 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitFor(this, context);
+    public void accept(JsVisitor v) {
+        v.visitFor(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         assert (!(initExpression != null && initVars != null));
 
         if (initExpression != null) {

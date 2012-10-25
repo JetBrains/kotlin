@@ -11,9 +11,9 @@ public interface JsNode extends HasSourceInfo {
      * Causes this object to have the visitor visit itself and its children.
      *
      * @param visitor the visitor that should traverse this node
-     * @param context the context of an existing traversal
+     *
      */
-    void accept(JsVisitor visitor, JsContext context);
+    void accept(JsVisitor visitor);
 
-    void acceptChildren(JsVisitor visitor, JsContext context);
+    void acceptChildren(JsVisitor visitor);
 }

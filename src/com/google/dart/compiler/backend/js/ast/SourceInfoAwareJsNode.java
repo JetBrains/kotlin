@@ -14,6 +14,6 @@ abstract class SourceInfoAwareJsNode extends AbstractNode {
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
     }
 }

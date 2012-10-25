@@ -49,56 +49,56 @@ public class JsFirstExpressionVisitor extends RecursiveJsVisitor {
     }
 
     @Override
-    public void visitArrayAccess(JsArrayAccess x, JsContext ctx) {
+    public void visitArrayAccess(JsArrayAccess x) {
         accept(x.getArrayExpression());
     }
 
     @Override
-    public void visitArray(JsArrayLiteral x, JsContext ctx) {
+    public void visitArray(JsArrayLiteral x) {
     }
 
     @Override
-    public void visitBinaryExpression(JsBinaryOperation x, JsContext ctx) {
+    public void visitBinaryExpression(JsBinaryOperation x) {
         accept(x.getArg1());
     }
 
     @Override
-    public void visitConditional(JsConditional x, JsContext ctx) {
+    public void visitConditional(JsConditional x) {
         accept(x.getTestExpression());
     }
 
     @Override
-    public void visitFunction(JsFunction x, JsContext ctx) {
+    public void visitFunction(JsFunction x) {
         needsParentheses = true;
     }
 
     @Override
-    public void visitInvocation(JsInvocation x, JsContext ctx) {
+    public void visitInvocation(JsInvocation x) {
         accept(x.getQualifier());
     }
 
     @Override
-    public void visitNameRef(JsNameRef x, JsContext ctx) {
-        if (!x.isLeaf()) {
-            accept(x.getQualifier());
+    public void visitNameRef(JsNameRef nameRef) {
+        if (!nameRef.isLeaf()) {
+            accept(nameRef.getQualifier());
         }
     }
 
     @Override
-    public void visitNew(JsNew x, JsContext ctx) {
+    public void visitNew(JsNew x) {
     }
 
     @Override
-    public void visitObjectLiteral(JsObjectLiteral x, JsContext ctx) {
+    public void visitObjectLiteral(JsObjectLiteral x) {
         needsParentheses = true;
     }
 
     @Override
-    public void visitPostfixOperation(JsPostfixOperation x, JsContext ctx) {
+    public void visitPostfixOperation(JsPostfixOperation x) {
         accept(x.getArg());
     }
 
     @Override
-    public void visitPrefixOperation(JsPrefixOperation x, JsContext ctx) {
+    public void visitPrefixOperation(JsPrefixOperation x) {
     }
 }

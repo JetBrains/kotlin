@@ -29,7 +29,7 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
      * We only look at the array expression since the index has its own scope.
      */
     @Override
-    public void visitArrayAccess(JsArrayAccess x, JsContext ctx) {
+    public void visitArrayAccess(JsArrayAccess x) {
         accept(x.getArrayExpression());
     }
 
@@ -37,25 +37,25 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
      * Array literals have their own scoping.
      */
     @Override
-    public void visitArray(JsArrayLiteral x, JsContext ctx) {
+    public void visitArray(JsArrayLiteral x) {
     }
 
     /**
      * Functions have their own scoping.
      */
     @Override
-    public void visitFunction(JsFunction x, JsContext ctx) {
+    public void visitFunction(JsFunction x) {
     }
 
     @Override
-    public void visitInvocation(JsInvocation x, JsContext ctx) {
+    public void visitInvocation(JsInvocation x) {
         containsInvocation = true;
     }
 
     @Override
-    public void visitNameRef(JsNameRef x, JsContext ctx) {
-        if (!x.isLeaf()) {
-            accept(x.getQualifier());
+    public void visitNameRef(JsNameRef nameRef) {
+        if (!nameRef.isLeaf()) {
+            accept(nameRef.getQualifier());
         }
     }
 
@@ -63,14 +63,14 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
      * New constructs bind to the nearest set of parentheses.
      */
     @Override
-    public void visitNew(JsNew x, JsContext ctx) {
+    public void visitNew(JsNew x) {
     }
 
     /**
      * Object literals have their own scope.
      */
     @Override
-    public void visitObjectLiteral(JsObjectLiteral x, JsContext ctx) {
+    public void visitObjectLiteral(JsObjectLiteral x) {
     }
 
     /**

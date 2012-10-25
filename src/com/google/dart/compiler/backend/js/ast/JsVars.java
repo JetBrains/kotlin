@@ -81,12 +81,12 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
         }
 
         @Override
-        public void accept(JsVisitor v, JsContext context) {
-            v.visit(this, context);
+        public void accept(JsVisitor v) {
+            v.visit(this);
         }
 
         @Override
-        public void acceptChildren(JsVisitor visitor, JsContext context) {
+        public void acceptChildren(JsVisitor visitor) {
             if (initExpression != null) {
                 visitor.accept(initExpression);
             }
@@ -113,12 +113,12 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitVars(this, context);
+    public void accept(JsVisitor v) {
+        v.visitVars(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(vars);
     }
 }

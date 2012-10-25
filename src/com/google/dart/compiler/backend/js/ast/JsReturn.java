@@ -26,12 +26,12 @@ public final class JsReturn extends SourceInfoAwareJsNode implements JsStatement
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitReturn(this, context);
+    public void accept(JsVisitor v) {
+        v.visitReturn(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         if (expression != null) {
             visitor.accept(expression);
         }

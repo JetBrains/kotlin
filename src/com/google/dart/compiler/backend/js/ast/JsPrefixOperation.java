@@ -14,7 +14,7 @@ public final class JsPrefixOperation extends JsUnaryOperation {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitPrefixOperation(this, context);
+    public void accept(JsVisitor v) {
+        v.visitPrefixOperation(this);
     }
 }

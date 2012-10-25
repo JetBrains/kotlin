@@ -52,12 +52,12 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitInvocation(this, context);
+    public void accept(JsVisitor v) {
+        v.visitInvocation(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(qualifier);
         visitor.acceptList(arguments);
     }

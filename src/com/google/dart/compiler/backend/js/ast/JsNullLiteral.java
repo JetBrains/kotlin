@@ -9,7 +9,7 @@ public final class JsNullLiteral extends JsLiteral.JsValueLiteral {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitNull(this, context);
+    public void accept(JsVisitor v) {
+        v.visitNull(this);
     }
 }

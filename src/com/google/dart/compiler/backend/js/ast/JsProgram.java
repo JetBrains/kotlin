@@ -7,7 +7,6 @@ package com.google.dart.compiler.backend.js.ast;
 import gnu.trove.TDoubleObjectHashMap;
 import gnu.trove.THashMap;
 import gnu.trove.TIntObjectHashMap;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -109,12 +108,12 @@ public final class JsProgram extends SourceInfoAwareJsNode {
     }
 
     @Override
-    public void accept(JsVisitor v, @Nullable JsContext context) {
-        v.visitProgram(this, context);
+    public void accept(JsVisitor v) {
+        v.visitProgram(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         for (JsProgramFragment fragment : fragments) {
             visitor.accept(fragment);
         }

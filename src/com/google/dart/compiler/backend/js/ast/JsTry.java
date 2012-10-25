@@ -48,12 +48,12 @@ public class JsTry extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitTry(this, context);
+    public void accept(JsVisitor v) {
+        v.visitTry(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(tryBlock);
         visitor.acceptWithInsertRemove(catches);
         if (finallyBlock != null) {

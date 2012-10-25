@@ -25,13 +25,13 @@ public class ChameleonJsExpression implements JsExpression {
     }
 
     @Override
-    public void accept(JsVisitor visitor, JsContext context) {
-        expression.accept(visitor, context);
+    public void accept(JsVisitor visitor) {
+        expression.accept(visitor);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
-        expression.acceptChildren(visitor, context);
+    public void acceptChildren(JsVisitor visitor) {
+        expression.acceptChildren(visitor);
     }
 
     @Override

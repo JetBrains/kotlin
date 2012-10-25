@@ -23,7 +23,7 @@ public class JsDocComment extends JsExpressionImpl {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitDocComment(this, context);
+    public void accept(JsVisitor v) {
+        v.visitDocComment(this);
     }
 }

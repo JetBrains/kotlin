@@ -12,12 +12,12 @@ public class JsDebugger extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitDebugger(this, context);
+    public void accept(JsVisitor v) {
+        v.visitDebugger(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
 
     }
 }

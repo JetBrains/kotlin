@@ -69,12 +69,12 @@ public final class JsNameRef extends JsExpressionImpl implements HasName {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitNameRef(this, context);
+    public void accept(JsVisitor v) {
+        v.visitNameRef(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         if (qualifier != null) {
            visitor.accept(qualifier);
         }

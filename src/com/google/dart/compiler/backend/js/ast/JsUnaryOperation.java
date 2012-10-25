@@ -33,7 +33,7 @@ public abstract class JsUnaryOperation extends JsExpressionImpl {
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         if (op.isModifying()) {
             // The delete operator is practically like an assignment of undefined, so
             // for practical purposes we're treating it as an lvalue.

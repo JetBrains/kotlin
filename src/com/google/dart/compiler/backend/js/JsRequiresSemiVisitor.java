@@ -34,21 +34,21 @@ public class JsRequiresSemiVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitFor(JsFor x, JsContext ctx) {
+    public void visitFor(JsFor x) {
         if (x.getBody() instanceof JsEmpty) {
             needsSemicolon = true;
         }
     }
 
     @Override
-    public void visitForIn(JsForIn x, JsContext ctx) {
+    public void visitForIn(JsForIn x) {
         if (x.getBody() instanceof JsEmpty) {
             needsSemicolon = true;
         }
     }
 
     @Override
-    public void visitIf(JsIf x, JsContext ctx) {
+    public void visitIf(JsIf x) {
         JsStatement thenStmt = x.getThenStatement();
         JsStatement elseStmt = x.getElseStatement();
         JsStatement toCheck = thenStmt;
@@ -65,14 +65,14 @@ public class JsRequiresSemiVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitLabel(JsLabel x, JsContext ctx) {
+    public void visitLabel(JsLabel x) {
         if (x.getStatement() instanceof JsEmpty) {
             needsSemicolon = true;
         }
     }
 
     @Override
-    public void visitWhile(JsWhile x, JsContext ctx) {
+    public void visitWhile(JsWhile x) {
         if (x.getBody() instanceof JsEmpty) {
             needsSemicolon = true;
         }

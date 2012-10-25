@@ -48,12 +48,12 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitCatch(this, context);
+    public void accept(JsVisitor v) {
+        v.visitCatch(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(param);
         if (condition != null) {
             visitor.accept(condition);

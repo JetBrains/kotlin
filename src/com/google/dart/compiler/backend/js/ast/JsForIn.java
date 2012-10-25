@@ -49,12 +49,12 @@ public class JsForIn extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitForIn(this, context);
+    public void accept(JsVisitor v) {
+        v.visitForIn(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         if (iterExpression != null) {
             visitor.acceptLvalue(iterExpression);
         }

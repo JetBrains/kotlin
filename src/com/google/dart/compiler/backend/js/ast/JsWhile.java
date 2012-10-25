@@ -36,12 +36,12 @@ public class JsWhile extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitWhile(this, context);
+    public void accept(JsVisitor v) {
+        v.visitWhile(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(condition);
         visitor.accept(body);
     }

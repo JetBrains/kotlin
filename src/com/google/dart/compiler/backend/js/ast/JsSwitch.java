@@ -32,12 +32,12 @@ public class JsSwitch extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+    public void accept(JsVisitor v) {
+        v.visit(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(expression);
         visitor.acceptWithInsertRemove(cases);
     }

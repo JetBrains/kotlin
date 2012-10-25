@@ -23,13 +23,13 @@ public final class JsCase extends JsSwitchMember {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitCase(this, context);
+    public void accept(JsVisitor v) {
+        v.visitCase(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(caseExpression);
-        super.acceptChildren(visitor, context);
+        super.acceptChildren(visitor);
     }
 }

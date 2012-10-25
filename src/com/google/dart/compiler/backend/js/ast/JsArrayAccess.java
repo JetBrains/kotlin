@@ -37,12 +37,12 @@ public final class JsArrayAccess extends JsExpressionImpl {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitArrayAccess(this, context);
+    public void accept(JsVisitor v) {
+        v.visitArrayAccess(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(arrayExpression);
         visitor.accept(indexExpression);
     }

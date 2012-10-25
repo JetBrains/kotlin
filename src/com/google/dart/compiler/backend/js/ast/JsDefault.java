@@ -9,7 +9,7 @@ package com.google.dart.compiler.backend.js.ast;
  */
 public final class JsDefault extends JsSwitchMember {
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitDefault(this, context);
+    public void accept(JsVisitor v) {
+        v.visitDefault(this);
     }
 }

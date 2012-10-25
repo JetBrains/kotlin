@@ -34,12 +34,12 @@ public final class JsBinaryOperation extends JsExpressionImpl {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitBinaryExpression(this, context);
+    public void accept(JsVisitor v) {
+        v.visitBinaryExpression(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         if (op.isAssignment()) {
             visitor.acceptLvalue(arg1);
         }

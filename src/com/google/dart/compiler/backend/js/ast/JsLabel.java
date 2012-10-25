@@ -42,12 +42,12 @@ public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasNa
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitLabel(this, context);
+    public void accept(JsVisitor v) {
+        v.visitLabel(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(statement);
     }
 }

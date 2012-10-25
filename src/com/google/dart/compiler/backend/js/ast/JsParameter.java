@@ -27,7 +27,7 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitParameter(this, context);
+    public void accept(JsVisitor v) {
+        v.visitParameter(this);
     }
 }

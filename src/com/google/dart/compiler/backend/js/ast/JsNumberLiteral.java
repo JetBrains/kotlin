@@ -13,8 +13,8 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
         }
 
         @Override
-        public void accept(JsVisitor v, JsContext context) {
-            v.visitDouble(this, context);
+        public void accept(JsVisitor v) {
+            v.visitDouble(this);
         }
 
         public String toString() {
@@ -30,8 +30,8 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
         }
 
         @Override
-        public void accept(JsVisitor v, JsContext context) {
-            v.visitInt(this, context);
+        public void accept(JsVisitor v) {
+            v.visitInt(this);
         }
 
         public String toString() {

@@ -35,12 +35,12 @@ public class JsPropertyInitializer extends SourceInfoAwareJsNode {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitPropertyInitializer(this, context);
+    public void accept(JsVisitor v) {
+        v.visitPropertyInitializer(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.accept(labelExpr);
         visitor.accept(valueExpr);
     }

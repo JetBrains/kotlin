@@ -44,12 +44,12 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitBlock(this, context);
+    public void accept(JsVisitor v) {
+        v.visitBlock(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(statements);
     }
 }

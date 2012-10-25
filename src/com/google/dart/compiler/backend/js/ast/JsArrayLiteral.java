@@ -27,12 +27,12 @@ public final class JsArrayLiteral extends JsLiteral {
     }
 
     @Override
-    public void accept(JsVisitor v, JsContext context) {
-        v.visitArray(this, context);
+    public void accept(JsVisitor v) {
+        v.visitArray(this);
     }
 
     @Override
-    public void acceptChildren(JsVisitor visitor, JsContext context) {
+    public void acceptChildren(JsVisitor visitor) {
         visitor.acceptWithInsertRemove(expressions);
     }
 }

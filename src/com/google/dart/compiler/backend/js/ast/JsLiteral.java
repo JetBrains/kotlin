@@ -23,8 +23,8 @@ public abstract class JsLiteral extends JsExpressionImpl {
         }
 
         @Override
-        public void accept(JsVisitor v, JsContext context) {
-            v.visitThis(this, context);
+        public void accept(JsVisitor v) {
+            v.visitThis(this);
         }
     }
 
@@ -41,8 +41,8 @@ public abstract class JsLiteral extends JsExpressionImpl {
       }
 
       @Override
-      public void accept(JsVisitor v, JsContext context) {
-        v.visitBoolean(this, context);
+      public void accept(JsVisitor v) {
+        v.visitBoolean(this);
       }
     }
 
