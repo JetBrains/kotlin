@@ -9,7 +9,7 @@ import com.google.dart.compiler.common.Symbol;
 /**
  * Represents a JavaScript label statement.
  */
-public class JsLabel extends JsNodeImpl implements JsStatement, HasName {
+public class JsLabel extends SourceInfoAwareJsNode implements JsStatement, HasName {
     private final JsName label;
 
     private JsStatement statement;

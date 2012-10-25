@@ -7,7 +7,7 @@ package com.google.dart.compiler.backend.js.ast;
 /**
  * Represents a JavaScript if statement.
  */
-public final class JsIf extends JsNodeImpl implements JsStatement {
+public final class JsIf extends SourceInfoAwareJsNode implements JsStatement {
     private JsExpression ifExpression;
     private JsStatement thenStatement;
     private JsStatement elseStatement;

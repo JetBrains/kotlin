@@ -7,7 +7,7 @@ package com.google.dart.compiler.backend.js.ast;
 /**
  * A JavaScript return statement.
  */
-public final class JsReturn extends JsNodeImpl implements JsStatement {
+public final class JsReturn extends SourceInfoAwareJsNode implements JsStatement {
     private JsExpression expression;
 
     public JsReturn() {

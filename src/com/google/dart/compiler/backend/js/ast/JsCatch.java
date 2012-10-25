@@ -7,7 +7,7 @@ package com.google.dart.compiler.backend.js.ast;
 /**
  * Represents a JavaScript catch clause.
  */
-public class JsCatch extends JsNodeImpl implements HasCondition {
+public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
 
     protected final JsCatchScope scope;
     private JsBlock body;

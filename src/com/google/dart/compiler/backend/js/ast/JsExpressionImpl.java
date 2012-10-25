@@ -6,10 +6,7 @@ package com.google.dart.compiler.backend.js.ast;
 
 import java.util.List;
 
-abstract class JsExpressionImpl extends JsNodeImpl implements JsExpression {
-    protected JsExpressionImpl() {
-    }
-
+abstract class JsExpressionImpl extends SourceInfoAwareJsNode implements JsExpression {
     /**
      * Determines whether or not this expression is a leaf, such as a
      * {@link JsNameRef}, {@link JsLiteral.JsBooleanLiteral}, and so on. Leaf expressions

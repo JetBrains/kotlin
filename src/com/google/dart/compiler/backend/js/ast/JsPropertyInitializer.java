@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Used in object literals to specify property values by name.
  */
-public class JsPropertyInitializer extends JsNodeImpl {
+public class JsPropertyInitializer extends SourceInfoAwareJsNode {
     private JsExpression labelExpr;
     private JsExpression valueExpr;
 

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * A JavaScript switch statement.
  */
-public class JsSwitch extends JsNodeImpl implements JsStatement {
+public class JsSwitch extends SourceInfoAwareJsNode implements JsStatement {
 
     private final List<JsSwitchMember> cases = new ArrayList<JsSwitchMember>();
     private JsExpression expression;

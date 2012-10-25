@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public class JsThrow extends JsNodeImpl implements JsStatement {
+public class JsThrow extends SourceInfoAwareJsNode implements JsStatement {
     private JsExpression expression;
 
     public JsThrow() {

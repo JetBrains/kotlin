@@ -15,7 +15,7 @@ package com.google.dart.compiler.backend.js.ast;
  * Note that any of the parts of the <code>for</code> loop header can be
  * <code>null</code>, although the body will never be null.
  */
-public class JsFor extends JsNodeImpl implements JsStatement {
+public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
     private JsStatement body;
     private JsExpression condition;
     private JsExpression incrementExpression;

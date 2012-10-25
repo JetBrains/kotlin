@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A member/case in a JavaScript switch object.
  */
-public abstract class JsSwitchMember extends JsNodeImpl {
+public abstract class JsSwitchMember extends SourceInfoAwareJsNode {
     protected final List<JsStatement> statements = new SmartList<JsStatement>();
 
     protected JsSwitchMember() {

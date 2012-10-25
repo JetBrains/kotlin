@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * A JavaScript <code>var</code> statement.
  */
-public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.JsVar> {
+public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterable<JsVars.JsVar> {
     private final List<JsVar> vars;
 
     private final boolean multiline;
@@ -49,7 +49,7 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
     /**
      * A var declared using the JavaScript <code>var</code> statement.
      */
-    public static class JsVar extends JsNodeImpl implements HasName {
+    public static class JsVar extends SourceInfoAwareJsNode implements HasName {
         private final JsName name;
         private JsExpression initExpression;
 

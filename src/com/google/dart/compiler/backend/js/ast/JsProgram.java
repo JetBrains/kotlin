@@ -17,7 +17,7 @@ import static com.google.dart.compiler.backend.js.ast.JsNumberLiteral.JsIntLiter
 /**
  * A JavaScript program.
  */
-public final class JsProgram extends JsNodeImpl {
+public final class JsProgram extends SourceInfoAwareJsNode {
     private final JsEmpty emptyStatement;
 
     private JsProgramFragment[] fragments;

@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public class JsEmpty extends JsNodeImpl implements JsStatement {
+public class JsEmpty extends SourceInfoAwareJsNode implements JsStatement {
     JsEmpty() {
     }
 

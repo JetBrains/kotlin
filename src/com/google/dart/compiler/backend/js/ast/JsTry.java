@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * A JavaScript <code>try</code> statement.
  */
-public class JsTry extends JsNodeImpl implements JsStatement {
+public class JsTry extends SourceInfoAwareJsNode implements JsStatement {
     private final List<JsCatch> catches;
     private JsBlock finallyBlock;
     private JsBlock tryBlock;
