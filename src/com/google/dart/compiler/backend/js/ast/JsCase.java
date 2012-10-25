@@ -32,9 +32,4 @@ public final class JsCase extends JsSwitchMember {
         caseExpression = visitor.accept(caseExpression);
         super.acceptChildren(visitor, context);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.CASE;
-    }
 }

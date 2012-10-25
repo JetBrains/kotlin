@@ -63,9 +63,4 @@ public final class JsIf extends JsNodeImpl implements JsStatement {
                         elseStatement = visitor.accept(elseStatement);
                     }
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.IF;
-    }
 }

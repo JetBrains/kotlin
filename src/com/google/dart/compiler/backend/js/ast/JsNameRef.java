@@ -104,9 +104,4 @@ public final class JsNameRef extends JsExpressionImpl implements CanBooleanEval,
                         qualifier = visitor.accept(qualifier);
                     }
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.NAME_REF;
-    }
 }

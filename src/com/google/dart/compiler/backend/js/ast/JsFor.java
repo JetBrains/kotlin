@@ -95,9 +95,4 @@ public class JsFor extends JsNodeImpl implements JsStatement {
         }
         body = visitor.accept(body);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.FOR;
-    }
 }

@@ -65,9 +65,4 @@ public final class JsArrayLiteral extends JsLiteral {
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         visitor.acceptWithInsertRemove(expressions);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.ARRAY;
-    }
 }

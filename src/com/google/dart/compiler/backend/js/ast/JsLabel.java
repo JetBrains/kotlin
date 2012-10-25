@@ -45,14 +45,9 @@ public class JsLabel extends JsNodeImpl implements JsStatement, HasName {
     public void accept(JsVisitor v, JsContext context) {
         v.visitLabel(this, context);
     }
-    
-    @Override
-        public void acceptChildren(JsVisitor visitor, JsContext context) {
-        statement = visitor.accept(statement);
-        }
 
     @Override
-    public NodeKind getKind() {
-        return NodeKind.LABEL;
+    public void acceptChildren(JsVisitor visitor, JsContext context) {
+        statement = visitor.accept(statement);
     }
 }

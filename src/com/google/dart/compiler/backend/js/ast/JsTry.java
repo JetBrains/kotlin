@@ -60,9 +60,4 @@ public class JsTry extends JsNodeImpl implements JsStatement {
             finallyBlock = visitor.accept(finallyBlock);
         }
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.TRY;
-    }
 }

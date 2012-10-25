@@ -35,9 +35,4 @@ public final class JsParameter extends JsNodeImpl implements HasName {
     public void acceptChildren(JsVisitor visitor, JsContext context) {
 
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.PARAMETER;
-    }
 }

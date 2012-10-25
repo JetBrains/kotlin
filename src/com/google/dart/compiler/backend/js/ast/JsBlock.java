@@ -52,9 +52,4 @@ public class JsBlock extends JsNodeImpl implements JsStatement {
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         visitor.acceptWithInsertRemove(statements);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.BLOCK;
-    }
 }

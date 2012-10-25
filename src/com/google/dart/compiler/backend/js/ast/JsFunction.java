@@ -99,9 +99,4 @@ public final class JsFunction extends JsLiteral implements HasName {
         visitor.acceptWithInsertRemove(params);
                     body = visitor.accept(body);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.FUNCTION;
-    }
 }

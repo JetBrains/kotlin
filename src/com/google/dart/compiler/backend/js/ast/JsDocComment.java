@@ -23,11 +23,6 @@ public class JsDocComment extends JsExpressionImpl {
     }
 
     @Override
-    public NodeKind getKind() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void accept(JsVisitor v, JsContext context) {
         v.visitDocComment(this, context);
     }

@@ -15,11 +15,6 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
         return false;
     }
 
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.NUMBER;
-    }
-
     public static final class JsDoubleLiteral extends JsNumberLiteral {
         public final double value;
 

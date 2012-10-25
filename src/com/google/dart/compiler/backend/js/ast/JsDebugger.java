@@ -8,22 +8,16 @@ package com.google.dart.compiler.backend.js.ast;
  * Represents a JavaScript debugger statement.
  */
 public class JsDebugger extends JsNodeImpl implements JsStatement {
+    public JsDebugger() {
+    }
 
-  public JsDebugger() {
-  }
-
-  @Override
-  public void accept(JsVisitor v, JsContext context) {
-    v.visitDebugger(this, context);
-  }
+    @Override
+    public void accept(JsVisitor v, JsContext context) {
+        v.visitDebugger(this, context);
+    }
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
 
     }
-
-    @Override
-  public NodeKind getKind() {
-    return NodeKind.DEBUGGER;
-  }
 }

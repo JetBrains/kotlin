@@ -77,9 +77,4 @@ public final class JsObjectLiteral extends JsLiteral {
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         visitor.acceptWithInsertRemove(properties);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.OBJECT;
-    }
 }

@@ -7,8 +7,6 @@ package com.google.dart.compiler.backend.js.ast;
 import com.google.dart.compiler.common.HasSourceInfo;
 
 public interface JsNode extends HasSourceInfo {
-    NodeKind getKind();
-
     /**
      * Causes this object to have the visitor visit itself and its children.
      *

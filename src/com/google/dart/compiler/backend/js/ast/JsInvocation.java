@@ -76,9 +76,4 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         qualifier = visitor.accept(qualifier);
         visitor.acceptList(arguments);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.INVOKE;
-    }
 }

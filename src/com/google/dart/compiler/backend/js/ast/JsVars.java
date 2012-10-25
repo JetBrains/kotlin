@@ -91,11 +91,6 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
                 initExpression = visitor.accept(initExpression);
             }
         }
-
-        @Override
-        public NodeKind getKind() {
-            return NodeKind.VAR;
-        }
     }
 
     public void add(JsVar var) {
@@ -125,10 +120,5 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         visitor.acceptWithInsertRemove(vars);
-    }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.VARS;
     }
 }

@@ -32,9 +32,4 @@ public final class JsNullLiteral extends JsLiteral.JsValueLiteral {
     public void accept(JsVisitor v, JsContext context) {
         v.visitNull(this, context);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.NULL;
-    }
 }

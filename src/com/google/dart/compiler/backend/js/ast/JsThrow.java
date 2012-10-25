@@ -31,9 +31,4 @@ public class JsThrow extends JsNodeImpl implements JsStatement {
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         visitor.accept(expression);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.THROW;
-    }
 }

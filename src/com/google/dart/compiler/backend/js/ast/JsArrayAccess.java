@@ -61,9 +61,4 @@ public final class JsArrayAccess extends JsExpressionImpl {
         arrayExpression = visitor.accept(arrayExpression);
         indexExpression = visitor.accept(indexExpression);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.ARRAY_ACCESS;
-    }
 }

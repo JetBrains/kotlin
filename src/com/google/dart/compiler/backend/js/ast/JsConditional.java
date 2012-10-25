@@ -71,9 +71,4 @@ public final class JsConditional extends JsExpressionImpl {
         thenExpr = visitor.accept(thenExpr);
         elseExpr = visitor.accept(elseExpr);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.CONDITIONAL;
-    }
 }

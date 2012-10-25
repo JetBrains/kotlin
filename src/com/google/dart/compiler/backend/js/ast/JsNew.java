@@ -51,9 +51,4 @@ public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
         constructorExpression = visitor.accept(constructorExpression);
         visitor.acceptList(arguments);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.NEW;
-    }
 }

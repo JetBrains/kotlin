@@ -31,9 +31,4 @@ public final class JsPostfixOperation extends JsUnaryOperation {
   public void accept(JsVisitor v, JsContext context) {
     v.visitPostfixOperation(this, context);
   }
-
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.POSTFIX_OP;
-  }
 }

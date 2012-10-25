@@ -41,9 +41,4 @@ public class JsSwitch extends JsNodeImpl implements JsStatement {
         expr = visitor.accept(expr);
         visitor.acceptWithInsertRemove(cases);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.SWITCH;
-    }
 }

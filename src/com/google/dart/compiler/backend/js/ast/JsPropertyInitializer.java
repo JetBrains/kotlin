@@ -48,9 +48,4 @@ public class JsPropertyInitializer extends JsNodeImpl {
         labelExpr = visitor.accept(labelExpr);
                     valueExpr = visitor.accept(valueExpr);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.PROPERTY_INIT;
-    }
 }

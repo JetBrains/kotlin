@@ -31,9 +31,4 @@ public class JsContinue extends JsNodeImpl implements JsStatement {
     public void acceptChildren(JsVisitor visitor, JsContext context) {
 
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.CONTINUE;
-    }
 }

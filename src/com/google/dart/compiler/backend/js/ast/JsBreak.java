@@ -17,11 +17,6 @@ public final class JsBreak extends JsContinue {
     }
 
     @Override
-    public NodeKind getKind() {
-        return NodeKind.BREAK;
-    }
-
-    @Override
     public void accept(JsVisitor v, JsContext context) {
         v.visitBreak(this, context);
     }

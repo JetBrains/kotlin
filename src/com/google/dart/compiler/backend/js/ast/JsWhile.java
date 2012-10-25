@@ -45,9 +45,4 @@ public class JsWhile extends JsNodeImpl implements JsStatement {
         condition = visitor.accept(condition);
         body = visitor.accept(body);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.WHILE;
-    }
 }

@@ -83,9 +83,4 @@ public final class JsBinaryOperation extends JsExpressionImpl {
         }
         arg2 = visitor.accept(arg2);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.BINARY_OP;
-    }
 }

@@ -16,11 +16,6 @@ public class JsDoWhile extends JsWhile {
     }
 
     @Override
-    public NodeKind getKind() {
-        return NodeKind.DO;
-    }
-
-    @Override
     public void accept(JsVisitor v, JsContext context) {
         v.visitDoWhile(this, context);
     }

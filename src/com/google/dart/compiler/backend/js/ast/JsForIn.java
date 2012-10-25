@@ -64,9 +64,4 @@ public class JsForIn extends JsNodeImpl implements JsStatement {
         objectExpression = visitor.accept(objectExpression);
         body = visitor.accept(body);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.FOR_IN;
-    }
 }

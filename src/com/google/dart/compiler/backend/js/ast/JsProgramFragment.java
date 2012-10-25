@@ -27,9 +27,4 @@ public class JsProgramFragment extends JsNodeImpl {
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         visitor.accept(globalBlock);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.PROGRAM_FRAGMENT;
-    }
 }

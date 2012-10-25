@@ -54,9 +54,4 @@ public final class JsRegExp extends JsLiteral.JsValueLiteral {
     public void accept(JsVisitor v, JsContext context) {
         v.visitRegExp(this, context);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.REGEXP;
-    }
 }

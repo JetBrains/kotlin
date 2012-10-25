@@ -44,9 +44,4 @@ public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
   public void accept(JsVisitor v, JsContext context) {
     v.visitString(this, context);
   }
-
-  @Override
-  public NodeKind getKind() {
-    return NodeKind.STRING;
-  }
 }

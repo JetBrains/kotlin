@@ -40,11 +40,6 @@ public class ChameleonJsExpression implements JsExpression {
     }
 
     @Override
-    public NodeKind getKind() {
-        return expression.getKind();
-    }
-
-    @Override
     public void accept(JsVisitor visitor, JsContext context) {
         expression.accept(visitor, context);
     }

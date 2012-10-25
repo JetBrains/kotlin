@@ -60,9 +60,4 @@ public class JsCatch extends JsNodeImpl implements HasCondition {
         }
         body = visitor.accept(body);
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.CATCH;
-    }
 }

@@ -33,12 +33,7 @@ public final class JsReturn extends JsNodeImpl implements JsStatement {
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         if (expression != null) {
-                        expression = visitor.accept(expression);
-                    }
-    }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.RETURN;
+            expression = visitor.accept(expression);
+        }
     }
 }

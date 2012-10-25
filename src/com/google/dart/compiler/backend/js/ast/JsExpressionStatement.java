@@ -26,11 +26,6 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
     }
 
     @Override
-    public NodeKind getKind() {
-        return NodeKind.EXPRESSION_STMT;
-    }
-
-    @Override
     public Object getSourceInfo() {
         return null;
     }

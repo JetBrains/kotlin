@@ -119,9 +119,4 @@ public final class JsProgram extends JsNodeImpl {
             visitor.accept(fragment);
         }
     }
-
-    @Override
-    public NodeKind getKind() {
-        return NodeKind.PROGRAM;
-    }
 }

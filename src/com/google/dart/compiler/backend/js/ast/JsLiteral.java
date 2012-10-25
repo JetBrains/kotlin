@@ -46,11 +46,6 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
         public void accept(JsVisitor v, JsContext context) {
             v.visitThis(this, context);
         }
-
-        @Override
-        public NodeKind getKind() {
-            return NodeKind.THIS;
-        }
     }
 
     public static final class JsBooleanLiteral extends JsValueLiteral {
@@ -88,11 +83,6 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
       @Override
       public void accept(JsVisitor v, JsContext context) {
         v.visitBoolean(this, context);
-      }
-
-      @Override
-      public NodeKind getKind() {
-        return NodeKind.BOOLEAN;
       }
     }
 
