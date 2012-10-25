@@ -4,7 +4,7 @@ package outer
 fun Int?.optint() : Unit {}
 val Int?.optval : Unit = Unit.VALUE
 
-fun <T, E> T.foo(<!UNUSED_PARAMETER!>x<!> : E, y : A) : T   {
+fun <T: Any, E> T.foo(<!UNUSED_PARAMETER!>x<!> : E, y : A) : T   {
   y.plus(1)
   y plus 1
   y + 1.0

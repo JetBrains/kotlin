@@ -1,7 +1,7 @@
 fun Int?.optint() : Unit {}
 val Int?.optval : Unit = Unit.VALUE
 
-fun <T, E> T.foo(<warning>x</warning> : E, y : A) : T   {
+fun <T: Any, E> T.foo(<warning>x</warning> : E, y : A) : T   {
   y.plus(1)
   y plus 1
   y + 1.0

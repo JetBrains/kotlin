@@ -2319,6 +2319,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullableTypes/redundantNullableInSupertype.kt");
             }
             
+            @TestMetadata("safeCallOnTypeWithNullableUpperBound.kt")
+            public void testSafeCallOnTypeWithNullableUpperBound() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnTypeWithNullableUpperBound.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/objects")

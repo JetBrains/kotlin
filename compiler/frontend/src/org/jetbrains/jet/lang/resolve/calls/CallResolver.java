@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -31,6 +30,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -891,11 +892,13 @@ public class CallResolver {
             ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
             boolean isExplicitReceiver, boolean implicitInvokeCheck) {
 
+        BindingContext bindingContext = context.candidateCall.getTrace().getBindingContext();
+
         ResolutionStatus result = SUCCESS;
         if (receiverParameter.exists() && receiverArgument.exists()) {
             boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
             JetType receiverArgumentType = receiverArgument.getType();
-            AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.candidateCall.getTrace().getBindingContext());
+            AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, bindingContext);
             if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
 
                 context.tracing.unsafeCall(context.candidateCall.getTrace(), receiverArgumentType, implicitInvokeCheck);
@@ -912,7 +915,8 @@ public class CallResolver {
                     result = OTHER_ERROR;
                 }
             }
-            if (safeAccess && !receiverArgumentType.isNullable()) {
+            DataFlowValue receiverValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiverArgument, bindingContext);
+            if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {
                 context.tracing.unnecessarySafeCall(context.candidateCall.getTrace(), receiverArgumentType);
             }
         }

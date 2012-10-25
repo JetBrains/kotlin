@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -59,6 +59,48 @@ public class DataFlowValueFactory {
     public DataFlowValue createDataFlowValue(@NotNull VariableDescriptor variableDescriptor) {
         JetType type = variableDescriptor.getType();
         return new DataFlowValue(variableDescriptor, type, isStableVariable(variableDescriptor), getImmanentNullability(type));
+    }
+
+    @NotNull
+    public DataFlowValue createDataFlowValue(@NotNull ReceiverDescriptor receiverDescriptor, @NotNull BindingContext bindingContext) {
+        return receiverDescriptor.accept(new ReceiverDescriptorVisitor<DataFlowValue, BindingContext>() {
+            @Override
+            public DataFlowValue visitNoReceiver(ReceiverDescriptor noReceiver, BindingContext data) {
+                throw new IllegalArgumentException("No DataFlowValue exists for ReceiverDescriptor.NO_RECEIVER");
+            }
+
+            @Override
+            public DataFlowValue visitExtensionReceiver(ExtensionReceiver receiver, BindingContext data) {
+                return createDataFlowValue(receiver);
+            }
+
+            @Override
+            public DataFlowValue visitExpressionReceiver(ExpressionReceiver receiver, BindingContext bindingContext) {
+                return createDataFlowValue(receiver.getExpression(), receiver.getType(), bindingContext);
+            }
+
+            @Override
+            public DataFlowValue visitClassReceiver(ClassReceiver receiver, BindingContext data) {
+                return createDataFlowValue(receiver);
+            }
+
+            @Override
+            public DataFlowValue visitTransientReceiver(TransientReceiver receiver, BindingContext data) {
+                return createTransientDataFlowValue(receiver);
+            }
+
+            @Override
+            public DataFlowValue visitScriptReceiver(ScriptReceiver receiver, BindingContext data) {
+                return createTransientDataFlowValue(receiver);
+            }
+
+            @NotNull
+            private DataFlowValue createTransientDataFlowValue(ReceiverDescriptor receiver) {
+                JetType type = receiver.getType();
+                boolean nullable = type.isNullable() || TypeUtils.hasNullableSuperType(type);
+                return new DataFlowValue(receiver, type, nullable, Nullability.NOT_NULL);
+            }
+        }, bindingContext);
     }
 
     private Nullability getImmanentNullability(JetType type) {
