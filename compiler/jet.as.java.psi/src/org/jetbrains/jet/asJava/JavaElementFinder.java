@@ -109,11 +109,6 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         FqName qualifiedName = new FqName(qualifiedNameString);
 
-        // qualifiedNameString's format can be "pkg.subpkg.Class$Inner$Inner" (e.g. from com.intellij.execution.filters.ExceptionWorker),
-        // which is neither a fully qualified name, nor an internal name. If we can, we should construct an internal name from it to handle
-        // 'namespace$src$...' queries more accurately. It's not a real internal name though, so it's not supposed to be used anywhere else
-        String internalNameUnsafe = qualifiedNameString.replace('.', '/');
-
         // Backend searches for java.lang.String. Will fail with SOE if continue
         if (qualifiedName.getFqName().startsWith("java.")) return PsiClass.EMPTY_ARRAY;
 
@@ -122,10 +117,8 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         for (JetFile file : filesInScope) {
             final FqName packageName = JetPsiUtil.getFQName(file);
             if (packageName != null && qualifiedName.getFqName().startsWith(packageName.getFqName())) {
-                String packageInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(packageName).getInternalName();
-                String multiFileNamespaceInternalName = NamespaceCodegen.getNamespacePartInternalName(file);
-                if (multiFileNamespaceInternalName.equals(internalNameUnsafe) ||
-                        (packageInternalName.equals(internalNameUnsafe) && NamespaceCodegen.shouldGenerateNSClass(Arrays.asList(file)))) {
+                if (qualifiedName.equals(QualifiedNamesUtil.combine(packageName, Name.identifier(JvmAbi.PACKAGE_CLASS))) &&
+                    NamespaceCodegen.shouldGenerateNSClass(Arrays.asList(file))) {
                     JetLightClass lightClass = JetLightClass.create(psiManager, file, qualifiedName);
                     if (lightClass != null) {
                         answer.add(lightClass);
