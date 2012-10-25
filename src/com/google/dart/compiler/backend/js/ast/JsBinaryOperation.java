@@ -6,9 +6,6 @@ package com.google.dart.compiler.backend.js.ast;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Represents a JavaScript binary operation.
- */
 public final class JsBinaryOperation extends JsExpressionImpl {
     private JsExpression arg1;
     private JsExpression arg2;
@@ -76,11 +73,11 @@ public final class JsBinaryOperation extends JsExpressionImpl {
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         if (op.isAssignment()) {
-            arg1 = visitor.acceptLvalue(arg1);
+            visitor.acceptLvalue(arg1);
         }
         else {
-            arg1 = visitor.accept(arg1);
+            visitor.accept(arg1);
         }
-        arg2 = visitor.accept(arg2);
+        visitor.accept(arg2);
     }
 }

@@ -101,7 +101,7 @@ public final class JsNameRef extends JsExpressionImpl implements CanBooleanEval,
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         if (qualifier != null) {
-            qualifier = visitor.accept(qualifier);
+           visitor.accept(qualifier);
         }
     }
 }

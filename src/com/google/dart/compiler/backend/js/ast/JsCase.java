@@ -29,7 +29,7 @@ public final class JsCase extends JsSwitchMember {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        caseExpression = visitor.accept(caseExpression);
+        visitor.accept(caseExpression);
         super.acceptChildren(visitor, context);
     }
 }

@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * Represents a JavaScript for..in statement.
- */
 public class JsForIn extends JsNodeImpl implements JsStatement {
     private JsStatement body;
     private JsExpression iterExpression;
@@ -59,9 +56,9 @@ public class JsForIn extends JsNodeImpl implements JsStatement {
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
         if (iterExpression != null) {
-            iterExpression = visitor.acceptLvalue(iterExpression);
+            visitor.acceptLvalue(iterExpression);
         }
-        objectExpression = visitor.accept(objectExpression);
-        body = visitor.accept(body);
+        visitor.accept(objectExpression);
+        visitor.accept(body);
     }
 }

@@ -367,7 +367,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         // get parentheses around it.
         printPair(x, x.getTestExpression());
         spaceOpt();
-        questionMark();
+        p.print('?');
         spaceOpt();
         printPair(x, x.getThenExpression());
         spaceOpt();
@@ -407,17 +407,17 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         leftParen();
         accept(x.getCondition());
         rightParen();
-        _nestedPush(x.getBody());
+        nestedPush(x.getBody());
         accept(x.getBody());
-        _nestedPop(x.getBody());
+        nestedPop(x.getBody());
     }
 
     @Override
     public void visitDoWhile(JsDoWhile x, JsContext context) {
         p.print(CHARS_DO);
-        _nestedPush(x.getBody());
+        nestedPush(x.getBody());
         accept(x.getBody());
-        _nestedPop(x.getBody());
+        nestedPop(x.getBody());
         if (needSemi) {
             semi();
             newlineOpt();
@@ -483,9 +483,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
 
         rightParen();
-        _nestedPush(x.getBody());
+        nestedPush(x.getBody());
         accept(x.getBody());
-        _nestedPop(x.getBody());
+        nestedPop(x.getBody());
     }
 
     @Override
@@ -518,9 +518,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getObjectExpression());
 
         rightParen();
-        _nestedPush(x.getBody());
+        nestedPush(x.getBody());
         accept(x.getBody());
-        _nestedPop(x.getBody());
+        nestedPop(x.getBody());
     }
 
     @Override
@@ -554,9 +554,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         accept(x.getIfExpression());
         rightParen();
         JsStatement thenStmt = x.getThenStatement();
-        _nestedPush(thenStmt);
+        nestedPush(thenStmt);
         accept(thenStmt);
-        _nestedPop(thenStmt);
+        nestedPop(thenStmt);
         JsStatement elseStatement = x.getElseStatement();
         if (elseStatement != null) {
             if (needSemi) {
@@ -570,14 +570,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.print(CHARS_ELSE);
             boolean elseIf = elseStatement instanceof JsIf;
             if (!elseIf) {
-                _nestedPush(elseStatement);
+                nestedPush(elseStatement);
             }
             else {
                 space();
             }
             accept(elseStatement);
             if (!elseIf) {
-                _nestedPop(elseStatement);
+                nestedPop(elseStatement);
             }
         }
     }
@@ -617,7 +617,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             parenPop(x, q, false);
             p.print('.');
         }
-        _nameRef(x);
+        nameRef(x);
     }
 
     @Override
@@ -745,9 +745,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitRegExp(JsRegExp x, JsContext ctx) {
-        _slash();
+        slash();
         p.print(x.getPattern());
-        _slash();
+        slash();
         String flags = x.getFlags();
         if (flags != null) {
             p.print(flags);
@@ -774,12 +774,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print(CHARS_SWITCH);
         spaceOpt();
         leftParen();
-        accept(x.getExpr());
+        accept(x.getExpression());
         rightParen();
         spaceOpt();
-        _blockOpen();
+        blockOpen();
         acceptList(x.getCases());
-        _blockClose();
+        blockClose();
     }
 
     @Override
@@ -918,7 +918,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         boolean needBraces = !x.isGlobalBlock();
         if (needBraces) {
-            _blockOpen();
+            blockOpen();
         }
 
         int count = 0;
@@ -1000,13 +1000,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print('=');
     }
 
-    private void _blockClose() {
+    private void blockClose() {
         p.indentOut();
         p.print('}');
         newlineOpt();
     }
 
-    private void _blockOpen() {
+    private void blockOpen() {
         p.print('{');
         p.indentIn();
         newlineOpt();
@@ -1040,11 +1040,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         nameDef(hasName.getName());
     }
 
-    private void _nameRef(JsNameRef nameRef) {
+    private void nameRef(JsNameRef nameRef) {
         p.print(nameRef.getIdent());
     }
 
-    private boolean _nestedPop(JsStatement statement) {
+    private boolean nestedPop(JsStatement statement) {
         boolean pop = !(statement instanceof JsBlock);
         if (pop) {
             p.indentOut();
@@ -1052,7 +1052,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         return pop;
     }
 
-    private boolean _nestedPush(JsStatement statement) {
+    private boolean nestedPush(JsStatement statement) {
         boolean push = !(statement instanceof JsBlock);
         if (push) {
             newlineOpt();
@@ -1116,10 +1116,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         return doPush;
     }
 
-    private void questionMark() {
-        p.print('?');
-    }
-
     private void rightParen() {
         p.print(')');
     }
@@ -1140,7 +1136,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         return true;
     }
 
-    private void _slash() {
+    private void slash() {
         p.print('/');
     }
 

@@ -80,19 +80,19 @@ public class JsFor extends JsNodeImpl implements JsStatement {
         assert (!(initExpression != null && initVars != null));
 
         if (initExpression != null) {
-            initExpression = visitor.accept(initExpression);
+            visitor.accept(initExpression);
         }
         else if (initVars != null) {
-            initVars = visitor.accept(initVars);
+            visitor.accept(initVars);
         }
 
         if (condition != null) {
-            condition = visitor.accept(condition);
+            visitor.accept(condition);
         }
 
         if (incrementExpression != null) {
-            incrementExpression = visitor.accept(incrementExpression);
+            visitor.accept(incrementExpression);
         }
-        body = visitor.accept(body);
+        visitor.accept(body);
     }
 }

@@ -77,7 +77,7 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
      * We only look at nodes that would not normally be surrounded by parentheses.
      */
     @Override
-    public <T extends JsNode> T accept(T node) {
+    public <T extends JsNode> void accept(T node) {
         // Assign to Object to prevent 'inconvertible types' compile errors due
         // to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6548436
         // reproducible in jdk1.6.0_02.
@@ -87,9 +87,9 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
             // Only visit expressions that won't automatically be surrounded by
             // parentheses
             if (precedence < JsPrecedenceVisitor.PRECEDENCE_NEW) {
-                return node;
+                return;
             }
         }
-        return super.accept(node);
+        super.accept(node);
     }
 }

@@ -64,8 +64,8 @@ public final class JsConditional extends JsExpressionImpl {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        testExpression = visitor.accept(testExpression);
-        thenExpression = visitor.accept(thenExpression);
-        elseExpression = visitor.accept(elseExpression);
+        visitor.accept(testExpression);
+        visitor.accept(thenExpression);
+        visitor.accept(elseExpression);
     }
 }

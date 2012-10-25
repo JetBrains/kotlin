@@ -42,7 +42,7 @@ public class JsWhile extends JsNodeImpl implements JsStatement {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        condition = visitor.accept(condition);
-        body = visitor.accept(body);
+        visitor.accept(condition);
+        visitor.accept(body);
     }
 }

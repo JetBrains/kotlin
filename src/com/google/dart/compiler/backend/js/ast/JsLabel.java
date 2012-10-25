@@ -48,6 +48,6 @@ public class JsLabel extends JsNodeImpl implements JsStatement, HasName {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        statement = visitor.accept(statement);
+        visitor.accept(statement);
     }
 }

@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * A JavaScript prefix or postfix operation.
- */
 public abstract class JsUnaryOperation extends JsExpressionImpl {
 
     private JsExpression arg;
@@ -45,10 +42,10 @@ public abstract class JsUnaryOperation extends JsExpressionImpl {
         if (op.isModifying()) {
             // The delete operator is practically like an assignment of undefined, so
             // for practical purposes we're treating it as an lvalue.
-            arg = visitor.acceptLvalue(arg);
+            visitor.acceptLvalue(arg);
         }
         else {
-            arg = visitor.accept(arg);
+            visitor.accept(arg);
         }
     }
 }

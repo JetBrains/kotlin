@@ -88,7 +88,7 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
         @Override
         public void acceptChildren(JsVisitor visitor, JsContext context) {
             if (initExpression != null) {
-                initExpression = visitor.accept(initExpression);
+                visitor.accept(initExpression);
             }
         }
     }

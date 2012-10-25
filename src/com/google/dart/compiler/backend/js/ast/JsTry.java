@@ -54,10 +54,10 @@ public class JsTry extends JsNodeImpl implements JsStatement {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        tryBlock = visitor.accept(tryBlock);
+        visitor.accept(tryBlock);
         visitor.acceptWithInsertRemove(catches);
         if (finallyBlock != null) {
-            finallyBlock = visitor.accept(finallyBlock);
+           visitor.accept(finallyBlock);
         }
     }
 }

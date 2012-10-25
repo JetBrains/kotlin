@@ -54,10 +54,10 @@ public class JsCatch extends JsNodeImpl implements HasCondition {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        param = visitor.accept(param);
+        visitor.accept(param);
         if (condition != null) {
-            condition = visitor.accept(condition);
+            visitor.accept(condition);
         }
-        body = visitor.accept(body);
+        visitor.accept(body);
     }
 }

@@ -83,9 +83,8 @@ public abstract class JsVisitor {
         }
     };
 
-    public <T extends JsNode> T accept(T node) {
+    public <T extends JsNode> void accept(T node) {
         doAccept(node, UNMODIFIABLE_CONTEXT);
-        return node;
     }
 
     public final <T extends JsNode> void acceptList(List<T> collection) {
@@ -94,9 +93,8 @@ public abstract class JsVisitor {
         }
     }
 
-    public JsExpression acceptLvalue(JsExpression expr) {
-        doAccept(expr, LVALUE_CONTEXT);
-        return expr;
+    public void acceptLvalue(JsExpression expression) {
+        doAccept(expression, LVALUE_CONTEXT);
     }
 
     public final <T extends JsNode> void acceptWithInsertRemove(List<T> collection) {

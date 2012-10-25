@@ -4,11 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * A JavaScript postfix operation.
- */
 public final class JsPostfixOperation extends JsUnaryOperation {
-
   public JsPostfixOperation(JsUnaryOperator op) {
     this(op, null);
   }

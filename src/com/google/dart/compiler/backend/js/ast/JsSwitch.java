@@ -13,7 +13,7 @@ import java.util.List;
 public class JsSwitch extends JsNodeImpl implements JsStatement {
 
     private final List<JsSwitchMember> cases = new ArrayList<JsSwitchMember>();
-    private JsExpression expr;
+    private JsExpression expression;
 
     public JsSwitch() {
         super();
@@ -23,12 +23,12 @@ public class JsSwitch extends JsNodeImpl implements JsStatement {
         return cases;
     }
 
-    public JsExpression getExpr() {
-        return expr;
+    public JsExpression getExpression() {
+        return expression;
     }
 
-    public void setExpr(JsExpression expr) {
-        this.expr = expr;
+    public void setExpression(JsExpression expression) {
+        this.expression = expression;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class JsSwitch extends JsNodeImpl implements JsStatement {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        expr = visitor.accept(expr);
+        visitor.accept(expression);
         visitor.acceptWithInsertRemove(cases);
     }
 }

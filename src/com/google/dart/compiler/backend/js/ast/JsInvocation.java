@@ -73,7 +73,7 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        qualifier = visitor.accept(qualifier);
+        visitor.accept(qualifier);
         visitor.acceptList(arguments);
     }
 }

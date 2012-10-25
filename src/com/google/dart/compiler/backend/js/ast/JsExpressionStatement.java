@@ -22,7 +22,7 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        expression = visitor.accept(expression);
+        visitor.accept(expression);
     }
 
     @Override
