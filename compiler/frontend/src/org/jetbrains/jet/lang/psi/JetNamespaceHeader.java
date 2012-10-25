@@ -128,5 +128,10 @@ public class JetNamespaceHeader extends JetReferenceExpression {
         }
         return builder.toString();
     }
+
+    @Override
+    public void subtreeChanged() {
+        qualifiedNameCache = null;
+    }
 }
 
