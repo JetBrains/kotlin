@@ -15,21 +15,6 @@ public class ChameleonJsExpression implements JsExpression {
     }
 
     @Override
-    public boolean hasSideEffects() {
-        return expression.hasSideEffects();
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return expression.isDefinitelyNotNull();
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return expression.isDefinitelyNull();
-    }
-
-    @Override
     public boolean isLeaf() {
         return expression.isLeaf();
     }

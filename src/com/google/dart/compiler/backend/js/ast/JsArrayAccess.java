@@ -28,21 +28,6 @@ public final class JsArrayAccess extends JsExpressionImpl {
         return indexExpression;
     }
 
-    @Override
-    public boolean hasSideEffects() {
-        return arrayExpression.hasSideEffects() || indexExpression.hasSideEffects();
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return false;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return false;
-    }
-
     public void setArrayExpression(JsExpression arrayExpression) {
         this.arrayExpression = arrayExpression;
     }

@@ -4,7 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEval {
+public abstract class JsLiteral extends JsExpressionImpl {
     public static final JsValueLiteral THIS = new JsThisRef();
     public static final JsNameRef UNDEFINED = new JsNameRef("undefined");
 
@@ -20,26 +20,6 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
     public static final class JsThisRef extends JsValueLiteral {
         private JsThisRef() {
             super();
-        }
-
-        @Override
-        public boolean isBooleanFalse() {
-            return false;
-        }
-
-        @Override
-        public boolean isBooleanTrue() {
-            return true;
-        }
-
-        @Override
-        public boolean isDefinitelyNotNull() {
-            return true;
-        }
-
-        @Override
-        public boolean isDefinitelyNull() {
-            return false;
         }
 
         @Override
@@ -61,26 +41,6 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
       }
 
       @Override
-      public boolean isBooleanFalse() {
-        return !value;
-      }
-
-      @Override
-      public boolean isBooleanTrue() {
-        return value;
-      }
-
-      @Override
-      public boolean isDefinitelyNotNull() {
-        return true;
-      }
-
-      @Override
-      public boolean isDefinitelyNull() {
-        return false;
-      }
-
-      @Override
       public void accept(JsVisitor v, JsContext context) {
         v.visitBoolean(this, context);
       }
@@ -91,11 +51,6 @@ public abstract class JsLiteral extends JsExpressionImpl implements CanBooleanEv
      */
     public abstract static class JsValueLiteral extends JsLiteral {
         protected JsValueLiteral() {
-        }
-
-        @Override
-        public final boolean hasSideEffects() {
-            return false;
         }
 
         @Override

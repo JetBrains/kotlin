@@ -55,32 +55,6 @@ public final class JsFunction extends JsLiteral implements HasName {
         return scope;
     }
 
-    @Override
-    public boolean hasSideEffects() {
-        // If there's a name, the name is assigned to.
-        return name != null;
-    }
-
-    @Override
-    public boolean isBooleanFalse() {
-        return false;
-    }
-
-    @Override
-    public boolean isBooleanTrue() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return false;
-    }
-
     public void setBody(JsBlock body) {
         this.body = body;
     }

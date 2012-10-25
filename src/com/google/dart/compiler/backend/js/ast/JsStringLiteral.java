@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-/**
- * A JavaScript string literal expression.
- */
 public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
 
   private final String value;
@@ -18,26 +15,6 @@ public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
 
   public String getValue() {
     return value;
-  }
-
-  @Override
-  public boolean isBooleanFalse() {
-    return value.length() == 0;
-  }
-
-  @Override
-  public boolean isBooleanTrue() {
-    return value.length() != 0;
-  }
-
-  @Override
-  public boolean isDefinitelyNotNull() {
-    return true;
-  }
-
-  @Override
-  public boolean isDefinitelyNull() {
-    return false;
   }
 
   @Override

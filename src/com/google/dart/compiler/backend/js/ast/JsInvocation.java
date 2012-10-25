@@ -47,21 +47,6 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
         return qualifier;
     }
 
-    @Override
-    public boolean hasSideEffects() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return false;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return false;
-    }
-
     public void setQualifier(JsExpression qualifier) {
         this.qualifier = qualifier;
     }

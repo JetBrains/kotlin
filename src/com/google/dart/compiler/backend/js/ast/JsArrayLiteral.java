@@ -27,36 +27,6 @@ public final class JsArrayLiteral extends JsLiteral {
     }
 
     @Override
-    public boolean hasSideEffects() {
-        for (JsExpression expr : expressions) {
-            if (expr.hasSideEffects()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isBooleanFalse() {
-        return false;
-    }
-
-    @Override
-    public boolean isBooleanTrue() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return false;
-    }
-
-    @Override
     public void accept(JsVisitor v, JsContext context) {
         v.visitArray(this, context);
     }

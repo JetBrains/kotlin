@@ -28,11 +28,6 @@ public abstract class JsUnaryOperation extends JsExpressionImpl {
         return op;
     }
 
-    @Override
-    public final boolean hasSideEffects() {
-        return op.isModifying() || arg.hasSideEffects();
-    }
-
     public void setArg(JsExpression arg) {
         this.arg = arg;
     }

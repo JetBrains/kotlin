@@ -14,16 +14,6 @@ public final class JsPostfixOperation extends JsUnaryOperation {
   }
 
   @Override
-  public boolean isDefinitelyNotNull() {
-    return true;
-  }
-
-  @Override
-  public boolean isDefinitelyNull() {
-    return false;
-  }
-
-  @Override
   public void accept(JsVisitor v, JsContext context) {
     v.visitPostfixOperation(this, context);
   }

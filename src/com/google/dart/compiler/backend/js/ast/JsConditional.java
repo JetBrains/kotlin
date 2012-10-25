@@ -30,21 +30,6 @@ public final class JsConditional extends JsExpressionImpl {
         return thenExpression;
     }
 
-    @Override
-    public boolean hasSideEffects() {
-        return testExpression.hasSideEffects() || thenExpression.hasSideEffects() || elseExpression.hasSideEffects();
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return thenExpression.isDefinitelyNotNull() && elseExpression.isDefinitelyNotNull();
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return thenExpression.isDefinitelyNull() && elseExpression.isDefinitelyNull();
-    }
-
     public void setElseExpression(JsExpression elseExpression) {
         this.elseExpression = elseExpression;
     }

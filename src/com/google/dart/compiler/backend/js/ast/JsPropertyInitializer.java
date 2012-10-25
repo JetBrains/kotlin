@@ -30,10 +30,6 @@ public class JsPropertyInitializer extends SourceInfoAwareJsNode {
         return valueExpr;
     }
 
-    public boolean hasSideEffects() {
-        return labelExpr.hasSideEffects() || valueExpr.hasSideEffects();
-    }
-
     public void setValueExpr(@NotNull JsExpression valueExpr) {
         this.valueExpr = valueExpr;
     }

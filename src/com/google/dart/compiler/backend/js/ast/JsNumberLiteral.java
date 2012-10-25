@@ -5,31 +5,11 @@
 package com.google.dart.compiler.backend.js.ast;
 
 public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return false;
-    }
-
     public static final class JsDoubleLiteral extends JsNumberLiteral {
         public final double value;
 
         JsDoubleLiteral(double value) {
             this.value = value;
-        }
-
-        @Override
-        public boolean isBooleanFalse() {
-            return value == 0.0;
-        }
-
-        @Override
-        public boolean isBooleanTrue() {
-            return value != 0.0;
         }
 
         @Override
@@ -47,16 +27,6 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
 
         JsIntLiteral(int value) {
             this.value = value;
-        }
-
-        @Override
-        public boolean isBooleanFalse() {
-            return value == 0;
-        }
-
-        @Override
-        public boolean isBooleanTrue() {
-            return value != 0;
         }
 
         @Override

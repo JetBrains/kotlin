@@ -9,26 +9,6 @@ public final class JsNullLiteral extends JsLiteral.JsValueLiteral {
     }
 
     @Override
-    public boolean isBooleanFalse() {
-        return true;
-    }
-
-    @Override
-    public boolean isBooleanTrue() {
-        return false;
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return false;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return true;
-    }
-
-    @Override
     public void accept(JsVisitor v, JsContext context) {
         v.visitNull(this, context);
     }

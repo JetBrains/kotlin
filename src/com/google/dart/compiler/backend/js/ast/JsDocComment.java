@@ -26,19 +26,4 @@ public class JsDocComment extends JsExpressionImpl {
     public void accept(JsVisitor v, JsContext context) {
         v.visitDocComment(this, context);
     }
-
-    @Override
-    public boolean hasSideEffects() {
-        return false;
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return false;
-    }
 }

@@ -22,26 +22,6 @@ public final class JsRegExp extends JsLiteral.JsValueLiteral {
         return pattern;
     }
 
-    @Override
-    public boolean isBooleanFalse() {
-        return false;
-    }
-
-    @Override
-    public boolean isBooleanTrue() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        return true;
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return false;
-    }
-
     public void setFlags(String suffix) {
         flags = suffix;
     }

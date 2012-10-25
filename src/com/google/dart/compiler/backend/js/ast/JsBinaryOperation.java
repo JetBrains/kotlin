@@ -34,38 +34,6 @@ public final class JsBinaryOperation extends JsExpressionImpl {
     }
 
     @Override
-    public boolean hasSideEffects() {
-        return op.isAssignment() || arg1.hasSideEffects() || arg2.hasSideEffects();
-    }
-
-    @Override
-    public boolean isDefinitelyNotNull() {
-        // Precarious coding, but none of these can have null results.
-        if (op.getPrecedence() > 5) {
-            return true;
-        }
-        if (op == JsBinaryOperator.OR) {
-            if (arg1 instanceof CanBooleanEval) {
-                if (((CanBooleanEval) arg1).isBooleanTrue()) {
-                    assert arg1.isDefinitelyNotNull();
-                    return true;
-                }
-            }
-        }
-        // AND and OR can return nulls
-        if (op.isAssignment()) {
-            return op != JsBinaryOperator.ASG || arg2.isDefinitelyNotNull();
-        }
-
-        return op == JsBinaryOperator.COMMA && arg2.isDefinitelyNotNull();
-    }
-
-    @Override
-    public boolean isDefinitelyNull() {
-        return op == JsBinaryOperator.AND && arg1.isDefinitelyNull();
-    }
-
-    @Override
     public void accept(JsVisitor v, JsContext context) {
         v.visitBinaryExpression(this, context);
     }
