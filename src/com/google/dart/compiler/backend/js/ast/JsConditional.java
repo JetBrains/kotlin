@@ -8,56 +8,56 @@ package com.google.dart.compiler.backend.js.ast;
  * Represents a JavaScript conditional expression.
  */
 public final class JsConditional extends JsExpressionImpl {
-    private JsExpression testExpr;
-    private JsExpression elseExpr;
-    private JsExpression thenExpr;
+    private JsExpression testExpression;
+    private JsExpression elseExpression;
+    private JsExpression thenExpression;
 
     public JsConditional() {
     }
 
-    public JsConditional(JsExpression testExpr, JsExpression thenExpr, JsExpression elseExpr) {
-        this.testExpr = testExpr;
-        this.thenExpr = thenExpr;
-        this.elseExpr = elseExpr;
+    public JsConditional(JsExpression testExpression, JsExpression thenExpression, JsExpression elseExpression) {
+        this.testExpression = testExpression;
+        this.thenExpression = thenExpression;
+        this.elseExpression = elseExpression;
     }
 
     public JsExpression getElseExpression() {
-        return elseExpr;
+        return elseExpression;
     }
 
     public JsExpression getTestExpression() {
-        return testExpr;
+        return testExpression;
     }
 
     public JsExpression getThenExpression() {
-        return thenExpr;
+        return thenExpression;
     }
 
     @Override
     public boolean hasSideEffects() {
-        return testExpr.hasSideEffects() || thenExpr.hasSideEffects() || elseExpr.hasSideEffects();
+        return testExpression.hasSideEffects() || thenExpression.hasSideEffects() || elseExpression.hasSideEffects();
     }
 
     @Override
     public boolean isDefinitelyNotNull() {
-        return thenExpr.isDefinitelyNotNull() && elseExpr.isDefinitelyNotNull();
+        return thenExpression.isDefinitelyNotNull() && elseExpression.isDefinitelyNotNull();
     }
 
     @Override
     public boolean isDefinitelyNull() {
-        return thenExpr.isDefinitelyNull() && elseExpr.isDefinitelyNull();
+        return thenExpression.isDefinitelyNull() && elseExpression.isDefinitelyNull();
     }
 
-    public void setElseExpression(JsExpression elseExpr) {
-        this.elseExpr = elseExpr;
+    public void setElseExpression(JsExpression elseExpression) {
+        this.elseExpression = elseExpression;
     }
 
-    public void setTestExpression(JsExpression testExpr) {
-        this.testExpr = testExpr;
+    public void setTestExpression(JsExpression testExpression) {
+        this.testExpression = testExpression;
     }
 
-    public void setThenExpression(JsExpression thenExpr) {
-        this.thenExpr = thenExpr;
+    public void setThenExpression(JsExpression thenExpression) {
+        this.thenExpression = thenExpression;
     }
 
     @Override
@@ -67,8 +67,8 @@ public final class JsConditional extends JsExpressionImpl {
 
     @Override
     public void acceptChildren(JsVisitor visitor, JsContext context) {
-        testExpr = visitor.accept(testExpr);
-        thenExpr = visitor.accept(thenExpr);
-        elseExpr = visitor.accept(elseExpr);
+        testExpression = visitor.accept(testExpression);
+        thenExpression = visitor.accept(thenExpression);
+        elseExpression = visitor.accept(elseExpression);
     }
 }
