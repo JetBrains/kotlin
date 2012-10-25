@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +81,10 @@ public class JetPsiFactory {
     public static PsiElement createWhiteSpace(Project project, String text) {
         JetProperty property = createProperty(project, "val" + text + "x");
         return property.findElementAt(3);
+    }
+
+    public static PsiElement createNewLineWhiteSpace(Project project) {
+        return createWhiteSpace(project, "\n");
     }
 
     public static JetClass createClass(Project project, String text) {
@@ -145,6 +150,11 @@ public class JetPsiFactory {
     public static JetParameter createParameter(Project project, String name, String type) {
         JetNamedFunction function = createFunction(project, "fun foo(" + name + " : " + type + ") {}");
         return function.getValueParameters().get(0);
+    }
+
+    public static JetWhenEntry createElseWhenEntry(Project project) {
+        JetNamedFunction function = createFunction(project, "fun foo() { when(12) { else -> { } } }");
+        return PsiTreeUtil.findChildOfType(function, JetWhenEntry.class);
     }
 
     @NotNull

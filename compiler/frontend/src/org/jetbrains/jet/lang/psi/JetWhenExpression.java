@@ -57,4 +57,10 @@ public class JetWhenExpression extends JetExpressionImpl {
     public PsiElement getWhenKeywordElement() {
         return findChildByType(JetTokens.WHEN_KEYWORD);
     }
+
+    @Nullable
+    public PsiElement getCloseBraceNode() {
+        ASTNode openBraceNode = getNode().findChildByType(JetTokens.RBRACE);
+        return openBraceNode != null ? openBraceNode.getPsi() : null;
+    }
 }

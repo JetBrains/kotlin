@@ -142,5 +142,7 @@ public class QuickFixes {
         actions.put(UNNECESSARY_NOT_NULL_ASSERTION, ExclExclCallFix.removeExclExclCall());
 
         actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
+
+        factories.put(NO_ELSE_IN_WHEN, AddWhenElseBranchFix.createFactory());
     }
 }
