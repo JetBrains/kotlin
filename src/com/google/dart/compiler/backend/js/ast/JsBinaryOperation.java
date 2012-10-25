@@ -70,7 +70,7 @@ public final class JsBinaryOperation extends JsExpressionImpl {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitBinaryExpression(this, context);
     }
 
     @Override

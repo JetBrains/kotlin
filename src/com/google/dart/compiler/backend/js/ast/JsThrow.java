@@ -24,7 +24,7 @@ public class JsThrow extends JsNodeImpl implements JsStatement {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitThrow(this, context);
     }
 
     @Override

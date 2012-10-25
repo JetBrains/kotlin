@@ -110,7 +110,7 @@ public final class JsProgram extends JsNodeImpl {
 
     @Override
     public void accept(JsVisitor v, @Nullable JsContext context) {
-        v.visit(this, context);
+        v.visitProgram(this, context);
     }
 
     @Override

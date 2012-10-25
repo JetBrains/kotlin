@@ -39,7 +39,7 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
 
         @Override
         public void accept(JsVisitor v, JsContext context) {
-            v.visit(this, context);
+            v.visitDouble(this, context);
         }
 
         public String toString() {
@@ -66,7 +66,7 @@ public abstract class JsNumberLiteral extends JsLiteral.JsValueLiteral {
 
         @Override
         public void accept(JsVisitor v, JsContext context) {
-            v.visit(this, context);
+            v.visitInt(this, context);
         }
 
         public String toString() {

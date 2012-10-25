@@ -5,17 +5,16 @@
 package com.google.dart.compiler.backend.js;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.backend.js.ast.JsExpressionStatement;
 
 /**
  * Determines if a statement at the end of a block requires a semicolon.
- * 
+ * <p/>
  * For example, the following statements require semicolons:<br>
  * <ul>
  * <li>if (cond);</li>
  * <li>while (cond);</li>
  * </ul>
- * 
+ * <p/>
  * The following do not require semicolons:<br>
  * <ul>
  * <li>return 1</li>
@@ -23,114 +22,59 @@ import com.google.dart.compiler.backend.js.ast.JsExpressionStatement;
  * </ul>
  */
 public class JsRequiresSemiVisitor extends JsVisitor {
+    private boolean needsSemicolon;
 
-  public static boolean exec(JsStatement lastStatement) {
-    JsRequiresSemiVisitor visitor = new JsRequiresSemiVisitor();
-    visitor.accept(lastStatement);
-    return visitor.needsSemicolon;
-  }
-
-  private boolean needsSemicolon = false;
-
-  private JsRequiresSemiVisitor() {
-  }
-
-  @Override
-  public boolean visit(JsBlock x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsBreak x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsDebugger x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsDoWhile x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsExpressionStatement x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsFor x, JsContext ctx) {
-    if (x.getBody() instanceof JsEmpty) {
-      needsSemicolon = true;
+    private JsRequiresSemiVisitor() {
     }
-    return false;
-  }
 
-  @Override
-  public boolean visit(JsForIn x, JsContext ctx) {
-    if (x.getBody() instanceof JsEmpty) {
-      needsSemicolon = true;
+    public static boolean exec(JsStatement lastStatement) {
+        JsRequiresSemiVisitor visitor = new JsRequiresSemiVisitor();
+        visitor.accept(lastStatement);
+        return visitor.needsSemicolon;
     }
-    return false;
-  }
 
-  @Override
-  public boolean visit(JsIf x, JsContext ctx) {
-    JsStatement thenStmt = x.getThenStatement();
-    JsStatement elseStmt = x.getElseStatement();
-    JsStatement toCheck = thenStmt;
-    if (elseStmt != null) {
-      toCheck = elseStmt;
+    @Override
+    public void visitFor(JsFor x, JsContext ctx) {
+        if (x.getBody() instanceof JsEmpty) {
+            needsSemicolon = true;
+        }
     }
-    if (toCheck instanceof JsEmpty) {
-      needsSemicolon = true;
-    } else {
-      // Must recurse to determine last statement (possible if-else chain).
-      accept(toCheck);
+
+    @Override
+    public void visitForIn(JsForIn x, JsContext ctx) {
+        if (x.getBody() instanceof JsEmpty) {
+            needsSemicolon = true;
+        }
     }
-    return false;
-  }
 
-  @Override
-  public boolean visit(JsLabel x, JsContext ctx) {
-    if (x.getStatement() instanceof JsEmpty) {
-      needsSemicolon = true;
+    @Override
+    public void visitIf(JsIf x, JsContext ctx) {
+        JsStatement thenStmt = x.getThenStatement();
+        JsStatement elseStmt = x.getElseStatement();
+        JsStatement toCheck = thenStmt;
+        if (elseStmt != null) {
+            toCheck = elseStmt;
+        }
+        if (toCheck instanceof JsEmpty) {
+            needsSemicolon = true;
+        }
+        else {
+            // Must recurse to determine last statement (possible if-else chain).
+            accept(toCheck);
+        }
     }
-    return false;
-  }
 
-  @Override
-  public boolean visit(JsReturn x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsSwitch x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsThrow x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsTry x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsVars x, JsContext ctx) {
-    return false;
-  }
-
-  @Override
-  public boolean visit(JsWhile x, JsContext ctx) {
-    if (x.getBody() instanceof JsEmpty) {
-      needsSemicolon = true;
+    @Override
+    public void visitLabel(JsLabel x, JsContext ctx) {
+        if (x.getStatement() instanceof JsEmpty) {
+            needsSemicolon = true;
+        }
     }
-    return false;
-  }
+
+    @Override
+    public void visitWhile(JsWhile x, JsContext ctx) {
+        if (x.getBody() instanceof JsEmpty) {
+            needsSemicolon = true;
+        }
+    }
 }

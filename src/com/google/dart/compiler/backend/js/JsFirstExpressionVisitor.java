@@ -30,7 +30,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpressionStatement;
  * <li>function() {}</li>
  * </ul>
  */
-public class JsFirstExpressionVisitor extends JsVisitor {
+public class JsFirstExpressionVisitor extends RecursiveJsVisitor {
     public static boolean exec(JsExpressionStatement statement) {
         JsExpression expression = statement.getExpression();
         // Pure function declarations do not need parentheses
@@ -49,67 +49,56 @@ public class JsFirstExpressionVisitor extends JsVisitor {
     }
 
     @Override
-    public boolean visit(JsArrayAccess x, JsContext ctx) {
+    public void visitArrayAccess(JsArrayAccess x, JsContext ctx) {
         accept(x.getArrayExpression());
-        return false;
     }
 
     @Override
-    public boolean visit(JsArrayLiteral x, JsContext ctx) {
-        return false;
+    public void visitArray(JsArrayLiteral x, JsContext ctx) {
     }
 
     @Override
-    public boolean visit(JsBinaryOperation x, JsContext ctx) {
+    public void visitBinaryExpression(JsBinaryOperation x, JsContext ctx) {
         accept(x.getArg1());
-        return false;
     }
 
     @Override
-    public boolean visit(JsConditional x, JsContext ctx) {
+    public void visitConditional(JsConditional x, JsContext ctx) {
         accept(x.getTestExpression());
-        return false;
     }
 
     @Override
-    public boolean visit(JsFunction x, JsContext ctx) {
+    public void visitFunction(JsFunction x, JsContext ctx) {
         needsParentheses = true;
-        return false;
     }
 
     @Override
-    public boolean visit(JsInvocation x, JsContext ctx) {
+    public void visitInvocation(JsInvocation x, JsContext ctx) {
         accept(x.getQualifier());
-        return false;
     }
 
     @Override
-    public boolean visit(JsNameRef x, JsContext ctx) {
+    public void visitNameRef(JsNameRef x, JsContext ctx) {
         if (!x.isLeaf()) {
             accept(x.getQualifier());
         }
-        return false;
     }
 
     @Override
-    public boolean visit(JsNew x, JsContext ctx) {
-        return false;
+    public void visitNew(JsNew x, JsContext ctx) {
     }
 
     @Override
-    public boolean visit(JsObjectLiteral x, JsContext ctx) {
+    public void visitObjectLiteral(JsObjectLiteral x, JsContext ctx) {
         needsParentheses = true;
-        return false;
     }
 
     @Override
-    public boolean visit(JsPostfixOperation x, JsContext ctx) {
+    public void visitPostfixOperation(JsPostfixOperation x, JsContext ctx) {
         accept(x.getArg());
-        return false;
     }
 
     @Override
-    public boolean visit(JsPrefixOperation x, JsContext ctx) {
-        return false;
+    public void visitPrefixOperation(JsPrefixOperation x, JsContext ctx) {
     }
 }

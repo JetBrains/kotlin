@@ -22,9 +22,6 @@ public class JsDoWhile extends JsWhile {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-            condition = v.accept(condition);
-            body = v.accept(body);
-        }
+        v.visitDoWhile(this, context);
     }
 }

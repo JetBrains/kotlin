@@ -30,7 +30,7 @@ public final class JsNullLiteral extends JsLiteral.JsValueLiteral {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitNull(this, context);
     }
 
     @Override

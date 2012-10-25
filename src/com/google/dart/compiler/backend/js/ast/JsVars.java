@@ -119,7 +119,7 @@ public class JsVars extends JsNodeImpl implements JsStatement, Iterable<JsVars.J
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitVars(this, context);
     }
 
     @Override

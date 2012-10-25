@@ -10,7 +10,7 @@ import com.google.dart.compiler.backend.js.ast.*;
  * Searches for method invocations in constructor expressions that would not
  * normally be surrounded by parentheses.
  */
-public class JsConstructExpressionVisitor extends JsVisitor {
+public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
     public static boolean exec(JsExpression expression) {
         if (JsPrecedenceVisitor.exec(expression) < JsPrecedenceVisitor.PRECEDENCE_NEW) {
             return true;
@@ -29,55 +29,48 @@ public class JsConstructExpressionVisitor extends JsVisitor {
      * We only look at the array expression since the index has its own scope.
      */
     @Override
-    public boolean visit(JsArrayAccess x, JsContext ctx) {
+    public void visitArrayAccess(JsArrayAccess x, JsContext ctx) {
         accept(x.getArrayExpression());
-        return false;
     }
 
     /**
      * Array literals have their own scoping.
      */
     @Override
-    public boolean visit(JsArrayLiteral x, JsContext ctx) {
-        return false;
+    public void visitArray(JsArrayLiteral x, JsContext ctx) {
     }
 
     /**
      * Functions have their own scoping.
      */
     @Override
-    public boolean visit(JsFunction x, JsContext ctx) {
-        return false;
+    public void visitFunction(JsFunction x, JsContext ctx) {
     }
 
     @Override
-    public boolean visit(JsInvocation x, JsContext ctx) {
+    public void visitInvocation(JsInvocation x, JsContext ctx) {
         containsInvocation = true;
-        return false;
     }
 
     @Override
-    public boolean visit(JsNameRef x, JsContext ctx) {
+    public void visitNameRef(JsNameRef x, JsContext ctx) {
         if (!x.isLeaf()) {
             accept(x.getQualifier());
         }
-        return false;
     }
 
     /**
      * New constructs bind to the nearest set of parentheses.
      */
     @Override
-    public boolean visit(JsNew x, JsContext ctx) {
-        return false;
+    public void visitNew(JsNew x, JsContext ctx) {
     }
 
     /**
      * Object literals have their own scope.
      */
     @Override
-    public boolean visit(JsObjectLiteral x, JsContext ctx) {
-        return false;
+    public void visitObjectLiteral(JsObjectLiteral x, JsContext ctx) {
     }
 
     /**

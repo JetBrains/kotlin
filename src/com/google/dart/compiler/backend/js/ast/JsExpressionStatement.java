@@ -17,7 +17,7 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitExpressionStatement(this, context);
     }
 
     @Override

@@ -53,7 +53,7 @@ public final class JsArrayAccess extends JsExpressionImpl {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitArrayAccess(this, context);
     }
 
     @Override

@@ -52,7 +52,7 @@ public final class JsRegExp extends JsLiteral.JsValueLiteral {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitRegExp(this, context);
     }
 
     @Override

@@ -84,198 +84,207 @@ public abstract class JsVisitor {
     };
 
     public <T extends JsNode> T accept(T node) {
-        doTraverse(node, UNMODIFIABLE_CONTEXT);
+        doAccept(node, UNMODIFIABLE_CONTEXT);
         return node;
     }
 
     public final <T extends JsNode> void acceptList(List<T> collection) {
         for (T node : collection) {
-            doTraverse(node, UNMODIFIABLE_CONTEXT);
+            doAccept(node, UNMODIFIABLE_CONTEXT);
         }
     }
 
     public JsExpression acceptLvalue(JsExpression expr) {
-        doTraverse(expr, LVALUE_CONTEXT);
+        doAccept(expr, LVALUE_CONTEXT);
         return expr;
     }
 
     public final <T extends JsNode> void acceptWithInsertRemove(List<T> collection) {
         for (T node : collection) {
-            doTraverse(node, UNMODIFIABLE_CONTEXT);
+            doAccept(node, UNMODIFIABLE_CONTEXT);
         }
     }
 
-    public boolean visit(JsArrayAccess x, JsContext ctx) {
-        return true;
+    public void visitArrayAccess(JsArrayAccess x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsArrayLiteral x, JsContext ctx) {
-        return true;
+    public void visitArray(JsArrayLiteral x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsBinaryOperation x, JsContext ctx) {
-        return true;
+    public void visitBinaryExpression(JsBinaryOperation x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsBlock x, JsContext ctx) {
-        return true;
+    public void visitBlock(JsBlock x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsLiteral.JsBooleanLiteral x, JsContext ctx) {
-        return true;
+    public void visitBoolean(JsLiteral.JsBooleanLiteral x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsBreak x, JsContext ctx) {
-        return true;
+    public void visitBreak(JsBreak x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsCase x, JsContext ctx) {
-        return true;
+    public void visitCase(JsCase x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsCatch x, JsContext ctx) {
-        return true;
+    public void visitCatch(JsCatch x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsConditional x, JsContext ctx) {
-        return true;
+    public void visitConditional(JsConditional x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsContinue x, JsContext ctx) {
-        return true;
+    public void visitContinue(JsContinue x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsDebugger x, JsContext ctx) {
-        return true;
+    public void visitDebugger(JsDebugger x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsDefault x, JsContext ctx) {
-        return true;
+    public void visitDefault(JsDefault x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsDoWhile x, JsContext ctx) {
-        return true;
+    public void visitDoWhile(JsDoWhile x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public void visit(JsEmpty x, JsContext ctx) {
+    public void visitEmpty(JsEmpty x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsExpressionStatement x, JsContext ctx) {
-        return true;
+    public void visitExpressionStatement(JsExpressionStatement x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsFor x, JsContext ctx) {
-        return true;
+    public void visitFor(JsFor x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsForIn x, JsContext ctx) {
-        return true;
+    public void visitForIn(JsForIn x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsFunction x, JsContext ctx) {
-        return true;
+    public void visitFunction(JsFunction x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsIf x, JsContext ctx) {
-        return true;
+    public void visitIf(JsIf x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsInvocation x, JsContext ctx) {
-        return true;
+    public void visitInvocation(JsInvocation x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsLabel x, JsContext ctx) {
-        return true;
+    public void visitLabel(JsLabel x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsNameRef x, JsContext ctx) {
-        return true;
+    public void visitNameRef(JsNameRef x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public boolean visit(JsNew x, JsContext ctx) {
-        return true;
+    public void visitNew(JsNew x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public void visit(JsNullLiteral x, JsContext ctx) {
+    public void visitNull(JsNullLiteral x, JsContext ctx) {
+        visitElement(x, ctx);
     }
 
-    public void visit(JsNumberLiteral.JsIntLiteral x, JsContext ctx) {
+    public void visitInt(JsNumberLiteral.JsIntLiteral x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public void visit(JsNumberLiteral.JsDoubleLiteral x, JsContext ctx) {
+    public void visitDouble(JsNumberLiteral.JsDoubleLiteral x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsObjectLiteral x, JsContext ctx) {
-        return true;
+    public void visitObjectLiteral(JsObjectLiteral x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsParameter x, JsContext ctx) {
-        return true;
+    public void visitParameter(JsParameter x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsPostfixOperation x, JsContext ctx) {
-        return true;
+    public void visitPostfixOperation(JsPostfixOperation x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsPrefixOperation x, JsContext ctx) {
-        return true;
+    public void visitPrefixOperation(JsPrefixOperation x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsProgram x, JsContext ctx) {
-        return true;
+    public void visitProgram(JsProgram x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsProgramFragment x, JsContext ctx) {
-        return true;
+    public void visitProgramFragment(JsProgramFragment x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsPropertyInitializer x, JsContext ctx) {
-        return true;
+    public void visitPropertyInitializer(JsPropertyInitializer x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public void visit(JsRegExp x, JsContext ctx) {
+    public void visitRegExp(JsRegExp x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsReturn x, JsContext ctx) {
-        return true;
+    public void visitReturn(JsReturn x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public void visit(JsStringLiteral x, JsContext ctx) {
+    public void visitString(JsStringLiteral x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsSwitch x, JsContext ctx) {
-        return true;
+    public void visit(JsSwitch x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsLiteral.JsThisRef x, JsContext ctx) {
-        return true;
+    public void visitThis(JsLiteral.JsThisRef x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsThrow x, JsContext ctx) {
-        return true;
+    public void visitThrow(JsThrow x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsTry x, JsContext ctx) {
-        return true;
+    public void visitTry(JsTry x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsVar x, JsContext ctx) {
-        return true;
+    public void visit(JsVar x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsVars x, JsContext ctx) {
-        return true;
+    public void visitVars(JsVars x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsWhile x, JsContext ctx) {
-        return true;
+    public void visitWhile(JsWhile x, JsContext context) {
+        visitElement(x, context);
     }
 
-    public boolean visit(JsDocComment x, JsContext context) {
-        return true;
+    public void visitDocComment(JsDocComment comment, JsContext context) {
+        visitElement(comment, context);
     }
 
-    protected void doTraverse(JsNode node, JsContext context) {
+    protected void visitElement(JsNode node, JsContext context) {
+    }
+
+    protected void doAccept(JsNode node, JsContext context) {
         node.accept(this, context);
     }
 }

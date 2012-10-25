@@ -47,7 +47,7 @@ public final class JsPrefixOperation extends JsUnaryOperation implements CanBool
 
   @Override
   public void accept(JsVisitor v, JsContext context) {
-    v.visit(this, context);
+    v.visitPrefixOperation(this, context);
   }
 
   @Override

@@ -53,9 +53,7 @@ public class JsForIn extends JsNodeImpl implements JsStatement {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        if (v.visit(this, context)) {
-
-        }
+        v.visitForIn(this, context);
     }
 
     @Override

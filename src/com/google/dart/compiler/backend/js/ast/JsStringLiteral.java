@@ -42,7 +42,7 @@ public final class JsStringLiteral extends JsLiteral.JsValueLiteral {
 
   @Override
   public void accept(JsVisitor v, JsContext context) {
-    v.visit(this, context);
+    v.visitString(this, context);
   }
 
   @Override

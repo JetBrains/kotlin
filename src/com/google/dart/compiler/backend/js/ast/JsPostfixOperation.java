@@ -29,7 +29,7 @@ public final class JsPostfixOperation extends JsUnaryOperation {
 
   @Override
   public void accept(JsVisitor v, JsContext context) {
-    v.visit(this, context);
+    v.visitPostfixOperation(this, context);
   }
 
   @Override

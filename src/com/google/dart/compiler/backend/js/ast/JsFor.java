@@ -72,7 +72,7 @@ public class JsFor extends JsNodeImpl implements JsStatement {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitFor(this, context);
     }
 
     @Override

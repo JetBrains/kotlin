@@ -52,7 +52,7 @@ public final class JsIf extends JsNodeImpl implements JsStatement {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitIf(this, context);
     }
 
     @Override

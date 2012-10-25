@@ -40,7 +40,7 @@ public class JsPropertyInitializer extends JsNodeImpl {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitPropertyInitializer(this, context);
     }
 
     @Override

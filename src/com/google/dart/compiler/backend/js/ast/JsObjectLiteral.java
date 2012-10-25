@@ -70,7 +70,7 @@ public final class JsObjectLiteral extends JsLiteral {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitObjectLiteral(this, context);
     }
 
     @Override

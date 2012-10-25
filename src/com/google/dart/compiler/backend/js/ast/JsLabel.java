@@ -43,7 +43,7 @@ public class JsLabel extends JsNodeImpl implements JsStatement, HasName {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitLabel(this, context);
     }
     
     @Override

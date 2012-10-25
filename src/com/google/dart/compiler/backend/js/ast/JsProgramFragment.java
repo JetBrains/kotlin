@@ -20,7 +20,7 @@ public class JsProgramFragment extends JsNodeImpl {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitProgramFragment(this, context);
     }
 
     @Override

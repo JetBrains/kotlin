@@ -45,7 +45,7 @@ public class JsBlock extends JsNodeImpl implements JsStatement {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitBlock(this, context);
     }
 
     @Override

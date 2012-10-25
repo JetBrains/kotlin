@@ -43,7 +43,7 @@ public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitNew(this, context);
     }
 
     @Override

@@ -58,7 +58,7 @@ public final class JsArrayLiteral extends JsLiteral {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitArray(this, context);
     }
 
     @Override

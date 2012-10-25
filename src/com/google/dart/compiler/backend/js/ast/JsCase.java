@@ -24,7 +24,7 @@ public final class JsCase extends JsSwitchMember {
 
     @Override
     public void accept(JsVisitor v, JsContext context) {
-        v.visit(this, context);
+        v.visitCase(this, context);
     }
 
     @Override
