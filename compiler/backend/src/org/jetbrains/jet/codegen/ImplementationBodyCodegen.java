@@ -1273,14 +1273,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     Type[] argTypes = function.getArgumentTypes();
                     List<Type> originalArgTypes = jvmSignature.getValueParameterTypes();
+
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     iv.load(0, OBJECT_TYPE);
                     for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                        Type argType = argTypes[i];
-                        iv.load(reg, argType);
-                        StackValue.coerce(argType, originalArgTypes.get(i), iv);
+                        StackValue.local(reg, argTypes[i]).put(originalArgTypes.get(i), iv);
                         //noinspection AssignmentToForLoopParameter
-                        reg += argType.getSize();
+                        reg += argTypes[i].getSize();
                     }
 
                     JetType jetType = CodegenUtil.getSuperClass(declaration);

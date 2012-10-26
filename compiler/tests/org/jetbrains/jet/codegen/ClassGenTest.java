@@ -120,6 +120,21 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/delegationMethodsWithArgs.kt");
     }
 
+    public void testDelegationGenericArg() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("classes/delegationGenericArg.kt");
+    }
+
+    public void testDelegationGenericLongArg() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("classes/delegationGenericLongArg.kt");
+    }
+
+    public void testDelegationGenericArgUpperBound() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("classes/delegationGenericArgUpperBound.kt");
+    }
+
     public void testFunDelegation() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("classes/funDelegation.jet");

@@ -57,7 +57,6 @@ import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_ARRAY_GENERIC_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
@@ -772,20 +771,13 @@ public class FunctionCodegen extends GenerationStateAware {
 
             Type[] argTypes = overridden.getArgumentTypes();
             Type[] originalArgTypes = jvmSignature.getArgumentTypes();
+
             InstructionAdapter iv = new InstructionAdapter(mv);
             iv.load(0, OBJECT_TYPE);
             for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                Type argType = argTypes[i];
-                iv.load(reg, argType);
-                if (argType.getSort() == Type.OBJECT) {
-                    StackValue.onStack(OBJECT_TYPE).put(originalArgTypes[i], iv);
-                }
-                else if (argType.getSort() == Type.ARRAY) {
-                    StackValue.onStack(JAVA_ARRAY_GENERIC_TYPE).put(originalArgTypes[i], iv);
-                }
-
+                StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
                 //noinspection AssignmentToForLoopParameter
-                reg += argType.getSize();
+                reg += argTypes[i].getSize();
             }
 
             iv.invokevirtual(state.getTypeMapper().mapType(
@@ -828,22 +820,16 @@ public class FunctionCodegen extends GenerationStateAware {
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
-            Type[] argTypes = overriddenMethod.getArgumentTypes();
+            Type[] argTypes = delegateMethod.getArgumentTypes();
+            Type[] originalArgTypes = overriddenMethod.getArgumentTypes();
+
             InstructionAdapter iv = new InstructionAdapter(mv);
             iv.load(0, OBJECT_TYPE);
             field.put(field.type, iv);
             for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                Type argType = argTypes[i];
-                iv.load(reg, argType);
-                if (argType.getSort() == Type.OBJECT) {
-                    StackValue.onStack(OBJECT_TYPE).put(overriddenMethod.getArgumentTypes()[i], iv);
-                }
-                else if (argType.getSort() == Type.ARRAY) {
-                    StackValue.onStack(JAVA_ARRAY_GENERIC_TYPE).put(overriddenMethod.getArgumentTypes()[i], iv);
-                }
-
+                StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
                 //noinspection AssignmentToForLoopParameter
-                reg += argType.getSize();
+                reg += argTypes[i].getSize();
             }
 
             ClassDescriptor classDescriptor = (ClassDescriptor) overriddenDescriptor.getContainingDeclaration();
