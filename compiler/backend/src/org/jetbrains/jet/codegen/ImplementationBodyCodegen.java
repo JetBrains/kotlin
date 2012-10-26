@@ -1552,11 +1552,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    @Nullable
-    private JetClassObject getClassObject() {
-        return myClass instanceof JetClass ? ((JetClass) myClass).getClassObject() : null;
-    }
-
 
     /**
      * Return pairs of descriptors. First is member of this that should be implemented by delegating to trait,
