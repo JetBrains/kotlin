@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverBinaryClassData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
@@ -151,7 +152,7 @@ public final class JavaClassResolver {
         }
 
         // Not let's take a descriptor of a Java class
-        ResolverClassData classData = classDescriptorCache.get(qualifiedName);
+        ResolverClassData classData = classDescriptorCache.get(getCorrectedFqName(qualifiedName));
         if (classData != null) {
             return classData.getClassDescriptor();
         }
@@ -163,15 +164,15 @@ public final class JavaClassResolver {
     private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
         PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
         if (psiClass == null) {
-            cacheValue(qualifiedName);
+            cacheNegativeValue(qualifiedName);
             return null;
         }
         ResolverClassData classData = createJavaClassDescriptor(qualifiedName, psiClass, tasks);
         return classData.getClassDescriptor();
     }
 
-    private void cacheValue(@NotNull FqName qualifiedName) {
-        ResolverClassData oldValue = classDescriptorCache.put(qualifiedName, ResolverBinaryClassData.NEGATIVE);
+    private void cacheNegativeValue(@NotNull FqName qualifiedName) {
+        ResolverClassData oldValue = classDescriptorCache.put(getCorrectedFqName(qualifiedName), ResolverBinaryClassData.NEGATIVE);
         if (oldValue != null) {
             throw new IllegalStateException("rewrite at " + qualifiedName);
         }
@@ -193,7 +194,7 @@ public final class JavaClassResolver {
 
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         // class may be resolved during resolution of parent
-        ResolverClassData classData = classDescriptorCache.get(fqName);
+        ResolverClassData classData = classDescriptorCache.get(getCorrectedFqName(fqName));
         if (classData != null) {
             return classData;
         }
@@ -214,7 +215,7 @@ public final class JavaClassResolver {
                 = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, psiClass, fqName, javaDescriptorResolver);
 
         ResolverClassData classData = classDescriptor.getResolverBinaryClassData();
-        classDescriptorCache.put(fqName, classData);
+        classDescriptorCache.put(getCorrectedFqName(fqName), classData);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
@@ -276,7 +277,7 @@ public final class JavaClassResolver {
 
         FqName fqName = new FqName(qualifiedName);
         assert fqName.equals(desiredFqName);
-        if (classDescriptorCache.containsKey(fqName)) {
+        if (classDescriptorCache.containsKey(getCorrectedFqName(fqName))) {
             throw new IllegalStateException(qualifiedName);
         }
     }
@@ -296,6 +297,26 @@ public final class JavaClassResolver {
         final String qualifiedName = psiClass.getQualifiedName();
         assert qualifiedName != null;
         return new FqName(qualifiedName);
+    }
+
+    @NotNull
+    private static FqNameUnsafe getCorrectedFqName(@NotNull FqName rawFqName) {
+        StringBuilder correctedFqName = new StringBuilder();
+        List<Name> segments = rawFqName.pathSegments();
+        for (int i = 0; i < segments.size(); i++) {
+            Name segment = segments.get(i);
+            if (correctedFqName.length() != 0) {
+                correctedFqName.append(".");
+            }
+            if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.getName())) {
+                assert i != 0;
+                correctedFqName.append(DescriptorUtils.getClassObjectName(segments.get(i - 1)));
+            }
+            else {
+                correctedFqName.append(segment);
+            }
+        }
+        return new FqNameUnsafe(correctedFqName.toString());
     }
 
     private static boolean isContainedInClass(@NotNull PsiClass psiClass) {
