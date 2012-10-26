@@ -294,16 +294,14 @@ public abstract class StackValue {
             }
         }
         else if (fromType.getSort() == Type.OBJECT && toType.getSort() <= Type.DOUBLE) {
-            if (fromType.equals(OBJECT_TYPE)) {
-                if (toType.getSort() == Type.BOOLEAN) {
-                    v.checkcast(JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType());
-                }
-                else if (toType.getSort() == Type.CHAR) {
-                    v.checkcast(JvmPrimitiveType.CHAR.getWrapper().getAsmType());
-                }
-                else {
-                    v.checkcast(getType(Number.class));
-                }
+            if (toType.getSort() == Type.BOOLEAN) {
+                coerce(fromType, JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType(), v);
+            }
+            else if (toType.getSort() == Type.CHAR) {
+                coerce(fromType, JvmPrimitiveType.CHAR.getWrapper().getAsmType(), v);
+            }
+            else {
+                coerce(fromType, getType(Number.class), v);
             }
             unbox(toType, v);
         }

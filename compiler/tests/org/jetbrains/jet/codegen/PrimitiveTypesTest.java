@@ -456,4 +456,8 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void test2794() throws Exception {
         blackBoxFile("regressions/kt2794.kt");
     }
+
+    public void testUnboxComparable() {
+        blackBoxFile("primitiveTypes/unboxComparable.kt");
+    }
 }
