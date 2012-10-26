@@ -5,5 +5,5 @@ class MyClass() {
 }
 
 // TESTED_OBJECT_KIND: function
-// TESTED_OBJECTS: MyClass$ClassObject$, test
+// TESTED_OBJECTS: MyClass$object, test
 // FLAGS: ACC_DEPRECATED, ACC_PUBLIC, ACC_FINAL
