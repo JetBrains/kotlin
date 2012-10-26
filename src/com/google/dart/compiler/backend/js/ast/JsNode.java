@@ -4,16 +4,27 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
-import com.google.dart.compiler.common.HasSourceInfo;
-
-public interface JsNode extends HasSourceInfo {
+public interface JsNode {
     /**
      * Causes this object to have the visitor visit itself and its children.
      *
      * @param visitor the visitor that should traverse this node
-     *
      */
     void accept(JsVisitor visitor);
 
     void acceptChildren(JsVisitor visitor);
+
+    /**
+     * Return the source info associated with this object.
+     */
+    Object getSource();
+
+    /**
+     * Set the source info associated with this object.
+     *
+     * @param info
+     */
+    void setSource(Object info);
+
+    JsNode source(Object info);
 }

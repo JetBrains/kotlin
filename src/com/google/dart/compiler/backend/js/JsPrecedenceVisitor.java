@@ -75,7 +75,7 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitInvocation(JsInvocation x) {
+    public void visitInvocation(JsInvocation invocation) {
         answer = 16;
     }
 

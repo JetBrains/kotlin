@@ -10,9 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Represents a JavaScript invocation.
- */
 public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArguments {
     private JsExpression qualifier;
 

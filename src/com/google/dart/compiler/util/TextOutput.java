@@ -42,6 +42,8 @@ public interface TextOutput {
 
     void setOutListener(OutListener outListener);
 
+    void maybeIndent();
+
     public interface OutListener {
         void newLined();
 

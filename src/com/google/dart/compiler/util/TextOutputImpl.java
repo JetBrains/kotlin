@@ -146,7 +146,8 @@ public class TextOutputImpl implements TextOutput {
         }
     }
 
-    private void maybeIndent() {
+    @Override
+    public void maybeIndent() {
         if (justNewlined && !compact) {
             printAndCount(indents[identLevel]);
             justNewlined = false;

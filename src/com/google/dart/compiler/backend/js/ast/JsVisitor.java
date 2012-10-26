@@ -105,8 +105,8 @@ public abstract class JsVisitor {
         visitElement(x);
     }
 
-    public void visitInvocation(JsInvocation x) {
-        visitElement(x);
+    public void visitInvocation(JsInvocation invocation) {
+        visitElement(invocation);
     }
 
     public void visitLabel(JsLabel x) {

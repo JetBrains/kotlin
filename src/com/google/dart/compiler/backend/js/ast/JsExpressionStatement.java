@@ -26,12 +26,17 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
     }
 
     @Override
-    public Object getSourceInfo() {
+    public Object getSource() {
         return null;
     }
 
     @Override
-    public void setSourceInfo(Object info) {
+    public void setSource(Object info) {
+        throw new IllegalStateException("You must not set source info for JsExpressionStatement, set for expression");
+    }
+
+    @Override
+    public JsNode source(Object info) {
         throw new IllegalStateException("You must not set source info for JsExpressionStatement, set for expression");
     }
 }

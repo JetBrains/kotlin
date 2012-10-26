@@ -73,8 +73,8 @@ public class JsFirstExpressionVisitor extends RecursiveJsVisitor {
     }
 
     @Override
-    public void visitInvocation(JsInvocation x) {
-        accept(x.getQualifier());
+    public void visitInvocation(JsInvocation invocation) {
+        accept(invocation.getQualifier());
     }
 
     @Override

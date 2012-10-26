@@ -48,7 +48,7 @@ public class JsConstructExpressionVisitor extends RecursiveJsVisitor {
     }
 
     @Override
-    public void visitInvocation(JsInvocation x) {
+    public void visitInvocation(JsInvocation invocation) {
         containsInvocation = true;
     }
 

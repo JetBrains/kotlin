@@ -583,11 +583,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
-    public void visitInvocation(JsInvocation x) {
-        printPair(x, x.getQualifier());
+    public void visitInvocation(JsInvocation invocation) {
+        printPair(invocation, invocation.getQualifier());
 
         leftParen();
-        printExpressions(x.getArguments());
+        printExpressions(invocation.getArguments());
         rightParen();
     }
 
@@ -621,7 +621,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             }
             p.print('.');
         }
+
+        p.maybeIndent();
+        beforeNodePrinted(nameRef);
         p.print(nameRef.getIdent());
+    }
+
+    protected void beforeNodePrinted(JsNode node) {
     }
 
     @Override
