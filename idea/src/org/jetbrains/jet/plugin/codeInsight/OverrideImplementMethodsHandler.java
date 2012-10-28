@@ -33,40 +33,30 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author yole
  */
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
-    public static List<DescriptorClassMember> membersFromDescriptors(Iterable<CallableMemberDescriptor> missingImplementations) {
+    public static List<DescriptorClassMember> membersFromDescriptors(
+            Iterable<CallableMemberDescriptor> missingImplementations,
+            BindingContext bindingContext
+    ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-            members.add(new DescriptorClassMember(memberDescriptor));
+            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, memberDescriptor);
+            members.add(new DescriptorClassMember(psiElement, memberDescriptor));
         }
         return members;
     }
-
-    @NotNull
-    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject) {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)classOrObject.getContainingFile())
-                .getBindingContext();
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
-        if (descriptor instanceof MutableClassDescriptor) {
-            return collectMethodsToGenerate((MutableClassDescriptor)descriptor);
-        }
-        return Collections.emptySet();
-    }
-
-    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
 
     public static void generateMethods(Editor editor,
             JetClassOrObject classOrObject,
@@ -91,7 +81,6 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
         ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
     }
-
 
     @Nullable
     private static PsiElement findInsertAfterAnchor(Editor editor, final JetClassBody body) {
@@ -243,8 +232,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     private static void addReceiverParameter(CallableDescriptor descriptor, StringBuilder bodyBuilder) {
-        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
-        if (receiverParameter != null) {
+        ReceiverDescriptor receiverParameter = descriptor.getReceiverParameter();
+        if (receiverParameter.exists()) {
             bodyBuilder.append(receiverParameter.getType()).append(".");
         }
     }
@@ -269,6 +258,17 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         Visibility visibility = descriptor.getVisibility();
         return visibility != Visibilities.INTERNAL ? visibility.toString() + " ": "";
     }
+
+    @NotNull
+    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject, BindingContext bindingContext) {
+        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+        if (descriptor instanceof MutableClassDescriptor) {
+            return collectMethodsToGenerate((MutableClassDescriptor) descriptor);
+        }
+        return Collections.emptySet();
+    }
+
+    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
 
     private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(Project project,
                                                                               DescriptorClassMember[] members) {
@@ -299,12 +299,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
 
-        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)classOrObject.getContainingFile())
+                .getBindingContext();
+
+        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject, bindingContext);
         if (missingImplementations.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
             return;
         }
-        List<DescriptorClassMember> members = membersFromDescriptors(missingImplementations);
+        List<DescriptorClassMember> members = membersFromDescriptors(missingImplementations, bindingContext);
 
         final List<DescriptorClassMember> selectedElements;
         if (implementAll) {

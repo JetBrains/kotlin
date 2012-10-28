@@ -16,10 +16,14 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
-import com.intellij.codeInsight.generation.ClassMember;
+import com.intellij.codeInsight.generation.ClassMemberWithElement;
 import com.intellij.codeInsight.generation.MemberChooserObject;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.util.PsiIconUtil;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -27,22 +31,27 @@ import javax.swing.*;
 /**
  * @author yole
  */
-public class DescriptorClassMember implements ClassMember {
+public class DescriptorClassMember implements ClassMemberWithElement {
     private final DeclarationDescriptor myDescriptor;
+    private final PsiElement myPsiElement;
 
-    public DescriptorClassMember(DeclarationDescriptor descriptor) {
+    public DescriptorClassMember(PsiElement element, DeclarationDescriptor descriptor) {
+        myPsiElement = element;
         myDescriptor = descriptor;
     }
 
     @Override
     public MemberChooserObject getParentNodeDelegate() {
         final DeclarationDescriptor parent = myDescriptor.getContainingDeclaration();
-        return new DescriptorClassMember(parent);
+        return new DescriptorClassMember(PsiTreeUtil.getParentOfType(myPsiElement, JetNamedDeclaration.class), parent);
     }
 
     @Override
     public void renderTreeNode(SimpleColoredComponent component, JTree tree) {
         component.append(getText());
+        if (myPsiElement.isValid()) {
+            component.setIcon(PsiIconUtil.getProvidersIcon(myPsiElement, 0));
+        }
     }
 
     @Override
@@ -69,5 +78,10 @@ public class DescriptorClassMember implements ClassMember {
     @Override
     public int hashCode() {
         return myDescriptor != null ? myDescriptor.hashCode() : 0;
+    }
+
+    @Override
+    public PsiElement getElement() {
+        return myPsiElement;
     }
 }
