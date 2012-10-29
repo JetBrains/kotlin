@@ -1542,8 +1542,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                 propertyCodegen
                                         .genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
                             }
-                            else if (declaration instanceof SimpleFunctionDescriptor) {
-                                functionCodegen.genDelegate((SimpleFunctionDescriptor) declaration, overriddenDescriptor, field);
+                            else if (declaration instanceof FunctionDescriptor) {
+                                functionCodegen
+                                        .genDelegate((FunctionDescriptor) declaration, (FunctionDescriptor) overriddenDescriptor, field);
                             }
                         }
                     }

@@ -794,16 +794,16 @@ public class FunctionCodegen extends GenerationStateAware {
         }
     }
 
-    public void genDelegate(FunctionDescriptor functionDescriptor, CallableMemberDescriptor overriddenDescriptor, StackValue field) {
-        genDelegate(functionDescriptor, overriddenDescriptor, field,
+    public void genDelegate(FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
+        genDelegate(functionDescriptor, (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field,
                     typeMapper.mapSignature(functionDescriptor.getName(), functionDescriptor),
-                    typeMapper.mapSignature(overriddenDescriptor.getName(), (FunctionDescriptor) overriddenDescriptor.getOriginal())
+                    typeMapper.mapSignature(overriddenDescriptor.getName(), overriddenDescriptor.getOriginal())
         );
     }
 
     public void genDelegate(
-            CallableMemberDescriptor functionDescriptor,
-            CallableMemberDescriptor overriddenDescriptor,
+            FunctionDescriptor functionDescriptor,
+            ClassDescriptor toClass,
             StackValue field,
             JvmMethodSignature jvmDelegateMethodSignature,
             JvmMethodSignature jvmOverriddenMethodSignature
@@ -832,10 +832,8 @@ public class FunctionCodegen extends GenerationStateAware {
                 reg += argTypes[i].getSize();
             }
 
-            ClassDescriptor classDescriptor = (ClassDescriptor) overriddenDescriptor.getContainingDeclaration();
-            String internalName =
-                    state.getTypeMapper().mapType(classDescriptor).getInternalName();
-            if (classDescriptor.getKind() == ClassKind.TRAIT) {
+            String internalName = typeMapper.mapType(toClass).getInternalName();
+            if (toClass.getKind() == ClassKind.TRAIT) {
                 iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
             }
             else {
