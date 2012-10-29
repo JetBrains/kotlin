@@ -19,11 +19,16 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.AUTOCAST_IMPOSSIBLE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
+import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 
 /**
  * @author abreslav
@@ -67,18 +72,6 @@ public class AutoCastUtils {
 
             @Override
             public List<ReceiverDescriptor> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
-//                JetExpression expression = receiver.getExpression();
-//                VariableDescriptor variableDescriptor = DataFlowValueFactory.getVariableDescriptorFromSimpleName(bindingContext, expression);
-//                if (variableDescriptor != null) {
-//                    List<ReceiverDescriptor> result = Lists.newArrayList();
-//                    for (JetType possibleType : dataFlowInfo.getPossibleTypesForVariable(variableDescriptor)) {
-//                        result.add(new AutoCastReceiver(receiver, possibleType, DataFlowValueFactory.isStableVariable(variableDescriptor)));
-//                    }
-//                    return result;
-//                }
-//                else if (expression instanceof JetThisExpression) {
-//                    return castThis(dataFlowInfo, receiver);
-//                }
                 DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(), receiver.getType(),
                                                                                                 bindingContext);
                 List<ReceiverDescriptor> result = Lists.newArrayList();
@@ -99,38 +92,23 @@ public class AutoCastUtils {
         return result;
     }
 
-//    @Nullable
-//    public static JetType castExpression(@NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
-//        JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
-//        DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, trace.getBindingContext());
-//        for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
-//            if (typeChecker.isSubtypeOf(possibleType, expectedType)) {
-//                if (dataFlowValue.isStableIdentifier()) {
-//                    trace.record(AUTOCAST, expression, possibleType);
-//                }
-//                else {
-//                    trace.report(AUTOCAST_IMPOSSIBLE.on(expression, possibleType, expression.getText()));
-//                }
-//                return possibleType;
-//            }
-//        }
-////        VariableDescriptor variableDescriptor = DataFlowValueFactory.getVariableDescriptorFromSimpleName(trace.getBindingContext(), expression);
-////        if (variableDescriptor != null) {
-////            List<JetType> possibleTypes = Lists.newArrayList(dataFlowInfo.getPossibleTypes(variableDescriptor));
-////            Collections.reverse(possibleTypes);
-////            for (JetType possibleType : possibleTypes) {
-////                if (typeChecker.isSubtypeOf(possibleType, expectedType)) {
-////                    if (DataFlowValueFactory.isStableVariable(variableDescriptor)) {
-////                        trace.record(AUTOCAST, expression, possibleType);
-////                    }
-////                    else {
-////                        trace.report(AUTOCAST_IMPOSSIBLE.on(expression, possibleType, expression.getText()));
-////                    }
-////                    return possibleType;
-////                }
-////            }
-////        }
-//        return null;
-//    }
-
+    public static void recordAutoCastIfNecessary(ReceiverDescriptor receiver, @NotNull BindingTrace trace) {
+        if (receiver instanceof AutoCastReceiver) {
+            AutoCastReceiver autoCastReceiver = (AutoCastReceiver) receiver;
+            ReceiverDescriptor original = autoCastReceiver.getOriginal();
+            if (original instanceof ExpressionReceiver) {
+                ExpressionReceiver expressionReceiver = (ExpressionReceiver) original;
+                if (autoCastReceiver.canCast()) {
+                    trace.record(AUTOCAST, expressionReceiver.getExpression(), autoCastReceiver.getType());
+                    trace.record(EXPRESSION_TYPE, expressionReceiver.getExpression(), autoCastReceiver.getType());
+                }
+                else {
+                    trace.report(AUTOCAST_IMPOSSIBLE.on(expressionReceiver.getExpression(), autoCastReceiver.getType(), expressionReceiver.getExpression().getText()));
+                }
+            }
+            else {
+                assert autoCastReceiver.canCast() : "A non-expression receiver must always be autocastabe: " + original;
+            }
+        }
+    }
 }
