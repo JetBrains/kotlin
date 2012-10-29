@@ -750,7 +750,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
                     iv.load(0, OBJECT_TYPE);
-                    if (original.getVisibility() == Visibilities.PRIVATE) {
+                    boolean hasBackingField = Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, original));
+                    if (original.getVisibility() == Visibilities.PRIVATE && hasBackingField) {
                         iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION).getInternalName(), original.getName().getName(),
                                     originalMethod.getReturnType().getDescriptor());
                     }
