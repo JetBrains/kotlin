@@ -360,4 +360,10 @@ public class PropertyGenTest extends CodegenTestCase {
             throw new RuntimeException(e);
         }
     }
+
+    public void testKt2892() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("properties/kt2892.kt");
+    }
+
 }
