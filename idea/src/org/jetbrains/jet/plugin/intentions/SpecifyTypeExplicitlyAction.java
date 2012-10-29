@@ -27,13 +27,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -177,6 +176,16 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 return;
             }
         }
+
+        // For enum entry expression, we want type "MyEntry" instead of "MyEntry.<class-object>.ENTRY1"
+        ClassifierDescriptor typeClassifier = exprType.getConstructor().getDeclarationDescriptor();
+        assert typeClassifier != null;
+        if (DescriptorUtils.isEnumEntry(typeClassifier)) {
+            ClassDescriptor enumClass = (ClassDescriptor) typeClassifier.getContainingDeclaration().getContainingDeclaration();
+            assert enumClass != null;
+            exprType = enumClass.getDefaultType();
+        }
+
         JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
         ASTNode colon = JetPsiFactory.createColonNode(project);
         ASTNode anchorNode = anchor == null ? null : anchor.getNode().getTreeNext();

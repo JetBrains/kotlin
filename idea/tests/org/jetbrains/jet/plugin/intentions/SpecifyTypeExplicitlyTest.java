@@ -57,6 +57,10 @@ public class SpecifyTypeExplicitlyTest extends LightIntentionActionTestCase {
         doTest();
     }
 
+    public void testEnumType() {
+        doTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/intentions/";
