@@ -93,10 +93,6 @@ public class FunctionCodegen extends GenerationStateAware {
         checkMustGenerateCode(functionDescriptor);
 
         OwnerKind kind = owner.getContextKind();
-        if (!isStatic(kind) &&
-                (kind instanceof OwnerKind.DelegateKind) != (functionDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
-            throw new IllegalStateException("Mismatching kind in " + functionDescriptor + "; context kind: " + kind);
-        }
 
         if (kind == OwnerKind.TRAIT_IMPL) {
             needJetAnnotations = false;
@@ -187,9 +183,6 @@ public class FunctionCodegen extends GenerationStateAware {
         OwnerKind kind = context.getContextKind();
         if (kind instanceof OwnerKind.StaticDelegateKind) {
             generateStaticDelegateMethodBody(mv, asmMethod, (OwnerKind.StaticDelegateKind) kind);
-        }
-        else if (kind instanceof OwnerKind.DelegateKind) {
-            generateDelegateMethodBody(mv, asmMethod, (OwnerKind.DelegateKind) kind);
         }
         else {
             FrameMap frameMap = context.prepareFrame(typeMapper);
@@ -315,24 +308,6 @@ public class FunctionCodegen extends GenerationStateAware {
 
             mv.visitVarInsn(sharedVarType.getOpcode(ISTORE), index);
         }
-    }
-
-    private void generateDelegateMethodBody(
-            @NotNull MethodVisitor mv,
-            @NotNull Method asmMethod,
-            @NotNull OwnerKind.DelegateKind dk
-    ) {
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        Type[] argTypes = asmMethod.getArgumentTypes();
-
-        iv.load(0, OBJECT_TYPE);
-        dk.getDelegate().put(OBJECT_TYPE, iv);
-        for (int i = 0; i < argTypes.length; i++) {
-            Type argType = argTypes[i];
-            iv.load(i + 1, argType);
-        }
-        iv.invokeinterface(dk.getOwnerClass(), asmMethod.getName(), asmMethod.getDescriptor());
-        iv.areturn(asmMethod.getReturnType());
     }
 
     private void generateStaticDelegateMethodBody(

@@ -180,7 +180,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         PsiElement psiElement = descriptorToDeclaration(bindingContext, propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
-        if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
+        if (isTrait) {
             flags |= ACC_ABSTRACT;
         }
 
@@ -202,7 +202,7 @@ public class PropertyCodegen extends GenerationStateAware {
             AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(getter);
         }
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && !isTrait) {
             if (propertyDescriptor.getModality() != Modality.ABSTRACT) {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
@@ -215,22 +215,11 @@ public class PropertyCodegen extends GenerationStateAware {
                     }
                     final Type type = typeMapper.mapType(propertyDescriptor);
 
-                    if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
-                        throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
-                    }
-
-                    if (kind instanceof OwnerKind.DelegateKind) {
-                        OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                        dk.getDelegate().put(OBJECT_TYPE, iv);
-                        iv.invokeinterface(dk.getOwnerClass(), getterName, descriptor);
-                    }
-                    else {
-                        iv.visitFieldInsn(
-                                kind == OwnerKind.NAMESPACE ? GETSTATIC : GETFIELD,
-                                typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
-                                propertyDescriptor.getName().getName(),
-                                type.getDescriptor());
-                    }
+                    iv.visitFieldInsn(
+                            kind == OwnerKind.NAMESPACE ? GETSTATIC : GETFIELD,
+                            typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
+                            propertyDescriptor.getName().getName(),
+                            type.getDescriptor());
                     iv.areturn(type);
                 }
             }
@@ -271,7 +260,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
         PsiElement psiElement = descriptorToDeclaration(bindingContext, propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
-        if (isTrait && !(kind instanceof OwnerKind.DelegateKind)) {
+        if (isTrait) {
             flags |= ACC_ABSTRACT;
         }
 
@@ -289,7 +278,7 @@ public class PropertyCodegen extends GenerationStateAware {
         assert !setter.hasBody();
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(setter);
 
-        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait)) {
             if (propertyDescriptor.getModality() != Modality.ABSTRACT) {
                 mv.visitCode();
                 if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
@@ -304,25 +293,11 @@ public class PropertyCodegen extends GenerationStateAware {
                         paramCode = 1;
                     }
 
-                    if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
-                        throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
-                    }
-
-                    if (kind instanceof OwnerKind.DelegateKind) {
-                        OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                        iv.load(0, OBJECT_TYPE);
-                        dk.getDelegate().put(OBJECT_TYPE, iv);
-
-                        iv.load(paramCode, type);
-                        iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), descriptor);
-                    }
-                    else {
-                        iv.load(paramCode, type);
-                        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? PUTSTATIC : PUTFIELD,
-                                          typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
-                                          propertyDescriptor.getName().getName(),
-                                          type.getDescriptor());
-                    }
+                    iv.load(paramCode, type);
+                    iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? PUTSTATIC : PUTFIELD,
+                                      typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
+                                      propertyDescriptor.getName().getName(),
+                                      type.getDescriptor());
 
                     iv.visitInsn(RETURN);
                 }

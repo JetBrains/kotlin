@@ -75,13 +75,8 @@ public class JetTypeMapper extends BindingTraceAware {
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-            if (kind instanceof OwnerKind.DelegateKind) {
+            if (classDescriptor.getKind() == ClassKind.OBJECT) {
                 mapTypeMode = JetTypeMapperMode.IMPL;
-            }
-            else {
-                if (classDescriptor.getKind() == ClassKind.OBJECT) {
-                    mapTypeMode = JetTypeMapperMode.IMPL;
-                }
             }
             Type asmType = mapType(classDescriptor.getDefaultType(), mapTypeMode);
             if (asmType.getSort() != Type.OBJECT) {

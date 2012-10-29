@@ -196,11 +196,8 @@ public class CodegenUtil {
     }
 
     public static void checkMustGenerateCode(CallableMemberDescriptor descriptor) {
-        if (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            throw new IllegalStateException("must not generate code for fake overrides");
-        }
-        if (descriptor.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            throw new IllegalStateException("code generation for synthesized members should be handled separately");
+        if (descriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+            throw new IllegalStateException("Must not generate code for descriptor: " + descriptor);
         }
     }
 
