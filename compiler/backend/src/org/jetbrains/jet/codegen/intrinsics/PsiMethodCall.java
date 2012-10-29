@@ -26,6 +26,8 @@ import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetCallElement;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
@@ -49,7 +51,11 @@ public class PsiMethodCall implements IntrinsicMethod {
     ) {
         final CallableMethod callableMethod =
                 state.getTypeMapper().mapToCallableMethod(method, false, OwnerKind.IMPLEMENTATION);
-        codegen.invokeMethodWithArguments(callableMethod, (JetCallExpression) element, receiver);
+        if(element instanceof JetBinaryExpression) {
+            codegen.invokeMethodWithArguments(callableMethod, receiver, ((JetBinaryExpression)element).getOperationReference());
+        }  else {
+            codegen.invokeMethodWithArguments(callableMethod, (JetCallElement) element, receiver);
+        }
         return StackValue.onStack(callableMethod.getSignature().getAsmMethod().getReturnType());
     }
 }

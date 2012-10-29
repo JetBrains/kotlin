@@ -1831,6 +1831,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     public void invokeMethodWithArguments(CallableMethod callableMethod, JetCallElement expression, StackValue receiver) {
         JetExpression calleeExpression = expression.getCalleeExpression();
+        invokeMethodWithArguments(callableMethod, receiver, calleeExpression);
+    }
+
+    public void invokeMethodWithArguments(CallableMethod callableMethod, StackValue receiver, JetExpression calleeExpression) {
         Call call = bindingContext.get(CALL, calleeExpression);
         ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, calleeExpression);
 
@@ -1838,6 +1842,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert call != null;
         invokeMethodWithArguments(callableMethod, resolvedCall, call, receiver);
     }
+
 
     protected void invokeMethodWithArguments(
             @NotNull CallableMethod callableMethod,

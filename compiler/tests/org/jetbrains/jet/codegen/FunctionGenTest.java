@@ -191,4 +191,8 @@ public class FunctionGenTest extends CodegenTestCase {
     public void testRemoveInIterator() throws Exception {
         blackBoxFileWithJava("functions/removeInIterator.kt");
     }
+
+    public void testKt2929() {
+        blackBoxFile("regressions/kt2929.kt");
+    }
 }
