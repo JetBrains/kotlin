@@ -226,7 +226,7 @@ public class PropertyCodegen extends GenerationStateAware {
         }
         FunctionCodegen.endVisit(mv, "getter", origin);
 
-        FunctionCodegen.generateBridgeIfNeeded(context, state, v, jvmMethodSignature.getAsmMethod(), getter, kind);
+        FunctionCodegen.generateBridgeIfNeeded(context, state, v, jvmMethodSignature.getAsmMethod(), getter);
     }
 
     public static void generateJetPropertyAnnotation(
@@ -304,7 +304,7 @@ public class PropertyCodegen extends GenerationStateAware {
             }
             FunctionCodegen.endVisit(mv, "setter", origin);
 
-            FunctionCodegen.generateBridgeIfNeeded(context, state, v, jvmMethodSignature.getAsmMethod(), setter, kind);
+            FunctionCodegen.generateBridgeIfNeeded(context, state, v, jvmMethodSignature.getAsmMethod(), setter);
         }
     }
 

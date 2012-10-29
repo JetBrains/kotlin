@@ -103,7 +103,7 @@ public class FunctionCodegen extends GenerationStateAware {
             generateMethodHeaderAndBody(fun, jvmSignature, needJetAnnotations, propertyTypeSignature, functionDescriptor, context);
 
             if (state.getClassBuilderMode() == ClassBuilderMode.FULL && !isAbstract(functionDescriptor, kind)) {
-                generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor, kind);
+                generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
             }
         }
 
@@ -471,10 +471,9 @@ public class FunctionCodegen extends GenerationStateAware {
             GenerationState state,
             ClassBuilder v,
             Method jvmSignature,
-            FunctionDescriptor functionDescriptor,
-            OwnerKind kind
+            FunctionDescriptor functionDescriptor
     ) {
-        if (kind == OwnerKind.TRAIT_IMPL) {
+        if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) {
             return;
         }
 

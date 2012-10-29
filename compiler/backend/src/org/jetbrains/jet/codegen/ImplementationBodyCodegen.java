@@ -1298,7 +1298,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     FunctionCodegen.endVisit(iv, "trait method", callableDescriptorToDeclaration(bindingContext, fun));
                 }
 
-                FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);
+                FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun);
             }
         }
     }
