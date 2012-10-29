@@ -25,6 +25,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileTextField;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -55,6 +56,7 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
@@ -65,8 +67,7 @@ import java.io.IOException;
 
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 
-// TODO change "implements" to "extends" on updating to IDEA 122.598+
-public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
+public class ConfigureKotlinLibraryNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
     public static final String LIBRARY_NAME = "KotlinRuntime";
     public static final String KOTLIN_RUNTIME_JAR = "kotlin-runtime.jar";
@@ -82,9 +83,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     @Override
-    // TODO change signature on updating to IDEA 122.598+
-    //public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
-    public EditorNotificationPanel createNotificationPanel(VirtualFile file) {
+    @Nullable
+    public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
         try {
             if (file.getFileType() != JetFileType.INSTANCE) return null;
 

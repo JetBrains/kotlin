@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.compiler.CompilerManager;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -35,7 +36,7 @@ import org.jetbrains.jet.plugin.JetFileType;
  * @author Evgeny Gerashchenko
  * @since 7/22/12
  */
-public class AbsentJdkAnnotationsNotifications implements EditorNotifications.Provider<EditorNotificationPanel> {
+public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("add.kotlin.jdk.annotations");
 
     private final Project project;
@@ -46,7 +47,7 @@ public class AbsentJdkAnnotationsNotifications implements EditorNotifications.Pr
 
     @Override
     @Nullable
-    public EditorNotificationPanel createNotificationPanel(VirtualFile file) {
+    public EditorNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
         if (file.getFileType() != JetFileType.INSTANCE) return null;
         if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
 
