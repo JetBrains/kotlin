@@ -1093,10 +1093,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             field.store(fieldType, iv);
         }
 
-        final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
-                                                                 new OwnerKind.DelegateKind(field, superTypeAsmType.getInternalName()),
-                                                                 state);
-        generateDelegates(superClassDescriptor, delegateContext, field);
+        generateDelegates(superClassDescriptor, field);
     }
 
     private void lookupConstructorExpressionsInClosureIfPresent(final ConstructorContext constructorContext) {
@@ -1527,9 +1524,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return false;
     }
 
-    protected void generateDelegates(ClassDescriptor toClass, CodegenContext delegateContext, StackValue field) {
-        final FunctionCodegen functionCodegen = new FunctionCodegen(delegateContext, v, state);
-        final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen);
+    protected void generateDelegates(ClassDescriptor toClass, StackValue field) {
+        final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
+        final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen);
 
         for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (declaration instanceof CallableMemberDescriptor) {
