@@ -1,0 +1,125 @@
+<root>
+  <item name='javax.swing.JTable void setModel(javax.swing.table.TableModel) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable void setGridColor(java.awt.Color) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable void setDropMode(javax.swing.DropMode) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable void setColumnModel(javax.swing.table.TableColumnModel) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable void setSelectionModel(javax.swing.ListSelectionModel) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable JTable(java.lang.Object[][], java.lang.Object[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable JTable(java.lang.Object[][], java.lang.Object[]) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable java.awt.Dimension getIntercellSpacing()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun getIntercellSpacing() : Dimension&quot;"/>
+      </annotation>
+  </item>
+  <item name='javax.swing.JTable void setIntercellSpacing(java.awt.Dimension) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable javax.swing.table.TableColumn getColumn(java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable void addColumn(javax.swing.table.TableColumn) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable void removeColumn(javax.swing.table.TableColumn) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable int columnAtPoint(java.awt.Point) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable int rowAtPoint(java.awt.Point) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable java.awt.Rectangle getCellRect(int, int, boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun getCellRect(row : Int, column : Int, includeSpacing : Boolean) : Rectangle&quot;"/>
+      </annotation>
+  </item>
+  <item name='javax.swing.JTable java.lang.String getToolTipText(java.awt.event.MouseEvent) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='javax.swing.JTable void sorterChanged(javax.swing.event.RowSorterEvent) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+    <item name='javax.swing.JTable void setGridColor(java.awt.Color)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setGridColor(gridColor : Color) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void setDropMode(javax.swing.DropMode)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setDropMode(dropMode : DropMode) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable javax.swing.table.TableColumn getColumn(java.lang.Object)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getColumn(identifier : Any) : TableColumn?&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void addColumn(javax.swing.table.TableColumn)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun addColumn(aColumn : TableColumn) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void removeColumn(javax.swing.table.TableColumn)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun removeColumn(aColumn : TableColumn) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable int columnAtPoint(java.awt.Point)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun columnAtPoint(point : Point) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable int rowAtPoint(java.awt.Point)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun rowAtPoint(point : Point) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable java.lang.String getToolTipText(java.awt.event.MouseEvent)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getToolTipText(event : MouseEvent) : String?&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void setModel(javax.swing.table.TableModel)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setModel(dataModel : TableModel) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void setColumnModel(javax.swing.table.TableColumnModel)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setColumnModel(columnModel : TableColumnModel) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void setSelectionModel(javax.swing.ListSelectionModel)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setSelectionModel(newModel : ListSelectionModel) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void sorterChanged(javax.swing.event.RowSorterEvent)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sorterChanged(e : RowSorterEvent) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='javax.swing.JTable void setIntercellSpacing(java.awt.Dimension)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun setIntercellSpacing(intercellSpacing : Dimension) : Unit&quot;"/>
+        </annotation>
+    </item>
+</root>

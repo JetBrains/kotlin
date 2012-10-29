@@ -745,6 +745,365 @@
   <!-- java.util.Arrays -->
   <item name='java.util.Arrays byte[] copyOf(byte[], int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : ByteArray, newLength : Int) : ByteArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays byte[] copyOf(byte[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays short[] copyOf(short[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : ShortArray, newLength : Int) : ShortArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays short[] copyOf(short[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int[] copyOf(int[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : IntArray, newLength : Int) : IntArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays int[] copyOf(int[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays long[] copyOf(long[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : LongArray, newLength : Int) : LongArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays long[] copyOf(long[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays char[] copyOf(char[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : CharArray, newLength : Int) : CharArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays char[] copyOf(char[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays float[] copyOf(float[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : FloatArray, newLength : Int) : FloatArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays float[] copyOf(float[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays double[] copyOf(double[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : DoubleArray, newLength : Int) : DoubleArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays double[] copyOf(double[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays boolean[] copyOf(boolean[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOf(original : BooleanArray, newLength : Int) : BooleanArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays boolean[] copyOfRange(boolean[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun copyOfRange(original : BooleanArray, from : Int, to : Int) : BooleanArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays boolean[] copyOfRange(boolean[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays double[] copyOfRange(double[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun copyOfRange(original : DoubleArray, from : Int, to : Int) : DoubleArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays double[] copyOfRange(double[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays float[] copyOfRange(float[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun copyOfRange(original : FloatArray, from : Int, to : Int) : FloatArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays float[] copyOfRange(float[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays char[] copyOfRange(char[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOfRange(original : CharArray, from : Int, to : Int) : CharArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays char[] copyOfRange(char[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays long[] copyOfRange(long[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOfRange(original : LongArray, from : Int, to : Int) : LongArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays long[] copyOfRange(long[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int[] copyOfRange(int[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOfRange(original : IntArray, from : Int, to : Int) : IntArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays int[] copyOfRange(int[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays short[] copyOfRange(short[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun copyOfRange(original : ShortArray, from : Int, to : Int) : ShortArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays short[] copyOfRange(short[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays byte[] copyOfRange(byte[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun copyOfRange(original : ByteArray, from : Int, to : Int) : ByteArray&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays byte[] copyOfRange(byte[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays java.util.List&lt;T&gt; asList(T...)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun &lt;T&gt; asList(vararg a : T) : List&lt;T&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays void sort(int[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(int[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(long[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(long[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(short[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(short[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(char[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(char[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(byte[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(byte[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(float[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(float[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(double[]) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(double[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void sort(T[], java.util.Comparator&lt;? super T&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun &lt;T&gt; sort(a : Array&lt;out T&gt;, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays void sort(java.lang.Object[])'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun sort(a : Array&lt;out Any?&gt;) : Unit&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays void sort(java.lang.Object[], int, int)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun sort(a : Array&lt;out Any?&gt;, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays void sort(T[], int, int, java.util.Comparator&lt;? super T&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun &lt;T&gt; sort(a : Array&lt;out T&gt;, fromIndex : Int, toIndex : Int, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays int binarySearch(long[], long) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(long[], int, int, long) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(int[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(int[], int, int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(short[], short) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(short[], int, int, short) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(char[], char) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(char[], int, int, char) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(byte[], byte) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(byte[], int, int, byte) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(double[], double) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(double[], int, int, double) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(float[], float) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(float[], int, int, float) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays int binarySearch(java.lang.Object[], java.lang.Object)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun binarySearch(a : Array&lt;out Any?&gt;, key : Any?) : Int&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays int binarySearch(java.lang.Object[], int, int, java.lang.Object)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun binarySearch(a : Array&lt;out Any?&gt;, fromIndex : Int, toIndex : Int, key : Any?) : Int&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays int binarySearch(T[], T, java.util.Comparator&lt;? super T&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun &lt;T&gt; binarySearch(a : Array&lt;out T&gt;, key : T, c : Comparator&lt;in T&gt;?) : Int&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays int binarySearch(T[], int, int, T, java.util.Comparator&lt;? super T&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun &lt;T&gt; binarySearch(a : Array&lt;out T&gt;, fromIndex : Int, toIndex : Int, key : T, c : Comparator&lt;in T&gt;?) : Int&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays boolean equals(java.lang.Object[], java.lang.Object[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays boolean equals(java.lang.Object[], java.lang.Object[]) 1'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays boolean equals(java.lang.Object[], java.lang.Object[])'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun equals(a : Array&lt;out Any?&gt;?, a2 : Array&lt;out Any?&gt;?) : Boolean&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays void fill(long[], long) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(long[], int, int, long) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(int[], int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(int[], int, int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(short[], short) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(short[], int, int, short) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(char[], char) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(char[], int, int, char) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(byte[], byte) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(byte[], int, int, byte) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(boolean[], boolean) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(boolean[], int, int, boolean) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(double[], double) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(double[], int, int, double) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(float[], float) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(float[], int, int, float) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(java.lang.Object[], java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays void fill(java.lang.Object[], int, int, java.lang.Object) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays T[] copyOf(U[], int, java.lang.Class&lt;? extends T[]&gt;) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays T[] copyOf(U[], int, java.lang.Class&lt;? extends T[]&gt;) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays T[] copyOf(U[], int, java.lang.Class&lt;? extends T[]&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun &lt;T, U&gt; copyOf(original : Array&lt;out U&gt;, newLength : Int, newType : Class&lt;out Array&lt;T&gt;&gt;) : Array&lt;T&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.Arrays byte[] copyOf(byte[], int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='java.util.Arrays byte[] copyOf(byte[], int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -788,46 +1147,30 @@
   <item name='java.util.Arrays boolean[] copyOf(boolean[], int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays boolean[] copyOfRange(boolean[], int, int)'>
+  <item name='java.util.Arrays boolean[] copyOf(boolean[], int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays boolean[] copyOfRange(boolean[], int, int) 0'>
+  <item name='java.util.Arrays T[] copyOfRange(T[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;T&gt; copyOfRange(original : Array&lt;out T&gt;, from : Int, to : Int) : Array&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays T[] copyOfRange(T[], int, int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays double[] copyOfRange(double[], int, int)'>
+  <item name='java.util.Arrays T[] copyOfRange(U[], int, int, java.lang.Class&lt;? extends T[]&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value"
+               val="&quot;fun &lt;T, U&gt; copyOfRange(original : Array&lt;out U&gt;, from : Int, to : Int, newType : Class&lt;out Array&lt;T&gt;&gt;) : Array&lt;T&gt;&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays T[] copyOfRange(U[], int, int, java.lang.Class&lt;? extends T[]&gt;) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays double[] copyOfRange(double[], int, int) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays float[] copyOfRange(float[], int, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays float[] copyOfRange(float[], int, int) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays char[] copyOfRange(char[], int, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays char[] copyOfRange(char[], int, int) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays long[] copyOfRange(long[], int, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays long[] copyOfRange(long[], int, int) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays int[] copyOfRange(int[], int, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays int[] copyOfRange(int[], int, int) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays short[] copyOfRange(short[], int, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.util.Arrays short[] copyOfRange(short[], int, int) 0'>
+  <item name='java.util.Arrays T[] copyOfRange(U[], int, int, java.lang.Class&lt;? extends T[]&gt;) 3'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='java.util.Arrays byte[] copyOfRange(byte[], int, int)'>
@@ -836,92 +1179,46 @@
   <item name='java.util.Arrays byte[] copyOfRange(byte[], int, int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays java.util.List&lt;T&gt; asList(T...)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; asList(vararg a : T) : List&lt;T&gt;&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays void sort(T[], java.util.Comparator&lt;? super T&gt;)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun &lt;T&gt; sort(a : Array&lt;out T&gt;, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays void sort(java.lang.Object[])'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun sort(a : Array&lt;out Any?&gt;) : Unit&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays void sort(java.lang.Object[], int, int)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun sort(a : Array&lt;out Any?&gt;, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays void sort(T[], int, int, java.util.Comparator&lt;? super T&gt;)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun &lt;T&gt; sort(a : Array&lt;out T&gt;, fromIndex : Int, toIndex : Int, c : Comparator&lt;in T&gt;?) : Unit&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays int binarySearch(java.lang.Object[], java.lang.Object)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun binarySearch(a : Array&lt;out Any?&gt;, key : Any?) : Int&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays int binarySearch(java.lang.Object[], int, int, java.lang.Object)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun binarySearch(a : Array&lt;out Any?&gt;, fromIndex : Int, toIndex : Int, key : Any?) : Int&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays int binarySearch(T[], T, java.util.Comparator&lt;? super T&gt;)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun &lt;T&gt; binarySearch(a : Array&lt;out T&gt;, key : T, c : Comparator&lt;in T&gt;?) : Int&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays int binarySearch(T[], int, int, T, java.util.Comparator&lt;? super T&gt;)'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun &lt;T&gt; binarySearch(a : Array&lt;out T&gt;, fromIndex : Int, toIndex : Int, key : T, c : Comparator&lt;in T&gt;?) : Int&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays boolean equals(java.lang.Object[], java.lang.Object[]) 0'>
-    <annotation name='org.jetbrains.annotations.Nullable'/>
-  </item>
-  <item name='java.util.Arrays boolean equals(java.lang.Object[], java.lang.Object[]) 1'>
-    <annotation name='org.jetbrains.annotations.Nullable'/>
-  </item>
-  <item name='java.util.Arrays boolean equals(java.lang.Object[], java.lang.Object[])'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun equals(a : Array&lt;out Any?&gt;?, a2 : Array&lt;out Any?&gt;?) : Boolean&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays void fill(java.lang.Object[], java.lang.Object) 0'>
+  <item name='java.util.Arrays short[] copyOfRange(short[], int, int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays void fill(java.lang.Object[], int, int, java.lang.Object) 0'>
+  <item name='java.util.Arrays short[] copyOfRange(short[], int, int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays T[] copyOf(U[], int, java.lang.Class&lt;? extends T[]&gt;) 0'>
+  <item name='java.util.Arrays int[] copyOfRange(int[], int, int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays T[] copyOf(U[], int, java.lang.Class&lt;? extends T[]&gt;) 2'>
+  <item name='java.util.Arrays int[] copyOfRange(int[], int, int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays T[] copyOf(U[], int, java.lang.Class&lt;? extends T[]&gt;)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value"
-           val="&quot;fun &lt;T, U&gt; copyOf(original : Array&lt;out U&gt;, newLength : Int, newType : Class&lt;out Array&lt;T&gt;&gt;) : Array&lt;T&gt;&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.util.Arrays T[] copyOfRange(T[], int, int)'>
+  <item name='java.util.Arrays long[] copyOfRange(long[], int, int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.util.Arrays T[] copyOfRange(T[], int, int) 0'>
+  <item name='java.util.Arrays long[] copyOfRange(long[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays char[] copyOfRange(char[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays char[] copyOfRange(char[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays float[] copyOfRange(float[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays float[] copyOfRange(float[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays double[] copyOfRange(double[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays double[] copyOfRange(double[], int, int) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays boolean[] copyOfRange(boolean[], int, int)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays boolean[] copyOfRange(boolean[], int, int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='java.util.Arrays T[] copyOf(T[], int)'>
@@ -929,6 +1226,93 @@
       <val name="value"
            val="&quot;fun &lt;T&gt; copyOf(original : Array&lt;out T&gt;, newLength : Int) : Array&lt;T?&gt;&quot;"/>
     </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(long[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(long[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : LongArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(int[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : IntArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(int[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(short[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : ShortArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(short[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(char[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : CharArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(char[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(byte[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : ByteArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(byte[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(boolean[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : BooleanArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(boolean[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(float[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : FloatArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(float[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(double[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : DoubleArray?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(double[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(java.lang.Object[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+      <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+          <val name="value" val="&quot;fun toString(a : Array&lt;out Any?&gt;?) : String&quot;"/>
+      </annotation>
+  </item>
+  <item name='java.util.Arrays java.lang.String toString(java.lang.Object[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String deepToString(java.lang.Object[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.Arrays java.lang.String deepToString(java.lang.Object[]) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
   </item>
 
   <!-- java.util.Collections -->
@@ -2011,4 +2395,388 @@
   <item name='java.util.ServiceLoader java.util.ServiceLoader&lt;S&gt; loadInstalled(java.lang.Class&lt;S&gt;) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+    <item name='java.util.Arrays void sort(long[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(long[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(int[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(int[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(short[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(short[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(char[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(double[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(double[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(float[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays int binarySearch(byte[], byte) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays int binarySearch(byte[], int, int, byte) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays int binarySearch(double[], double) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays int binarySearch(double[], int, int, double) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays int binarySearch(float[], float) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.Arrays void sort(long[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : LongArray) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(long[], int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : LongArray, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(int[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : IntArray) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(int[], int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : IntArray, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(short[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : ShortArray) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(short[], int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : ShortArray, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(char[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : CharArray) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(char[], int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : CharArray, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(byte[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : ByteArray) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(byte[], int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : ByteArray, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(double[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : DoubleArray) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(double[], int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : DoubleArray, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(float[])'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : FloatArray) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void sort(float[], int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun sort(a : FloatArray, fromIndex : Int, toIndex : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(long[], long)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun binarySearch(a : LongArray, key : Long) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(long[], int, int, long)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun binarySearch(a : LongArray, fromIndex : Int, toIndex : Int, key : Long) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(int[], int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun binarySearch(a : IntArray, key : Int) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(int[], int, int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun binarySearch(a : IntArray, fromIndex : Int, toIndex : Int, key : Int) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(short[], short)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun binarySearch(a : ShortArray, key : Short) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(short[], int, int, short)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun binarySearch(a : ShortArray, fromIndex : Int, toIndex : Int, key : Short) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(char[], char)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun binarySearch(a : CharArray, key : Char) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(char[], int, int, char)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun binarySearch(a : CharArray, fromIndex : Int, toIndex : Int, key : Char) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(byte[], byte)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun binarySearch(a : ByteArray, key : Byte) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(byte[], int, int, byte)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun binarySearch(a : ByteArray, fromIndex : Int, toIndex : Int, key : Byte) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(double[], double)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun binarySearch(a : DoubleArray, key : Double) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(double[], int, int, double)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun binarySearch(a : DoubleArray, fromIndex : Int, toIndex : Int, key : Double) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(float[], float)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun binarySearch(a : FloatArray, key : Float) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays int binarySearch(float[], int, int, float)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun binarySearch(a : FloatArray, fromIndex : Int, toIndex : Int, key : Float) : Int&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(long[], long)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : LongArray, `val` : Long) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(long[], int, int, long)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : LongArray, fromIndex : Int, toIndex : Int, `val` : Long) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(int[], int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : IntArray, `val` : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(int[], int, int, int)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : IntArray, fromIndex : Int, toIndex : Int, `val` : Int) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(short[], short)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : ShortArray, `val` : Short) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(short[], int, int, short)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : ShortArray, fromIndex : Int, toIndex : Int, `val` : Short) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(char[], char)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : CharArray, `val` : Char) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(char[], int, int, char)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : CharArray, fromIndex : Int, toIndex : Int, `val` : Char) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(byte[], byte)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : ByteArray, `val` : Byte) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(byte[], int, int, byte)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : ByteArray, fromIndex : Int, toIndex : Int, `val` : Byte) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(boolean[], boolean)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : BooleanArray, `val` : Boolean) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(boolean[], int, int, boolean)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : BooleanArray, fromIndex : Int, toIndex : Int, `val` : Boolean) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(double[], double)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : DoubleArray, `val` : Double) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(double[], int, int, double)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : DoubleArray, fromIndex : Int, toIndex : Int, `val` : Double) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(float[], float)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : FloatArray, `val` : Float) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(float[], int, int, float)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : FloatArray, fromIndex : Int, toIndex : Int, `val` : Float) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(java.lang.Object[], java.lang.Object)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun fill(a : Array&lt;out Any?&gt;, `val` : Any?) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.Arrays void fill(java.lang.Object[], int, int, java.lang.Object)'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun fill(a : Array&lt;out Any?&gt;, fromIndex : Int, toIndex : Int, `val` : Any?) : Unit&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.NavigableSet java.util.NavigableSet&lt;E&gt; descendingSet()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun descendingSet() : NavigableSet&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.NavigableSet java.util.Iterator&lt;E&gt; descendingIterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun descendingIterator() : MutableIterator&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.NavigableSet java.util.NavigableSet&lt;E&gt; subSet(E, boolean, E, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun subSet(fromElement : E, fromInclusive : Boolean, toElement : E, toInclusive : Boolean) : NavigableSet&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.NavigableSet java.util.NavigableSet&lt;E&gt; headSet(E, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun headSet(toElement : E, inclusive : Boolean) : NavigableSet&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.NavigableSet java.util.NavigableSet&lt;E&gt; tailSet(E, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value"
+                 val="&quot;fun tailSet(fromElement : E, inclusive : Boolean) : NavigableSet&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedMap java.util.Comparator&lt;? super K&gt; comparator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun comparator() : Comparator&lt;in K&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedMap java.util.SortedMap&lt;K,V&gt; subMap(K, K)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun subMap(fromKey : K, toKey : K) : SortedMap&lt;K, V&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedMap java.util.SortedMap&lt;K,V&gt; headMap(K)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun headMap(toKey : K) : SortedMap&lt;K, V&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedMap java.util.SortedMap&lt;K,V&gt; tailMap(K)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun tailMap(fromKey : K) : SortedMap&lt;K, V&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedSet java.util.Comparator&lt;? super E&gt; comparator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun comparator() : Comparator&lt;in E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedSet java.util.SortedSet&lt;E&gt; subSet(E, E)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun subSet(fromElement : E, toElement : E) : SortedSet&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedSet java.util.SortedSet&lt;E&gt; headSet(E)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun headSet(toElement : E) : SortedSet&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
+    <item name='java.util.SortedSet java.util.SortedSet&lt;E&gt; tailSet(E)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun tailSet(fromElement : E) : SortedSet&lt;E&gt;&quot;"/>
+        </annotation>
+    </item>
 </root>
