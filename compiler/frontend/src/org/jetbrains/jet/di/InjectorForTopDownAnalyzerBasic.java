@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
@@ -66,6 +67,7 @@ public class InjectorForTopDownAnalyzerBasic {
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
     private CallResolver callResolver;
+    private CandidateResolver candidateResolver;
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -101,6 +103,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
+        this.candidateResolver = new CandidateResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
@@ -159,10 +162,13 @@ public class InjectorForTopDownAnalyzerBasic {
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
-        callResolver.setDescriptorResolver(descriptorResolver);
+        callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
         callResolver.setResolutionResultsHandler(resolutionResultsHandler);
         callResolver.setTypeResolver(typeResolver);
+
+        candidateResolver.setExpressionTypingServices(expressionTypingServices);
+        candidateResolver.setTypeResolver(typeResolver);
 
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
