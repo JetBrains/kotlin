@@ -316,17 +316,17 @@ public class PropertyCodegen extends GenerationStateAware {
         return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.getName());
     }
 
-    public void genDelegate(PropertyDescriptor declaration, PropertyDescriptor overriddenDescriptor, StackValue field) {
-        ClassDescriptor toClass = (ClassDescriptor) overriddenDescriptor.getContainingDeclaration();
+    public void genDelegate(PropertyDescriptor delegate, PropertyDescriptor overridden, StackValue field) {
+        ClassDescriptor toClass = (ClassDescriptor) overridden.getContainingDeclaration();
 
-        JvmMethodSignature getterSignature =
-                typeMapper.mapGetterSignature(declaration.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature();
-        functionCodegen.genDelegate(declaration.getGetter(), toClass, field, getterSignature, getterSignature);
+        functionCodegen.genDelegate(delegate.getGetter(), toClass, field,
+                                    typeMapper.mapGetterSignature(delegate, OwnerKind.IMPLEMENTATION).getJvmMethodSignature(),
+                                    typeMapper.mapGetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature());
 
-        if (declaration.isVar()) {
-            JvmMethodSignature setterSignature =
-                    typeMapper.mapSetterSignature(declaration.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature();
-            functionCodegen.genDelegate(declaration.getSetter(), toClass, field, setterSignature, setterSignature);
+        if (delegate.isVar()) {
+            functionCodegen.genDelegate(delegate.getSetter(), toClass, field,
+                                        typeMapper.mapSetterSignature(delegate, OwnerKind.IMPLEMENTATION).getJvmMethodSignature(),
+                                        typeMapper.mapSetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION).getJvmMethodSignature());
         }
     }
 }

@@ -30,6 +30,16 @@ public class BridgeMethodGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1959.kt");
     }
 
+    public void testDelegation() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/delegation.kt");
+    }
+
+    public void testDelegationProperty() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/delegationProperty.kt");
+    }
+
     public void testDelegationToTraitImpl() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("bridges/delegationToTraitImpl.kt");
@@ -93,6 +103,11 @@ public class BridgeMethodGenTest extends CodegenTestCase {
     public void testSubstitutionInSuperClass() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("bridges/substitutionInSuperClass.kt");
+    }
+
+    public void testSubstitutionInSuperClassDelegation() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("bridges/substitutionInSuperClassDelegation.kt");
     }
 
     public void testSubstitutionInSuperClassAbstractFun() {

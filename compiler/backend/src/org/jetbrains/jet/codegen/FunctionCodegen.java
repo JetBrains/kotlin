@@ -818,6 +818,8 @@ public class FunctionCodegen extends GenerationStateAware {
 
             iv.areturn(delegateMethod.getReturnType());
             endVisit(mv, "delegate method", descriptorToDeclaration(bindingContext, functionDescriptor));
+
+            generateBridgeIfNeeded(owner, state, v, jvmDelegateMethodSignature.getAsmMethod(), functionDescriptor);
         }
     }
 }
