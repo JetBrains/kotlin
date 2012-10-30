@@ -45,4 +45,6 @@ public interface DeclarationDescriptorVisitor<R, D> {
     R visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, D data);
 
     R visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, D data);
+
+    R visitReceiverParameterDescriptor(ReceiverParameterDescriptor descriptor, D data);
 }
