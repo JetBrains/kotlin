@@ -437,8 +437,8 @@ public class NamespaceComparator {
             }
         }
 
-        public void serialize(ExtensionReceiver extensionReceiver) {
-            serialize(extensionReceiver.getType());
+        public void serialize(ReceiverParameterDescriptor receiverParameterDescriptor) {
+            serialize(receiverParameterDescriptor.getType());
         }
 
         private void serialize(@NotNull PropertyAccessorDescriptor accessor) {

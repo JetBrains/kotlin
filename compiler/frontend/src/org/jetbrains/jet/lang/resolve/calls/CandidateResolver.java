@@ -315,7 +315,7 @@ public class CandidateResolver {
         // Receiver
         // Error is already reported if something is missing
         ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
-        ReceiverDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
         if (receiverArgument.exists() && receiverParameter.exists()) {
             constraintsSystem.addSubtypeConstraint(receiverParameter.getType(), receiverArgument.getType(),
                                                    ConstraintPosition.RECEIVER_POSITION);
@@ -467,7 +467,7 @@ public class CandidateResolver {
     }
 
     private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ResolvedCall<D> candidateCall,
-            ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
+            ReceiverParameterDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
             boolean isExplicitReceiver, boolean implicitInvokeCheck) {
 
         BindingContext bindingContext = context.candidateCall.getTrace().getBindingContext();

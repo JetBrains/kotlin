@@ -21,12 +21,12 @@ import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -93,8 +93,8 @@ public class OverloadingConflictResolver {
         if (OverridingUtil.overrides(f, g)) return true;
         if (OverridingUtil.overrides(g, f)) return false;
 
-        ReceiverDescriptor receiverOfF = f.getReceiverParameter();
-        ReceiverDescriptor receiverOfG = g.getReceiverParameter();
+        ReceiverParameterDescriptor receiverOfF = f.getReceiverParameter();
+        ReceiverParameterDescriptor receiverOfG = g.getReceiverParameter();
         if (f.getReceiverParameter().exists() && g.getReceiverParameter().exists()) {
             if (!typeMoreSpecific(receiverOfF.getType(), receiverOfG.getType())) return false;
         }

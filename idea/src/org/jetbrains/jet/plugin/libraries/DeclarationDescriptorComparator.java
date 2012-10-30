@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Comparator;
@@ -36,7 +35,7 @@ class DeclarationDescriptorComparator implements Comparator<DeclarationDescripto
         }
         else if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor fun = (FunctionDescriptor)descriptor;
-            if (fun.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
+            if (!fun.getReceiverParameter().exists()) {
                 return 2;
             }
             else {
@@ -65,7 +64,7 @@ class DeclarationDescriptorComparator implements Comparator<DeclarationDescripto
         CallableDescriptor c1 = (CallableDescriptor)o1;
         CallableDescriptor c2 = (CallableDescriptor)o2;
 
-        if (c1.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER && c2.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+        if (c1.getReceiverParameter().exists() && c2.getReceiverParameter().exists()) {
             String r1 = DescriptorRenderer.TEXT.renderType(c1.getReceiverParameter().getType());
             String r2 = DescriptorRenderer.TEXT.renderType(c2.getReceiverParameter().getType());
             int receiversCompareTo = r1.compareTo(r2);

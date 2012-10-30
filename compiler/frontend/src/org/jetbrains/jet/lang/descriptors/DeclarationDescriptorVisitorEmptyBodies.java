@@ -92,4 +92,9 @@ public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements Declaratio
     public R visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, D data) {
         return visitPropertyAccessorDescriptor(descriptor, data);
     }
+
+    @Override
+    public R visitReceiverParameterDescriptor(ReceiverParameterDescriptor descriptor, D data) {
+        return visitDeclarationDescriptor(descriptor, data);
+    }
 }

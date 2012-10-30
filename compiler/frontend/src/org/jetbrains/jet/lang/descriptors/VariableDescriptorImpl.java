@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -89,14 +88,14 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     @Override
-    public ReceiverDescriptor getReceiverParameter() {
-        return ReceiverDescriptor.NO_RECEIVER;
+    public ReceiverParameterDescriptor getReceiverParameter() {
+        return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
     }
 
     @NotNull
     @Override
-    public ReceiverDescriptor getExpectedThisObject() {
-        return ReceiverDescriptor.NO_RECEIVER;
+    public ReceiverParameterDescriptor getExpectedThisObject() {
+        return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
     }
 
     @NotNull

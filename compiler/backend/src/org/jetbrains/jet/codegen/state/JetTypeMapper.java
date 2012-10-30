@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -500,7 +499,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         writeFormalTypeParameters(f.getTypeParameters(), signatureVisitor);
 
-        final ReceiverDescriptor receiverTypeRef = f.getReceiverParameter();
+        final ReceiverParameterDescriptor receiverTypeRef = f.getReceiverParameter();
         final JetType receiverType = !receiverTypeRef.exists() ? null : receiverTypeRef.getType();
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
 
@@ -611,7 +610,7 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     public JvmMethodSignature mapSignature(Name name, FunctionDescriptor f) {
-        final ReceiverDescriptor receiver = f.getReceiverParameter();
+        final ReceiverParameterDescriptor receiver = f.getReceiverParameter();
 
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
 
@@ -638,7 +637,7 @@ public class JetTypeMapper extends BindingTraceAware {
         return signatureWriter.makeJvmMethodSignature(name.getName());
     }
 
-    private void writeReceiverIfNeeded(ReceiverDescriptor receiver, BothSignatureWriter signatureWriter) {
+    private void writeReceiverIfNeeded(ReceiverParameterDescriptor receiver, BothSignatureWriter signatureWriter) {
         if (receiver.exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
             mapType(receiver.getType(), signatureWriter, JetTypeMapperMode.VALUE);

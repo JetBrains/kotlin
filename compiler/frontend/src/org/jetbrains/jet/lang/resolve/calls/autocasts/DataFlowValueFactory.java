@@ -148,7 +148,7 @@ public class DataFlowValueFactory {
                 return Pair.create((Object) ((CallableDescriptor) declarationDescriptor).getReceiverParameter(), true);
             }
             if (declarationDescriptor instanceof ClassDescriptor) {
-                return Pair.create((Object) ((ClassDescriptor) declarationDescriptor).getImplicitReceiver(), true);
+                return Pair.create((Object) ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter(), true);
             }
             return Pair.create(null, true);
         }

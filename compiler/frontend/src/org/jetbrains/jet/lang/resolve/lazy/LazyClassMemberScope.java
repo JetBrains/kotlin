@@ -324,7 +324,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
-        return thisDescriptor.getImplicitReceiver();
+        return thisDescriptor.getThisAsReceiverParameter();
     }
 
     @NotNull

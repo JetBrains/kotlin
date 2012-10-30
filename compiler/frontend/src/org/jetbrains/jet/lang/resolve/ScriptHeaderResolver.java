@@ -145,7 +145,7 @@ public class ScriptHeaderResolver {
 
             List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
 
-            scope.setImplicitReceiver(descriptor.getImplicitReceiver());
+            scope.setImplicitReceiver(descriptor.getThisAsReceiverParameter());
 
             JetFile file = (JetFile) declaration.getContainingFile();
             JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);

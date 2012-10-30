@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -56,7 +55,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     private JetScope scopeForMemberLookup;
     private JetScope innerClassesScope;
 
-    private ClassReceiver implicitReceiver;
+    private ReceiverParameterDescriptor implicitReceiver;
 
     private Name name;
     private final DeclarationDescriptor containingDeclaration;
@@ -231,9 +230,9 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public ReceiverDescriptor getImplicitReceiver() {
+    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         if (implicitReceiver == null) {
-            implicitReceiver = new ClassReceiver(this);
+            implicitReceiver = new ReceiverParameterDescriptorImpl(this, getDefaultType());
         }
         return implicitReceiver;
     }

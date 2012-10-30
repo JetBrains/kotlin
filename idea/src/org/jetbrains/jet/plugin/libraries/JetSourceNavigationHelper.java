@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -165,7 +164,7 @@ public class JetSourceNavigationHelper {
             if (receiverType == null) {
                 // non-extension property
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
-                    if (candidate.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
+                    if (!candidate.getReceiverParameter().exists()) {
                         if (matcher.areSame(decompiledDeclaration, candidate)) {
                             return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                         }
@@ -176,7 +175,7 @@ public class JetSourceNavigationHelper {
                 // extension property
                 String expectedTypeString = receiverType.getText();
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
-                    if (candidate.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+                    if (candidate.getReceiverParameter().exists()) {
                         String thisReceiverType = DescriptorRenderer.TEXT.renderType(candidate.getReceiverParameter().getType());
                         if (expectedTypeString.equals(thisReceiverType)) {
                             if (matcher.areSame(decompiledDeclaration, candidate)) {

@@ -19,10 +19,15 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetThisExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lexer.JetTokens;
 
 class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -79,7 +84,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         JetPsiChecker.highlightName(holder, elementToHighlight,
                                     namespace ? JetHighlightingColors.NAMESPACE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
         );
-        if (descriptor.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+        if (descriptor.getReceiverParameter().exists()) {
             JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
         }
         if (withBackingField) {

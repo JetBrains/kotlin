@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
@@ -36,7 +35,7 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
     }
 
     public void initialize(
-            @NotNull ReceiverDescriptor expectedThisObject,
+            @NotNull ReceiverParameterDescriptor expectedThisObject,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull JetType returnType) {
         super.initialize(null, expectedThisObject, Collections.<TypeParameterDescriptor>emptyList(), valueParameters, returnType, Modality.FINAL, Visibilities.LOCAL);

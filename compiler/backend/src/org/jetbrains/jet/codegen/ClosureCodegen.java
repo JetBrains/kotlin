@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
@@ -174,7 +173,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
             iv.load(0, Type.getObjectType(className));
 
-            final ReceiverDescriptor receiver = funDescriptor.getReceiverParameter();
+            final ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
             int count = 1;
             if (receiver.exists()) {
                 StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);

@@ -149,12 +149,12 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         }
 
         @Override
-        public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor expectedReceiver) {
+        public void missingReceiver(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor expectedReceiver) {
             trace.report(MISSING_RECEIVER.on(reference, expectedReceiver.getType()));
         }
 
         @Override
-        public void wrongReceiverType(@NotNull BindingTrace trace, @NotNull ReceiverDescriptor receiverParameter, @NotNull ReceiverDescriptor receiverArgument) {
+        public void wrongReceiverType(@NotNull BindingTrace trace, @NotNull ReceiverParameterDescriptor receiverParameter, @NotNull ReceiverDescriptor receiverArgument) {
             if (receiverArgument instanceof ExpressionReceiver) {
                 ExpressionReceiver expressionReceiver = (ExpressionReceiver)receiverArgument;
                 trace.report(TYPE_MISMATCH.on(expressionReceiver.getExpression(), receiverParameter.getType(), receiverArgument.getType()));

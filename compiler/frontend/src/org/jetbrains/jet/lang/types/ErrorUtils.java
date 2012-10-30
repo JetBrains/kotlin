@@ -163,7 +163,7 @@ public class ErrorUtils {
             Visibilities.INTERNAL,
             true,
             null,
-            ReceiverDescriptor.NO_RECEIVER,
+            ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
             Name.special("<ERROR PROPERTY>"),
             ERROR_PROPERTY_TYPE,
             CallableMemberDescriptor.Kind.DECLARATION);
@@ -173,7 +173,7 @@ public class ErrorUtils {
         ErrorSimpleFunctionDescriptorImpl function = new ErrorSimpleFunctionDescriptorImpl(ownerScope);
         function.initialize(
                 null,
-                ReceiverDescriptor.NO_RECEIVER,
+                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
                 Collections.<TypeParameterDescriptorImpl>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),

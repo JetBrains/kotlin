@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
@@ -147,7 +146,7 @@ public class FunctionCodegen extends GenerationStateAware {
         MethodBounds methodBounds = generateMethodBody(mv, fun, functionDescriptor, context, asmMethod, localVariablesInfo);
 
         Type thisType;
-        ReceiverDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
+        ReceiverParameterDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
         if (expectedThisObject.exists()) {
             thisType = typeMapper.mapType(expectedThisObject.getType());
         }
@@ -396,7 +395,7 @@ public class FunctionCodegen extends GenerationStateAware {
 
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
         Modality modality = functionDescriptor.getModality();
-        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
 
         int start = 0;
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
@@ -546,7 +545,7 @@ public class FunctionCodegen extends GenerationStateAware {
             return;
         }
 
-        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         boolean hasReceiver = receiverParameter.exists();
         boolean isStatic = isStatic(kind);
 
@@ -592,7 +591,7 @@ public class FunctionCodegen extends GenerationStateAware {
             Method jvmSignature,
             FunctionDescriptor functionDescriptor,
             OwnerKind kind,
-            ReceiverDescriptor receiverParameter,
+            ReceiverParameterDescriptor receiverParameter,
             boolean hasReceiver,
             boolean aStatic,
             JvmClassName ownerInternalName,

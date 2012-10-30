@@ -33,13 +33,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author yole
@@ -241,7 +243,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     private static void addReceiverParameter(CallableDescriptor descriptor, StringBuilder bodyBuilder) {
-        ReceiverDescriptor receiverParameter = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         if (receiverParameter.exists()) {
             bodyBuilder.append(receiverParameter.getType()).append(".");
         }

@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -45,6 +44,7 @@ import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getDefaultConstructorVisibility;
@@ -336,7 +336,7 @@ public class DescriptorResolver {
 
         functionDescriptor.initialize(
                 null,
-                classDescriptor.getImplicitReceiver(),
+                classDescriptor.getThisAsReceiverParameter(),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 Collections.<ValueParameterDescriptor>emptyList(),
                 returnType,
@@ -384,7 +384,7 @@ public class DescriptorResolver {
 
         functionDescriptor.initialize(
                 null,
-                classDescriptor.getImplicitReceiver(),
+                classDescriptor.getThisAsReceiverParameter(),
                 Collections.<TypeParameterDescriptor>emptyList(),
                 parameterDescriptors,
                 returnType,
@@ -735,7 +735,7 @@ public class DescriptorResolver {
             JetType type =
                     getVariableType(scope, variable, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
 
-            propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), scope.getImplicitReceiver(), (JetType) null);
+            propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), NO_RECEIVER_PARAMETER, (JetType) null);
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor);
             return propertyDescriptor;
         }
@@ -800,7 +800,7 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
-                                   getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
+                                   getExpectedThisObjectIfNeeded(containingDeclaration), NO_RECEIVER_PARAMETER);
         propertyDescriptor.initialize(createDefaultGetter(propertyDescriptor), null);
         trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, classDescriptor);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
@@ -899,9 +899,9 @@ public class DescriptorResolver {
             }
         }
 
-        ReceiverDescriptor receiverDescriptor = receiverType == null
-                                                ? ReceiverDescriptor.NO_RECEIVER
-                                                : new ExtensionReceiver(propertyDescriptor, receiverType);
+        ReceiverParameterDescriptor receiverDescriptor = receiverType == null
+                                                ? NO_RECEIVER_PARAMETER
+                                                : new ReceiverParameterDescriptorImpl(propertyDescriptor, receiverType);
 
         JetScope propertyScope = getPropertyDeclarationInnerScope(scope, typeParameterDescriptors, ReceiverDescriptor.NO_RECEIVER, trace);
 
@@ -1169,7 +1169,7 @@ public class DescriptorResolver {
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
-                                   getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
+                                   getExpectedThisObjectIfNeeded(classDescriptor), NO_RECEIVER_PARAMETER);
 
         PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter = propertyDescriptor.isVar() ? createDefaultSetter(propertyDescriptor) : null;
@@ -1234,14 +1234,13 @@ public class DescriptorResolver {
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
                                                  VALUES_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
-        ClassReceiver classReceiver = new ClassReceiver(classObjectDescriptor);
         JetType type = DeferredType.create(trace, new LazyValue<JetType>() {
             @Override
             protected JetType compute() {
                 return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
             }
         });
-        values.initialize(null, classReceiver, Collections.<TypeParameterDescriptor>emptyList(),
+        values.initialize(null, classObjectDescriptor.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
                           Collections.<ValueParameterDescriptor>emptyList(),
                           type, Modality.FINAL,
                           Visibilities.PUBLIC, false);
@@ -1259,7 +1258,6 @@ public class DescriptorResolver {
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
                                                  VALUE_OF_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
-        ClassReceiver classReceiver = new ClassReceiver(classObjectDescriptor);
         JetType type = DeferredType.create(trace, new LazyValue<JetType>() {
             @Override
             protected JetType compute() {
@@ -1275,7 +1273,7 @@ public class DescriptorResolver {
                 KotlinBuiltIns.getInstance().getStringType(),
                 false,
                 null);
-        values.initialize(null, classReceiver,
+        values.initialize(null, classObjectDescriptor.getThisAsReceiverParameter(),
                           Collections.<TypeParameterDescriptor>emptyList(),
                           Collections.singletonList(parameterDescriptor),
                           type, Modality.FINAL,

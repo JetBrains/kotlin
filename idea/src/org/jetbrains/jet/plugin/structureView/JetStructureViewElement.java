@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -195,7 +194,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             textBuilder = new StringBuilder();
 
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-            ReceiverDescriptor receiver = functionDescriptor.getReceiverParameter();
+            ReceiverParameterDescriptor receiver = functionDescriptor.getReceiverParameter();
             if (receiver.exists()) {
                 textBuilder.append(DescriptorRenderer.TEXT.renderType(receiver.getType())).append(".");
             }

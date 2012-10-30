@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
@@ -211,7 +212,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             }
         }
 
-        ReceiverDescriptor receiverParameter = candidate.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
         ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
         if (receiverParameter.exists() &&!receiverArgument.exists()) {
             tracing.missingReceiver(traceForCall, receiverParameter);

@@ -1331,7 +1331,7 @@ public abstract class StackValue {
 
         private void genReceiver(
                 InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type,
-                @Nullable ReceiverDescriptor receiverParameter, int depth
+                @Nullable ReceiverParameterDescriptor receiverParameter, int depth
         ) {
             if (receiver == StackValue.none()) {
                 if (receiverParameter != null) {

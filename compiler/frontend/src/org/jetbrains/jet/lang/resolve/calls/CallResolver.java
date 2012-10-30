@@ -47,6 +47,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
@@ -240,7 +241,7 @@ public class CallResolver {
                 }
                 
                 FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), Name.special("<for expression " + calleeExpression.getText() + ">"));
-                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER, Modality.FINAL, Visibilities.LOCAL);
+                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER_PARAMETER, Modality.FINAL, Visibilities.LOCAL);
                 ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(functionDescriptor, JetPsiUtil.isSafeCall(context.call));
                 resolutionCandidate.setReceiverArgument(context.call.getExplicitReceiver());
                 resolutionCandidate.setExplicitReceiverKind(ExplicitReceiverKind.RECEIVER_ARGUMENT);
@@ -591,7 +592,7 @@ public class CallResolver {
         boolean found = false;
         for (ResolutionCandidate<FunctionDescriptor> candidate : candidates) {
             FunctionDescriptor functionDescriptor = candidate.getDescriptor();
-            ReceiverDescriptor functionReceiver = functionDescriptor.getReceiverParameter();
+            ReceiverParameterDescriptor functionReceiver = functionDescriptor.getReceiverParameter();
             if (!functionReceiver.exists()) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
             if (!typeChecker.isSubtypeOf(receiver.getType(), functionReceiver.getType())) continue;

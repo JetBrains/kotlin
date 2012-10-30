@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -52,13 +49,15 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     private List<ValueParameterDescriptor> valueParameters;
 
     private final ScriptCodeDescriptor scriptCodeDescriptor = new ScriptCodeDescriptor(this);
-    private final ReceiverDescriptor implicitReceiver = new ScriptReceiver(this);
+    private final ReceiverParameterDescriptor implicitReceiver = new ReceiverParameterDescriptorImpl(this,
+                                                                                                     // Putting Any here makes no sense,
+                                                                                                     // it is simply copied from someplace else
+                                                                                                     // during a refactoring
+                                                                                                     KotlinBuiltIns.getInstance().getAnyType());
 
-    private ClassDescriptorImpl classDescriptor;
+    private final ClassDescriptorImpl classDescriptor;
 
-    private WritableScopeImpl classScope;
-    private ClassDescriptorImpl descriptor;
-    private ClassReceiver classReceiver;
+    private final WritableScopeImpl classScope;
 
     public ScriptDescriptor(@Nullable DeclarationDescriptor containingDeclaration, int priority, JetScript script, JetScope scriptScope) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
@@ -80,7 +79,6 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                 classScope,
                 new HashSet<ConstructorDescriptor>(),
                 null);
-        classReceiver = new ClassReceiver(classDescriptor);
     }
 
     public void initialize(@NotNull JetType returnType, JetScript declaration, BindingContext bindingContext) {
@@ -94,7 +92,11 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                                                                false,
                                                                Name.identifier(ScriptNameUtil.LAST_EXPRESSION_VALUE_FIELD_NAME),
                                                                CallableMemberDescriptor.Kind.DECLARATION);
-        propertyDescriptor.setType(returnType, Collections.<TypeParameterDescriptor>emptyList(), new ClassReceiver(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
+        propertyDescriptor.setType(
+                returnType,
+                Collections.<TypeParameterDescriptor>emptyList(),
+                classDescriptor.getThisAsReceiverParameter(),
+                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
         propertyDescriptor.initialize(null, null);
         classScope.addPropertyDescriptor(propertyDescriptor);
 
@@ -150,7 +152,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     }
 
     @NotNull
-    public ReceiverDescriptor getImplicitReceiver() {
+    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         return implicitReceiver;
     }
 
@@ -182,7 +184,10 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                                                                    false,
                                                                    parameter.getName(),
                                                                    CallableMemberDescriptor.Kind.DECLARATION);
-            propertyDescriptor.setType(parameter.getType(), Collections.<TypeParameterDescriptor>emptyList(), classReceiver, ReceiverDescriptor.NO_RECEIVER);
+            propertyDescriptor.setType(
+                    parameter.getType(),
+                    Collections.<TypeParameterDescriptor>emptyList(),
+                    classDescriptor.getThisAsReceiverParameter(), ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
             //PropertyGetterDescriptor getter = DescriptorResolver.createDefaultGetter(propertyDescriptor);
             //getter.initialize(propertyDescriptor.getType());
             propertyDescriptor.initialize(null, null);

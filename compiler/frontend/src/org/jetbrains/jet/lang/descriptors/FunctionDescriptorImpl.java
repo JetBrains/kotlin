@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -34,7 +31,7 @@ import org.jetbrains.jet.lang.types.Variance;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
+import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 /**
  * @author abreslav
@@ -44,8 +41,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected List<TypeParameterDescriptor> typeParameters;
     protected List<ValueParameterDescriptor> unsubstitutedValueParameters;
     protected JetType unsubstitutedReturnType;
-    private ReceiverDescriptor receiverParameter;
-    protected ReceiverDescriptor expectedThisObject;
+    private ReceiverParameterDescriptor receiverParameter;
+    protected ReceiverParameterDescriptor expectedThisObject;
 
     protected Modality modality;
     protected Visibility visibility;
@@ -76,7 +73,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     protected FunctionDescriptorImpl initialize(
             @Nullable JetType receiverParameterType,
-            @NotNull ReceiverDescriptor expectedThisObject,
+            @NotNull ReceiverParameterDescriptor expectedThisObject,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
@@ -87,7 +84,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.receiverParameter = receiverParameterType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverParameterType);
+        this.receiverParameter = receiverParameterType == null ? NO_RECEIVER_PARAMETER : new ReceiverParameterDescriptorImpl(this, receiverParameterType);
         this.expectedThisObject = expectedThisObject;
         
         for (int i = 0; i < typeParameters.size(); ++i) {
@@ -123,13 +120,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @NotNull
     @Override
-    public ReceiverDescriptor getReceiverParameter() {
+    public ReceiverParameterDescriptor getReceiverParameter() {
         return receiverParameter;
     }
 
     @NotNull
     @Override
-    public ReceiverDescriptor getExpectedThisObject() {
+    public ReceiverParameterDescriptor getExpectedThisObject() {
         return expectedThisObject;
     }
 
@@ -207,13 +204,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             }
         }
 
-        ReceiverDescriptor substitutedExpectedThis = NO_RECEIVER;
-        if (expectedThisObject.exists()) {
-            JetType substitutedType = substitutor.substitute(expectedThisObject.getType(), Variance.INVARIANT);
-            if (substitutedType == null) {
-                return null;
-            }
-            substitutedExpectedThis = new TransientReceiver(substitutedType);
+        ReceiverParameterDescriptor substitutedExpectedThis = expectedThisObject.substitute(substitutor);
+        if (substitutedExpectedThis == null) {
+            return null;
         }
 
         List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);

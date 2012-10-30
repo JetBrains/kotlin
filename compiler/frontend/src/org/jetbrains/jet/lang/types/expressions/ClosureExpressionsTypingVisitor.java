@@ -16,18 +16,15 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
@@ -38,7 +35,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_INFER_PARAMETER_TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
  * @author abreslav
@@ -107,8 +103,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             parameterTypes.add(valueParameter.getType());
         }
-        ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
-        JetType receiver = receiverParameter != NO_RECEIVER ? receiverParameter.getType() : null;
+        ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
+        JetType receiver = receiverParameter.exists() ? receiverParameter.getType() : null;
 
         JetType returnType = TypeUtils.NO_EXPECTED_TYPE;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
@@ -168,7 +164,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             effectiveReceiverType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef, context.trace, true);
         }
         functionDescriptor.initialize(effectiveReceiverType,
-                                      NO_RECEIVER,
+                                      ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
                                       Collections.<TypeParameterDescriptorImpl>emptyList(),
                                       valueParameterDescriptors,
                                       /*unsubstitutedReturnType = */ null,

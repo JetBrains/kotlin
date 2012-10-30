@@ -209,41 +209,41 @@ public class ExpressionTypingUtils {
     * Checks if receiver declaration could be resolved to call expected receiver.
     */
     public static boolean checkIsExtensionCallable (
-            @NotNull ReceiverDescriptor expectedReceiver,
-            @NotNull CallableDescriptor receiverArgument
+            @NotNull ReceiverDescriptor receiverArgument,
+            @NotNull CallableDescriptor callableDescriptor
     ) {
-        JetType type = expectedReceiver.getType();
+        JetType type = receiverArgument.getType();
 
         if (type instanceof NamespaceType) {
             // This fake class ruins standard algorithms
             return false;
         }
 
-        if (checkReceiverResolution(expectedReceiver, type, receiverArgument)) return true;
+        if (checkReceiverResolution(receiverArgument, type, callableDescriptor)) return true;
         if (type.isNullable()) {
             JetType notNullableType = TypeUtils.makeNotNullable(type);
-            if (checkReceiverResolution(expectedReceiver, notNullableType, receiverArgument)) return true;
+            if (checkReceiverResolution(receiverArgument, notNullableType, callableDescriptor)) return true;
         }
         return false;
     }
 
     private static boolean checkReceiverResolution (
-            @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull ReceiverDescriptor receiverArgument,
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor callableDescriptor
     ) {
-        ReceiverDescriptor callReceiver = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
 
-        if (!expectedReceiver.exists() && !callReceiver.exists()) {
+        if (!receiverArgument.exists() && !receiverParameter.exists()) {
             // Both receivers do not exist
             return true;
         }
 
-        if (!(expectedReceiver.exists() && callReceiver.exists())) {
+        if (!(receiverArgument.exists() && receiverParameter.exists())) {
             return false;
         }
 
-        Set<Name> typeNamesInReceiver = collectUsedTypeNames(callReceiver.getType());
+        Set<Name> typeNamesInReceiver = collectUsedTypeNames(receiverParameter.getType());
 
         ConstraintSystem constraintSystem = new ConstraintSystemImpl();
         for (TypeParameterDescriptor typeParameterDescriptor : callableDescriptor.getTypeParameters()) {
@@ -252,7 +252,7 @@ public class ExpressionTypingUtils {
             }
         }
 
-        constraintSystem.addSubtypeConstraint(callReceiver.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
+        constraintSystem.addSubtypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
         return constraintSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem);
     }
 

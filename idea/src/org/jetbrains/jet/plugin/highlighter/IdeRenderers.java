@@ -30,13 +30,12 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.psi.JetValueArgument;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -141,7 +140,7 @@ public class IdeRenderers {
                 Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
 
                 DescriptorRenderer htmlRenderer = DescriptorRenderer.HTML;
-                if (funDescriptor.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+                if (funDescriptor.getReceiverParameter().exists()) {
                     stringBuilder.append(htmlRenderer.renderType(funDescriptor.getReceiverParameter().getType())).append(".");
                 }
                 stringBuilder.append(funDescriptor.getName()).append("(");

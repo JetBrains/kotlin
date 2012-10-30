@@ -19,9 +19,10 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collections;
+
+import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 /**
  * @author alex.tkachman
@@ -35,7 +36,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
         FunctionDescriptor fd = (FunctionDescriptor) descriptor;
 
         initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
-                   descriptor instanceof ConstructorDescriptor ? ReceiverDescriptor.NO_RECEIVER : fd.getExpectedThisObject(),
+                   descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : fd.getExpectedThisObject(),
                    Collections.<TypeParameterDescriptor>emptyList(),
                    fd.getValueParameters(),
                    fd.getReturnType(),

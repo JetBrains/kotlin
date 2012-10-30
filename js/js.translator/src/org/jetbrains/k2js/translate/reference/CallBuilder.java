@@ -107,8 +107,8 @@ public final class CallBuilder {
     private CallTranslator finish() {
         if (resolvedCall == null) {
             assert descriptor != null;
-            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, descriptor.getExpectedThisObject(),
-                                                                              descriptor.getReceiverParameter(),
+            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, descriptor.getExpectedThisObject().getValue(),
+                                                                              descriptor.getReceiverParameter().getValue(),
                                                                               ExplicitReceiverKind.THIS_OBJECT, false),
                                                    TemporaryBindingTrace.create(new BindingTraceContext(), "trace to resolve call (in js)"));
         }

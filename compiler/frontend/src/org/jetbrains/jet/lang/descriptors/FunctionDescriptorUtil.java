@@ -105,7 +105,7 @@ public class FunctionDescriptorUtil {
     @NotNull
     public static JetScope getFunctionInnerScope(@NotNull JetScope outerScope, @NotNull FunctionDescriptor descriptor, @NotNull BindingTrace trace) {
         WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, new TraceBasedRedeclarationHandler(trace), "Function inner scope");
-        ReceiverDescriptor receiver = descriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
         if (receiver.exists()) {
             parameterScope.setImplicitReceiver(receiver);
         }
@@ -120,7 +120,7 @@ public class FunctionDescriptorUtil {
         return parameterScope;
     }
 
-    public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType, @NotNull ReceiverDescriptor expectedThisObject,
+    public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType, @NotNull ReceiverParameterDescriptor expectedThisObject,
             @NotNull Modality modality, @NotNull Visibility visibility) {
 
         assert KotlinBuiltIns.getInstance().isFunctionType(functionType);

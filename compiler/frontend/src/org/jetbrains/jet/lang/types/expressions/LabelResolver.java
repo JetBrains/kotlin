@@ -22,11 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
 
@@ -124,8 +124,8 @@ public class LabelResolver {
         return result;
     }
 
-    public ReceiverDescriptor resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel,
-            ExpressionTypingContext context, ReceiverDescriptor thisReceiver, LabelName labelName) {
+    public ReceiverParameterDescriptor resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel,
+            ExpressionTypingContext context, ReceiverParameterDescriptor thisReceiver, LabelName labelName) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
         assert targetLabel != null;
@@ -133,7 +133,7 @@ public class LabelResolver {
             DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
             if (declarationDescriptor instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                thisReceiver = classDescriptor.getImplicitReceiver();
+                thisReceiver = classDescriptor.getThisAsReceiverParameter();
             }
             else if (declarationDescriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;

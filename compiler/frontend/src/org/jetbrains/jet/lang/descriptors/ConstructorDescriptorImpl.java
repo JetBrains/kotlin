@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 /**
  * @author abreslav
@@ -51,12 +52,12 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     //isStatic - for java only
     public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Visibility visibility, boolean isStatic) {
-        super.initialize(null, isStatic ? ReceiverDescriptor.NO_RECEIVER : getExpectedThisObject(getContainingDeclaration()), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
+        super.initialize(null, isStatic ? NO_RECEIVER_PARAMETER : getExpectedThisObject(getContainingDeclaration()), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
         return this;
     }
 
     @NotNull
-    private static ReceiverDescriptor getExpectedThisObject(@NotNull ClassDescriptor descriptor) {
+    private static ReceiverParameterDescriptor getExpectedThisObject(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         return DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration);
     }

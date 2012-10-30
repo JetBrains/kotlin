@@ -18,10 +18,12 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 /**
  * @author Evgeny Gerashchenko
@@ -73,7 +75,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                     if (fun.getContainingDeclaration() instanceof NamespaceDescriptor) {
                         JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.NAMESPACE_FUNCTION_CALL);
                     }
-                    if (fun.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+                    if (fun.getReceiverParameter().exists()) {
                         JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
                     }
                 }

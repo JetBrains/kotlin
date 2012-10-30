@@ -224,7 +224,7 @@ public abstract class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolutionCandidate<D> candidate) {
-        ReceiverDescriptor expectedThisObject = candidate.getDescriptor().getExpectedThisObject();
+        ReceiverParameterDescriptor expectedThisObject = candidate.getDescriptor().getExpectedThisObject();
         if (!expectedThisObject.exists()) return true;
         List<ReceiverDescriptor> receivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(receivers);

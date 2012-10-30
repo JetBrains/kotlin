@@ -248,7 +248,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
                         @NotNull
                         @Override
                         public ReceiverDescriptor getImplicitReceiver() {
-                            return classObjectDescriptor.getImplicitReceiver();
+                            return classObjectDescriptor.getThisAsReceiverParameter();
                         }
                     }
                     );

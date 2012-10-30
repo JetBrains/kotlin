@@ -504,8 +504,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable // No class receivers
-    private ReceiverDescriptor resolveToReceiver(JetLabelQualifiedInstanceExpression expression, ExpressionTypingContext context, boolean onlyClassReceivers) {
-        ReceiverDescriptor thisReceiver = null;
+    private ReceiverParameterDescriptor resolveToReceiver(JetLabelQualifiedInstanceExpression expression, ExpressionTypingContext context, boolean onlyClassReceivers) {
+        ReceiverParameterDescriptor thisReceiver = null;
         String labelName = expression.getLabelName();
         if (labelName != null) {
             thisReceiver = context.labelResolver.resolveThisLabel(

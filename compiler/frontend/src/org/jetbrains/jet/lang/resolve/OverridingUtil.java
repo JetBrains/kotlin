@@ -23,7 +23,6 @@ import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
@@ -112,7 +111,7 @@ public class OverridingUtil {
     }
     
     private static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
-        ReceiverDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
         ArrayList<JetType> parameters = new ArrayList<JetType>();
         if (receiverParameter.exists()) {
             parameters.add(receiverParameter.getType());

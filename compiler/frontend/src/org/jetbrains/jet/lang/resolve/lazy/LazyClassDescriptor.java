@@ -35,8 +35,6 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -70,7 +68,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final Visibility visibility;
     private final ClassKind kind;
 
-    private ClassReceiver implicitReceiver;
+    private ReceiverParameterDescriptor thisAsReceiverParameter;
     private List<AnnotationDescriptor> annotations;
     private ClassDescriptor classObjectDescriptor;
     private boolean classObjectDescriptorResolved = false;
@@ -273,11 +271,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     @Override
-    public ReceiverDescriptor getImplicitReceiver() {
-        if (implicitReceiver == null) {
-            implicitReceiver = new ClassReceiver(this);
+    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
+        if (thisAsReceiverParameter == null) {
+            thisAsReceiverParameter = new ReceiverParameterDescriptorImpl(this, getDefaultType());
         }
-        return implicitReceiver;
+        return thisAsReceiverParameter;
     }
 
     @Override
@@ -315,7 +313,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         getClassObjectType();
         getConstructors();
         getContainingDeclaration();
-        getImplicitReceiver();
+        getThisAsReceiverParameter();
         getKind();
         getModality();
         getName();

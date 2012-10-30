@@ -91,11 +91,11 @@ public final class JsDescriptorUtils {
     //TODO: why callable descriptor
     @Nullable
     public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
-        ReceiverDescriptor expectedThisObject = callableDescriptor.getExpectedThisObject();
+        ReceiverParameterDescriptor expectedThisObject = callableDescriptor.getExpectedThisObject();
         if (!expectedThisObject.exists()) {
             return null;
         }
-        return getDeclarationDescriptorForReceiver(expectedThisObject);
+        return getDeclarationDescriptorForReceiver(expectedThisObject.getValue());
     }
 
     @NotNull
@@ -110,11 +110,11 @@ public final class JsDescriptorUtils {
 
     @Nullable
     public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor callableDescriptor) {
-        ReceiverDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
         if (!receiverParameter.exists()) {
             return null;
         }
-        return getDeclarationDescriptorForReceiver(receiverParameter);
+        return getDeclarationDescriptorForReceiver(receiverParameter.getValue());
     }
 
     //TODO: maybe we have similar routine
