@@ -2362,11 +2362,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return genCmpWithNull(left, leftType, opToken);
         }
 
-        if (isIntZero(left, leftType)) {
+        if (isIntZero(left, leftType) && isIntPrimitive(rightType)) {
             return genCmpWithZero(right, rightType, opToken);
         }
 
-        if (isIntZero(right, rightType)) {
+        if (isIntZero(right, rightType) && isIntPrimitive(leftType)) {
             return genCmpWithZero(left, leftType, opToken);
         }
 

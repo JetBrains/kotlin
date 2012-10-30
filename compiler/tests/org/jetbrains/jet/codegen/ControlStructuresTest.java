@@ -250,6 +250,11 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertEquals(false, main.invoke(null, 1, 0));
     }
 
+    public void testCompareBoxedIntegerToZero() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("controlStructures/compareBoxedIntegerToZero.kt");
+    }
+
     public void testCompareToNull() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
