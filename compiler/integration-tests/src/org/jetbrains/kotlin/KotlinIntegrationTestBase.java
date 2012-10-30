@@ -156,7 +156,7 @@ public abstract class KotlinIntegrationTestBase {
                 }
             }
 
-            private void appendToContent(StringBuilder content, String prefix, String line) {
+            private synchronized void appendToContent(StringBuilder content, String prefix, String line) {
                 content.append(prefix);
                 content.append(StringUtil.trimTrailing(line));
                 content.append("\n");
