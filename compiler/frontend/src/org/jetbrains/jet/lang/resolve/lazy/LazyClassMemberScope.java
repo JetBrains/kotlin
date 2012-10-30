@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -323,7 +322,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @NotNull
     @Override
-    public ReceiverDescriptor getImplicitReceiver() {
+    protected ReceiverParameterDescriptor getImplicitReceiver() {
         return thisDescriptor.getThisAsReceiverParameter();
     }
 

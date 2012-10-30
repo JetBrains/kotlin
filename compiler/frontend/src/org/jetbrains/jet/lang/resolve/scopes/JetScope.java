@@ -21,11 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author abreslav
@@ -87,16 +85,10 @@ public interface JetScope {
     Collection<DeclarationDescriptor> getAllDescriptors();
 
     /**
-     * @return EFFECTIVE implicit receiver at this point (may be corresponding to an outer scope)
-     */
-    @NotNull
-    ReceiverDescriptor getImplicitReceiver();
-
-    /**
      * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
      * @param result
      */
-    void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result);
+    void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result);
 
     @NotNull
     Collection<DeclarationDescriptor> getOwnDeclaredDescriptors();

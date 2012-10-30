@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,17 +32,11 @@ import java.util.Set;
  */
 public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
-    private final ReceiverDescriptor implicitReceiver;
     private final JetScope[] scopeChain;
     private Collection<DeclarationDescriptor> allDescriptors;
 
     public ChainedScope(DeclarationDescriptor containingDeclaration, JetScope... scopes) {
-        this(containingDeclaration, ReceiverDescriptor.NO_RECEIVER, scopes);
-    }
-
-    public ChainedScope(DeclarationDescriptor containingDeclaration, ReceiverDescriptor implicitReceiver, JetScope... scopes) {
         this.containingDeclaration = containingDeclaration;
-        this.implicitReceiver = implicitReceiver;
         scopeChain = scopes.clone();
     }
 
@@ -121,14 +114,8 @@ public class ChainedScope implements JetScope {
         return result;
     }
 
-    @NotNull
     @Override
-    public ReceiverDescriptor getImplicitReceiver() {
-        return implicitReceiver;
-    }
-
-    @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
         for (JetScope jetScope : scopeChain) {
             jetScope.getImplicitReceiversHierarchy(result);
         }

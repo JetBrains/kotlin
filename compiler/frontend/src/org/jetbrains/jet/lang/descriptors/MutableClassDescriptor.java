@@ -28,8 +28,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.List;
 import java.util.Set;
@@ -155,7 +153,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }
-        scopeForMemberResolution.setImplicitReceiver(new ClassReceiver(this));
+        scopeForMemberResolution.setImplicitReceiver(getThisAsReceiverParameter());
     }
 
     @NotNull
@@ -245,13 +243,12 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
                             return classObjectDescriptor.getDefaultType().getMemberScope();
                         }
 
-                        @NotNull
                         @Override
-                        public ReceiverDescriptor getImplicitReceiver() {
-                            return classObjectDescriptor.getThisAsReceiverParameter();
+                        public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
+                            super.getImplicitReceiversHierarchy(result);
+                            result.add(0, classObjectDescriptor.getThisAsReceiverParameter());
                         }
-                    }
-                    );
+                    });
 
                     return ClassObjectStatus.OK;
                 }

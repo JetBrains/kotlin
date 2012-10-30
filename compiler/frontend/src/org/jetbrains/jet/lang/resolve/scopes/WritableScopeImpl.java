@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -63,7 +62,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private Map<Name, ClassDescriptor> objectDescriptors;
 
     @Nullable
-    private ReceiverDescriptor implicitReceiver;
+    private ReceiverParameterDescriptor implicitReceiver;
 
     public WritableScopeImpl(@NotNull JetScope scope, @NotNull DeclarationDescriptor owner,
             @NotNull RedeclarationHandler redeclarationHandler, @NotNull String debugName) {
@@ -452,19 +451,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return super.getNamespace(name);
     }
 
-    @NotNull
     @Override
-    public ReceiverDescriptor getImplicitReceiver() {
-        checkMayRead();
-
-        if (implicitReceiver == null) {
-            return super.getImplicitReceiver();
-        }
-        return implicitReceiver;
-    }
-
-    @Override
-    public void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver) {
+    public void setImplicitReceiver(@NotNull ReceiverParameterDescriptor implicitReceiver) {
         checkMayWrite();
 
         if (this.implicitReceiver != null) {
@@ -474,7 +462,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
         checkMayRead();
 
         super.getImplicitReceiversHierarchy(result);

@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.CommonSupertypes;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -572,10 +571,13 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertType(String contextType, final String expression, String expectedType) {
         final JetType thisType = makeType(contextType);
         JetScope scope = new JetScopeAdapter(classDefinitions.BASIC_SCOPE) {
-            @NotNull
             @Override
-            public ReceiverDescriptor getImplicitReceiver() {
-                return new ExpressionReceiver(JetPsiFactory.createExpression(getProject(), expression), thisType);
+            public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
+                result.add(new ReceiverParameterDescriptorImpl(
+                        classDefinitions.BASIC_SCOPE.getContainingDeclaration(),
+                        thisType,
+                        new ExpressionReceiver(JetPsiFactory.createExpression(getProject(), expression), thisType)
+                ));
             }
         };
         assertType(scope, expression, expectedType);

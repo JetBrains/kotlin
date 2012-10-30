@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -77,14 +76,8 @@ public class ErrorUtils {
             return null; // TODO : review
         }
 
-        @NotNull
         @Override
-        public ReceiverDescriptor getImplicitReceiver() {
-            return ReceiverDescriptor.NO_RECEIVER;
-        }
-
-        @Override
-        public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+        public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
         }
 
         @NotNull

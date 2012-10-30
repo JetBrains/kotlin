@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.Set;
@@ -64,14 +63,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
         checkMayRead();
 
         return writableWorker.getContainingDeclaration();
-    }
-
-    @Override
-    @NotNull
-    public ReceiverDescriptor getImplicitReceiver() {
-        checkMayRead();
-
-        return writableWorker.getImplicitReceiver();
     }
 
     @Override
@@ -275,7 +266,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver) {
+    public void setImplicitReceiver(@NotNull ReceiverParameterDescriptor implicitReceiver) {
         checkMayWrite();
 
         writableWorker.setImplicitReceiver(implicitReceiver);

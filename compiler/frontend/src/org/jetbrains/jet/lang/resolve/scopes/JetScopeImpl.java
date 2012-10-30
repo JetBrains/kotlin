@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -65,12 +64,6 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public ReceiverDescriptor getImplicitReceiver() {
-        return ReceiverDescriptor.NO_RECEIVER;
-    }
-
-    @NotNull
-    @Override
     public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
         return Collections.emptySet();
     }
@@ -93,7 +86,7 @@ public abstract class JetScopeImpl implements JetScope {
     }
 
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
     }
 
     @NotNull

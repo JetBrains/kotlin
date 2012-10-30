@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
 
@@ -262,12 +261,15 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected abstract void addExtraDescriptors();
 
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
-        ReceiverDescriptor receiver = getImplicitReceiver();
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
+        ReceiverParameterDescriptor receiver = getImplicitReceiver();
         if (receiver.exists()) {
             result.add(receiver);
         }
     }
+
+    @NotNull
+    protected abstract ReceiverParameterDescriptor getImplicitReceiver();
 
     // Do not change this, override in concrete subclasses:
     // it is very easy to compromise laziness of this class, and fail all the debugging

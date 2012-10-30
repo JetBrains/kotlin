@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -103,7 +102,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverDescriptor> result) {
+    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
         checkMayRead();
 
         super.getImplicitReceiversHierarchy(result);
@@ -111,10 +110,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
         // Example: class member resolution scope imports a scope of it's class object
         //          members of the class object must be able to find it as an implicit receiver
         for (JetScope scope : getImports()) {
-            ReceiverDescriptor definedReceiver = scope.getImplicitReceiver();
-            if (definedReceiver.exists()) {
-                result.add(0, definedReceiver);
-            }
+            scope.getImplicitReceiversHierarchy(result);
         }
     }
 

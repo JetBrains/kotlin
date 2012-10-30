@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
@@ -104,10 +105,9 @@ public final class TipsManager {
             else {
                 Collection<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
 
-                List<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
-                resolutionScope.getImplicitReceiversHierarchy(result);
+                List<ReceiverParameterDescriptor> result = JetScopeUtils.getImplicitReceiversHierarchy(resolutionScope);
 
-                for (ReceiverDescriptor receiverDescriptor : result) {
+                for (ReceiverParameterDescriptor receiverDescriptor : result) {
                     JetType receiverType = receiverDescriptor.getType();
                     descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors());
                 }
@@ -153,8 +153,7 @@ public final class TipsManager {
     ) {
         final Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
-        final List<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
-        scope.getImplicitReceiversHierarchy(result);
+        final List<ReceiverParameterDescriptor> result = JetScopeUtils.getImplicitReceiversHierarchy(scope);
 
         descriptorsSet.removeAll(
                 Collections2.filter(JetScopeUtils.getAllExtensions(scope), new Predicate<CallableDescriptor>() {
@@ -163,8 +162,8 @@ public final class TipsManager {
                         if (!callableDescriptor.getReceiverParameter().exists()) {
                             return false;
                         }
-                        for (ReceiverDescriptor receiverDescriptor : result) {
-                            if (ExpressionTypingUtils.checkIsExtensionCallable(receiverDescriptor, callableDescriptor)) {
+                        for (ReceiverParameterDescriptor receiverDescriptor : result) {
+                            if (ExpressionTypingUtils.checkIsExtensionCallable(receiverDescriptor.getValue(), callableDescriptor)) {
                                 return false;
                             }
                         }

@@ -18,17 +18,13 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Map;
 import java.util.Set;
@@ -81,8 +77,8 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
 
     @NotNull
     @Override
-    public ReceiverDescriptor getImplicitReceiver() {
-        return ReceiverDescriptor.NO_RECEIVER;
+    protected ReceiverParameterDescriptor getImplicitReceiver() {
+        return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
     }
 
     @Override

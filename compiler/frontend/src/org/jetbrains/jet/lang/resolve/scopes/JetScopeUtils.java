@@ -16,11 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -41,10 +44,24 @@ public final class JetScopeUtils {
      * @return receivers hierarchy.
      */
     @NotNull
-    public static Collection<ReceiverDescriptor> getImplicitReceiversHierarchy(@NotNull JetScope scope) {
-        List<ReceiverDescriptor> descriptors = Lists.newArrayList();
+    public static List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy(@NotNull JetScope scope) {
+        List<ReceiverParameterDescriptor> descriptors = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(descriptors);
         return descriptors;
+    }
+
+    public static List<ReceiverDescriptor> getImplicitReceiversHierarchyValues(@NotNull JetScope scope) {
+        Collection<ReceiverParameterDescriptor> hierarchy = getImplicitReceiversHierarchy(scope);
+
+        return Lists.newArrayList(
+                Collections2.transform(hierarchy,
+                       new Function<ReceiverParameterDescriptor, ReceiverDescriptor>() {
+                           @Override
+                           public ReceiverDescriptor apply(ReceiverParameterDescriptor receiverParameterDescriptor) {
+                               return receiverParameterDescriptor.getValue();
+                           }
+                       })
+        );
     }
 
     /**

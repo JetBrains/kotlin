@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -742,7 +741,8 @@ public class DescriptorResolver {
             JetType type =
                     getVariableType(scope, variable, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
 
-            propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), NO_RECEIVER_PARAMETER, (JetType) null);
+            ReceiverParameterDescriptor receiverParameter = ((ScriptDescriptor) containingDeclaration).getThisAsReceiverParameter();
+            propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), receiverParameter, (JetType) null);
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor);
             return propertyDescriptor;
         }
@@ -839,7 +839,7 @@ public class DescriptorResolver {
 
     public JetScope getPropertyDeclarationInnerScope(
             @NotNull JetScope outerScope, @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @NotNull ReceiverDescriptor receiver, BindingTrace trace
+            @NotNull ReceiverParameterDescriptor receiver, BindingTrace trace
     ) {
         WritableScopeImpl result = new WritableScopeImpl(
                 outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace),
@@ -908,7 +908,7 @@ public class DescriptorResolver {
 
         ReceiverParameterDescriptor receiverDescriptor = resolveReceiverParameterFor(propertyDescriptor, receiverType);
 
-        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, typeParameterDescriptors, ReceiverDescriptor.NO_RECEIVER, trace);
+        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, typeParameterDescriptors, NO_RECEIVER_PARAMETER, trace);
 
         JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true, trace);
 

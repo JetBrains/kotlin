@@ -42,11 +42,10 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -400,7 +399,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitThisExpression(JetThisExpression expression, ExpressionTypingContext context) {
         JetType result = null;
-        ReceiverDescriptor thisReceiver = resolveToReceiver(expression, context, false);
+        ReceiverParameterDescriptor thisReceiver = resolveToReceiver(expression, context, false);
 
         if (thisReceiver != null) {
             if (!thisReceiver.exists()) {
@@ -422,7 +421,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         JetType result = null;
 
-        ReceiverDescriptor thisReceiver = resolveToReceiver(expression, context, true);
+        ReceiverParameterDescriptor thisReceiver = resolveToReceiver(expression, context, true);
         if (thisReceiver == null) return JetTypeInfo.create(null, context.dataFlowInfo);
 
         if (!thisReceiver.exists()) {
@@ -512,21 +511,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     expression.getInstanceReference(), expression.getTargetLabel(), context, thisReceiver, new LabelName(labelName));
         }
         else {
+            List<ReceiverParameterDescriptor> receivers = JetScopeUtils.getImplicitReceiversHierarchy(context.scope);
             if (onlyClassReceivers) {
-                List<ReceiverDescriptor> receivers = Lists.newArrayList();
-                context.scope.getImplicitReceiversHierarchy(receivers);
-                for (ReceiverDescriptor receiver : receivers) {
-                    if (receiver instanceof ClassReceiver) {
+                for (ReceiverParameterDescriptor receiver : receivers) {
+                    if (receiver.getContainingDeclaration() instanceof ClassDescriptor) {
                         thisReceiver = receiver;
                         break;
                     }
                 }
             }
-            else {
-                thisReceiver = context.scope.getImplicitReceiver();
+            else if (!receivers.isEmpty()) {
+                thisReceiver = receivers.get(0);
             }
-            if (thisReceiver instanceof ThisReceiverDescriptor) {
-                context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), ((ThisReceiverDescriptor) thisReceiver).getDeclarationDescriptor());
+            else {
+                thisReceiver = ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
+            }
+            if (thisReceiver != null && thisReceiver.exists()) {
+                context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), thisReceiver.getContainingDeclaration());
             }
         }
         return thisReceiver;

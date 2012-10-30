@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -114,8 +115,7 @@ public abstract class TaskPrioritizer {
         ProgressIndicatorProvider.checkCanceled();
 
         AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.trace.getBindingContext());
-        List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
-        scope.getImplicitReceiversHierarchy(implicitReceivers);
+        List<ReceiverDescriptor> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(scope);
         boolean hasExplicitThisObject = context.call.getThisObject().exists();
         if (hasExplicitThisObject) {
             implicitReceivers.add(context.call.getThisObject());
@@ -226,12 +226,11 @@ public abstract class TaskPrioritizer {
     private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolutionCandidate<D> candidate) {
         ReceiverParameterDescriptor expectedThisObject = candidate.getDescriptor().getExpectedThisObject();
         if (!expectedThisObject.exists()) return true;
-        List<ReceiverDescriptor> receivers = Lists.newArrayList();
-        scope.getImplicitReceiversHierarchy(receivers);
-        for (ReceiverDescriptor receiver : receivers) {
+        List<ReceiverParameterDescriptor> receivers = JetScopeUtils.getImplicitReceiversHierarchy(scope);
+        for (ReceiverParameterDescriptor receiver : receivers) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(receiver.getType(), expectedThisObject.getType())) {
                 // TODO : Autocasts & nullability
-                candidate.setThisObject(expectedThisObject);
+                candidate.setThisObject(expectedThisObject.getValue());
                 return true;
             }
         }
