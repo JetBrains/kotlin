@@ -67,6 +67,8 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
+        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+
         if (context.getCompletionChar() == '(') {
             context.setAddCompletionChar(false);
         }

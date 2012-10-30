@@ -83,6 +83,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest(' ');
     }
 
+    public void testInsertImportOnTab() {
+        doTest(CompletionType.BASIC, 2, "ArrayList", null, '\t');
+    }
+
     public void testFunctionLiteralInsertWhenNoSpacesForBraces() {
         CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
         JetCodeStyleSettings jetSettings = settings.getCustomSettings(JetCodeStyleSettings.class);

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -37,6 +38,8 @@ public class ReferenceToClassesShortening {
         if (elementsToCompact.isEmpty()) {
             return;
         }
+        PsiDocumentManager.getInstance(elementsToCompact.get(0).getProject()).commitAllDocuments();
+
         final JetFile file = (JetFile) elementsToCompact.get(0).getContainingFile();
         final BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
         for (JetElement element : elementsToCompact) {

@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -38,6 +39,8 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
 
     @Override
     public void handleInsert(final InsertionContext context, final LookupElement item) {
+        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+
         if (context.getFile() instanceof JetFile) {
             final JetFile jetFile = (JetFile) context.getFile();
             ApplicationManager.getApplication().runReadAction(new Runnable() {
