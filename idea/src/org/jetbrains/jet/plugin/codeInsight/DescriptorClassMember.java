@@ -19,11 +19,14 @@ package org.jetbrains.jet.plugin.codeInsight;
 import com.intellij.codeInsight.generation.ClassMemberWithElement;
 import com.intellij.codeInsight.generation.MemberChooserObject;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMember;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.SimpleColoredComponent;
-import com.intellij.util.PsiIconUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -32,10 +35,15 @@ import javax.swing.*;
  * @author yole
  */
 public class DescriptorClassMember implements ClassMemberWithElement {
+
+    public static final String NO_PARENT_FOR = "No parent for ";
+
+    @NotNull
     private final DeclarationDescriptor myDescriptor;
+    @NotNull
     private final PsiElement myPsiElement;
 
-    public DescriptorClassMember(PsiElement element, DeclarationDescriptor descriptor) {
+    public DescriptorClassMember(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
         myPsiElement = element;
         myDescriptor = descriptor;
     }
@@ -43,14 +51,28 @@ public class DescriptorClassMember implements ClassMemberWithElement {
     @Override
     public MemberChooserObject getParentNodeDelegate() {
         final DeclarationDescriptor parent = myDescriptor.getContainingDeclaration();
-        return new DescriptorClassMember(PsiTreeUtil.getParentOfType(myPsiElement, JetNamedDeclaration.class), parent);
+        PsiElement declaration;
+        if (myPsiElement instanceof JetDeclaration) {
+            // kotlin
+            declaration = PsiTreeUtil.getStubOrPsiParentOfType(myPsiElement, JetNamedDeclaration.class);
+        }
+        else {
+            // java or bytecode
+            declaration = ((PsiMember) myPsiElement).getContainingClass();
+        }
+        assert declaration != null : NO_PARENT_FOR + myPsiElement;
+        assert parent != null : NO_PARENT_FOR + myDescriptor;
+        return new DescriptorClassMember(declaration, parent);
     }
 
     @Override
     public void renderTreeNode(SimpleColoredComponent component, JTree tree) {
         component.append(getText());
         if (myPsiElement.isValid()) {
-            component.setIcon(PsiIconUtil.getProvidersIcon(myPsiElement, 0));
+            component.setIcon(myPsiElement.getIcon(0));
+        }
+        else {
+            component.setIcon(JetDescriptorIconProvider.getBaseIcon(myDescriptor));
         }
     }
 
@@ -70,14 +92,14 @@ public class DescriptorClassMember implements ClassMemberWithElement {
 
         DescriptorClassMember that = (DescriptorClassMember) o;
 
-        if (myDescriptor != null ? !myDescriptor.equals(that.myDescriptor) : that.myDescriptor != null) return false;
+        if (!myDescriptor.equals(that.myDescriptor)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return myDescriptor != null ? myDescriptor.hashCode() : 0;
+        return myDescriptor.hashCode();
     }
 
     @Override
