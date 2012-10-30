@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import gnu.trove.THashMap;
@@ -41,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -152,7 +154,7 @@ public final class JavaClassResolver {
         }
 
         // Not let's take a descriptor of a Java class
-        ResolverClassData classData = classDescriptorCache.get(getCorrectedFqName(qualifiedName));
+        ResolverClassData classData = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
         if (classData != null) {
             return classData.getClassDescriptor();
         }
@@ -172,7 +174,7 @@ public final class JavaClassResolver {
     }
 
     private void cacheNegativeValue(@NotNull FqName qualifiedName) {
-        ResolverClassData oldValue = classDescriptorCache.put(getCorrectedFqName(qualifiedName), ResolverBinaryClassData.NEGATIVE);
+        ResolverClassData oldValue = classDescriptorCache.put(javaClassToKotlinFqName(qualifiedName), ResolverBinaryClassData.NEGATIVE);
         if (oldValue != null) {
             throw new IllegalStateException("rewrite at " + qualifiedName);
         }
@@ -194,7 +196,7 @@ public final class JavaClassResolver {
 
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         // class may be resolved during resolution of parent
-        ResolverClassData classData = classDescriptorCache.get(getCorrectedFqName(fqName));
+        ResolverClassData classData = classDescriptorCache.get(javaClassToKotlinFqName(fqName));
         if (classData != null) {
             return classData;
         }
@@ -215,7 +217,7 @@ public final class JavaClassResolver {
                 = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, psiClass, fqName, javaDescriptorResolver);
 
         ResolverClassData classData = classDescriptor.getResolverBinaryClassData();
-        classDescriptorCache.put(getCorrectedFqName(fqName), classData);
+        classDescriptorCache.put(javaClassToKotlinFqName(fqName), classData);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
@@ -277,7 +279,7 @@ public final class JavaClassResolver {
 
         FqName fqName = new FqName(qualifiedName);
         assert fqName.equals(desiredFqName);
-        if (classDescriptorCache.containsKey(getCorrectedFqName(fqName))) {
+        if (classDescriptorCache.containsKey(javaClassToKotlinFqName(fqName))) {
             throw new IllegalStateException(qualifiedName);
         }
     }
@@ -299,24 +301,21 @@ public final class JavaClassResolver {
         return new FqName(qualifiedName);
     }
 
+    // This method replaces "object" segments of FQ name to "<class-object-for-...>"
     @NotNull
-    private static FqNameUnsafe getCorrectedFqName(@NotNull FqName rawFqName) {
-        StringBuilder correctedFqName = new StringBuilder();
-        List<Name> segments = rawFqName.pathSegments();
-        for (int i = 0; i < segments.size(); i++) {
-            Name segment = segments.get(i);
-            if (correctedFqName.length() != 0) {
-                correctedFqName.append(".");
-            }
+    private static FqNameUnsafe javaClassToKotlinFqName(@NotNull FqName rawFqName) {
+        List<Name> correctedSegments = new ArrayList<Name>();
+        for (Name segment : rawFqName.pathSegments()) {
             if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.getName())) {
-                assert i != 0;
-                correctedFqName.append(DescriptorUtils.getClassObjectName(segments.get(i - 1)));
+                assert !correctedSegments.isEmpty();
+                Name previous = correctedSegments.get(correctedSegments.size() - 1);
+                correctedSegments.add(DescriptorUtils.getClassObjectName(previous));
             }
             else {
-                correctedFqName.append(segment);
+                correctedSegments.add(segment);
             }
         }
-        return new FqNameUnsafe(correctedFqName.toString());
+        return new FqNameUnsafe(StringUtil.join(correctedSegments, "."));
     }
 
     private static boolean isContainedInClass(@NotNull PsiClass psiClass) {
