@@ -2362,6 +2362,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return genCmpWithNull(left, leftType, opToken);
         }
 
+        if (isIntZero(left, leftType)) {
+            return genCmpWithZero(right, rightType, opToken);
+        }
+
+        if (isIntZero(right, rightType)) {
+            return genCmpWithZero(left, leftType, opToken);
+        }
+
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
             gen(left, leftType);
             StackValue.valueOf(v, leftType);
@@ -2382,6 +2390,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         return
                 genEqualsForExpressionsOnStack(v, opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
+    }
+
+    private boolean isIntZero(JetExpression expr, Type exprType) {
+        CompileTimeConstant<?> exprValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr);
+        return isIntPrimitive(exprType) && exprValue != null && exprValue.getValue().equals(0);
+    }
+
+    private StackValue genCmpWithZero(JetExpression exp, Type expType, IElementType opToken) {
+        v.iconst(1);
+        gen(exp, expType);
+        Label ok = new Label();
+        if (JetTokens.EQEQ == opToken || JetTokens.EQEQEQ == opToken) {
+            v.ifeq(ok);
+        }
+        else {
+            v.ifne(ok);
+        }
+        v.pop();
+        v.iconst(0);
+        v.mark(ok);
+        return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
     private StackValue genCmpWithNull(JetExpression exp, Type expType, IElementType opToken) {

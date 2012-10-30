@@ -234,6 +234,22 @@ public class ControlStructuresTest extends CodegenTestCase {
         blackBoxFile("regressions/kt237.jet");
     }
 
+    public void testCompareToZero() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        loadText("fun foo(a: Int, b: Int): Boolean = a == 0 && b != 0 && 0 == a && 0 != b");
+        String text = generateToText();
+        /*
+         * Check that the we generate optimized byte-code!
+         */
+        assertTrue(text.contains("IFEQ"));
+        assertTrue(text.contains("IFNE"));
+        assertFalse(text.contains("IF_ICMPEQ"));
+        assertFalse(text.contains("IF_ICMPNE"));
+        final Method main = generateFunction();
+        assertEquals(true, main.invoke(null, 0, 1));
+        assertEquals(false, main.invoke(null, 1, 0));
+    }
+
     public void testCompareToNull() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
