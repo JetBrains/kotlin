@@ -80,7 +80,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void testFunctionLiteralInsertOnSpace() {
-        doTest(' ');
+        doTest(CompletionType.BASIC, 2, null, null, ' ');
     }
 
     public void testInsertImportOnTab() {
@@ -108,11 +108,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void doTest() {
-        doTest('\n');
-    }
-
-    public void doTest(char completionChar) {
-        doTest(CompletionType.BASIC, 2, null, null, completionChar);
+        doTest(CompletionType.BASIC, 2, null, null, '\n');
     }
 
     public void doTest(CompletionType type, int time, @Nullable String lookupString, @Nullable String tailText, char completionChar) {
