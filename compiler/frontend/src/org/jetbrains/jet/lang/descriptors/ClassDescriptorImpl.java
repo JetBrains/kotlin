@@ -172,7 +172,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         if (thisAsReceiverParameter == null) {
-            thisAsReceiverParameter = new ReceiverParameterDescriptorImpl(this, getDefaultType());
+            thisAsReceiverParameter = new ReceiverParameterDescriptorImpl(this, getDefaultType(), new ClassReceiver(this));
         }
         return thisAsReceiverParameter;
     }

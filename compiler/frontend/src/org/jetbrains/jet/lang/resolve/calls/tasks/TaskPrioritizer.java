@@ -213,7 +213,7 @@ public abstract class TaskPrioritizer {
                     }
                     if (containingDeclaration != null && isClassObject(containingDeclaration)) {
                         ResolutionCandidate<D> candidate = ResolutionCandidate.create(descriptor);
-                        candidate.setThisObject(new ClassReceiver((ClassDescriptor) containingDeclaration));
+                        candidate.setThisObject(((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter().getValue());
                         candidate.setExplicitReceiverKind(ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
                         result.add(candidate);
                     }

@@ -232,7 +232,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         if (implicitReceiver == null) {
-            implicitReceiver = new ReceiverParameterDescriptorImpl(this, getDefaultType());
+            implicitReceiver = new ReceiverParameterDescriptorImpl(this, getDefaultType(), new ClassReceiver(this));
         }
         return implicitReceiver;
     }

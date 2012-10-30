@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -32,8 +33,6 @@ import org.jetbrains.jet.lang.types.Variance;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 /**
  * @author abreslav
@@ -105,9 +104,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull ReceiverParameterDescriptor expectedThisObject,
             @Nullable JetType receiverType
     ) {
-        ReceiverParameterDescriptor receiverParameter = receiverType == null
-                ? NO_RECEIVER_PARAMETER
-                : new ReceiverParameterDescriptorImpl(this, receiverType);
+        ReceiverParameterDescriptor receiverParameter = DescriptorResolver.resolveReceiverParameterFor(this, receiverType);
         setType(outType, typeParameters, expectedThisObject, receiverParameter);
     }
 

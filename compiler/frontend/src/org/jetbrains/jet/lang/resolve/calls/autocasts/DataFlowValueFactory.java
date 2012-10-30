@@ -145,10 +145,10 @@ public class DataFlowValueFactory {
             JetThisExpression thisExpression = (JetThisExpression) expression;
             DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, thisExpression.getInstanceReference());
             if (declarationDescriptor instanceof CallableDescriptor) {
-                return Pair.create((Object) ((CallableDescriptor) declarationDescriptor).getReceiverParameter(), true);
+                return Pair.create((Object) ((CallableDescriptor) declarationDescriptor).getReceiverParameter().getValue(), true);
             }
             if (declarationDescriptor instanceof ClassDescriptor) {
-                return Pair.create((Object) ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter(), true);
+                return Pair.create((Object) ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter().getValue(), true);
             }
             return Pair.create(null, true);
         }

@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
@@ -30,8 +31,6 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.List;
 import java.util.Set;
-
-import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 /**
  * @author abreslav
@@ -84,7 +83,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
-        this.receiverParameter = receiverParameterType == null ? NO_RECEIVER_PARAMETER : new ReceiverParameterDescriptorImpl(this, receiverParameterType);
+        this.receiverParameter = DescriptorResolver.resolveReceiverParameterFor(this, receiverParameterType);
         this.expectedThisObject = expectedThisObject;
         
         for (int i = 0; i < typeParameters.size(); ++i) {

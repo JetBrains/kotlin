@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -66,6 +67,12 @@ public class DescriptorResolver {
     private AnnotationResolver annotationResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
+
+    public static ReceiverParameterDescriptor resolveReceiverParameterFor(@NotNull CallableDescriptor owner, @Nullable JetType receiverParameterType) {
+        return receiverParameterType == null
+                                 ? NO_RECEIVER_PARAMETER
+                                 : new ReceiverParameterDescriptorImpl(owner, receiverParameterType, new ExtensionReceiver(owner, receiverParameterType));
+    }
 
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
@@ -899,9 +906,7 @@ public class DescriptorResolver {
             }
         }
 
-        ReceiverParameterDescriptor receiverDescriptor = receiverType == null
-                                                ? NO_RECEIVER_PARAMETER
-                                                : new ReceiverParameterDescriptorImpl(propertyDescriptor, receiverType);
+        ReceiverParameterDescriptor receiverDescriptor = resolveReceiverParameterFor(propertyDescriptor, receiverType);
 
         JetScope propertyScope = getPropertyDeclarationInnerScope(scope, typeParameterDescriptors, ReceiverDescriptor.NO_RECEIVER, trace);
 

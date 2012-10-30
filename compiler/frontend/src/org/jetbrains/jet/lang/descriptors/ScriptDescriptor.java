@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -53,7 +54,8 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                                                                                                      // Putting Any here makes no sense,
                                                                                                      // it is simply copied from someplace else
                                                                                                      // during a refactoring
-                                                                                                     KotlinBuiltIns.getInstance().getAnyType());
+                                                                                                     KotlinBuiltIns.getInstance().getAnyType(),
+                                                                                                     new ScriptReceiver(this));
 
     private final ClassDescriptorImpl classDescriptor;
 
