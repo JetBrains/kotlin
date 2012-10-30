@@ -41,7 +41,6 @@ import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -191,7 +190,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         // Inner enums are moved by frontend to a class object of outer class, but we want them to be inner for the outer class itself
         // (to avoid publicly visible names like A$ClassObject$$B), so they are handled specially in this method
 
-        for (ClassDescriptor innerClass : DescriptorUtils.getInnerClasses(descriptor)) {
+        for (ClassDescriptor innerClass : getInnerClassesAndObjects(descriptor)) {
             // If it's an inner enum inside a class object, don't write it
             // (instead write it to inner classes of this class object's containing class)
             if (!isEnumMovedToClassObject(innerClass)) {
@@ -202,7 +201,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
         if (classObjectDescriptor != null) {
             // Process all enums here which were moved to our class object
-            for (ClassDescriptor innerClass : DescriptorUtils.getInnerClasses(classObjectDescriptor)) {
+            for (ClassDescriptor innerClass : getInnerClassesAndObjects(classObjectDescriptor)) {
                 if (isEnumMovedToClassObject(innerClass)) {
                     writeInnerClass(innerClass, true);
                 }

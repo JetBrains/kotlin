@@ -365,18 +365,4 @@ public class DescriptorUtils {
                 + (classifier == null ? "null" : classifier.getClass());
         return (ClassDescriptor) classifier;
     }
-
-    @SuppressWarnings("unchecked")
-    public static Collection<ClassDescriptor> getInnerClasses(ClassDescriptor classDescriptor) {
-        JetScope innerClassesScope = classDescriptor.getUnsubstitutedInnerClassesScope();
-        Collection<DeclarationDescriptor> inners = innerClassesScope.getAllDescriptors();
-        for (DeclarationDescriptor inner : inners) {
-            assert inner instanceof ClassDescriptor
-                    : "Not a class in inner classes scope of " + classDescriptor + ": " + inner;
-        }
-        return new ImmutableList.Builder<ClassDescriptor>()
-                .addAll((Collection) inners)
-                .addAll(innerClassesScope.getObjectDescriptors())
-                .build();
-    }
 }

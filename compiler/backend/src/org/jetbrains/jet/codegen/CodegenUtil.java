@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.CommonClassNames;
+import com.google.common.collect.ImmutableList;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +35,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
@@ -236,5 +236,19 @@ public class CodegenUtil {
 
     private static boolean rawTypeMatches(JetType type, ClassDescriptor classDescriptor) {
         return type.getConstructor().getDeclarationDescriptor().getOriginal() == classDescriptor.getOriginal();
+    }
+
+    @SuppressWarnings("unchecked")
+    static Collection<ClassDescriptor> getInnerClassesAndObjects(ClassDescriptor classDescriptor) {
+        JetScope innerClassesScope = classDescriptor.getUnsubstitutedInnerClassesScope();
+        Collection<DeclarationDescriptor> inners = innerClassesScope.getAllDescriptors();
+        for (DeclarationDescriptor inner : inners) {
+            assert inner instanceof ClassDescriptor
+                    : "Not a class in inner classes scope of " + classDescriptor + ": " + inner;
+        }
+        return new ImmutableList.Builder<ClassDescriptor>()
+                .addAll((Collection) inners)
+                .addAll(innerClassesScope.getObjectDescriptors())
+                .build();
     }
 }
