@@ -20,11 +20,11 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -232,7 +232,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
         if (implicitReceiver == null) {
-            implicitReceiver = new ReceiverParameterDescriptorImpl(this, getDefaultType(), new ClassReceiver(this));
+            implicitReceiver = DescriptorResolver.createLazyReceiverParameterDescriptor(this);
         }
         return implicitReceiver;
     }

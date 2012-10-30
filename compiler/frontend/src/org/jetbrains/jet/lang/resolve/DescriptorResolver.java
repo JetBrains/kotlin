@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -1284,5 +1285,44 @@ public class DescriptorResolver {
                           type, Modality.FINAL,
                           Visibilities.PUBLIC, false);
         return values;
+    }
+
+    public static ReceiverParameterDescriptor createLazyReceiverParameterDescriptor(@NotNull final ClassDescriptor classDescriptor) {
+        return new AbstractReceiverParameterDescriptor() {
+
+            private ClassReceiver value;
+
+            @NotNull
+            @Override
+            public JetType getType() {
+                // This must be lazy, thus the inner class
+                return classDescriptor.getDefaultType();
+            }
+
+            @NotNull
+            @Override
+            public ReceiverDescriptor getValue() {
+                if (value == null) {
+                    value = new ClassReceiver(classDescriptor);
+                }
+                return value;
+            }
+
+            @NotNull
+            @Override
+            public DeclarationDescriptor getContainingDeclaration() {
+                return classDescriptor;
+            }
+
+            @Override
+            public boolean exists() {
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "class " + classDescriptor.getName() + "::this";
+            }
+        };
     }
 }
