@@ -275,20 +275,22 @@ public class ExpressionTypingUtils {
     public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
             @NotNull ReceiverDescriptor receiver,
             @NotNull ExpressionTypingContext context,
+            @NotNull List<JetExpression> valueArguments,
             @NotNull Name name
     ) {
-        return makeAndResolveFakeCall(receiver, context, name).getSecond();
+        return makeAndResolveFakeCall(receiver, context, valueArguments, name).getSecond();
     }
 
     @NotNull
     public static Pair<Call, OverloadResolutionResults<FunctionDescriptor>> makeAndResolveFakeCall(
             @NotNull ReceiverDescriptor receiver,
             @NotNull ExpressionTypingContext context,
+            @NotNull List<JetExpression> valueArguments,
             @NotNull Name name
     ) {
         final JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fake");
-        TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace, "trace for resolve fake call for", name);
-        Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
+        TemporaryBindingTrace fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name);
+        Call call = CallMaker.makeCallWithExpressions(fake, receiver, null, fake, valueArguments);
         OverloadResolutionResults<FunctionDescriptor> results =
                 context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name);
         if (results.isSuccess()) {
@@ -318,7 +320,7 @@ public class ExpressionTypingUtils {
 
             JetType expectedType = getExpectedTypeForComponent(context, entry);
             OverloadResolutionResults<FunctionDescriptor> results =
-                    resolveFakeCall(receiver, context.replaceExpectedType(expectedType), componentName);
+                    resolveFakeCall(receiver, context.replaceExpectedType(expectedType), Collections.<JetExpression>emptyList(), componentName);
 
             JetType componentType = null;
             if (results.isSuccess()) {

@@ -19,7 +19,9 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +51,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
@@ -992,9 +995,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 Name name = Name.identifier("equals");
                 if (right != null) {
                     ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
-                    OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
-                            receiver, name,
-                            Collections.singletonList(KotlinBuiltIns.getInstance().getNullableAnyType()));
+
+                    final JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeArgument");
+                    TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);
+                    traceWithFakeArgumentInfo.record(EXPRESSION_TYPE, fakeArgument, KotlinBuiltIns.getInstance().getNullableAnyType());
+
+                    OverloadResolutionResults<FunctionDescriptor> resolutionResults = resolveFakeCall(
+                            receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), Collections.<JetExpression>singletonList(fakeArgument), name);
+
                     if (resolutionResults.isSuccess()) {
                         FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
                         context.trace.record(REFERENCE_TARGET, operationSign, equals);

@@ -327,7 +327,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         // Make a fake call loopRange.iterator(), and try to resolve it
         Name iterator = Name.identifier("iterator");
-        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls = makeAndResolveFakeCall(loopRange, context, iterator);
+        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls = makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator);
         Call iteratorCall = calls.getFirst();
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
@@ -376,7 +376,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = resolveFakeCall(
-                new TransientReceiver(iteratorType), context, Name.identifier(name));
+                new TransientReceiver(iteratorType), context, Collections.<JetExpression>emptyList(), Name.identifier(name));
         if (nextResolutionResults.isAmbiguity()) {
             context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));
         }
