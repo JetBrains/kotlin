@@ -37,13 +37,11 @@ import javax.swing.*;
 public class DescriptorClassMember implements ClassMemberWithElement {
 
     public static final String NO_PARENT_FOR = "No parent for ";
-
     @NotNull
     private final DeclarationDescriptor myDescriptor;
-    @NotNull
     private final PsiElement myPsiElement;
 
-    public DescriptorClassMember(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
+    public DescriptorClassMember(PsiElement element, @NotNull DeclarationDescriptor descriptor) {
         myPsiElement = element;
         myDescriptor = descriptor;
     }
@@ -51,16 +49,15 @@ public class DescriptorClassMember implements ClassMemberWithElement {
     @Override
     public MemberChooserObject getParentNodeDelegate() {
         final DeclarationDescriptor parent = myDescriptor.getContainingDeclaration();
-        PsiElement declaration;
+        PsiElement declaration = null;
         if (myPsiElement instanceof JetDeclaration) {
             // kotlin
             declaration = PsiTreeUtil.getStubOrPsiParentOfType(myPsiElement, JetNamedDeclaration.class);
         }
-        else {
+        else if (myPsiElement != null) {
             // java or bytecode
             declaration = ((PsiMember) myPsiElement).getContainingClass();
         }
-        assert declaration != null : NO_PARENT_FOR + myPsiElement;
         assert parent != null : NO_PARENT_FOR + myDescriptor;
         return new DescriptorClassMember(declaration, parent);
     }
@@ -68,7 +65,7 @@ public class DescriptorClassMember implements ClassMemberWithElement {
     @Override
     public void renderTreeNode(SimpleColoredComponent component, JTree tree) {
         component.append(getText());
-        if (myPsiElement.isValid()) {
+        if (myPsiElement != null && myPsiElement.isValid()) {
             component.setIcon(myPsiElement.getIcon(0));
         }
         else {
