@@ -334,17 +334,13 @@ public final class JavaPropertyResolver {
             PropertyPsiDataElement characteristicMember,
             TypeVariableResolver typeVariableResolverForPropertyInternals
     ) {
-        JetType receiverType;
         if (characteristicMember.getReceiverType() == null) {
-            receiverType = null;
+            return null;
         }
-        else if (characteristicMember.getReceiverType().getTypeString().length() > 0) {
-            receiverType = semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
+        if (!characteristicMember.getReceiverType().getTypeString().isEmpty()) {
+            return semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
         }
-        else {
-            receiverType = semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
-        }
-        return receiverType;
+        return semanticServices.getTypeTransformer().transformToType(characteristicMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
     }
 
     private static int getNumberOfNonExtensionProperties(@NotNull Collection<PropertyPsiData> propertyPsiDataCollection) {
