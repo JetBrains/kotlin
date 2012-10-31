@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -36,14 +37,14 @@ public final class NamedMembers {
     private final List<PsiMethodWrapper> methods = Lists.newArrayList();
 
     @NotNull
-    private final List<PropertyAccessorData> propertyAccessors = Lists.newArrayList();
+    private final List<PropertyPsiDataElement> propertyPsiDataElements = Lists.newArrayList();
 
     void addMethod(@NotNull PsiMethodWrapper method) {
         methods.add(method);
     }
 
-    void addPropertyAccessor(@NotNull PropertyAccessorData propertyAccessorData) {
-        propertyAccessors.add(propertyAccessorData);
+    void addPropertyAccessor(@NotNull PropertyPsiDataElement propertyPsiDataElement) {
+        propertyPsiDataElements.add(propertyPsiDataElement);
     }
 
     @NotNull
@@ -57,7 +58,7 @@ public final class NamedMembers {
     }
 
     @NotNull
-    public List<PropertyAccessorData> getPropertyAccessors() {
-        return propertyAccessors;
+    public List<PropertyPsiDataElement> getPropertyPsiDataElements() {
+        return propertyPsiDataElements;
     }
 }

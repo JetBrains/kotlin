@@ -96,7 +96,7 @@ public final class MembersCache {
                 NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(psiClass.getName()));
 
                 TypeSource type = new TypeSource("", instanceField.getType(), instanceField);
-                namedMembers.addPropertyAccessor(new PropertyAccessorData(new PsiFieldWrapper(instanceField), type, null));
+                namedMembers.addPropertyAccessor(new PropertyPsiDataElement(new PsiFieldWrapper(instanceField), type, null));
             }
         }
     }
@@ -154,7 +154,7 @@ public final class MembersCache {
                 }
 
                 TypeSource type = new TypeSource("", fieldWrapper.getType(), field);
-                namedMembers.addPropertyAccessor(new PropertyAccessorData(fieldWrapper, type, null));
+                namedMembers.addPropertyAccessor(new PropertyPsiDataElement(fieldWrapper, type, null));
             }
         }
 
@@ -220,7 +220,7 @@ public final class MembersCache {
                         new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(),
                                        propertyTypeParameter.getPsiParameter());
 
-                members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
+                members.addPropertyAccessor(new PropertyPsiDataElement(method, false, propertyType, receiverType));
             }
         }
 
@@ -260,7 +260,7 @@ public final class MembersCache {
                 assert returnType != null;
                 TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), returnType, method.getPsiMethod());
 
-                members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
+                members.addPropertyAccessor(new PropertyPsiDataElement(method, true, propertyType, receiverType));
             }
         }
 

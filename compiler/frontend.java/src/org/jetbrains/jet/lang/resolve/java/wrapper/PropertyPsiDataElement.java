@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java.wrapper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.java.TypeSource;
 
 /**
- * @author Stepan Koltsov
+ * Some PSI corresponding to a property: getter, setter or field.
  */
-public class PropertyAccessorData {
+public final class PropertyPsiDataElement {
 
     @NotNull
     private final PsiMemberWrapper member;
@@ -39,14 +37,19 @@ public class PropertyAccessorData {
     private final TypeSource receiverType;
     
     
-    PropertyAccessorData(@NotNull PsiMethodWrapper method, boolean getter, @NotNull TypeSource type, @Nullable TypeSource receiverType) {
+    public PropertyPsiDataElement(
+            @NotNull PsiMethodWrapper method,
+            boolean getter,
+            @NotNull TypeSource type,
+            @Nullable TypeSource receiverType
+    ) {
         this.member = method;
         this.type = type;
         this.receiverType = receiverType;
         this.getter = getter;
     }
 
-    PropertyAccessorData(@NotNull PsiFieldWrapper field, @NotNull TypeSource type, @Nullable TypeSource receiverType) {
+    public PropertyPsiDataElement(@NotNull PsiFieldWrapper field, @NotNull TypeSource type, @Nullable TypeSource receiverType) {
         this.member = field;
         this.type = type;
         this.receiverType = receiverType;

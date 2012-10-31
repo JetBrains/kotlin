@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -99,9 +100,9 @@ public final class JavaPropertyResolver {
     }
 
     private static class GroupingValue {
-        PropertyAccessorData getter;
-        PropertyAccessorData setter;
-        PropertyAccessorData field;
+        PropertyPsiDataElement getter;
+        PropertyPsiDataElement setter;
+        PropertyPsiDataElement field;
         boolean ext;
     }
 
@@ -113,7 +114,7 @@ public final class JavaPropertyResolver {
             @NotNull Name propertyName,
             @NotNull String context
     ) {
-        Map<String, GroupingValue> map = collectGroupingValuesFromAccessors(namedMembers.getPropertyAccessors());
+        Map<String, GroupingValue> map = collectGroupingValuesFromAccessors(namedMembers.getPropertyPsiDataElements());
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
 
@@ -130,7 +131,7 @@ public final class JavaPropertyResolver {
             boolean isFinal = isPropertyFinal(scopeData, members);
             boolean isVar = isPropertyVar(members);
 
-            PropertyAccessorData characteristicMember = getCharacteristicMember(members);
+            PropertyPsiDataElement characteristicMember = getCharacteristicMember(members);
 
             Visibility visibility = DescriptorResolverUtils.resolveVisibility(characteristicMember.getMember().getPsiMember(), null);
             CallableMemberDescriptor.Kind kind = CallableMemberDescriptor.Kind.DECLARATION;
@@ -298,7 +299,7 @@ public final class JavaPropertyResolver {
 
     private List<TypeParameterDescriptor> resolvePropertyTypeParameters(
             @NotNull GroupingValue members,
-            @NotNull PropertyAccessorData characteristicMember,
+            @NotNull PropertyPsiDataElement characteristicMember,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
         // TODO: Can't get type parameters from field - only from accessors
@@ -312,7 +313,7 @@ public final class JavaPropertyResolver {
 
     private JetType getPropertyType(
             GroupingValue members,
-            PropertyAccessorData characteristicMember,
+            PropertyPsiDataElement characteristicMember,
             TypeVariableResolver typeVariableResolverForPropertyInternals
     ) {
         JetType propertyType;
@@ -335,7 +336,7 @@ public final class JavaPropertyResolver {
 
     @Nullable
     private JetType getReceiverType(
-            PropertyAccessorData characteristicMember,
+            PropertyPsiDataElement characteristicMember,
             TypeVariableResolver typeVariableResolverForPropertyInternals
     ) {
         JetType receiverType;
@@ -362,7 +363,7 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private static PropertyAccessorData getCharacteristicMember(GroupingValue members) {
+    private static PropertyPsiDataElement getCharacteristicMember(GroupingValue members) {
         if (members.getter != null) {
             return members.getter;
         }
@@ -422,7 +423,7 @@ public final class JavaPropertyResolver {
         }
     }
 
-    private static String propertyKeyForGrouping(PropertyAccessorData propertyAccessor) {
+    private static String propertyKeyForGrouping(PropertyPsiDataElement propertyAccessor) {
         String type = key(propertyAccessor.getType());
         String receiverType = key(propertyAccessor.getReceiverType());
         return Pair.create(type, receiverType).toString();
@@ -449,9 +450,9 @@ public final class JavaPropertyResolver {
         }
     }
 
-    private static Map<String, GroupingValue> collectGroupingValuesFromAccessors(List<PropertyAccessorData> propertyAccessors) {
+    private static Map<String, GroupingValue> collectGroupingValuesFromAccessors(List<PropertyPsiDataElement> propertyAccessors) {
         Map<String, GroupingValue> map = new HashMap<String, GroupingValue>();
-        for (PropertyAccessorData propertyAccessor : propertyAccessors) {
+        for (PropertyPsiDataElement propertyAccessor : propertyAccessors) {
             String key = propertyKeyForGrouping(propertyAccessor);
 
             GroupingValue value = map.get(key);
