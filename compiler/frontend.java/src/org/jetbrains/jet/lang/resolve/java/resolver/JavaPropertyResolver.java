@@ -107,7 +107,8 @@ public final class JavaPropertyResolver {
             @NotNull Name propertyName,
             @NotNull String context
     ) {
-        Collection<PropertyPsiData> psiDataCollection = PropertyPsiData.collectGroupingValuesFromAccessors(namedMembers.getPropertyPsiDataElements());
+        Collection<PropertyPsiData> psiDataCollection = PropertyPsiData.assemblePropertyPsiDataFromElements(
+                namedMembers.getPropertyPsiDataElements());
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
 

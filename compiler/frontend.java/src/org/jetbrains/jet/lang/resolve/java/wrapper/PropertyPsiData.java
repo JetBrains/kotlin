@@ -29,10 +29,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/*
+* Data from PSI related to one property used to resolve this property.
+*/
 public final class PropertyPsiData {
 
     @NotNull
-    public static Collection<PropertyPsiData> collectGroupingValuesFromAccessors(@NotNull List<PropertyPsiDataElement> elements) {
+    public static Collection<PropertyPsiData> assemblePropertyPsiDataFromElements(@NotNull List<PropertyPsiDataElement> elements) {
         Map<String, PropertyPsiData> map = new HashMap<String, PropertyPsiData>();
         for (PropertyPsiDataElement element : elements) {
             String key = propertyKeyForGrouping(element);
@@ -106,11 +110,6 @@ public final class PropertyPsiData {
     @Nullable
     public PropertyPsiDataElement getSetter() {
         return setter;
-    }
-
-    @Nullable
-    public PropertyPsiDataElement getField() {
-        return field;
     }
 
     @SuppressWarnings("ConstantConditions")
