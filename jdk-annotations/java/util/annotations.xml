@@ -89,6 +89,9 @@
       <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
+  <item name='java.util.ArrayList java.util.Iterator&lt;E&gt; iterator()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='java.util.List boolean add(E)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
