@@ -131,7 +131,7 @@ public final class JavaPropertyResolver {
 
             PropertyPsiDataElement getter = members.getGetter();
             if (getter != null) {
-                JetMethodAnnotation jetMethod = ((PsiMethodWrapper) getter.getMember()).getJetMethod();
+                JetMethodAnnotation jetMethod = ((PsiMethodWrapper) getter.getMember()).getJetMethodAnnotation();
                 visibility = DescriptorResolverUtils.resolveVisibility(members.getCharacteristicPsi(), jetMethod);
                 kind = DescriptorKindUtils.flagsToKind(jetMethod.kind());
             }
@@ -184,7 +184,7 @@ public final class JavaPropertyResolver {
                     setterVisibility = DescriptorResolverUtils.resolveVisibility(
                             setter.getMember().getPsiMember(),
                             ((PsiMethodWrapper) setter.getMember())
-                                    .getJetMethod());
+                                    .getJetMethodAnnotation());
                 }
                 setterDescriptor = new PropertySetterDescriptor(
                         propertyDescriptor,

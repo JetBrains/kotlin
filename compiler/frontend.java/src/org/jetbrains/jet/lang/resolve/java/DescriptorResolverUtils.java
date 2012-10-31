@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
@@ -78,10 +78,10 @@ public final class DescriptorResolverUtils {
     public static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {
         if (memberWrapper instanceof PsiMethodWrapper) {
             PsiMethodWrapper method = (PsiMethodWrapper) memberWrapper;
-            if (method.getJetMethod().hasForceOpenFlag()) {
+            if (method.getJetMethodAnnotation().hasForceOpenFlag()) {
                 return Modality.OPEN;
             }
-            if (method.getJetMethod().hasForceFinalFlag()) {
+            if (method.getJetMethodAnnotation().hasForceFinalFlag()) {
                 return Modality.FINAL;
             }
         }

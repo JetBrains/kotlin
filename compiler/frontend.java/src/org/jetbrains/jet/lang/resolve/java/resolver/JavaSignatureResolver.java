@@ -346,9 +346,9 @@ public final class JavaSignatureResolver {
 
         List<TypeParameterDescriptorInitialization> typeParametersIntialization;
         final PsiMethod psiMethod = method.getPsiMethod();
-        if (method.getJetMethod().typeParameters().length() > 0) {
+        if (method.getJetMethodAnnotation().typeParameters().length() > 0) {
             typeParametersIntialization = resolveMethodTypeParametersFromJetSignature(
-                    method.getJetMethod().typeParameters(), psiMethod, functionDescriptor);
+                    method.getJetMethodAnnotation().typeParameters(), psiMethod, functionDescriptor);
         }
         else {
             typeParametersIntialization = makeUninitializedTypeParameters(functionDescriptor, psiMethod.getTypeParameters());

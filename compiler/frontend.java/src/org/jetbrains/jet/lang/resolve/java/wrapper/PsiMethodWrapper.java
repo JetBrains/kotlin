@@ -55,22 +55,22 @@ public class PsiMethodWrapper extends PsiMemberWrapper {
         return getParameters().get(i);
     }
 
-    private JetMethodAnnotation jetMethod;
+    private JetMethodAnnotation jetMethodAnnotation;
     @NotNull
-    public JetMethodAnnotation getJetMethod() {
-        if (jetMethod == null) {
-            jetMethod = JetMethodAnnotation.get(getPsiMethod());
+    public JetMethodAnnotation getJetMethodAnnotation() {
+        if (jetMethodAnnotation == null) {
+            jetMethodAnnotation = JetMethodAnnotation.get(getPsiMethod());
         }
-        return jetMethod;
+        return jetMethodAnnotation;
     }
 
-    private JetConstructorAnnotation jetConstructor;
+    private JetConstructorAnnotation jetConstructorAnnotation;
     @NotNull
-    public JetConstructorAnnotation getJetConstructor() {
-        if (jetConstructor == null) {
-            jetConstructor = JetConstructorAnnotation.get(getPsiMethod());
+    public JetConstructorAnnotation getJetConstructorAnnotation() {
+        if (jetConstructorAnnotation == null) {
+            jetConstructorAnnotation = JetConstructorAnnotation.get(getPsiMethod());
         }
-        return jetConstructor;
+        return jetConstructorAnnotation;
     }
 
     @Override

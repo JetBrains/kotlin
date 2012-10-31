@@ -89,7 +89,7 @@ public final class JavaFunctionResolver {
         }
 
         // TODO: ugly
-        if (method.getJetMethod().hasPropertyFlag()) {
+        if (method.getJetMethodAnnotation().hasPropertyFlag()) {
             return null;
         }
 
@@ -112,7 +112,7 @@ public final class JavaFunctionResolver {
                 scopeData.getClassOrNamespaceDescriptor(),
                 annotationResolver.resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
-                DescriptorKindUtils.flagsToKind(method.getJetMethod().kind())
+                DescriptorKindUtils.flagsToKind(method.getJetMethodAnnotation().kind())
         );
 
         String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
@@ -150,7 +150,7 @@ public final class JavaFunctionResolver {
                 valueParameterDescriptors.getDescriptors(),
                 returnType,
                 DescriptorResolverUtils.resolveModality(method, method.isFinal()),
-                DescriptorResolverUtils.resolveVisibility(psiMethod, method.getJetMethod()),
+                DescriptorResolverUtils.resolveVisibility(psiMethod, method.getJetMethodAnnotation()),
                 /*isInline = */ false
         );
 
@@ -238,7 +238,7 @@ public final class JavaFunctionResolver {
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
 
-        String returnTypeFromAnnotation = method.getJetMethod().returnType();
+        String returnTypeFromAnnotation = method.getJetMethodAnnotation().returnType();
 
         JetType transformedType;
         if (returnTypeFromAnnotation.length() > 0) {

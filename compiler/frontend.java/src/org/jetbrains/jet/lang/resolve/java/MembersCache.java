@@ -181,7 +181,7 @@ public final class MembersCache {
                     processSetter(method, propertyParseResult);
                 }
 
-                if (!method.getJetMethod().hasPropertyFlag()) {
+                if (!method.getJetMethodAnnotation().hasPropertyFlag()) {
                     NamedMembers namedMembers = getOrCreateEmpty(Name.identifier(method.getName()));
                     namedMembers.addMethod(method);
                 }
@@ -192,7 +192,7 @@ public final class MembersCache {
             String propertyName = propertyParseResult.getPropertyName();
             NamedMembers members = getOrCreateEmpty(Name.identifier(propertyName));
 
-            if (method.getJetMethod().hasPropertyFlag()) {
+            if (method.getJetMethodAnnotation().hasPropertyFlag()) {
                 if (method.getParameters().size() == 0) {
                     // TODO: report error properly
                     throw new IllegalStateException();
@@ -217,7 +217,7 @@ public final class MembersCache {
 
                 PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
                 TypeSource propertyType =
-                        new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(),
+                        new TypeSource(method.getJetMethodAnnotation().propertyType(), propertyTypeParameter.getPsiParameter().getType(),
                                        propertyTypeParameter.getPsiParameter());
 
                 members.addPropertyAccessor(new PropertyPsiDataElement(method, false, propertyType, receiverType));
@@ -229,7 +229,7 @@ public final class MembersCache {
             NamedMembers members = getOrCreateEmpty(Name.identifier(propertyName));
 
             // TODO: some java properties too
-            if (method.getJetMethod().hasPropertyFlag()) {
+            if (method.getJetMethodAnnotation().hasPropertyFlag()) {
 
                 int i = 0;
 
@@ -258,7 +258,7 @@ public final class MembersCache {
                 // TODO: what if returnType == null?
                 final PsiType returnType = method.getReturnType();
                 assert returnType != null;
-                TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), returnType, method.getPsiMethod());
+                TypeSource propertyType = new TypeSource(method.getJetMethodAnnotation().propertyType(), returnType, method.getPsiMethod());
 
                 members.addPropertyAccessor(new PropertyPsiDataElement(method, true, propertyType, receiverType));
             }

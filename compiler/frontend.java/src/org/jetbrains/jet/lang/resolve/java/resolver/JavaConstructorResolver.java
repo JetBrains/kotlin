@@ -169,7 +169,7 @@ public final class JavaConstructorResolver {
         PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 
         //noinspection deprecation
-        if (constructor.getJetConstructor().hidden()) {
+        if (constructor.getJetConstructorAnnotation().hidden()) {
             return null;
         }
 
@@ -204,7 +204,7 @@ public final class JavaConstructorResolver {
 
         constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
                                          valueParameterDescriptors.getDescriptors(),
-                                         DescriptorResolverUtils.resolveVisibility(psiConstructor, constructor.getJetConstructor()),
+                                         DescriptorResolverUtils.resolveVisibility(psiConstructor, constructor.getJetConstructorAnnotation()),
                                          aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;
