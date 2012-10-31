@@ -189,20 +189,20 @@ public final class JavaFunctionResolver {
             Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
 
             OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
-                                                              new OverrideResolver.DescriptorSink() {
-                                                                  @Override
-                                                                  public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                                                                      functions.add((FunctionDescriptor) fakeOverride);
-                                                                  }
+                  new OverrideResolver.DescriptorSink() {
+                      @Override
+                      public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                          functions.add((FunctionDescriptor) fakeOverride);
+                      }
 
-                                                                  @Override
-                                                                  public void conflict(
-                                                                          @NotNull CallableMemberDescriptor fromSuper,
-                                                                          @NotNull CallableMemberDescriptor fromCurrent
-                                                                  ) {
-                                                                      // nop
-                                                                  }
-                                                              });
+                      @Override
+                      public void conflict(
+                              @NotNull CallableMemberDescriptor fromSuper,
+                              @NotNull CallableMemberDescriptor fromCurrent
+                      ) {
+                          // nop
+                      }
+                  });
         }
 
         OverrideResolver.resolveUnknownVisibilities(functions, trace);
