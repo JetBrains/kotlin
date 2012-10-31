@@ -10,6 +10,17 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="library" name="javax.inject" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$Tests$/bean-generator/runtime/jar/bean-generator-runtime.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="bean-generator-runtime" level="project" />
+    <orderEntry type="module" module-name="bean-generator-runtime" />
     <orderEntry type="module" module-name="util" />
   </component>
 </module>
