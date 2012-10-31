@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="bean-generator-runtime:jar">
+    <output-path>$PROJECT_DIR$/bean-generator/runtime/jar</output-path>
+    <root id="archive" name="bean-generator-runtime.jar">
+      <element id="module-output" name="bean-generator-runtime" />
+    </root>
+  </artifact>
+</component>

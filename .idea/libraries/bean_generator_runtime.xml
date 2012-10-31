@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="bean-generator-runtime">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/bean-generator/runtime/jar/bean-generator-runtime.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
