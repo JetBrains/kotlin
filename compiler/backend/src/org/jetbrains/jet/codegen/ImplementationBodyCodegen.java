@@ -32,6 +32,7 @@ import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.ConstructorContext;
+import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
@@ -41,6 +42,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -414,12 +416,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
 
         generateComponentFunctionsForDataClasses();
+        generateCopyFunctionForDataClasses();
 
         List<PropertyDescriptor> properties = getDataProperties();
         if (!properties.isEmpty()) {
             generateDataClassToStringIfNeeded(properties);
             generateDataClassHashCodeIfNeeded(properties);
             generateDataClassEqualsIfNeeded(properties);
+        }
+    }
+
+    private void generateCopyFunctionForDataClasses() {
+        FunctionDescriptor copyFunction = bindingContext.get(BindingContext.DATA_CLASS_COPY_FUNCTION, descriptor);
+        if (copyFunction != null) {
+            generateCopyFunction(copyFunction);
         }
     }
 
@@ -638,6 +648,76 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.areturn(componentType);
 
         FunctionCodegen.endVisit(mv, function.getName().getName(), myClass);
+    }
+
+    private void generateCopyFunction(@NotNull final FunctionDescriptor function) {
+        JetType returnType = function.getReturnType();
+        assert returnType != null : "Return type of copy function should not be null: " + function;
+
+        JvmMethodSignature methodSignature = typeMapper.mapSignature(function.getName(), function);
+        final String methodDesc = methodSignature.getAsmMethod().getDescriptor();
+
+        MethodVisitor mv = v.newMethod(myClass, FunctionCodegen.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
+                                       function.getName().getName(), methodDesc,
+                                       null, null);
+
+        FunctionCodegen.genJetAnnotations(state, function, null, null, mv);
+
+        mv.visitCode();
+        InstructionAdapter iv = new InstructionAdapter(mv);
+
+        ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
+
+
+        Label methodBegin = new Label();
+        mv.visitLabel(methodBegin);
+
+        final Type thisDescriptorType = typeMapper.mapType(descriptor.getDefaultType());
+        iv.anew(thisDescriptorType);
+        iv.dup();
+
+        String thisInternalName = thisDescriptorType.getInternalName();
+
+        assert function.getValueParameters().size() == constructor.getValueParameters().size() :
+                "Number of parameters of copy function and constructor are different. Copy: " + function.getValueParameters().size() + ", constructor: " + constructor.getValueParameters().size();
+
+        int parameterIndex = 0;
+        for (ValueParameterDescriptor parameterDescriptor : function.getValueParameters()) {
+            iv.load(parameterIndex + 1, typeMapper.mapType(parameterDescriptor.getType()));
+            parameterIndex++;
+        }
+
+        String constructorJvmDescriptor = typeMapper.mapToCallableMethod(constructor).getSignature().getAsmMethod().getDescriptor();
+        iv.invokespecial(thisInternalName, "<init>", constructorJvmDescriptor);
+
+        iv.areturn(thisDescriptorType);
+
+        Label methodEnd = new Label();
+        mv.visitLabel(methodEnd);
+
+        FunctionCodegen.MethodBounds methodBounds = new FunctionCodegen.MethodBounds(methodBegin, methodEnd);
+        FunctionCodegen.generateLocalVariableTable(typeMapper, mv, function, thisDescriptorType, FunctionCodegen.generateLocalVariablesInfo(function), methodBounds);
+
+        FunctionCodegen.endVisit(mv, function.getName().getName(), myClass);
+
+        final MethodContext functionContext = context.intoFunction(function);
+        FunctionCodegen.generateDefaultIfNeeded(functionContext, state, v, methodSignature.getAsmMethod(), function, OwnerKind.IMPLEMENTATION,
+                    new DefaultParameterValueLoader() {
+                        @Override
+                        public void putValueOnStack(
+                                ValueParameterDescriptor descriptor,
+                                ExpressionCodegen codegen
+                        ) {
+                            assert (KotlinBuiltIns.getInstance().isData((ClassDescriptor) function.getContainingDeclaration()))
+                                    : "Trying to create function with default arguments for function that isn't presented in code for class without data annotation";
+                            PropertyDescriptor propertyDescriptor = codegen.getBindingContext().get(
+                                    BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor);
+                            assert propertyDescriptor != null : "Trying to generate default value for parameter of copy function that doesn't correspond to any property";
+                            codegen.v.load(0, thisDescriptorType);
+                            Type propertyType = codegen.typeMapper.mapType(propertyDescriptor.getType());
+                            codegen.intermediateValueForProperty(propertyDescriptor, false, null).put(propertyType, codegen.v);
+                        }
+                    });
     }
 
     private void generateEnumMethods() {
@@ -971,7 +1051,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         assert constructorDescriptor != null;
         FunctionCodegen.generateDefaultIfNeeded(constructorContext, state, v, constructorMethod.getAsmMethod(), constructorDescriptor,
-                                                OwnerKind.IMPLEMENTATION);
+                    OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT);
     }
 
     private void genSuperCallToDelegatorToSuperClass(InstructionAdapter iv) {

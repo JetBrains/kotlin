@@ -365,4 +365,10 @@ public class DescriptorUtils {
                 + (classifier == null ? "null" : classifier.getClass());
         return (ClassDescriptor) classifier;
     }
+
+    public static ConstructorDescriptor getConstructorOfDataClass(ClassDescriptor classDescriptor) {
+        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+        assert constructors.size() == 1 : "Data class must have only one constructor: " + constructors;
+        return constructors.iterator().next();
+    }
 }

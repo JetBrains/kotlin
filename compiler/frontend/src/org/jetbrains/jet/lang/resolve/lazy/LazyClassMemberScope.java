@@ -174,6 +174,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 break;
             }
         }
+        if (!constructor.getValueParameters().isEmpty() && name.equals(DescriptorResolver.COPY_METHOD_NAME)) {
+            SimpleFunctionDescriptor copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
+                    constructor.getValueParameters(),
+                    thisDescriptor, resolveSession.getTrace());
+            result.add(copyFunctionDescriptor);
+        }
     }
 
     private void generateEnumClassObjectMethods(@NotNull Collection<? super FunctionDescriptor> result, @NotNull Name name) {
@@ -307,6 +313,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             if (functions.isEmpty()) break;
             n++;
         }
+        getFunctions(Name.identifier("copy"));
     }
 
     @Override

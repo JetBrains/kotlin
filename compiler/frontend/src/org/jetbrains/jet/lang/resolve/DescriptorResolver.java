@@ -57,6 +57,7 @@ import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 public class DescriptorResolver {
     public static final Name VALUE_OF_METHOD_NAME = Name.identifier("valueOf");
     public static final Name VALUES_METHOD_NAME = Name.identifier("values");
+    public static final Name COPY_METHOD_NAME = Name.identifier("copy");
     public static final String COMPONENT_FUNCTION_NAME_PREFIX = "component";
 
     @NotNull
@@ -346,6 +347,53 @@ public class DescriptorResolver {
 
         trace.record(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter, functionDescriptor);
 
+        return functionDescriptor;
+    }
+
+    @NotNull
+    public static SimpleFunctionDescriptor createCopyFunctionDescriptor(
+            @NotNull Collection<ValueParameterDescriptor> constructorParameters,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull BindingTrace trace
+    ) {
+        JetType returnType = classDescriptor.getDefaultType();
+
+        SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
+                classDescriptor,
+                Collections.<AnnotationDescriptor>emptyList(),
+                COPY_METHOD_NAME,
+                CallableMemberDescriptor.Kind.SYNTHESIZED
+        );
+
+        List<ValueParameterDescriptor> parameterDescriptors = Lists.newArrayList();
+
+        for (ValueParameterDescriptor parameter : constructorParameters) {
+            PropertyDescriptor propertyDescriptor = trace.getBindingContext().get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
+            // If parameter hasn't corresponding property, so it mustn't have default value as a parameter in copy function for data class
+            boolean declaresDefaultValue = propertyDescriptor != null;
+            ValueParameterDescriptorImpl parameterDescriptor =
+                    new ValueParameterDescriptorImpl(functionDescriptor, parameter.getIndex(), parameter.getAnnotations(),
+                                                     parameter.getName(), parameter.isVar(), parameter.getType(),
+                                                     declaresDefaultValue,
+                                                     parameter.getVarargElementType());
+            parameterDescriptors.add(parameterDescriptor);
+            if (declaresDefaultValue) {
+                trace.record(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor, propertyDescriptor);
+            }
+        }
+
+        functionDescriptor.initialize(
+                null,
+                classDescriptor.getImplicitReceiver(),
+                Collections.<TypeParameterDescriptor>emptyList(),
+                parameterDescriptors,
+                returnType,
+                Modality.FINAL,
+                classDescriptor.getVisibility(),
+                true
+        );
+
+        trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor);
         return functionDescriptor;
     }
 

@@ -91,7 +91,7 @@ public class DeclarationResolver {
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
-        createComponentFunctionsForDataClasses();
+        createFunctionsForDataClasses();
         importsResolver.processMembersImports(rootScope);
         checkRedeclarationsInNamespaces();
         checkRedeclarationsInInnerClassNames();
@@ -219,24 +219,22 @@ public class DeclarationResolver {
         }
     }
 
-    private void createComponentFunctionsForDataClasses() {
+    private void createFunctionsForDataClasses() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
 
             if (jetClass.hasPrimaryConstructor() && KotlinBuiltIns.getInstance().isData(classDescriptor)) {
-                createComponentFunctions(classDescriptor);
+                ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(classDescriptor);
+                createComponentFunctions(classDescriptor, constructor);
+                createCopyFunction(classDescriptor, constructor);
             }
         }
     }
 
-    private void createComponentFunctions(MutableClassDescriptor classDescriptor) {
-        Set<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
-        assert constructors.size() == 1 : "Data class hasn't a single constructor: " + constructors.size();
-        ConstructorDescriptor constructor = constructors.iterator().next();
-
+    private void createComponentFunctions(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
         int parameterIndex = 0;
-        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+        for (ValueParameterDescriptor parameter : constructorDescriptor.getValueParameters()) {
             if (!ErrorUtils.isErrorType(parameter.getType())) {
                 PropertyDescriptor property = trace.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter);
                 if (property != null) {
@@ -249,6 +247,13 @@ public class DeclarationResolver {
                 }
             }
         }
+    }
+
+    private void createCopyFunction(@NotNull MutableClassDescriptor classDescriptor, @NotNull ConstructorDescriptor constructorDescriptor) {
+        SimpleFunctionDescriptor functionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
+                constructorDescriptor.getValueParameters(), classDescriptor, trace);
+
+        classDescriptor.getBuilder().addFunctionDescriptor(functionDescriptor);
     }
 
     private void processPrimaryConstructor(MutableClassDescriptor classDescriptor, JetClass klass) {
@@ -356,8 +361,8 @@ public class DeclarationResolver {
                     descriptorMap.put(desc.getName(), desc);
                 }
             }
-            
-           reportRedeclarations(descriptorMap); 
+
+           reportRedeclarations(descriptorMap);
         }
     }
 
@@ -392,5 +397,5 @@ public class DeclarationResolver {
         }
     }
 
-    
+
 }
