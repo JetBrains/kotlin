@@ -52,9 +52,14 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, memberDescriptor);
-            assert psiElement != null : "Can not find PsiElement for descriptor " + memberDescriptor;
-            members.add(new DescriptorClassMember(psiElement, memberDescriptor));
+            List<PsiElement> psiElements = BindingContextUtils.descriptorToDeclarations(bindingContext, memberDescriptor);
+            DescriptorClassMember member;
+            if (psiElements.isEmpty()) {
+                member = new DescriptorClassMember(null, memberDescriptor);
+            } else {
+                member = new DescriptorClassMember(psiElements.get(0), memberDescriptor);
+            }
+            members.add(member);
         }
         return members;
     }
