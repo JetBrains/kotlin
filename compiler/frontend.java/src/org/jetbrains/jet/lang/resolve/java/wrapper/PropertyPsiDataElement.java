@@ -71,6 +71,10 @@ public final class PropertyPsiDataElement {
         return receiverType;
     }
 
+    boolean isExtension() {
+        return getReceiverType() != null;
+    }
+
     public boolean isGetter() {
         return member instanceof PsiMethodWrapper && getter;
     }

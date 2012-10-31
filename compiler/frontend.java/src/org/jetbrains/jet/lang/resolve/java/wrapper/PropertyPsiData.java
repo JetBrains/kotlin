@@ -16,64 +16,66 @@
 
 package org.jetbrains.jet.lang.resolve.java.wrapper;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.TypeSource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class PropertyPsiData {
-    public static Map<String, PropertyPsiData> collectGroupingValuesFromAccessors(List<PropertyPsiDataElement> propertyAccessors) {
+
+    @NotNull
+    public static Collection<PropertyPsiData> collectGroupingValuesFromAccessors(@NotNull List<PropertyPsiDataElement> elements) {
         Map<String, PropertyPsiData> map = new HashMap<String, PropertyPsiData>();
-        for (PropertyPsiDataElement propertyAccessor : propertyAccessors) {
-            String key = propertyKeyForGrouping(propertyAccessor);
+        for (PropertyPsiDataElement element : elements) {
+            String key = propertyKeyForGrouping(element);
 
             PropertyPsiData value = map.get(key);
             if (value == null) {
                 value = new PropertyPsiData();
-                value.isExtension = propertyAccessor.getReceiverType() != null;
                 map.put(key, value);
             }
 
-            if (value.isExtension && (propertyAccessor.getReceiverType() == null)) {
-                throw new IllegalStateException("internal error, incorrect key");
-            }
-
-            if (propertyAccessor.isGetter()) {
+            if (element.isGetter()) {
                 if (value.getter != null) {
                     throw new IllegalStateException("oops, duplicate key");
                 }
-                value.getter = propertyAccessor;
+                value.getter = element;
             }
-            else if (propertyAccessor.isSetter()) {
+            else if (element.isSetter()) {
                 if (value.setter != null) {
                     throw new IllegalStateException("oops, duplicate key");
                 }
-                value.setter = propertyAccessor;
+                value.setter = element;
             }
-            else if (propertyAccessor.isField()) {
+            else if (element.isField()) {
                 if (value.field != null) {
                     throw new IllegalStateException("oops, duplicate key");
                 }
-                value.field = propertyAccessor;
+                value.field = element;
             }
             else {
                 throw new IllegalStateException();
             }
         }
 
-        return map;
+        return map.values();
     }
 
-    private static String propertyKeyForGrouping(PropertyPsiDataElement propertyAccessor) {
+    @NotNull
+    private static String propertyKeyForGrouping(@NotNull PropertyPsiDataElement propertyAccessor) {
         String type = key(propertyAccessor.getType());
         String receiverType = key(propertyAccessor.getReceiverType());
         return Pair.create(type, receiverType).toString();
     }
 
+    @NotNull
     private static String key(@Nullable TypeSource typeSource) {
         if (typeSource == null) {
             return "";
@@ -92,7 +94,8 @@ public final class PropertyPsiData {
     private PropertyPsiDataElement setter = null;
     @Nullable
     private PropertyPsiDataElement field = null;
-    boolean isExtension = false;
+    @Nullable
+    private Collection<PropertyPsiDataElement> elements = null;
 
     @Nullable
     public PropertyPsiDataElement getGetter() {
@@ -109,8 +112,39 @@ public final class PropertyPsiData {
         return field;
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
+    private Collection<PropertyPsiDataElement> getElements() {
+        if (elements == null) {
+            elements = Lists.newArrayList();
+            if (getter != null) {
+                elements.add(getter);
+            }
+            if (setter != null) {
+                elements.add(setter);
+            }
+            if (field != null) {
+                elements.add(field);
+            }
+            assert !elements.isEmpty();
+        }
+        return elements;
+    }
+
     public boolean isExtension() {
+        boolean isExtension = getCharacteristicMember().isExtension();
+        for (PropertyPsiDataElement element : getElements()) {
+            assert (element.isExtension() == isExtension);
+        }
         return isExtension;
+    }
+
+    public boolean isStatic() {
+        boolean isStatic = getCharacteristicMember().getMember().isStatic();
+        for (PropertyPsiDataElement element : getElements()) {
+            assert (element.getMember().isStatic() == isStatic);
+        }
+        return isStatic;
     }
 
     @NotNull
@@ -127,8 +161,14 @@ public final class PropertyPsiData {
         throw new IllegalStateException();
     }
 
+    @NotNull
+    public PsiMember getCharacteristicPsi() {
+        return getCharacteristicMember().getMember().getPsiMember();
+    }
+
     public boolean isVar() {
         if (getter == null && setter == null) {
+            assert field != null;
             return !field.getMember().isFinal();
         }
         return setter != null;

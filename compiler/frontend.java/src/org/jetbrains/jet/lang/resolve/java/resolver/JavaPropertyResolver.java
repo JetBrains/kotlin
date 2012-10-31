@@ -107,13 +107,13 @@ public final class JavaPropertyResolver {
             @NotNull Name propertyName,
             @NotNull String context
     ) {
-        Map<String, PropertyPsiData> map = PropertyPsiData.collectGroupingValuesFromAccessors(namedMembers.getPropertyPsiDataElements());
+        Collection<PropertyPsiData> psiDataCollection = PropertyPsiData.collectGroupingValuesFromAccessors(namedMembers.getPropertyPsiDataElements());
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
 
-        int regularPropertiesCount = getNumberOfNonExtensionProperties(map);
+        int regularPropertiesCount = getNumberOfNonExtensionProperties(psiDataCollection);
 
-        for (PropertyPsiData members : map.values()) {
+        for (PropertyPsiData members : psiDataCollection) {
 
             // we cannot have more then one property with given name even if java code
             // has several fields, getters and setter of different types
@@ -126,16 +126,17 @@ public final class JavaPropertyResolver {
 
             PropertyPsiDataElement characteristicMember = members.getCharacteristicMember();
 
-            Visibility visibility = DescriptorResolverUtils.resolveVisibility(characteristicMember.getMember().getPsiMember(), null);
+            Visibility visibility = DescriptorResolverUtils.resolveVisibility(members.getCharacteristicPsi(), null);
             CallableMemberDescriptor.Kind kind = CallableMemberDescriptor.Kind.DECLARATION;
 
-            if (members.getGetter() != null && members.getGetter().getMember() instanceof PsiMethodWrapper) {
-                JetMethodAnnotation jetMethod = ((PsiMethodWrapper) members.getGetter().getMember()).getJetMethod();
-                visibility = DescriptorResolverUtils.resolveVisibility(characteristicMember.getMember().getPsiMember(), jetMethod);
+            PropertyPsiDataElement getter = members.getGetter();
+            if (getter != null) {
+                JetMethodAnnotation jetMethod = ((PsiMethodWrapper) getter.getMember()).getJetMethod();
+                visibility = DescriptorResolverUtils.resolveVisibility(members.getCharacteristicPsi(), jetMethod);
                 kind = DescriptorKindUtils.flagsToKind(jetMethod.kind());
             }
 
-            DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, characteristicMember.getMember().isStatic());
+            DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, members.isStatic());
             boolean isEnumEntry = DescriptorUtils.isEnumClassObject(realOwner);
             boolean isPropertyForNamedObject = members.getField() != null && JvmAbi.INSTANCE_FIELD.equals(members.getField().getMember().getName());
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
@@ -165,10 +166,10 @@ public final class JavaPropertyResolver {
             PropertyGetterDescriptor getterDescriptor = null;
             PropertySetterDescriptor setterDescriptor = null;
 
-            if (members.getGetter() != null) {
+            if (getter != null) {
                 getterDescriptor = new PropertyGetterDescriptor(
                         propertyDescriptor,
-                        annotationResolver.resolveAnnotations(members.getGetter().getMember().getPsiMember()),
+                        annotationResolver.resolveAnnotations(getter.getMember().getPsiMember()),
                         Modality.OPEN,
                         visibility,
                         true,
@@ -176,17 +177,18 @@ public final class JavaPropertyResolver {
                         kind);
             }
 
-            if (members.getSetter() != null) {
-                Visibility setterVisibility = DescriptorResolverUtils.resolveVisibility(members.getSetter().getMember().getPsiMember(), null);
-                if (members.getSetter().getMember() instanceof PsiMethodWrapper) {
+            PropertyPsiDataElement setter = members.getSetter();
+            if (setter != null) {
+                Visibility setterVisibility = DescriptorResolverUtils.resolveVisibility(setter.getMember().getPsiMember(), null);
+                if (setter.getMember() instanceof PsiMethodWrapper) {
                     setterVisibility = DescriptorResolverUtils.resolveVisibility(
-                            members.getSetter().getMember().getPsiMember(),
-                            ((PsiMethodWrapper) members.getSetter().getMember())
+                            setter.getMember().getPsiMember(),
+                            ((PsiMethodWrapper) setter.getMember())
                                     .getJetMethod());
                 }
                 setterDescriptor = new PropertySetterDescriptor(
                         propertyDescriptor,
-                        annotationResolver.resolveAnnotations(members.getSetter().getMember().getPsiMember()),
+                        annotationResolver.resolveAnnotations(setter.getMember().getPsiMember()),
                         Modality.OPEN,
                         setterVisibility,
                         true,
@@ -345,9 +347,9 @@ public final class JavaPropertyResolver {
         return receiverType;
     }
 
-    private static int getNumberOfNonExtensionProperties(Map<String, PropertyPsiData> map) {
+    private static int getNumberOfNonExtensionProperties(@NotNull Collection<PropertyPsiData> propertyPsiDataCollection) {
         int regularPropertiesCount = 0;
-        for (PropertyPsiData members : map.values()) {
+        for (PropertyPsiData members : propertyPsiDataCollection) {
             if (!members.isExtension()) {
                 ++regularPropertiesCount;
             }
