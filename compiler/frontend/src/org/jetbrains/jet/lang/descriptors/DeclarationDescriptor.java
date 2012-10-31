@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.buildergen.runtime.Reference;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -32,9 +33,11 @@ public interface DeclarationDescriptor extends Annotated, Named {
      *         returns <code>this</code> object if the current descriptor is original itself
      */
     @NotNull
+    @Reference
     DeclarationDescriptor getOriginal();
 
     @Nullable
+    @Reference
     DeclarationDescriptor getContainingDeclaration();
 
     @Nullable

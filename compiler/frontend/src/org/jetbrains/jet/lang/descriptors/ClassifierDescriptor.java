@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.buildergen.runtime.Skip;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
@@ -28,11 +29,14 @@ public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
     @NotNull
     TypeConstructor getTypeConstructor();
 
+    @Skip
     @NotNull
     JetType getDefaultType();
 
+    @Skip
     @Nullable
     JetType getClassObjectType();
 
+    @Skip
     boolean isClassObjectAValue();
 }

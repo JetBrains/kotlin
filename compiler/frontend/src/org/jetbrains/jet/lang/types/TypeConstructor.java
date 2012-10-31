@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.buildergen.runtime.Reference;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -38,5 +39,6 @@ public interface TypeConstructor extends Annotated {
     boolean isSealed();
 
     @Nullable
+    @Reference
     ClassifierDescriptor getDeclarationDescriptor();
 }

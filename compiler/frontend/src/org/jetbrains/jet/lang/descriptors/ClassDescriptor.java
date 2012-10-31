@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.buildergen.runtime.Skip;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -34,6 +35,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     @NotNull
     JetScope getMemberScope(List<TypeProjection> typeArguments);
 
+    @Skip
     @NotNull
     JetScope getUnsubstitutedInnerClassesScope();
 
@@ -73,6 +75,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     @NotNull
     Visibility getVisibility();
 
+    @Skip
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();
 }

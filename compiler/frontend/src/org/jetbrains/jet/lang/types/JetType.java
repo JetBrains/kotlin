@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.buildergen.runtime.Reference;
+import org.jetbrains.jet.buildergen.runtime.Skip;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -28,10 +30,12 @@ import java.util.List;
  * @see JetTypeChecker#isSubtypeOf(JetType, JetType)
  */
 public interface JetType extends Annotated {
+    @Reference
     @NotNull TypeConstructor getConstructor();
     @NotNull List<TypeProjection> getArguments();
     boolean isNullable();
 
+    @Skip
     @NotNull
     JetScope getMemberScope();
 

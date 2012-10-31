@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.buildergen.runtime.Reference;
+import org.jetbrains.jet.buildergen.runtime.Skip;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -31,6 +33,7 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @Nullable
     ReceiverParameterDescriptor getReceiverParameter();
 
+    @Skip
     @Nullable
     ReceiverParameterDescriptor getExpectedThisObject();
 
@@ -53,6 +56,7 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @NotNull
     List<ValueParameterDescriptor> getValueParameters();
 
+    @Reference
     @NotNull
     Set<? extends CallableDescriptor> getOverriddenDescriptors();
 }

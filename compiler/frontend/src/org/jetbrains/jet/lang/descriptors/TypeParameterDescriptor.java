@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.buildergen.runtime.Skip;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -35,12 +36,14 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     @NotNull
     Set<JetType> getUpperBounds();
 
+    @Skip
     @NotNull
     JetType getUpperBoundsAsType();
 
     @NotNull
     Set<JetType> getLowerBounds();
 
+    @Skip
     @NotNull
     JetType getLowerBoundsAsType();
 

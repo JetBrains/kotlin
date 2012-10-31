@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.buildergen.runtime.Skip;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -24,6 +25,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
  * @author abreslav
  */
 public interface VariableDescriptor extends CallableDescriptor {
+    @Skip // getReturnType() is enough
     @NotNull
     JetType getType();
 

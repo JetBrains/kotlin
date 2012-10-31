@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.buildergen.runtime.Skip;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -182,6 +183,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return setter;
     }
 
+    @Skip
     @NotNull
     public List<PropertyAccessorDescriptor> getAccessors() {
         List<PropertyAccessorDescriptor> r = Lists.newArrayListWithCapacity(2);
