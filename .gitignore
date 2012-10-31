@@ -21,3 +21,4 @@ gh-pages
 *.class
 .DS_Store
 android.tests.dependencies
+bean-generator
