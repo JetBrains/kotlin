@@ -22,9 +22,9 @@ import org.jetbrains.jet.lang.types.JetType;
 /**
  * @author abreslav
  */
-public interface ReceiverDescriptor {
+public interface ReceiverValue {
 
-    ReceiverDescriptor NO_RECEIVER = new ReceiverDescriptor() {
+    ReceiverValue NO_RECEIVER = new ReceiverValue() {
         @NotNull
         @Override
         public JetType getType() {
@@ -37,7 +37,7 @@ public interface ReceiverDescriptor {
         }
 
         @Override
-        public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
+        public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
             return visitor.visitNoReceiver(this, data);
         }
 
@@ -52,5 +52,5 @@ public interface ReceiverDescriptor {
 
     boolean exists();
 
-    <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data);
+    <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data);
 }

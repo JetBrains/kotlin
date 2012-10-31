@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -64,8 +64,8 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
-    private final ReceiverDescriptor thisObject; // receiver object of a method
-    private final ReceiverDescriptor receiverArgument; // receiver of an extension function
+    private final ReceiverValue thisObject; // receiver object of a method
+    private final ReceiverValue receiverArgument; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
     private final boolean isSafeCall;
 
@@ -162,13 +162,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Override
     @NotNull
-    public ReceiverDescriptor getReceiverArgument() {
+    public ReceiverValue getReceiverArgument() {
         return receiverArgument;
     }
 
     @Override
     @NotNull
-    public ReceiverDescriptor getThisObject() {
+    public ReceiverValue getThisObject() {
         return thisObject;
     }
 

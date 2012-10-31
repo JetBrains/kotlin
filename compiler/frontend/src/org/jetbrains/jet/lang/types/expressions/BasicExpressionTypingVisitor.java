@@ -19,9 +19,7 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,18 +42,17 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
@@ -618,7 +615,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private FunctionDescriptor getFunctionDescriptor(@NotNull Call call, @NotNull JetExpression callExpression, @NotNull ReceiverDescriptor receiver,
+    private FunctionDescriptor getFunctionDescriptor(@NotNull Call call, @NotNull JetExpression callExpression, @NotNull ReceiverValue receiver,
             @NotNull ExpressionTypingContext context, @NotNull boolean[] result) {
 
         OverloadResolutionResults<FunctionDescriptor> results = context.resolveFunctionCall(call);
@@ -635,7 +632,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverDescriptor receiver,
+    private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result) {
 
         TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
@@ -670,7 +667,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    public JetTypeInfo getSelectorReturnTypeInfo(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
+    public JetTypeInfo getSelectorReturnTypeInfo(@NotNull ReceiverValue receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
         if (selectorExpression instanceof JetCallExpression) {
             return getCallExpressionTypeInfo((JetCallExpression) selectorExpression, receiver, callOperationNode, context);
         }
@@ -695,7 +692,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverDescriptor receiver,
+    private JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
 
         boolean[] result = new boolean[1];
@@ -723,7 +720,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverDescriptor receiver,
+    private JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
 
         boolean[] result = new boolean[1];
@@ -775,11 +772,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
-    private static void checkSuper(@NotNull ReceiverDescriptor receiverDescriptor, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
+    private static void checkSuper(@NotNull ReceiverValue receiverValue, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
             @NotNull BindingTrace trace, @NotNull JetExpression expression) {
         if (!results.isSingleResult()) return;
-        if (!(receiverDescriptor instanceof ExpressionReceiver)) return;
-        JetExpression receiver = ((ExpressionReceiver) receiverDescriptor).getExpression();
+        if (!(receiverValue instanceof ExpressionReceiver)) return;
+        JetExpression receiver = ((ExpressionReceiver) receiverValue).getExpression();
         CallableDescriptor descriptor = results.getResultingDescriptor();
         if (receiver instanceof JetSuperExpression && descriptor instanceof MemberDescriptor) {
             if (((MemberDescriptor) descriptor).getModality() == Modality.ABSTRACT) {
@@ -996,7 +993,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (right != null) {
                     ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
 
-                    final JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fakeArgument");
+                    final JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(
+                            context.expressionTypingServices.getProject(), "fakeArgument");
                     TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);
                     traceWithFakeArgumentInfo.record(EXPRESSION_TYPE, fakeArgument, KotlinBuiltIns.getInstance().getNullableAnyType());
 

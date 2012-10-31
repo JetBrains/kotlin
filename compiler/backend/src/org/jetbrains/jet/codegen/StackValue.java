@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -751,7 +751,7 @@ public abstract class StackValue {
                     }
                 }
 
-                ReceiverDescriptor receiverParameter = resolvedGetCall.getReceiverArgument();
+                ReceiverValue receiverParameter = resolvedGetCall.getReceiverArgument();
                 int receiverIndex = -1;
                 if (receiverParameter.exists()) {
                     Type type = codegen.typeMapper.mapType(receiverParameter.getType());
@@ -762,7 +762,7 @@ public abstract class StackValue {
                     v.store((receiverIndex = lastIndex) - sz, type);
                 }
 
-                ReceiverDescriptor thisObject = resolvedGetCall.getThisObject();
+                ReceiverValue thisObject = resolvedGetCall.getThisObject();
                 int thisIndex = -1;
                 if (thisObject.exists()) {
                     frame.enterTemp(OBJECT_TYPE);
@@ -1262,8 +1262,8 @@ public abstract class StackValue {
                 ExpressionCodegen codegen,
                 CallableMethod callableMethod
         ) {
-            ReceiverDescriptor thisObject = resolvedCall.getThisObject();
-            ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
+            ReceiverValue thisObject = resolvedCall.getThisObject();
+            ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
 
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
@@ -1305,8 +1305,8 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-            ReceiverDescriptor thisObject = resolvedCall.getThisObject();
-            ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
+            ReceiverValue thisObject = resolvedCall.getThisObject();
+            ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
             if (thisObject.exists()) {
                 if (receiverArgument.exists()) {
                     if (callableMethod != null) {
@@ -1330,7 +1330,7 @@ public abstract class StackValue {
         }
 
         private void genReceiver(
-                InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type,
+                InstructionAdapter v, ReceiverValue receiverArgument, Type type,
                 @Nullable ReceiverParameterDescriptor receiverParameter, int depth
         ) {
             if (receiver == StackValue.none()) {

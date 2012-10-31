@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -314,7 +314,7 @@ public class CandidateResolver {
 
         // Receiver
         // Error is already reported if something is missing
-        ReceiverDescriptor receiverArgument = candidateCall.getReceiverArgument();
+        ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
         ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
         if (receiverArgument.exists() && receiverParameter.exists()) {
             constraintsSystem.addSubtypeConstraint(receiverParameter.getType(), receiverArgument.getType(),
@@ -467,7 +467,7 @@ public class CandidateResolver {
     }
 
     private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ResolvedCall<D> candidateCall,
-            ReceiverParameterDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
+            ReceiverParameterDescriptor receiverParameter, ReceiverValue receiverArgument,
             boolean isExplicitReceiver, boolean implicitInvokeCheck) {
 
         BindingContext bindingContext = context.candidateCall.getTrace().getBindingContext();

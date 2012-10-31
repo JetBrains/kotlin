@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,22 +34,22 @@ public interface AutoCastService {
         }
 
         @Override
-        public boolean isNotNull(@NotNull ReceiverDescriptor receiver) {
+        public boolean isNotNull(@NotNull ReceiverValue receiver) {
             return !receiver.getType().isNullable();
         }
 
         @NotNull
         @Override
-        public List<ReceiverDescriptor> getVariantsForReceiver(@NotNull ReceiverDescriptor receiverDescriptor) {
-            return Collections.singletonList(receiverDescriptor);
+        public List<ReceiverValue> getVariantsForReceiver(@NotNull ReceiverValue receiverValue) {
+            return Collections.singletonList(receiverValue);
         }
     };
 
     @NotNull
-    List<ReceiverDescriptor> getVariantsForReceiver(@NotNull ReceiverDescriptor receiverDescriptor);
+    List<ReceiverValue> getVariantsForReceiver(@NotNull ReceiverValue receiverValue);
 
     @NotNull
     DataFlowInfo getDataFlowInfo();
 
-    boolean isNotNull(@NotNull ReceiverDescriptor receiver);
+    boolean isNotNull(@NotNull ReceiverValue receiver);
 }

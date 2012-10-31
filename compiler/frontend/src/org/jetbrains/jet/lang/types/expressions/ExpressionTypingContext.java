@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
@@ -160,14 +160,14 @@ public class ExpressionTypingContext {
     }
 
     @NotNull
-    public OverloadResolutionResults<VariableDescriptor> resolveSimpleProperty(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
+    public OverloadResolutionResults<VariableDescriptor> resolveSimpleProperty(@NotNull ReceiverValue receiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
         return expressionTypingServices.getCallResolver().resolveSimpleProperty(makeResolutionContext(call));
     }
 
     @Deprecated // Builds wrong resolved calls, should be removed
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverDescriptor receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverValue receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
         return expressionTypingServices.getCallResolver().resolveExactSignature(scope, receiver, name, parameterTypes);
     }
 }

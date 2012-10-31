@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 /**
 * @author svtk
@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 public final class CallResolutionContext<D extends CallableDescriptor, F extends D> extends ResolutionContext {
     /*package*/ final ResolvedCallImpl<D> candidateCall;
     /*package*/ final TracingStrategy tracing;
-    /*package*/ ReceiverDescriptor receiverForVariableAsFunctionSecondCall = ReceiverDescriptor.NO_RECEIVER;
+    /*package*/ ReceiverValue receiverForVariableAsFunctionSecondCall = ReceiverValue.NO_RECEIVER;
 
     private CallResolutionContext(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {
         super(trace, task.scope, call, task.expectedType, task.dataFlowInfo);

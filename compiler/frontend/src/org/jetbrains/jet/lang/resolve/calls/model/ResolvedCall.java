@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
@@ -41,11 +41,11 @@ public interface ResolvedCall<D extends CallableDescriptor> {
 
     /** If the target was an extension function or property, this is the value for its receiver parameter */
     @NotNull
-    ReceiverDescriptor getReceiverArgument();
+    ReceiverValue getReceiverArgument();
 
     /** If the target was a member of a class, this is the object of that class to call it on */
     @NotNull
-    ReceiverDescriptor getThisObject();
+    ReceiverValue getThisObject();
 
     /** Determines whether receiver argument or this object is substituted for explicit receiver */
     @NotNull

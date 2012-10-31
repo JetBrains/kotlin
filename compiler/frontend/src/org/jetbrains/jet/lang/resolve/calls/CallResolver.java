@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.util.JetFakeReference;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -51,7 +51,7 @@ import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
@@ -200,7 +200,7 @@ public class CallResolver {
                         context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(context);
                     }
-                    Collection<ResolutionCandidate<CallableDescriptor>> candidates = TaskPrioritizer.<CallableDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors);
+                    Collection<ResolutionCandidate<CallableDescriptor>> candidates = TaskPrioritizer.<CallableDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverValue>singletonList(NO_RECEIVER), constructors);
                     for (ResolutionCandidate<CallableDescriptor> candidate : candidates) {
                         candidate.setSafeCall(JetPsiUtil.isSafeCall(context.call));
                     }
@@ -531,7 +531,7 @@ public class CallResolver {
 
     @Deprecated // Creates wrong resolved calls, should be removed
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverValue receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
         List<ResolutionCandidate<FunctionDescriptor>> candidates = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);
 
         BindingTraceContext trace = new BindingTraceContext();
@@ -545,7 +545,7 @@ public class CallResolver {
                                                                      Collections.<ResolvedCallWithTrace<FunctionDescriptor>>emptySet());
     }
 
-    private List<ResolutionCandidate<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver,
+    private List<ResolutionCandidate<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverValue receiver,
                                                                                       Name name, List<JetType> parameterTypes) {
         List<ResolutionCandidate<FunctionDescriptor>> result = Lists.newArrayList();
         if (receiver.exists()) {
@@ -587,7 +587,7 @@ public class CallResolver {
         return found;
     }
 
-    private boolean findExtensionFunctions(Collection<ResolutionCandidate<FunctionDescriptor>> candidates, ReceiverDescriptor receiver,
+    private boolean findExtensionFunctions(Collection<ResolutionCandidate<FunctionDescriptor>> candidates, ReceiverValue receiver,
                                            List<JetType> parameterTypes, List<ResolutionCandidate<FunctionDescriptor>> result) {
         boolean found = false;
         for (ResolutionCandidate<FunctionDescriptor> candidate : candidates) {

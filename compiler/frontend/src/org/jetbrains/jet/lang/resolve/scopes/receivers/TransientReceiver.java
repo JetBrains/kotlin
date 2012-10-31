@@ -25,13 +25,13 @@ import org.jetbrains.jet.lang.types.JetType;
  *
  * @author abreslav
  */
-public class TransientReceiver extends AbstractReceiverDescriptor {
+public class TransientReceiver extends AbstractReceiverValue {
     public TransientReceiver(@NotNull JetType type) {
         super(type);
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
         return visitor.visitTransientReceiver(this, data);
     }
 

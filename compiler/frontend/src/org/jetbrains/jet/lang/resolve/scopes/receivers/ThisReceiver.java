@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
  *
  * @author abreslav
  */
-public interface ThisReceiverDescriptor extends ReceiverDescriptor {
+public interface ThisReceiver extends ReceiverValue {
     @NotNull
     DeclarationDescriptor getDeclarationDescriptor();
 }

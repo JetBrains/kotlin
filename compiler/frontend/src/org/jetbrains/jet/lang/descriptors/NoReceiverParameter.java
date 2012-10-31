@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -40,8 +40,8 @@ import java.util.List;
 
     @NotNull
     @Override
-    public ReceiverDescriptor getValue() {
-        return ReceiverDescriptor.NO_RECEIVER;
+    public ReceiverValue getValue() {
+        return ReceiverValue.NO_RECEIVER;
     }
 
     @NotNull

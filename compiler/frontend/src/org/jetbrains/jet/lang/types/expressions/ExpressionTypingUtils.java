@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -190,13 +190,13 @@ public class ExpressionTypingUtils {
                 .analyseImportReference(importDirective, scope, new BindingTraceContext(), moduleConfiguration);
 
         List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
-        ReceiverDescriptor receiverDescriptor = new ExpressionReceiver(receiverExpression, receiverType);
+        ReceiverValue receiverValue = new ExpressionReceiver(receiverExpression, receiverType);
 
         for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
             if (declarationDescriptor instanceof CallableDescriptor) {
                 CallableDescriptor callableDescriptor = (CallableDescriptor) declarationDescriptor;
 
-                if (checkIsExtensionCallable(receiverDescriptor, callableDescriptor)) {
+                if (checkIsExtensionCallable(receiverValue, callableDescriptor)) {
                     callableExtensionDescriptors.add(callableDescriptor);
                 }
             }
@@ -209,7 +209,7 @@ public class ExpressionTypingUtils {
     * Checks if receiver declaration could be resolved to call expected receiver.
     */
     public static boolean checkIsExtensionCallable (
-            @NotNull ReceiverDescriptor receiverArgument,
+            @NotNull ReceiverValue receiverArgument,
             @NotNull CallableDescriptor callableDescriptor
     ) {
         JetType type = receiverArgument.getType();
@@ -228,7 +228,7 @@ public class ExpressionTypingUtils {
     }
 
     private static boolean checkReceiverResolution (
-            @NotNull ReceiverDescriptor receiverArgument,
+            @NotNull ReceiverValue receiverArgument,
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor callableDescriptor
     ) {
@@ -273,7 +273,7 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
-            @NotNull ReceiverDescriptor receiver,
+            @NotNull ReceiverValue receiver,
             @NotNull ExpressionTypingContext context,
             @NotNull List<JetExpression> valueArguments,
             @NotNull Name name
@@ -283,7 +283,7 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static Pair<Call, OverloadResolutionResults<FunctionDescriptor>> makeAndResolveFakeCall(
-            @NotNull ReceiverDescriptor receiver,
+            @NotNull ReceiverValue receiver,
             @NotNull ExpressionTypingContext context,
             @NotNull List<JetExpression> valueArguments,
             @NotNull Name name
@@ -309,7 +309,7 @@ public class ExpressionTypingUtils {
     public static void defineLocalVariablesFromMultiDeclaration(
             @NotNull WritableScope writableScope,
             @NotNull JetMultiDeclaration multiDeclaration,
-            @NotNull ReceiverDescriptor receiver,
+            @NotNull ReceiverValue receiver,
             @NotNull JetExpression reportErrorsOn,
             @NotNull ExpressionTypingContext context
     ) {

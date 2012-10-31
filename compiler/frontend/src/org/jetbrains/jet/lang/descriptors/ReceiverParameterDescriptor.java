@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -34,7 +34,7 @@ public interface ReceiverParameterDescriptor extends DeclarationDescriptor {
     JetType getType();
 
     @NotNull
-    ReceiverDescriptor getValue();
+    ReceiverValue getValue();
 
     @Override
     @NotNull

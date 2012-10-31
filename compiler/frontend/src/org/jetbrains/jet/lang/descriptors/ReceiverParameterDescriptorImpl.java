@@ -17,18 +17,18 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
 public class ReceiverParameterDescriptorImpl extends AbstractReceiverParameterDescriptor {
     private final DeclarationDescriptor containingDeclaration;
     private final JetType type;
-    private final ReceiverDescriptor value;
+    private final ReceiverValue value;
 
     public ReceiverParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetType type,
-            @NotNull ReceiverDescriptor value
+            @NotNull ReceiverValue value
     ) {
         this.containingDeclaration = containingDeclaration;
         this.type = type;
@@ -43,7 +43,7 @@ public class ReceiverParameterDescriptorImpl extends AbstractReceiverParameterDe
 
     @NotNull
     @Override
-    public ReceiverDescriptor getValue() {
+    public ReceiverValue getValue() {
         return value;
     }
 

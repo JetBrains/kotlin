@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.JetType;
 /**
  * @author abreslav
  */
-public class ExtensionReceiver extends AbstractReceiverDescriptor implements ThisReceiverDescriptor {
+public class ExtensionReceiver extends AbstractReceiverValue implements ThisReceiver {
 
     private final CallableDescriptor descriptor;
 
@@ -40,7 +40,7 @@ public class ExtensionReceiver extends AbstractReceiverDescriptor implements Thi
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
         return visitor.visitExtensionReceiver(this, data);
     }
 

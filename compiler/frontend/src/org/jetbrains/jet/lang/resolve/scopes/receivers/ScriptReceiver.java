@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -25,7 +24,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 /**
  * @author Stepan Koltsov
  */
-public class ScriptReceiver implements ThisReceiverDescriptor {
+public class ScriptReceiver implements ThisReceiver {
 
     @NotNull
     private final ScriptDescriptor scriptDescriptor;
@@ -54,7 +53,7 @@ public class ScriptReceiver implements ThisReceiverDescriptor {
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
         return visitor.visitScriptReceiver(this, data);
     }
 }

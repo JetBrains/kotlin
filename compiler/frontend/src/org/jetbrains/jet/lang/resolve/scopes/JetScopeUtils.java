@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,14 +36,14 @@ import java.util.Set;
 public final class JetScopeUtils {
     private JetScopeUtils() {}
 
-    public static List<ReceiverDescriptor> getImplicitReceiversHierarchyValues(@NotNull JetScope scope) {
+    public static List<ReceiverValue> getImplicitReceiversHierarchyValues(@NotNull JetScope scope) {
         Collection<ReceiverParameterDescriptor> hierarchy = scope.getImplicitReceiversHierarchy();
 
         return Lists.newArrayList(
                 Collections2.transform(hierarchy,
-                       new Function<ReceiverParameterDescriptor, ReceiverDescriptor>() {
+                       new Function<ReceiverParameterDescriptor, ReceiverValue>() {
                            @Override
-                           public ReceiverDescriptor apply(ReceiverParameterDescriptor receiverParameterDescriptor) {
+                           public ReceiverValue apply(ReceiverParameterDescriptor receiverParameterDescriptor) {
                                return receiverParameterDescriptor.getValue();
                            }
                        })

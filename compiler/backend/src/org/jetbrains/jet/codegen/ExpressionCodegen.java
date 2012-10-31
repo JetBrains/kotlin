@@ -1716,7 +1716,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         FunctionDescriptor fd = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
         boolean superCall = false;
-        ReceiverDescriptor explicitReceiver = call.getExplicitReceiver();
+        ReceiverValue explicitReceiver = call.getExplicitReceiver();
         if (explicitReceiver instanceof ExpressionReceiver) {
             final JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
             if (receiverExpression instanceof JetSuperExpression) {
@@ -1886,7 +1886,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         receiver.put(receiver.type, v);
     }
 
-    public void generateFromResolvedCall(@NotNull ReceiverDescriptor descriptor, @NotNull Type type) {
+    public void generateFromResolvedCall(@NotNull ReceiverValue descriptor, @NotNull Type type) {
         if (descriptor instanceof ClassReceiver) {
             Type exprType = asmType(descriptor.getType());
             ClassReceiver classReceiver = (ClassReceiver) descriptor;
@@ -3432,7 +3432,7 @@ The "returned" value of try expression with no finally is either the last expres
         v.athrow();
     }
 
-    private Call makeFakeCall(ReceiverDescriptor initializerAsReceiver) {
+    private Call makeFakeCall(ReceiverValue initializerAsReceiver) {
         JetSimpleNameExpression fake = JetPsiFactory.createSimpleName(state.getProject(), "fake");
         return CallMaker.makeCall(fake, initializerAsReceiver);
     }

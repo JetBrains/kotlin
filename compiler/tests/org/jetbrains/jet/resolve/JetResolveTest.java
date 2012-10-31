@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -142,7 +142,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
         CallResolver callResolver = new InjectorForTests(getProject()).getCallResolver();
         OverloadResolutionResults<FunctionDescriptor> functions = callResolver.resolveExactSignature(
-                classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, Name.identifier(name), parameterTypeList);
+                classDescriptor.getMemberScope(typeArguments), ReceiverValue.NO_RECEIVER, Name.identifier(name), parameterTypeList);
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {

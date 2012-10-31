@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
@@ -65,13 +65,13 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
 
     @NotNull
     @Override
-    public ReceiverDescriptor getReceiverArgument() {
+    public ReceiverValue getReceiverArgument() {
         return variableCall.getReceiverArgument();
     }
 
     @NotNull
     @Override
-    public ReceiverDescriptor getThisObject() {
+    public ReceiverValue getThisObject() {
         return variableCall.getThisObject();
     }
 

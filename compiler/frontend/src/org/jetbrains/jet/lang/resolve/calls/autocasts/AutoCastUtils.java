@@ -40,41 +40,41 @@ public class AutoCastUtils {
     /**
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
-    public static List<ReceiverDescriptor> getAutoCastVariants(
+    public static List<ReceiverValue> getAutoCastVariants(
             @NotNull final BindingContext bindingContext,
-            @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiverToCast
+            @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverValue receiverToCast
     ) {
-        return receiverToCast.accept(new ReceiverDescriptorVisitor<List<ReceiverDescriptor>, Object>() {
+        return receiverToCast.accept(new ReceiverValueVisitor<List<ReceiverValue>, Object>() {
             @Override
-            public List<ReceiverDescriptor> visitNoReceiver(ReceiverDescriptor noReceiver, Object data) {
+            public List<ReceiverValue> visitNoReceiver(ReceiverValue noReceiver, Object data) {
                 return Collections.emptyList();
             }
 
             @Override
-            public List<ReceiverDescriptor> visitTransientReceiver(TransientReceiver receiver, Object data) {
+            public List<ReceiverValue> visitTransientReceiver(TransientReceiver receiver, Object data) {
                 return Collections.emptyList();
             }
 
             @Override
-            public List<ReceiverDescriptor> visitExtensionReceiver(ExtensionReceiver receiver, Object data) {
+            public List<ReceiverValue> visitExtensionReceiver(ExtensionReceiver receiver, Object data) {
                 return castThis(dataFlowInfo, receiver);
             }
 
             @Override
-            public List<ReceiverDescriptor> visitClassReceiver(ClassReceiver receiver, Object data) {
+            public List<ReceiverValue> visitClassReceiver(ClassReceiver receiver, Object data) {
                 return castThis(dataFlowInfo, receiver);
             }
 
             @Override
-            public List<ReceiverDescriptor> visitScriptReceiver(ScriptReceiver receiver, Object data) {
+            public List<ReceiverValue> visitScriptReceiver(ScriptReceiver receiver, Object data) {
                 return Collections.emptyList();
             }
 
             @Override
-            public List<ReceiverDescriptor> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
+            public List<ReceiverValue> visitExpressionReceiver(ExpressionReceiver receiver, Object data) {
                 DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(), receiver.getType(),
                                                                                                 bindingContext);
-                List<ReceiverDescriptor> result = Lists.newArrayList();
+                List<ReceiverValue> result = Lists.newArrayList();
                 for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
                     result.add(new AutoCastReceiver(receiver, possibleType, dataFlowValue.isStableIdentifier()));
                 }
@@ -83,19 +83,19 @@ public class AutoCastUtils {
         }, null);
     }
 
-    private static List<ReceiverDescriptor> castThis(@NotNull DataFlowInfo dataFlowInfo, @NotNull ThisReceiverDescriptor receiver) {
+    private static List<ReceiverValue> castThis(@NotNull DataFlowInfo dataFlowInfo, @NotNull ThisReceiver receiver) {
         assert receiver.exists();
-        List<ReceiverDescriptor> result = Lists.newArrayList();
+        List<ReceiverValue> result = Lists.newArrayList();
         for (JetType possibleType : dataFlowInfo.getPossibleTypes(DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver))) {
             result.add(new AutoCastReceiver(receiver, possibleType, true));
         }
         return result;
     }
 
-    public static void recordAutoCastIfNecessary(ReceiverDescriptor receiver, @NotNull BindingTrace trace) {
+    public static void recordAutoCastIfNecessary(ReceiverValue receiver, @NotNull BindingTrace trace) {
         if (receiver instanceof AutoCastReceiver) {
             AutoCastReceiver autoCastReceiver = (AutoCastReceiver) receiver;
-            ReceiverDescriptor original = autoCastReceiver.getOriginal();
+            ReceiverValue original = autoCastReceiver.getOriginal();
             if (original instanceof ExpressionReceiver) {
                 ExpressionReceiver expressionReceiver = (ExpressionReceiver) original;
                 if (autoCastReceiver.canCast()) {

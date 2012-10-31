@@ -50,7 +50,7 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    public DataFlowValue createDataFlowValue(@NotNull ThisReceiverDescriptor receiver) {
+    public DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
         JetType type = receiver.getType();
         return new DataFlowValue(receiver, type, true, getImmanentNullability(type));
     }
@@ -62,11 +62,11 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    public DataFlowValue createDataFlowValue(@NotNull ReceiverDescriptor receiverDescriptor, @NotNull BindingContext bindingContext) {
-        return receiverDescriptor.accept(new ReceiverDescriptorVisitor<DataFlowValue, BindingContext>() {
+    public DataFlowValue createDataFlowValue(@NotNull ReceiverValue receiverValue, @NotNull BindingContext bindingContext) {
+        return receiverValue.accept(new ReceiverValueVisitor<DataFlowValue, BindingContext>() {
             @Override
-            public DataFlowValue visitNoReceiver(ReceiverDescriptor noReceiver, BindingContext data) {
-                throw new IllegalArgumentException("No DataFlowValue exists for ReceiverDescriptor.NO_RECEIVER");
+            public DataFlowValue visitNoReceiver(ReceiverValue noReceiver, BindingContext data) {
+                throw new IllegalArgumentException("No DataFlowValue exists for ReceiverValue.NO_RECEIVER");
             }
 
             @Override
@@ -95,7 +95,7 @@ public class DataFlowValueFactory {
             }
 
             @NotNull
-            private DataFlowValue createTransientDataFlowValue(ReceiverDescriptor receiver) {
+            private DataFlowValue createTransientDataFlowValue(ReceiverValue receiver) {
                 JetType type = receiver.getType();
                 boolean nullable = type.isNullable() || TypeUtils.hasNullableSuperType(type);
                 return new DataFlowValue(receiver, type, nullable, Nullability.NOT_NULL);

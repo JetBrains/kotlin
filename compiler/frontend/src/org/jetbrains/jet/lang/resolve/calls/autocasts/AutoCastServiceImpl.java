@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 
@@ -37,9 +37,9 @@ public class AutoCastServiceImpl implements AutoCastService {
 
     @NotNull
     @Override
-    public List<ReceiverDescriptor> getVariantsForReceiver(@NotNull ReceiverDescriptor receiverDescriptor) {
-        List<ReceiverDescriptor> variants = Lists.newArrayList(AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverDescriptor));
-        variants.add(receiverDescriptor);
+    public List<ReceiverValue> getVariantsForReceiver(@NotNull ReceiverValue receiverValue) {
+        List<ReceiverValue> variants = Lists.newArrayList(AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverValue));
+        variants.add(receiverValue);
         return variants;
     }
 
@@ -50,11 +50,11 @@ public class AutoCastServiceImpl implements AutoCastService {
     }
 
     @Override
-    public boolean isNotNull(@NotNull ReceiverDescriptor receiver) {
+    public boolean isNotNull(@NotNull ReceiverValue receiver) {
         if (!receiver.getType().isNullable()) return true;
 
-        List<ReceiverDescriptor> autoCastVariants = AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiver);
-        for (ReceiverDescriptor autoCastVariant : autoCastVariants) {
+        List<ReceiverValue> autoCastVariants = AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiver);
+        for (ReceiverValue autoCastVariant : autoCastVariants) {
             if (!autoCastVariant.getType().isNullable()) return true;
         }
         return false;

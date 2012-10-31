@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -100,7 +100,7 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static DeclarationDescriptor getDeclarationDescriptorForReceiver
-            (@NotNull ReceiverDescriptor receiverParameter) {
+            (@NotNull ReceiverValue receiverParameter) {
         DeclarationDescriptor declarationDescriptor =
                 receiverParameter.getType().getConstructor().getDeclarationDescriptor();
         //TODO: WHY assert?
@@ -185,7 +185,7 @@ public final class JsDescriptorUtils {
     public static DeclarationDescriptor getDeclarationDescriptorForExtensionCallReceiver(
             @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
-        ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
+        ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
         if (receiverArgument instanceof ExtensionReceiver) {
             return ((ExtensionReceiver) receiverArgument).getDeclarationDescriptor();
         }

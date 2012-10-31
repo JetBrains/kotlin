@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -86,7 +86,7 @@ public class AnnotationResolver {
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                                                                     trace,
                                                                     scope,
-                                                                    CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement),
+                                                                    CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, entryElement),
                                                                     NO_EXPECTED_TYPE,
                                                                     DataFlowInfo.EMPTY);
         if (results.isSuccess()) {

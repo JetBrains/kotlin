@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.internal.Location;
@@ -273,8 +273,8 @@ public class ResolveToolwindow extends JPanel implements Disposable {
 
     private static String renderCall(StringBuilder builder, ResolvedCall<? extends CallableDescriptor> resolvedCall) {
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-        ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
-        ReceiverDescriptor thisObject = resolvedCall.getThisObject();
+        ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
+        ReceiverValue thisObject = resolvedCall.getThisObject();
         Map<TypeParameterDescriptor, JetType> typeArguments = resolvedCall.getTypeArguments();
         Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
 
@@ -344,7 +344,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         builder.append(">");
     }
 
-    private static void renderReceiver(ReceiverDescriptor receiverArgument, ReceiverDescriptor thisObject, StringBuilder builder) {
+    private static void renderReceiver(ReceiverValue receiverArgument, ReceiverValue thisObject, StringBuilder builder) {
         if (receiverArgument.exists()) {
             builder.append("/").append(receiverArgument);
         }

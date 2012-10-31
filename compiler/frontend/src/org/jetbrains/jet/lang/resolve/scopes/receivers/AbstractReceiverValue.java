@@ -22,10 +22,10 @@ import org.jetbrains.jet.lang.types.JetType;
 /**
  * @author abreslav
  */
-public abstract class AbstractReceiverDescriptor implements ReceiverDescriptor {
+public abstract class AbstractReceiverValue implements ReceiverValue {
     protected final JetType receiverType;
 
-    public AbstractReceiverDescriptor(@NotNull JetType receiverType) {
+    public AbstractReceiverValue(@NotNull JetType receiverType) {
         this.receiverType = receiverType;
     }
 

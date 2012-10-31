@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 
@@ -34,10 +34,10 @@ public interface Call {
     ASTNode getCallOperationNode();
 
     @NotNull
-    ReceiverDescriptor getExplicitReceiver();
+    ReceiverValue getExplicitReceiver();
 
     @NotNull
-    ReceiverDescriptor getThisObject();
+    ReceiverValue getThisObject();
 
     @Nullable
     JetExpression getCalleeExpression();

@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -111,7 +111,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     candidate, variableCall, candidateTrace, task);
 
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
-                    candidate.getDescriptor(), candidate.getThisObject(), ReceiverDescriptor.NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
+                    candidate.getDescriptor(), candidate.getThisObject(), ReceiverValue.NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
 
             CallResolutionContext<CallableDescriptor, FunctionDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
                     candidateWithoutReceiver, variableCallWithoutReceiver, candidateTrace, task);
@@ -165,8 +165,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             return new DelegatingCall(variableCall) {
                 @NotNull
                 @Override
-                public ReceiverDescriptor getExplicitReceiver() {
-                    return ReceiverDescriptor.NO_RECEIVER;
+                public ReceiverValue getExplicitReceiver() {
+                    return ReceiverValue.NO_RECEIVER;
                 }
             };
         }
@@ -216,13 +216,13 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             return new CallForImplicitInvoke(task.call) {
                 @NotNull
                 @Override
-                public ReceiverDescriptor getExplicitReceiver() {
+                public ReceiverValue getExplicitReceiver() {
                     return context.receiverForVariableAsFunctionSecondCall;
                 }
 
                 @NotNull
                 @Override
-                public ReceiverDescriptor getThisObject() {
+                public ReceiverValue getThisObject() {
                     return receiverFromVariable;
                 }
 

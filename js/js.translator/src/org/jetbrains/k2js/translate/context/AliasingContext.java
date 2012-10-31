@@ -28,10 +28,9 @@ import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class AliasingContext {
         @Nullable
         @Override
         public JsExpression get(@NotNull ResolvedCall<?> call) {
-            ReceiverDescriptor callThisObject = call.getThisObject();
+            ReceiverValue callThisObject = call.getThisObject();
             return callThisObject.exists() && (callThisObject instanceof ClassReceiver || callThisObject instanceof ExtensionReceiver)
                    ? JsLiteral.THIS
                    : null;
@@ -116,13 +115,13 @@ public class AliasingContext {
         @Nullable
         @Override
         public JsExpression get(@NotNull ResolvedCall<?> call) {
-            ReceiverDescriptor thisObject = call.getThisObject();
+            ReceiverValue thisObject = call.getThisObject();
             if (!thisObject.exists()) {
                 return null;
             }
 
             if (thisObject instanceof ExtensionReceiver || thisObject instanceof ClassReceiver) {
-                JsNameRef ref = get(((ThisReceiverDescriptor) thisObject).getDeclarationDescriptor());
+                JsNameRef ref = get(((ThisReceiver) thisObject).getDeclarationDescriptor());
                 if (ref != null) {
                     return ref;
                 }

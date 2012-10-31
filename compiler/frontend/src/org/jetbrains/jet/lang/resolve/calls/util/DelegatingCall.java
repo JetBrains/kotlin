@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 
@@ -44,13 +44,13 @@ public class DelegatingCall implements Call {
 
     @Override
     @NotNull
-    public ReceiverDescriptor getExplicitReceiver() {
+    public ReceiverValue getExplicitReceiver() {
         return delegate.getExplicitReceiver();
     }
 
     @NotNull
     @Override
-    public ReceiverDescriptor getThisObject() {
+    public ReceiverValue getThisObject() {
         return delegate.getThisObject();
     }
 

@@ -23,7 +23,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.psi.Call.CallType;
 
 import java.util.Collections;
@@ -75,17 +75,17 @@ public class CallMaker {
     private static class CallImpl implements Call {
 
         private final PsiElement callElement;
-        private final ReceiverDescriptor explicitReceiver;
+        private final ReceiverValue explicitReceiver;
         private final ASTNode callOperationNode;
         private final JetExpression calleeExpression;
         private final List<? extends ValueArgument> valueArguments;
         private final Call.CallType callType;
 
-        protected CallImpl(@NotNull PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
+        protected CallImpl(@NotNull PsiElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
             this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT);
         }
 
-        protected CallImpl(@NotNull PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode,
+        protected CallImpl(@NotNull PsiElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
                 @Nullable JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
@@ -102,14 +102,14 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public ReceiverDescriptor getExplicitReceiver() {
+        public ReceiverValue getExplicitReceiver() {
             return explicitReceiver;
         }
 
         @NotNull
         @Override
-        public ReceiverDescriptor getThisObject() {
-            return ReceiverDescriptor.NO_RECEIVER;
+        public ReceiverValue getThisObject() {
+            return ReceiverValue.NO_RECEIVER;
         }
 
         @Override
@@ -162,13 +162,13 @@ public class CallMaker {
         }
     }
 
-    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver,
+    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
                                                @NotNull List<JetExpression> argumentExpressions) {
         return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT);
     }
 
-    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver,
+    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
                                                @NotNull List<JetExpression> argumentExpressions, @NotNull CallType callType) {
         List<ValueArgument> arguments = Lists.newArrayList();
@@ -178,31 +178,31 @@ public class CallMaker {
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
-    public static Call makeCall(JetElement callElement, ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, JetExpression calleeExpression, List<? extends ValueArgument> arguments) {
+    public static Call makeCall(JetElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, JetExpression calleeExpression, List<? extends ValueArgument> arguments) {
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, CallType.DEFAULT);
     }
 
-    public static Call makeCall(JetElement callElement, ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode,
+    public static Call makeCall(JetElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
             JetExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
         return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
-    public static Call makeCall(@NotNull ReceiverDescriptor leftAsReceiver, JetBinaryExpression expression) {
+    public static Call makeCall(@NotNull ReceiverValue leftAsReceiver, JetBinaryExpression expression) {
         return makeCallWithExpressions(expression, leftAsReceiver, null, expression.getOperationReference(), Collections.singletonList(expression.getRight()));
     }
 
-    public static Call makeCall(@NotNull ReceiverDescriptor baseAsReceiver, JetUnaryExpression expression) {
+    public static Call makeCall(@NotNull ReceiverValue baseAsReceiver, JetUnaryExpression expression) {
         return makeCall(expression, baseAsReceiver, null, expression.getOperationReference(), Collections.<ValueArgument>emptyList());
     }
 
-    public static Call makeArraySetCall(@NotNull ReceiverDescriptor arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
+    public static Call makeArraySetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
             @NotNull JetExpression rightHandSide, @NotNull CallType callType) {
         List<JetExpression> arguments = Lists.newArrayList(arrayAccessExpression.getIndexExpressions());
         arguments.add(rightHandSide);
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arguments, callType);
     }
 
-    public static Call makeArrayGetCall(@NotNull ReceiverDescriptor arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
+    public static Call makeArrayGetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
             @NotNull CallType callType) {
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arrayAccessExpression.getIndexExpressions(), callType);
     }
@@ -215,11 +215,11 @@ public class CallMaker {
         return new ExpressionValueArgument(expression, reportErrorsOn);
     }
 
-    public static Call makePropertyCall(@NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
+    public static Call makePropertyCall(@NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
         return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<JetExpression>emptyList());
     }
 
-    public static Call makeCall(@NotNull final ReceiverDescriptor explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final JetCallElement callElement) {
+    public static Call makeCall(@NotNull final ReceiverValue explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final JetCallElement callElement) {
         return new Call() {
             @Override
             public ASTNode getCallOperationNode() {
@@ -228,14 +228,14 @@ public class CallMaker {
 
             @NotNull
             @Override
-            public ReceiverDescriptor getExplicitReceiver() {
+            public ReceiverValue getExplicitReceiver() {
                 return explicitReceiver;
             }
 
             @NotNull
             @Override
-            public ReceiverDescriptor getThisObject() {
-                return ReceiverDescriptor.NO_RECEIVER;
+            public ReceiverValue getThisObject() {
+                return ReceiverValue.NO_RECEIVER;
             }
 
             @Override
@@ -293,7 +293,7 @@ public class CallMaker {
         };
     }
 
-    public static Call makeCall(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver) {
+    public static Call makeCall(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver) {
         return new CallImpl(callElement, explicitReceiver, null, null, Collections.<ValueArgument>emptyList());
     }
 }

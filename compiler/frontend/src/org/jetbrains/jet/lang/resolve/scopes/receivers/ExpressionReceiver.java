@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.types.JetType;
 /**
  * @author abreslav
  */
-public class ExpressionReceiver extends AbstractReceiverDescriptor implements ReceiverDescriptor {
+public class ExpressionReceiver extends AbstractReceiverValue implements ReceiverValue {
 
     private final JetExpression expression;
 
@@ -38,7 +38,7 @@ public class ExpressionReceiver extends AbstractReceiverDescriptor implements Re
     }
 
     @Override
-    public <R, D> R accept(@NotNull ReceiverDescriptorVisitor<R, D> visitor, D data) {
+    public <R, D> R accept(@NotNull ReceiverValueVisitor<R, D> visitor, D data) {
         return visitor.visitExpressionReceiver(this, data);
     }
 
