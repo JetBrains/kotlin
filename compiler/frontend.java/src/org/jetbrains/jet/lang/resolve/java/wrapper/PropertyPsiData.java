@@ -173,4 +173,12 @@ public final class PropertyPsiData {
         }
         return setter != null;
     }
+
+    public boolean isStaticFinalField() {
+        if (getter != null || setter != null) {
+            return false;
+        }
+        assert field != null;
+        return field.getMember().isFinal() && field.getMember().isStatic();
+    }
 }

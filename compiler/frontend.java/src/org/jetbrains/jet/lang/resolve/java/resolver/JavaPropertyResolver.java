@@ -306,25 +306,25 @@ public final class JavaPropertyResolver {
         return Collections.emptyList();
     }
 
+    @NotNull
     private JetType getPropertyType(
             PropertyPsiData members,
             PropertyPsiDataElement characteristicMember,
             TypeVariableResolver typeVariableResolverForPropertyInternals
     ) {
-        JetType propertyType;
         if (!characteristicMember.getType().getTypeString().isEmpty()) {
-            propertyType = semanticServices.getTypeTransformer().transformToType(characteristicMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
+            return semanticServices.getTypeTransformer().transformToType(
+                    characteristicMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
         }
-        else {
-            propertyType = semanticServices.getTypeTransformer().transformToType(characteristicMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
-            if (JavaAnnotationResolver.findAnnotation(characteristicMember.getType().getPsiNotNullOwner(),
-                                                      JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
-                propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
-            }
-            else if (members.getGetter() == null && members.getSetter() == null && members.getField().getMember().isFinal() && members.getField().getMember().isStatic()) {
-                // http://youtrack.jetbrains.com/issue/KT-1388
-                propertyType = TypeUtils.makeNotNullable(propertyType);
-            }
+        JetType propertyType = semanticServices.getTypeTransformer().transformToType(
+                characteristicMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
+
+        boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotation(
+                characteristicMember.getType().getPsiNotNullOwner(),
+                JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null;
+
+        if (hasNotNullAnnotation || members.isStaticFinalField()) {
+            propertyType = TypeUtils.makeNotNullable(propertyType);
         }
         return propertyType;
     }
