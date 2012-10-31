@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.TypeSource;
 
 import java.util.Collection;
@@ -180,5 +181,20 @@ public final class PropertyPsiData {
         }
         assert field != null;
         return field.getMember().isFinal() && field.getMember().isStatic();
+    }
+
+    public boolean isPropertyForNamedObject() {
+        return field != null && JvmAbi.INSTANCE_FIELD.equals(field.getMember().getName());
+    }
+
+    public boolean isFinal() {
+        if (getter != null) {
+            return getter.getMember().isFinal();
+        }
+
+        if (setter != null) {
+            return setter.getMember().isFinal();
+        }
+        return false;
     }
 }
