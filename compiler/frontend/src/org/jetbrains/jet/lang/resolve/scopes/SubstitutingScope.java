@@ -118,8 +118,9 @@ public class SubstitutingScope implements JetScope {
         return workerScope.getNamespace(name); // TODO
     }
 
+    @NotNull
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
+    public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
         throw new UnsupportedOperationException(); // TODO
     }
 

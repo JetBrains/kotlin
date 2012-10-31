@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -82,9 +83,10 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
         });
     }
 
+    @NotNull
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
-        // Do nothing
+    public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
+        return Collections.emptyList();
     }
 
     @Override

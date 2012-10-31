@@ -34,9 +34,10 @@ public abstract class AbstractScopeAdapter implements JetScope {
     @NotNull
     protected abstract JetScope getWorkerScope();
 
+    @NotNull
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
-        getWorkerScope().getImplicitReceiversHierarchy(result);
+    public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
+        return getWorkerScope().getImplicitReceiversHierarchy();
     }
 
     @NotNull

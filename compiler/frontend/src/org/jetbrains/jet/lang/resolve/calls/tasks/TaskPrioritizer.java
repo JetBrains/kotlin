@@ -226,7 +226,7 @@ public abstract class TaskPrioritizer {
     private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolutionCandidate<D> candidate) {
         ReceiverParameterDescriptor expectedThisObject = candidate.getDescriptor().getExpectedThisObject();
         if (!expectedThisObject.exists()) return true;
-        List<ReceiverParameterDescriptor> receivers = JetScopeUtils.getImplicitReceiversHierarchy(scope);
+        List<ReceiverParameterDescriptor> receivers = scope.getImplicitReceiversHierarchy();
         for (ReceiverParameterDescriptor receiver : receivers) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(receiver.getType(), expectedThisObject.getType())) {
                 // TODO : Autocasts & nullability

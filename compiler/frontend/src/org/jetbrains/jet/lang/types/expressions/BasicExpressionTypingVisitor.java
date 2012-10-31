@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -511,7 +510,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     expression.getInstanceReference(), expression.getTargetLabel(), context, thisReceiver, new LabelName(labelName));
         }
         else {
-            List<ReceiverParameterDescriptor> receivers = JetScopeUtils.getImplicitReceiversHierarchy(context.scope);
+            List<ReceiverParameterDescriptor> receivers = context.scope.getImplicitReceiversHierarchy();
             if (onlyClassReceivers) {
                 for (ReceiverParameterDescriptor receiver : receivers) {
                     if (receiver.getContainingDeclaration() instanceof ClassDescriptor) {

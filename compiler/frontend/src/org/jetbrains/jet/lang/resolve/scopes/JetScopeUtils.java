@@ -36,22 +36,8 @@ import java.util.Set;
 public final class JetScopeUtils {
     private JetScopeUtils() {}
 
-    /**
-     * Get receivers in order of locality, so that the closest (the most local) receiver goes first
-     * A wrapper for {@link JetScope#getImplicitReceiversHierarchy(List)}
-     *
-     * @param scope Scope for getting receivers hierarchy.
-     * @return receivers hierarchy.
-     */
-    @NotNull
-    public static List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy(@NotNull JetScope scope) {
-        List<ReceiverParameterDescriptor> descriptors = Lists.newArrayList();
-        scope.getImplicitReceiversHierarchy(descriptors);
-        return descriptors;
-    }
-
     public static List<ReceiverDescriptor> getImplicitReceiversHierarchyValues(@NotNull JetScope scope) {
-        Collection<ReceiverParameterDescriptor> hierarchy = getImplicitReceiversHierarchy(scope);
+        Collection<ReceiverParameterDescriptor> hierarchy = scope.getImplicitReceiversHierarchy();
 
         return Lists.newArrayList(
                 Collections2.transform(hierarchy,

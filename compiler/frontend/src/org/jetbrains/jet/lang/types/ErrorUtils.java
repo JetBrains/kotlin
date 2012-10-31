@@ -76,8 +76,10 @@ public class ErrorUtils {
             return null; // TODO : review
         }
 
+        @NotNull
         @Override
-        public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
+        public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
+            return Collections.emptyList();
         }
 
         @NotNull

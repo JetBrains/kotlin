@@ -462,14 +462,13 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result) {
-        checkMayRead();
-
-        super.getImplicitReceiversHierarchy(result);
-
+    protected List<ReceiverParameterDescriptor> computeImplicitReceiversHierarchy() {
+        List<ReceiverParameterDescriptor> implicitReceiverHierarchy = Lists.newArrayList();
         if (implicitReceiver != null && implicitReceiver.exists()) {
-            result.add(0, implicitReceiver);
+            implicitReceiverHierarchy.add(implicitReceiver);
         }
+        implicitReceiverHierarchy.addAll(super.computeImplicitReceiversHierarchy());
+        return implicitReceiverHierarchy;
     }
 
 //    @SuppressWarnings({"NullableProblems"})

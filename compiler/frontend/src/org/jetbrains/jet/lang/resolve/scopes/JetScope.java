@@ -86,9 +86,9 @@ public interface JetScope {
 
     /**
      * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
-     * @param result
      */
-    void getImplicitReceiversHierarchy(@NotNull List<ReceiverParameterDescriptor> result);
+    @NotNull
+    List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy();
 
     @NotNull
     Collection<DeclarationDescriptor> getOwnDeclaredDescriptors();

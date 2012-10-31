@@ -105,7 +105,7 @@ public final class TipsManager {
             else {
                 Collection<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
 
-                List<ReceiverParameterDescriptor> result = JetScopeUtils.getImplicitReceiversHierarchy(resolutionScope);
+                List<ReceiverParameterDescriptor> result = resolutionScope.getImplicitReceiversHierarchy();
 
                 for (ReceiverParameterDescriptor receiverDescriptor : result) {
                     JetType receiverType = receiverDescriptor.getType();
@@ -153,7 +153,7 @@ public final class TipsManager {
     ) {
         final Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
-        final List<ReceiverParameterDescriptor> result = JetScopeUtils.getImplicitReceiversHierarchy(scope);
+        final List<ReceiverParameterDescriptor> result = scope.getImplicitReceiversHierarchy();
 
         descriptorsSet.removeAll(
                 Collections2.filter(JetScopeUtils.getAllExtensions(scope), new Predicate<CallableDescriptor>() {
