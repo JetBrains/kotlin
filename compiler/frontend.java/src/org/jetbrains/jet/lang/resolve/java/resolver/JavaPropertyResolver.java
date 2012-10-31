@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
+import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiData;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -99,13 +99,6 @@ public final class JavaPropertyResolver {
                                     "class or namespace " + qualifiedName);
     }
 
-    private static class GroupingValue {
-        PropertyPsiDataElement getter;
-        PropertyPsiDataElement setter;
-        PropertyPsiDataElement field;
-        boolean ext;
-    }
-
     @NotNull
     private Set<VariableDescriptor> resolveNamedGroupProperties(
             @NotNull ClassOrNamespaceDescriptor owner,
@@ -114,37 +107,37 @@ public final class JavaPropertyResolver {
             @NotNull Name propertyName,
             @NotNull String context
     ) {
-        Map<String, GroupingValue> map = collectGroupingValuesFromAccessors(namedMembers.getPropertyPsiDataElements());
+        Map<String, PropertyPsiData> map = PropertyPsiData.collectGroupingValuesFromAccessors(namedMembers.getPropertyPsiDataElements());
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
 
         int regularPropertiesCount = getNumberOfNonExtensionProperties(map);
 
-        for (GroupingValue members : map.values()) {
+        for (PropertyPsiData members : map.values()) {
 
             // we cannot have more then one property with given name even if java code
             // has several fields, getters and setter of different types
-            if (!members.ext && regularPropertiesCount > 1) {
+            if (!members.isExtension() && regularPropertiesCount > 1) {
                 continue;
             }
 
             boolean isFinal = isPropertyFinal(scopeData, members);
-            boolean isVar = isPropertyVar(members);
+            boolean isVar = members.isVar();
 
-            PropertyPsiDataElement characteristicMember = getCharacteristicMember(members);
+            PropertyPsiDataElement characteristicMember = members.getCharacteristicMember();
 
             Visibility visibility = DescriptorResolverUtils.resolveVisibility(characteristicMember.getMember().getPsiMember(), null);
             CallableMemberDescriptor.Kind kind = CallableMemberDescriptor.Kind.DECLARATION;
 
-            if (members.getter != null && members.getter.getMember() instanceof PsiMethodWrapper) {
-                JetMethodAnnotation jetMethod = ((PsiMethodWrapper) members.getter.getMember()).getJetMethod();
+            if (members.getGetter() != null && members.getGetter().getMember() instanceof PsiMethodWrapper) {
+                JetMethodAnnotation jetMethod = ((PsiMethodWrapper) members.getGetter().getMember()).getJetMethod();
                 visibility = DescriptorResolverUtils.resolveVisibility(characteristicMember.getMember().getPsiMember(), jetMethod);
                 kind = DescriptorKindUtils.flagsToKind(jetMethod.kind());
             }
 
             DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, characteristicMember.getMember().isStatic());
             boolean isEnumEntry = DescriptorUtils.isEnumClassObject(realOwner);
-            boolean isPropertyForNamedObject = members.field != null && JvmAbi.INSTANCE_FIELD.equals(members.field.getMember().getName());
+            boolean isPropertyForNamedObject = members.getField() != null && JvmAbi.INSTANCE_FIELD.equals(members.getField().getMember().getName());
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     realOwner,
                     annotationResolver.resolveAnnotations(characteristicMember.getMember().getPsiMember()),
@@ -172,10 +165,10 @@ public final class JavaPropertyResolver {
             PropertyGetterDescriptor getterDescriptor = null;
             PropertySetterDescriptor setterDescriptor = null;
 
-            if (members.getter != null) {
+            if (members.getGetter() != null) {
                 getterDescriptor = new PropertyGetterDescriptor(
                         propertyDescriptor,
-                        annotationResolver.resolveAnnotations(members.getter.getMember().getPsiMember()),
+                        annotationResolver.resolveAnnotations(members.getGetter().getMember().getPsiMember()),
                         Modality.OPEN,
                         visibility,
                         true,
@@ -183,17 +176,17 @@ public final class JavaPropertyResolver {
                         kind);
             }
 
-            if (members.setter != null) {
-                Visibility setterVisibility = DescriptorResolverUtils.resolveVisibility(members.setter.getMember().getPsiMember(), null);
-                if (members.setter.getMember() instanceof PsiMethodWrapper) {
+            if (members.getSetter() != null) {
+                Visibility setterVisibility = DescriptorResolverUtils.resolveVisibility(members.getSetter().getMember().getPsiMember(), null);
+                if (members.getSetter().getMember() instanceof PsiMethodWrapper) {
                     setterVisibility = DescriptorResolverUtils.resolveVisibility(
-                            members.setter.getMember().getPsiMember(),
-                            ((PsiMethodWrapper) members.setter.getMember())
+                            members.getSetter().getMember().getPsiMember(),
+                            ((PsiMethodWrapper) members.getSetter().getMember())
                                     .getJetMethod());
                 }
                 setterDescriptor = new PropertySetterDescriptor(
                         propertyDescriptor,
-                        annotationResolver.resolveAnnotations(members.setter.getMember().getPsiMember()),
+                        annotationResolver.resolveAnnotations(members.getSetter().getMember().getPsiMember()),
                         Modality.OPEN,
                         setterVisibility,
                         true,
@@ -298,12 +291,12 @@ public final class JavaPropertyResolver {
     }
 
     private List<TypeParameterDescriptor> resolvePropertyTypeParameters(
-            @NotNull GroupingValue members,
+            @NotNull PropertyPsiData members,
             @NotNull PropertyPsiDataElement characteristicMember,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
         // TODO: Can't get type parameters from field - only from accessors
-        if (characteristicMember == members.setter || characteristicMember == members.getter) {
+        if (characteristicMember == members.getSetter() || characteristicMember == members.getGetter()) {
             PsiMethodWrapper method = (PsiMethodWrapper) characteristicMember.getMember();
             return javaSignatureResolver.resolveMethodTypeParameters(method, propertyDescriptor);
         }
@@ -312,7 +305,7 @@ public final class JavaPropertyResolver {
     }
 
     private JetType getPropertyType(
-            GroupingValue members,
+            PropertyPsiData members,
             PropertyPsiDataElement characteristicMember,
             TypeVariableResolver typeVariableResolverForPropertyInternals
     ) {
@@ -326,7 +319,7 @@ public final class JavaPropertyResolver {
                                                       JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                 propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
             }
-            else if (members.getter == null && members.setter == null && members.field.getMember().isFinal() && members.field.getMember().isStatic()) {
+            else if (members.getGetter() == null && members.getSetter() == null && members.getField().getMember().isFinal() && members.getField().getMember().isStatic()) {
                 // http://youtrack.jetbrains.com/issue/KT-1388
                 propertyType = TypeUtils.makeNotNullable(propertyType);
             }
@@ -352,50 +345,27 @@ public final class JavaPropertyResolver {
         return receiverType;
     }
 
-    private static int getNumberOfNonExtensionProperties(Map<String, GroupingValue> map) {
+    private static int getNumberOfNonExtensionProperties(Map<String, PropertyPsiData> map) {
         int regularPropertiesCount = 0;
-        for (GroupingValue members : map.values()) {
-            if (!members.ext) {
+        for (PropertyPsiData members : map.values()) {
+            if (!members.isExtension()) {
                 ++regularPropertiesCount;
             }
         }
         return regularPropertiesCount;
     }
 
-    @NotNull
-    private static PropertyPsiDataElement getCharacteristicMember(GroupingValue members) {
-        if (members.getter != null) {
-            return members.getter;
-        }
-
-        if (members.field != null) {
-            return members.field;
-        }
-        else if (members.setter != null) {
-            return members.setter;
-        }
-
-        throw new IllegalStateException();
-    }
-
-    private static boolean isPropertyVar(GroupingValue members) {
-        if (members.getter == null && members.setter == null) {
-            return !members.field.getMember().isFinal();
-        }
-        return members.setter != null;
-    }
-
-    private static boolean isPropertyFinal(ResolverScopeData scopeData, GroupingValue members) {
+    private static boolean isPropertyFinal(ResolverScopeData scopeData, PropertyPsiData members) {
         if (!scopeData.isKotlin()) {
             return true;
         }
 
-        if (members.getter != null) {
-            return members.getter.getMember().isFinal();
+        if (members.getGetter() != null) {
+            return members.getGetter().getMember().isFinal();
         }
 
-        if (members.setter != null) {
-            return members.setter.getMember().isFinal();
+        if (members.getSetter() != null) {
+            return members.getSetter().getMember().isFinal();
         }
 
         return false;
@@ -409,24 +379,6 @@ public final class JavaPropertyResolver {
             }
         }
         return r;
-    }
-
-    private static String key(@Nullable TypeSource typeSource) {
-        if (typeSource == null) {
-            return "";
-        }
-        else if (typeSource.getTypeString().length() > 0) {
-            return typeSource.getTypeString();
-        }
-        else {
-            return typeSource.getPsiType().getPresentableText();
-        }
-    }
-
-    private static String propertyKeyForGrouping(PropertyPsiDataElement propertyAccessor) {
-        String type = key(propertyAccessor.getType());
-        String receiverType = key(propertyAccessor.getReceiverType());
-        return Pair.create(type, receiverType).toString();
     }
 
     @NotNull
@@ -448,47 +400,5 @@ public final class JavaPropertyResolver {
         else {
             return owner;
         }
-    }
-
-    private static Map<String, GroupingValue> collectGroupingValuesFromAccessors(List<PropertyPsiDataElement> propertyAccessors) {
-        Map<String, GroupingValue> map = new HashMap<String, GroupingValue>();
-        for (PropertyPsiDataElement propertyAccessor : propertyAccessors) {
-            String key = propertyKeyForGrouping(propertyAccessor);
-
-            GroupingValue value = map.get(key);
-            if (value == null) {
-                value = new GroupingValue();
-                value.ext = propertyAccessor.getReceiverType() != null;
-                map.put(key, value);
-            }
-
-            if (value.ext && (propertyAccessor.getReceiverType() == null)) {
-                throw new IllegalStateException("internal error, incorrect key");
-            }
-
-            if (propertyAccessor.isGetter()) {
-                if (value.getter != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
-                value.getter = propertyAccessor;
-            }
-            else if (propertyAccessor.isSetter()) {
-                if (value.setter != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
-                value.setter = propertyAccessor;
-            }
-            else if (propertyAccessor.isField()) {
-                if (value.field != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
-                value.field = propertyAccessor;
-            }
-            else {
-                throw new IllegalStateException();
-            }
-        }
-
-        return map;
     }
 }
