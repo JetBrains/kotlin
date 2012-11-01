@@ -198,8 +198,9 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
+        final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
         final BindingContext bindingContext = WholeProjectAnalyzerFacade
-                .analyzeProjectWithCacheOnAFile((JetFile) classOrObject.getContainingFile())
+                .analyzeProjectWithCacheOnAFile(jetFile)
                 .getBindingContext();
         final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
@@ -230,7 +231,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
                 OverrideImplementMethodsHandler.generateMethods(
                         myFixture.getEditor(), classOrObject,
                         OverrideImplementMethodsHandler
-                                .membersFromDescriptors(Collections.singletonList(singleToOverride), bindingContext));
+                                .membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride), bindingContext));
             }
         }.execute();
     }
@@ -240,8 +241,9 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
+        final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
         final BindingContext bindingContext = WholeProjectAnalyzerFacade
-                .analyzeProjectWithCacheOnAFile((JetFile) classOrObject.getContainingFile())
+                .analyzeProjectWithCacheOnAFile(jetFile)
                 .getBindingContext();
         final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
@@ -258,7 +260,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
                         myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler.membersFromDescriptors(descriptorsList, bindingContext));
+                        OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList, bindingContext));
             }
         }.execute();
     }
