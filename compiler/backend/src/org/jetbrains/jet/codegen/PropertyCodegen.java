@@ -43,6 +43,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isExternallyAccessible;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
@@ -138,11 +139,6 @@ public class PropertyCodegen extends GenerationStateAware {
             flags |= getterDescriptor == null ? getDeprecatedAccessFlag(propertyDescriptor): getDeprecatedAccessFlag(getterDescriptor);
             generateDefaultGetter(propertyDescriptor, flags, p);
         }
-    }
-
-    private static boolean isExternallyAccessible(PropertyDescriptor p) {
-        return p.getVisibility() != Visibilities.PRIVATE || DescriptorUtils.isClassObject(p.getContainingDeclaration())
-               || p.getContainingDeclaration() instanceof NamespaceDescriptor;
     }
 
     private void generateSetter(JetProperty p, PropertyDescriptor propertyDescriptor) {

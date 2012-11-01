@@ -1537,6 +1537,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             //noinspection ConstantConditions
             if (isInsideClass &&
                 (propertyDescriptor.getGetter() == null ||
+                 !DescriptorUtils.isExternallyAccessible(propertyDescriptor) ||
                  propertyDescriptor.getGetter().isDefault() && propertyDescriptor.getGetter().getModality() == Modality.FINAL)) {
                 getter = null;
             }
@@ -1573,6 +1574,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             //noinspection ConstantConditions
             if (!propertyDescriptor.isVar() || isInsideClass &&
                                                (propertyDescriptor.getSetter() == null ||
+                                                !DescriptorUtils.isExternallyAccessible(propertyDescriptor) ||
                                                 propertyDescriptor.getSetter().isDefault() &&
                                                 propertyDescriptor.getSetter().getModality() == Modality.FINAL)) {
                 setter = null;
