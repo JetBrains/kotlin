@@ -214,11 +214,11 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
         ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
         ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
-        if (receiverParameter.exists() &&!receiverArgument.exists()) {
+        if (receiverParameter != null &&!receiverArgument.exists()) {
             tracing.missingReceiver(traceForCall, receiverParameter);
             status = ERROR;
         }
-        if (!receiverParameter.exists() && receiverArgument.exists()) {
+        if (receiverParameter == null && receiverArgument.exists()) {
             tracing.noReceiverAllowed(traceForCall);
             if (call.getCalleeExpression() instanceof JetSimpleNameExpression) {
                 status = STRONG_ERROR;
@@ -228,7 +228,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             }
         }
 
-        assert (candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists()) : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+        assert (candidateCall.getThisObject().exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null)) : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
 
         return status;
     }

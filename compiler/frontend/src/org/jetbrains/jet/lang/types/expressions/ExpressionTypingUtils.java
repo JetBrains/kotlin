@@ -234,12 +234,12 @@ public class ExpressionTypingUtils {
     ) {
         ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
 
-        if (!receiverArgument.exists() && !receiverParameter.exists()) {
+        if (!receiverArgument.exists() && receiverParameter == null) {
             // Both receivers do not exist
             return true;
         }
 
-        if (!(receiverArgument.exists() && receiverParameter.exists())) {
+        if (!(receiverArgument.exists() && receiverParameter != null)) {
             return false;
         }
 

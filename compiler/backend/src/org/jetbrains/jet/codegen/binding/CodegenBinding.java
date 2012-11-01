@@ -183,7 +183,7 @@ public class CodegenBinding {
                                 ? ((PropertyAccessorDescriptor) enclosingReceiver).getCorrespondingProperty()
                                 : enclosingReceiver;
 
-            if (!enclosingReceiver.getReceiverParameter().exists()) {
+            if (enclosingReceiver.getReceiverParameter() == null) {
                 enclosingReceiver = null;
             }
         }

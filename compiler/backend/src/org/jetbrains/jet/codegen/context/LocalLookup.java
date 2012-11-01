@@ -131,7 +131,7 @@ public interface LocalLookup {
             @Override
             public StackValue outerValue(EnclosedValueDescriptor d, ExpressionCodegen expressionCodegen) {
                 CallableDescriptor descriptor = (FunctionDescriptor) d.getDescriptor();
-                return StackValue.local(descriptor.getExpectedThisObject().exists() ? 1 : 0, d.getType());
+                return StackValue.local(descriptor.getExpectedThisObject() != null ? 1 : 0, d.getType());
             }
         };
 

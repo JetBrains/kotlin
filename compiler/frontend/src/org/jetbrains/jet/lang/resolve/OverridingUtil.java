@@ -113,7 +113,7 @@ public class OverridingUtil {
     private static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
         ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
         ArrayList<JetType> parameters = new ArrayList<JetType>();
-        if (receiverParameter.exists()) {
+        if (receiverParameter != null) {
             parameters.add(receiverParameter.getType());
         }
         for (ValueParameterDescriptor valueParameterDescriptor : callableDescriptor.getValueParameters()) {
@@ -123,7 +123,7 @@ public class OverridingUtil {
     }
     
     private static int compiledValueParameterCount(CallableDescriptor callableDescriptor) {
-        if (callableDescriptor.getReceiverParameter().exists()) {
+        if (callableDescriptor.getReceiverParameter() != null) {
             return 1 + callableDescriptor.getValueParameters().size();
         }
         else {

@@ -175,7 +175,7 @@ public class ClosureCodegen extends GenerationStateAware {
 
             final ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
             int count = 1;
-            if (receiver.exists()) {
+            if (receiver != null) {
                 StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
                 StackValue.onStack(OBJECT_TYPE)
                         .upcast(typeMapper.mapType(receiver.getType()), iv);

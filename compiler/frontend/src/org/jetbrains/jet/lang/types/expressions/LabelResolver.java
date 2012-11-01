@@ -156,7 +156,7 @@ public class LabelResolver {
                 DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                 if (declarationDescriptor instanceof FunctionDescriptor) {
                     ReceiverParameterDescriptor thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
-                    if (thisReceiver.exists()) {
+                    if (thisReceiver != null) {
                         context.trace.record(LABEL_TARGET, targetLabel, element);
                         context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
                     }
@@ -177,8 +177,8 @@ public class LabelResolver {
     }
 
     public static final class LabeledReceiverResolutionResult {
-        public static LabeledReceiverResolutionResult labelResolutionSuccess(@NotNull ReceiverParameterDescriptor receiverParameterDescriptor) {
-            if (!receiverParameterDescriptor.exists()) {
+        public static LabeledReceiverResolutionResult labelResolutionSuccess(@Nullable ReceiverParameterDescriptor receiverParameterDescriptor) {
+            if (receiverParameterDescriptor == null) {
                 return new LabeledReceiverResolutionResult(Code.NO_THIS, null);
             }
             return new LabeledReceiverResolutionResult(Code.SUCCESS, receiverParameterDescriptor);

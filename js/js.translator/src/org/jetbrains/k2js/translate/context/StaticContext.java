@@ -233,7 +233,7 @@ public final class StaticContext {
 
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
                     String accessorName = Namer.getNameForAccessor(propertyName, isGetter,
-                                                                   !accessorDescriptor.getReceiverParameter().exists() && isEcma5());
+                                                                   accessorDescriptor.getReceiverParameter() == null && isEcma5());
                     return declareName(descriptor, accessorName);
                 }
             };

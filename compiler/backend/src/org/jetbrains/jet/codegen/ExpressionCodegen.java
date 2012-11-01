@@ -1379,7 +1379,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             final StackValue.Property iValue =
                     intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
             if (!directToField && resolvedCall != null && !isSuper) {
-                receiver.put(propertyDescriptor.getReceiverParameter().exists() || isStatic
+                receiver.put(propertyDescriptor.getReceiverParameter() != null || isStatic
                              ? receiver.type
                              : iValue.methodOwner.getAsmType(), v);
             }
@@ -1566,7 +1566,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     getter = null;
                 }
 
-                if (getter == null && propertyDescriptor.getReceiverParameter().exists()) {
+                if (getter == null && propertyDescriptor.getReceiverParameter() != null) {
                     throw new IllegalStateException();
                 }
             }
@@ -1586,7 +1586,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     setter = null;
                 }
 
-                if (setter == null && propertyDescriptor.isVar() && propertyDescriptor.getReceiverParameter().exists()) {
+                if (setter == null && propertyDescriptor.isVar() && propertyDescriptor.getReceiverParameter() != null) {
                     throw new IllegalStateException();
                 }
             }
@@ -3018,7 +3018,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     gen(array, asmType(((ClassDescriptor) getterDescriptor.getContainingDeclaration()).getDefaultType()));
                 }
 
-                if (getterDescriptor.getReceiverParameter().exists()) {
+                if (getterDescriptor.getReceiverParameter() != null) {
                     index++;
                 }
                 asmType = accessor.getSignature().getAsmMethod().getReturnType();
@@ -3033,7 +3033,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     gen(array, arrayType);
                 }
 
-                if (setterDescriptor.getReceiverParameter().exists()) {
+                if (setterDescriptor.getReceiverParameter() != null) {
                     index++;
                 }
                 asmType = argumentTypes[argumentTypes.length - 1];

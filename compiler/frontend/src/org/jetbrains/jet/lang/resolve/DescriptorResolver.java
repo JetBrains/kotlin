@@ -840,7 +840,7 @@ public class DescriptorResolver {
 
     public JetScope getPropertyDeclarationInnerScope(
             @NotNull JetScope outerScope, @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @NotNull ReceiverParameterDescriptor receiver, BindingTrace trace
+            @Nullable ReceiverParameterDescriptor receiver, BindingTrace trace
     ) {
         WritableScopeImpl result = new WritableScopeImpl(
                 outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace),
@@ -848,7 +848,7 @@ public class DescriptorResolver {
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
-        if (receiver.exists()) {
+        if (receiver != null) {
             result.setImplicitReceiver(receiver);
         }
         result.changeLockLevel(WritableScope.LockLevel.READING);
@@ -1312,11 +1312,6 @@ public class DescriptorResolver {
             @Override
             public DeclarationDescriptor getContainingDeclaration() {
                 return classDescriptor;
-            }
-
-            @Override
-            public boolean exists() {
-                return true;
             }
 
             @Override

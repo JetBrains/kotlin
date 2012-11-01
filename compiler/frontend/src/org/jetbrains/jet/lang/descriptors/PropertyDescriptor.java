@@ -89,7 +89,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Visibility visibility,
             boolean isVar,
             @Nullable JetType receiverType,
-            @NotNull ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor expectedThisObject,
             @NotNull Name name,
             @NotNull JetType outType,
             @NotNull Kind kind
@@ -101,7 +101,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     public void setType(
             @NotNull JetType outType,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @NotNull ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor expectedThisObject,
             @Nullable JetType receiverType
     ) {
         ReceiverParameterDescriptor receiverParameter = DescriptorResolver.resolveReceiverParameterFor(this, receiverType);
@@ -111,8 +111,8 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     public void setType(
             @NotNull JetType outType,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @NotNull ReceiverParameterDescriptor expectedThisObject,
-            @NotNull ReceiverParameterDescriptor receiverParameter
+            @Nullable ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor receiverParameter
     ) {
         setOutType(outType);
 
@@ -138,12 +138,12 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     }
 
     @Override
-    @NotNull
+    @Nullable
     public ReceiverParameterDescriptor getReceiverParameter() {
         return receiverParameter;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverParameterDescriptor getExpectedThisObject() {
         return expectedThisObject;
@@ -216,10 +216,19 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             return null; // TODO : tell the user that the property was projected out
         }
 
-        ReceiverParameterDescriptor substitutedExpectedThisObject = getExpectedThisObject().substitute(substitutor);
+
+        ReceiverParameterDescriptor substitutedExpectedThisObject;
+        ReceiverParameterDescriptor expectedThisObject = getExpectedThisObject();
+        if (expectedThisObject != null) {
+            substitutedExpectedThisObject = expectedThisObject.substitute(substitutor);
+            if (substitutedExpectedThisObject == null) return null;
+        }
+        else {
+            substitutedExpectedThisObject = null;
+        }
 
         JetType substitutedReceiverType;
-        if (receiverParameter.exists()) {
+        if (receiverParameter != null) {
             substitutedReceiverType = substitutor.substitute(receiverParameter.getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverType == null) return null;
         }

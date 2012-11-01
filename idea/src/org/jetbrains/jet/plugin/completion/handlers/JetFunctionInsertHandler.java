@@ -184,7 +184,7 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
                         final SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
                         // Don't insert import for qualified expression if don't try to insert extension function
                         if (PsiTreeUtil.getParentOfType(element, JetQualifiedExpression.class) != null &&
-                                !functionDescriptor.getReceiverParameter().exists()) {
+                            functionDescriptor.getReceiverParameter() == null) {
 
                             return;
                         }

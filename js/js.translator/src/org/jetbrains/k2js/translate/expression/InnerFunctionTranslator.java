@@ -70,7 +70,7 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
     @NotNull
     private JsExpression getThis() {
         ClassDescriptor outerClassDescriptor = closureContext.outerClassDescriptor;
-        if (outerClassDescriptor != null && !descriptor.getReceiverParameter().exists()) {
+        if (outerClassDescriptor != null && descriptor.getReceiverParameter() == null) {
             return JsLiteral.THIS;
         }
 

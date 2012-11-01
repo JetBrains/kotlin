@@ -41,7 +41,7 @@ public class CallableDescriptorCollectors {
             Set<FunctionDescriptor> functions = Sets.newLinkedHashSet(scope.getFunctions(name));
             for (Iterator<FunctionDescriptor> iterator = functions.iterator(); iterator.hasNext(); ) {
                 FunctionDescriptor functionDescriptor = iterator.next();
-                if (functionDescriptor.getReceiverParameter().exists()) {
+                if (functionDescriptor.getReceiverParameter() != null) {
                     iterator.remove();
                 }
             }

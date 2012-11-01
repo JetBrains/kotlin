@@ -62,7 +62,7 @@ public final class JetScopeUtils {
         for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
             if (descriptor instanceof CallableDescriptor) {
                 CallableDescriptor callDescriptor = (CallableDescriptor) descriptor;
-                if (callDescriptor.getReceiverParameter().exists()) {
+                if (callDescriptor.getReceiverParameter() != null) {
                     result.add(callDescriptor);
                 }
             }

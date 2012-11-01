@@ -102,7 +102,7 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
         if (receiver != null) {
             return receiver;
         }
-        assert !propertyDescriptor.getReceiverParameter().exists() : "Can't have native extension properties.";
+        assert propertyDescriptor.getReceiverParameter() == null : "Can't have native extension properties.";
         DeclarationDescriptor expectedThisDescriptor = getExpectedThisDescriptor(propertyDescriptor);
         if (expectedThisDescriptor == null) {
             return null;

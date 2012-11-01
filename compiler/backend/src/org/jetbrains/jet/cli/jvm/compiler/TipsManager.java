@@ -159,7 +159,7 @@ public final class TipsManager {
                 Collections2.filter(JetScopeUtils.getAllExtensions(scope), new Predicate<CallableDescriptor>() {
                     @Override
                     public boolean apply(CallableDescriptor callableDescriptor) {
-                        if (!callableDescriptor.getReceiverParameter().exists()) {
+                        if (callableDescriptor.getReceiverParameter() == null) {
                             return false;
                         }
                         for (ReceiverParameterDescriptor receiverDescriptor : result) {

@@ -219,7 +219,7 @@ public class IntrinsicMethods {
 
         if (descriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
-            if (!functionDescriptor.getReceiverParameter().exists()) {
+            if (functionDescriptor.getReceiverParameter() == null) {
                 FqNameUnsafe ownerFqName = DescriptorUtils.getFQName(descriptor.getContainingDeclaration());
                 if (ownerFqName.equalsTo("jet.String")) {
                     return new PsiMethodCall(functionDescriptor);

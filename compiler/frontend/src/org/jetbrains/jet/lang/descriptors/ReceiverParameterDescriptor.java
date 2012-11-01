@@ -27,8 +27,9 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
  */
 public interface ReceiverParameterDescriptor extends DeclarationDescriptor {
 
-    // NOTE: Instead of comparing to NO_RECEIVER_PARAMETER, call exists()
-    ReceiverParameterDescriptor NO_RECEIVER_PARAMETER = NoReceiverParameter.INSTANCE;
+    // This field exists for better readability of the client code
+    @Nullable
+    ReceiverParameterDescriptor NO_RECEIVER_PARAMETER = null;
 
     @NotNull
     JetType getType();
@@ -39,8 +40,6 @@ public interface ReceiverParameterDescriptor extends DeclarationDescriptor {
     @Override
     @NotNull
     DeclarationDescriptor getContainingDeclaration();
-
-    boolean exists();
 
     @Nullable
     @Override

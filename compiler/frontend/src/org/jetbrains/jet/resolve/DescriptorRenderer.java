@@ -354,7 +354,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 @NotNull StringBuilder builder,
                 @Nullable Boolean isVar,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
-                @NotNull ReceiverParameterDescriptor receiver,
+                @Nullable ReceiverParameterDescriptor receiver,
                 @Nullable JetType outType) {
             String typeString = lt() + "no type>";
             if (outType != null) {
@@ -366,7 +366,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
             renderTypeParameters(typeParameters, builder);
 
-            if (receiver.exists()) {
+            if (receiver != null) {
                 builder.append(escape(renderType(receiver.getType()))).append(".");
             }
 
@@ -424,7 +424,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             }
 
             ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
-            if (receiver.exists()) {
+            if (receiver != null) {
                 builder.append(escape(renderType(receiver.getType()))).append(".");
             }
 

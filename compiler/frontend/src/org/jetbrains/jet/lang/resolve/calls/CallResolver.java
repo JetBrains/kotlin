@@ -578,7 +578,7 @@ public class CallResolver {
         boolean found = false;
         for (ResolutionCandidate<FunctionDescriptor> resolvedCall : candidates) {
             FunctionDescriptor functionDescriptor = resolvedCall.getDescriptor();
-            if (functionDescriptor.getReceiverParameter().exists()) continue;
+            if (functionDescriptor.getReceiverParameter() != null) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
             if (!checkValueParameters(functionDescriptor, parameterTypes)) continue;
             result.add(resolvedCall);
@@ -593,7 +593,7 @@ public class CallResolver {
         for (ResolutionCandidate<FunctionDescriptor> candidate : candidates) {
             FunctionDescriptor functionDescriptor = candidate.getDescriptor();
             ReceiverParameterDescriptor functionReceiver = functionDescriptor.getReceiverParameter();
-            if (!functionReceiver.exists()) continue;
+            if (functionReceiver == null) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
             if (!typeChecker.isSubtypeOf(receiver.getType(), functionReceiver.getType())) continue;
             if (!checkValueParameters(functionDescriptor, parameterTypes))continue;

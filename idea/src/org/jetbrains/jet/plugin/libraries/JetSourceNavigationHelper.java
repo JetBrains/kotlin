@@ -164,7 +164,7 @@ public class JetSourceNavigationHelper {
             if (receiverType == null) {
                 // non-extension property
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
-                    if (!candidate.getReceiverParameter().exists()) {
+                    if (candidate.getReceiverParameter() == null) {
                         if (matcher.areSame(decompiledDeclaration, candidate)) {
                             return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                         }
@@ -175,8 +175,9 @@ public class JetSourceNavigationHelper {
                 // extension property
                 String expectedTypeString = receiverType.getText();
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
-                    if (candidate.getReceiverParameter().exists()) {
-                        String thisReceiverType = DescriptorRenderer.TEXT.renderType(candidate.getReceiverParameter().getType());
+                    ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
+                    if (receiverParameter != null) {
+                        String thisReceiverType = DescriptorRenderer.TEXT.renderType(receiverParameter.getType());
                         if (expectedTypeString.equals(thisReceiverType)) {
                             if (matcher.areSame(decompiledDeclaration, candidate)) {
                                 return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);

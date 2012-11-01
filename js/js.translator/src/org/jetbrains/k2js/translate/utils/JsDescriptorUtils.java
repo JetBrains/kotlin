@@ -85,14 +85,14 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean isExtension(@NotNull CallableDescriptor functionDescriptor) {
-        return (functionDescriptor.getReceiverParameter().exists());
+        return (functionDescriptor.getReceiverParameter() != null);
     }
 
     //TODO: why callable descriptor
     @Nullable
     public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
         ReceiverParameterDescriptor expectedThisObject = callableDescriptor.getExpectedThisObject();
-        if (!expectedThisObject.exists()) {
+        if (expectedThisObject == null) {
             return null;
         }
         return getDeclarationDescriptorForReceiver(expectedThisObject.getValue());
@@ -111,7 +111,7 @@ public final class JsDescriptorUtils {
     @Nullable
     public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor callableDescriptor) {
         ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
-        if (!receiverParameter.exists()) {
+        if (receiverParameter == null) {
             return null;
         }
         return getDeclarationDescriptorForReceiver(receiverParameter.getValue());

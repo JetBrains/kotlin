@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -106,13 +107,13 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorNo
         return correspondingProperty;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverParameterDescriptor getReceiverParameter() {
         return getCorrespondingProperty().getReceiverParameter();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverParameterDescriptor getExpectedThisObject() {
         return getCorrespondingProperty().getExpectedThisObject();

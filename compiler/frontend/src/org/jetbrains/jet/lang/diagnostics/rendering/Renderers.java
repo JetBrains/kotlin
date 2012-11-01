@@ -26,22 +26,22 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
+import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
 /**
  * @author svtk
@@ -193,7 +193,7 @@ public class Renderers {
              .text("None of the following substitutions");
 
         for (CallableDescriptor substitutedDescriptor : substitutedDescriptors) {
-            JetType receiverType = substitutedDescriptor.getReceiverParameter().exists() ? substitutedDescriptor.getReceiverParameter().getType() : null;
+            JetType receiverType = DescriptorUtils.getReceiverParameterType(substitutedDescriptor.getReceiverParameter());
 
             final Collection<ConstraintPosition> errorPositions = Sets.newHashSet();
             List<JetType> parameterTypes = Lists.newArrayList();

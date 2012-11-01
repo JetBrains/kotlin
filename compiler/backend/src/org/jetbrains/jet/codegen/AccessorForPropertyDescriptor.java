@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -32,7 +33,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptor {
               pd.isVar(), Name.identifier(pd.getName() + "$b$" + index),
               Kind.DECLARATION);
 
-        JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
+        JetType receiverType = DescriptorUtils.getReceiverParameterType(pd.getReceiverParameter());
         setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), pd.getExpectedThisObject(), receiverType);
         initialize(new Getter(this), new Setter(this));
     }

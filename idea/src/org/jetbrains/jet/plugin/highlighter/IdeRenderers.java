@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
@@ -140,8 +141,9 @@ public class IdeRenderers {
                 Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
 
                 DescriptorRenderer htmlRenderer = DescriptorRenderer.HTML;
-                if (funDescriptor.getReceiverParameter().exists()) {
-                    stringBuilder.append(htmlRenderer.renderType(funDescriptor.getReceiverParameter().getType())).append(".");
+                ReceiverParameterDescriptor receiverParameter = funDescriptor.getReceiverParameter();
+                if (receiverParameter != null) {
+                    stringBuilder.append(htmlRenderer.renderType(receiverParameter.getType())).append(".");
                 }
                 stringBuilder.append(funDescriptor.getName()).append("(");
                 boolean first = true;

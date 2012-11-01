@@ -300,7 +300,7 @@ public class DeclarationResolver {
                     public boolean apply(@Nullable DeclarationDescriptor descriptor) {
                         if (descriptor instanceof PropertyDescriptor) {
                             PropertyDescriptor propertyDescriptor = (PropertyDescriptor)descriptor;
-                            return !propertyDescriptor.getReceiverParameter().exists();
+                            return propertyDescriptor.getReceiverParameter() == null;
                         }
                         return true;
                     }

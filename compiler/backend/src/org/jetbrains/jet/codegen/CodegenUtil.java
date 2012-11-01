@@ -69,12 +69,13 @@ public class CodegenUtil {
     public static SimpleFunctionDescriptor createInvoke(FunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
         SimpleFunctionDescriptorImpl invokeDescriptor = new SimpleFunctionDescriptorImpl(
-                fd.getExpectedThisObject().exists() ? KotlinBuiltIns.getInstance().getExtensionFunction(arity) : KotlinBuiltIns.getInstance().getFunction(arity),
+                fd.getExpectedThisObject() != null
+                ? KotlinBuiltIns.getInstance().getExtensionFunction(arity) : KotlinBuiltIns.getInstance().getFunction(arity),
                 Collections.<AnnotationDescriptor>emptyList(),
                 Name.identifier("invoke"),
                 CallableMemberDescriptor.Kind.DECLARATION);
 
-        invokeDescriptor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
+        invokeDescriptor.initialize(DescriptorUtils.getReceiverParameterType(fd.getReceiverParameter()),
                                     fd.getExpectedThisObject(),
                                     Collections.<TypeParameterDescriptorImpl>emptyList(),
                                     fd.getValueParameters(),
@@ -121,7 +122,7 @@ public class CodegenUtil {
     @NotNull
     public static JvmClassName getInternalClassName(FunctionDescriptor descriptor) {
         final int paramCount = descriptor.getValueParameters().size();
-        if (descriptor.getReceiverParameter().exists()) {
+        if (descriptor.getReceiverParameter() != null) {
             return JvmClassName.byInternalName("jet/ExtensionFunction" + paramCount);
         }
         else {
@@ -136,7 +137,7 @@ public class CodegenUtil {
         signatureWriter.writeFormalTypeParametersStart();
         signatureWriter.writeFormalTypeParametersEnd();
 
-        boolean isExtensionFunction = fd.getReceiverParameter().exists();
+        boolean isExtensionFunction = fd.getReceiverParameter() != null;
         int paramCount = fd.getValueParameters().size();
         if (isExtensionFunction) {
             paramCount++;

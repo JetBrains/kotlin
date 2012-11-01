@@ -104,7 +104,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             parameterTypes.add(valueParameter.getType());
         }
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
-        JetType receiver = receiverParameter.exists() ? receiverParameter.getType() : null;
+        JetType receiver = DescriptorUtils.getReceiverParameterType(receiverParameter);
 
         JetType returnType = TypeUtils.NO_EXPECTED_TYPE;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);

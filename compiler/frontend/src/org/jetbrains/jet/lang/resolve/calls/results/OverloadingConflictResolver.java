@@ -95,7 +95,7 @@ public class OverloadingConflictResolver {
 
         ReceiverParameterDescriptor receiverOfF = f.getReceiverParameter();
         ReceiverParameterDescriptor receiverOfG = g.getReceiverParameter();
-        if (f.getReceiverParameter().exists() && g.getReceiverParameter().exists()) {
+        if (receiverOfF != null && receiverOfG != null) {
             if (!typeMoreSpecific(receiverOfF.getType(), receiverOfG.getType())) return false;
         }
 

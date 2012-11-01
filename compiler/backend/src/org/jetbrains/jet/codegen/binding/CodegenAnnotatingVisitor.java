@@ -64,7 +64,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         ((ClassDescriptorImpl)classDescriptor).initialize(
                 false,
                 Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singleton((funDescriptor.getReceiverParameter().exists()
+                Collections.singleton((funDescriptor.getReceiverParameter() != null
                                        ? KotlinBuiltIns.getInstance().getExtensionFunction(arity)
                                        : KotlinBuiltIns.getInstance().getFunction(arity)).getDefaultType()), JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>emptySet(), null);

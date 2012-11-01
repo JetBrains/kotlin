@@ -35,7 +35,7 @@ class DeclarationDescriptorComparator implements Comparator<DeclarationDescripto
         }
         else if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor fun = (FunctionDescriptor)descriptor;
-            if (!fun.getReceiverParameter().exists()) {
+            if (fun.getReceiverParameter() == null) {
                 return 2;
             }
             else {
@@ -64,9 +64,11 @@ class DeclarationDescriptorComparator implements Comparator<DeclarationDescripto
         CallableDescriptor c1 = (CallableDescriptor)o1;
         CallableDescriptor c2 = (CallableDescriptor)o2;
 
-        if (c1.getReceiverParameter().exists() && c2.getReceiverParameter().exists()) {
-            String r1 = DescriptorRenderer.TEXT.renderType(c1.getReceiverParameter().getType());
-            String r2 = DescriptorRenderer.TEXT.renderType(c2.getReceiverParameter().getType());
+        ReceiverParameterDescriptor c1ReceiverParameter = c1.getReceiverParameter();
+        ReceiverParameterDescriptor c2ReceiverParameter = c2.getReceiverParameter();
+        if (c1ReceiverParameter != null && c2ReceiverParameter != null) {
+            String r1 = DescriptorRenderer.TEXT.renderType(c1ReceiverParameter.getType());
+            String r2 = DescriptorRenderer.TEXT.renderType(c2ReceiverParameter.getType());
             int receiversCompareTo = r1.compareTo(r2);
             if (receiversCompareTo != 0) {
                 return receiversCompareTo;

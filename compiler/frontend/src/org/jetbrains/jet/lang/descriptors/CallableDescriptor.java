@@ -28,10 +28,10 @@ import java.util.Set;
 * @author abreslav
 */
 public interface CallableDescriptor extends DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot {
-    @NotNull
+    @Nullable
     ReceiverParameterDescriptor getReceiverParameter();
 
-    @NotNull
+    @Nullable
     ReceiverParameterDescriptor getExpectedThisObject();
 
     @NotNull

@@ -72,7 +72,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     protected FunctionDescriptorImpl initialize(
             @Nullable JetType receiverParameterType,
-            @NotNull ReceiverParameterDescriptor expectedThisObject,
+            @Nullable ReceiverParameterDescriptor expectedThisObject,
             @NotNull List<? extends TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
@@ -117,13 +117,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.unsubstitutedReturnType = unsubstitutedReturnType;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverParameterDescriptor getReceiverParameter() {
         return receiverParameter;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverParameterDescriptor getExpectedThisObject() {
         return expectedThisObject;
@@ -196,16 +196,19 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
         JetType substitutedReceiverParameterType = null;
-        if (receiverParameter.exists()) {
+        if (receiverParameter != null) {
             substitutedReceiverParameterType = substitutor.substitute(getReceiverParameter().getType(), Variance.IN_VARIANCE);
             if (substitutedReceiverParameterType == null) {
                 return null;
             }
         }
 
-        ReceiverParameterDescriptor substitutedExpectedThis = expectedThisObject.substitute(substitutor);
-        if (substitutedExpectedThis == null) {
-            return null;
+        ReceiverParameterDescriptor substitutedExpectedThis = null;
+        if (expectedThisObject != null) {
+            substitutedExpectedThis = expectedThisObject.substitute(substitutor);
+            if (substitutedExpectedThis == null) {
+                return null;
+            }
         }
 
         List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(substitutedDescriptor, this, substitutor);

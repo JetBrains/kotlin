@@ -52,9 +52,4 @@ public class ReceiverParameterDescriptorImpl extends AbstractReceiverParameterDe
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
     }
-
-    @Override
-    public boolean exists() {
-        return true;
-    }
 }

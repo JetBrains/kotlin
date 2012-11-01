@@ -195,7 +195,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
 
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             ReceiverParameterDescriptor receiver = functionDescriptor.getReceiverParameter();
-            if (receiver.exists()) {
+            if (receiver != null) {
                 textBuilder.append(DescriptorRenderer.TEXT.renderType(receiver.getType())).append(".");
             }
 

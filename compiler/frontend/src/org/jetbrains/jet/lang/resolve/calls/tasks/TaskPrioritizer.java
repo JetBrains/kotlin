@@ -204,7 +204,7 @@ public abstract class TaskPrioritizer {
         }
         if (receiverParameters.size() == 1 && !receiverParameters.iterator().next().exists()) {
             for (D descriptor : descriptors) {
-                if (descriptor.getExpectedThisObject().exists() && !descriptor.getReceiverParameter().exists()) {
+                if (descriptor.getExpectedThisObject() != null && descriptor.getReceiverParameter() == null) {
                     DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
                     if (descriptor instanceof ConstructorDescriptor) {
                         assert containingDeclaration != null;
@@ -224,7 +224,7 @@ public abstract class TaskPrioritizer {
 
     private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolutionCandidate<D> candidate) {
         ReceiverParameterDescriptor expectedThisObject = candidate.getDescriptor().getExpectedThisObject();
-        if (!expectedThisObject.exists()) return true;
+        if (expectedThisObject == null) return true;
         List<ReceiverParameterDescriptor> receivers = scope.getImplicitReceiversHierarchy();
         for (ReceiverParameterDescriptor receiver : receivers) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(receiver.getType(), expectedThisObject.getType())) {

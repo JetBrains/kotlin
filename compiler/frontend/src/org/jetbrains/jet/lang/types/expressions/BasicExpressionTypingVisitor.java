@@ -548,7 +548,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             else if (!receivers.isEmpty()) {
                 result = receivers.get(0);
             }
-            if (result.exists()) {
+            if (result != NO_RECEIVER_PARAMETER) {
                 context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
             }
             return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(result);

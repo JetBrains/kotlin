@@ -244,7 +244,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     private static void addReceiverParameter(CallableDescriptor descriptor, StringBuilder bodyBuilder) {
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
-        if (receiverParameter.exists()) {
+        if (receiverParameter != null) {
             bodyBuilder.append(receiverParameter.getType()).append(".");
         }
     }

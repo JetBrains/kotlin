@@ -71,7 +71,7 @@ public final class DescriptorLookupConverter {
             typeText = DescriptorRenderer.TEXT.renderType(returnType);
             presentableText += DescriptorRenderer.TEXT.renderFunctionParameters(functionDescriptor);
 
-            boolean extensionFunction = functionDescriptor.getReceiverParameter().exists();
+            boolean extensionFunction = functionDescriptor.getReceiverParameter() != null;
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (containingDeclaration != null && extensionFunction) {
                 tailText += " for " + DescriptorRenderer.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());

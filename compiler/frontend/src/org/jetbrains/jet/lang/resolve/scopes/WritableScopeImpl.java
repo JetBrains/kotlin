@@ -222,7 +222,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             checkForPropertyRedeclaration(name, variableDescriptor);
             getPropertyGroups().put(name, variableDescriptor);
         }
-        if (!variableDescriptor.getReceiverParameter().exists()) {
+        if (variableDescriptor.getReceiverParameter() == null) {
             checkForRedeclaration(name, variableDescriptor);
             // TODO : Should this always happen?
             getVariableClassOrNamespaceDescriptors().put(name, variableDescriptor);
@@ -374,7 +374,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         ReceiverParameterDescriptor receiverParameter = variableDescriptor.getReceiverParameter();
         for (VariableDescriptor oldProperty : properties) {
             ReceiverParameterDescriptor receiverParameterForOldVariable = oldProperty.getReceiverParameter();
-            if (((receiverParameter.exists() && receiverParameterForOldVariable.exists()) &&
+            if (((receiverParameter != null && receiverParameterForOldVariable != null) &&
                  (JetTypeChecker.INSTANCE.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())))) {
                 redeclarationHandler.handleRedeclaration(oldProperty, variableDescriptor);
             }
@@ -464,7 +464,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     protected List<ReceiverParameterDescriptor> computeImplicitReceiversHierarchy() {
         List<ReceiverParameterDescriptor> implicitReceiverHierarchy = Lists.newArrayList();
-        if (implicitReceiver != null && implicitReceiver.exists()) {
+        if (implicitReceiver != null) {
             implicitReceiverHierarchy.add(implicitReceiver);
         }
         implicitReceiverHierarchy.addAll(super.computeImplicitReceiversHierarchy());

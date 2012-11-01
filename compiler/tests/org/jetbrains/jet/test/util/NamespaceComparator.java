@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -431,7 +430,7 @@ public class NamespaceComparator {
         }
 
         private void serializeReceiver(CallableDescriptor fun) {
-            if (fun.getReceiverParameter().exists()) {
+            if (fun.getReceiverParameter() != null) {
                 new TypeSerializer(sb).serialize(fun.getReceiverParameter());
                 sb.append(".");
             }
@@ -492,8 +491,9 @@ public class NamespaceComparator {
                 sb.append("> ");
             }
             sb.append("!");
-            if (prop.getReceiverParameter().exists()) {
-                new TypeSerializer(sb).serialize(prop.getReceiverParameter().getType());
+            ReceiverParameterDescriptor receiverParameter = prop.getReceiverParameter();
+            if (receiverParameter != null) {
+                new TypeSerializer(sb).serialize(receiverParameter.getType());
                 sb.append(".");
             }
             sb.append(prop.getName());

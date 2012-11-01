@@ -75,7 +75,6 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
                 .getFileScopeForDeclarationResolution((JetFile) declaration.getContainingFile());
     }
 
-    @NotNull
     @Override
     protected ReceiverParameterDescriptor getImplicitReceiver() {
         return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;

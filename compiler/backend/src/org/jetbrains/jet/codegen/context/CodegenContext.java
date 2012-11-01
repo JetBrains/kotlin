@@ -110,7 +110,7 @@ public abstract class CodegenContext {
     public final CallableDescriptor getCallableDescriptorWithReceiver() {
         if (contextDescriptor instanceof CallableDescriptor) {
             final CallableDescriptor callableDescriptor = (CallableDescriptor) getContextDescriptor();
-            return callableDescriptor.getReceiverParameter().exists() ? callableDescriptor : null;
+            return callableDescriptor.getReceiverParameter() != null ? callableDescriptor : null;
         }
         return null;
     }

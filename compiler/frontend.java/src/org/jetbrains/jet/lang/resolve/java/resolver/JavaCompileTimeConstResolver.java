@@ -19,10 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -155,7 +152,7 @@ public final class JavaCompileTimeConstResolver {
                 Name identifier = Name.identifier(((PsiEnumConstant) resolveElement).getName());
                 Collection<VariableDescriptor> properties = scope.getProperties(identifier);
                 for (VariableDescriptor variableDescriptor : properties) {
-                    if (!variableDescriptor.getReceiverParameter().exists()) {
+                    if (variableDescriptor.getReceiverParameter() == null) {
                         return new EnumValue((PropertyDescriptor) variableDescriptor);
                     }
                 }

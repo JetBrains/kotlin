@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -54,13 +55,13 @@ public class DescriptorUtils {
 
         return substitutedFunction;
     }
-    
+
     public static Modality convertModality(Modality modality, boolean makeNonAbstract) {
         if (makeNonAbstract && modality == Modality.ABSTRACT) return Modality.OPEN;
         return modality;
     }
 
-    @NotNull
+    @Nullable
     public static ReceiverParameterDescriptor getExpectedThisObjectIfNeeded(@NotNull DeclarationDescriptor containingDeclaration) {
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -144,8 +145,8 @@ public class DescriptorUtils {
     @Nullable
     public static <D extends DeclarationDescriptor> D getParentOfType(@Nullable DeclarationDescriptor descriptor, @NotNull Class<D> aClass) {
         return getParentOfType(descriptor, aClass, true);
-    }    
-    
+    }
+
     @Nullable
     public static <D extends DeclarationDescriptor> D getParentOfType(@Nullable DeclarationDescriptor descriptor, @NotNull Class<D> aClass, boolean strict) {
         if (descriptor == null) return null;
@@ -161,7 +162,7 @@ public class DescriptorUtils {
         }
         return null;
     }
-    
+
     public static boolean isAncestor(@Nullable DeclarationDescriptor ancestor, @NotNull DeclarationDescriptor declarationDescriptor, boolean strict) {
         if (ancestor == null) return false;
         DeclarationDescriptor descriptor = strict ? declarationDescriptor.getContainingDeclaration() : declarationDescriptor;
@@ -175,7 +176,7 @@ public class DescriptorUtils {
     @Nullable
     public static VariableDescriptor filterNonExtensionProperty(Collection<VariableDescriptor> variables) {
         for (VariableDescriptor variable : variables) {
-            if (!variable.getReceiverParameter().exists()) {
+            if (variable.getReceiverParameter() == null) {
                 return variable;
             }
         }
@@ -344,7 +345,7 @@ public class DescriptorUtils {
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
         return Visibilities.PUBLIC;
     }
-    
+
     public static List<String> getSortedValueArguments(AnnotationDescriptor descriptor) {
         List<String> resultList = Lists.newArrayList();
         for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
@@ -368,4 +369,21 @@ public class DescriptorUtils {
         assert constructors.size() == 1 : "Data class must have only one constructor: " + constructors;
         return constructors.iterator().next();
     }
+
+    @Nullable
+    public static JetType getReceiverParameterType(@Nullable ReceiverParameterDescriptor receiverParameterDescriptor) {
+        if (receiverParameterDescriptor == null) {
+            return null;
+        }
+        return receiverParameterDescriptor.getType();
+    }
+
+    @NotNull
+    public static ReceiverValue safeGetValue(@Nullable ReceiverParameterDescriptor receiverParameterDescriptor) {
+        if (receiverParameterDescriptor == null) {
+            return ReceiverValue.NO_RECEIVER;
+        }
+        return receiverParameterDescriptor.getValue();
+    }
+
 }

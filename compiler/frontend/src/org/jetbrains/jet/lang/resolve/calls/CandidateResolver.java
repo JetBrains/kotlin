@@ -316,7 +316,7 @@ public class CandidateResolver {
         // Error is already reported if something is missing
         ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
         ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
-        if (receiverArgument.exists() && receiverParameter.exists()) {
+        if (receiverArgument.exists() && receiverParameter != null) {
             constraintsSystem.addSubtypeConstraint(receiverParameter.getType(), receiverArgument.getType(),
                                                    ConstraintPosition.RECEIVER_POSITION);
         }
@@ -473,7 +473,7 @@ public class CandidateResolver {
         BindingContext bindingContext = context.candidateCall.getTrace().getBindingContext();
 
         ResolutionStatus result = SUCCESS;
-        if (receiverParameter.exists() && receiverArgument.exists()) {
+        if (receiverParameter != null && receiverArgument.exists()) {
             boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
             JetType receiverArgumentType = receiverArgument.getType();
             AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, bindingContext);

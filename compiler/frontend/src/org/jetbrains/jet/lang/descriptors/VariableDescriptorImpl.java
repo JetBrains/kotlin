@@ -86,13 +86,11 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
         return Collections.emptyList();
     }
 
-    @NotNull
     @Override
     public ReceiverParameterDescriptor getReceiverParameter() {
         return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
     }
 
-    @NotNull
     @Override
     public ReceiverParameterDescriptor getExpectedThisObject() {
         return ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
