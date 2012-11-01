@@ -3500,6 +3500,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/thisAndSuper/Super.kt");
             }
             
+            @TestMetadata("superInExtensionFunction.kt")
+            public void testSuperInExtensionFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/superInExtensionFunction.kt");
+            }
+            
             @TestMetadata("superInExtensionFunctionCall.kt")
             public void testSuperInExtensionFunctionCall() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/thisAndSuper/superInExtensionFunctionCall.kt");

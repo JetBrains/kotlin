@@ -525,15 +525,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         String labelName = expression.getLabelName();
         if (labelName != null) {
-            return context.labelResolver.resolveThisLabel(expression.getInstanceReference(), expression.getTargetLabel(),
-                                                          context, new LabelName(labelName));
+            LabelResolver.LabeledReceiverResolutionResult resolutionResult = context.labelResolver.resolveThisLabel(
+                    expression.getInstanceReference(), expression.getTargetLabel(), context, new LabelName(labelName));
+            if (onlyClassReceivers && resolutionResult.success()) {
+                if (!isDeclaredInClass(resolutionResult.getReceiverParameterDescriptor())) {
+                    return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(NO_RECEIVER_PARAMETER);
+                }
+            }
+            return resolutionResult;
         }
         else {
             ReceiverParameterDescriptor result = NO_RECEIVER_PARAMETER;
             List<ReceiverParameterDescriptor> receivers = context.scope.getImplicitReceiversHierarchy();
             if (onlyClassReceivers) {
                 for (ReceiverParameterDescriptor receiver : receivers) {
-                    if (receiver.getContainingDeclaration() instanceof ClassDescriptor) {
+                    if (isDeclaredInClass(receiver)) {
                         result = receiver;
                         break;
                     }
@@ -547,6 +553,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(result);
         }
+    }
+
+    private boolean isDeclaredInClass(ReceiverParameterDescriptor receiver) {
+        return receiver.getContainingDeclaration() instanceof ClassDescriptor;
     }
 
     @Override
