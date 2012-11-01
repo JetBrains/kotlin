@@ -30,7 +30,7 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class})
 public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEagerResolve {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Tuples.class, Tests.Varargs.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.ThisAndSuper.class, Tests.Tuples.class, Tests.Varargs.class})
     public static class Tests extends AbstractDiagnosticsTestWithEagerResolve {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -391,11 +391,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/QualifiedExpressions.kt");
         }
         
-        @TestMetadata("QualifiedThis.kt")
-        public void testQualifiedThis() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/QualifiedThis.kt");
-        }
-        
         @TestMetadata("RecursiveTypeInference.kt")
         public void testRecursiveTypeInference() throws Exception {
             doTest("compiler/testData/diagnostics/tests/RecursiveTypeInference.kt");
@@ -444,11 +439,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         @TestMetadata("StringTemplates.kt")
         public void testStringTemplates() throws Exception {
             doTest("compiler/testData/diagnostics/tests/StringTemplates.kt");
-        }
-        
-        @TestMetadata("Super.kt")
-        public void testSuper() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/Super.kt");
         }
         
         @TestMetadata("SupertypeListChecks.kt")
@@ -3489,6 +3479,59 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
+        public static class ThisAndSuper extends AbstractDiagnosticsTestWithEagerResolve {
+            public void testAllFilesPresentInThisAndSuper() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve", new File("compiler/testData/diagnostics/tests/thisAndSuper"), "kt", true);
+            }
+            
+            @TestMetadata("ambigousLabelOnThis.kt")
+            public void testAmbigousLabelOnThis() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/ambigousLabelOnThis.kt");
+            }
+            
+            @TestMetadata("QualifiedThis.kt")
+            public void testQualifiedThis() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/QualifiedThis.kt");
+            }
+            
+            @TestMetadata("Super.kt")
+            public void testSuper() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/Super.kt");
+            }
+            
+            @TestMetadata("superInExtensionFunctionCall.kt")
+            public void testSuperInExtensionFunctionCall() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/superInExtensionFunctionCall.kt");
+            }
+            
+            @TestMetadata("superInToplevelFunction.kt")
+            public void testSuperInToplevelFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/superInToplevelFunction.kt");
+            }
+            
+            @TestMetadata("superIsNotAnExpression.kt")
+            public void testSuperIsNotAnExpression() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/superIsNotAnExpression.kt");
+            }
+            
+            @TestMetadata("thisInFunctionLiterals.kt")
+            public void testThisInFunctionLiterals() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInFunctionLiterals.kt");
+            }
+            
+            @TestMetadata("thisInNestedClasses.kt")
+            public void testThisInNestedClasses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInNestedClasses.kt");
+            }
+            
+            @TestMetadata("thisInToplevelFunction.kt")
+            public void testThisInToplevelFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInToplevelFunction.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/tuples")
         public static class Tuples extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInTuples() throws Exception {
@@ -3591,6 +3634,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Shadowing.class);
             suite.addTestSuite(Substitutions.class);
             suite.addTestSuite(Subtyping.class);
+            suite.addTestSuite(ThisAndSuper.class);
             suite.addTestSuite(Tuples.class);
             suite.addTestSuite(Varargs.class);
             return suite;

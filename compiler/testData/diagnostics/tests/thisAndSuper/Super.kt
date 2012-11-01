@@ -1,17 +1,5 @@
 package example;
 
-fun any(<!UNUSED_PARAMETER!>a<!> : Any) {}
-
-fun notAnExpression() {
-    any(<!SUPER_IS_NOT_AN_EXPRESSION!>super<!>) // not an expression
-    if (<!SUPER_IS_NOT_AN_EXPRESSION!>super<!>) {} else {} // not an expression
-    val <!UNUSED_VARIABLE!>x<!> = <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> // not an expression
-    <!NO_ELSE_IN_WHEN!>when<!> (1) {
-        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> -> 1 // not an expression
-    }
-
-}
-
 trait T {
     fun foo() {}
 }
@@ -54,12 +42,6 @@ class A<E>() : C(), T {
     }
 }
 
-fun foo() {
-    <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
-    <!SUPER_NOT_AVAILABLE!>super<!>.foo()
-    <!SUPER_NOT_AVAILABLE!>super<Nothing><!>.foo()
-}
-
 trait G<T> {
     fun foo() {}
 }
@@ -78,12 +60,5 @@ class ERROR<E>() : <!UNRESOLVED_REFERENCE!>UR<!> {
 
     fun test() {
         super.<!UNRESOLVED_REFERENCE!>foo<!>()
-    }
-}
-
-// No supertype at all
-class A1 {
-    fun test() {
-        <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>.equals(null)
     }
 }
