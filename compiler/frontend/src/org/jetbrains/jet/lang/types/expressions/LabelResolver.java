@@ -124,13 +124,14 @@ public class LabelResolver {
         return result;
     }
 
-    public ReceiverParameterDescriptor resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel,
-            ExpressionTypingContext context, ReceiverParameterDescriptor thisReceiver, LabelName labelName) {
+    public LabeledReceiverResolutionResult resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel,
+            ExpressionTypingContext context, LabelName labelName) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
         assert targetLabel != null;
         if (size == 1) {
             DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
+            ReceiverParameterDescriptor thisReceiver;
             if (declarationDescriptor instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
                 thisReceiver = classDescriptor.getThisAsReceiverParameter();
@@ -146,17 +147,20 @@ public class LabelResolver {
             assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
             context.trace.record(LABEL_TARGET, targetLabel, element);
             context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
+
+            return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
         }
         else if (size == 0) {
             JetElement element = resolveNamedLabel(labelName, targetLabel, false, context);
             if (element instanceof JetFunctionLiteralExpression) {
                 DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                 if (declarationDescriptor instanceof FunctionDescriptor) {
-                    thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
+                    ReceiverParameterDescriptor thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
                     if (thisReceiver.exists()) {
                         context.trace.record(LABEL_TARGET, targetLabel, element);
                         context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
                     }
+                    return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
                 }
                 else {
                     context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel));
@@ -169,6 +173,49 @@ public class LabelResolver {
         else {
             context.trace.report(AMBIGUOUS_LABEL.on(targetLabel));
         }
-        return thisReceiver;
+        return LabeledReceiverResolutionResult.labelResolutionFailed();
+    }
+
+    public static final class LabeledReceiverResolutionResult {
+        public static LabeledReceiverResolutionResult labelResolutionSuccess(@NotNull ReceiverParameterDescriptor receiverParameterDescriptor) {
+            if (!receiverParameterDescriptor.exists()) {
+                return new LabeledReceiverResolutionResult(Code.NO_THIS, null);
+            }
+            return new LabeledReceiverResolutionResult(Code.SUCCESS, receiverParameterDescriptor);
+        }
+
+        public static LabeledReceiverResolutionResult labelResolutionFailed() {
+            return new LabeledReceiverResolutionResult(Code.LABEL_RESOLUTION_ERROR, null);
+        }
+
+        public enum Code {
+            LABEL_RESOLUTION_ERROR,
+            NO_THIS,
+            SUCCESS
+        }
+
+        private final Code code;
+        private final ReceiverParameterDescriptor receiverParameterDescriptor;
+
+        private LabeledReceiverResolutionResult(
+                Code code,
+                ReceiverParameterDescriptor receiverParameterDescriptor
+        ) {
+            this.code = code;
+            this.receiverParameterDescriptor = receiverParameterDescriptor;
+        }
+
+        public Code getCode() {
+            return code;
+        }
+
+        public boolean success() {
+            return code == Code.SUCCESS;
+        }
+
+        public ReceiverParameterDescriptor getReceiverParameterDescriptor() {
+            assert success() : "Don't try to obtain the receiver when resolution failed with " + code;
+            return receiverParameterDescriptor;
+        }
     }
 }

@@ -50,6 +50,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
@@ -395,16 +396,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitThisExpression(JetThisExpression expression, ExpressionTypingContext context) {
         JetType result = null;
-        ReceiverParameterDescriptor thisReceiver = resolveToReceiver(expression, context, false);
+        LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, false);
 
-        if (thisReceiver != null) {
-            if (!thisReceiver.exists()) {
+        switch (resolutionResult.getCode()) {
+            case LABEL_RESOLUTION_ERROR:
+                // Do nothing, the error is already reported
+                break;
+            case NO_THIS:
                 context.trace.report(NO_THIS.on(expression));
-            }
-            else {
-                result = thisReceiver.getType();
+                break;
+            case SUCCESS:
+                result = resolutionResult.getReceiverParameterDescriptor().getType();
                 context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
-            }
+                break;
         }
         return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
     }
@@ -415,118 +419,134 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(expression, expression.getText()));
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        JetType result = null;
 
-        ReceiverParameterDescriptor thisReceiver = resolveToReceiver(expression, context, true);
-        if (thisReceiver == null) return JetTypeInfo.create(null, context.dataFlowInfo);
-
-        if (!thisReceiver.exists()) {
-            context.trace.report(SUPER_NOT_AVAILABLE.on(expression));
+        LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
+        switch (resolutionResult.getCode()) {
+            case LABEL_RESOLUTION_ERROR:
+                // The error is already reported
+                return JetTypeInfo.create(null, context.dataFlowInfo);
+            case NO_THIS:
+                context.trace.report(SUPER_NOT_AVAILABLE.on(expression));
+                return JetTypeInfo.create(null, context.dataFlowInfo);
+            case SUCCESS:
+                JetType result = checkPossiblyQualifiedSuper(expression, context, resolutionResult.getReceiverParameterDescriptor());
+                if (result != null) {
+                    context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
+                }
+                return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
         }
-        else {
-            JetType thisType = thisReceiver.getType();
-            Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
-            TypeSubstitutor substitutor = TypeSubstitutor.create(thisType);
+        throw new IllegalStateException("Unknown code: " + resolutionResult.getCode());
+    }
 
-            JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
-            if (superTypeQualifier != null) {
-                JetTypeElement typeElement = superTypeQualifier.getTypeElement();
+    private JetType checkPossiblyQualifiedSuper(
+            JetSuperExpression expression,
+            ExpressionTypingContext context,
+            ReceiverParameterDescriptor thisReceiver
+    ) {
+        JetType result = null;
+        JetType thisType = thisReceiver.getType();
+        Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
+        TypeSubstitutor substitutor = TypeSubstitutor.create(thisType);
 
-                DeclarationDescriptor classifierCandidate = null;
-                JetType supertype = null;
-                PsiElement redundantTypeArguments = null;
-                if (typeElement instanceof JetUserType) {
-                    JetUserType userType = (JetUserType) typeElement;
-                    // This may be just a superclass name even if the superclass is generic
-                    if (userType.getTypeArguments().isEmpty()) {
-                        classifierCandidate = context.expressionTypingServices.getTypeResolver().resolveClass(context.scope, userType, context.trace);
-                    }
-                    else {
-                        supertype = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
-                        redundantTypeArguments = userType.getTypeArgumentList();
-                    }
+        JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
+        if (superTypeQualifier != null) {
+            JetTypeElement typeElement = superTypeQualifier.getTypeElement();
+
+            DeclarationDescriptor classifierCandidate = null;
+            JetType supertype = null;
+            PsiElement redundantTypeArguments = null;
+            if (typeElement instanceof JetUserType) {
+                JetUserType userType = (JetUserType) typeElement;
+                // This may be just a superclass name even if the superclass is generic
+                if (userType.getTypeArguments().isEmpty()) {
+                    classifierCandidate = context.expressionTypingServices.getTypeResolver().resolveClass(context.scope, userType, context.trace);
                 }
                 else {
                     supertype = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
-                }
-
-                if (supertype != null) {
-                    if (supertypes.contains(supertype)) {
-                        result = supertype;
-                    }
-                }
-                else if (classifierCandidate instanceof ClassDescriptor) {
-                    ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
-
-                    for (JetType declaredSupertype : supertypes) {
-                        if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
-                            result = substitutor.safeSubstitute(declaredSupertype, Variance.INVARIANT);
-                            break;
-                        }
-                    }
-                }
-
-                boolean validClassifier = classifierCandidate != null && !ErrorUtils.isError(classifierCandidate);
-                boolean validType = supertype != null && !ErrorUtils.isErrorType(supertype);
-                if (result == null && (validClassifier || validType)) {
-                    context.trace.report(NOT_A_SUPERTYPE.on(superTypeQualifier));
-                }
-                else if (redundantTypeArguments != null) {
-                    context.trace.report(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.on(redundantTypeArguments));
+                    redundantTypeArguments = userType.getTypeArgumentList();
                 }
             }
             else {
-                if (supertypes.size() > 1) {
-                    context.trace.report(AMBIGUOUS_SUPER.on(expression));
-                }
-                else {
-                    // supertypes may be empty when all the supertypes are error types (are not resolved, for example)
-                    JetType type = supertypes.isEmpty()
-                                   ? KotlinBuiltIns.getInstance().getAnyType()
-                                   : supertypes.iterator().next();
-                    result = substitutor.substitute(type, Variance.INVARIANT);
-                }
+                supertype = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
             }
-            if (result != null) {
-                context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
-                context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
-                if (superTypeQualifier != null) {
-                    context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
-                }
-            }
-        }
-        return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
-    }
 
-    @Nullable // No class receivers
-    private ReceiverParameterDescriptor resolveToReceiver(JetLabelQualifiedInstanceExpression expression, ExpressionTypingContext context, boolean onlyClassReceivers) {
-        ReceiverParameterDescriptor thisReceiver = null;
-        String labelName = expression.getLabelName();
-        if (labelName != null) {
-            thisReceiver = context.labelResolver.resolveThisLabel(
-                    expression.getInstanceReference(), expression.getTargetLabel(), context, thisReceiver, new LabelName(labelName));
+            if (supertype != null) {
+                if (supertypes.contains(supertype)) {
+                    result = supertype;
+                }
+            }
+            else if (classifierCandidate instanceof ClassDescriptor) {
+                ClassDescriptor superclass = (ClassDescriptor) classifierCandidate;
+
+                for (JetType declaredSupertype : supertypes) {
+                    if (declaredSupertype.getConstructor().equals(superclass.getTypeConstructor())) {
+                        result = substitutor.safeSubstitute(declaredSupertype, Variance.INVARIANT);
+                        break;
+                    }
+                }
+            }
+
+            boolean validClassifier = classifierCandidate != null && !ErrorUtils.isError(classifierCandidate);
+            boolean validType = supertype != null && !ErrorUtils.isErrorType(supertype);
+            if (result == null && (validClassifier || validType)) {
+                context.trace.report(NOT_A_SUPERTYPE.on(superTypeQualifier));
+            }
+            else if (redundantTypeArguments != null) {
+                context.trace.report(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.on(redundantTypeArguments));
+            }
         }
         else {
+            if (supertypes.size() > 1) {
+                context.trace.report(AMBIGUOUS_SUPER.on(expression));
+            }
+            else {
+                // supertypes may be empty when all the supertypes are error types (are not resolved, for example)
+                JetType type = supertypes.isEmpty()
+                               ? KotlinBuiltIns.getInstance().getAnyType()
+                               : supertypes.iterator().next();
+                result = substitutor.substitute(type, Variance.INVARIANT);
+            }
+        }
+        if (result != null) {
+            context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
+            context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
+            if (superTypeQualifier != null) {
+                context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
+            }
+        }
+        return result;
+    }
+
+    @NotNull // No class receivers
+    private LabelResolver.LabeledReceiverResolutionResult resolveToReceiver(
+            JetLabelQualifiedInstanceExpression expression,
+            ExpressionTypingContext context,
+            boolean onlyClassReceivers
+    ) {
+        String labelName = expression.getLabelName();
+        if (labelName != null) {
+            return context.labelResolver.resolveThisLabel(expression.getInstanceReference(), expression.getTargetLabel(),
+                                                          context, new LabelName(labelName));
+        }
+        else {
+            ReceiverParameterDescriptor result = NO_RECEIVER_PARAMETER;
             List<ReceiverParameterDescriptor> receivers = context.scope.getImplicitReceiversHierarchy();
             if (onlyClassReceivers) {
                 for (ReceiverParameterDescriptor receiver : receivers) {
                     if (receiver.getContainingDeclaration() instanceof ClassDescriptor) {
-                        thisReceiver = receiver;
+                        result = receiver;
                         break;
                     }
                 }
             }
             else if (!receivers.isEmpty()) {
-                thisReceiver = receivers.get(0);
+                result = receivers.get(0);
             }
-            else {
-                thisReceiver = ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
+            if (result.exists()) {
+                context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
             }
-            if (thisReceiver != null && thisReceiver.exists()) {
-                context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), thisReceiver.getContainingDeclaration());
-            }
+            return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(result);
         }
-        return thisReceiver;
     }
 
     @Override
