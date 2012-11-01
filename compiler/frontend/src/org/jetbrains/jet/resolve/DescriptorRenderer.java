@@ -44,7 +44,6 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return false;
         }
     };
-
     public static final DescriptorRenderer COMPACT = new DescriptorRenderer() {
         @Override
         protected boolean shouldRenderDefinedIn() {
@@ -56,9 +55,23 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return false;
         }
     };
+    public static final DescriptorRenderer STARTS_FROM_NAME = new DescriptorRenderer() {
+        @Override
+        protected boolean shouldRenderDefinedIn() {
+            return false;
+        }
 
+        @Override
+        protected boolean shouldRenderModifiers() {
+            return false;
+        }
+
+        @Override
+        protected boolean shouldStartsFromName() {
+            return true;
+        }
+    };
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
-
     public static final DescriptorRenderer DEBUG_TEXT = new DescriptorRenderer() {
         @Override
         protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
@@ -66,13 +79,8 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return descriptor.declaresDefaultValue();
         }
     };
-
     public static final DescriptorRenderer HTML = new HtmlDescriptorRenderer();
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
@@ -89,6 +97,16 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return null;
         }
     };
+    private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
+
+    private static List<String> getOuterClassesNames(ClassDescriptor cd) {
+        ArrayList<String> result = new ArrayList<String>();
+        while (cd.getContainingDeclaration() instanceof ClassifierDescriptor) {
+            result.add(cd.getName().getName());
+            cd = (ClassDescriptor) cd.getContainingDeclaration();
+        }
+        return result;
+    }
 
     protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
         return descriptor.hasDefaultValue();
@@ -125,15 +143,6 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         else {
             return escape(renderDefaultType(type, shortNamesOnly));
         }
-    }
-
-    private static List<String> getOuterClassesNames(ClassDescriptor cd) {
-        ArrayList<String> result = new ArrayList<String>();
-        while (cd.getContainingDeclaration() instanceof ClassifierDescriptor) {
-            result.add(cd.getName().getName());
-            cd = (ClassDescriptor)cd.getContainingDeclaration();
-        }
-        return result;
     }
 
     private String renderDefaultType(JetType type, boolean shortNamesOnly) {
@@ -260,6 +269,10 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return true;
     }
 
+    protected boolean shouldStartsFromName() {
+        return false;
+    }
+
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
         if (declarationDescriptor instanceof ModuleDescriptor) {
             stringBuilder.append(" is a module");
@@ -313,6 +326,24 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
     }
 
+    public static class HtmlDescriptorRenderer extends DescriptorRenderer {
+
+        @Override
+        protected String escape(String s) {
+            return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        }
+
+        @Override
+        public String renderKeyword(String keyword) {
+            return "<b>" + keyword + "</b>";
+        }
+
+        @Override
+        public String renderMessage(String s) {
+            return "<i>" + s + "</i>";
+        }
+    }
+
     private class RenderDeclarationDescriptorVisitor implements DeclarationDescriptorVisitor<Void, StringBuilder> {
 
         @Override
@@ -334,7 +365,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         protected Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
             JetType type = descriptor.getType();
             if (descriptor instanceof ValueParameterDescriptor) {
-                JetType varargElementType = ((ValueParameterDescriptor)descriptor).getVarargElementType();
+                JetType varargElementType = ((ValueParameterDescriptor) descriptor).getVarargElementType();
                 if (varargElementType != null) {
                     builder.append(renderKeyword("vararg")).append(" ");
                     type = varargElementType;
@@ -356,10 +387,11 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 @Nullable Boolean isVar,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull ReceiverDescriptor receiver,
-                @Nullable JetType outType) {
+                @Nullable JetType outType
+        ) {
             String typeString = lt() + "no type>";
             if (outType != null) {
-                if (isVar != null) {
+                if (isVar != null && !shouldStartsFromName()) {
                     builder.append(renderKeyword(isVar ? "var" : "val")).append(" ");
                 }
                 typeString = renderType(outType);
@@ -376,8 +408,10 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
-            renderVisibility(descriptor.getVisibility(), builder);
-            renderModality(descriptor.getModality(), builder);
+            if (!shouldStartsFromName()) {
+                renderVisibility(descriptor.getVisibility(), builder);
+                renderModality(descriptor.getModality(), builder);
+            }
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder,
                     descriptor.isVar(),
@@ -390,10 +424,11 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderVisibility(Visibility visibility, StringBuilder builder) {
-            if(!shouldRenderModifiers()) return;
+            if (!shouldRenderModifiers()) return;
             if ("package".equals(visibility.toString())) {
                 builder.append("public/*package*/ ");
-            } else {
+            }
+            else {
                 builder.append(renderKeyword(visibility.toString())).append(" ");
             }
         }
@@ -417,16 +452,18 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
-            renderVisibility(descriptor.getVisibility(), builder);
-            renderModality(descriptor.getModality(), builder);
-            builder.append(renderKeyword("fun")).append(" ");
-            if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
-                builder.append(" ");
-            }
+            if (!shouldStartsFromName()) {
+                renderVisibility(descriptor.getVisibility(), builder);
+                renderModality(descriptor.getModality(), builder);
+                builder.append(renderKeyword("fun")).append(" ");
+                if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
+                    builder.append(" ");
+                }
 
-            ReceiverDescriptor receiver = descriptor.getReceiverParameter();
-            if (receiver.exists()) {
-                builder.append(escape(renderType(receiver.getType()))).append(".");
+                ReceiverDescriptor receiver = descriptor.getReceiverParameter();
+                if (receiver.exists()) {
+                    builder.append(escape(renderType(receiver.getType()))).append(".");
+                }
             }
 
             renderName(descriptor, builder);
@@ -552,16 +589,20 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
-            if (descriptor.getKind() != ClassKind.CLASS_OBJECT) {
-                renderVisibility(descriptor.getVisibility(), builder);
+            boolean isNotClassObject = descriptor.getKind() != ClassKind.CLASS_OBJECT;
+            if (!shouldStartsFromName()) {
+                if (isNotClassObject) {
+                    renderVisibility(descriptor.getVisibility(), builder);
+                    if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT) {
+                        renderModality(descriptor.getModality(), builder);
+                    }
+                }
+                builder.append(renderKeyword(keyword));
+                if (isNotClassObject) {
+                    builder.append(" ");
+                }
             }
-            if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT
-                && descriptor.getKind() != ClassKind.CLASS_OBJECT) {
-                renderModality(descriptor.getModality(), builder);
-            }
-            builder.append(renderKeyword(keyword));
-            if (descriptor.getKind() != ClassKind.CLASS_OBJECT) {
-                builder.append(" ");
+            if (isNotClassObject) {
                 renderName(descriptor, builder);
                 renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
             }
@@ -622,24 +663,6 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             else {
                 // rendered with "where"
             }
-        }
-    }
-
-    public static class HtmlDescriptorRenderer extends DescriptorRenderer {
-
-        @Override
-        protected String escape(String s) {
-            return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-        }
-
-        @Override
-        public String renderKeyword(String keyword) {
-            return "<b>" + keyword + "</b>";
-        }
-
-        @Override
-        public String renderMessage(String s) {
-            return "<i>" + s + "</i>";
         }
     }
 }

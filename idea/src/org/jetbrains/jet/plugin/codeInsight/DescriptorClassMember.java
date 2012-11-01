@@ -83,7 +83,7 @@ public class DescriptorClassMember implements ClassMemberWithElement {
 
     @Override
     public String getText() {
-        return DescriptorRenderer.TEXT.render(myDescriptor);
+        return DescriptorRenderer.STARTS_FROM_NAME.render(myDescriptor);
     }
 
     public DeclarationDescriptor getDescriptor() {
