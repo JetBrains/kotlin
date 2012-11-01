@@ -54,19 +54,6 @@ public abstract class StackValue {
         this.type = type;
     }
 
-    public static void valueOf(InstructionAdapter instructionAdapter, final Type type) {
-        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-            return;
-        }
-        if (type == Type.VOID_TYPE) {
-            instructionAdapter.aconst(null);
-        }
-        else {
-            Type boxed = boxType(type);
-            instructionAdapter.invokestatic(boxed.getInternalName(), "valueOf", "(" + type.getDescriptor() + ")" + boxed.getDescriptor());
-        }
-    }
-
     /**
      * Put this value to the top of the stack.
      */

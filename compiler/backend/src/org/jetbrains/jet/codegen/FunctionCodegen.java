@@ -766,12 +766,9 @@ public class FunctionCodegen extends GenerationStateAware {
             iv.invokevirtual(state.getTypeMapper().mapType(
                     (ClassDescriptor) owner.getContextDescriptor()).getInternalName(),
                              jvmSignature.getName(), jvmSignature.getDescriptor());
-            if (isPrimitive(jvmSignature.getReturnType()) && !isPrimitive(overridden.getReturnType())) {
-                StackValue.valueOf(iv, jvmSignature.getReturnType());
-            }
-            if (jvmSignature.getReturnType() == Type.VOID_TYPE) {
-                iv.aconst(null);
-            }
+
+            StackValue.onStack(jvmSignature.getReturnType()).put(overridden.getReturnType(), iv);
+
             iv.areturn(overridden.getReturnType());
             endVisit(mv, "bridge method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
         }

@@ -2212,12 +2212,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         gen(expr, receiverType);
         if (!receiverJetType.isNullable()) {
             StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
-            Type type = propValue.type;
+            Type type = boxType(propValue.type);
             propValue.put(type, v);
-            if (isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
-                StackValue.valueOf(v, type);
-                type = boxType(type);
-            }
 
             return StackValue.onStack(type);
         }
@@ -2227,17 +2223,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.dup();
             v.ifnull(ifnull);
             StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
-            Type type = propValue.type;
+            Type type = boxType(propValue.type);
             propValue.put(type, v);
-            if (isPrimitive(type) && !type.equals(Type.VOID_TYPE)) {
-                StackValue.valueOf(v, type);
-                type = boxType(type);
-            }
             v.goTo(end);
 
             v.mark(ifnull);
             v.pop();
-            if (!propValue.type.equals(Type.VOID_TYPE)) {
+            if (!type.equals(Type.VOID_TYPE)) {
                 v.aconst(null);
             }
             v.mark(end);
@@ -2394,12 +2386,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (isPrimitive(leftType) != isPrimitive(rightType)) {
-            gen(left, leftType);
-            StackValue.valueOf(v, leftType);
             leftType = boxType(leftType);
-            gen(right, rightType);
-            StackValue.valueOf(v, rightType);
+            gen(left, leftType);
             rightType = boxType(rightType);
+            gen(right, rightType);
         }
         else {
             gen(left, leftType);
