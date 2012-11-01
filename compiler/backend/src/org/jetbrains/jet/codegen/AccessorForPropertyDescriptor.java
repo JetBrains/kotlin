@@ -52,6 +52,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptor {
             super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,
                   false,
                   false, Kind.DECLARATION);
+            initializeDefault();
         }
     }
 }
