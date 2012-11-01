@@ -39,6 +39,26 @@ public class JetIconProvider extends IconProvider {
 
     public static JetIconProvider INSTANCE = new JetIconProvider();
 
+    @Nullable
+    public static JetClassOrObject getMainClass(@NotNull JetFile file) {
+        List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
+            @Override
+            public boolean value(JetDeclaration jetDeclaration) {
+                return jetDeclaration instanceof JetClassOrObject;
+            }
+        });
+        if (classes.size() == 1) {
+            if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
+                return (JetClassOrObject) classes.get(0);
+            }
+        }
+        return null;
+    }
+
+    private static boolean isAbstract(@NotNull JetDeclarationWithBody declaration) {
+        return declaration.hasBlockBody() && declaration.getBodyExpression() == null;
+    }
+
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
         if (psiElement instanceof JetFile) {
@@ -54,9 +74,17 @@ public class JetIconProvider extends IconProvider {
                 return JetIcons.EXTENSION_FUNCTION;
             }
 
-            return PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass
-                   ? PlatformIcons.METHOD_ICON
-                   : JetIcons.FUNCTION;
+            if (PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass) {
+                if (isAbstract((JetFunction) psiElement)) {
+                    return PlatformIcons.ABSTRACT_METHOD_ICON;
+                }
+                else {
+                    return PlatformIcons.METHOD_ICON;
+                }
+            }
+            else {
+                return JetIcons.FUNCTION;
+            }
         }
         if (psiElement instanceof JetClass) {
             JetClass jetClass = (JetClass) psiElement;
@@ -77,7 +105,7 @@ public class JetIconProvider extends IconProvider {
             return JetIcons.OBJECT;
         }
         if (psiElement instanceof JetParameter) {
-            JetParameter parameter = (JetParameter)psiElement;
+            JetParameter parameter = (JetParameter) psiElement;
             if (parameter.getValOrVarNode() != null) {
                 JetParameterList parameterList = PsiTreeUtil.getParentOfType(psiElement, JetParameterList.class);
                 if (parameterList != null && parameterList.getParent() instanceof JetClass) {
@@ -87,7 +115,7 @@ public class JetIconProvider extends IconProvider {
             return JetIcons.PARAMETER;
         }
         if (psiElement instanceof JetProperty) {
-            JetProperty property = (JetProperty)psiElement;
+            JetProperty property = (JetProperty) psiElement;
             return property.isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
         }
 
@@ -95,22 +123,6 @@ public class JetIconProvider extends IconProvider {
             return JetIcons.CLASS;
         }
 
-        return null;
-    }
-
-    @Nullable
-    public static JetClassOrObject getMainClass(@NotNull JetFile file) {
-        List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
-            @Override
-            public boolean value(JetDeclaration jetDeclaration) {
-                return jetDeclaration instanceof JetClassOrObject;
-            }
-        });
-        if (classes.size() == 1) {
-            if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
-                return (JetClassOrObject) classes.get(0);
-            }
-        }
         return null;
     }
 }
