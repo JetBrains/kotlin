@@ -199,6 +199,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testIntersect() throws Exception {
+        assertIntersection("Number", "Number?", "Hashable");
+        assertIntersection("Number", "Hashable", "Number?");
+        assertIntersection("Hashable", "Hashable?", "Hashable");
+
         assertIntersection("Int?", "Int?", "Int?");
         assertIntersection("Int", "Int?", "Int");
         assertIntersection("Int", "Int", "Int?");
