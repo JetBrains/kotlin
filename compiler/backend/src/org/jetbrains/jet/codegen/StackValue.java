@@ -228,17 +228,6 @@ public abstract class StackValue {
         }
     }
 
-    public void upcast(Type type, InstructionAdapter v) {
-        if (type.equals(this.type)) return;
-
-        if (type.getSort() == Type.OBJECT && this.type.getSort() == Type.OBJECT) {
-            v.checkcast(type);
-        }
-        else {
-            coerceTo(type, v);
-        }
-    }
-
     private static void pop(Type type, InstructionAdapter v) {
         if (type.getSize() == 1) {
             v.pop();

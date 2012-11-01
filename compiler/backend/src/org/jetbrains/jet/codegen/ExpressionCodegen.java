@@ -1806,7 +1806,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetType type = fd.getReturnType();
             assert type != null;
             final Type retType = typeMapper.mapReturnType(type);
-            StackValue.onStack(callReturnType).upcast(retType, v);
+            StackValue.coerce(callReturnType, retType, v);
             return StackValue.onStack(retType);
         }
         return StackValue.none();
