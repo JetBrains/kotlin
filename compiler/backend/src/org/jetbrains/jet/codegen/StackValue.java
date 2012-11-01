@@ -339,7 +339,10 @@ public abstract class StackValue {
     }
 
     public static StackValue thisOrOuter(ExpressionCodegen codegen, ClassDescriptor descriptor, boolean isSuper) {
-        return new ThisOuter(codegen, descriptor, isSuper);
+        // Coerce this/super for traits to support traits with required classes
+        // Do not coerce for other classes due to the 'protected' access issues (JVMS 7, 4.9.2 Structural Constraints)
+        boolean coerceType = descriptor.getKind() == ClassKind.TRAIT;
+        return new ThisOuter(codegen, descriptor, isSuper, coerceType);
     }
 
     public static StackValue postIncrement(int index, int increment) {
@@ -1187,18 +1190,20 @@ public abstract class StackValue {
         private final ExpressionCodegen codegen;
         private final ClassDescriptor descriptor;
         private final boolean isSuper;
+        private final boolean coerceType;
 
-        public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor, boolean isSuper) {
+        public ThisOuter(ExpressionCodegen codegen, ClassDescriptor descriptor, boolean isSuper, boolean coerceType) {
             super(OBJECT_TYPE);
             this.codegen = codegen;
             this.descriptor = descriptor;
             this.isSuper = isSuper;
+            this.coerceType = coerceType;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             final StackValue stackValue = codegen.generateThisOrOuter(descriptor, isSuper);
-            stackValue.put(stackValue.type, v);  // no coercion here
+            stackValue.put(coerceType ? type : stackValue.type, v);
         }
     }
 
