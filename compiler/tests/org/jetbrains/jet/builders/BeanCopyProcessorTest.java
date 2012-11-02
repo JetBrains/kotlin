@@ -48,7 +48,6 @@ public class BeanCopyProcessorTest extends KotlinTestWithEnvironment {
     }
 
     public void testBuiltInFunctions() throws Exception {
-        //JetStandardLibrary.initialize();
         printAll(KotlinBuiltIns.getInstance().getBuiltInsScope());
     }
 
