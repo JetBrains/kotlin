@@ -127,9 +127,9 @@ public final class JavaClassResolver {
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         PostponedTasks postponedTasks = new PostponedTasks();
-        ClassDescriptor clazz = resolveClass(qualifiedName, searchRule, postponedTasks);
+        ClassDescriptor classDescriptor = resolveClass(qualifiedName, searchRule, postponedTasks);
         postponedTasks.performTasks();
-        return clazz;
+        return classDescriptor;
     }
 
     @Nullable
