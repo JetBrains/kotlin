@@ -184,6 +184,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testLocalMultideclarationValues() {
+        doTest();
+    }
+
     public void testNamedObject() {
         doTest();
     }
