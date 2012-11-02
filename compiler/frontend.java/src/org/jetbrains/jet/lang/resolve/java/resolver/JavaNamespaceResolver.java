@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
@@ -38,13 +39,17 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 public final class JavaNamespaceResolver {
 
     @NotNull
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
     @NotNull
-    private final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
+    private final Map<FqName, JavaPackageScope> resolvedNamespaceCache = Maps.newHashMap();
+    @NotNull
+    private final Set<FqName> unresolvedCache = Sets.newHashSet();
+
     private PsiClassFinder psiClassFinder;
     private BindingTrace trace;
     private JavaSemanticServices javaSemanticServices;
@@ -75,9 +80,12 @@ public final class JavaNamespaceResolver {
             return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
         }
 
-        ResolverNamespaceData namespaceData = lookUpCache(qualifiedName);
-        if (namespaceData != null) {
-            return namespaceData.getNamespaceDescriptor();
+        if (unresolvedCache.contains(qualifiedName)) {
+            return null;
+        }
+        JavaPackageScope scope = resolvedNamespaceCache.get(qualifiedName);
+        if (scope != null) {
+            return (NamespaceDescriptor) scope.getContainingDeclaration();
         }
 
         NamespaceDescriptorParent parentNs = resolveParentNamespace(qualifiedName);
@@ -101,10 +109,6 @@ public final class JavaNamespaceResolver {
         ns.setMemberScope(scopeData.getMemberScope());
 
         return scopeData.getNamespaceDescriptor();
-    }
-
-    private ResolverNamespaceData lookUpCache(FqName qualifiedName) {
-        return namespaceDescriptorCacheByFqn.get(qualifiedName);
     }
 
     @Nullable
@@ -145,21 +149,26 @@ public final class JavaNamespaceResolver {
                 break lookingForPsi;
             }
 
-            cache(fqName, ResolverNamespaceData.NEGATIVE);
+            cache(fqName, null);
             return null;
         }
 
         ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
 
-        namespaceData.setMemberScope(new JavaPackageScope(fqName, javaSemanticServices, namespaceData));
+        JavaPackageScope memberScope = new JavaPackageScope(fqName, javaSemanticServices, namespaceData);
+        namespaceData.setMemberScope(memberScope);
 
-        cache(fqName, namespaceData);
+        cache(fqName, memberScope);
 
         return namespaceData;
     }
 
-    private void cache(@NotNull FqName fqName, @NotNull ResolverNamespaceData namespaceData) {
-        ResolverNamespaceData oldValue = namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
+    private void cache(@NotNull FqName fqName, @Nullable JavaPackageScope packageScope) {
+        if (packageScope == null) {
+            unresolvedCache.add(fqName);
+            return;
+        }
+        JavaPackageScope oldValue = resolvedNamespaceCache.put(fqName, packageScope);
         if (oldValue != null) {
             throw new IllegalStateException("rewrite at " + fqName);
         }
@@ -168,19 +177,21 @@ public final class JavaNamespaceResolver {
     @Nullable
     public JavaPackageScope getJavaPackageScopeForExistingNamespaceDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor) {
         FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-        ResolverNamespaceData resolverNamespaceData = lookUpCache(fqName);
-        if (resolverNamespaceData == null) {
-            resolverNamespaceData = createNamespaceResolverScopeData(fqName, namespaceDescriptor);
-        }
-        if (resolverNamespaceData == null) {
-            return null;
-        }
-        if (resolverNamespaceData == ResolverNamespaceData.NEGATIVE) {
+        if (unresolvedCache.contains(fqName)) {
             throw new IllegalStateException(
                     "This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin: " +
                     fqName);
         }
-        JavaPackageScope scope = resolverNamespaceData.getMemberScope();
+        JavaPackageScope alreadyResolvedScope = resolvedNamespaceCache.get(fqName);
+        if (alreadyResolvedScope != null) {
+            return alreadyResolvedScope;
+        }
+        ResolverNamespaceData data;
+        data = createNamespaceResolverScopeData(fqName, namespaceDescriptor);
+        if (data == null) {
+            return null;
+        }
+        JavaPackageScope scope = data.getMemberScope();
         if (scope == null) {
             throw new IllegalStateException("fqn: " + fqName);
         }
