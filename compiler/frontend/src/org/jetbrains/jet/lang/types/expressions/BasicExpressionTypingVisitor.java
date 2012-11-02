@@ -1089,13 +1089,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (right != null) {
                     ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
 
-                    final JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(
-                            context.expressionTypingServices.getProject(), "fakeArgument");
-                    TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);
-                    traceWithFakeArgumentInfo.record(EXPRESSION_TYPE, fakeArgument, KotlinBuiltIns.getInstance().getNullableAnyType());
-
                     OverloadResolutionResults<FunctionDescriptor> resolutionResults = resolveFakeCall(
-                            receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), Collections.<JetExpression>singletonList(fakeArgument), name);
+                            context, receiver, name, KotlinBuiltIns.getInstance().getNullableAnyType());
 
                     if (resolutionResults.isSuccess()) {
                         FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.resolve;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
@@ -32,12 +31,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -58,7 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.resolveFakeCall;
 
 /**
@@ -140,26 +134,15 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
 
     @NotNull
     private FunctionDescriptor standardFunction(ClassDescriptor classDescriptor, String name, JetType... parameterTypes) {
-        List<JetType> parameterTypeList = Arrays.asList(parameterTypes);
-
-        TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(new BindingTraceContext(),
-                                                                                       "trace to store fake argument for", name);
-        int index = 0;
-        List<JetExpression> valueArguments = Lists.newArrayList();
-        for (JetType type : parameterTypeList) {
-            final JetReferenceExpression fakeArgument = JetPsiFactory.createSimpleName(getProject(), "fakeArgument" + index++);
-            valueArguments.add(fakeArgument);
-            traceWithFakeArgumentInfo.record(EXPRESSION_TYPE, fakeArgument, type);
-        }
 
         ExpressionTypingServices expressionTypingServices = new InjectorForTests(getProject()).getExpressionTypingServices();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingServices, traceWithFakeArgumentInfo, classDescriptor.getDefaultType().getMemberScope(),
+                expressionTypingServices, new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, false);
 
         OverloadResolutionResults<FunctionDescriptor> functions = resolveFakeCall(
-                ReceiverValue.NO_RECEIVER, context, valueArguments, Name.identifier(name));
+                context, ReceiverValue.NO_RECEIVER, Name.identifier(name), parameterTypes);
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
@@ -170,7 +153,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
                 }
             }
         }
-        throw new IllegalArgumentException("Not found: kotlin::" + classDescriptor.getName() + "." + name + "(" + parameterTypeList + ")");
+        throw new IllegalArgumentException("Not found: kotlin::" + classDescriptor.getName() + "." + name + "(" +
+                                           Arrays.toString(parameterTypes) + ")");
     }
 
     @Override
