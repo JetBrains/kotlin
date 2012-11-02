@@ -188,6 +188,11 @@ public final class JavaFunctionResolver {
     ) {
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
+        Set<SimpleFunctionDescriptor> functionsFromSupertypes = null;
+        if (owner instanceof ClassDescriptor) {
+            functionsFromSupertypes = getFunctionsFromSupertypes(methodName, owner);
+        }
+
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.getMethods()) {
             SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData, owner);
@@ -198,8 +203,6 @@ public final class JavaFunctionResolver {
 
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
-
-            Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(methodName, owner);
 
             OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
                   new OverrideResolver.DescriptorSink() {
