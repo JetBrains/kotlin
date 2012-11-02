@@ -46,6 +46,18 @@ public class SuperGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testInnerClassLabeledSuper() {
+        blackBoxFile("super/innerClassLabeledSuper.kt");
+    }
+
+    public void testInnerClassLabeledSuperProperty() {
+        blackBoxFile("super/innerClassLabeledSuperProperty.kt");
+    }
+
+    public void testMultipleSuperTraits() {
+        blackBoxFile("super/multipleSuperTraits.kt");
+    }
+
     public void testEnclosedFun () {
         blackBoxFile("/super/enclosedFun.jet");
 //        System.out.println(generateToText());

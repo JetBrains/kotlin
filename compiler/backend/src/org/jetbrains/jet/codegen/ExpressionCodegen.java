@@ -291,14 +291,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitSuperExpression(JetSuperExpression expression, StackValue data) {
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
-        if (descriptor instanceof ClassDescriptor) {
-            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, true);
+        return StackValue.thisOrOuter(this, getSuperCallLabelTarget(expression), true);
+    }
+
+    private ClassDescriptor getSuperCallLabelTarget(JetSuperExpression expression) {
+        PsiElement labelPsi = bindingContext.get(BindingContext.LABEL_TARGET, expression.getTargetLabel());
+        ClassDescriptor labelTarget = (ClassDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, labelPsi);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
+        // "super<descriptor>@labelTarget"
+        if (labelTarget != null) {
+            return labelTarget;
         }
-        else {
-            JetType type = context.getThisDescriptor().getDefaultType();
-            return StackValue.local(0, asmType(type));
-        }
+        assert descriptor instanceof ClassDescriptor : "Don't know how to generate super-call to not a class";
+        ClassDescriptor target = getParentContextSubclassOf((ClassDescriptor) descriptor).getThisDescriptor();
+        return target;
     }
 
     @NotNull
@@ -1738,38 +1744,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
         FunctionDescriptor fd = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
-        boolean superCall = false;
-        ReceiverValue explicitReceiver = call.getExplicitReceiver();
-        if (explicitReceiver instanceof ExpressionReceiver) {
-            final JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
-            if (receiverExpression instanceof JetSuperExpression) {
-                superCall = true;
-                receiver = StackValue.thisOrOuter(this, context.getThisDescriptor(), true);
-                JetSuperExpression superExpression = (JetSuperExpression) receiverExpression;
-                PsiElement enclosingElement = bindingContext.get(BindingContext.LABEL_TARGET, superExpression.getTargetLabel());
-                ClassDescriptor enclosed = (ClassDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, enclosingElement);
-                if (!isInterface(fd.getContainingDeclaration())) {
-                    if (enclosed == null) {
-                        enclosed = (ClassDescriptor) fd.getContainingDeclaration();
-                    }
-                    if (enclosed != context.getThisDescriptor()) {
-                        CodegenContext c = context;
-                        //noinspection ConstantConditions
-                        while (true) {
-                            if ((c instanceof ClassContext || c instanceof AnonymousClassContext) &&
-                                    DescriptorUtils.isSubclass(c.getThisDescriptor(), enclosed)) {
-                                break;
-                            }
-                            c = c.getParentContext();
-                            assert c != null;
-                        }
-                        fd = unwrapFakeOverride(fd);
-                        fd = (FunctionDescriptor) c.getAccessor(fd);
-                        superCall = false;
-                        receiver = StackValue.thisOrOuter(this, enclosed, true);
-                    }
-                }
-            }
+        boolean superCall = isSuperCall(call);
+
+        if (superCall && !isInterface(fd.getContainingDeclaration())) {
+            CodegenContext c = getParentContextSubclassOf((ClassDescriptor) fd.getContainingDeclaration());
+            fd = (FunctionDescriptor) c.getAccessor(unwrapFakeOverride(fd));
         }
 
         fd = accessableFunctionDescriptor(fd);
@@ -1798,6 +1777,35 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             StackValue stackValue = intrinsic.generate(this, v, callType, call.getCallElement(), args, receiver, state);
             stackValue.put(exprType, v);
             return StackValue.onStack(exprType);
+        }
+    }
+
+    @Nullable
+    private static JetSuperExpression getSuperCallExpression(Call call) {
+        ReceiverValue explicitReceiver = call.getExplicitReceiver();
+        if (explicitReceiver instanceof ExpressionReceiver) {
+            JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
+            if (receiverExpression instanceof JetSuperExpression) {
+                return (JetSuperExpression) receiverExpression;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isSuperCall(Call call) {
+        return getSuperCallExpression(call) != null;
+    }
+
+    // Find the first parent of the current context which corresponds to a subclass of a given class
+    private CodegenContext getParentContextSubclassOf(ClassDescriptor descriptor) {
+        CodegenContext c = context;
+        while (true) {
+            if ((c instanceof ClassContext || c instanceof AnonymousClassContext) &&
+                    DescriptorUtils.isSubclass(c.getThisDescriptor(), descriptor)) {
+                return c;
+            }
+            c = c.getParentContext();
+            assert c != null;
         }
     }
 
@@ -2200,7 +2208,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitDotQualifiedExpression(JetDotQualifiedExpression expression, StackValue receiver) {
-        return genQualified(StackValue.none(), expression.getSelectorExpression());
+        JetExpression receiverExpression = expression.getReceiverExpression();
+        StackValue receiverValue = receiverExpression instanceof JetSuperExpression ? gen(receiverExpression) : StackValue.none();
+        return genQualified(receiverValue, expression.getSelectorExpression());
     }
 
     @Override
