@@ -33,12 +33,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.plugin.references.StandardLibraryReferenceResolver;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
@@ -48,22 +46,6 @@ import java.util.*;
  */
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
 
-    public static PsiElement getDeclaration(JetFile file, DeclarationDescriptor descriptor, BindingContext bindingContext) {
-        Collection<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
-
-        if (elements.isEmpty()) {
-            StandardLibraryReferenceResolver libraryReferenceResolver =
-                    file.getProject().getComponent(StandardLibraryReferenceResolver.class);
-            elements = libraryReferenceResolver.resolveStandardLibrarySymbol(descriptor);
-        }
-
-        if (!elements.isEmpty()) {
-            return elements.iterator().next();
-        }
-
-        return null;
-    }
-
     public static List<DescriptorClassMember> membersFromDescriptors(
             JetFile file, Iterable<CallableMemberDescriptor> missingImplementations,
             BindingContext bindingContext
@@ -71,7 +53,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
 
-            PsiElement declaration = getDeclaration(file, memberDescriptor, bindingContext);
+            PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor, bindingContext);
             assert declaration != null : "Can not find declaration for descriptor " + memberDescriptor;
             DescriptorClassMember member = new DescriptorClassMember(declaration, memberDescriptor);
             members.add(member);
