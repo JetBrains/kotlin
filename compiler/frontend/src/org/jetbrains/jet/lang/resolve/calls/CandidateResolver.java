@@ -246,7 +246,7 @@ public class CandidateResolver {
                                                         .create(descriptor, constraintSystem, argumentTypes, receiverType,
                                                                 context.expectedType),
                                                 constraintSystemWithoutExpectedTypeConstraint);
-            resolvedCall.addStatus(ResolutionStatus.TYPE_INFERENCE_ERROR);
+            resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
             failed.add(resolvedCall);
             return;
         }
@@ -351,7 +351,7 @@ public class CandidateResolver {
         else {
             context.tracing.upperBoundViolated(candidateCall.getTrace(), inferenceErrorData);
         }
-        return TYPE_INFERENCE_ERROR.combine(argumentsStatus);
+        return OTHER_ERROR.combine(argumentsStatus);
     }
 
     private void addConstraintForValueArgument(
