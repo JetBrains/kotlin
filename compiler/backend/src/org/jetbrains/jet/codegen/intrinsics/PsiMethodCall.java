@@ -50,7 +50,7 @@ public class PsiMethodCall implements IntrinsicMethod {
             List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state
     ) {
         final CallableMethod callableMethod =
-                state.getTypeMapper().mapToCallableMethod(method, false, OwnerKind.IMPLEMENTATION);
+                state.getTypeMapper().mapToCallableMethod(method, false, false, OwnerKind.IMPLEMENTATION);
         if(element instanceof JetBinaryExpression) {
             codegen.invokeMethodWithArguments(callableMethod, receiver, ((JetBinaryExpression)element).getOperationReference());
         }  else {

@@ -161,10 +161,11 @@ public abstract class StackValue {
             boolean isSuper,
             @Nullable Method getter,
             @Nullable Method setter,
-            int invokeOpcode,
+            int getterInvokeOpcode,
+            int setterInvokeOpcode,
             GenerationState state
     ) {
-        return new Property(descriptor, methodOwner, methodOwnerParam, getter, setter, isStatic, isInterface, isSuper, type, invokeOpcode,
+        return new Property(descriptor, methodOwner, methodOwnerParam, getter, setter, isStatic, isInterface, isSuper, type, getterInvokeOpcode, setterInvokeOpcode,
                             state);
     }
 
@@ -940,7 +941,8 @@ public abstract class StackValue {
         private final boolean isStatic;
         private final boolean isInterface;
         private final boolean isSuper;
-        private final int invokeOpcode;
+        private final int getterInvokeOpcode;
+        private final int setterInvokeOpcode;
         @NotNull
         private final PropertyDescriptor descriptor;
         @NotNull
@@ -949,7 +951,7 @@ public abstract class StackValue {
         public Property(
                 @NotNull PropertyDescriptor descriptor, @NotNull JvmClassName methodOwner, @NotNull JvmClassName methodOwnerParam,
                 @Nullable Method getter, @Nullable Method setter, boolean isStatic, boolean isInterface, boolean isSuper,
-                @NotNull Type type, int invokeOpcode, @NotNull GenerationState state
+                @NotNull Type type, int getterInvokeOpcode, int setterInvokeOpcode, @NotNull GenerationState state
         ) {
             super(type);
             this.methodOwner = methodOwner;
@@ -959,13 +961,15 @@ public abstract class StackValue {
             this.isStatic = isStatic;
             this.isInterface = isInterface;
             this.isSuper = isSuper;
-            this.invokeOpcode = invokeOpcode;
+            this.getterInvokeOpcode = getterInvokeOpcode;
+            this.setterInvokeOpcode = setterInvokeOpcode;
             this.descriptor = descriptor;
             this.state = state;
-            if (invokeOpcode == 0) {
-                if (setter != null || getter != null) {
-                    throw new IllegalArgumentException();
-                }
+            if (getterInvokeOpcode == 0 && getter != null) {
+                throw new IllegalArgumentException();
+            }
+            if (setterInvokeOpcode == 0 && setter != null) {
+                throw new IllegalArgumentException();
             }
         }
 
@@ -983,7 +987,7 @@ public abstract class StackValue {
                     genNotNullAssertionForField(v, state, descriptor);
                 }
                 else {
-                    v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
+                    v.visitMethodInsn(getterInvokeOpcode, methodOwner.getInternalName(), getter.getName(), getter.getDescriptor());
                 }
             }
             coerceTo(type, v);
@@ -1002,7 +1006,7 @@ public abstract class StackValue {
                                  this.type.getDescriptor());
             }
             else {
-                v.visitMethodInsn(invokeOpcode, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor());
+                v.visitMethodInsn(setterInvokeOpcode, methodOwner.getInternalName(), setter.getName(), setter.getDescriptor());
             }
         }
 

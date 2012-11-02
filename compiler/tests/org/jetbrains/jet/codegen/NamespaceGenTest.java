@@ -549,4 +549,8 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testPrivateTopLevelPropAndVarInInner() {
         blackBoxFile("privateTopLevelPropAndVarInInner.kt");
     }
+
+    public void testInvokeSpecial() {
+        blackBoxFile("invokespecial.kt");
+    }
 }

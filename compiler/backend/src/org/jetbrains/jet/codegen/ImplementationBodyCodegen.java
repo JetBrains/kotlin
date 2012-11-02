@@ -1318,8 +1318,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
                 AnnotationCodegen.forMethod(mv, state.getTypeMapper()).genAnnotations(fun);
 
-                JvmMethodSignature jvmSignature =
-                        typeMapper.mapToCallableMethod(inheritedFun, false, OwnerKind.IMPLEMENTATION).getSignature();
+                JvmMethodSignature jvmSignature = typeMapper.mapToCallableMethod(
+                        inheritedFun,
+                        false,
+                        isCallInsideSameClassAsDeclared(inheritedFun, context),
+                        OwnerKind.IMPLEMENTATION).getSignature();
                 JetMethodAnnotationWriter aw = JetMethodAnnotationWriter.visitAnnotation(mv);
                 int kotlinFlags = getFlagsForVisibility(fun.getVisibility());
                 if (fun instanceof PropertyAccessorDescriptor) {
@@ -1556,7 +1559,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         JvmClassName owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
                         Type propType = typeMapper.mapType(jetType);
                         StackValue.property(propertyDescriptor, owner, owner,
-                                            propType, false, false, false, null, null, 0, state).store(propType, iv);
+                                            propType, false, false, false, null, null, 0, 0, state).store(propType, iv);
                     }
                 }
             }

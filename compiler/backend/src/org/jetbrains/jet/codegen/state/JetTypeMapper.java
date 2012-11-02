@@ -385,7 +385,12 @@ public class JetTypeMapper extends BindingTraceAware {
         }
     }
 
-    public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor functionDescriptor, boolean superCall, OwnerKind kind) {
+    public CallableMethod mapToCallableMethod(
+            @NotNull FunctionDescriptor functionDescriptor,
+            boolean superCall,
+            boolean isInsideClass,
+            OwnerKind kind
+    ) {
         final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
         functionDescriptor = unwrapFakeOverride(functionDescriptor);
@@ -444,10 +449,19 @@ public class JetTypeMapper extends BindingTraceAware {
             ownerForDefaultParam = JvmClassName.byType(mapType(declarationOwner.getDefaultType(), JetTypeMapperMode.TYPE_PARAMETER));
             ownerForDefaultImpl = JvmClassName.byInternalName(
                     ownerForDefaultParam.getInternalName() + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+            if (isInterface) {
+                invokeOpcode = superCall ? INVOKESTATIC : INVOKEINTERFACE;
+            }
+            else {
+                if (isAccessor) {
+                    invokeOpcode = INVOKESTATIC;
+                }
+                else {
+                    boolean isPrivateFunInvocation = isInsideClass && functionDescriptor.getVisibility() == Visibilities.PRIVATE;
+                    invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
+                }
+            }
 
-            invokeOpcode = isInterface
-                           ? (superCall ? INVOKESTATIC : INVOKEINTERFACE)
-                           : (isAccessor ? INVOKESTATIC : (superCall ? INVOKESPECIAL : INVOKEVIRTUAL));
             if (isInterface && superCall) {
                 descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
                 owner = JvmClassName.byInternalName(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
