@@ -76,14 +76,14 @@ public final class JavaClassObjectResolver {
     }
 
     @Nullable
-    public ResolverClassData createClassObjectDescriptor(
+    public ClassDescriptorFromJvmBytecode createClassObjectDescriptor(
             @NotNull ClassDescriptor containing,
             @NotNull PsiClass psiClass
     ) {
         DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
         if (psiClass.isEnum()) {
-            return createClassObjectDescriptorForEnum(containing, psiClass).getResolverBinaryClassData();
+            return createClassObjectDescriptorForEnum(containing, psiClass);
         }
 
         if (!DescriptorResolverUtils.isKotlinClass(psiClass)) {
@@ -91,7 +91,7 @@ public final class JavaClassObjectResolver {
         }
 
         if (hasInnerEnums(containing, psiClass)) {
-            return createSyntheticClassObject(containing, psiClass).getResolverBinaryClassData();
+            return createSyntheticClassObject(containing, psiClass);
         }
 
         PsiClass classObjectPsiClass = getClassObjectPsiClass(psiClass);
@@ -103,19 +103,21 @@ public final class JavaClassObjectResolver {
     }
 
     @NotNull
-    private ResolverClassData createClassObjectFromPsi(@NotNull ClassDescriptor containing, @NotNull PsiClass classObjectPsiClass) {
+    private ClassDescriptorFromJvmBytecode createClassObjectFromPsi(
+            @NotNull ClassDescriptor containing,
+            @NotNull PsiClass classObjectPsiClass
+    ) {
         String qualifiedName = classObjectPsiClass.getQualifiedName();
         assert qualifiedName != null;
         FqName fqName = new FqName(qualifiedName);
-        ResolverClassData classData = new ClassDescriptorFromJvmBytecode(
-                containing, ClassKind.CLASS_OBJECT, classObjectPsiClass, fqName, javaDescriptorResolver)
-                .getResolverBinaryClassData();
-
-        ClassDescriptorFromJvmBytecode classObjectDescriptor = classData.getClassDescriptor();
-        classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData,
+        ClassDescriptorFromJvmBytecode classObjectDescriptor
+                = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver);
+        ResolverClassData classObjectData = ResolverClassData.createBinaryClassData(classObjectPsiClass, fqName, classObjectDescriptor);
+        classObjectDescriptor.setClassData(classObjectData);
+        classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(new PsiClassWrapper(classObjectPsiClass), classObjectData,
                                                                              Collections.<TypeParameterDescriptor>emptyList()));
-        setUpClassObjectDescriptor(containing, fqName, classData, getClassObjectName(containing.getName()));
-        return classObjectDescriptor.getResolverBinaryClassData();
+        setUpClassObjectDescriptor(containing, fqName, classObjectData, getClassObjectName(containing.getName()));
+        return classObjectDescriptor;
     }
 
     private static boolean hasInnerEnums(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
@@ -146,8 +148,11 @@ public final class JavaClassObjectResolver {
             @NotNull PsiClass psiClass
     ) {
         FqNameUnsafe fqName = DescriptorResolverUtils.getFqNameForClassObject(psiClass);
+
         ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
-                containing, ClassKind.CLASS_OBJECT, psiClass, null, javaDescriptorResolver);
+                containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver);
+        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass, null, classObjectDescriptor);
+        classObjectDescriptor.setClassData(classData);
 
         ResolverClassData data = ResolverClassData.createSyntheticClassObjectClassData(psiClass, classObjectDescriptor);
         setUpClassObjectDescriptor(containing, fqName, data, getClassObjectName(containing.getName().getName()));

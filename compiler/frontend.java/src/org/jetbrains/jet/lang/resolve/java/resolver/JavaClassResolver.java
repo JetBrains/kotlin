@@ -225,20 +225,21 @@ public final class JavaClassResolver {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassDescriptorFromJvmBytecode classDescriptor
-                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, psiClass, fqName, javaDescriptorResolver);
+                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver);
+        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass, fqName, classDescriptor);
+        classDescriptor.setClassData(classData);
 
-        ResolverClassData classData = classDescriptor.getResolverBinaryClassData();
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
-                = signatureResolver.createUninitializedClassTypeParameters(psiClass, classData);
+                = signatureResolver.createUninitializedClassTypeParameters(psiClass, classDescriptor);
 
         classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
         List<JetType> supertypes = Lists.newArrayList();
         classDescriptor.setSupertypes(supertypes);
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
-        classDescriptor.setModality(resolveModality(psiClass, classData));
+        classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
         classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
 
@@ -249,11 +250,9 @@ public final class JavaClassResolver {
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
         supertypes.addAll(supertypesResolver.getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
 
-        ResolverClassData classObjectData = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
-        cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass),
-              classObjectData != null ? classObjectData.getClassDescriptor() : null);
-        if (classObjectData != null) {
-            ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectData.getClassDescriptor();
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
+        cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);
+        if (classObjectDescriptor != null) {
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
 
@@ -286,8 +285,8 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private static Modality resolveModality(@NotNull PsiClass psiClass, @NotNull ResolverClassData classData) {
-        if (classData.getClassDescriptor().getKind() == ClassKind.ANNOTATION_CLASS) {
+    private static Modality resolveModality(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
+        if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             return Modality.FINAL;
         }
         return Modality.convertFromFlags(
