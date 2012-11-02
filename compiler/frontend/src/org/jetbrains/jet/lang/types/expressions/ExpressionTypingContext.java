@@ -164,10 +164,4 @@ public class ExpressionTypingContext {
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
         return expressionTypingServices.getCallResolver().resolveSimpleProperty(makeResolutionContext(call));
     }
-
-    @Deprecated // Builds wrong resolved calls, should be removed
-    @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull ReceiverValue receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
-        return expressionTypingServices.getCallResolver().resolveExactSignature(scope, receiver, name, parameterTypes);
-    }
 }
