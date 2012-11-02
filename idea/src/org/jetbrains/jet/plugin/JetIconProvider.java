@@ -18,15 +18,18 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.swing.*;
@@ -66,6 +69,34 @@ public class JetIconProvider extends IconProvider {
             JetClassOrObject mainClass = getMainClass(file);
             return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : JetIcons.FILE;
         }
+
+        Icon result = getBaseIcon(psiElement);
+        if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof JetModifierListOwner) {
+            JetModifierList list = ((JetModifierListOwner) psiElement).getModifierList();
+            if (list!=null) {
+                RowIcon rowIcon = new RowIcon(2);
+                rowIcon.setIcon(result, 0);
+                rowIcon.setIcon(getVisibilityIcon(list), 1);
+                result = rowIcon;
+            }
+        }
+        return result;
+    }
+
+    public static Icon getVisibilityIcon(JetModifierList list) {
+        if (list.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+            return PlatformIcons.PRIVATE_ICON;
+        }
+        if (list.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
+            return PlatformIcons.PROTECTED_ICON;
+        }
+        if (list.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
+            return PlatformIcons.PUBLIC_ICON;
+        }
+        return PlatformIcons.PACKAGE_LOCAL_ICON;
+    }
+
+    private static Icon getBaseIcon(PsiElement psiElement) {
         if (psiElement instanceof JetNamespaceHeader) {
             return PlatformIcons.PACKAGE_ICON;
         }
