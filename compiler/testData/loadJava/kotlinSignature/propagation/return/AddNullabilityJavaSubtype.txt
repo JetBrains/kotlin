@@ -1,0 +1,10 @@
+namespace test
+
+public open class test.AddNullabilityJavaSubtype : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.AddNullabilityJavaSubtype
+    public open fun foo(): jet.CharSequence
+    public open class test.AddNullabilityJavaSubtype.Sub : test.AddNullabilityJavaSubtype {
+        public final /*constructor*/ fun <init>(): test.AddNullabilityJavaSubtype.Sub
+        public open override /*1*/ fun foo(): jet.String
+    }
+}

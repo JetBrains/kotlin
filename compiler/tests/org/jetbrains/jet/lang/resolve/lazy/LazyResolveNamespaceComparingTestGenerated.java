@@ -1129,7 +1129,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         }
         
         @TestMetadata("compiler/testData/loadJava/kotlinSignature")
-        @InnerTestClasses({KotlinSignature.Error.class})
+        @InnerTestClasses({KotlinSignature.Error.class, KotlinSignature.Propagation.class})
         public static class KotlinSignature extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInKotlinSignature() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature"), "kt", true);
@@ -1328,10 +1328,64 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 
             }
             
+            @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation")
+            @InnerTestClasses({Propagation.Return.class})
+            public static class Propagation extends AbstractLazyResolveNamespaceComparingTest {
+                public void testAllFilesPresentInPropagation() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), "kt", true);
+                }
+                
+                @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/return")
+                public static class Return extends AbstractLazyResolveNamespaceComparingTest {
+                    @TestMetadata("AddNotNullJavaSubtype.kt")
+                    public void testAddNotNullJavaSubtype() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNotNullJavaSubtype.kt");
+                    }
+                    
+                    @TestMetadata("AddNotNullSameJavaType.kt")
+                    public void testAddNotNullSameJavaType() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNotNullSameJavaType.kt");
+                    }
+                    
+                    @TestMetadata("AddNullabilityJavaSubtype.kt")
+                    public void testAddNullabilityJavaSubtype() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.kt");
+                    }
+                    
+                    @TestMetadata("AddNullabilitySameJavaType.kt")
+                    public void testAddNullabilitySameJavaType() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.kt");
+                    }
+                    
+                    public void testAllFilesPresentInReturn() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "kt", true);
+                    }
+                    
+                    @TestMetadata("InheritNullabilityJavaSubtype.kt")
+                    public void testInheritNullabilityJavaSubtype() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.kt");
+                    }
+                    
+                    @TestMetadata("InheritNullabilitySameJavaType.kt")
+                    public void testInheritNullabilitySameJavaType() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.kt");
+                    }
+                    
+                }
+                
+                public static Test innerSuite() {
+                    TestSuite suite = new TestSuite("Propagation");
+                    suite.addTestSuite(Propagation.class);
+                    suite.addTestSuite(Return.class);
+                    return suite;
+                }
+            }
+            
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("KotlinSignature");
                 suite.addTestSuite(KotlinSignature.class);
                 suite.addTestSuite(Error.class);
+                suite.addTest(Propagation.innerSuite());
                 return suite;
             }
         }

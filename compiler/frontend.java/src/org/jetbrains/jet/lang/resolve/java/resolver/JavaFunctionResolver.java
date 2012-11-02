@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
@@ -134,6 +135,20 @@ public final class JavaFunctionResolver {
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = parameterResolver
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
+
+
+        Set<JetType> typesFromSuperMethods = Sets.newHashSet();
+        for (HierarchicalMethodSignature superSignature : method.getPsiMethod().getHierarchicalMethodSignature().getSuperSignatures()) {
+            DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superSignature.getMethod());
+            if (superFun instanceof FunctionDescriptor) {
+                typesFromSuperMethods.add(((FunctionDescriptor) superFun).getReturnType());
+            }
+        }
+        typesFromSuperMethods.add(returnType);
+        JetType intersectionType = TypeUtils.intersect(JetTypeChecker.INSTANCE, typesFromSuperMethods);
+        if (intersectionType != null && intersectionType.getConstructor().getDeclarationDescriptor() != null) {
+            returnType = intersectionType;
+        }
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =

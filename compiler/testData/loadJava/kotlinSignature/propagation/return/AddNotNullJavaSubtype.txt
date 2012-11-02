@@ -1,0 +1,10 @@
+namespace test
+
+public open class test.AddNotNullJavaSubtype : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.AddNotNullJavaSubtype
+    public open fun foo(): jet.CharSequence?
+    public open class test.AddNotNullJavaSubtype.Sub : test.AddNotNullJavaSubtype {
+        public final /*constructor*/ fun <init>(): test.AddNotNullJavaSubtype.Sub
+        public open override /*1*/ fun foo(): jet.String
+    }
+}
