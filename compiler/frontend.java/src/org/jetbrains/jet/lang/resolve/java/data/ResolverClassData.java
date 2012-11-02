@@ -30,11 +30,6 @@ public class ResolverClassData extends ResolverScopeData {
 
     private final ClassDescriptorFromJvmBytecode classDescriptor;
 
-    public ResolverClassData(boolean negative) {
-        super(negative);
-        this.classDescriptor = null;
-    }
-
     public ResolverClassData(
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
@@ -49,5 +44,21 @@ public class ResolverClassData extends ResolverScopeData {
 
     public ClassDescriptorFromJvmBytecode getClassDescriptor() {
         return classDescriptor;
+    }
+
+    @NotNull
+    public static ResolverClassData createSyntheticClassObjectClassData(
+            @Nullable PsiClass psiClass,
+            @NotNull ClassDescriptorFromJvmBytecode descriptor
+    ) {
+        return new ResolverClassData(psiClass, null, null, true, descriptor);
+    }
+
+    public static ResolverClassData createBinaryClassData(
+            @NotNull PsiClass psiClass,
+            @Nullable FqName fqName,
+            @NotNull ClassDescriptorFromJvmBytecode classDescriptor
+    ) {
+        return new ResolverClassData(psiClass, null, fqName, false, classDescriptor);
     }
 }

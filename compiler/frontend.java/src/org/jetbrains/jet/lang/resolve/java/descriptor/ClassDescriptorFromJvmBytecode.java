@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverBinaryClassData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.lazy.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -52,7 +51,7 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
             @NotNull JavaDescriptorResolver javaDescriptorResolver) {
         super(containingDeclaration, kind);
         this.javaDescriptorResolver = javaDescriptorResolver;
-        this.resolverBinaryClassData = new ResolverBinaryClassData(psiClass, fqName, this);
+        this.resolverBinaryClassData = ResolverClassData.createBinaryClassData(psiClass, fqName, this);
     }
 
     @NotNull

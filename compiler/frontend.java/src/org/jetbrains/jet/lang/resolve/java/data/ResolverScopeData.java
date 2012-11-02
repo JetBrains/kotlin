@@ -95,18 +95,6 @@ public abstract class ResolverScopeData {
         }
     }
 
-    public ResolverScopeData(boolean negative) {
-        if (!negative) {
-            throw new IllegalStateException();
-        }
-        this.psiClass = null;
-        this.psiPackage = null;
-        this.fqName = null;
-        this.staticMembers = false;
-        this.kotlin = false;
-        this.classOrNamespaceDescriptor = null;
-    }
-
     @NotNull
     public PsiElement getPsiPackageOrPsiClass() {
         if (psiPackage != null) {
