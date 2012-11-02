@@ -21,18 +21,12 @@ import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * Either package or class with static members
  */
 public class ResolverNamespaceData extends ResolverScopeData {
-    public static final ResolverNamespaceData NEGATIVE = new ResolverNamespaceData(true);
-
-    private final NamespaceDescriptor namespaceDescriptor;
-
-    private JavaPackageScope memberScope;
 
     public ResolverNamespaceData(
             @Nullable PsiClass psiClass,
@@ -41,23 +35,5 @@ public class ResolverNamespaceData extends ResolverScopeData {
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
         super(psiClass, psiPackage, fqName, true, namespaceDescriptor);
-        this.namespaceDescriptor = namespaceDescriptor;
-    }
-
-    public ResolverNamespaceData(boolean negative) {
-        super(negative);
-        this.namespaceDescriptor = null;
-    }
-
-    public JavaPackageScope getMemberScope() {
-        return memberScope;
-    }
-
-    public NamespaceDescriptor getNamespaceDescriptor() {
-        return namespaceDescriptor;
-    }
-
-    public void setMemberScope(JavaPackageScope memberScope) {
-        this.memberScope = memberScope;
     }
 }

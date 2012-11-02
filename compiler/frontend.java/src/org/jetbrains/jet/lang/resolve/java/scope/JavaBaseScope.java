@@ -44,17 +44,18 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     protected final JavaSemanticServices semanticServices;
+
     @NotNull
     protected final ResolverScopeData resolverScopeData;
 
     @NotNull
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
+
     @NotNull
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
-
-
     @Nullable
     private Collection<DeclarationDescriptor> allDescriptors = null;
+
 
     protected JavaBaseScope(
             @NotNull JavaSemanticServices semanticServices,
@@ -163,5 +164,10 @@ public abstract class JavaBaseScope extends JetScopeImpl {
                     resolverScopeData.getClassOrNamespaceDescriptor(), psiClass,
                     resolverScopeData.isStaticMembers()));
         }
+    }
+
+    @NotNull
+    public ResolverScopeData getResolverScopeData() {
+        return resolverScopeData;
     }
 }
