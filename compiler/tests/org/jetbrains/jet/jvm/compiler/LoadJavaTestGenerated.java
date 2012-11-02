@@ -457,6 +457,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.java");
                 }
                 
+                @TestMetadata("AddNullabilitySameGenericType1.java")
+                public void testAddNullabilitySameGenericType1() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType1.java");
+                }
+                
+                @TestMetadata("AddNullabilitySameGenericType2.java")
+                public void testAddNullabilitySameGenericType2() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType2.java");
+                }
+                
                 @TestMetadata("AddNullabilitySameJavaType.java")
                 public void testAddNullabilitySameJavaType() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.java");
@@ -469,6 +479,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("InheritNullabilityJavaSubtype.java")
                 public void testInheritNullabilityJavaSubtype() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.java");
+                }
+                
+                @TestMetadata("InheritNullabilitySameGenericType.java")
+                public void testInheritNullabilitySameGenericType() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilitySameGenericType.java");
                 }
                 
                 @TestMetadata("InheritNullabilitySameJavaType.java")

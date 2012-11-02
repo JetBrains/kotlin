@@ -1352,6 +1352,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.kt");
                     }
                     
+                    @TestMetadata("AddNullabilitySameGenericType1.kt")
+                    public void testAddNullabilitySameGenericType1() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType1.kt");
+                    }
+                    
+                    @TestMetadata("AddNullabilitySameGenericType2.kt")
+                    public void testAddNullabilitySameGenericType2() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType2.kt");
+                    }
+                    
                     @TestMetadata("AddNullabilitySameJavaType.kt")
                     public void testAddNullabilitySameJavaType() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.kt");
@@ -1364,6 +1374,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     @TestMetadata("InheritNullabilityJavaSubtype.kt")
                     public void testInheritNullabilityJavaSubtype() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.kt");
+                    }
+                    
+                    @TestMetadata("InheritNullabilitySameGenericType.kt")
+                    public void testInheritNullabilitySameGenericType() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilitySameGenericType.kt");
                     }
                     
                     @TestMetadata("InheritNullabilitySameJavaType.kt")

@@ -34,16 +34,13 @@ import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
@@ -136,7 +133,6 @@ public final class JavaFunctionResolver {
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
-
         Set<JetType> typesFromSuperMethods = Sets.newHashSet();
         for (HierarchicalMethodSignature superSignature : method.getPsiMethod().getHierarchicalMethodSignature().getSuperSignatures()) {
             DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superSignature.getMethod());
@@ -144,11 +140,8 @@ public final class JavaFunctionResolver {
                 typesFromSuperMethods.add(((FunctionDescriptor) superFun).getReturnType());
             }
         }
-        typesFromSuperMethods.add(returnType);
-        JetType intersectionType = TypeUtils.intersect(JetTypeChecker.INSTANCE, typesFromSuperMethods);
-        if (intersectionType != null && intersectionType.getConstructor().getDeclarationDescriptor() != null) {
-            returnType = intersectionType;
-        }
+
+        returnType = modifyReturnTypeAccordingToSuperMethods(returnType, typesFromSuperMethods, true);
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =
@@ -291,6 +284,92 @@ public final class JavaFunctionResolver {
             }
         }
         return r;
+    }
+
+    @NotNull
+    private static JetType modifyReturnTypeAccordingToSuperMethods(
+            @NotNull JetType autoType,
+            @NotNull Collection<JetType> typesFromSuper,
+            boolean covariantPosition
+    ) {
+        if (ErrorUtils.isErrorType(autoType)) {
+            return autoType;
+        }
+
+        boolean resultNullable = returnTypeMustBeNullable(autoType, typesFromSuper, covariantPosition);
+        List<TypeProjection> resultArguments = getTypeArgsOfReturnType(autoType, typesFromSuper);
+        JetScope resultScope;
+        ClassifierDescriptor classifierDescriptor = autoType.getConstructor().getDeclarationDescriptor();
+        if (classifierDescriptor instanceof ClassDescriptor) {
+            resultScope = ((ClassDescriptor) classifierDescriptor).getMemberScope(resultArguments);
+        }
+        else {
+            resultScope = autoType.getMemberScope();
+        }
+
+        return new JetTypeImpl(autoType.getAnnotations(),
+                               autoType.getConstructor(),
+                               resultNullable,
+                               resultArguments,
+                               resultScope);
+    }
+
+    @NotNull
+    private static List<TypeProjection> getTypeArgsOfReturnType(@NotNull JetType autoType, Collection<JetType> typesFromSuper) {
+        TypeConstructor typeConstructor = autoType.getConstructor();
+        List<TypeProjection> autoTypeArguments = autoType.getArguments();
+
+        // If class is changed, then we can't say anything about type arguments
+        for (JetType typeFromSuper : typesFromSuper) {
+            if (!TypeUtils.equalClasses(autoType, typeFromSuper)) {
+                return autoTypeArguments;
+            }
+        }
+
+        List<TypeProjection> resultArguments = Lists.newArrayList();
+        for (int i = 0; i < autoTypeArguments.size(); i++) {
+            TypeProjection argument = autoTypeArguments.get(i);
+            JetType argType = argument.getType();
+            Variance varianceInClass = typeConstructor.getParameters().get(i).getVariance();
+
+            List<JetType> argTypesFromSuper = Lists.newArrayList();
+            for (JetType typeFromSuper : typesFromSuper) {
+                argTypesFromSuper.add(typeFromSuper.getArguments().get(i).getType());
+            }
+
+            JetType type = modifyReturnTypeAccordingToSuperMethods(argType, argTypesFromSuper, varianceInClass == Variance.OUT_VARIANCE);
+            resultArguments.add(new TypeProjection(argument.getProjectionKind(), type));
+        }
+        return resultArguments;
+    }
+
+    private static boolean returnTypeMustBeNullable(JetType autoType, Collection<JetType> typesFromSuper, boolean covariantPosition) {
+        boolean someSupersNullable = false;
+        boolean someSupersNotNull = false;
+        for (JetType typeFromSuper : typesFromSuper) {
+            if (typeFromSuper.isNullable()) {
+                someSupersNullable = true;
+            }
+            else {
+                someSupersNotNull = true;
+            }
+        }
+        if (someSupersNotNull && someSupersNullable) {
+            //noinspection IfStatementWithIdenticalBranches
+            if (covariantPosition) {
+                return false;
+            }
+            else {
+                // TODO error!
+                return true;
+            }
+        }
+
+        if (!someSupersNotNull && !someSupersNullable) { // no types from super
+            return autoType.isNullable();
+        }
+
+        return someSupersNullable && autoType.isNullable();
     }
 
     private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {
