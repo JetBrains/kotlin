@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.util.Printer;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -152,5 +153,16 @@ public class CallableMethod implements Callable {
 
     public Type getReturnType() {
         return signature.getAsmMethod().getReturnType();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Printer.OPCODES[invokeOpcode]);
+        sb.append(" ");
+        sb.append(owner);
+        sb.append(".");
+        sb.append(signature);
+        return sb.toString();
     }
 }
