@@ -34,10 +34,4 @@ public class ResolverBinaryClassData extends ResolverClassData {
     ) {
         super(psiClass, null, fqName, false, classDescriptor);
     }
-
-    public ResolverBinaryClassData(boolean negative) {
-        super(negative);
-    }
-
-    public static final ResolverClassData NEGATIVE = new ResolverBinaryClassData(true);
 }
