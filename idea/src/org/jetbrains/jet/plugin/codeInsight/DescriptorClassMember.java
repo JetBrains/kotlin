@@ -26,6 +26,7 @@ import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -49,7 +50,7 @@ public class DescriptorClassMember implements ClassMemberWithElement {
         myPsiElement = element;
         myDescriptor = descriptor;
         if (myPsiElement.isValid()) {
-            boolean isClass = myPsiElement instanceof PsiClass;
+            boolean isClass = myPsiElement instanceof PsiClass || myPsiElement instanceof JetClass;
             int flags = isClass ? 0 : 3;
             icon = myPsiElement.getIcon(flags);
         }
