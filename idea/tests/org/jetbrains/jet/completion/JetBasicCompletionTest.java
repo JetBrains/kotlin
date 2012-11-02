@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.completion;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -252,6 +253,7 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/basic").getPath() +
