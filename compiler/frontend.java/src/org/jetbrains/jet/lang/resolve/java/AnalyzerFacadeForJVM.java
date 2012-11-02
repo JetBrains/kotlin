@@ -124,7 +124,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                 }
                 if (psiClassFinder.findPsiPackage(fqName) != null) {
-                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);
+                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
                     assert javaPackageScope != null;
                     namespaceMemberScope.importScope(javaPackageScope);
                 }

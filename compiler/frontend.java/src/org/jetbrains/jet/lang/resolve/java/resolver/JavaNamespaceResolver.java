@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
@@ -165,10 +166,11 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
+    public JavaPackageScope getJavaPackageScopeForExistingNamespaceDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
         ResolverNamespaceData resolverNamespaceData = lookUpCache(fqName);
         if (resolverNamespaceData == null) {
-            resolverNamespaceData = createNamespaceResolverScopeData(fqName, ns);
+            resolverNamespaceData = createNamespaceResolverScopeData(fqName, namespaceDescriptor);
         }
         if (resolverNamespaceData == null) {
             return null;

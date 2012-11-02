@@ -122,8 +122,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        return namespaceResolver.getJavaPackageScope(fqName, ns);
+    public JavaPackageScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(namespaceDescriptor);
     }
 
     @NotNull
