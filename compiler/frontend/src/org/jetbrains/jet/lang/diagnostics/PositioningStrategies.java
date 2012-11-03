@@ -182,7 +182,7 @@ public class PositioningStrategies {
         };
     }
 
-    public static PositioningStrategy<JetArrayAccessExpression> ARRAY_ACCESS = new PositioningStrategy<JetArrayAccessExpression>() {
+    public static final PositioningStrategy<JetArrayAccessExpression> ARRAY_ACCESS = new PositioningStrategy<JetArrayAccessExpression>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetArrayAccessExpression element) {
@@ -190,7 +190,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetModifierListOwner> VISIBILITY_MODIFIER = new PositioningStrategy<JetModifierListOwner>() {
+    public static final PositioningStrategy<JetModifierListOwner> VISIBILITY_MODIFIER = new PositioningStrategy<JetModifierListOwner>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetModifierListOwner element) {
@@ -211,7 +211,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetTypeProjection> PROJECTION_MODIFIER = new PositioningStrategy<JetTypeProjection>() {
+    public static final PositioningStrategy<JetTypeProjection> PROJECTION_MODIFIER = new PositioningStrategy<JetTypeProjection>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetTypeProjection element) {
@@ -219,7 +219,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetParameter> PARAMETER_DEFAULT_VALUE = new PositioningStrategy<JetParameter>() {
+    public static final PositioningStrategy<JetParameter> PARAMETER_DEFAULT_VALUE = new PositioningStrategy<JetParameter>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetParameter element) {
@@ -227,7 +227,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<PsiElement> CALL_ELEMENT = new PositioningStrategy<PsiElement>() {
+    public static final PositioningStrategy<PsiElement> CALL_ELEMENT = new PositioningStrategy<PsiElement>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull PsiElement callElement) {
@@ -241,7 +241,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetDeclarationWithBody> DECLARATION_WITH_BODY = new PositioningStrategy<JetDeclarationWithBody>() {
+    public static final PositioningStrategy<JetDeclarationWithBody> DECLARATION_WITH_BODY = new PositioningStrategy<JetDeclarationWithBody>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetDeclarationWithBody element) {
@@ -264,7 +264,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetProperty> VAL_OR_VAR_NODE = new PositioningStrategy<JetProperty>() {
+    public static final PositioningStrategy<JetProperty> VAL_OR_VAR_NODE = new PositioningStrategy<JetProperty>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetProperty property) {
@@ -272,7 +272,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetWhenEntry> ELSE_ENTRY = new PositioningStrategy<JetWhenEntry>() {
+    public static final PositioningStrategy<JetWhenEntry> ELSE_ENTRY = new PositioningStrategy<JetWhenEntry>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetWhenEntry entry) {
@@ -282,7 +282,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetWhenExpression> WHEN_EXPRESSION = new PositioningStrategy<JetWhenExpression>() {
+    public static final PositioningStrategy<JetWhenExpression> WHEN_EXPRESSION = new PositioningStrategy<JetWhenExpression>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetWhenExpression element) {
@@ -290,7 +290,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetWhenConditionInRange> WHEN_CONDITION_IN_RANGE =
+    public static final PositioningStrategy<JetWhenConditionInRange> WHEN_CONDITION_IN_RANGE =
             new PositioningStrategy<JetWhenConditionInRange>() {
                 @NotNull
                 @Override
@@ -299,7 +299,7 @@ public class PositioningStrategies {
                 }
             };
 
-    public static PositioningStrategy<JetNullableType> NULLABLE_TYPE = new PositioningStrategy<JetNullableType>() {
+    public static final PositioningStrategy<JetNullableType> NULLABLE_TYPE = new PositioningStrategy<JetNullableType>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetNullableType element) {
@@ -307,7 +307,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetExpression> CALL_EXPRESSION = new PositioningStrategy<JetExpression>() {
+    public static final PositioningStrategy<JetExpression> CALL_EXPRESSION = new PositioningStrategy<JetExpression>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetExpression element) {
@@ -331,7 +331,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetElement> VALUE_ARGUMENTS = new PositioningStrategy<JetElement>() {
+    public static final PositioningStrategy<JetElement> VALUE_ARGUMENTS = new PositioningStrategy<JetElement>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetElement element) {
@@ -345,4 +345,7 @@ public class PositioningStrategies {
             return super.mark(element);
         }
     };
+
+    private PositioningStrategies() {
+    }
 }
