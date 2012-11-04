@@ -23,6 +23,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -55,20 +56,23 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
     @Nullable
     private Collection<DeclarationDescriptor> allDescriptors = null;
-
+    @NotNull
+    private final ClassOrNamespaceDescriptor descriptor;
 
     protected JavaBaseScope(
+            @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull JavaSemanticServices semanticServices,
             @NotNull ResolverScopeData resolverScopeData
     ) {
         this.semanticServices = semanticServices;
         this.resolverScopeData = resolverScopeData;
+        this.descriptor = descriptor;
     }
 
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
-        return resolverScopeData.getClassOrNamespaceDescriptor();
+        return descriptor;
     }
 
     @NotNull
@@ -88,7 +92,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<VariableDescriptor> computePropertyDescriptors(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData);
+        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData, descriptor);
     }
 
     @NotNull
@@ -108,7 +112,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData);
+        return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData, descriptor);
     }
 
     @NotNull
@@ -158,14 +162,12 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             @NotNull Collection<DeclarationDescriptor> result
     ) {
         // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
-        if (getContainingDeclaration() instanceof JavaNamespaceDescriptor) {
-            result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                    resolverScopeData.getClassOrNamespaceDescriptor(), psiClass, false));
+        if (descriptor instanceof JavaNamespaceDescriptor) {
+            result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(descriptor, psiClass, false));
         }
         else {
             result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                    resolverScopeData.getClassOrNamespaceDescriptor(), psiClass,
-                    resolverScopeData.isStaticMembers()));
+                    descriptor, psiClass, resolverScopeData.isStaticMembers()));
         }
     }
 

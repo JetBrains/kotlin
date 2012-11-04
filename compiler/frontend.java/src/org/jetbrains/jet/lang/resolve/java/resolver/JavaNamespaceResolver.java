@@ -137,7 +137,7 @@ public final class JavaNamespaceResolver {
             javaPackageScope = null;
         }
         else {
-            javaPackageScope = new JavaPackageScope(fqName, javaSemanticServices, namespaceData);
+            javaPackageScope = new JavaPackageScope(namespaceDescriptor, fqName, javaSemanticServices, namespaceData);
         }
 
         cache(fqName, javaPackageScope);
@@ -170,7 +170,7 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        return new ResolverNamespaceData(psiClass, psiPackage, fqName, namespaceDescriptor);
+        return new ResolverNamespaceData(psiClass, psiPackage, fqName);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaPackageScope packageScope) {

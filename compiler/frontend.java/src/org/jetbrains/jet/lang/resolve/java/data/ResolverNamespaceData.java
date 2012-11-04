@@ -20,7 +20,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
@@ -31,9 +30,8 @@ public class ResolverNamespaceData extends ResolverScopeData {
     public ResolverNamespaceData(
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
-            @NotNull FqName fqName,
-            @NotNull NamespaceDescriptor namespaceDescriptor
+            @NotNull FqName fqName
     ) {
-        super(psiClass, psiPackage, fqName, true, namespaceDescriptor);
+        super(psiClass, psiPackage, fqName, true);
     }
 }

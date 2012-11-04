@@ -220,7 +220,11 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(Name methodName, ResolverScopeData scopeData) {
+    public Set<FunctionDescriptor> resolveFunctionGroup(
+            @NotNull Name methodName,
+            @NotNull ResolverScopeData scopeData,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+    ) {
         MembersCache namedMembersMap = scopeData.getMembersCache();
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
@@ -229,7 +233,7 @@ public final class JavaFunctionResolver {
         }
         PsiClass psiClass = scopeData.getPsiClass();
         assert psiClass != null;
-        return resolveNamedGroupFunctions(scopeData.getClassOrNamespaceDescriptor(), psiClass, namedMembers, methodName, scopeData);
+        return resolveNamedGroupFunctions(ownerDescriptor, psiClass, namedMembers, methodName, scopeData);
     }
 
     @NotNull

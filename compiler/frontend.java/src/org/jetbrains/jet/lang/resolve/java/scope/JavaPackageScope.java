@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
@@ -35,10 +36,11 @@ public class JavaPackageScope extends JavaBaseScope {
     private final FqName packageFQN;
 
     public JavaPackageScope(
+            @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices,
             @NotNull ResolverScopeData resolverNamespaceData) {
-        super(semanticServices, resolverNamespaceData);
+        super(descriptor, semanticServices, resolverNamespaceData);
         this.packageFQN = packageFQN;
 
         if (!resolverNamespaceData.isStaticMembers()) {

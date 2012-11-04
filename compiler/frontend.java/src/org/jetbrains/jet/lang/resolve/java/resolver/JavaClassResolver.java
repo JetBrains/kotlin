@@ -226,7 +226,7 @@ public final class JavaClassResolver {
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassDescriptorFromJvmBytecode classDescriptor
                 = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver);
-        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass, fqName, classDescriptor);
+        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass, fqName);
         classDescriptor.setClassData(classData);
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
@@ -241,7 +241,7 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
+        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classDescriptor, semanticServices, classData));
 
         String context = "class " + psiClass.getQualifiedName();
         signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);

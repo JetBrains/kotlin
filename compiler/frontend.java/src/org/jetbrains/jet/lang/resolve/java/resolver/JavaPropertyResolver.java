@@ -83,7 +83,8 @@ public final class JavaPropertyResolver {
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name fieldName,
-            @NotNull ResolverScopeData scopeData
+            @NotNull ResolverScopeData scopeData,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
 
         PsiClass psiClass = scopeData.getPsiClass();
@@ -95,7 +96,7 @@ public final class JavaPropertyResolver {
 
         //noinspection ConstantConditions
         String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
-        return resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
+        return resolveNamedGroupProperties(ownerDescriptor, scopeData, namedMembers, fieldName,
                                            "class or namespace " + qualifiedName);
     }
 

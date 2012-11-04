@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.MembersCache;
@@ -55,10 +54,6 @@ public abstract class ResolverScopeData {
         return kotlin;
     }
 
-    public ClassOrNamespaceDescriptor getClassOrNamespaceDescriptor() {
-        return classOrNamespaceDescriptor;
-    }
-
     @Nullable
     private final PsiClass psiClass;
     @Nullable
@@ -67,14 +62,12 @@ public abstract class ResolverScopeData {
     private final FqName fqName;
     private final boolean staticMembers;
     private final boolean kotlin;
-    private final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
 
     public ResolverScopeData(
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
             @Nullable FqName fqName,
-            boolean staticMembers,
-            @NotNull ClassOrNamespaceDescriptor descriptor
+            boolean staticMembers
     ) {
         DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
@@ -88,7 +81,6 @@ public abstract class ResolverScopeData {
 
         this.staticMembers = staticMembers;
         this.kotlin = psiClass != null && DescriptorResolverUtils.isKotlinClass(psiClass);
-        classOrNamespaceDescriptor = descriptor;
 
         if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {
             throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);

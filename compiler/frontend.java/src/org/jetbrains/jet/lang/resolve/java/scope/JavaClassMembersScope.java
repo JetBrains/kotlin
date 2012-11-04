@@ -21,6 +21,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
@@ -42,9 +43,10 @@ public class JavaClassMembersScope extends JavaBaseScope {
     private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
 
     public JavaClassMembersScope(
+            @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull JavaSemanticServices semanticServices,
             @NotNull ResolverScopeData resolverScopeData) {
-        super(semanticServices, resolverScopeData);
+        super(descriptor, semanticServices, resolverScopeData);
 
         if (resolverScopeData.getPsiClass() == null) {
             throw new IllegalArgumentException("must pass PsiClass here");
