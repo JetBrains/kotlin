@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.data;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -27,26 +26,25 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 */
 public class ResolverClassData extends ResolverScopeData {
 
-    public ResolverClassData(
-            @Nullable PsiClass psiClass,
-            @Nullable PsiPackage psiPackage,
+    private ResolverClassData(
+            @NotNull PsiClass psiClass,
             @Nullable FqName fqName,
             boolean staticMembers
     ) {
-        super(psiClass, psiPackage, fqName, staticMembers);
+        super(psiClass, null, fqName, staticMembers);
     }
 
     @NotNull
     public static ResolverClassData createSyntheticClassObjectClassData(
-            @Nullable PsiClass psiClass
+            @NotNull PsiClass psiClass
     ) {
-        return new ResolverClassData(psiClass, null, null, true);
+        return new ResolverClassData(psiClass, null, true);
     }
 
     public static ResolverClassData createBinaryClassData(
             @NotNull PsiClass psiClass,
             @Nullable FqName fqName
     ) {
-        return new ResolverClassData(psiClass, null, fqName, false);
+        return new ResolverClassData(psiClass, fqName, false);
     }
 }
