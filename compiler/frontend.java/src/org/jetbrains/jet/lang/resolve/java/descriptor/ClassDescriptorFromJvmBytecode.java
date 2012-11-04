@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
+import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.LazyClassDescriptor;
 
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     private final JavaDescriptorResolver javaDescriptorResolver;
 
     @NotNull
-    private final ResolverClassData resolverBinaryClassData;
+    private final ClassPsiDeclarationProvider resolverBinaryClassData;
 
 
     // lazy
@@ -46,19 +46,18 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration, @NotNull ClassKind kind,
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
-            @NotNull ResolverClassData data
+            @NotNull ClassPsiDeclarationProvider data
     ) {
         super(containingDeclaration, kind);
         this.javaDescriptorResolver = javaDescriptorResolver;
-        resolverBinaryClassData = data;
+        this.resolverBinaryClassData = data;
     }
 
     @NotNull
     @Override
     public Collection<ConstructorDescriptor> getConstructors() {
         if (constructors == null) {
-            this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData,
-                                                                           this);
+            this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData, this);
         }
         return constructors;
     }

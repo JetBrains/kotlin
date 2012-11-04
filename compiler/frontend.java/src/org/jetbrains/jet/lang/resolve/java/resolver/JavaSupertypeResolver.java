@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
+import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -75,7 +75,7 @@ public final class JavaSupertypeResolver {
     public Collection<JetType> getSupertypes(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull PsiClassWrapper psiClass,
-            @NotNull ResolverClassData classData,
+            @NotNull ClassPsiDeclarationProvider classData,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
 
@@ -140,7 +140,7 @@ public final class JavaSupertypeResolver {
 
     private void addBaseClass(
             @NotNull PsiClassWrapper psiClass,
-            @NotNull ResolverClassData classData,
+            @NotNull ClassPsiDeclarationProvider classData,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull List<JetType> result
     ) {

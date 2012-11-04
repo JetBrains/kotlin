@@ -28,7 +28,9 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
@@ -164,7 +166,7 @@ public final class JavaClassObjectResolver {
             @NotNull ClassDescriptorFromJvmBytecode classObjectDescriptor,
             @NotNull ClassDescriptor containing,
             @NotNull FqNameBase fqName,
-            @NotNull ResolverClassData data,
+            @NotNull ClassPsiDeclarationProvider data,
             @NotNull Name classObjectName
     ) {
         classObjectDescriptor.setName(classObjectName);
@@ -172,7 +174,9 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.setVisibility(containing.getVisibility());
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
-        JavaClassMembersScope classMembersScope = new JavaClassMembersScope(classObjectDescriptor, semanticServices, data);
+        //TODO:
+        JavaClassMembersScope classMembersScope = new JavaClassMembersScope(classObjectDescriptor, semanticServices,
+                                                                            (ResolverScopeData) data);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
