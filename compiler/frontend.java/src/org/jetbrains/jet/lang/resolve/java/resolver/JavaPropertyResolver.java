@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
@@ -85,7 +86,7 @@ public final class JavaPropertyResolver {
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name fieldName,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull PsiDeclarationProvider scopeData,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
         NamedMembers namedMembers = scopeData.getMembersCache().get(fieldName);
@@ -100,7 +101,7 @@ public final class JavaPropertyResolver {
     @NotNull
     private Set<VariableDescriptor> resolveNamedGroupProperties(
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull PsiDeclarationProvider scopeData,
             @NotNull NamedMembers namedMembers,
             @NotNull Name propertyName,
             @NotNull String context
@@ -167,7 +168,7 @@ public final class JavaPropertyResolver {
     @NotNull
     private PropertyDescriptor resolveProperty(
             @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull PsiDeclarationProvider scopeData,
             @NotNull Name propertyName,
             @NotNull String context,
             @NotNull PropertyPsiData psiData
@@ -420,7 +421,7 @@ public final class JavaPropertyResolver {
         return regularPropertiesCount;
     }
 
-    private static boolean isPropertyFinal(ResolverScopeData scopeData, PropertyPsiData psiData) {
+    private static boolean isPropertyFinal(PsiDeclarationProvider scopeData, PropertyPsiData psiData) {
         if (scopeData.getOrigin() == JAVA) {
             return true;
         }
@@ -443,11 +444,16 @@ public final class JavaPropertyResolver {
     @NotNull
     private ClassOrNamespaceDescriptor getRealOwner(
             @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull PsiDeclarationProvider scopeData,
             boolean isStatic
     ) {
-        PsiClass psiClass = scopeData.getPsiClass();
-        if (psiClass == null || !psiClass.isEnum() || !isStatic) {
+        //TODO: hack!
+        ResolverScopeData resolverScopeData = (ResolverScopeData) scopeData;
+        if (resolverScopeData.isEmpty()) {
+            return owner;
+        }
+        PsiClass psiClass = resolverScopeData.getPsiClass();
+        if (!psiClass.isEnum() || !isStatic) {
             return owner;
         }
         final String qualifiedName = psiClass.getQualifiedName();

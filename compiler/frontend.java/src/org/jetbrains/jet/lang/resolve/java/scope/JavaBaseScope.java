@@ -132,8 +132,8 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     private Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
-        PsiClass psiClass = resolverScopeData.getPsiClass();
-        if (psiClass != null) {
+        if (!resolverScopeData.isEmpty()) {
+            PsiClass psiClass = resolverScopeData.getPsiClass();
             computeFieldAndFunctionDescriptors(result);
             computeInnerClasses(psiClass, result);
         }

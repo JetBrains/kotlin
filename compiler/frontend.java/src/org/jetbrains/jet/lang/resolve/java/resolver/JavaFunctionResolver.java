@@ -26,7 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -84,7 +85,7 @@ public final class JavaFunctionResolver {
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
-            @NotNull ResolverScopeData scopeData, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+            @NotNull PsiDeclarationProvider scopeData, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
         PsiType returnPsiType = method.getReturnType();
         if (returnPsiType == null) {
@@ -174,7 +175,7 @@ public final class JavaFunctionResolver {
     @NotNull
     private Set<FunctionDescriptor> resolveNamedGroupFunctions(
             @NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass,
-            NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData
+            NamedMembers namedMembers, Name methodName, PsiDeclarationProvider scopeData
     ) {
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
@@ -225,17 +226,15 @@ public final class JavaFunctionResolver {
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(
             @NotNull Name methodName,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull ClassPsiDeclarationProvider scopeData,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
-        MembersCache namedMembersMap = scopeData.getMembersCache();
 
-        NamedMembers namedMembers = namedMembersMap.get(methodName);
+        NamedMembers namedMembers = scopeData.getMembersCache().get(methodName);
         if (namedMembers == null) {
             return Collections.emptySet();
         }
         PsiClass psiClass = scopeData.getPsiClass();
-        assert psiClass != null;
         return resolveNamedGroupFunctions(ownerDescriptor, psiClass, namedMembers, methodName, scopeData);
     }
 

@@ -30,11 +30,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
 
-public abstract class ResolverScopeData {
+public abstract class ResolverScopeData implements ClassPsiDeclarationProvider {
 
     private MembersCache membersCache = null;
 
-    @Nullable
     private final PsiClass psiClass;
 
     @Nullable
@@ -84,6 +83,7 @@ public abstract class ResolverScopeData {
             return psiClass;
         }
     }
+    @Override
     @NotNull
     public MembersCache getMembersCache() {
         if (membersCache == null) {
@@ -92,9 +92,15 @@ public abstract class ResolverScopeData {
         return membersCache;
     }
 
-    @Nullable
+    @Override
+    @NotNull
     public PsiClass getPsiClass() {
         return psiClass;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return psiClass == null;
     }
 
     @Nullable
@@ -102,6 +108,7 @@ public abstract class ResolverScopeData {
         return psiPackage;
     }
 
+    @Override
     @NotNull
     public Origin getOrigin() {
         return origin;
