@@ -44,6 +44,8 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
+
 public final class JavaPropertyResolver {
 
     private JavaSemanticServices semanticServices;
@@ -241,7 +243,7 @@ public final class JavaPropertyResolver {
 
         recordObjectDeclarationClassIfNeeded(psiData, realOwner, propertyDescriptor, propertyType);
 
-        if (!scopeData.isKotlin()) {
+        if (scopeData.getOrigin() == JAVA) {
             trace.record(BindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
         }
         return propertyDescriptor;
@@ -419,7 +421,7 @@ public final class JavaPropertyResolver {
     }
 
     private static boolean isPropertyFinal(ResolverScopeData scopeData, PropertyPsiData psiData) {
-        if (!scopeData.isKotlin()) {
+        if (scopeData.getOrigin() == JAVA) {
             return true;
         }
         return psiData.isFinal();

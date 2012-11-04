@@ -42,6 +42,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
+
 public final class JavaFunctionResolver {
 
     private JavaTypeTransformer typeTransformer;
@@ -95,7 +98,7 @@ public final class JavaFunctionResolver {
 
         final PsiMethod psiMethod = method.getPsiMethod();
         final PsiClass containingClass = psiMethod.getContainingClass();
-        if (scopeData.isKotlin()) {
+        if (scopeData.getOrigin() == KOTLIN) {
             // TODO: unless maybe class explicitly extends Object
             assert containingClass != null;
             String ownerClassName = containingClass.getQualifiedName();
@@ -158,7 +161,7 @@ public final class JavaFunctionResolver {
             BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, psiMethod, functionDescriptorImpl);
         }
 
-        if (!scopeData.isKotlin()) {
+        if (scopeData.getOrigin() == JAVA) {
             trace.record(BindingContext.IS_DECLARED_IN_JAVA, functionDescriptorImpl);
         }
 

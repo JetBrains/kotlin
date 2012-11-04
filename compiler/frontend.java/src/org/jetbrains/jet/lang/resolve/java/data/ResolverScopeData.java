@@ -64,7 +64,7 @@ public abstract class ResolverScopeData {
         this.origin = determineOrigin(psiClass);
 
         //TODO: move check to remove fqName parameter
-        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && isKotlin()) {
+        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && getOrigin() == KOTLIN) {
             throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
         }
     }
@@ -87,7 +87,7 @@ public abstract class ResolverScopeData {
     @NotNull
     public MembersCache getMembersCache() {
         if (membersCache == null) {
-            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers, isKotlin());
+            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers, getOrigin() == KOTLIN);
         }
         return membersCache;
     }
@@ -102,8 +102,9 @@ public abstract class ResolverScopeData {
         return psiPackage;
     }
 
-    public boolean isKotlin() {
-        return origin == KOTLIN;
+    @NotNull
+    public Origin getOrigin() {
+        return origin;
     }
 
     public boolean isStaticMembers() {

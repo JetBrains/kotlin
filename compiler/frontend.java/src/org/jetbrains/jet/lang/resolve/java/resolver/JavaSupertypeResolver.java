@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
+
 public final class JavaSupertypeResolver {
 
     private BindingTrace trace;
@@ -142,7 +144,7 @@ public final class JavaSupertypeResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull List<JetType> result
     ) {
-        if (classData.isKotlin()
+        if (classData.getOrigin() == KOTLIN
             || DescriptorResolverUtils.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
             // TODO: annotations
             || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
