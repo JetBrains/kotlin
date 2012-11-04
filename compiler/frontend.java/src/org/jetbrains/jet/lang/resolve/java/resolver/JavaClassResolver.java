@@ -224,10 +224,9 @@ public final class JavaClassResolver {
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
-        ClassDescriptorFromJvmBytecode classDescriptor
-                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver);
         ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass, fqName);
-        classDescriptor.setClassData(classData);
+        ClassDescriptorFromJvmBytecode classDescriptor
+                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver, classData);
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));

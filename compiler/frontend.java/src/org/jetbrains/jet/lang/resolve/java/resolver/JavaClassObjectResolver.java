@@ -110,10 +110,9 @@ public final class JavaClassObjectResolver {
         String qualifiedName = classObjectPsiClass.getQualifiedName();
         assert qualifiedName != null;
         FqName fqName = new FqName(qualifiedName);
-        ClassDescriptorFromJvmBytecode classObjectDescriptor
-                = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver);
         ResolverClassData classObjectData = ResolverClassData.createBinaryClassData(classObjectPsiClass, fqName);
-        classObjectDescriptor.setClassData(classObjectData);
+        ClassDescriptorFromJvmBytecode classObjectDescriptor
+                = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver, classObjectData);
         classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(classObjectDescriptor, new PsiClassWrapper(classObjectPsiClass), classObjectData,
                                                                              Collections.<TypeParameterDescriptor>emptyList()
         ));
@@ -151,10 +150,9 @@ public final class JavaClassObjectResolver {
     ) {
         FqNameUnsafe fqName = DescriptorResolverUtils.getFqNameForClassObject(psiClass);
 
-        ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
-                containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver);
         ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass, null);
-        classObjectDescriptor.setClassData(classData);
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
+                containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver, classData);
 
         ResolverClassData data = ResolverClassData.createSyntheticClassObjectClassData(psiClass);
         setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().getName()));

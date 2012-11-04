@@ -36,7 +36,8 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     @NotNull
     private final JavaDescriptorResolver javaDescriptorResolver;
 
-    private ResolverClassData resolverBinaryClassData = null;
+    @NotNull
+    private final ResolverClassData resolverBinaryClassData;
 
 
     // lazy
@@ -44,24 +45,21 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration, @NotNull ClassKind kind,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull ResolverClassData data
     ) {
         super(containingDeclaration, kind);
         this.javaDescriptorResolver = javaDescriptorResolver;
+        resolverBinaryClassData = data;
     }
 
     @NotNull
     @Override
     public Collection<ConstructorDescriptor> getConstructors() {
         if (constructors == null) {
-            assert resolverBinaryClassData != null;
             this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData,
                                                                            this);
         }
         return constructors;
-    }
-
-    public void setClassData(@NotNull ResolverClassData resolverBinaryClassData) {
-        this.resolverBinaryClassData = resolverBinaryClassData;
     }
 }
