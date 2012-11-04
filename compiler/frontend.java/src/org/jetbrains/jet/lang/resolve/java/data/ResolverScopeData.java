@@ -27,34 +27,23 @@ import org.jetbrains.jet.lang.resolve.java.MembersCache;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-/**
-* @author Pavel Talanov
-*/
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
+
 public abstract class ResolverScopeData {
-    @Nullable
-    public PsiClass getPsiClass() {
-        return psiClass;
-    }
 
-    @Nullable
-    public PsiPackage getPsiPackage() {
-        return psiPackage;
-    }
-
-    public boolean isStaticMembers() {
-        return staticMembers;
-    }
-
-    public boolean isKotlin() {
-        return kotlin;
-    }
+    private MembersCache membersCache = null;
 
     @Nullable
     private final PsiClass psiClass;
+
     @Nullable
     private final PsiPackage psiPackage;
+
     private final boolean staticMembers;
-    private final boolean kotlin;
+
+    @NotNull
+    private final Origin origin;
 
     public ResolverScopeData(
             @Nullable PsiClass psiClass,
@@ -72,12 +61,17 @@ public abstract class ResolverScopeData {
         }
 
         this.staticMembers = staticMembers;
-        this.kotlin = psiClass != null && DescriptorResolverUtils.isKotlinClass(psiClass);
+        this.origin = determineOrigin(psiClass);
 
         //TODO: move check to remove fqName parameter
-        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {
+        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && isKotlin()) {
             throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
         }
+    }
+
+    @NotNull
+    private static Origin determineOrigin(@Nullable PsiClass psiClass) {
+        return ((psiClass != null) && DescriptorResolverUtils.isKotlinClass(psiClass)) ? KOTLIN : JAVA;
     }
 
     @NotNull
@@ -90,14 +84,29 @@ public abstract class ResolverScopeData {
             return psiClass;
         }
     }
-
-    private MembersCache membersCache = null;
-
     @NotNull
     public MembersCache getMembersCache() {
         if (membersCache == null) {
-            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers, kotlin);
+            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers, isKotlin());
         }
         return membersCache;
+    }
+
+    @Nullable
+    public PsiClass getPsiClass() {
+        return psiClass;
+    }
+
+    @Nullable
+    public PsiPackage getPsiPackage() {
+        return psiPackage;
+    }
+
+    public boolean isKotlin() {
+        return origin == KOTLIN;
+    }
+
+    public boolean isStaticMembers() {
+        return staticMembers;
     }
 }
