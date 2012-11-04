@@ -30,7 +30,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.data.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
+import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -131,13 +133,14 @@ public final class JavaNamespaceResolver {
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        ResolverNamespaceData namespaceData = createNamespaceData(fqName, namespaceDescriptor);
+        PackagePsiDeclarationProvider namespaceData = createNamespaceData(fqName, namespaceDescriptor);
         JavaPackageScope javaPackageScope;
         if (namespaceData == null) {
             javaPackageScope = null;
         }
         else {
-            javaPackageScope = new JavaPackageScope(namespaceDescriptor, fqName, javaSemanticServices, namespaceData);
+            //TODO:
+            javaPackageScope = new JavaPackageScope(namespaceDescriptor, fqName, javaSemanticServices, (ResolverScopeData) namespaceData);
         }
 
         cache(fqName, javaPackageScope);
@@ -146,7 +149,7 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    private ResolverNamespaceData createNamespaceData(
+    private PackagePsiDeclarationProvider createNamespaceData(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {

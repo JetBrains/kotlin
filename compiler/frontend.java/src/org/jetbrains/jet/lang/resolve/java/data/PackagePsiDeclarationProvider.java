@@ -16,22 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java.data;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * Either package or class with static members
- */
-public class ResolverNamespaceData extends ResolverScopeData implements PackagePsiDeclarationProvider {
+public interface PackagePsiDeclarationProvider extends PsiDeclarationProvider {
 
-    public ResolverNamespaceData(
-            @Nullable PsiClass psiClass,
-            @Nullable PsiPackage psiPackage,
-            @NotNull FqName fqName
-    ) {
-        super(psiClass, psiPackage, fqName, true);
-    }
+    @NotNull
+    PsiPackage getPsiPackage();
 }

@@ -103,7 +103,7 @@ public abstract class ResolverScopeData implements ClassPsiDeclarationProvider {
         return psiClass == null;
     }
 
-    @Nullable
+    @NotNull
     public PsiPackage getPsiPackage() {
         return psiPackage;
     }
