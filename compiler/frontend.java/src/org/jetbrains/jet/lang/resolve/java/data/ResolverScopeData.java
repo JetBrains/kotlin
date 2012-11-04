@@ -41,11 +41,6 @@ public abstract class ResolverScopeData {
         return psiPackage;
     }
 
-    @Nullable
-    public FqName getFqName() {
-        return fqName;
-    }
-
     public boolean isStaticMembers() {
         return staticMembers;
     }
@@ -58,8 +53,6 @@ public abstract class ResolverScopeData {
     private final PsiClass psiClass;
     @Nullable
     private final PsiPackage psiPackage;
-    @Nullable
-    private final FqName fqName;
     private final boolean staticMembers;
     private final boolean kotlin;
 
@@ -73,7 +66,6 @@ public abstract class ResolverScopeData {
 
         this.psiClass = psiClass;
         this.psiPackage = psiPackage;
-        this.fqName = fqName;
 
         if (psiClass == null && psiPackage == null) {
             throw new IllegalStateException("both psiClass and psiPackage cannot be null");
@@ -82,6 +74,7 @@ public abstract class ResolverScopeData {
         this.staticMembers = staticMembers;
         this.kotlin = psiClass != null && DescriptorResolverUtils.isKotlinClass(psiClass);
 
+        //TODO: move check to remove fqName parameter
         if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {
             throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
         }
