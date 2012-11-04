@@ -432,7 +432,7 @@ public final class JavaPropertyResolver {
     @NotNull
     private static Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, Name propertyName) {
         Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData)) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData.getClassOrNamespaceDescriptor())) {
             for (VariableDescriptor property : supertype.getMemberScope().getProperties(propertyName)) {
                 r.add((PropertyDescriptor) property);
             }

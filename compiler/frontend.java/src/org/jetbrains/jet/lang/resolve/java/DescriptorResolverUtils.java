@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kt.PsiAnnotationWithFlags;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMemberWrapper;
@@ -63,16 +60,11 @@ public final class DescriptorResolverUtils {
         return kind == ClassKind.CLASS || kind == ClassKind.TRAIT || kind == ClassKind.ENUM_CLASS;
     }
 
-    public static Collection<JetType> getSupertypes(@NotNull ResolverScopeData scope) {
-        if (scope instanceof ResolverClassData) {
-            return ((ResolverClassData) scope).getClassDescriptor().getSupertypes();
+    public static Collection<? extends JetType> getSupertypes(@NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor) {
+        if (classOrNamespaceDescriptor instanceof ClassDescriptor) {
+            return ((ClassDescriptor) classOrNamespaceDescriptor).getTypeConstructor().getSupertypes();
         }
-        else if (scope instanceof ResolverNamespaceData) {
-            return Collections.emptyList();
-        }
-        else {
-            throw new IllegalStateException();
-        }
+        return Collections.emptyList();
     }
 
     public static Modality resolveModality(PsiMemberWrapper memberWrapper, boolean isFinal) {

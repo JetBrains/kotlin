@@ -264,7 +264,7 @@ public final class JavaFunctionResolver {
             Name methodName
     ) {
         Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData)) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData.getClassOrNamespaceDescriptor())) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
                 r.add((SimpleFunctionDescriptor) function);
             }
