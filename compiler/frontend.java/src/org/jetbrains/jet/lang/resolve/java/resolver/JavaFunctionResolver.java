@@ -81,7 +81,7 @@ public final class JavaFunctionResolver {
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
-            @NotNull ResolverScopeData scopeData
+            @NotNull ResolverScopeData scopeData, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
         PsiType returnPsiType = method.getReturnType();
         if (returnPsiType == null) {
@@ -109,7 +109,7 @@ public final class JavaFunctionResolver {
         }
 
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
-                scopeData.getClassOrNamespaceDescriptor(),
+                ownerDescriptor,
                 annotationResolver.resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
                 DescriptorKindUtils.flagsToKind(method.getJetMethodAnnotation().kind())
@@ -145,7 +145,7 @@ public final class JavaFunctionResolver {
 
         functionDescriptorImpl.initialize(
                 valueParameterDescriptors.getReceiverType(),
-                DescriptorUtils.getExpectedThisObjectIfNeeded(scopeData.getClassOrNamespaceDescriptor()),
+                DescriptorUtils.getExpectedThisObjectIfNeeded(ownerDescriptor),
                 methodTypeParameters,
                 valueParameterDescriptors.getDescriptors(),
                 returnType,
@@ -177,7 +177,7 @@ public final class JavaFunctionResolver {
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.getMethods()) {
-            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
+            SimpleFunctionDescriptor function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData, owner);
             if (function != null) {
                 functionsFromCurrent.add(function);
             }
@@ -186,7 +186,7 @@ public final class JavaFunctionResolver {
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
-            Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
+            Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(methodName, owner);
 
             OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor,
                   new OverrideResolver.DescriptorSink() {
@@ -260,11 +260,10 @@ public final class JavaFunctionResolver {
 
     @NotNull
     private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(
-            ResolverScopeData scopeData,
-            Name methodName
+            @NotNull Name methodName, @NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor
     ) {
         Set<SimpleFunctionDescriptor> r = Sets.newLinkedHashSet();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData.getClassOrNamespaceDescriptor())) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(classOrNamespaceDescriptor)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
                 r.add((SimpleFunctionDescriptor) function);
             }

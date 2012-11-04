@@ -153,7 +153,10 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         }
     }
 
-    private void computeInnerClasses(@NotNull PsiClass psiClass, @NotNull Collection<DeclarationDescriptor> result) {
+    private void computeInnerClasses(
+            @NotNull PsiClass psiClass,
+            @NotNull Collection<DeclarationDescriptor> result
+    ) {
         // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
         if (getContainingDeclaration() instanceof JavaNamespaceDescriptor) {
             result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(

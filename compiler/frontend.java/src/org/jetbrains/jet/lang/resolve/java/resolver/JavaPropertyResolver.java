@@ -101,7 +101,7 @@ public final class JavaPropertyResolver {
 
     @NotNull
     private Set<VariableDescriptor> resolveNamedGroupProperties(
-            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
             @NotNull ResolverScopeData scopeData,
             @NotNull NamedMembers namedMembers,
             @NotNull Name propertyName,
@@ -122,13 +122,13 @@ public final class JavaPropertyResolver {
                 continue;
             }
 
-            propertiesFromCurrent.add(resolveProperty(owner, scopeData, propertyName, context, propertyPsiData));
+            propertiesFromCurrent.add(resolveProperty(ownerDescriptor, scopeData, propertyName, context, propertyPsiData));
         }
 
-        Set<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(scopeData, propertyName);
+        Set<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(propertyName, ownerDescriptor);
         Set<PropertyDescriptor> properties = Sets.newHashSet();
 
-        generateOverrides(owner, propertyName, propertiesFromCurrent, propertiesFromSupertypes, properties);
+        generateOverrides(ownerDescriptor, propertyName, propertiesFromCurrent, propertiesFromSupertypes, properties);
         OverrideResolver.resolveUnknownVisibilities(properties, trace);
 
         properties.addAll(propertiesFromCurrent);
@@ -430,9 +430,11 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private static Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, Name propertyName) {
+    private static Set<PropertyDescriptor> getPropertiesFromSupertypes(
+            @NotNull Name propertyName, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+    ) {
         Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData.getClassOrNamespaceDescriptor())) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(ownerDescriptor)) {
             for (VariableDescriptor property : supertype.getMemberScope().getProperties(propertyName)) {
                 r.add((PropertyDescriptor) property);
             }
