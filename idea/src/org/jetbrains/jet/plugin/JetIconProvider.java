@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.swing.*;
@@ -58,10 +57,6 @@ public class JetIconProvider extends IconProvider {
         return null;
     }
 
-    private static boolean isAbstract(@NotNull JetDeclarationWithBody declaration) {
-        return declaration.hasBlockBody() && declaration.getBodyExpression() == null;
-    }
-
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
         if (psiElement instanceof JetFile) {
@@ -73,7 +68,7 @@ public class JetIconProvider extends IconProvider {
         Icon result = getBaseIcon(psiElement);
         if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof JetModifierListOwner) {
             JetModifierList list = ((JetModifierListOwner) psiElement).getModifierList();
-            if (list!=null) {
+            if (list != null) {
                 RowIcon rowIcon = new RowIcon(2);
                 rowIcon.setIcon(result, 0);
                 rowIcon.setIcon(getVisibilityIcon(list), 1);
@@ -96,7 +91,7 @@ public class JetIconProvider extends IconProvider {
         return PlatformIcons.PACKAGE_LOCAL_ICON;
     }
 
-    private static Icon getBaseIcon(PsiElement psiElement) {
+    public static Icon getBaseIcon(PsiElement psiElement) {
         if (psiElement instanceof JetNamespaceHeader) {
             return PlatformIcons.PACKAGE_ICON;
         }
@@ -106,7 +101,7 @@ public class JetIconProvider extends IconProvider {
             }
 
             if (PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass) {
-                if (isAbstract((JetFunction) psiElement)) {
+                if (JetPsiUtil.isAbstract((JetFunction) psiElement)) {
                     return PlatformIcons.ABSTRACT_METHOD_ICON;
                 }
                 else {

@@ -141,7 +141,7 @@ public class JetPsiUtil {
             if (objectDeclaration == null) {
                 objectDeclaration = PsiTreeUtil.getParentOfType(namedDeclaration, JetEnumEntry.class);
             }
-            
+
             if (objectDeclaration == null) {
                 return null;
             }
@@ -166,7 +166,7 @@ public class JetPsiUtil {
         }
         else if (parent instanceof JetNamedFunction || parent instanceof JetClass) {
             firstPart = getFQName((JetNamedDeclaration) parent);
-        } 
+        }
         else if (parent instanceof JetObjectDeclaration) {
             if (parent.getParent() instanceof JetClassObject) {
                 JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(parent, JetClassOrObject.class);
@@ -215,7 +215,8 @@ public class JetPsiUtil {
         return false;
     }
 
-    @Nullable @IfNotParsed
+    @Nullable
+    @IfNotParsed
     public static ImportPath getImportPath(JetImportDirective importDirective) {
         final JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
@@ -322,11 +323,11 @@ public class JetPsiUtil {
     @Nullable
     public static JetSimpleNameExpression getLastReference(@NotNull JetExpression importedReference) {
         if (importedReference instanceof JetDotQualifiedExpression) {
-            JetExpression selectorExpression = ((JetDotQualifiedExpression)importedReference).getSelectorExpression();
-            return (selectorExpression instanceof JetSimpleNameExpression) ? (JetSimpleNameExpression)selectorExpression : null;
+            JetExpression selectorExpression = ((JetDotQualifiedExpression) importedReference).getSelectorExpression();
+            return (selectorExpression instanceof JetSimpleNameExpression) ? (JetSimpleNameExpression) selectorExpression : null;
         }
         if (importedReference instanceof JetSimpleNameExpression) {
-            return (JetSimpleNameExpression)importedReference;
+            return (JetSimpleNameExpression) importedReference;
         }
         return null;
     }
@@ -417,5 +418,9 @@ public class JetPsiUtil {
     public static boolean isNullConstant(@NotNull JetExpression expression) {
         JetExpression deparenthesized = deparenthesize(expression);
         return deparenthesized instanceof JetConstantExpression && deparenthesized.getNode().getElementType() == JetNodeTypes.NULL;
+    }
+
+    public static boolean isAbstract(@NotNull JetDeclarationWithBody declaration) {
+        return declaration.getBodyExpression() == null;
     }
 }
