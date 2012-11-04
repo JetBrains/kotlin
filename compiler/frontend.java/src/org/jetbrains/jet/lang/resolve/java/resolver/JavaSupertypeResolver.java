@@ -71,11 +71,11 @@ public final class JavaSupertypeResolver {
     }
 
     public Collection<JetType> getSupertypes(
+            @NotNull ClassDescriptor classDescriptor,
             @NotNull PsiClassWrapper psiClass,
             @NotNull ResolverClassData classData,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
-        ClassDescriptor classDescriptor = classData.getClassDescriptor();
 
         final List<JetType> result = new ArrayList<JetType>();
 

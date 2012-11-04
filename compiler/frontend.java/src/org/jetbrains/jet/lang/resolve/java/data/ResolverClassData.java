@@ -28,8 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 */
 public class ResolverClassData extends ResolverScopeData {
 
-    private final ClassDescriptorFromJvmBytecode classDescriptor;
-
     public ResolverClassData(
             @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
@@ -38,12 +36,6 @@ public class ResolverClassData extends ResolverScopeData {
             @NotNull ClassDescriptorFromJvmBytecode descriptor
     ) {
         super(psiClass, psiPackage, fqName, staticMembers, descriptor);
-        classDescriptor = descriptor;
-    }
-
-
-    public ClassDescriptorFromJvmBytecode getClassDescriptor() {
-        return classDescriptor;
     }
 
     @NotNull

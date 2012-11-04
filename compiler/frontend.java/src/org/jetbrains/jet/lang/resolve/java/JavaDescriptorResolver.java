@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -107,8 +108,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
-        return constructorResolver.resolveConstructors(classData);
+    public Collection<ConstructorDescriptor> resolveConstructors(
+            @NotNull ResolverClassData classData, @NotNull ClassDescriptorFromJvmBytecode classDescriptor
+    ) {
+        return constructorResolver.resolveConstructors(classData, classDescriptor);
     }
 
     @Nullable

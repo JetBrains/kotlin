@@ -248,7 +248,8 @@ public final class JavaClassResolver {
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
-        supertypes.addAll(supertypesResolver.getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
+        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classData, classTypeParameters
+        ));
 
         ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
         cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);

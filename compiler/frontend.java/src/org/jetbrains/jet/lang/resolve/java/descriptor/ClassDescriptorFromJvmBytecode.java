@@ -55,7 +55,8 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     public Collection<ConstructorDescriptor> getConstructors() {
         if (constructors == null) {
             assert resolverBinaryClassData != null;
-            this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData);
+            this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData,
+                                                                           this);
         }
         return constructors;
     }

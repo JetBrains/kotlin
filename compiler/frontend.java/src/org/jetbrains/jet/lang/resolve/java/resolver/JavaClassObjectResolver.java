@@ -114,8 +114,9 @@ public final class JavaClassObjectResolver {
                 = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver);
         ResolverClassData classObjectData = ResolverClassData.createBinaryClassData(classObjectPsiClass, fqName, classObjectDescriptor);
         classObjectDescriptor.setClassData(classObjectData);
-        classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(new PsiClassWrapper(classObjectPsiClass), classObjectData,
-                                                                             Collections.<TypeParameterDescriptor>emptyList()));
+        classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(classObjectDescriptor, new PsiClassWrapper(classObjectPsiClass), classObjectData,
+                                                                             Collections.<TypeParameterDescriptor>emptyList()
+        ));
         setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, classObjectData, getClassObjectName(containing.getName())
         );
         return classObjectDescriptor;

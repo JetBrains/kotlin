@@ -62,12 +62,13 @@ public final class JavaConstructorResolver {
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
+    public Collection<ConstructorDescriptor> resolveConstructors(
+            @NotNull ResolverClassData classData, @NotNull ClassDescriptorFromJvmBytecode containingClass
+    ) {
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
         PsiClass psiClass = classData.getPsiClass();
 
-        ClassDescriptorFromJvmBytecode containingClass = classData.getClassDescriptor();
         assert psiClass != null;
         TypeVariableResolver resolverForTypeParameters = TypeVariableResolvers.classTypeVariableResolver(
                 containingClass, "class " + psiClass.getQualifiedName());
