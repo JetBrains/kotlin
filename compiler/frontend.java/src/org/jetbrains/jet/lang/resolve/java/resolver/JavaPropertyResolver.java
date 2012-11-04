@@ -86,18 +86,13 @@ public final class JavaPropertyResolver {
             @NotNull ResolverScopeData scopeData,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
-
-        PsiClass psiClass = scopeData.getPsiClass();
-
         NamedMembers namedMembers = scopeData.getMembersCache().get(fieldName);
         if (namedMembers == null) {
             return Collections.emptySet();
         }
 
-        //noinspection ConstantConditions
-        String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
         return resolveNamedGroupProperties(ownerDescriptor, scopeData, namedMembers, fieldName,
-                                           "class or namespace " + qualifiedName);
+                                           "class or namespace " + DescriptorUtils.getFQName(ownerDescriptor));
     }
 
     @NotNull
