@@ -445,17 +445,15 @@ public final class JavaPropertyResolver {
             boolean isStatic
     ) {
         PsiClass psiClass = scopeData.getPsiClass();
-        if (psiClass != null && psiClass.isEnum() && isStatic) {
-            final String qualifiedName = psiClass.getQualifiedName();
-            assert qualifiedName != null;
-            final ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(qualifiedName));
-            assert classDescriptor != null;
-            final ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-            assert classObjectDescriptor != null;
-            return classObjectDescriptor;
-        }
-        else {
+        if (psiClass == null || !psiClass.isEnum() || !isStatic) {
             return owner;
         }
+        final String qualifiedName = psiClass.getQualifiedName();
+        assert qualifiedName != null;
+        final ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(qualifiedName));
+        assert classDescriptor != null;
+        final ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+        assert classObjectDescriptor != null;
+        return classObjectDescriptor;
     }
 }
