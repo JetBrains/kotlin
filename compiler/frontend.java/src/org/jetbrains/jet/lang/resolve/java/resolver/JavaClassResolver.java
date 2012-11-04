@@ -212,11 +212,11 @@ public final class JavaClassResolver {
 
         assert (!unresolvedCache.contains(fqName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
-        return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration).getClassDescriptor();
+        return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);
     }
 
     @NotNull
-    private ResolverClassData doCreateClassDescriptor(
+    private ClassDescriptorFromJvmBytecode doCreateClassDescriptor(
             @NotNull FqName fqName,
             @NotNull PsiClass psiClass,
             @NotNull PostponedTasks taskList,
@@ -260,7 +260,7 @@ public final class JavaClassResolver {
 
         trace.record(BindingContext.CLASS, psiClass, classDescriptor);
 
-        return classData;
+        return classDescriptor;
     }
 
     private void cache(@NotNull FqNameBase fqName, @Nullable ClassDescriptor classDescriptor) {

@@ -116,7 +116,8 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.setClassData(classObjectData);
         classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(new PsiClassWrapper(classObjectPsiClass), classObjectData,
                                                                              Collections.<TypeParameterDescriptor>emptyList()));
-        setUpClassObjectDescriptor(containing, fqName, classObjectData, getClassObjectName(containing.getName()));
+        setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, classObjectData, getClassObjectName(containing.getName())
+        );
         return classObjectDescriptor;
     }
 
@@ -155,28 +156,28 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.setClassData(classData);
 
         ResolverClassData data = ResolverClassData.createSyntheticClassObjectClassData(psiClass, classObjectDescriptor);
-        setUpClassObjectDescriptor(containing, fqName, data, getClassObjectName(containing.getName().getName()));
+        setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().getName()));
 
         return classObjectDescriptor;
     }
 
     private void setUpClassObjectDescriptor(
+            @NotNull ClassDescriptorFromJvmBytecode classObjectDescriptor,
             @NotNull ClassDescriptor containing,
             @NotNull FqNameBase fqName,
             @NotNull ResolverClassData data,
             @NotNull Name classObjectName
     ) {
-        ClassDescriptorFromJvmBytecode classDescriptor = data.getClassDescriptor();
-        classDescriptor.setName(classObjectName);
-        classDescriptor.setModality(Modality.FINAL);
-        classDescriptor.setVisibility(containing.getVisibility());
-        classDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
-        classDescriptor.createTypeConstructor();
+        classObjectDescriptor.setName(classObjectName);
+        classObjectDescriptor.setModality(Modality.FINAL);
+        classObjectDescriptor.setVisibility(containing.getVisibility());
+        classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classObjectDescriptor.createTypeConstructor();
         JavaClassMembersScope classMembersScope = new JavaClassMembersScope(semanticServices, data);
         WritableScopeImpl writableScope =
-                new WritableScopeImpl(classMembersScope, classDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
+                new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        classDescriptor.setScopeForMemberLookup(writableScope);
+        classObjectDescriptor.setScopeForMemberLookup(writableScope);
     }
 
 

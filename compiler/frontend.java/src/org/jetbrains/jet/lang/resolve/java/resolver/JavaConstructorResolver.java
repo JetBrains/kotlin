@@ -145,7 +145,7 @@ public final class JavaConstructorResolver {
         }
         else {
             for (PsiMethod psiConstructor : psiConstructors) {
-                ConstructorDescriptor constructor = resolveConstructor(psiClass, classData, isStatic, psiConstructor);
+                ConstructorDescriptor constructor = resolveConstructor(psiClass, isStatic, psiConstructor, containingClass);
                 if (constructor != null) {
                     constructors.add(constructor);
                 }
@@ -162,9 +162,9 @@ public final class JavaConstructorResolver {
     @Nullable
     private ConstructorDescriptor resolveConstructor(
             PsiClass psiClass,
-            ResolverClassData classData,
             boolean aStatic,
-            PsiMethod psiConstructor
+            PsiMethod psiConstructor,
+            ClassDescriptorFromJvmBytecode classDescriptor
     ) {
         PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 
@@ -178,14 +178,14 @@ public final class JavaConstructorResolver {
         }
 
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                classData.getClassDescriptor(),
+                classDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false);
 
         String context = "constructor of class " + psiClass.getQualifiedName();
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
                 constructorDescriptor, constructor.getParameters(),
-                TypeVariableResolvers.classTypeVariableResolver(classData.getClassDescriptor(), context));
+                TypeVariableResolvers.classTypeVariableResolver(classDescriptor, context));
 
         if (valueParameterDescriptors.getReceiverType() != null) {
             throw new IllegalStateException();
@@ -202,7 +202,7 @@ public final class JavaConstructorResolver {
                          alternativeMethodSignatureData.getError());
         }
 
-        constructorDescriptor.initialize(classData.getClassDescriptor().getTypeConstructor().getParameters(),
+        constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(),
                                          valueParameterDescriptors.getDescriptors(),
                                          DescriptorResolverUtils.resolveVisibility(psiConstructor, constructor.getJetConstructorAnnotation()),
                                          aStatic);
