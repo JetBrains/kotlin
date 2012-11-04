@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -51,11 +52,18 @@ public class DescriptorClassMember implements ClassMemberWithElement {
         myDescriptor = descriptor;
         if (myPsiElement.isValid()) {
             boolean isClass = myPsiElement instanceof PsiClass || myPsiElement instanceof JetClass;
-            int flags = isClass ? 0 : 3;
-            icon = myPsiElement.getIcon(flags);
+            int flags = isClass ? 0 : 1;
+            if (myPsiElement instanceof JetDeclaration) {  // kotlin declaration
+                // visibility and abstraction better detect by a descriptor
+                icon = JetDescriptorIconProvider.getIcon(myDescriptor, flags);
+            }
+            else {
+                // it is better to show java icons for java code
+                icon = myPsiElement.getIcon(flags);
+            }
         }
         else {
-            icon = null;
+            icon = JetDescriptorIconProvider.getIcon(myDescriptor, 0);
         }
     }
 
@@ -72,7 +80,7 @@ public class DescriptorClassMember implements ClassMemberWithElement {
             declaration = ((PsiMember) myPsiElement).getContainingClass();
         }
         assert parent != null : NO_PARENT_FOR + myDescriptor;
-        assert declaration != null : String.format("No parent of type %s for %s", JetNamedDeclaration.class.getSimpleName(), myPsiElement);
+        assert declaration != null : NO_PARENT_FOR + myPsiElement;
         return new DescriptorClassMember(declaration, parent);
     }
 
