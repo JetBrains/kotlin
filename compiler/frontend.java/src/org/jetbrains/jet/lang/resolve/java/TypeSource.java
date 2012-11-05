@@ -32,7 +32,7 @@ public class TypeSource {
     @NotNull
     private final PsiModifierListOwner psiNotNullOwner;
 
-    TypeSource(@NotNull String typeString, @NotNull PsiType psiType, @NotNull PsiModifierListOwner psiNotNullOwner) {
+    public TypeSource(@NotNull String typeString, @NotNull PsiType psiType, @NotNull PsiModifierListOwner psiNotNullOwner) {
         this.typeString = typeString;
         this.psiType = psiType;
         this.psiNotNullOwner = psiNotNullOwner;

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.provider;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
 public abstract class PsiDeclarationProviderBase implements PsiDeclarationProvider {
     private MembersCache membersCache = null;

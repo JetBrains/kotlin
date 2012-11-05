@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.provider;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
 public interface PsiDeclarationProvider {
 

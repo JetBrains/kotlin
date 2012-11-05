@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSigna
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiData;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;

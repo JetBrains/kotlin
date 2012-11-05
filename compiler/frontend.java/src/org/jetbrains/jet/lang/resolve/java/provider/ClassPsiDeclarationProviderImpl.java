@@ -4,7 +4,6 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.Origin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;

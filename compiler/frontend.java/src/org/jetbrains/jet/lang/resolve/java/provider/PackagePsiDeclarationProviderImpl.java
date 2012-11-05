@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.Origin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;
