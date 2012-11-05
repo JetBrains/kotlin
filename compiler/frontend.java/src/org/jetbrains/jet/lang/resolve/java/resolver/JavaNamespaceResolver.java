@@ -106,7 +106,7 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        trace.record(BindingContext.NAMESPACE, newScope.getResolverScopeData().getPsiPackageOrPsiClass(), javaNamespaceDescriptor);
+        trace.record(BindingContext.NAMESPACE, newScope.getResolverScopeData().getPsiPackage(), javaNamespaceDescriptor);
 
         javaNamespaceDescriptor.setMemberScope(newScope);
 
@@ -173,7 +173,8 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        return new ResolverNamespaceData(psiClass, psiPackage, fqName);
+        assert psiPackage != null;
+        return ResolverNamespaceData.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaPackageScope packageScope) {

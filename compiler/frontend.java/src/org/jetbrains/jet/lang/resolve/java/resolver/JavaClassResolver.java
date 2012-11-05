@@ -224,7 +224,7 @@ public final class JavaClassResolver {
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
-        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass, fqName);
+        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classDescriptor
                 = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver, classData);
 

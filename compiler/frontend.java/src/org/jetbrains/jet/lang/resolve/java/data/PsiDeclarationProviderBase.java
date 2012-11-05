@@ -16,31 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.java.data;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
-/**
-* @author Pavel Talanov
-*/
-public class ResolverClassData extends ClassPsiDeclarationProviderBase {
+public abstract class PsiDeclarationProviderBase implements PsiDeclarationProvider {
+    private MembersCache membersCache = null;
 
-    protected ResolverClassData(
-            @NotNull PsiClass psiClass,
-            boolean staticMembers
-    ) {
-        super(staticMembers, psiClass);
+    @Override
+    @NotNull
+    public MembersCache getMembersCache() {
+        if (membersCache == null) {
+            membersCache = buildMembersCache();
+        }
+        return membersCache;
     }
 
     @NotNull
-    public static ResolverClassData createSyntheticClassObjectClassData(
-            @NotNull PsiClass psiClass
-    ) {
-        return new ResolverClassData(psiClass, true);
-    }
-
-    public static ResolverClassData createBinaryClassData(
-            @NotNull PsiClass psiClass
-    ) {
-        return new ResolverClassData(psiClass, false);
-    }
+    protected abstract MembersCache buildMembersCache();
 }

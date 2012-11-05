@@ -42,10 +42,6 @@ public class JavaPackageScope extends JavaBaseScope {
             @NotNull ResolverScopeData resolverNamespaceData) {
         super(descriptor, semanticServices, resolverNamespaceData);
         this.packageFQN = packageFQN;
-
-        if (!resolverNamespaceData.isStaticMembers()) {
-            throw new IllegalArgumentException("instance members should be resolved using " + JavaClassMembersScope.class);
-        }
     }
 
     @Override

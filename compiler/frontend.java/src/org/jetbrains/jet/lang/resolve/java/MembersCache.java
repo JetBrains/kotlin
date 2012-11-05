@@ -56,18 +56,17 @@ public final class MembersCache {
 
     @NotNull
     public static MembersCache buildMembersByNameCache(
-            @Nullable PsiClass psiClass,
+            @NotNull MembersCache membersCache, @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
             boolean staticMembers,
             boolean isKotlin
     ) {
-        MembersCache cache = new MembersCache();
         if (psiClass != null) {
-            cache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
+            membersCache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
         }
         PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getInnerClasses();
-        cache.new ObjectClassProcessor(classes).process();
-        return cache;
+        membersCache.new ObjectClassProcessor(classes).process();
+        return membersCache;
     }
 
     private class ObjectClassProcessor {

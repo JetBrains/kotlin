@@ -17,32 +17,16 @@
 package org.jetbrains.jet.lang.resolve.java.data;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.MembersCache;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
-import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
-
-public abstract class ResolverScopeData implements ClassPsiDeclarationProvider {
-
-    private MembersCache membersCache = null;
-
-    private final PsiClass psiClass;
+public abstract class ResolverScopeData extends ClassPsiDeclarationProviderBase {
 
     @Nullable
     private final PsiPackage psiPackage;
-
-    private final boolean staticMembers;
-
-    @NotNull
-    private final Origin origin;
 
     public ResolverScopeData(
             @Nullable PsiClass psiClass,
@@ -50,71 +34,20 @@ public abstract class ResolverScopeData implements ClassPsiDeclarationProvider {
             @Nullable FqName fqName,
             boolean staticMembers
     ) {
+        super(staticMembers, psiClass);
         DescriptorResolverUtils.checkPsiClassIsNotJet(psiClass);
 
-        this.psiClass = psiClass;
         this.psiPackage = psiPackage;
 
         if (psiClass == null && psiPackage == null) {
             throw new IllegalStateException("both psiClass and psiPackage cannot be null");
         }
 
-        this.staticMembers = staticMembers;
-        this.origin = determineOrigin(psiClass);
-
         //TODO: move check to remove fqName parameter
-        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && getOrigin() == KOTLIN) {
-            throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
-        }
-    }
-
-    @NotNull
-    private static Origin determineOrigin(@Nullable PsiClass psiClass) {
-        return ((psiClass != null) && DescriptorResolverUtils.isKotlinClass(psiClass)) ? KOTLIN : JAVA;
-    }
-
-    @NotNull
-    public PsiElement getPsiPackageOrPsiClass() {
-        if (psiPackage != null) {
-            return psiPackage;
-        }
-        else {
-            assert psiClass != null;
-            return psiClass;
-        }
-    }
-    @Override
-    @NotNull
-    public MembersCache getMembersCache() {
-        if (membersCache == null) {
-            membersCache = MembersCache.buildMembersByNameCache(psiClass, psiPackage, staticMembers, getOrigin() == KOTLIN);
-        }
-        return membersCache;
-    }
-
-    @Override
-    @NotNull
-    public PsiClass getPsiClass() {
-        return psiClass;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return psiClass == null;
     }
 
     @NotNull
     public PsiPackage getPsiPackage() {
         return psiPackage;
-    }
-
-    @Override
-    @NotNull
-    public Origin getOrigin() {
-        return origin;
-    }
-
-    public boolean isStaticMembers() {
-        return staticMembers;
     }
 }

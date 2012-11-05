@@ -20,18 +20,61 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.MembersCache;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-/**
- * Either package or class with static members
- */
-public class ResolverNamespaceData extends ResolverScopeData implements PackagePsiDeclarationProvider {
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
 
-    public ResolverNamespaceData(
+public class ResolverNamespaceData extends PsiDeclarationProviderBase implements PackagePsiDeclarationProvider {
+
+    @NotNull
+    public static PackagePsiDeclarationProvider createDeclarationProviderForPackage(
+            @NotNull PsiPackage psiPackage,
             @Nullable PsiClass psiClass,
-            @Nullable PsiPackage psiPackage,
-            @NotNull FqName fqName
+            //TODO:
+            @Nullable FqName fqName
     ) {
-        super(psiClass, psiPackage, fqName, true);
+        if (psiClass == null) {
+            return new ResolverNamespaceData(psiPackage);
+        }
+        KotlinNamespacePsiDeclarationProvider result = new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass);
+        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS))) {
+            throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
+        }
+        return result;
+    }
+
+    @NotNull
+    private final PsiPackage psiPackage;
+
+    protected ResolverNamespaceData(
+            @NotNull PsiPackage psiPackage
+    ) {
+        this.psiPackage = psiPackage;
+    }
+
+    @NotNull
+    @Override
+    public PsiPackage getPsiPackage() {
+        return psiPackage;
+    }
+
+    @NotNull
+    @Override
+    protected MembersCache buildMembersCache() {
+        return MembersCache.buildMembersByNameCache(new MembersCache(), null, getPsiPackage(), true, false);
+    }
+
+    @NotNull
+    @Override
+    public Origin getOrigin() {
+        return JAVA;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
     }
 }
