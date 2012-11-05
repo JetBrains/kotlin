@@ -132,7 +132,7 @@ public final class JavaNamespaceResolver {
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        PsiDeclarationProvider namespaceData = createNamespaceData(fqName, namespaceDescriptor);
+        PsiDeclarationProvider namespaceData = createDeclarationProvider(fqName, namespaceDescriptor);
         JavaPackageScope javaPackageScope;
         if (namespaceData == null) {
             javaPackageScope = null;
@@ -148,30 +148,24 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    private PsiDeclarationProvider createNamespaceData(
+    private PsiDeclarationProvider createDeclarationProvider(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        PsiPackage psiPackage;
-        PsiClass psiClass;
-
-        lookingForPsi:
-        {
-            psiClass = getPsiClassForJavaPackageScope(fqName);
-            psiPackage = psiClassFinder.findPsiPackage(fqName);
-            if (psiClass != null || psiPackage != null) {
-                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
-                break lookingForPsi;
-            }
-
-            psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
-            if (psiClass != null && !psiClass.isEnum()) {
-                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
-                break lookingForPsi;
-            }
-            return null;
+        PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
+        PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
+        if (psiClass != null || psiPackage != null) {
+            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
+            return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
         }
-        return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
+
+        psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        if (psiClass != null && !psiClass.isEnum()) {
+            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
+            return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
+        }
+
+        return null;
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaPackageScope packageScope) {
