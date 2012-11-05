@@ -106,6 +106,22 @@ public inline fun <T: Any> T?.foldRight(initial: T, operation: (it: T, it2: T) -
 }
 
 /**
+ * Returns the value of the Nullable unless it is null, otherwise it will return the value passed in.  Equivalent to ?:
+ * but supports further chaining.
+ */
+public inline fun <T> T?.getOrElse(alt : T) : T {
+    return this ?: alt
+}
+
+/**
+ * Returns the value of the Nullable unless it is null, otherwise it will return the result of the expression passed in.  
+ * Equivalent to ?: but supports further chaining.
+ */
+public inline fun <T> T?.getOrElse(t: () -> T) : T {
+    return this ?: t()
+}
+
+/**
  * Iterates through the collection performing the transformation on each element and using the result
  * as the key in a map to group elements by the result
  */
