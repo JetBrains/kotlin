@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.data;
+package org.jetbrains.jet.lang.resolve.java.provider;
 
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 
-public interface PackagePsiDeclarationProvider extends PsiDeclarationProvider {
+public interface ClassPsiDeclarationProvider extends PsiDeclarationProvider {
 
     @NotNull
-    PsiPackage getPsiPackage();
+    PsiClass getPsiClass();
+
+    //TODO: remove this method
+    boolean isStaticMembers();
 }

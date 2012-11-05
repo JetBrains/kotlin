@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiData;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
+import static org.jetbrains.jet.lang.resolve.java.provider.Origin.JAVA;
 
 public final class JavaPropertyResolver {
 

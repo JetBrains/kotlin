@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.data;
+package org.jetbrains.jet.lang.resolve.java.provider;
 
-public enum Origin {
-    JAVA,
-    KOTLIN
+import com.intellij.psi.PsiPackage;
+import org.jetbrains.annotations.NotNull;
+
+public interface PackagePsiDeclarationProvider extends PsiDeclarationProvider {
+
+    @NotNull
+    PsiPackage getPsiPackage();
 }

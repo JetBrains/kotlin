@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProviderImpl;
-import org.jetbrains.jet.lang.resolve.java.data.PackagePsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProviderImpl;
+import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 

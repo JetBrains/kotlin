@@ -26,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -43,8 +43,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
-import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.provider.Origin.JAVA;
+import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;
 
 public final class JavaFunctionResolver {
 

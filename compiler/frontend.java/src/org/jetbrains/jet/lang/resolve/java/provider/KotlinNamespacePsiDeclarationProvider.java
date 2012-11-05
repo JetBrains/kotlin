@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.data;
+package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
-import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;
 
 public final class KotlinNamespacePsiDeclarationProvider extends ClassPsiDeclarationProviderImpl implements PackagePsiDeclarationProvider {
 
