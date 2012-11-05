@@ -57,6 +57,7 @@ public class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
+        //TODO: check that class is an object
         return semanticServices.getDescriptorResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
     }
 
