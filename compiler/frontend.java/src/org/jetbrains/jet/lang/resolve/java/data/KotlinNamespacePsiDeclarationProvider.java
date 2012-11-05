@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
 import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
 
-public final class KotlinNamespacePsiDeclarationProvider extends ResolverClassData implements PackagePsiDeclarationProvider {
+public final class KotlinNamespacePsiDeclarationProvider extends ClassPsiDeclarationProviderImpl implements PackagePsiDeclarationProvider {
 
     @NotNull
     private final PackagePsiDeclarationProvider packagePsiDeclarationProvider;

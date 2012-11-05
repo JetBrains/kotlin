@@ -35,10 +35,11 @@ public final class PsiDeclarationProviderFactory {
         return createDeclarationProviderForClassStaticMembers(psiClass);
     }
 
-    public static ResolverClassData createBinaryClassData(
+    @NotNull
+    public static ClassPsiDeclarationProvider createBinaryClassData(
             @NotNull PsiClass psiClass
     ) {
-        return new ResolverClassData(psiClass, false);
+        return new ClassPsiDeclarationProviderImpl(psiClass, false);
     }
 
     @NotNull
@@ -78,6 +79,6 @@ public final class PsiDeclarationProviderFactory {
 
     @NotNull
     private static ClassPsiDeclarationProvider createDeclarationProviderForClassStaticMembers(@NotNull PsiClass psiClass) {
-        return new ResolverClassData(psiClass, true);
+        return new ClassPsiDeclarationProviderImpl(psiClass, true);
     }
 }

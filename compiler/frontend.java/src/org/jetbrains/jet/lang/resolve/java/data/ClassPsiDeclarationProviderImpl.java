@@ -9,7 +9,7 @@ import org.jetbrains.jet.lang.resolve.java.MembersCache;
 import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
 
-public abstract class ClassPsiDeclarationProviderBase extends PsiDeclarationProviderBase implements ClassPsiDeclarationProvider {
+public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase implements ClassPsiDeclarationProvider {
 
     @NotNull
     private final PsiClass psiClass;
@@ -17,9 +17,8 @@ public abstract class ClassPsiDeclarationProviderBase extends PsiDeclarationProv
     @NotNull
     protected final Origin origin;
 
-    public ClassPsiDeclarationProviderBase(
-            boolean staticMembers,
-            @NotNull PsiClass psiClass
+    protected ClassPsiDeclarationProviderImpl(
+            @NotNull PsiClass psiClass, boolean staticMembers
     ) {
         this.staticMembers = staticMembers;
         this.psiClass = psiClass;

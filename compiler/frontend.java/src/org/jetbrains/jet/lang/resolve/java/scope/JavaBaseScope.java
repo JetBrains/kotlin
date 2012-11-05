@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProviderBase;
+import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProviderImpl;
 import org.jetbrains.jet.lang.resolve.java.data.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
@@ -172,7 +172,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         }
         else {
             result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                    descriptor, psiClass, ((ClassPsiDeclarationProviderBase) resolverScopeData).isStaticMembers()));
+                    descriptor, psiClass, ((ClassPsiDeclarationProviderImpl) resolverScopeData).isStaticMembers()));
         }
     }
 }
