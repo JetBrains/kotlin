@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
@@ -444,15 +444,13 @@ public final class JavaPropertyResolver {
     @NotNull
     private ClassOrNamespaceDescriptor getRealOwner(
             @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull PsiDeclarationProvider scopeData,
+            @NotNull PsiDeclarationProvider declarationProvider,
             boolean isStatic
     ) {
-        //TODO: hack!
-        ResolverScopeData resolverScopeData = (ResolverScopeData) scopeData;
-        if (resolverScopeData.isEmpty()) {
+        if (!(declarationProvider instanceof ClassPsiDeclarationProvider)) {
             return owner;
         }
-        PsiClass psiClass = resolverScopeData.getPsiClass();
+        PsiClass psiClass = ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
         if (!psiClass.isEnum() || !isStatic) {
             return owner;
         }

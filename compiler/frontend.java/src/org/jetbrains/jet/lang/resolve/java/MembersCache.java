@@ -64,6 +64,7 @@ public final class MembersCache {
         if (psiClass != null) {
             membersCache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
         }
+        //TODO:
         PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getInnerClasses();
         membersCache.new ObjectClassProcessor(classes).process();
         return membersCache;

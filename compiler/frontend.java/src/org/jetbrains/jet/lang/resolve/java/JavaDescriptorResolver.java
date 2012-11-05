@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
@@ -132,7 +132,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name name,
-            @NotNull ResolverScopeData data,
+            @NotNull PsiDeclarationProvider data,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
         return propertiesResolver.resolveFieldGroupByName(name, data, ownerDescriptor);
@@ -166,7 +166,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Set<FunctionDescriptor> resolveFunctionGroup(
             @NotNull Name methodName,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull ClassPsiDeclarationProvider scopeData,
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
         return functionResolver.resolveFunctionGroup(methodName, scopeData, ownerDescriptor);

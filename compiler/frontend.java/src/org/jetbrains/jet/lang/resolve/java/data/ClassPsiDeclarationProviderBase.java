@@ -39,11 +39,6 @@ public abstract class ClassPsiDeclarationProviderBase extends PsiDeclarationProv
     }
 
     @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
     @NotNull
     public Origin getOrigin() {
         return origin;
@@ -54,6 +49,7 @@ public abstract class ClassPsiDeclarationProviderBase extends PsiDeclarationProv
         return ((psiClass != null) && DescriptorResolverUtils.isKotlinClass(psiClass)) ? KOTLIN : JAVA;
     }
 
+    @Override
     public boolean isStaticMembers() {
         return staticMembers;
     }

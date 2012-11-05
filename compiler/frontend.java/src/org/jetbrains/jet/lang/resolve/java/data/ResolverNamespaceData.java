@@ -30,14 +30,19 @@ import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
 public class ResolverNamespaceData extends PsiDeclarationProviderBase implements PackagePsiDeclarationProvider {
 
     @NotNull
-    public static PackagePsiDeclarationProvider createDeclarationProviderForPackage(
-            @NotNull PsiPackage psiPackage,
+    public static PsiDeclarationProvider createDeclarationProviderForPackage(
+            @Nullable PsiPackage psiPackage,
             @Nullable PsiClass psiClass,
             //TODO:
             @Nullable FqName fqName
     ) {
         if (psiClass == null) {
+
+            assert psiPackage != null;
             return new ResolverNamespaceData(psiPackage);
+        }
+        if (psiPackage == null) {
+            return new ResolverClassData(psiClass, true);
         }
         KotlinNamespacePsiDeclarationProvider result = new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass);
         if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS))) {
@@ -71,10 +76,5 @@ public class ResolverNamespaceData extends PsiDeclarationProviderBase implements
     @Override
     public Origin getOrigin() {
         return JAVA;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
     }
 }

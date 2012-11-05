@@ -30,9 +30,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -106,7 +105,7 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        trace.record(BindingContext.NAMESPACE, newScope.getResolverScopeData().getPsiPackage(), javaNamespaceDescriptor);
+        trace.record(BindingContext.NAMESPACE, newScope.getPsiElement(), javaNamespaceDescriptor);
 
         javaNamespaceDescriptor.setMemberScope(newScope);
 
@@ -133,14 +132,14 @@ public final class JavaNamespaceResolver {
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        PackagePsiDeclarationProvider namespaceData = createNamespaceData(fqName, namespaceDescriptor);
+        PsiDeclarationProvider namespaceData = createNamespaceData(fqName, namespaceDescriptor);
         JavaPackageScope javaPackageScope;
         if (namespaceData == null) {
             javaPackageScope = null;
         }
         else {
             //TODO:
-            javaPackageScope = new JavaPackageScope(namespaceDescriptor, fqName, javaSemanticServices, (ResolverScopeData) namespaceData);
+            javaPackageScope = new JavaPackageScope(namespaceDescriptor, fqName, javaSemanticServices, namespaceData);
         }
 
         cache(fqName, javaPackageScope);
@@ -149,7 +148,7 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    private PackagePsiDeclarationProvider createNamespaceData(
+    private PsiDeclarationProvider createNamespaceData(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
@@ -172,8 +171,6 @@ public final class JavaNamespaceResolver {
             }
             return null;
         }
-
-        assert psiPackage != null;
         return ResolverNamespaceData.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
     }
 

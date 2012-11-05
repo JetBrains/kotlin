@@ -23,4 +23,7 @@ public interface ClassPsiDeclarationProvider extends PsiDeclarationProvider {
 
     @NotNull
     PsiClass getPsiClass();
+
+    //TODO: remove this method
+    boolean isStaticMembers();
 }

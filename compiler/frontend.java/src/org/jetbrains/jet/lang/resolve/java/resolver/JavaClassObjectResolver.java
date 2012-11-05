@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
@@ -175,8 +174,7 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
         //TODO:
-        JavaClassMembersScope classMembersScope = new JavaClassMembersScope(classObjectDescriptor, semanticServices,
-                                                                            (ResolverScopeData) data);
+        JavaClassMembersScope classMembersScope = new JavaClassMembersScope(classObjectDescriptor, semanticServices, data);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);

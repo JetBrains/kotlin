@@ -26,7 +26,4 @@ public interface PsiDeclarationProvider {
 
     @NotNull
     Origin getOrigin();
-
-    //TODO: remove this method
-    boolean isEmpty();
 }
