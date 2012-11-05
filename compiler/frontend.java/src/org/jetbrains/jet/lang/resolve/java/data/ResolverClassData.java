@@ -30,17 +30,4 @@ public class ResolverClassData extends ClassPsiDeclarationProviderBase {
     ) {
         super(staticMembers, psiClass);
     }
-
-    @NotNull
-    public static ResolverClassData createSyntheticClassObjectClassData(
-            @NotNull PsiClass psiClass
-    ) {
-        return new ResolverClassData(psiClass, true);
-    }
-
-    public static ResolverClassData createBinaryClassData(
-            @NotNull PsiClass psiClass
-    ) {
-        return new ResolverClassData(psiClass, false);
-    }
 }

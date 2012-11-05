@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.data.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
@@ -111,7 +112,7 @@ public final class JavaClassObjectResolver {
         String qualifiedName = classObjectPsiClass.getQualifiedName();
         assert qualifiedName != null;
         FqName fqName = new FqName(qualifiedName);
-        ResolverClassData classObjectData = ResolverClassData.createBinaryClassData(classObjectPsiClass);
+        ResolverClassData classObjectData = PsiDeclarationProviderFactory.createBinaryClassData(classObjectPsiClass);
         ClassDescriptorFromJvmBytecode classObjectDescriptor
                 = new ClassDescriptorFromJvmBytecode(containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver, classObjectData);
         classObjectDescriptor.setSupertypes(supertypesResolver.getSupertypes(classObjectDescriptor, new PsiClassWrapper(classObjectPsiClass), classObjectData,
@@ -151,11 +152,11 @@ public final class JavaClassObjectResolver {
     ) {
         FqNameUnsafe fqName = DescriptorResolverUtils.getFqNameForClassObject(psiClass);
 
-        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass);
+        ResolverClassData classData = PsiDeclarationProviderFactory.createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classObjectDescriptor = new ClassDescriptorFromJvmBytecode(
                 containing, ClassKind.CLASS_OBJECT, javaDescriptorResolver, classData);
 
-        ResolverClassData data = ResolverClassData.createSyntheticClassObjectClassData(psiClass);
+        ClassPsiDeclarationProvider data = PsiDeclarationProviderFactory.createSyntheticClassObjectClassData(psiClass);
         setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, data, getClassObjectName(containing.getName().getName()));
 
         return classObjectDescriptor;

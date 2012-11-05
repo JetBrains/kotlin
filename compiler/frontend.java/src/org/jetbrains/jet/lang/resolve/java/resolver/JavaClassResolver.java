@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
@@ -224,7 +225,7 @@ public final class JavaClassResolver {
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
-        ResolverClassData classData = ResolverClassData.createBinaryClassData(psiClass);
+        ResolverClassData classData = PsiDeclarationProviderFactory.createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classDescriptor
                 = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver, classData);
 

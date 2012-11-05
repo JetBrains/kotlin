@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
+import org.jetbrains.jet.lang.resolve.java.data.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -171,7 +171,7 @@ public final class JavaNamespaceResolver {
             }
             return null;
         }
-        return ResolverNamespaceData.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
+        return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaPackageScope packageScope) {

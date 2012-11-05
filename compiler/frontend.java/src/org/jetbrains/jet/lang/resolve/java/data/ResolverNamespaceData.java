@@ -16,40 +16,13 @@
 
 package org.jetbrains.jet.lang.resolve.java.data;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.MembersCache;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
 
 public class ResolverNamespaceData extends PsiDeclarationProviderBase implements PackagePsiDeclarationProvider {
-
-    @NotNull
-    public static PsiDeclarationProvider createDeclarationProviderForPackage(
-            @Nullable PsiPackage psiPackage,
-            @Nullable PsiClass psiClass,
-            //TODO:
-            @Nullable FqName fqName
-    ) {
-        if (psiClass == null) {
-
-            assert psiPackage != null;
-            return new ResolverNamespaceData(psiPackage);
-        }
-        if (psiPackage == null) {
-            return new ResolverClassData(psiClass, true);
-        }
-        KotlinNamespacePsiDeclarationProvider result = new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass);
-        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS))) {
-            throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
-        }
-        return result;
-    }
 
     @NotNull
     private final PsiPackage psiPackage;
