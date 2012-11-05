@@ -21,13 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.MembersCache;
 
 import static org.jetbrains.jet.lang.resolve.java.data.Origin.JAVA;
+import static org.jetbrains.jet.lang.resolve.java.data.Origin.KOTLIN;
 
-public class ResolverNamespaceData extends PsiDeclarationProviderBase implements PackagePsiDeclarationProvider {
+public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProviderBase implements PackagePsiDeclarationProvider {
 
     @NotNull
     private final PsiPackage psiPackage;
 
-    protected ResolverNamespaceData(
+    /*package private*/ PackagePsiDeclarationProviderImpl(
             @NotNull PsiPackage psiPackage
     ) {
         this.psiPackage = psiPackage;
@@ -42,7 +43,7 @@ public class ResolverNamespaceData extends PsiDeclarationProviderBase implements
     @NotNull
     @Override
     protected MembersCache buildMembersCache() {
-        return MembersCache.buildMembersByNameCache(new MembersCache(), null, getPsiPackage(), true, false);
+        return MembersCache.buildMembersByNameCache(new MembersCache(), null, getPsiPackage(), true, getOrigin() == KOTLIN);
     }
 
     @NotNull

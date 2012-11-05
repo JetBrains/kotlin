@@ -33,7 +33,7 @@ public final class KotlinNamespacePsiDeclarationProvider extends ClassPsiDeclara
             @NotNull PsiClass psiClass
     ) {
         super(psiClass, true);
-        this.packagePsiDeclarationProvider = new ResolverNamespaceData(psiPackage);
+        this.packagePsiDeclarationProvider = PsiDeclarationProviderFactory.createDeclarationProviderForNamespaceWithoutMembers(psiPackage);
     }
 
     @NotNull
