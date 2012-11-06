@@ -170,11 +170,20 @@ public class ResolveSessionUtils {
             bodyResolver.resolvePropertyInitializer(jetProperty, descriptor, propertyInitializer, propertyResolutionScope);
         }
 
+        addAccessorDeclaringScopes(jetProperty, bodyResolveContext, propertyResolutionScope);
+        bodyResolver.resolvePropertyAccessors(jetProperty, descriptor);
+    }
+
+    private static void addAccessorDeclaringScopes(
+            JetProperty jetProperty,
+            EmptyBodyResolveContext bodyResolveContext,
+            JetScope propertyResolutionScope
+    ) {
+        ImmutableMap.Builder<JetDeclaration, JetScope> builder = ImmutableMap.builder();
         for (final JetPropertyAccessor propertyAccessor : jetProperty.getAccessors()) {
-            bodyResolveContext.setDeclaringScopes(
-                    ImmutableMap.<JetDeclaration, JetScope>builder().put(propertyAccessor, propertyResolutionScope).build());
-            bodyResolver.resolvePropertyAccessors(jetProperty, descriptor);
+            builder.put(propertyAccessor, propertyResolutionScope);
         }
+        bodyResolveContext.setDeclaringScopes(builder.build());
     }
 
     private static void functionAdditionalResolve(
