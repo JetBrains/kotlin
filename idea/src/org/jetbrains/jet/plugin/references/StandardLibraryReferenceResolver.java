@@ -122,6 +122,10 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null;
 
+        // Refreshing VFS: in case the plugin jar was updated, the caches may hold the old value
+        vf.getChildren();
+        vf.refresh(false, true);
+
         PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(vf);
         assert psiDirectory != null;
         return ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
