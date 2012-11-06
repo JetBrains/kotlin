@@ -332,4 +332,8 @@ public class ArrayGenTest extends CodegenTestCase {
         blackBoxFile("classes/nonnullarray.jet");
         //        System.out.println(generateToText());
     }
+
+    public void testArrayCast() throws Exception {
+        blackBoxFile("regressions/kt2997.kt");
+    }
 }
