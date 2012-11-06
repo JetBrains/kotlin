@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -375,7 +374,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     builder,
                     skipValVar ? null : descriptor.isVar(),
                     Collections.<TypeParameterDescriptor>emptyList(),
-                    ReceiverDescriptor.NO_RECEIVER,
+                    ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
                     type);
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
@@ -386,7 +385,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 @NotNull StringBuilder builder,
                 @Nullable Boolean isVar,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
-                @NotNull ReceiverDescriptor receiver,
+                @Nullable ReceiverParameterDescriptor receiver,
                 @Nullable JetType outType
         ) {
             String typeString = lt() + "no type>";
@@ -399,7 +398,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
             renderTypeParameters(typeParameters, builder);
 
-            if (receiver.exists()) {
+            if (receiver != null) {
                 builder.append(escape(renderType(receiver.getType()))).append(".");
             }
 
@@ -460,8 +459,8 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     builder.append(" ");
                 }
 
-                ReceiverDescriptor receiver = descriptor.getReceiverParameter();
-                if (receiver.exists()) {
+                ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
+                if (receiver != null) {
                     builder.append(escape(renderType(receiver.getType()))).append(".");
                 }
             }
@@ -481,6 +480,11 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         @Override
         public Void visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, StringBuilder data) {
             return visitFunctionDescriptor(descriptor, data);
+        }
+
+        @Override
+        public Void visitReceiverParameterDescriptor(ReceiverParameterDescriptor descriptor, StringBuilder data) {
+            throw new UnsupportedOperationException("Don't render receiver parameters");
         }
 
         private void renderWhereSuffix(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
