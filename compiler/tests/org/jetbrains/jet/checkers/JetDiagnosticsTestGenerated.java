@@ -1656,6 +1656,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funKeyword.kt");
                 }
                 
+                @TestMetadata("funcitonTypes.kt")
+                public void testFuncitonTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funcitonTypes.kt");
+                }
+                
                 @TestMetadata("incompleteVal.kt")
                 public void testIncompleteVal() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/incompleteVal.kt");
