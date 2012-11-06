@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,7 +34,7 @@ public interface BodiesResolveContext {
     Map<JetObjectDeclaration, MutableClassDescriptor> getObjects();
     Map<JetProperty, PropertyDescriptor> getProperties();
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
-    Map<JetDeclaration, JetScope> getDeclaringScopes();
+    Function<JetDeclaration, JetScope> getDeclaringScopes();
     Map<JetScript, ScriptDescriptor> getScripts();
     Map<JetScript, WritableScope> getScriptScopes();
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects;
     private final Map<JetProperty, PropertyDescriptor> properties;
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions;
-    private final Map<JetDeclaration, JetScope> declaringScopes;
+    private final Function<JetDeclaration, JetScope> declaringScopes;
     private final Map<JetScript, ScriptDescriptor> scripts;
     private final Map<JetScript, WritableScope> scriptScopes;
 
@@ -49,7 +50,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
         objects = Collections.unmodifiableMap(context.getObjects());
         properties = Collections.unmodifiableMap(context.getProperties());
         functions = Collections.unmodifiableMap(context.getFunctions());
-        declaringScopes = Collections.unmodifiableMap(context.getDeclaringScopes());
+        declaringScopes = context.getDeclaringScopes();
         scripts = Collections.unmodifiableMap(context.getScripts());
         scriptScopes = Collections.unmodifiableMap(context.getScriptScopes());
 
@@ -77,7 +78,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     }
 
     @Override
-    public Map<JetDeclaration, JetScope> getDeclaringScopes() {
+    public Function<JetDeclaration, JetScope> getDeclaringScopes() {
         return declaringScopes;
     }
 
