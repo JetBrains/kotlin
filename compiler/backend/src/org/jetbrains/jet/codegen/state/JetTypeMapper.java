@@ -519,8 +519,6 @@ public class JetTypeMapper extends BindingTraceAware {
 
         signatureVisitor.writeParametersStart();
 
-        writeThisForAccessorIfNeeded(f, signatureVisitor);
-
         if (kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
             JetType jetType = CodegenUtil.getSuperClass(containingDeclaration);
@@ -533,6 +531,9 @@ public class JetTypeMapper extends BindingTraceAware {
             signatureVisitor.writeParameterType(JvmMethodParameterKind.THIS);
             signatureVisitor.writeAsmType(type, jetType.isNullable());
             signatureVisitor.writeParameterTypeEnd();
+        }
+        else {
+            writeThisForAccessorIfNeeded(f, signatureVisitor);
         }
 
         if (receiverType != null) {

@@ -88,4 +88,12 @@ public class TraitsTest extends CodegenTestCase {
     public void testKt2963() {
         blackBoxFile("regressions/kt2963.kt");
     }
+
+    public void testWithRequiredSuper() {
+        blackBoxFile("traits/withRequiredSuper.kt");
+    }
+
+    public void testWithRequiredSuperViaBridge() {
+        blackBoxFile("traits/withRequiredSuperViaBridge.kt");
+    }
 }
