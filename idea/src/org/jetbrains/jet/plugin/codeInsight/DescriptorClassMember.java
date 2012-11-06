@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.generation.ClassMemberWithElement;
 import com.intellij.codeInsight.generation.MemberChooserObject;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMember;
@@ -52,7 +53,7 @@ public class DescriptorClassMember implements ClassMemberWithElement {
         myDescriptor = descriptor;
         if (myPsiElement.isValid()) {
             boolean isClass = myPsiElement instanceof PsiClass || myPsiElement instanceof JetClass;
-            int flags = isClass ? 0 : 1;
+            int flags = isClass ? 0 : Iconable.ICON_FLAG_VISIBILITY;
             if (myPsiElement instanceof JetDeclaration) {  // kotlin declaration
                 // visibility and abstraction better detect by a descriptor
                 icon = JetDescriptorIconProvider.getIcon(myDescriptor, flags);

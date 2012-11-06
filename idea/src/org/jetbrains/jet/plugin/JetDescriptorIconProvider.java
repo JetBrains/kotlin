@@ -82,7 +82,7 @@ public final class JetDescriptorIconProvider {
             }
 
             if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                if (Modality.ABSTRACT == ((FunctionDescriptor) descriptor).getModality()) {
+                if (Modality.ABSTRACT == functionDescriptor.getModality()) {
                     return PlatformIcons.ABSTRACT_METHOD_ICON;
                 }
                 else {
