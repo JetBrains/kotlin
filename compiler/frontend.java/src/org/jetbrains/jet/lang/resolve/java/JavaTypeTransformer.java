@@ -171,7 +171,7 @@ public class JavaTypeTransformer {
                         if (parameters.size() != psiArguments.length) {
                             throw new IllegalStateException(
                                     "parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length
-                                            + " in " + classType.getPresentableText());
+                                            + " in " + classType.getPresentableText() + "\n PsiClass: \n" + psiClass.getText());
                         }
                         
                         for (int i = 0; i < parameters.size(); i++) {
