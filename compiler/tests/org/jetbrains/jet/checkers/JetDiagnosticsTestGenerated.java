@@ -2674,6 +2674,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/redeclarations/Redeclarations.kt");
             }
             
+            @TestMetadata("RedeclaredTypeParameters.kt")
+            public void testRedeclaredTypeParameters() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaredTypeParameters.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/regressions")

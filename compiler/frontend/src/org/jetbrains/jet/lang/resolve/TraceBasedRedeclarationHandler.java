@@ -45,7 +45,7 @@ public class TraceBasedRedeclarationHandler implements RedeclarationHandler {
             trace.report(REDECLARATION.on(firstElement, descriptor.getName().getName()));
         }
         else {
-            throw new IllegalStateException("No declaration found found for " + descriptor);
+            throw new IllegalStateException("No declaration found for " + descriptor);
         }
     }
 }

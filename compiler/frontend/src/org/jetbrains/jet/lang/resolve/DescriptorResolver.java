@@ -530,8 +530,8 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(typeParameter.getName()),
                 index
         );
-        extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
+        extensibleScope.addTypeParameterDescriptor(typeParameterDescriptor);
         return typeParameterDescriptor;
     }
 
