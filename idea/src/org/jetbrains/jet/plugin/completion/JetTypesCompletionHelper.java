@@ -19,115 +19,73 @@ package org.jetbrains.jet.plugin.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
-import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 
-import java.util.Collection;
+public class JetTypesCompletionHelper {
+    private JetTypesCompletionHelper() {}
 
-/**
- * @author Nikolay Krasko
- */
-public class JetTypesCompletionHelper extends CompletionContributor {
-    public JetTypesCompletionHelper() {}
-
-    /**
-     * Jet classes will be added as java completions for unification
-     */
-    static void addClasses(
+    static void addJetTypes(
             @NotNull final CompletionParameters parameters,
-            @NotNull final CompletionResultSet result,
-            @NotNull final BindingContext jetContext,
-            @NotNull final ResolveSession resolveSession,
-            @NotNull final Consumer<LookupElement> consumer
+            @NotNull final JetCompletionResultSet jetCompletionResult
     ) {
-        CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
+        jetCompletionResult.addAllElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses());
 
-        final Collection<ClassDescriptor> jetOnlyClasses = KotlinBuiltIns.getInstance().getNonPhysicalClasses();
-        for (DeclarationDescriptor jetOnlyClass : jetOnlyClasses) {
-            consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, jetContext, jetOnlyClass));
-        }
+        Project project = parameters.getOriginalFile().getProject();
+        JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+        jetCompletionResult.addAllElements(namesCache.getJetClassesDescriptors(
+                jetCompletionResult.getShortNameFilter(), jetCompletionResult.getResolveSession()));
 
-        if (!JsModuleDetector.isJsModule((JetFile)parameters.getOriginalFile())) {
-            JavaClassNameCompletionContributor.addAllClasses(
-                    parameters,
-                    false,
-                    JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
-                    new Consumer<LookupElement>() {
-                        @Override
-                        public void consume(LookupElement lookupElement) {
-                            if (lookupElement instanceof JavaPsiClassReferenceElement) {
-                                JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
-
-                                PsiClass psiClass = javaPsiReferenceElement.getObject();
-                                if (addAsJetLookupElement(parameters, psiClass, resolveSession, jetContext, consumer)) {
-                                    return;
-                                }
-
-                                // Redefine standard java insert handler which is going to insert fqn
-                                javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
-                                consumer.consume(lookupElement);
-                            }
-                        }
-                    });
-        }
-        else {
-            Project project = parameters.getOriginalFile().getProject();
-            JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
-            Collection<ClassDescriptor> descriptors = namesCache.getJetClassesDescriptors(
-                    new Condition<String>() {
-                        @Override
-                        public boolean value(String shortName) {
-                            return result.getPrefixMatcher().prefixMatches(shortName);
-                        }
-                    }, resolveSession);
-
-            for (ClassDescriptor descriptor : descriptors) {
-                consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, jetContext, descriptor));
-            }
+        if (!JsModuleDetector.isJsModule((JetFile) parameters.getOriginalFile())) {
+            addAdaptedJavaCompletion(parameters,jetCompletionResult);
         }
     }
 
-    private static boolean addAsJetLookupElement(
-            CompletionParameters parameters,
-            PsiClass aClass,
-            ResolveSession resolveSession,
-            BindingContext context,
-            Consumer<LookupElement> consumer
+    /**
+     * Add java elements with performing conversion to kotlin elements if necessary.
+     */
+    static void addAdaptedJavaCompletion(
+            @NotNull final CompletionParameters parameters,
+            @NotNull final JetCompletionResultSet jetCompletionResult
     ) {
-        if (aClass instanceof JetLightClass) {
-            Project project = parameters.getPosition().getProject();
+        CompletionResultSet tempResult = jetCompletionResult.getResult().withPrefixMatcher(
+                CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
+        JavaClassNameCompletionContributor.addAllClasses(
+                parameters,
+                false,
+                JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
+                new Consumer<LookupElement>() {
+                    @Override
+                    public void consume(LookupElement lookupElement) {
+                        if (lookupElement instanceof JavaPsiClassReferenceElement) {
+                            JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
 
-            Collection<JetClassOrObject> classOrObjects =
-                    JetFullClassNameIndex.getInstance().get(aClass.getQualifiedName(), project, GlobalSearchScope.allScope(project));
+                            PsiClass psiClass = javaPsiReferenceElement.getObject();
+                            if (addJavaClassAsJetLookupElement(psiClass)) {
+                                return;
+                            }
 
-            for (JetClassOrObject classOrObject : classOrObjects) {
-                if (classOrObject.getContainingFile().getOriginalFile().equals(aClass.getContainingFile())) {
-                    Collection<ClassDescriptor> classDescriptors = ResolveSessionUtils.getClassDescriptorsByFqName(
-                            resolveSession, ((JetLightClass) aClass).getFqName());
-                    for (ClassDescriptor descriptor : classDescriptors) {
-                        consumer.consume(DescriptorLookupConverter.createLookupElement(resolveSession, context, descriptor));
+                            // Redefine standard java insert handler which is going to insert fqn
+                            javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
+                            jetCompletionResult.addElement(javaPsiReferenceElement);
+                        }
                     }
+                });
 
-                    return true;
-                }
-            }
+    }
+
+    private static boolean addJavaClassAsJetLookupElement(PsiClass aClass) {
+        if (aClass instanceof JetLightClass) {
+            // Do nothing. Kotlin not-compiled class should have already been added as kotlin element before.
+            return true;
         }
 
         return false;
