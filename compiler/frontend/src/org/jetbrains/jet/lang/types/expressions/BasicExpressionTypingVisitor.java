@@ -283,7 +283,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
      * It is an error in "is" statement and warning in "as".
      */
     public static boolean isCastErased(JetType actualType, JetType targetType, JetTypeChecker typeChecker) {
-
         if (!(targetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
             // TODO: what if it is TypeParameterDescriptor?
             return false;
@@ -294,22 +293,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return false;
         }
 
+        List<TypeParameterDescriptor> actualTypeParameters = actualType.getConstructor().getParameters();
         {
             Multimap<TypeConstructor, TypeProjection> typeSubstitutionMap =
                     SubstitutionUtils.buildDeepSubstitutionMultimap(targetType);
 
-            for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
-                TypeProjection actualTypeParameter = actualType.getArguments().get(i);
-                TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
+            for (int i = 0; i < actualTypeParameters.size(); i++) {
+                TypeProjection actualTypeArgument = actualType.getArguments().get(i);
+                TypeParameterDescriptor actualTypeParameter = actualTypeParameters.get(i);
 
-                if (subjectTypeParameterDescriptor.isReified()) {
+                if (actualTypeParameter.isReified()) {
                     continue;
                 }
 
-                Collection<TypeProjection> subst = typeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
-                for (TypeProjection proj : subst) {
-                    //if (!proj.getType().equals(actualTypeParameter.getType())) {
-                    if (!typeChecker.isSubtypeOf(actualTypeParameter.getType(), proj.getType())) {
+                Collection<TypeProjection> substituted = typeSubstitutionMap.get(actualTypeParameter.getTypeConstructor());
+                for (TypeProjection substitutedProjection : substituted) {
+                    //if (!substitutedProjection.getType().equals(actualTypeArgument.getType())) {
+                    if (!typeChecker.isSubtypeOf(actualTypeArgument.getType(), substitutedProjection.getType())) { // TODO hides error
                         return true;
                     }
                 }
@@ -317,33 +317,32 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         {
-            JetType targetTypeClerared = TypeUtils.makeUnsubstitutedType(
+            JetType targetTypeCleared = TypeUtils.makeUnsubstitutedType(
                     (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
 
             Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
-                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
+                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetTypeCleared);
 
             Set<JetType> clearSubstituted = new HashSet<JetType>();
 
-            for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
-                TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
-
-                Collection<TypeProjection> subst = clearTypeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
-                for (TypeProjection proj : subst) {
-                    clearSubstituted.add(proj.getType());
+            for (TypeParameterDescriptor actualTypeParameter : actualTypeParameters) {
+                Collection<TypeProjection> substituted = clearTypeSubstitutionMap.get(actualTypeParameter.getTypeConstructor());
+                for (TypeProjection substitutedProjection : substituted) {
+                    clearSubstituted.add(substitutedProjection.getType());
                 }
             }
 
-            for (int i = 0; i < targetType.getConstructor().getParameters().size(); ++i) {
-                TypeParameterDescriptor typeParameter = targetType.getConstructor().getParameters().get(i);
-                TypeProjection typeProjection = targetType.getArguments().get(i);
+            List<TypeParameterDescriptor> targetTypeParameters = targetType.getConstructor().getParameters();
+            for (int i = 0; i < targetTypeParameters.size(); i++) {
+                TypeParameterDescriptor typeParameter = targetTypeParameters.get(i);
 
                 if (typeParameter.isReified()) {
                     continue;
                 }
 
                 // "is List<*>"
-                if (typeProjection.equals(SubstitutionUtils.makeStarProjection(typeParameter))) {
+                TypeProjection typeArgument = targetType.getArguments().get(i);
+                if (typeArgument.equals(SubstitutionUtils.makeStarProjection(typeParameter))) {
                     continue;
                 }
 
