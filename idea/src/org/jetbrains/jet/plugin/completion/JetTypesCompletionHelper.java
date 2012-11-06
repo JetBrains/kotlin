@@ -44,8 +44,8 @@ import java.util.Collection;
 /**
  * @author Nikolay Krasko
  */
-public class JetClassCompletionContributor extends CompletionContributor {
-    public JetClassCompletionContributor() {}
+public class JetTypesCompletionHelper extends CompletionContributor {
+    public JetTypesCompletionHelper() {}
 
     /**
      * Jet classes will be added as java completions for unification
