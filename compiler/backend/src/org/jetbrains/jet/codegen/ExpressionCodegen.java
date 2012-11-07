@@ -1747,8 +1747,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean superCall = isSuperCall(call);
 
         if (superCall && !isInterface(fd.getContainingDeclaration())) {
-            CodegenContext c = getParentContextSubclassOf((ClassDescriptor) fd.getContainingDeclaration());
-            fd = (FunctionDescriptor) c.getAccessor(unwrapFakeOverride(fd));
+            JetSuperExpression expression = getSuperCallExpression(call);
+            ClassDescriptor owner = getSuperCallLabelTarget(expression);
+            CodegenContext c = context.findParentContextWithDescriptor(owner);
+            assert c != null : "Couldn't find a context for a super-call: " + fd;
+            if (c != context.getParentContext()) {
+                fd = (FunctionDescriptor) c.getAccessor(unwrapFakeOverride(fd));
+            }
         }
 
         fd = accessableFunctionDescriptor(fd);

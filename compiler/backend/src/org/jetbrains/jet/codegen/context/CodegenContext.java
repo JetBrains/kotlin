@@ -217,6 +217,16 @@ public abstract class CodegenContext {
         return cur == null ? null : (ClassDescriptor) cur.getContextDescriptor();
     }
 
+    @Nullable
+    public CodegenContext findParentContextWithDescriptor(DeclarationDescriptor descriptor) {
+        CodegenContext c = this;
+        while (c != null) {
+            if (c.getContextDescriptor() == descriptor) break;
+            c = c.getParentContext();
+        }
+        return c;
+    }
+
     public DeclarationDescriptor getAccessor(DeclarationDescriptor descriptor) {
         if (accessors == null) {
             accessors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();

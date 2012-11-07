@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.jet.ConfigurationKind;
 
 public class SuperGenTest extends CodegenTestCase {
@@ -28,22 +29,18 @@ public class SuperGenTest extends CodegenTestCase {
 
     public void testBasicProperty () {
         blackBoxFile("/super/basicproperty.jet");
-//        System.out.println(generateToText());
     }
 
     public void testTraitProperty () {
         blackBoxFile("/super/traitproperty.jet");
-//        System.out.println(generateToText());
     }
 
     public void testBasicMethodSuperTrait () {
         blackBoxFile("/super/basicmethodSuperTrait.jet");
-//        System.out.println(generateToText());
     }
 
     public void testBasicMethodSuperClass () {
         blackBoxFile("/super/basicmethodSuperClass.jet");
-//        System.out.println(generateToText());
     }
 
     public void testInnerClassLabeledSuper() {
@@ -60,12 +57,16 @@ public class SuperGenTest extends CodegenTestCase {
 
     public void testEnclosedFun () {
         blackBoxFile("/super/enclosedFun.jet");
-//        System.out.println(generateToText());
     }
 
     public void testEnclosedVar () {
         blackBoxFile("/super/enclosedVar.jet");
-//        System.out.println(generateToText());
     }
 
+    public void testKt2887() {
+        loadFile("super/kt2887.kt");
+        String text = generateToText();
+        // There should be exactly one bridge in this example
+        assertEquals(1, StringUtils.countMatches(text, "bridge"));
+    }
 }
