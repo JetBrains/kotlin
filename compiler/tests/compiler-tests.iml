@@ -17,6 +17,7 @@
     <orderEntry type="library" name="asm-addons" level="project" />
     <orderEntry type="library" name="dx-android" level="project" />
     <orderEntry type="module" module-name="bean-generator" scope="TEST" />
+    <orderEntry type="module" module-name="bean-generator-runtime" />
   </component>
 </module>
 

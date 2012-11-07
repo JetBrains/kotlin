@@ -17,7 +17,15 @@
 package org.jetbrains.jet.builders;
 
 import beans.FunctionDescriptorBean;
+import beans.TypeConstructorBean;
+import beans.TypeParameterDescriptorBean;
 import beans.ValueParameterDescriptorBean;
+import beans.impl.FunctionDescriptorBeanImpl;
+import beans.impl.JetTypeBeanImpl;
+import beans.impl.TypeConstructorBeanImpl;
+import beans.impl.TypeParameterDescriptorBeanImpl;
+import beans.references.impl.LiteralClassifierDescriptorBeanReference;
+import beans.references.impl.LiteralTypeConstructorBeanReference;
 import beans.util.BeanUtil;
 import beans.util.CopyProcessor;
 import beans.util.DataToBean;
@@ -31,6 +39,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.Printer;
@@ -45,6 +54,46 @@ public class BeanCopyProcessorTest extends KotlinTestWithEnvironment {
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
+    }
+
+    public void testRedirectBoundReferences() {
+        // fun <T> original() : T
+        TypeParameterDescriptorBeanImpl beanT = new TypeParameterDescriptorBeanImpl();
+        TypeConstructorBeanImpl typeConstructorT = new TypeConstructorBeanImpl()
+                .setDeclarationDescriptor(new LiteralClassifierDescriptorBeanReference(beanT));
+        FunctionDescriptorBeanImpl original = new FunctionDescriptorBeanImpl()
+                .addToTypeParameters(
+                        beanT
+                                .setName(Name.identifier("T"))
+                                .setTypeConstructor(
+                                        typeConstructorT
+                                )
+                )
+                .setName(Name.identifier("original"))
+                .setReturnType(
+                        new JetTypeBeanImpl()
+                                .setConstructor(
+                                        new LiteralTypeConstructorBeanReference(typeConstructorT)
+                                )
+                );
+
+        FunctionDescriptorBean copy = new CopyProcessor().processFunctionDescriptor(original);
+        TypeParameterDescriptorBean beanT_copy = copy.getTypeParameters().get(0);
+        assertNotSame(beanT, beanT_copy);
+        assertNotSame(beanT.getTypeConstructor(), beanT_copy.getTypeConstructor());
+        assertSame(
+                beanT.getTypeConstructor().getDeclarationDescriptor().resolveTo(TypeParameterDescriptorBean.class),
+                beanT);
+        TypeConstructorBean typeConstructorT_copy = beanT_copy.getTypeConstructor();
+        assertSame(
+                typeConstructorT_copy.getDeclarationDescriptor().resolveTo(TypeParameterDescriptorBean.class),
+                beanT_copy);
+        assertSame(
+                original.getReturnType().getConstructor().resolveTo(Object.class),
+                typeConstructorT);
+        assertSame(
+                copy.getReturnType().getConstructor().resolveTo(Object.class),
+                typeConstructorT_copy);
     }
 
     public void testBuiltInFunctions() throws Exception {
