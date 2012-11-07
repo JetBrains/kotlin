@@ -1,2 +1,2 @@
 
-fun ff(c: Collection<String>) = c as List<String>
+fun ff(c: MutableCollection<String>) = c as MutableList<String>

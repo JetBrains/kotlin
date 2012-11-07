@@ -1,2 +1,2 @@
 
-fun ff(c: Collection<String>) = c <!CAST_NEVER_SUCCEEDS!>as<!> List<Int>
+fun ff(c: MutableCollection<String>) = c <!CAST_NEVER_SUCCEEDS!>as<!> MutableList<Int>

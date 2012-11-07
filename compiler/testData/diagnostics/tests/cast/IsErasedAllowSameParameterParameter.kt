@@ -1,3 +1,3 @@
 
-fun ff<T>(l: Collection<T>) = l is List<T>
+fun ff<T>(l: MutableCollection<T>) = l is MutableList<T>
 
