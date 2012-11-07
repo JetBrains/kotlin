@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.provider;
 
-public enum Origin {
+public enum DeclarationOrigin {
     JAVA,
     KOTLIN
 }

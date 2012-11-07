@@ -19,8 +19,8 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jetbrains.jet.lang.resolve.java.provider.Origin.JAVA;
-import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
 public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProviderBase implements PackagePsiDeclarationProvider {
 
@@ -42,12 +42,12 @@ public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProvi
     @NotNull
     @Override
     protected MembersCache buildMembersCache() {
-        return MembersCache.buildMembersByNameCache(new MembersCache(), null, getPsiPackage(), true, getOrigin() == KOTLIN);
+        return MembersCache.buildMembersByNameCache(new MembersCache(), null, getPsiPackage(), true, getDeclarationOrigin() == KOTLIN);
     }
 
     @NotNull
     @Override
-    public Origin getOrigin() {
+    public DeclarationOrigin getDeclarationOrigin() {
         return JAVA;
     }
 }

@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
 public final class JavaSupertypeResolver {
 
@@ -144,7 +144,7 @@ public final class JavaSupertypeResolver {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull List<JetType> result
     ) {
-        if (classData.getOrigin() == KOTLIN
+        if (classData.getDeclarationOrigin() == KOTLIN
             || DescriptorResolverUtils.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
             // TODO: annotations
             || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {

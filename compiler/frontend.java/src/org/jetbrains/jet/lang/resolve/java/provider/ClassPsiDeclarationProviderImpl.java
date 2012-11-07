@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 
-import static org.jetbrains.jet.lang.resolve.java.provider.Origin.JAVA;
-import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
 public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase implements ClassPsiDeclarationProvider {
 
@@ -14,20 +14,20 @@ public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase 
     private final PsiClass psiClass;
     private final boolean staticMembers;
     @NotNull
-    protected final Origin origin;
+    protected final DeclarationOrigin declarationOrigin;
 
     protected ClassPsiDeclarationProviderImpl(
             @NotNull PsiClass psiClass, boolean staticMembers
     ) {
         this.staticMembers = staticMembers;
         this.psiClass = psiClass;
-        this.origin = determineOrigin(psiClass);
+        this.declarationOrigin = determineOrigin(psiClass);
     }
 
     @Override
     @NotNull
     protected MembersCache buildMembersCache() {
-        return MembersCache.buildMembersByNameCache(new MembersCache(), psiClass, null, staticMembers, getOrigin() == KOTLIN);
+        return MembersCache.buildMembersByNameCache(new MembersCache(), psiClass, null, staticMembers, getDeclarationOrigin() == KOTLIN);
     }
 
     @Override
@@ -38,12 +38,12 @@ public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase 
 
     @Override
     @NotNull
-    public Origin getOrigin() {
-        return origin;
+    public DeclarationOrigin getDeclarationOrigin() {
+        return declarationOrigin;
     }
 
     @NotNull
-    private static Origin determineOrigin(@Nullable PsiClass psiClass) {
+    private static DeclarationOrigin determineOrigin(@Nullable PsiClass psiClass) {
         return ((psiClass != null) && DescriptorResolverUtils.isKotlinClass(psiClass)) ? KOTLIN : JAVA;
     }
 

@@ -20,7 +20,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 
-import static org.jetbrains.jet.lang.resolve.java.provider.Origin.KOTLIN;
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
 public final class KotlinNamespacePsiDeclarationProvider extends ClassPsiDeclarationProviderImpl implements PackagePsiDeclarationProvider {
 
@@ -45,13 +45,13 @@ public final class KotlinNamespacePsiDeclarationProvider extends ClassPsiDeclara
     @Override
     protected MembersCache buildMembersCache() {
         MembersCache cacheWithMembers = super.buildMembersCache();
-        MembersCache.buildMembersByNameCache(cacheWithMembers, null, packagePsiDeclarationProvider.getPsiPackage(), true, getOrigin() == KOTLIN);
+        MembersCache.buildMembersByNameCache(cacheWithMembers, null, packagePsiDeclarationProvider.getPsiPackage(), true, getDeclarationOrigin() == KOTLIN);
         return cacheWithMembers;
     }
 
     @NotNull
     @Override
-    public Origin getOrigin() {
+    public DeclarationOrigin getDeclarationOrigin() {
         return KOTLIN;
     }
 }

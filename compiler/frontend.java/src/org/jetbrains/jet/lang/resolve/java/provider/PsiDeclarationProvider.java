@@ -24,5 +24,5 @@ public interface PsiDeclarationProvider {
     MembersCache getMembersCache();
 
     @NotNull
-    Origin getOrigin();
+    DeclarationOrigin getDeclarationOrigin();
 }
