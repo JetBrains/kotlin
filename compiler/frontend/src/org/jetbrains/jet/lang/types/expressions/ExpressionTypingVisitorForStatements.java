@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -109,9 +110,11 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         VariableDescriptor propertyDescriptor = context.expressionTypingServices.getDescriptorResolver().
                 resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property, context.dataFlowInfo, context.trace);
         JetExpression initializer = property.getInitializer();
-        if (property.getTypeRef() != null && initializer != null) {
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
+        if (initializer != null) {
             JetType outType = propertyDescriptor.getType();
-            facade.getTypeInfo(initializer, context.replaceExpectedType(outType).replaceScope(scope)).getType();
+            JetTypeInfo typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType).replaceScope(scope));
+            dataFlowInfo = typeInfo.getDataFlowInfo();
         }
         
         {
@@ -121,7 +124,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         scope.addVariableDescriptor(propertyDescriptor);
         ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(property);
-        return DataFlowUtils.checkStatementType(property, context, context.dataFlowInfo);
+        return DataFlowUtils.checkStatementType(property, context, dataFlowInfo);
     }
 
     @Override

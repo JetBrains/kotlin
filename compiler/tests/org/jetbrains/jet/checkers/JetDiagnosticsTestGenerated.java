@@ -1141,6 +1141,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ArrayAccess.kt");
             }
             
+            @TestMetadata("AssignmentInInitializer.kt")
+            public void testAssignmentInInitializer() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/AssignmentInInitializer.kt");
+            }
+            
             @TestMetadata("BinaryExpression.kt")
             public void testBinaryExpression() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpression.kt");
