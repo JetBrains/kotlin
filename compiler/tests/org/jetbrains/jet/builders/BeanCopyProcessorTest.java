@@ -16,14 +16,9 @@
 
 package org.jetbrains.jet.builders;
 
-import beans.FunctionDescriptorBean;
-import beans.TypeConstructorBean;
-import beans.TypeParameterDescriptorBean;
-import beans.ValueParameterDescriptorBean;
-import beans.impl.FunctionDescriptorBeanImpl;
-import beans.impl.JetTypeBeanImpl;
-import beans.impl.TypeConstructorBeanImpl;
-import beans.impl.TypeParameterDescriptorBeanImpl;
+import beans.*;
+import beans.impl.*;
+import beans.references.impl.LiteralClassDescriptorBeanReference;
 import beans.references.impl.LiteralClassifierDescriptorBeanReference;
 import beans.references.impl.LiteralTypeConstructorBeanReference;
 import beans.util.BeanUtil;
@@ -94,6 +89,24 @@ public class BeanCopyProcessorTest extends KotlinTestWithEnvironment {
         assertSame(
                 copy.getReturnType().getConstructor().resolveTo(Object.class),
                 typeConstructorT_copy);
+    }
+
+    public void testRedirectFreeReferences() {
+        // class T
+        ClassDescriptorBeanImpl classT = new ClassDescriptorBeanImpl();
+        TypeConstructorBeanImpl typeConstructorT = new TypeConstructorBeanImpl()
+                .setDeclarationDescriptor(new LiteralClassDescriptorBeanReference(classT));
+
+        classT.setTypeConstructor(typeConstructorT);
+
+        // T (a type)
+        JetTypeBeanImpl typeT = new JetTypeBeanImpl()
+                .setConstructor(new LiteralTypeConstructorBeanReference(typeConstructorT));
+
+        JetTypeBean typeT_copy = new CopyProcessor().processJetType(typeT);
+
+        assertSame(typeConstructorT, typeT.getConstructor().resolveTo(TypeConstructorBean.class));
+        assertSame(typeConstructorT, typeT_copy.getConstructor().resolveTo(TypeConstructorBean.class));
     }
 
     public void testBuiltInFunctions() throws Exception {
