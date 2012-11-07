@@ -95,6 +95,8 @@
 
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 
+      <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;../kotlinc/lib/kotlin-compiler.jar"/>
+
       <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetSyntaxHighlighterFactory"/>
       <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
       <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>

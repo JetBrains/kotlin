@@ -23,6 +23,14 @@
             <element id="dir-copy" path="$PROJECT_DIR$/js/js.libraries/src" />
           </element>
           <element id="library" level="project" name="javax.inject" />
+          <element id="directory" name="jps">
+            <element id="archive" name="kotlin-jps-plugin.jar">
+              <element id="module-output" name="jps-plugin" />
+              <element id="directory" name="META-INF">
+                <element id="dir-copy" path="$Tests$/jps-plugin/src/META-INF" />
+              </element>
+            </element>
+          </element>
         </element>
         <element id="directory" name="kotlinc">
           <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
