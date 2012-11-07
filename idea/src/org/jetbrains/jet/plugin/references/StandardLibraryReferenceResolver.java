@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -101,7 +102,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
                                                             getJetFiles("jet", jetFilesIndependentOfUnit));
 
             ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
-            assert tuple0 != null;
+            assert tuple0 != null : "Can't find the declaration for Tuple0";
             scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
                                           "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
@@ -120,9 +121,13 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     private List<JetFile> getJetFiles(String dir, final Predicate<JetFile> filter) {
         URL url = StandardLibraryReferenceResolver.class.getResource("/" + dir + "/");
         VirtualFile vf = VfsUtil.findFileByURL(url);
-        assert vf != null;
+        assert vf != null : "Virtual file not found by URL: " + url;
 
         // Refreshing VFS: in case the plugin jar was updated, the caches may hold the old value
+        if (vf instanceof NewVirtualFile) {
+            NewVirtualFile newVirtualFile = (NewVirtualFile) vf;
+            newVirtualFile.markDirtyRecursively(); // This doesn't happen in a JARFS entry, unless we do it manually here
+        }
         vf.getChildren();
         vf.refresh(false, true);
 
