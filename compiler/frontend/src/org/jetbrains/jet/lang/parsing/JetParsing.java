@@ -1702,7 +1702,7 @@ public class JetParsing extends AbstractJetParsing {
         return parseValueParameter(true);
     }
 
-    private void parseValueParameter() {
+    public void parseValueParameter() {
         parseValueParameter(false);
     }
 
