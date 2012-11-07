@@ -60,7 +60,8 @@ public final class DescriptorResolverUtils {
         return kind == ClassKind.CLASS || kind == ClassKind.TRAIT || kind == ClassKind.ENUM_CLASS;
     }
 
-    public static Collection<? extends JetType> getSupertypes(@NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor) {
+    @NotNull
+    public static Collection<JetType> getSupertypes(@NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor) {
         if (classOrNamespaceDescriptor instanceof ClassDescriptor) {
             return ((ClassDescriptor) classOrNamespaceDescriptor).getTypeConstructor().getSupertypes();
         }

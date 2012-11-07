@@ -67,7 +67,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
         Collection<? extends DeclarationDescriptor> superDescriptors;
         String message;
         if (descriptor instanceof ClassDescriptor) {
-            Collection<? extends JetType> supertypes = ((ClassDescriptor) descriptor).getTypeConstructor().getSupertypes();
+            Collection<JetType> supertypes = ((ClassDescriptor) descriptor).getTypeConstructor().getSupertypes();
             List<ClassDescriptor> superclasses = ContainerUtil.mapNotNull(supertypes, new Function<JetType, ClassDescriptor>() {
                 @Override
                 public ClassDescriptor fun(JetType type) {

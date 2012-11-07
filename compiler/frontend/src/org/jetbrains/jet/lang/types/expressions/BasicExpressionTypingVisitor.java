@@ -445,7 +445,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         JetType result = null;
         JetType thisType = thisReceiver.getType();
-        Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
+        Collection<JetType> supertypes = thisType.getConstructor().getSupertypes();
         TypeSubstitutor substitutor = TypeSubstitutor.create(thisType);
 
         JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();

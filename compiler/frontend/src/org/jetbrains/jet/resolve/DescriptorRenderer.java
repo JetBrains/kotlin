@@ -611,12 +611,12 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
             }
             if (!descriptor.equals(KotlinBuiltIns.getInstance().getNothing())) {
-                Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+                Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
                 if (supertypes.isEmpty() || supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAny(supertypes.iterator().next())) {
                 }
                 else {
                     builder.append(" : ");
-                    for (Iterator<? extends JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
+                    for (Iterator<JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
                         JetType supertype = iterator.next();
                         builder.append(renderType(supertype));
                         if (iterator.hasNext()) {

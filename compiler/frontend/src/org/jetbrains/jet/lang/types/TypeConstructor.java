@@ -33,7 +33,7 @@ public interface TypeConstructor extends Annotated {
     List<TypeParameterDescriptor> getParameters();
 
     @NotNull
-    Collection<? extends JetType> getSupertypes();
+    Collection<JetType> getSupertypes();
 
     boolean isSealed();
 

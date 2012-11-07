@@ -47,7 +47,7 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
 
     @NotNull
     @Override
-    public Collection<? extends JetType> getSupertypes() {
+    public Collection<JetType> getSupertypes() {
         return intersectedTypes;
     }
 

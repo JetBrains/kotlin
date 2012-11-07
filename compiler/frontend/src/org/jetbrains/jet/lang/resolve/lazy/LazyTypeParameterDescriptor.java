@@ -180,7 +180,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
             typeConstructor = new TypeConstructor() {
                 @NotNull
                 @Override
-                public Collection<? extends JetType> getSupertypes() {
+                public Collection<JetType> getSupertypes() {
                     return LazyTypeParameterDescriptor.this.getUpperBounds();
                 }
 
