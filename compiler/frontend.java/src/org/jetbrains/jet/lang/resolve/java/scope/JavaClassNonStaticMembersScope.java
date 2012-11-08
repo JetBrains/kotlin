@@ -59,8 +59,10 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
         for (PsiClass innerClass : declarationProvider.getPsiClass().getAllInnerClasses()) {
             if (name.getName().equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != declarationProvider.isStaticMembers()) return null;
+                String qualifiedName = innerClass.getQualifiedName();
+                assert qualifiedName != null;
                 ClassDescriptor classDescriptor = getResolver()
-                        .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                        .resolveClass(new FqName(qualifiedName), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }
