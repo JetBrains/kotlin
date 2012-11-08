@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -170,5 +171,17 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     protected JavaDescriptorResolver getResolver() {
         return semanticServices.getDescriptorResolver();
+    }
+
+    //TODO: remove this method
+    @NotNull
+    public PsiElement getPsiElement() {
+        if (declarationProvider instanceof ClassPsiDeclarationProvider) {
+            return ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
+        }
+        if (declarationProvider instanceof PackagePsiDeclarationProvider) {
+            return ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
+        }
+        throw new IllegalStateException();
     }
 }

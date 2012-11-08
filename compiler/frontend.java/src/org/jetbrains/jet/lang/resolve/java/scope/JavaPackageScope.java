@@ -16,15 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -36,8 +33,6 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
     @NotNull
     private final FqName packageFQN;
-    @NotNull
-    private final PsiDeclarationProvider declarationProvider;
 
     protected JavaPackageScope(
             @NotNull NamespaceDescriptor descriptor,
@@ -46,7 +41,6 @@ public abstract class JavaPackageScope extends JavaBaseScope {
             @NotNull JavaSemanticServices semanticServices
     ) {
         super(descriptor, semanticServices, declarationProvider);
-        this.declarationProvider = declarationProvider;
         this.packageFQN = packageFQN;
     }
 
@@ -64,17 +58,5 @@ public abstract class JavaPackageScope extends JavaBaseScope {
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
-    }
-
-    //TODO: remove this method
-    @NotNull
-    public PsiElement getPsiElement() {
-        if (declarationProvider instanceof ClassPsiDeclarationProvider) {
-            return ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
-        }
-        if (declarationProvider instanceof PackagePsiDeclarationProvider) {
-            return ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
-        }
-        throw new IllegalStateException();
     }
 }
