@@ -103,6 +103,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testInsertFqnForJavaClass() {
+        doTest(CompletionType.BASIC, 2, "SortedSet", "java.util", '\n');
+    }
+
     public void testHigherOrderFunctionWithArg() {
         doTest(CompletionType.BASIC, 2, "filterNot", null, '\n');
     }

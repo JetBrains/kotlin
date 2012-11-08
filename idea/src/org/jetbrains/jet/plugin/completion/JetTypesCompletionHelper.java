@@ -24,10 +24,13 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
+import org.jetbrains.jet.plugin.libraries.DecompiledDataFactory;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 public class JetTypesCompletionHelper {
@@ -69,22 +72,33 @@ public class JetTypesCompletionHelper {
                             JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
 
                             PsiClass psiClass = javaPsiReferenceElement.getObject();
-                            if (addJavaClassAsJetLookupElement(psiClass)) {
+                            if (addJavaClassAsJetLookupElement(psiClass, jetCompletionResult)) {
                                 return;
                             }
 
                             // Redefine standard java insert handler which is going to insert fqn
-                            javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
-                            jetCompletionResult.addElement(javaPsiReferenceElement);
+                            jetCompletionResult.addElement(javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.INSTANCE));
                         }
                     }
                 });
 
     }
 
-    private static boolean addJavaClassAsJetLookupElement(PsiClass aClass) {
+    private static boolean addJavaClassAsJetLookupElement(PsiClass aClass, JetCompletionResultSet jetCompletionResult) {
         if (aClass instanceof JetLightClass) {
             // Do nothing. Kotlin not-compiled class should have already been added as kotlin element before.
+            return true;
+        }
+
+        if (DecompiledDataFactory.isCompiledFromKotlin(aClass)) {
+            // TODO: Filter classes for compiled kotlin objects
+            String qualifiedName = aClass.getQualifiedName();
+            if (qualifiedName != null) {
+                FqName fqName = new FqName(qualifiedName);
+                jetCompletionResult.addAllElements(
+                        ResolveSessionUtils.getClassDescriptorsByFqName(jetCompletionResult.getResolveSession(), fqName));
+            }
+
             return true;
         }
 

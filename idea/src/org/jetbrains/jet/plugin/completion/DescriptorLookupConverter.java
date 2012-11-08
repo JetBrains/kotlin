@@ -129,7 +129,7 @@ public final class DescriptorLookupConverter {
         if (declaration instanceof PsiClass) {
             PsiClass psiClass = (PsiClass) declaration;
             if (!DecompiledDataFactory.isCompiledFromKotlin(psiClass)) {
-                return new JavaPsiClassReferenceElement(psiClass).setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
+                return new JavaPsiClassReferenceElement(psiClass).setInsertHandler(JetJavaClassInsertHandler.INSTANCE);
             }
         }
 
