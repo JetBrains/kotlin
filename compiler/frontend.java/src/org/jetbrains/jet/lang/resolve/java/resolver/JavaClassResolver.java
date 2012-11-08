@@ -206,7 +206,7 @@ public final class JavaClassResolver {
 
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         // class may be resolved during resolution of parent
-        ClassDescriptor cachedDescriptor = classDescriptorCache.get(fqName);
+        ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(fqName));
         if (cachedDescriptor != null) {
             return cachedDescriptor;
         }
