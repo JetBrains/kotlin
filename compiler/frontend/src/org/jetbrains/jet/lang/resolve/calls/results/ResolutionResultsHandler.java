@@ -33,6 +33,8 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_RESULT;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.SEVERITY_LEVELS;
+import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.STRONG_ERROR;
+import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
 
 public class ResolutionResultsHandler {
     @NotNull
@@ -41,6 +43,28 @@ public class ResolutionResultsHandler {
     @Inject
     public void setOverloadingConflictResolver(@NotNull OverloadingConflictResolver overloadingConflictResolver) {
         this.overloadingConflictResolver = overloadingConflictResolver;
+    }
+
+    @NotNull
+    public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
+            @NotNull BindingTrace trace,
+            @NotNull TracingStrategy tracing,
+            @NotNull Set<ResolvedCallWithTrace<D>> candidates) {
+        Set<ResolvedCallWithTrace<D>> successfulCandidates = Sets.newLinkedHashSet();
+        Set<ResolvedCallWithTrace<D>> failedCandidates = Sets.newLinkedHashSet();
+        for (ResolvedCallWithTrace<D> candidateCall : candidates) {
+            ResolutionStatus status = candidateCall.getStatus();
+            if (status.isSuccess()) {
+                successfulCandidates.add(candidateCall);
+            }
+            else {
+                assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
+                if (candidateCall.getStatus() != STRONG_ERROR) {
+                    failedCandidates.add(candidateCall);
+                }
+            }
+        }
+        return computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates);
     }
 
     @NotNull

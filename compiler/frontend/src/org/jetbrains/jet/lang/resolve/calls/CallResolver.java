@@ -28,7 +28,10 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
-import org.jetbrains.jet.lang.resolve.calls.results.*;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
+import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.tasks.*;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
@@ -36,7 +39,8 @@ import org.jetbrains.jet.lang.resolve.calls.util.JetFakeReference;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -50,7 +54,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -502,24 +505,8 @@ public class CallResolver {
             }
         }
 
-        Set<ResolvedCallWithTrace<F>> successfulCandidates = Sets.newLinkedHashSet();
-        Set<ResolvedCallWithTrace<F>> failedCandidates = Sets.newLinkedHashSet();
-        for (ResolvedCallWithTrace<F> candidateCall : task.getResolvedCalls()) {
-            ResolutionStatus status = candidateCall.getStatus();
-            if (status.isSuccess()) {
-                successfulCandidates.add(candidateCall);
-            }
-            else {
-                assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
-                if (candidateCall.getStatus() != STRONG_ERROR) {
-                    failedCandidates.add(candidateCall);
-                }
-            }
-        }
-        
-        OverloadResolutionResultsImpl<F> results = resolutionResultsHandler.computeResultAndReportErrors(task.trace, task.tracing,
-                                                                                                         successfulCandidates,
-                                                                                                         failedCandidates);
+        OverloadResolutionResultsImpl<F> results = resolutionResultsHandler.computeResultAndReportErrors(
+                task.trace, task.tracing, task.getResolvedCalls());
         if (!results.isSingleResult() && !results.isIncomplete()) {
             candidateResolver.checkTypesWithNoCallee(task.toBasic());
         }
