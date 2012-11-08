@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
@@ -133,8 +134,8 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
         if (declarationProvider instanceof ClassPsiDeclarationProvider) {
             PsiClass psiClass = ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
-            computeFieldAndFunctionDescriptors(result);
-            computeInnerClasses(psiClass, result);
+            result.addAll(computeFieldAndFunctionDescriptors());
+            result.addAll(computeInnerClasses(psiClass));
         }
         if (declarationProvider instanceof PackagePsiDeclarationProvider) {
             PsiPackage psiPackage = ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
@@ -144,7 +145,9 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         return result;
     }
 
-    private void computeFieldAndFunctionDescriptors(Collection<DeclarationDescriptor> result) {
+    @NotNull
+    private Collection<DeclarationDescriptor> computeFieldAndFunctionDescriptors() {
+        Collection<DeclarationDescriptor> result = Lists.newArrayList();
         for (NamedMembers members : declarationProvider.getMembersCache().allMembers()) {
             Name name = members.getName();
             ProgressIndicatorProvider.checkCanceled();
@@ -152,19 +155,20 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             ProgressIndicatorProvider.checkCanceled();
             result.addAll(getProperties(name));
         }
+        return result;
     }
 
-    private void computeInnerClasses(
-            @NotNull PsiClass psiClass,
-            @NotNull Collection<DeclarationDescriptor> result
+    @NotNull
+    private Collection<ClassDescriptor> computeInnerClasses(
+            @NotNull PsiClass psiClass
     ) {
         // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
         if (descriptor instanceof JavaNamespaceDescriptor) {
-            result.addAll(getResolver().resolveInnerClasses(descriptor, psiClass, false));
+            return getResolver().resolveInnerClasses(descriptor, psiClass, false);
         }
         else {
-            result.addAll(getResolver().resolveInnerClasses(
-                    descriptor, psiClass, ((ClassPsiDeclarationProviderImpl) declarationProvider).isStaticMembers()));
+            return getResolver().resolveInnerClasses(descriptor, psiClass,
+                                                     ((ClassPsiDeclarationProviderImpl) declarationProvider).isStaticMembers());
         }
     }
 
