@@ -1241,6 +1241,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/IfThenElseBothInvalid.kt");
             }
             
+            @TestMetadata("MultiDeclaration.kt")
+            public void testMultiDeclaration() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/MultiDeclaration.kt");
+            }
+            
             @TestMetadata("ObjectExpression.kt")
             public void testObjectExpression() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ObjectExpression.kt");

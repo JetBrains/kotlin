@@ -137,14 +137,14 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.report(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION.on(multiDeclaration));
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
-        final ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(facade, initializer,
-                                                                                                  context.replaceExpectedType(
-                                                                                                          TypeUtils.NO_EXPECTED_TYPE));
+        final ExpressionReceiver expressionReceiver =
+                ExpressionTypingUtils.getExpressionReceiver(facade, initializer, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
+        DataFlowInfo dataFlowInfo = facade.getTypeInfo(initializer, context).getDataFlowInfo();
         if (expressionReceiver == null) {
-            return JetTypeInfo.create(null, context.dataFlowInfo);
+            return JetTypeInfo.create(null, dataFlowInfo);
         }
         ExpressionTypingUtils.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
-        return DataFlowUtils.checkStatementType(multiDeclaration, context, context.dataFlowInfo);
+        return DataFlowUtils.checkStatementType(multiDeclaration, context, dataFlowInfo);
     }
 
     @Override
