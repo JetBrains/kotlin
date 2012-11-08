@@ -23,19 +23,22 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.ModifiersChecker;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -182,16 +185,20 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
         JetType result;
+        DataFlowInfo dataFlowInfo;
         if (operationType == JetTokens.EQ) {
-            result = visitAssignment(expression, context);
+            JetTypeInfo typeInfo = visitAssignment(expression, context);
+            result = typeInfo.getType();
+            dataFlowInfo = typeInfo.getDataFlowInfo();
         }
         else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
             result = visitAssignmentOperation(expression, context);
+            dataFlowInfo = context.dataFlowInfo;
         }
         else {
             return facade.getTypeInfo(expression, context);
         }
-        return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
+        return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
     }
 
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
@@ -263,25 +270,29 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         return checkAssignmentType(type, expression, contextWithExpectedType);
     }
 
-    protected JetType visitAssignment(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+    @NotNull
+    protected JetTypeInfo visitAssignment(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
+        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(scope);
         JetExpression left = context.expressionTypingServices.deparenthesize(expression.getLeft(), context);
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
-            if (right == null) return null;
-            JetType assignmentType = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context.replaceScope(scope), context.trace);
+            if (right == null) return JetTypeInfo.create(null, context.dataFlowInfo);
+            JetType assignmentType = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
             basic.checkLValue(context.trace, arrayAccessExpression);
-            return checkAssignmentType(assignmentType, expression, contextWithExpectedType);
+            return JetTypeInfo.create(checkAssignmentType(assignmentType, expression, contextWithExpectedType), context.dataFlowInfo);
         }
-        JetType leftType = facade.getTypeInfo(expression.getLeft(), context.replaceScope(scope)).getType();
+        JetTypeInfo leftInfo = facade.getTypeInfo(expression.getLeft(), context);
+        JetType leftType = leftInfo.getType();
+        DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         if (right != null) {
-            JetType rightType = facade.getTypeInfo(right, context.replaceExpectedType(leftType).replaceScope(scope)).getType();
+            JetTypeInfo rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo).replaceExpectedType(leftType));
+            dataFlowInfo = rightInfo.getDataFlowInfo();
         }
         if (leftType != null) { //if leftType == null, some another error has been generated
             basic.checkLValue(context.trace, expression.getLeft());
         }
-        return DataFlowUtils.checkStatementType(expression, contextWithExpectedType);
+        return DataFlowUtils.checkStatementType(expression, contextWithExpectedType, dataFlowInfo);
     }
 
 
