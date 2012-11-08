@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.TranslatingCompiler;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -31,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -55,7 +55,6 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
  */
 public final class CompilerUtils {
     private static SoftReference<URLClassLoader> ourClassLoaderRef = new SoftReference<URLClassLoader>(null);
-    static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.compiler.CompilerUtils");
 
     private CompilerUtils() {
     }
@@ -143,11 +142,10 @@ public final class CompilerUtils {
                 FileUtil.loadTextAndClose(wrappingReader);
             }
             catch (IOException ioException) {
-                LOG.error(ioException);
+                reportException(messageCollector, ioException);
             }
             String message = stringBuilder.toString();
-            LOG.error(message);
-            LOG.error(e);
+            reportException(messageCollector, new IllegalStateException(message, e));
             messageCollector.report(ERROR, message, NO_LOCATION);
         }
         finally {
@@ -155,7 +153,7 @@ public final class CompilerUtils {
                 reader.close();
             }
             catch (IOException e) {
-                LOG.error(e);
+                reportException(messageCollector, e);
             }
         }
     }
@@ -255,10 +253,6 @@ public final class CompilerUtils {
             }
             String text = message.toString();
 
-            if ("exception".equals(qNameLowerCase)) {
-                LOG.error(text);
-            }
-
             if (category == LOGGING) {
                 collector.learn(text);
             }
@@ -331,6 +325,10 @@ public final class CompilerUtils {
         BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
         parseCompilerMessagesFromReader(messageCollector, reader, outputItemsCollector);
         handleProcessTermination(exitCode, messageCollector);
+    }
+
+    static void reportException(@NotNull MessageCollector messageCollector, @NotNull Throwable e) {
+        messageCollector.report(EXCEPTION, MessageRenderer.PLAIN.renderException(e), NO_LOCATION);
     }
 }
 

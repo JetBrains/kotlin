@@ -251,7 +251,7 @@ public class JetCompiler implements TranslatingCompiler {
             return CompilerUtils.getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {
-            CompilerUtils.LOG.error(e);
+            CompilerUtils.reportException(messageCollector, e);
             return -1;
         }
     }

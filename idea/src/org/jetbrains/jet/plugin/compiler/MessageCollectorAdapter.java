@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.compiler;
 
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
@@ -26,6 +27,8 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import static com.intellij.openapi.compiler.CompilerMessageCategory.*;
 
 class MessageCollectorAdapter implements MessageCollector {
+    private static final Logger LOG = Logger.getInstance(MessageCollectorAdapter.class);
+
     private final CompileContext compileContext;
 
     public MessageCollectorAdapter(CompileContext compileContext) {
@@ -40,6 +43,9 @@ class MessageCollectorAdapter implements MessageCollector {
     ) {
         CompilerMessageCategory category = category(severity);
         compileContext.addMessage(category, message, location.getPath(), location.getLine(), location.getColumn());
+        if (severity == CompilerMessageSeverity.EXCEPTION) {
+            LOG.error(message);
+        }
         if (category == STATISTICS) {
             compileContext.getProgressIndicator().setText(message);
         }
