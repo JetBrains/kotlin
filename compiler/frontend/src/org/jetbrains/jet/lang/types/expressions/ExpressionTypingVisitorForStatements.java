@@ -184,24 +184,21 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     public JetTypeInfo visitBinaryExpression(JetBinaryExpression expression, ExpressionTypingContext context) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
-        JetType result;
-        DataFlowInfo dataFlowInfo;
+        JetTypeInfo result;
         if (operationType == JetTokens.EQ) {
-            JetTypeInfo typeInfo = visitAssignment(expression, context);
-            result = typeInfo.getType();
-            dataFlowInfo = typeInfo.getDataFlowInfo();
+            result = visitAssignment(expression, context);
         }
         else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
             result = visitAssignmentOperation(expression, context);
-            dataFlowInfo = context.dataFlowInfo;
         }
         else {
             return facade.getTypeInfo(expression, context);
         }
-        return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
+        return DataFlowUtils.checkType(result.getType(), expression, context, result.getDataFlowInfo());
     }
 
-    protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    @NotNull
+    protected JetTypeInfo visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         //There is a temporary binding trace for an opportunity to resolve set method for array if needed (the initial trace should be used there)
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
                 contextWithExpectedType.trace, "trace to resolve array set method for binary expression", expression);
@@ -209,20 +206,22 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
-        JetType leftType = facade.getTypeInfo(expression.getLeft(), context).getType();
+        JetTypeInfo leftInfo = facade.getTypeInfo(expression.getLeft(), context);
+        JetType leftType = leftInfo.getType();
+        DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
 
         JetExpression right = expression.getRight();
         JetExpression left = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression.getLeft());
         if (right == null || left == null) {
             temporaryBindingTrace.commit();
-            return null;
+            return JetTypeInfo.create(null, dataFlowInfo);
         }
 
         if (leftType == null) {
-            facade.getTypeInfo(right, context);
+            dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
             context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
             temporaryBindingTrace.commit();
-            return null;
+            return JetTypeInfo.create(null, dataFlowInfo);
         }
         ExpressionReceiver receiver = new ExpressionReceiver(left, leftType);
 
@@ -247,7 +246,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             for (ResolvedCall<? extends FunctionDescriptor> call : ambiguityResolutionResults.getResultingCalls()) {
                 descriptors.add(call.getResultingDescriptor());
             }
-            facade.getTypeInfo(right, context);
+            dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
             context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);
         }
         else if (assignmentOperationType != null) {
@@ -264,10 +263,11 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                         contextWithExpectedType.trace, "trace to resolve array set method for assignment", expression));
                 basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
+            dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
         }
         basic.checkLValue(context.trace, expression.getLeft());
         temporaryBindingTrace.commit();
-        return checkAssignmentType(type, expression, contextWithExpectedType);
+        return JetTypeInfo.create(checkAssignmentType(type, expression, contextWithExpectedType), dataFlowInfo);
     }
 
     @NotNull
