@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.provider.*;
@@ -89,7 +90,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<VariableDescriptor> computePropertyDescriptors(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, declarationProvider, descriptor);
+        return getResolver().resolveFieldGroupByName(name, declarationProvider, descriptor);
     }
 
     @NotNull
@@ -158,11 +159,16 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     ) {
         // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
         if (descriptor instanceof JavaNamespaceDescriptor) {
-            result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(descriptor, psiClass, false));
+            result.addAll(getResolver().resolveInnerClasses(descriptor, psiClass, false));
         }
         else {
-            result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
+            result.addAll(getResolver().resolveInnerClasses(
                     descriptor, psiClass, ((ClassPsiDeclarationProviderImpl) declarationProvider).isStaticMembers()));
         }
+    }
+
+    @NotNull
+    protected JavaDescriptorResolver getResolver() {
+        return semanticServices.getDescriptorResolver();
     }
 }

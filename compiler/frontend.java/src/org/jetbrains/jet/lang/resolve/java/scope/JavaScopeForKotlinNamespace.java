@@ -43,7 +43,6 @@ public final class JavaScopeForKotlinNamespace extends JavaPackageScope {
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver()
-                .resolveFunctionGroup(name, declarationProvider, descriptor);
+        return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
     }
 }

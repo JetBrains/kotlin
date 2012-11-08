@@ -32,11 +32,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Class static of instance members.
- *
- * @author abreslav
- */
 public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
@@ -73,7 +68,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
         for (PsiClass innerClass : classPsiDeclarationProvider.getPsiClass().getAllInnerClasses()) {
             if (name.getName().equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != classPsiDeclarationProvider.isStaticMembers()) return null;
-                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver()
+                ClassDescriptor classDescriptor = getResolver()
                         .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {
                     return classDescriptor;
@@ -86,7 +81,6 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver()
-                .resolveFunctionGroup(name, classPsiDeclarationProvider, descriptor);
+        return getResolver().resolveFunctionGroup(name, classPsiDeclarationProvider, descriptor);
     }
 }
