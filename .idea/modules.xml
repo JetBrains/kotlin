@@ -13,6 +13,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/compiler/frontend/frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/grammar/grammar.iml" filepath="$PROJECT_DIR$/grammar/grammar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ide-compiler-runner/ide-compiler-runner.iml" filepath="$PROJECT_DIR$/ide-compiler-runner/ide-compiler-runner.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea.iml" filepath="$PROJECT_DIR$/idea/idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea_runner/idea_runner.iml" filepath="$PROJECT_DIR$/idea_runner/idea_runner.iml" />
       <module fileurl="file://$PROJECT_DIR$/injector-generator/injector-generator.iml" filepath="$PROJECT_DIR$/injector-generator/injector-generator.iml" />

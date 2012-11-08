@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
-import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
+import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.module.Module;
@@ -35,9 +35,12 @@ import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
+import com.intellij.util.Function;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.containers.ContainerUtil;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
@@ -119,9 +122,9 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
-        File scriptFile =
-                tryToWriteScriptFile(compileContext, moduleChunk, files, module, tests, compileContext.getModuleOutputDirectory(module),
-                                     environment.getOutput());
+        File scriptFile = tryToWriteScriptFile(compileContext, moduleChunk, files, module, tests,
+                                               compileContext.getModuleOutputDirectory(module),
+                                               environment.getOutput());
 
         if (scriptFile == null) return;
 
@@ -142,96 +145,67 @@ public class JetCompiler implements TranslatingCompiler {
         }
     }
 
-    private static File tryToWriteScriptFile(CompileContext compileContext,
+    public static File tryToWriteScriptFile(
+            CompileContext compileContext,
             Chunk<Module> moduleChunk,
             List<VirtualFile> files,
             Module module,
-            boolean tests, VirtualFile mainOutput, VirtualFile outputDir) {
-        ModuleChunk
-                chunk = new ModuleChunk((CompileContextEx)compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
+            boolean tests, VirtualFile mainOutput, VirtualFile outputDir
+    ) {
+        ArrayList<String> sourceFilePaths = ContainerUtil.newArrayList(paths(files));
+        ModuleChunk chunk = new ModuleChunk((CompileContextEx)compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
         String moduleName = moduleChunk.getNodes().iterator().next().getName();
+        String outputDirectoryForTests = path(compileContext.getModuleOutputDirectoryForTests(module));
+        String moduleOutputDirectory = path(compileContext.getModuleOutputDirectory(module));
 
         // Filter the output we are writing to
-        Set<VirtualFile> outputDirectoriesToFilter = Sets.newHashSet(compileContext.getModuleOutputDirectoryForTests(module));
+        Set<String> outputDirectoriesToFilter = ContainerUtil.newHashSet(outputDirectoryForTests);
         if (!tests) {
-            outputDirectoriesToFilter.add(compileContext.getModuleOutputDirectory(module));
+            outputDirectoriesToFilter.add(moduleOutputDirectory);
         }
-        CharSequence script = generateModuleScript(moduleName, chunk, files, tests, mainOutput, outputDirectoriesToFilter);
+        CharSequence script = KotlinModuleScriptGenerator.generateModuleScript(
+                moduleName,
+                getDependencyProvider(chunk, tests, mainOutput),
+                sourceFilePaths,
+                tests,
+                outputDirectoriesToFilter
+        );
 
         File scriptFile = new File(path(outputDir), "script.kts");
         try {
             FileUtil.writeToFile(scriptFile, script.toString());
         }
         catch (IOException e) {
-            compileContext.addMessage(ERROR, "[Internal Error] Cannot write script to " + scriptFile.getAbsolutePath(), "", -1, -1);
+            compileContext.addMessage(CompilerMessageCategory.ERROR, "[Internal Error] Cannot write script to " + scriptFile.getAbsolutePath(), "", -1, -1);
             return null;
         }
         return scriptFile;
     }
 
-    private static CharSequence generateModuleScript(String moduleName,
-            ModuleChunk chunk,
-            List<VirtualFile> files,
-            boolean tests,
-            VirtualFile mainOutput,
-            Set<VirtualFile> directoriesToFilterOut) {
-        StringBuilder script = new StringBuilder();
+    private static KotlinModuleScriptGenerator.DependencyProvider getDependencyProvider(
+            final ModuleChunk chunk,
+            final boolean tests,
+            final VirtualFile mainOutputPath
+    ) {
+        return new KotlinModuleScriptGenerator.DependencyProvider() {
+            @Override
+            public void processClassPath(@NotNull KotlinModuleScriptGenerator.DependencyProcessor processor) {
+                // TODO: have a bootclasspath in script API
+                processor.processClassPathSection("Boot classpath", paths(chunk.getCompilationBootClasspathFiles()));
 
-        if (tests) {
-            script.append("// Module script for tests\n");
-        }
-        else {
-            script.append("// Module script for production\n");
-        }
+                processor.processClassPathSection("Compilation classpath", paths(chunk.getCompilationClasspathFiles()));
 
-        script.append("import kotlin.modules.*\n");
-        script.append("fun project() {\n");
-        script.append("    module(\"" + moduleName + "\") {\n");
+                // This is for java files in same roots
+                processor.processClassPathSection("Java classpath (for Java sources)", paths(Arrays.asList(chunk.getSourceRoots())));
 
-        for (VirtualFile sourceFile : files) {
-            script.append("        sources += \"" + path(sourceFile) + "\"\n");
-        }
 
-        // TODO: have a bootclasspath in script API
-        script.append("        // Boot classpath\n");
-        for (VirtualFile root : chunk.getCompilationBootClasspathFiles()) {
-            script.append("        classpath += \"" + path(root) + "\"\n");
-        }
+                if (tests && mainOutputPath != null) {
+                    processor.processClassPathSection("Main output", Arrays.asList(path(mainOutputPath)));
+                }
 
-        script.append("        // Compilation classpath\n");
-        for (VirtualFile root : chunk.getCompilationClasspathFiles()) {
-            String path = path(root);
-            if (directoriesToFilterOut.contains(root)) {
-                // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
-                // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
-                // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
-                script.append("        // Output directory, commented out\n");
-                script.append("        // ");
+                processor.processAnnotationRoots(getAnnotationRootPaths(chunk));
             }
-            script.append("        classpath += \"" + path + "\"\n");
-        }
-
-        // This is for java files in same roots
-        script.append("        // Java classpath (for Java sources)\n");
-        for (VirtualFile root : chunk.getSourceRoots()) {
-            script.append("        classpath += \"" + path(root) + "\"\n");
-        }
-
-        script.append("        // Main output\n");
-        if (tests && mainOutput != null) {
-            script.append("        classpath += \"" + path(mainOutput) + "\"\n");
-        }
-
-        script.append("        // External annotations\n");
-        for (Module module : chunk.getModules()) {
-            for (VirtualFile file : OrderEnumerator.orderEntries(module).roots(AnnotationOrderRootType.getInstance()).getRoots()) {
-                script.append("        annotationsPath += \"").append(path(file)).append("\"\n");
-            }
-        }
-
-        script.append("    }\n");
-        script.append("}\n");
-        return script;
+        };
     }
 
     private static void runInProcess(final CompileContext compileContext,
@@ -329,6 +303,25 @@ public class JetCompiler implements TranslatingCompiler {
             compileContext.addMessage(ERROR, "[Internal Error] " + e.getLocalizedMessage(), "", -1, -1);
             return;
         }
+    }
+
+    private static List<String> getAnnotationRootPaths(ModuleChunk chunk) {
+        List<String> annotationPaths = ContainerUtil.newArrayList();
+        for (Module module : chunk.getModules()) {
+            for (VirtualFile file : OrderEnumerator.orderEntries(module).roots(AnnotationOrderRootType.getInstance()).getRoots()) {
+                annotationPaths.add(path(file));
+            }
+        }
+        return annotationPaths;
+    }
+
+    private static Collection<String> paths(Collection<VirtualFile> files) {
+        return ContainerUtil.map(files, new Function<VirtualFile, String>() {
+            @Override
+            public String fun(VirtualFile file) {
+                return path(file);
+            }
+        });
     }
 
     private static String path(VirtualFile root) {
