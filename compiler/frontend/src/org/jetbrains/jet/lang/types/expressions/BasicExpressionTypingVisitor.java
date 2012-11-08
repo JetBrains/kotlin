@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -293,23 +294,30 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return false;
         }
 
-        List<TypeParameterDescriptor> superTypeParameters = supertype.getConstructor().getParameters();
+        List<TypeParameterDescriptor> superParameters = supertype.getConstructor().getParameters();
         {
             Multimap<TypeConstructor, TypeProjection> subtypeSubstitutionMap =
                     SubstitutionUtils.buildDeepSubstitutionMultimap(subtype);
 
-            for (int i = 0; i < superTypeParameters.size(); i++) {
-                TypeProjection superTypeArgument = supertype.getArguments().get(i);
-                TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
+            for (int i = 0; i < superParameters.size(); i++) {
+                TypeProjection superArgument = supertype.getArguments().get(i);
+                TypeParameterDescriptor parameter = superParameters.get(i);
 
-                if (superTypeParameter.isReified()) {
+                if (parameter.isReified()) {
                     continue;
                 }
 
-                Collection<TypeProjection> substituted = subtypeSubstitutionMap.get(superTypeParameter.getTypeConstructor());
-                for (TypeProjection substitutedProjection : substituted) {
-                    //if (!substitutedProjection.getType().equals(superTypeArgument.getType())) {
-                    if (!typeChecker.isSubtypeOf(superTypeArgument.getType(), substitutedProjection.getType())) { // TODO hides error
+                Collection<TypeProjection> substituted = subtypeSubstitutionMap.get(parameter.getTypeConstructor());
+                for (TypeProjection substitutedArgument : substituted) {
+                    JetType superIn = TypeCheckingProcedure.getInType(parameter, superArgument);
+                    JetType superOut = TypeCheckingProcedure.getOutType(parameter, superArgument);
+
+                    JetType subIn = TypeCheckingProcedure.getInType(parameter, substitutedArgument);
+                    JetType subOut = TypeCheckingProcedure.getOutType(parameter, substitutedArgument);
+
+                    if (typeChecker.isSubtypeOf(superOut, subOut) && typeChecker.isSubtypeOf(subIn, superIn)) {
+                        // super type range must be subset of sub type range
+                    } else {
                         return true;
                     }
                 }
@@ -325,7 +333,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
             Set<JetType> clearSubstituted = new HashSet<JetType>();
 
-            for (TypeParameterDescriptor superTypeParameter : superTypeParameters) {
+            for (TypeParameterDescriptor superTypeParameter : superParameters) {
                 Collection<TypeProjection> substituted = clearTypeSubstitutionMap.get(superTypeParameter.getTypeConstructor());
                 for (TypeProjection substitutedProjection : substituted) {
                     clearSubstituted.add(substitutedProjection.getType());
