@@ -19,10 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class PsiDeclarationProviderFactory {
     private PsiDeclarationProviderFactory() {
@@ -41,14 +37,9 @@ public final class PsiDeclarationProviderFactory {
     @NotNull
     public static KotlinNamespacePsiDeclarationProvider createDeclarationForKotlinNamespace(
             @NotNull PsiPackage psiPackage,
-            @NotNull PsiClass psiClass,
-            @Nullable FqName fqName
+            @NotNull PsiClass psiClass
     ) {
-        KotlinNamespacePsiDeclarationProvider result = new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass);
-        if (fqName != null && fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS))) {
-            throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
-        }
-        return result;
+        return new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass);
     }
 
     @NotNull

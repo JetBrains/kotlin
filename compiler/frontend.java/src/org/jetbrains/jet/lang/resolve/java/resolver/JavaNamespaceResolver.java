@@ -155,7 +155,7 @@ public final class JavaNamespaceResolver {
                                                           fqName, javaSemanticServices);
             }
             return new JavaScopeForKotlinNamespace(namespaceDescriptor,
-                                                   createDeclarationForKotlinNamespace(psiPackage, psiClass, fqName),
+                                                   createDeclarationForKotlinNamespace(psiPackage, psiClass),
                                                    fqName, javaSemanticServices);
         }
 
