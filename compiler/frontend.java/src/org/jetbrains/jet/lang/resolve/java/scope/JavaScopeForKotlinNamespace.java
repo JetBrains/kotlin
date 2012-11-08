@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -24,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.provider.KotlinNamespacePsiDeclaratio
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
 import java.util.Set;
 
 public final class JavaScopeForKotlinNamespace extends JavaPackageScope {
@@ -44,5 +46,11 @@ public final class JavaScopeForKotlinNamespace extends JavaPackageScope {
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
         return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
+    }
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        return getResolver().resolveInnerClasses(descriptor, declarationProvider.getPsiClass(), false);
     }
 }

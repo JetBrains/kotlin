@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
 import java.util.Map;
 
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
@@ -68,4 +69,10 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
         return null;
     }
 
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        return getResolver().resolveInnerClasses(descriptor, declarationProvider.getPsiClass(), declarationProvider.isStaticMembers());
+    }
 }

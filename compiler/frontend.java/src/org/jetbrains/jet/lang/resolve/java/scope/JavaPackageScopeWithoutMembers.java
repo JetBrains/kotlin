@@ -17,20 +17,22 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
 public final class JavaPackageScopeWithoutMembers extends JavaPackageScope {
     public JavaPackageScopeWithoutMembers(
             @NotNull NamespaceDescriptor descriptor,
-            @NotNull PsiDeclarationProvider declarationProvider,
+            @NotNull PackagePsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices
     ) {
@@ -41,5 +43,11 @@ public final class JavaPackageScopeWithoutMembers extends JavaPackageScope {
     @NotNull
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
             return Collections.emptySet();
+    }
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        return Collections.emptyList();
     }
 }

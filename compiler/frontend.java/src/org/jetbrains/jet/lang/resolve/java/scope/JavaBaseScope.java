@@ -20,17 +20,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.provider.*;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.provider.PackagePsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
@@ -38,8 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
-import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllPackageDeclarations;
 
 public abstract class JavaBaseScope extends JetScopeImpl {
 
@@ -130,20 +127,15 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     }
 
     @NotNull
-    private Collection<DeclarationDescriptor> computeAllDescriptors() {
+    protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
-        if (declarationProvider instanceof ClassPsiDeclarationProvider) {
-            PsiClass psiClass = ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
-            result.addAll(computeFieldAndFunctionDescriptors());
-            result.addAll(computeInnerClasses(psiClass));
-        }
-        if (declarationProvider instanceof PackagePsiDeclarationProvider) {
-            PsiPackage psiPackage = ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
-            assert descriptor instanceof NamespaceDescriptor;
-            result.addAll(computeAllPackageDeclarations(psiPackage, semanticServices, DescriptorUtils.getFQName(descriptor).toSafe()));
-        }
+        result.addAll(computeFieldAndFunctionDescriptors());
+        result.addAll(computeInnerClasses());
         return result;
     }
+
+    @NotNull
+    protected abstract Collection<ClassDescriptor> computeInnerClasses();
 
     @NotNull
     private Collection<DeclarationDescriptor> computeFieldAndFunctionDescriptors() {
@@ -156,20 +148,6 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             result.addAll(getProperties(name));
         }
         return result;
-    }
-
-    @NotNull
-    private Collection<ClassDescriptor> computeInnerClasses(
-            @NotNull PsiClass psiClass
-    ) {
-        // TODO: Trying to hack the situation when we produce namespace descriptor for java class and still want to see inner classes
-        if (descriptor instanceof JavaNamespaceDescriptor) {
-            return getResolver().resolveInnerClasses(descriptor, psiClass, false);
-        }
-        else {
-            return getResolver().resolveInnerClasses(descriptor, psiClass,
-                                                     ((ClassPsiDeclarationProviderImpl) declarationProvider).isStaticMembers());
-        }
     }
 
     @NotNull

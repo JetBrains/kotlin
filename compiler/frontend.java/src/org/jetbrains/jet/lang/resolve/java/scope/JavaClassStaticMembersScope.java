@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
+
 public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @NotNull
     private final FqName packageFQN;
@@ -54,5 +56,11 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
+    }
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        return getResolver().resolveInnerClasses(descriptor, declarationProvider.getPsiClass(), false);
     }
 }
