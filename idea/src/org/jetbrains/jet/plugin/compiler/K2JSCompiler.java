@@ -30,14 +30,16 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Chunk;
+import com.intellij.util.Function;
 import com.intellij.util.StringBuilderSpinAllocator;
 import gnu.trove.THashSet;
-import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
+import org.jetbrains.jet.compiler.runner.CompilerRunnerUtil;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
@@ -47,8 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.plugin.compiler.CompilerUtils.invokeExecMethod;
-import static org.jetbrains.jet.plugin.compiler.CompilerUtils.outputCompilerMessagesAndHandleExitCode;
+import static org.jetbrains.jet.compiler.runner.CompilerRunnerUtil.invokeExecMethod;
+import static org.jetbrains.jet.compiler.runner.CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode;
 
 /**
  * @author Pavel Talanov
@@ -91,9 +93,9 @@ public final class K2JSCompiler implements TranslatingCompiler {
     private static void doCompile(@NotNull final MessageCollector messageCollector, @NotNull OutputSink sink, @NotNull final Module module,
             @NotNull final CompilerEnvironment environment) {
         CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
-        outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function1<PrintStream, Integer>() {
+        outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
             @Override
-            public Integer invoke(PrintStream stream) {
+            public Integer fun(PrintStream stream) {
                 return execInProcess(messageCollector, environment, stream, module);
             }
         });
@@ -136,7 +138,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
             assert virtualFile != null : "Virtual file not found for module output: " + outDir;
             virtualFile.refresh(false, true);
         }
-        return CompilerUtils.getReturnCodeFromObject(rc);
+        return CompilerRunnerUtil.getReturnCodeFromObject(rc);
     }
 
     @NotNull
