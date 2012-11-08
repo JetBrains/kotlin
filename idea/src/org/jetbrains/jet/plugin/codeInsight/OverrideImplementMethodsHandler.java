@@ -87,11 +87,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             afterAnchor = added;
             elementsToCompact.add((JetElement) added);
         }
+        ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
+
         if (!body.isPhysical()) {
             classOrObject.add(JetPsiFactory.createWhiteSpace(project));
             classOrObject.add(body);
         }
-        ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
     }
 
     @Nullable
