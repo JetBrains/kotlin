@@ -26,8 +26,6 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
-import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -43,8 +41,6 @@ public class InjectorForMacros {
     private AnnotationResolver annotationResolver;
     private DescriptorResolver descriptorResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
-    private ResolutionResultsHandler resolutionResultsHandler;
-    private OverloadingConflictResolver overloadingConflictResolver;
 
     public InjectorForMacros(
         @NotNull Project project,
@@ -59,8 +55,6 @@ public class InjectorForMacros {
         this.annotationResolver = new AnnotationResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        this.resolutionResultsHandler = new ResolutionResultsHandler();
-        this.overloadingConflictResolver = new OverloadingConflictResolver();
 
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
@@ -69,7 +63,6 @@ public class InjectorForMacros {
 
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setResolutionResultsHandler(resolutionResultsHandler);
         callResolver.setTypeResolver(typeResolver);
 
         candidateResolver.setExpressionTypingServices(expressionTypingServices);
@@ -86,8 +79,6 @@ public class InjectorForMacros {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         descriptorResolver.setTypeResolver(typeResolver);
-
-        resolutionResultsHandler.setOverloadingConflictResolver(overloadingConflictResolver);
 
     }
 

@@ -40,6 +40,10 @@ import java.util.Set;
  */
 public class OverloadingConflictResolver {
 
+    public static OverloadingConflictResolver INSTANCE = new OverloadingConflictResolver();
+
+    private OverloadingConflictResolver() {}
+
     @Nullable
     public <D extends CallableDescriptor> ResolvedCallWithTrace<D> findMaximallySpecific(
             @NotNull Set<ResolvedCallWithTrace<D>> candidates,
@@ -79,7 +83,11 @@ public class OverloadingConflictResolver {
      * Int < Long
      * Int < Short < Byte
      */
-    private <Descriptor extends CallableDescriptor> boolean moreSpecific(Descriptor f, Descriptor g, boolean discriminateGenericDescriptors) {
+    private <Descriptor extends CallableDescriptor> boolean moreSpecific(
+            Descriptor f,
+            Descriptor g,
+            boolean discriminateGenericDescriptors
+    ) {
         if (f.getContainingDeclaration() instanceof ScriptDescriptor && g.getContainingDeclaration() instanceof ScriptDescriptor) {
             ScriptDescriptor fs = (ScriptDescriptor) f.getContainingDeclaration();
             ScriptDescriptor gs = (ScriptDescriptor) g.getContainingDeclaration();

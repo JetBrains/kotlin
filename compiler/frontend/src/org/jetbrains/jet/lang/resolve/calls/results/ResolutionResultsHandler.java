@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -37,19 +36,16 @@ import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.STRO
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
 
 public class ResolutionResultsHandler {
-    @NotNull
-    private OverloadingConflictResolver overloadingConflictResolver;
+    public static ResolutionResultsHandler INSTANCE = new ResolutionResultsHandler();
 
-    @Inject
-    public void setOverloadingConflictResolver(@NotNull OverloadingConflictResolver overloadingConflictResolver) {
-        this.overloadingConflictResolver = overloadingConflictResolver;
-    }
+    private ResolutionResultsHandler() {}
 
     @NotNull
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
             @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing,
-            @NotNull Set<ResolvedCallWithTrace<D>> candidates) {
+            @NotNull Set<ResolvedCallWithTrace<D>> candidates
+    ) {
         Set<ResolvedCallWithTrace<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failedCandidates = Sets.newLinkedHashSet();
         for (ResolvedCallWithTrace<D> candidateCall : candidates) {
@@ -72,7 +68,8 @@ public class ResolutionResultsHandler {
             @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing,
             @NotNull Set<ResolvedCallWithTrace<D>> successfulCandidates,
-            @NotNull Set<ResolvedCallWithTrace<D>> failedCandidates) {
+            @NotNull Set<ResolvedCallWithTrace<D>> failedCandidates
+    ) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (successfulCandidates.size() > 0) {
@@ -137,7 +134,7 @@ public class ResolutionResultsHandler {
         }
     }
 
-    private static <D extends CallableDescriptor> boolean allClean(Collection<ResolvedCallWithTrace<D>> results) {
+    private <D extends CallableDescriptor> boolean allClean(Collection<ResolvedCallWithTrace<D>> results) {
         for (ResolvedCallWithTrace<D> result : results) {
             if (result.isDirty()) return false;
         }
@@ -161,13 +158,13 @@ public class ResolutionResultsHandler {
             if (cleanCandidates.isEmpty()) {
                 cleanCandidates = candidates;
             }
-            ResolvedCallWithTrace<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, false);
+            ResolvedCallWithTrace<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, false);
             if (maximallySpecific != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecific);
             }
 
             if (discriminateGenerics) {
-                ResolvedCallWithTrace<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(cleanCandidates, true);
+                ResolvedCallWithTrace<D> maximallySpecificGenericsDiscriminated = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, true);
                 if (maximallySpecificGenericsDiscriminated != null) {
                     return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
                 }

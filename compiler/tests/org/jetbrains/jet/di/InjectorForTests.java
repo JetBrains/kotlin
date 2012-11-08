@@ -27,8 +27,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
-import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadingConflictResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -45,8 +43,6 @@ public class InjectorForTests {
     private AnnotationResolver annotationResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private CandidateResolver candidateResolver;
-    private ResolutionResultsHandler resolutionResultsHandler;
-    private OverloadingConflictResolver overloadingConflictResolver;
 
     public InjectorForTests(
         @NotNull Project project
@@ -61,8 +57,6 @@ public class InjectorForTests {
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.candidateResolver = new CandidateResolver();
-        this.resolutionResultsHandler = new ResolutionResultsHandler();
-        this.overloadingConflictResolver = new OverloadingConflictResolver();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
@@ -80,7 +74,6 @@ public class InjectorForTests {
 
         this.callResolver.setCandidateResolver(candidateResolver);
         this.callResolver.setExpressionTypingServices(expressionTypingServices);
-        this.callResolver.setResolutionResultsHandler(resolutionResultsHandler);
         this.callResolver.setTypeResolver(typeResolver);
 
         annotationResolver.setCallResolver(callResolver);
@@ -88,8 +81,6 @@ public class InjectorForTests {
 
         candidateResolver.setExpressionTypingServices(expressionTypingServices);
         candidateResolver.setTypeResolver(typeResolver);
-
-        resolutionResultsHandler.setOverloadingConflictResolver(overloadingConflictResolver);
 
     }
 

@@ -64,18 +64,11 @@ public class CallResolver {
     private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
 
     @NotNull
-    private ResolutionResultsHandler resolutionResultsHandler;
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
     private TypeResolver typeResolver;
     @NotNull
     private CandidateResolver candidateResolver;
-
-    @Inject
-    public void setResolutionResultsHandler(@NotNull ResolutionResultsHandler resolutionResultsHandler) {
-        this.resolutionResultsHandler = resolutionResultsHandler;
-    }
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -331,7 +324,7 @@ public class CallResolver {
             candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(
                     CallResolutionContext.create(context, tracing, resolvedCall), successful, failed);
         }
-        OverloadResolutionResultsImpl<D> results = resolutionResultsHandler.computeResultAndReportErrors(context.trace, tracing, successful,
+        OverloadResolutionResultsImpl<D> results = ResolutionResultsHandler.INSTANCE.computeResultAndReportErrors(context.trace, tracing, successful,
                                                                                                          failed);
         if (!results.isSingleResult()) {
             candidateResolver.checkTypesWithNoCallee(context);
@@ -505,7 +498,7 @@ public class CallResolver {
             }
         }
 
-        OverloadResolutionResultsImpl<F> results = resolutionResultsHandler.computeResultAndReportErrors(
+        OverloadResolutionResultsImpl<F> results = ResolutionResultsHandler.INSTANCE.computeResultAndReportErrors(
                 task.trace, task.tracing, task.getResolvedCalls());
         if (!results.isSingleResult() && !results.isIncomplete()) {
             candidateResolver.checkTypesWithNoCallee(task.toBasic());
