@@ -97,7 +97,18 @@ public class OverloadingConflictResolver {
             }
         }
 
-        if (discriminateGenericDescriptors && !isGeneric(f) && isGeneric(g)) return true;
+        boolean isGenericF = isGeneric(f);
+        boolean isGenericG = isGeneric(g);
+        if (discriminateGenericDescriptors) {
+            if (!isGenericF && isGenericG) return true;
+            if (isGenericF && !isGenericG) return false;
+
+            if (isGenericF && isGenericG) {
+                return moreSpecific(DescriptorUtils.substituteBounds(f), DescriptorUtils.substituteBounds(g), false);
+            }
+        }
+
+
         if (OverridingUtil.overrides(f, g)) return true;
         if (OverridingUtil.overrides(g, f)) return false;
 
@@ -177,16 +188,6 @@ public class OverloadingConflictResolver {
                     }
                 }
             }
-        }
-
-        if (discriminateGenericDescriptors && isGeneric(f)) {
-            if (!isGeneric(g)) {
-                return false;
-            }
-
-            // g is generic, too
-
-            return moreSpecific(DescriptorUtils.substituteBounds(f), DescriptorUtils.substituteBounds(g), false);
         }
 
         return true;
