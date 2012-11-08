@@ -17,12 +17,19 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+
+import java.util.Set;
 
 public final class JavaClassStaticMembersScope extends JavaPackageScope {
+    @NotNull
+    private final ClassPsiDeclarationProvider declarationProvider;
+
     public JavaClassStaticMembersScope(
             @NotNull NamespaceDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
@@ -30,5 +37,13 @@ public final class JavaClassStaticMembersScope extends JavaPackageScope {
             @NotNull JavaSemanticServices semanticServices
     ) {
         super(descriptor, declarationProvider, packageFQN, semanticServices);
+        this.declarationProvider = declarationProvider;
+    }
+
+    @NotNull
+    @Override
+    protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
+        return semanticServices.getDescriptorResolver()
+                .resolveFunctionGroup(name, declarationProvider, descriptor);
     }
 }

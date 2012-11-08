@@ -44,7 +44,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     protected final JavaSemanticServices semanticServices;
 
     @NotNull
-    protected final PsiDeclarationProvider resolverScopeData;
+    protected final PsiDeclarationProvider declarationProvider;
 
     @NotNull
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
@@ -54,15 +54,15 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @Nullable
     private Collection<DeclarationDescriptor> allDescriptors = null;
     @NotNull
-    private final ClassOrNamespaceDescriptor descriptor;
+    protected final ClassOrNamespaceDescriptor descriptor;
 
     protected JavaBaseScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull JavaSemanticServices semanticServices,
-            @NotNull PsiDeclarationProvider resolverScopeData
+            @NotNull PsiDeclarationProvider declarationProvider
     ) {
         this.semanticServices = semanticServices;
-        this.resolverScopeData = resolverScopeData;
+        this.declarationProvider = declarationProvider;
         this.descriptor = descriptor;
     }
 
@@ -89,7 +89,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     private Set<VariableDescriptor> computePropertyDescriptors(@NotNull Name name) {
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData, descriptor);
+        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, declarationProvider, descriptor);
     }
 
     @NotNull
@@ -108,13 +108,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     }
 
     @NotNull
-    private Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        if (!(resolverScopeData instanceof ClassPsiDeclarationProvider)) {
-            return Collections.emptySet();
-        }
-        return semanticServices.getDescriptorResolver()
-                .resolveFunctionGroup(name, (ClassPsiDeclarationProvider) resolverScopeData, descriptor);
-    }
+    protected abstract Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name);
 
     @NotNull
     @Override
@@ -135,13 +129,13 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     @NotNull
     private Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
-        if (resolverScopeData instanceof ClassPsiDeclarationProvider) {
-            PsiClass psiClass = ((ClassPsiDeclarationProvider) resolverScopeData).getPsiClass();
+        if (declarationProvider instanceof ClassPsiDeclarationProvider) {
+            PsiClass psiClass = ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
             computeFieldAndFunctionDescriptors(result);
             computeInnerClasses(psiClass, result);
         }
-        if (resolverScopeData instanceof PackagePsiDeclarationProvider) {
-            PsiPackage psiPackage = ((PackagePsiDeclarationProvider) resolverScopeData).getPsiPackage();
+        if (declarationProvider instanceof PackagePsiDeclarationProvider) {
+            PsiPackage psiPackage = ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
             assert descriptor instanceof NamespaceDescriptor;
             result.addAll(computeAllPackageDeclarations(psiPackage, semanticServices, DescriptorUtils.getFQName(descriptor).toSafe()));
         }
@@ -149,7 +143,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     }
 
     private void computeFieldAndFunctionDescriptors(Collection<DeclarationDescriptor> result) {
-        for (NamedMembers members : resolverScopeData.getMembersCache().allMembers()) {
+        for (NamedMembers members : declarationProvider.getMembersCache().allMembers()) {
             Name name = members.getName();
             ProgressIndicatorProvider.checkCanceled();
             result.addAll(getFunctions(name));
@@ -168,7 +162,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
         }
         else {
             result.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                    descriptor, psiClass, ((ClassPsiDeclarationProviderImpl) resolverScopeData).isStaticMembers()));
+                    descriptor, psiClass, ((ClassPsiDeclarationProviderImpl) declarationProvider).isStaticMembers()));
         }
     }
 }

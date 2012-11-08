@@ -20,10 +20,7 @@ import com.google.common.collect.Maps;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
@@ -33,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class static of instance members.
@@ -83,5 +81,12 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
             }
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
+        return semanticServices.getDescriptorResolver()
+                .resolveFunctionGroup(name, classPsiDeclarationProvider, descriptor);
     }
 }
