@@ -47,10 +47,11 @@ public class JavaClassMembersScope extends JavaBaseScope {
 
     public JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull JavaSemanticServices semanticServices,
-            @NotNull ClassPsiDeclarationProvider resolverScopeData) {
-        super(descriptor, semanticServices, resolverScopeData);
-        this.classPsiDeclarationProvider = resolverScopeData;
+            @NotNull ClassPsiDeclarationProvider declarationProvider,
+            @NotNull JavaSemanticServices semanticServices
+    ) {
+        super(descriptor, semanticServices, declarationProvider);
+        this.classPsiDeclarationProvider = declarationProvider;
     }
 
     @NotNull

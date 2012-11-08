@@ -173,7 +173,7 @@ public final class JavaClassObjectResolver {
         classObjectDescriptor.setVisibility(containing.getVisibility());
         classObjectDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObjectDescriptor.createTypeConstructor();
-        JavaClassMembersScope classMembersScope = new JavaClassMembersScope(classObjectDescriptor, semanticServices, data);
+        JavaClassMembersScope classMembersScope = new JavaClassMembersScope(classObjectDescriptor, data, semanticServices);
         WritableScopeImpl writableScope =
                 new WritableScopeImpl(classMembersScope, classObjectDescriptor, RedeclarationHandler.THROW_EXCEPTION, fqName.toString());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);

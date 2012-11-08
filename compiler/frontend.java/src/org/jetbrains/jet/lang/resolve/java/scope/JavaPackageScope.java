@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
@@ -33,18 +32,19 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 /**
  * @author abreslav
  */
-public class JavaPackageScope extends JavaBaseScope {
+public abstract class JavaPackageScope extends JavaBaseScope {
 
     @NotNull
     private final FqName packageFQN;
     @NotNull
     private final PsiDeclarationProvider declarationProvider;
 
-    public JavaPackageScope(
-            @NotNull ClassOrNamespaceDescriptor descriptor,
+    protected JavaPackageScope(
+            @NotNull NamespaceDescriptor descriptor,
+            @NotNull PsiDeclarationProvider declarationProvider,
             @NotNull FqName packageFQN,
-            @NotNull JavaSemanticServices semanticServices,
-            @NotNull PsiDeclarationProvider declarationProvider) {
+            @NotNull JavaSemanticServices semanticServices
+    ) {
         super(descriptor, semanticServices, declarationProvider);
         this.declarationProvider = declarationProvider;
         this.packageFQN = packageFQN;

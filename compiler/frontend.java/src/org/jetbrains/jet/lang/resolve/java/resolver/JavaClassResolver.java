@@ -241,7 +241,7 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classDescriptor, semanticServices, classData));
+        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classDescriptor, classData, semanticServices));
 
         String context = "class " + psiClass.getQualifiedName();
         signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);

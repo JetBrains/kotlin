@@ -31,9 +31,10 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaScopeForKotlinNamespace;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -41,6 +42,8 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory.*;
 
 public final class JavaNamespaceResolver {
 
@@ -132,39 +135,37 @@ public final class JavaNamespaceResolver {
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        PsiDeclarationProvider namespaceData = createDeclarationProvider(fqName, namespaceDescriptor);
-        JavaPackageScope javaPackageScope;
-        if (namespaceData == null) {
-            javaPackageScope = null;
-        }
-        else {
-            //TODO:
-            javaPackageScope = new JavaPackageScope(namespaceDescriptor, fqName, javaSemanticServices, namespaceData);
-        }
-
-        cache(fqName, javaPackageScope);
-
-        return javaPackageScope;
+        JavaPackageScope namespaceScope = doCreateNamespaceScope(fqName, namespaceDescriptor);
+        cache(fqName, namespaceScope);
+        return namespaceScope;
     }
 
     @Nullable
-    private PsiDeclarationProvider createDeclarationProvider(
+    private JavaPackageScope doCreateNamespaceScope(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
         PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
-        if (psiClass != null || psiPackage != null) {
+        if (psiPackage != null) {
+            PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
             trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
-            return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
+            if (psiClass == null) {
+                return new JavaPackageScopeWithoutMembers(namespaceDescriptor,
+                                                          createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
+                                                          fqName, javaSemanticServices);
+            }
+            return new JavaScopeForKotlinNamespace(namespaceDescriptor,
+                                                   createDeclarationForKotlinNamespace(psiPackage, psiClass, fqName),
+                                                   fqName, javaSemanticServices);
         }
 
-        psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
         if (psiClass != null && !psiClass.isEnum()) {
             trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
-            return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
+            return new JavaClassStaticMembersScope(namespaceDescriptor,
+                                                   createDeclarationProviderForClassStaticMembers(psiClass),
+                                                   fqName, javaSemanticServices);
         }
-
         return null;
     }
 
