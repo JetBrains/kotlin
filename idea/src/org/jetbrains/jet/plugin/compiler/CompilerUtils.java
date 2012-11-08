@@ -24,12 +24,10 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.compiler.runner.AbstractOutputItemCollector;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
-import org.jetbrains.jet.compiler.runner.OutputItemsCollector;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -51,42 +49,21 @@ public final class CompilerUtils {
         return new File(file.getPath());
     }
 
-    public static class OutputItemsCollectorImpl implements OutputItemsCollector {
-        private static final String FOR_SOURCE_PREFIX = "For source: ";
-        private static final String EMITTING_PREFIX = "Emitting: ";
-        private final String outputPath;
-        private VirtualFile currentSource;
-        private List<TranslatingCompiler.OutputItem> answer = new ArrayList<TranslatingCompiler.OutputItem>();
-        private List<VirtualFile> sources = new ArrayList<VirtualFile>();
+    public static class OutputItemsCollectorImpl extends AbstractOutputItemCollector<VirtualFile, TranslatingCompiler.OutputItem> {
 
-        public OutputItemsCollectorImpl(String outputPath) {
-            this.outputPath = outputPath;
+        public OutputItemsCollectorImpl(@NotNull String outputPath) {
+            super(outputPath);
         }
 
         @Override
-        public void learn(String message) {
-            message = message.trim();
-            if (message.startsWith(FOR_SOURCE_PREFIX)) {
-                currentSource = LocalFileSystem.getInstance().findFileByPath(message.substring(FOR_SOURCE_PREFIX.length()));
-                if (currentSource != null) {
-                    sources.add(currentSource);
-                }
-            }
-            else if (message.startsWith(EMITTING_PREFIX)) {
-                if (currentSource != null) {
-                    OutputItemImpl item = new OutputItemImpl(outputPath + "/" + message.substring(EMITTING_PREFIX.length()), currentSource);
-                    LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(item.getOutputPath()));
-                    answer.add(item);
-                }
-            }
+        protected TranslatingCompiler.OutputItem convertResult(String resultPath, VirtualFile correspondingSource) {
+            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(resultPath));
+            return new OutputItemImpl(resultPath, correspondingSource);
         }
 
-        public List<TranslatingCompiler.OutputItem> getOutputs() {
-            return answer;
-        }
-
-        public List<VirtualFile> getSources() {
-            return sources;
+        @Override
+        protected VirtualFile convertSource(String sourcePath) {
+            return LocalFileSystem.getInstance().findFileByPath(sourcePath);
         }
     }
 }
