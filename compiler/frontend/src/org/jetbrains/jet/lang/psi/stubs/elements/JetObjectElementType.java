@@ -69,7 +69,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         assert name != null;
 
         FqName fqName = psi.getFqName();
-        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName);
+        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, psi.isTopLevel());
     }
 
     @Override
@@ -77,6 +77,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         dataStream.writeName(stub.getName());
         FqName fqName = stub.getFQName();
         dataStream.writeName(fqName != null ? fqName.toString() : null);
+        dataStream.writeBoolean(stub.isTopLevel());
     }
 
     @Override
@@ -84,8 +85,9 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         StringRef name = dataStream.readName();
         StringRef fqNameStr = dataStream.readName();
         FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
+        boolean isTopLevel = dataStream.readBoolean();
 
-        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName);
+        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, isTopLevel);
     }
 
     @Override

@@ -27,4 +27,5 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 public interface PsiJetObjectStub extends NamedStub<JetObjectDeclaration> {
     @Nullable
     FqName getFQName();
+    boolean isTopLevel();
 }

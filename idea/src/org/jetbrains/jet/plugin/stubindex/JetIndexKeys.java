@@ -17,10 +17,7 @@
 package org.jetbrains.jet.plugin.stubindex;
 
 import com.intellij.psi.stubs.StubIndexKey;
-import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 
 /**
  * @author Nikolay Krasko
@@ -29,6 +26,9 @@ public interface JetIndexKeys {
     StubIndexKey<String, JetClassOrObject> SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.class.shortName");
     StubIndexKey<String, JetClassOrObject> SUPERCLASS_NAME_KEY = StubIndexKey.createIndexKey("jet.class.superClassName");
     StubIndexKey<String, JetClassOrObject> FQN_KEY = StubIndexKey.createIndexKey("jet.fqn");
+
+    StubIndexKey<String, JetObjectDeclaration> TOP_LEVEL_OBJECT_SHORT_NAME_KEY =
+            StubIndexKey.createIndexKey("jet.top.level.object.short.name");
 
     StubIndexKey<String, JetNamedFunction> TOP_LEVEL_FUNCTION_SHORT_NAME_KEY =
             StubIndexKey.createIndexKey("jet.top.level.function.short.name");

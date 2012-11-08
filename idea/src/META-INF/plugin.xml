@@ -204,6 +204,7 @@
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex" />
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex" />
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex" />
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetTopLevelShortObjectNameIndex" />
 
       <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor" />
       <psi.clsCustomNavigationPolicy implementation="org.jetbrains.jet.plugin.libraries.JetClsNavigationPolicy" />
