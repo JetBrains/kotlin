@@ -201,6 +201,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testNoImportedJavaClassDuplication() {
+        doTest();
+    }
+
     public void testNoTopLevelCompletionInQualifiedUserTypes() {
         doTest();
     }

@@ -139,7 +139,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
 
-        return new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory);
+        return new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
