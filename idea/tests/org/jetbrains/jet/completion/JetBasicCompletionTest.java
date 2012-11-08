@@ -153,6 +153,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInLongDotQualifiedExpression() {
+        doTest();
+    }
+
     public void testInMiddleOfNamespace() {
         doTest();
     }
