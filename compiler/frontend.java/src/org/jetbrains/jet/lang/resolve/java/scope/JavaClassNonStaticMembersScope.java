@@ -22,6 +22,7 @@ import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
@@ -36,12 +37,17 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     @NotNull
     private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
 
+    private Collection<ConstructorDescriptor> constructors = null;
+    @NotNull
+    private final ClassDescriptor descriptor;
+
     public JavaClassNonStaticMembersScope(
             @NotNull ClassDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider psiDeclarationProvider,
             @NotNull JavaSemanticServices semanticServices
     ) {
         super(descriptor, psiDeclarationProvider, semanticServices);
+        this.descriptor = descriptor;
     }
 
     @Override
@@ -71,6 +77,14 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
         return null;
     }
 
+
+    @NotNull
+    public Collection<ConstructorDescriptor> getConstructors() {
+        if (constructors == null) {
+            this.constructors = getResolver().resolveConstructors(declarationProvider, descriptor);
+        }
+        return constructors;
+    }
 
     @NotNull
     @Override

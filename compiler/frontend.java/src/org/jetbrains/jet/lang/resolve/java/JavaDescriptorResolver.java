@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
@@ -109,7 +108,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @NotNull
     public Collection<ConstructorDescriptor> resolveConstructors(
-            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptorFromJvmBytecode classDescriptor
+            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptor classDescriptor
     ) {
         return constructorResolver.resolveConstructors(classData, classDescriptor);
     }

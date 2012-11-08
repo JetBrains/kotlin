@@ -21,8 +21,7 @@ import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.lazy.LazyClassDescriptor;
 
 import java.util.Collection;
@@ -33,32 +32,25 @@ import java.util.Collection;
  * @see LazyClassDescriptor
  */
 public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
-    @NotNull
-    private final JavaDescriptorResolver javaDescriptorResolver;
 
-    @NotNull
-    private final ClassPsiDeclarationProvider resolverBinaryClassData;
-
-
-    // lazy
-    private Collection<ConstructorDescriptor> constructors;
+    private JavaClassNonStaticMembersScope scopeForConstructorResolve;
 
     public ClassDescriptorFromJvmBytecode(
-            @NotNull DeclarationDescriptor containingDeclaration, @NotNull ClassKind kind,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver,
-            @NotNull ClassPsiDeclarationProvider data
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull ClassKind kind
     ) {
         super(containingDeclaration, kind);
-        this.javaDescriptorResolver = javaDescriptorResolver;
-        this.resolverBinaryClassData = data;
     }
+
 
     @NotNull
     @Override
     public Collection<ConstructorDescriptor> getConstructors() {
-        if (constructors == null) {
-            this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData, this);
-        }
-        return constructors;
+        assert scopeForConstructorResolve != null;
+        return scopeForConstructorResolve.getConstructors();
+    }
+
+    public void setScopeForConstructorResolve(@NotNull JavaClassNonStaticMembersScope scopeForConstructorResolve) {
+        this.scopeForConstructorResolve = scopeForConstructorResolve;
     }
 }

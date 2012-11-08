@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -63,7 +62,7 @@ public final class JavaConstructorResolver {
 
     @NotNull
     public Collection<ConstructorDescriptor> resolveConstructors(
-            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptorFromJvmBytecode containingClass
+            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptor containingClass
     ) {
         Collection<ConstructorDescriptor> constructors = Lists.newArrayList();
 
@@ -164,7 +163,7 @@ public final class JavaConstructorResolver {
             PsiClass psiClass,
             boolean aStatic,
             PsiMethod psiConstructor,
-            ClassDescriptorFromJvmBytecode classDescriptor
+            ClassDescriptor classDescriptor
     ) {
         PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 

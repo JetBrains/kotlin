@@ -73,7 +73,6 @@ public final class JavaClassResolver {
     private final Set<FqNameBase> unresolvedCache = Sets.newHashSet();
 
     private BindingTrace trace;
-    private JavaDescriptorResolver javaDescriptorResolver;
     private JavaSignatureResolver signatureResolver;
     private JavaSemanticServices semanticServices;
     private JavaAnnotationResolver annotationResolver;
@@ -88,11 +87,6 @@ public final class JavaClassResolver {
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
-    }
-
-    @Inject
-    public void setJavaDescriptorResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @Inject
@@ -226,8 +220,7 @@ public final class JavaClassResolver {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassPsiDeclarationProvider classData = PsiDeclarationProviderFactory.createBinaryClassData(psiClass);
-        ClassDescriptorFromJvmBytecode classDescriptor
-                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver, classData);
+        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind);
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
@@ -241,15 +234,16 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        classDescriptor.setScopeForMemberLookup(new JavaClassNonStaticMembersScope(classDescriptor, classData, semanticServices));
+        JavaClassNonStaticMembersScope membersScope = new JavaClassNonStaticMembersScope(classDescriptor, classData, semanticServices);
+        classDescriptor.setScopeForMemberLookup(membersScope);
+        classDescriptor.setScopeForConstructorResolve(membersScope);
 
         String context = "class " + psiClass.getQualifiedName();
         signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
-        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classData, classTypeParameters
-        ));
+        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classData, classTypeParameters));
 
         ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
         cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);
