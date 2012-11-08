@@ -16,27 +16,21 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.google.common.collect.Maps;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
-    private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
-    @NotNull
-    private final ClassPsiDeclarationProvider classPsiDeclarationProvider;
+    protected final ClassPsiDeclarationProvider declarationProvider;
 
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
@@ -44,7 +38,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
             @NotNull JavaSemanticServices semanticServices
     ) {
         super(descriptor, semanticServices, declarationProvider);
-        this.classPsiDeclarationProvider = declarationProvider;
+        this.declarationProvider = declarationProvider;
     }
 
     @NotNull
@@ -53,34 +47,10 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
         throw new UnsupportedOperationException(); // TODO
     }
 
-    @Override
-    public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassifierDescriptor classifierDescriptor = classifiers.get(name);
-        if (classifierDescriptor == null) {
-            classifierDescriptor = doGetClassifierDescriptor(name);
-            classifiers.put(name, classifierDescriptor);
-        }
-        return classifierDescriptor;
-    }
-
-    private ClassifierDescriptor doGetClassifierDescriptor(Name name) {
-        // TODO : suboptimal, walk the list only once
-        for (PsiClass innerClass : classPsiDeclarationProvider.getPsiClass().getAllInnerClasses()) {
-            if (name.getName().equals(innerClass.getName())) {
-                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != classPsiDeclarationProvider.isStaticMembers()) return null;
-                ClassDescriptor classDescriptor = getResolver()
-                        .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                if (classDescriptor != null) {
-                    return classDescriptor;
-                }
-            }
-        }
-        return null;
-    }
 
     @NotNull
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return getResolver().resolveFunctionGroup(name, classPsiDeclarationProvider, descriptor);
+        return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
     }
 }

@@ -31,8 +31,8 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaScopeForKotlinNamespace;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -50,7 +50,7 @@ public final class JavaNamespaceResolver {
     @NotNull
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
     @NotNull
-    private final Map<FqName, JavaPackageScope> resolvedNamespaceCache = Maps.newHashMap();
+    private final Map<FqName, JavaBaseScope> resolvedNamespaceCache = Maps.newHashMap();
     @NotNull
     private final Set<FqName> unresolvedCache = Sets.newHashSet();
 
@@ -87,7 +87,7 @@ public final class JavaNamespaceResolver {
         if (unresolvedCache.contains(qualifiedName)) {
             return null;
         }
-        JavaPackageScope scope = resolvedNamespaceCache.get(qualifiedName);
+        JavaBaseScope scope = resolvedNamespaceCache.get(qualifiedName);
         if (scope != null) {
             return (NamespaceDescriptor) scope.getContainingDeclaration();
         }
@@ -103,7 +103,7 @@ public final class JavaNamespaceResolver {
                 qualifiedName
         );
 
-        JavaPackageScope newScope = createNamespaceScope(qualifiedName, javaNamespaceDescriptor);
+        JavaBaseScope newScope = createNamespaceScope(qualifiedName, javaNamespaceDescriptor);
         if (newScope == null) {
             return null;
         }
@@ -131,17 +131,17 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    private JavaPackageScope createNamespaceScope(
+    private JavaBaseScope createNamespaceScope(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        JavaPackageScope namespaceScope = doCreateNamespaceScope(fqName, namespaceDescriptor);
+        JavaBaseScope namespaceScope = doCreateNamespaceScope(fqName, namespaceDescriptor);
         cache(fqName, namespaceScope);
         return namespaceScope;
     }
 
     @Nullable
-    private JavaPackageScope doCreateNamespaceScope(
+    private JavaBaseScope doCreateNamespaceScope(
             @NotNull FqName fqName,
             @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
@@ -169,26 +169,26 @@ public final class JavaNamespaceResolver {
         return null;
     }
 
-    private void cache(@NotNull FqName fqName, @Nullable JavaPackageScope packageScope) {
+    private void cache(@NotNull FqName fqName, @Nullable JavaBaseScope packageScope) {
         if (packageScope == null) {
             unresolvedCache.add(fqName);
             return;
         }
-        JavaPackageScope oldValue = resolvedNamespaceCache.put(fqName, packageScope);
+        JavaBaseScope oldValue = resolvedNamespaceCache.put(fqName, packageScope);
         if (oldValue != null) {
             throw new IllegalStateException("rewrite at " + fqName);
         }
     }
 
     @Nullable
-    public JavaPackageScope getJavaPackageScopeForExistingNamespaceDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor) {
+    public JavaBaseScope getJavaPackageScopeForExistingNamespaceDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor) {
         FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
         if (unresolvedCache.contains(fqName)) {
             throw new IllegalStateException(
                     "This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin: " +
                     fqName);
         }
-        JavaPackageScope alreadyResolvedScope = resolvedNamespaceCache.get(fqName);
+        JavaBaseScope alreadyResolvedScope = resolvedNamespaceCache.get(fqName);
         if (alreadyResolvedScope != null) {
             return alreadyResolvedScope;
         }

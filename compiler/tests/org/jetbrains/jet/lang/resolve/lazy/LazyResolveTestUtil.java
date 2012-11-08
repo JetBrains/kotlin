@@ -36,9 +36,9 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -114,7 +114,7 @@ public class LazyResolveTestUtil {
                     namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                 }
                 if (psiClassFinder.findPsiPackage(fqName) != null) {
-                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
+                    JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
                     assert javaPackageScope != null;
                     namespaceMemberScope.importScope(javaPackageScope);
                 }

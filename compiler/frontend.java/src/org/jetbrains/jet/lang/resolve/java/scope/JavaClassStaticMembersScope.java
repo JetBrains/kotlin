@@ -17,18 +17,18 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Set;
-
-public final class JavaClassStaticMembersScope extends JavaPackageScope {
+public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @NotNull
-    private final ClassPsiDeclarationProvider declarationProvider;
+    private final FqName packageFQN;
 
     public JavaClassStaticMembersScope(
             @NotNull NamespaceDescriptor descriptor,
@@ -36,13 +36,23 @@ public final class JavaClassStaticMembersScope extends JavaPackageScope {
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices
     ) {
-        super(descriptor, declarationProvider, packageFQN, semanticServices);
-        this.declarationProvider = declarationProvider;
+        super(descriptor, declarationProvider, semanticServices);
+        this.packageFQN = packageFQN;
     }
 
-    @NotNull
     @Override
-    protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
-        return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
+        return getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+    }
+
+    @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
+        //TODO: check that class is an object
+        return getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+    }
+
+    @Override
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
+        return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 }

@@ -36,11 +36,11 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -124,7 +124,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                 }
                 if (psiClassFinder.findPsiPackage(fqName) != null) {
-                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
+                    JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
                     assert javaPackageScope != null;
                     namespaceMemberScope.importScope(javaPackageScope);
                 }

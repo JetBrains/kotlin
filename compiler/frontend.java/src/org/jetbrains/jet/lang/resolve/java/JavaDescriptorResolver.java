@@ -25,9 +25,9 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -125,7 +125,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    public JavaPackageScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
+    public JetScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
         return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(namespaceDescriptor);
     }
 
