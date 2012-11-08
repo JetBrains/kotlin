@@ -45,6 +45,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testDoNotInsertImportIfResolvedIntoJavaConstructor() {
+        doTest();
+    }
+
     public void testNonStandardArray() {
         doTest(CompletionType.BASIC, 2, "Array", "java.lang.reflect", '\n');
     }
