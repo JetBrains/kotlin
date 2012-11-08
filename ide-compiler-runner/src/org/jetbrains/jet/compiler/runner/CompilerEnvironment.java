@@ -34,6 +34,10 @@ public final class CompilerEnvironment {
     @NotNull
     public static CompilerEnvironment getEnvironmentFor(boolean tests, File mainOutput, File outputDirectoryForTests) {
         final File outputDir = tests ? outputDirectoryForTests : mainOutput;
+        return getEnvironmentFor(outputDir);
+    }
+
+    public static CompilerEnvironment getEnvironmentFor(File outputDir) {
         File kotlinHome = PathUtil.getDefaultCompilerPath();
         return new CompilerEnvironment(kotlinHome, outputDir);
     }
