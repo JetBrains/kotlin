@@ -125,12 +125,18 @@ public class TypeSubstitutor {
 
     @Nullable
     public JetType substitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) {
+        TypeProjection projection = substitute(new TypeProjection(howThisTypeIsUsed, type));
+        return projection == null ? null : projection.getType();
+    }
+
+    @Nullable
+    public TypeProjection substitute(@NotNull TypeProjection typeProjection) {
         if (isEmpty()) {
-            return type;
+            return typeProjection;
         }
 
         try {
-            return unsafeSubstitute(new TypeProjection(howThisTypeIsUsed, type), 0).getType();
+            return unsafeSubstitute(typeProjection, 0);
         } catch (SubstitutionException e) {
             return null;
         }

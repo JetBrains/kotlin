@@ -71,14 +71,13 @@ public class SubstitutionUtils {
 
         for (int i = 0; i < arguments.size(); i++) {
             TypeProjection argument = arguments.get(i);
-            TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+            TypeParameterDescriptor parameter = parameters.get(i);
 
-            JetType substitute = substitutor.substitute(argument.getType(), Variance.INVARIANT);
+            TypeProjection substitute = substitutor.substitute(argument);
             assert substitute != null;
-            TypeProjection substitutedTypeProjection = new TypeProjection(argument.getProjectionKind(), substitute);
-            substitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
+            substitution.put(parameter.getTypeConstructor(), substitute);
             if (fullSubstitution != null) {
-                fullSubstitution.put(typeParameterDescriptor.getTypeConstructor(), substitutedTypeProjection);
+                fullSubstitution.put(parameter.getTypeConstructor(), substitute);
             }
         }
         if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(context)) return;
