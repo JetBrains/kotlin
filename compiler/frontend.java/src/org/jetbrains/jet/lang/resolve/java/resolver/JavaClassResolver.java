@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmByte
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
@@ -241,7 +241,7 @@ public final class JavaClassResolver {
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
         classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classDescriptor, classData, semanticServices));
+        classDescriptor.setScopeForMemberLookup(new JavaClassNonStaticMembersScope(classDescriptor, classData, semanticServices));
 
         String context = "class " + psiClass.getQualifiedName();
         signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);

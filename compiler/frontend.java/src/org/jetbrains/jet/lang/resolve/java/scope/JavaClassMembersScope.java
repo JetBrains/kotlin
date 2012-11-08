@@ -39,13 +39,13 @@ import java.util.Map;
  *
  * @author abreslav
  */
-public class JavaClassMembersScope extends JavaBaseScope {
+public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
     @NotNull
     private final ClassPsiDeclarationProvider classPsiDeclarationProvider;
 
-    public JavaClassMembersScope(
+    protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull ClassPsiDeclarationProvider declarationProvider,
             @NotNull JavaSemanticServices semanticServices
