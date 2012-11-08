@@ -16,17 +16,15 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.vfs.VirtualFile;
-import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.utils.PathUtil;
 
-import java.io.*;
+import java.io.File;
 
-import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
 /**
  * @author Pavel Talanov
@@ -34,9 +32,8 @@ import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
 public final class CompilerEnvironment {
 
     @NotNull
-    public static CompilerEnvironment getEnvironmentFor(@NotNull CompileContext compileContext, @NotNull Module module, boolean tests) {
-        VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
-        final VirtualFile outputDir = tests ? compileContext.getModuleOutputDirectoryForTests(module) : mainOutput;
+    public static CompilerEnvironment getEnvironmentFor(boolean tests, File mainOutput, File outputDirectoryForTests) {
+        final File outputDir = tests ? outputDirectoryForTests : mainOutput;
         File kotlinHome = PathUtil.getDefaultCompilerPath();
         return new CompilerEnvironment(kotlinHome, outputDir);
     }
@@ -44,9 +41,9 @@ public final class CompilerEnvironment {
     @Nullable
     private final File kotlinHome;
     @Nullable
-    private final VirtualFile output;
+    private final File output;
 
-    public CompilerEnvironment(@Nullable File home, @Nullable VirtualFile output) {
+    public CompilerEnvironment(@Nullable File home, @Nullable File output) {
         this.kotlinHome = home;
         this.output = output;
     }
@@ -62,17 +59,17 @@ public final class CompilerEnvironment {
     }
 
     @NotNull
-    public VirtualFile getOutput() {
+    public File getOutput() {
         assert output != null;
         return output;
     }
 
-    public void reportErrorsTo(@NotNull CompileContext compileContext) {
+    public void reportErrorsTo(@NotNull MessageCollector messageCollector) {
         if (output == null) {
-            compileContext.addMessage(ERROR, "[Internal Error] No output directory", "", -1, -1);
+            messageCollector.report(ERROR, "[Internal Error] No output directory", NO_LOCATION);
         }
         if (kotlinHome == null) {
-            compileContext.addMessage(ERROR, "Cannot find kotlinc home. Make sure plugin is properly installed", "", -1, -1);
+            messageCollector.report(ERROR, "Cannot find kotlinc home. Make sure plugin is properly installed", NO_LOCATION);
         }
     }
 

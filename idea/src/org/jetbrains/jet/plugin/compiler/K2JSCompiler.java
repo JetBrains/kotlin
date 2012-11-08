@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ModuleOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Chunk;
@@ -34,9 +35,13 @@ import gnu.trove.THashSet;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,22 +77,24 @@ public final class K2JSCompiler implements TranslatingCompiler {
             return;
         }
 
-        CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(context, module, /*tests = */ false);
+        MessageCollector messageCollector = new MessageCollectorAdapter(context);
+
+        CompilerEnvironment environment = CompilerUtils.getEnvironmentFor(context, module, /*tests = */ false);
         if (!environment.success()) {
-            environment.reportErrorsTo(context);
+            environment.reportErrorsTo(messageCollector);
             return;
         }
 
-        doCompile(context, sink, module, environment);
+        doCompile(messageCollector, sink, module, environment);
     }
 
-    private static void doCompile(@NotNull final CompileContext context, @NotNull OutputSink sink, @NotNull final Module module,
+    private static void doCompile(@NotNull final MessageCollector messageCollector, @NotNull OutputSink sink, @NotNull final Module module,
             @NotNull final CompilerEnvironment environment) {
         CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
-        outputCompilerMessagesAndHandleExitCode(context, collector, new Function1<PrintStream, Integer>() {
+        outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function1<PrintStream, Integer>() {
             @Override
             public Integer invoke(PrintStream stream) {
-                return execInProcess(context, environment, stream, module);
+                return execInProcess(messageCollector, environment, stream, module);
             }
         });
         sink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
@@ -103,27 +110,31 @@ public final class K2JSCompiler implements TranslatingCompiler {
     }
 
     @NotNull
-    private static Integer execInProcess(@NotNull CompileContext context,
+    private static Integer execInProcess(@NotNull MessageCollector messageCollector,
             @NotNull CompilerEnvironment environment, @NotNull PrintStream out, @NotNull Module module) {
         try {
-            return doExec(context, environment, out, module);
+            return doExec(messageCollector, environment, out, module);
         }
         catch (Throwable e) {
-            context.addMessage(CompilerMessageCategory.ERROR, "Exception while executing compiler:\n" + e.getMessage(), null, -1, -1);
+            messageCollector.report(CompilerMessageSeverity.ERROR,
+                                    "Exception while executing compiler:\n" + e.getMessage(),
+                                    CompilerMessageLocation.NO_LOCATION);
         }
         return -1;
     }
 
     @NotNull
-    private static Integer doExec(@NotNull CompileContext context, @NotNull CompilerEnvironment environment, @NotNull PrintStream out,
+    private static Integer doExec(@NotNull MessageCollector messageCollector, @NotNull CompilerEnvironment environment, @NotNull PrintStream out,
             @NotNull Module module) throws Exception {
-        VirtualFile outDir = context.getModuleOutputDirectory(module);
-        String outFile = outDir == null ? null : outDir.getPath() + "/" + module.getName() + ".js";
+        File outDir = environment.getOutput();
+        String outFile = outDir.getPath() + "/" + module.getName() + ".js";
         String[] commandLineArgs = constructArguments(module, outFile);
-        Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
+        Object rc = invokeExecMethod(environment, out, messageCollector, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
 
-        if (outDir != null && !ApplicationManager.getApplication().isUnitTestMode()) {
-            outDir.refresh(false, true);
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(outDir);
+            assert virtualFile != null : "Virtual file not found for module output: " + outDir;
+            virtualFile.refresh(false, true);
         }
         return CompilerUtils.getReturnCodeFromObject(rc);
     }

@@ -19,15 +19,18 @@ package org.jetbrains.jet.plugin.compiler;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -44,7 +47,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
-import static com.intellij.openapi.compiler.CompilerMessageCategory.*;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
 
 /**
  * @author Pavel Talanov
@@ -56,12 +60,11 @@ public final class CompilerUtils {
     private CompilerUtils() {
     }
 
-    public static List<File> kompilerClasspath(File kotlinHome, CompileContext context) {
+    public static List<File> kompilerClasspath(File kotlinHome, MessageCollector messageCollector) {
         File libs = new File(kotlinHome, "lib");
 
         if (!libs.exists() || libs.isFile()) {
-            context.addMessage(ERROR, "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed", "", -1,
-                               -1);
+            messageCollector.report(ERROR, "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed", NO_LOCATION);
             return Collections.emptyList();
         }
 
@@ -70,17 +73,17 @@ public final class CompilerUtils {
         return answer;
     }
 
-    public static URLClassLoader getOrCreateClassLoader(File kotlinHome, CompileContext context) {
+    public static URLClassLoader getOrCreateClassLoader(File kotlinHome, MessageCollector messageCollector) {
         URLClassLoader answer = ourClassLoaderRef.get();
         if (answer == null) {
-            answer = createClassloader(kotlinHome, context);
+            answer = createClassloader(kotlinHome, messageCollector);
             ourClassLoaderRef = new SoftReference<URLClassLoader>(answer);
         }
         return answer;
     }
 
-    private static URLClassLoader createClassloader(File kotlinHome, CompileContext context) {
-        List<File> jars = kompilerClasspath(kotlinHome, context);
+    private static URLClassLoader createClassloader(File kotlinHome, MessageCollector messageCollector) {
+        List<File> jars = kompilerClasspath(kotlinHome, messageCollector);
         URL[] urls = new URL[jars.size()];
         for (int i = 0; i < urls.length; i++) {
             try {
@@ -93,13 +96,13 @@ public final class CompilerUtils {
         return new URLClassLoader(urls, null);
     }
 
-    static void handleProcessTermination(int exitCode, CompileContext compileContext) {
+    static void handleProcessTermination(int exitCode, MessageCollector messageCollector) {
         if (exitCode != 0 && exitCode != 1) {
-            compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + exitCode, "", -1, -1);
+            messageCollector.report(ERROR, "Compiler terminated with exit code: " + exitCode, NO_LOCATION);
         }
     }
 
-    public static void parseCompilerMessagesFromReader(CompileContext compileContext, final Reader reader, OutputItemsCollector collector) {
+    public static void parseCompilerMessagesFromReader(MessageCollector messageCollector, final Reader reader, OutputItemsCollector collector) {
         // Sometimes the compiler can't output valid XML
         // Example: error in command line arguments passed to the compiler
         // having no -tags key (arguments are not parsed), the compiler doesn't know
@@ -130,7 +133,7 @@ public final class CompilerUtils {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
-            parser.parse(new InputSource(wrappingReader), new CompilerOutputSAXHandler(compileContext, collector));
+            parser.parse(new InputSource(wrappingReader), new CompilerOutputSAXHandler(messageCollector, collector));
         }
         catch (Throwable e) {
 
@@ -145,7 +148,7 @@ public final class CompilerUtils {
             String message = stringBuilder.toString();
             LOG.error(message);
             LOG.error(e);
-            compileContext.addMessage(ERROR, message, null, -1, -1);
+            messageCollector.report(ERROR, message, NO_LOCATION);
         }
         finally {
             try {
@@ -168,24 +171,37 @@ public final class CompilerUtils {
 
     public static Object invokeExecMethod(CompilerEnvironment environment,
             PrintStream out,
-            CompileContext context, String[] arguments, String name) throws Exception {
-        URLClassLoader loader = getOrCreateClassLoader(environment.getKotlinHome(), context);
+            MessageCollector messageCollector, String[] arguments, String name) throws Exception {
+        URLClassLoader loader = getOrCreateClassLoader(environment.getKotlinHome(), messageCollector);
         Class<?> kompiler = Class.forName(name, true, loader);
         Method exec = kompiler.getMethod("exec", PrintStream.class, String[].class);
         return exec.invoke(kompiler.newInstance(), out, arguments);
     }
 
+    @NotNull
+    public static CompilerEnvironment getEnvironmentFor(@NotNull CompileContext compileContext, @NotNull Module module, boolean tests) {
+        VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
+        VirtualFile outputDirectoryForTests = compileContext.getModuleOutputDirectoryForTests(module);
+        return CompilerEnvironment.getEnvironmentFor(tests, toIoFile(mainOutput), toIoFile(outputDirectoryForTests));
+    }
+
+    @Nullable
+    public static File toIoFile(@Nullable VirtualFile file) {
+        if (file == null) return null;
+        return new File(file.getPath());
+    }
+
     private static class CompilerOutputSAXHandler extends DefaultHandler {
-        private static final Map<String, CompilerMessageCategory> CATEGORIES = ImmutableMap.<String, CompilerMessageCategory>builder()
-                .put("error", CompilerMessageCategory.ERROR)
-                .put("warning", CompilerMessageCategory.WARNING)
-                .put("logging", CompilerMessageCategory.STATISTICS)
-                .put("exception", CompilerMessageCategory.ERROR)
-                .put("info", CompilerMessageCategory.INFORMATION)
-                .put("messages", CompilerMessageCategory.INFORMATION) // Root XML element
+        private static final Map<String, CompilerMessageSeverity> CATEGORIES = ImmutableMap.<String, CompilerMessageSeverity>builder()
+                .put("error", ERROR)
+                .put("warning", WARNING)
+                .put("logging", LOGGING)
+                .put("exception", ERROR)
+                .put("info", INFO)
+                .put("messages", INFO) // Root XML element
                 .build();
 
-        private final CompileContext compileContext;
+        private final MessageCollector messageCollector;
         private final OutputItemsCollector collector;
 
         private final StringBuilder message = new StringBuilder();
@@ -194,8 +210,8 @@ public final class CompilerUtils {
         private int line;
         private int column;
 
-        public CompilerOutputSAXHandler(CompileContext compileContext, OutputItemsCollector collector) {
-            this.compileContext = compileContext;
+        public CompilerOutputSAXHandler(MessageCollector messageCollector, OutputItemsCollector collector) {
+            this.messageCollector = messageCollector;
             this.collector = collector;
         }
 
@@ -217,7 +233,7 @@ public final class CompilerUtils {
                 // We're directly inside the root tag: <MESSAGES>
                 String message = new String(ch, start, length);
                 if (!message.trim().isEmpty()) {
-                    compileContext.addMessage(ERROR, "Unhandled compiler output: " + message, null, -1, -1);
+                    messageCollector.report(ERROR, "Unhandled compiler output: " + message, NO_LOCATION);
                 }
             }
             else {
@@ -232,10 +248,10 @@ public final class CompilerUtils {
                 return;
             }
             String qNameLowerCase = qName.toLowerCase();
-            CompilerMessageCategory category = CATEGORIES.get(qNameLowerCase);
+            CompilerMessageSeverity category = CATEGORIES.get(qNameLowerCase);
             if (category == null) {
-                compileContext.addMessage(ERROR, "Unknown compiler message tag: " + qName, null, -1, -1);
-                category = INFORMATION;
+                messageCollector.report(ERROR, "Unknown compiler message tag: " + qName, NO_LOCATION);
+                category = INFO;
             }
             String text = message.toString();
 
@@ -243,12 +259,11 @@ public final class CompilerUtils {
                 LOG.error(text);
             }
 
-            if (category == STATISTICS) {
-                compileContext.getProgressIndicator().setText(text);
+            if (category == LOGGING) {
                 collector.learn(text);
             }
             else {
-                compileContext.addMessage(category, text, path, line, column);
+                messageCollector.report(category, text, CompilerMessageLocation.create(path, line, column));
             }
             tags.pop();
         }
@@ -305,8 +320,8 @@ public final class CompilerUtils {
         }
     }
 
-    public static void outputCompilerMessagesAndHandleExitCode(@NotNull CompileContext context,
-            @NotNull OutputItemsCollector collector,
+    public static void outputCompilerMessagesAndHandleExitCode(@NotNull MessageCollector messageCollector,
+            @NotNull OutputItemsCollector outputItemsCollector,
             @NotNull Function1<PrintStream, Integer> compilerRun) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(outputStream);
@@ -314,8 +329,8 @@ public final class CompilerUtils {
         int exitCode = compilerRun.invoke(out);
 
         BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
-        parseCompilerMessagesFromReader(context, reader, collector);
-        handleProcessTermination(exitCode, context);
+        parseCompilerMessagesFromReader(messageCollector, reader, outputItemsCollector);
+        handleProcessTermination(exitCode, messageCollector);
     }
 }
 

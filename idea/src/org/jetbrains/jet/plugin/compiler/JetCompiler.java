@@ -40,6 +40,9 @@ import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
@@ -49,9 +52,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.*;
-
-import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
-import static com.intellij.openapi.compiler.CompilerMessageCategory.INFORMATION;
 
 /**
  * @author yole
@@ -108,7 +108,8 @@ public class JetCompiler implements TranslatingCompiler {
         doCompile(compileContext, moduleChunk, testFiles, module, outputSink, true);
     }
 
-    private void doCompile(CompileContext compileContext,
+    private void doCompile(
+            final CompileContext compileContext,
             Chunk<Module> moduleChunk,
             List<VirtualFile> files,
             Module module,
@@ -116,9 +117,11 @@ public class JetCompiler implements TranslatingCompiler {
             boolean tests) {
         if (files.isEmpty()) return;
 
-        CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(compileContext, module, tests);
+        MessageCollector messageCollector = new MessageCollectorAdapter(compileContext);
+
+        CompilerEnvironment environment = CompilerUtils.getEnvironmentFor(compileContext, module, tests);
         if (!environment.success()) {
-            environment.reportErrorsTo(compileContext);
+            environment.reportErrorsTo(messageCollector);
             return;
         }
 
@@ -129,19 +132,31 @@ public class JetCompiler implements TranslatingCompiler {
         if (scriptFile == null) return;
 
         CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
-        runCompiler(compileContext, environment, scriptFile, collector);
+        runCompiler(messageCollector, environment, scriptFile, collector);
         outputSink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
     }
 
-    private void runCompiler(CompileContext compileContext,
+    private static void runCompiler(
+            MessageCollector messageCollector,
             CompilerEnvironment environment,
             File scriptFile,
-            CompilerUtils.OutputItemsCollectorImpl collector) {
-        if (RUN_OUT_OF_PROCESS) {
-            runOutOfProcess(compileContext, collector, environment, scriptFile);
+            CompilerUtils.OutputItemsCollectorImpl collector
+    ) {
+        runCompiler(messageCollector, environment, scriptFile, collector, RUN_OUT_OF_PROCESS);
+    }
+
+    private static void runCompiler(
+            MessageCollector messageCollector,
+            CompilerEnvironment environment,
+            File scriptFile,
+            CompilerUtils.OutputItemsCollectorImpl collector,
+            boolean runOutOfProcess
+    ) {
+        if (runOutOfProcess) {
+            runOutOfProcess(messageCollector, collector, environment, scriptFile);
         }
         else {
-            runInProcess(compileContext, collector, environment, scriptFile);
+            runInProcess(messageCollector, collector, environment, scriptFile);
         }
     }
 
@@ -150,7 +165,7 @@ public class JetCompiler implements TranslatingCompiler {
             Chunk<Module> moduleChunk,
             List<VirtualFile> files,
             Module module,
-            boolean tests, VirtualFile mainOutput, VirtualFile outputDir
+            boolean tests, VirtualFile mainOutput, File outputDir
     ) {
         ArrayList<String> sourceFilePaths = ContainerUtil.newArrayList(paths(files));
         ModuleChunk chunk = new ModuleChunk((CompileContextEx)compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
@@ -171,7 +186,7 @@ public class JetCompiler implements TranslatingCompiler {
                 outputDirectoriesToFilter
         );
 
-        File scriptFile = new File(path(outputDir), "script.kts");
+        File scriptFile = new File(outputDir, "script.kts");
         try {
             FileUtil.writeToFile(scriptFile, script.toString());
         }
@@ -208,27 +223,29 @@ public class JetCompiler implements TranslatingCompiler {
         };
     }
 
-    private static void runInProcess(final CompileContext compileContext,
+    private static void runInProcess(final MessageCollector messageCollector,
             OutputItemsCollector collector,
             final CompilerEnvironment environment,
             final File scriptFile) {
-        CompilerUtils.outputCompilerMessagesAndHandleExitCode(compileContext, collector, new Function1<PrintStream, Integer>() {
+        CompilerUtils.outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function1<PrintStream, Integer>() {
             @Override
             public Integer invoke(PrintStream stream) {
-                return execInProcess(environment, scriptFile, stream, compileContext);
+                return execInProcess(environment, scriptFile, stream, messageCollector);
             }
         });
     }
 
-    private static int execInProcess(CompilerEnvironment environment, File scriptFile, PrintStream out, CompileContext context) {
+    private static int execInProcess(CompilerEnvironment environment, File scriptFile, PrintStream out, MessageCollector messageCollector) {
         try {
             String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
             String[] arguments = commandLineArguments(environment.getOutput(), scriptFile);
-            context.addMessage(INFORMATION, "Using kotlinHome=" + environment.getKotlinHome(), "", -1, -1);
-            context.addMessage(INFORMATION,
-                               "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1,
-                               -1);
-            Object rc = CompilerUtils.invokeExecMethod(environment, out, context, arguments, compilerClassName);
+            messageCollector.report(CompilerMessageSeverity.INFO,
+                                    "Using kotlinHome=" + environment.getKotlinHome(),
+                                    CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(CompilerMessageSeverity.INFO,
+                               "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments),
+                               CompilerMessageLocation.NO_LOCATION);
+            Object rc = CompilerUtils.invokeExecMethod(environment, out, messageCollector, arguments, compilerClassName);
             // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
             // so we take it's contents through reflection
             return CompilerUtils.getReturnCodeFromObject(rc);
@@ -239,18 +256,20 @@ public class JetCompiler implements TranslatingCompiler {
         }
     }
 
-    private static String[] commandLineArguments(VirtualFile outputDir, File scriptFile) {
+    private static String[] commandLineArguments(File outputDir, File scriptFile) {
         return new String[]{
                 "-module", scriptFile.getAbsolutePath(),
-                "-output", path(outputDir),
+                "-output", outputDir.getPath(),
                 "-tags", "-verbose", "-version",
                 "-noStdlib", "-noJdkAnnotations", "-noJdk"};
     }
 
-    private static void runOutOfProcess(final CompileContext compileContext,
-            final OutputItemsCollector collector,
+    private static void runOutOfProcess(
+            final MessageCollector messageCollector,
+            final OutputItemsCollector itemCollector,
             CompilerEnvironment environment,
-            File scriptFile) {
+            File scriptFile
+    ) {
         final SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
         params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
@@ -259,7 +278,7 @@ public class JetCompiler implements TranslatingCompiler {
             params.getProgramParametersList().add(arg);
         }
 
-        for (File jar : CompilerUtils.kompilerClasspath(environment.getKotlinHome(), compileContext)) {
+        for (File jar : CompilerUtils.kompilerClasspath(environment.getKotlinHome(), messageCollector)) {
             params.getClassPath().add(jar);
         }
 
@@ -271,7 +290,9 @@ public class JetCompiler implements TranslatingCompiler {
         final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
                 ((JavaSdkType)sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
 
-        compileContext.addMessage(INFORMATION, "Invoking out-of-process compiler with arguments: " + commandLine, "", -1, -1);
+        messageCollector.report(CompilerMessageSeverity.INFO,
+                                "Invoking out-of-process compiler with arguments: " + commandLine,
+                                CompilerMessageLocation.NO_LOCATION);
 
         try {
             final Process process = commandLine.createProcess();
@@ -280,7 +301,7 @@ public class JetCompiler implements TranslatingCompiler {
                 @Override
                 public void run() {
                     CompilerUtils
-                            .parseCompilerMessagesFromReader(compileContext, new InputStreamReader(process.getInputStream()), collector);
+                            .parseCompilerMessagesFromReader(messageCollector, new InputStreamReader(process.getInputStream()), itemCollector);
                 }
             });
 
@@ -297,10 +318,12 @@ public class JetCompiler implements TranslatingCompiler {
             });
 
             int exitCode = process.waitFor();
-            CompilerUtils.handleProcessTermination(exitCode, compileContext);
+            CompilerUtils.handleProcessTermination(exitCode, messageCollector);
         }
         catch (Exception e) {
-            compileContext.addMessage(ERROR, "[Internal Error] " + e.getLocalizedMessage(), "", -1, -1);
+            messageCollector.report(CompilerMessageSeverity.ERROR,
+                                    "[Internal Error] " + e.getLocalizedMessage(),
+                                    CompilerMessageLocation.NO_LOCATION);
             return;
         }
     }
