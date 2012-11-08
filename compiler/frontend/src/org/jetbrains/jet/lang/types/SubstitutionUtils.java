@@ -50,6 +50,20 @@ public class SubstitutionUtils {
         return typeSubstitutor;
     }
 
+    /*
+      For each supertype of a given type, we map type parameters to type arguments.
+
+      For instance, we have the following class hierarchy:
+          trait Hashable
+          trait Iterable<out T>
+          trait Collection<out E>: Iterable<E>, Hashable
+          trait MyFooCollection<F>: Collection<Foo<F>>
+
+      For MyFunCollection<out CharSequence>, the following multimap will be returned:
+          T declared in Iterable -> Foo<out CharSequence>
+          E declared in Collection -> Foo<out CharSequence>
+          F declared in MyFooCollection -> out CharSequence
+     */
     @NotNull
     public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull JetType type) {
         Multimap<TypeConstructor, TypeProjection> fullSubstitution = CommonSuppliers.newLinkedHashSetHashSetMultimap();
