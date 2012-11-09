@@ -27,8 +27,11 @@
             <element id="archive" name="kotlin-jps-plugin.jar">
               <element id="module-output" name="jps-plugin" />
               <element id="directory" name="META-INF">
-                <element id="dir-copy" path="$Tests$/jps-plugin/src/META-INF" />
+                <element id="dir-copy" path="$PROJECT_DIR$/jps-plugin/src/META-INF" />
               </element>
+              <element id="module-output" name="ide-compiler-runner" />
+              <element id="module-output" name="cli-common" />
+              <element id="module-output" name="util" />
             </element>
           </element>
         </element>
