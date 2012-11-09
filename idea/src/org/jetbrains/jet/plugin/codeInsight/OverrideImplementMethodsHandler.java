@@ -68,9 +68,10 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             JetClassOrObject classOrObject,
             List<DescriptorClassMember> selectedElements
     ) {
-        final JetClassBody body = classOrObject.getBody();
+        JetClassBody body = classOrObject.getBody();
+        Project project = classOrObject.getProject();
         if (body == null) {
-            return;
+            body = JetPsiFactory.createEmptyClassBody(project);
         }
 
         PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
@@ -87,6 +88,11 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             elementsToCompact.add((JetElement) added);
         }
         ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
+
+        if (!body.isPhysical()) {
+            classOrObject.add(JetPsiFactory.createWhiteSpace(project));
+            classOrObject.add(body);
+        }
     }
 
     @Nullable
