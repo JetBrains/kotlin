@@ -839,12 +839,39 @@ public class DescriptorResolver {
     }
 
     public JetScope getPropertyDeclarationInnerScope(
-            @NotNull JetScope outerScope, @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver, BindingTrace trace
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetScope outerScope,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor receiver,
+            BindingTrace trace
+    ) {
+        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, true);
+    }
+
+    public JetScope getPropertyDeclarationInnerScopeForInitializer(
+            @NotNull JetScope outerScope,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor receiver,
+            BindingTrace trace
+    ) {
+        return getPropertyDeclarationInnerScope(null, outerScope, typeParameters, receiver, trace, false);
+    }
+
+    private JetScope getPropertyDeclarationInnerScope(
+            @Nullable PropertyDescriptor propertyDescriptor, // PropertyDescriptor can be null for property scope which hasn't label to property (in this case addLabelForProperty parameter must be false
+            @NotNull JetScope outerScope,
+            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
+            @Nullable ReceiverParameterDescriptor receiver,
+            BindingTrace trace,
+            boolean addLabelForProperty
     ) {
         WritableScopeImpl result = new WritableScopeImpl(
                 outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace),
                 "Property declaration inner scope");
+        if (addLabelForProperty) {
+            assert propertyDescriptor != null : "PropertyDescriptor can be null for property scope which hasn't label to property";
+            result.addLabeledDeclaration(propertyDescriptor);
+        }
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
@@ -909,7 +936,8 @@ public class DescriptorResolver {
 
         ReceiverParameterDescriptor receiverDescriptor = resolveReceiverParameterFor(propertyDescriptor, receiverType);
 
-        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, typeParameterDescriptors, NO_RECEIVER_PARAMETER, trace);
+        JetScope propertyScope = getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
+                                                                  NO_RECEIVER_PARAMETER, trace);
 
         JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true, trace);
 

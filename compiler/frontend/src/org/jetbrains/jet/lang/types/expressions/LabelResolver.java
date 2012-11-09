@@ -19,10 +19,7 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -139,6 +136,10 @@ public class LabelResolver {
             else if (declarationDescriptor instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
                 thisReceiver = functionDescriptor.getReceiverParameter();
+            }
+            else if (declarationDescriptor instanceof PropertyDescriptor) {
+                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) declarationDescriptor;
+                thisReceiver = propertyDescriptor.getReceiverParameter();
             }
             else {
                 throw new UnsupportedOperationException("Unsupported descriptor: " + declarationDescriptor); // TODO

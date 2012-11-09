@@ -108,7 +108,7 @@ public interface LocalLookup {
         RECEIVER {
             @Override
             public boolean isCase(DeclarationDescriptor d, GenerationState state) {
-                return d instanceof FunctionDescriptor;
+                return d instanceof CallableDescriptor;
             }
 
             @Override
@@ -130,7 +130,7 @@ public interface LocalLookup {
 
             @Override
             public StackValue outerValue(EnclosedValueDescriptor d, ExpressionCodegen expressionCodegen) {
-                CallableDescriptor descriptor = (FunctionDescriptor) d.getDescriptor();
+                CallableDescriptor descriptor = (CallableDescriptor) d.getDescriptor();
                 return StackValue.local(descriptor.getExpectedThisObject() != null ? 1 : 0, d.getType());
             }
         };

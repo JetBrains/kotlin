@@ -3570,6 +3570,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInNestedClasses.kt");
             }
             
+            @TestMetadata("thisInPropertyInitializer.kt")
+            public void testThisInPropertyInitializer() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInPropertyInitializer.kt");
+            }
+            
             @TestMetadata("thisInToplevelFunction.kt")
             public void testThisInToplevelFunction() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInToplevelFunction.kt");
