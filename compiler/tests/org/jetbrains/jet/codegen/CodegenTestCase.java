@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.utils.ExceptionUtils;
-import org.jetbrains.jet.utils.Progress;
+import org.jetbrains.jet.codegen.state.Progress;
 
 import java.io.File;
 import java.io.IOException;

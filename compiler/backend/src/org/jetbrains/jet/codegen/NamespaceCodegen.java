@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.utils.Progress;
+import org.jetbrains.jet.codegen.state.Progress;
 
 import java.io.File;
 import java.util.Collection;

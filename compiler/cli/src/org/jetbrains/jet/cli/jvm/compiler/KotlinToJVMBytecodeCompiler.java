@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.PathUtil;
-import org.jetbrains.jet.utils.Progress;
+import org.jetbrains.jet.codegen.state.Progress;
 
 import java.io.File;
 import java.io.FileNotFoundException;

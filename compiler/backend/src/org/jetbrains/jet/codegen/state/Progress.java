@@ -17,7 +17,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.utils;
+package org.jetbrains.jet.codegen.state;
 
 public interface Progress {
     Progress DEAF = new Progress() {
