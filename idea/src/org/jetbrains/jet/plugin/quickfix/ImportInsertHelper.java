@@ -24,10 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -98,6 +95,12 @@ public class ImportInsertHelper {
                     if (target instanceof PsiMethod) {
                         PsiMethod method = (PsiMethod) target;
                         same = (method.isConstructor() && file.getManager().areElementsEquivalent(method.getContainingClass(), targetElement));
+                    }
+                }
+
+                if (!same) {
+                    if (target instanceof JetObjectDeclarationName) {
+                        same = file.getManager().areElementsEquivalent(target.getParent(), targetElement);
                     }
                 }
 

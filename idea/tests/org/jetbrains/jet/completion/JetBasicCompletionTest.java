@@ -213,6 +213,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testNoObjectInTypePosition() {
+        doTest();
+    }
+
     public void testNoTopLevelCompletionInQualifiedUserTypes() {
         doTest();
     }

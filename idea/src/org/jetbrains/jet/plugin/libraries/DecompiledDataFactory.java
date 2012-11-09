@@ -35,6 +35,8 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -213,5 +215,9 @@ public class DecompiledDataFactory {
 
     public static boolean isCompiledFromKotlin(@NotNull PsiClass psiClass) {
         return isKotlinClass(psiClass) || isKotlinNamespaceClass(psiClass);
+    }
+
+    public static boolean isKotlinObject(PsiClass aClass) {
+        return JetClassAnnotation.get(aClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT;
     }
 }

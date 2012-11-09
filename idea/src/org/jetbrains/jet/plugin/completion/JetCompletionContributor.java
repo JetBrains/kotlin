@@ -190,6 +190,7 @@ public class JetCompletionContributor extends CompletionContributor {
             if (shouldRunTopLevelCompletion()) {
                 JetTypesCompletionHelper.addJetTypes(parameters, jetResult);
                 addJetTopLevelFunctions();
+                addJetTopLevelObjects();
             }
 
             if (shouldRunExtensionsCompletion()) {
@@ -214,9 +215,17 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         public static boolean isPartOfTypeDeclaration(@NotNull DeclarationDescriptor descriptor) {
-            return (descriptor instanceof ClassDescriptor) ||
-                   (descriptor instanceof NamespaceDescriptor) ||
-                   (descriptor instanceof TypeParameterDescriptor);
+            if (descriptor instanceof NamespaceDescriptor || descriptor instanceof TypeParameterDescriptor) {
+                return true;
+            }
+
+            if (descriptor instanceof ClassDescriptor) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+                ClassKind kind = classDescriptor.getKind();
+                return !(kind == ClassKind.OBJECT || kind == ClassKind.CLASS_OBJECT);
+            }
+
+            return false;
         }
 
         private void addJetTopLevelFunctions() {
@@ -232,6 +241,18 @@ public class JetCompletionContributor extends CompletionContributor {
                 if (name.contains(actualPrefix)) {
                     jetResult.addAllElements(namesCache.getTopLevelFunctionDescriptorsByName(
                             name, jetReference.getExpression(), getResolveSession(), scope));
+                }
+            }
+        }
+
+        private void addJetTopLevelObjects() {
+            JetShortNamesCache namesCache = JetCacheManager.getInstance(getPosition().getProject()).getNamesCache();
+            GlobalSearchScope scope = GlobalSearchScope.allScope(getPosition().getProject());
+            Collection<String> objectNames = namesCache.getAllTopLevelObjectNames();
+
+            for (String name : objectNames) {
+                if (jetResult.getResult().getPrefixMatcher().prefixMatches(name)) {
+                    jetResult.addAllElements(namesCache.getTopLevelObjectsByName(name, jetReference.getExpression(), getResolveSession(), scope));
                 }
             }
         }

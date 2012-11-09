@@ -91,12 +91,13 @@ public class JetTypesCompletionHelper {
         }
 
         if (DecompiledDataFactory.isCompiledFromKotlin(aClass)) {
-            // TODO: Filter classes for compiled kotlin objects
-            String qualifiedName = aClass.getQualifiedName();
-            if (qualifiedName != null) {
-                FqName fqName = new FqName(qualifiedName);
-                jetCompletionResult.addAllElements(
-                        ResolveSessionUtils.getClassDescriptorsByFqName(jetCompletionResult.getResolveSession(), fqName));
+            if (!DecompiledDataFactory.isKotlinObject(aClass)) {
+                String qualifiedName = aClass.getQualifiedName();
+                if (qualifiedName != null) {
+                    FqName fqName = new FqName(qualifiedName);
+                    jetCompletionResult.addAllElements(
+                            ResolveSessionUtils.getClassDescriptorsByFqName(jetCompletionResult.getResolveSession(), fqName));
+                }
             }
 
             return true;
