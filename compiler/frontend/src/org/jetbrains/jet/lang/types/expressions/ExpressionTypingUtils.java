@@ -274,8 +274,10 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
-            @NotNull ExpressionTypingContext context, @NotNull ReceiverValue receiver,
-            @NotNull Name name, @NotNull JetType... argumentTypes
+            @NotNull ExpressionTypingContext context,
+            @NotNull ReceiverValue receiver,
+            @NotNull Name name,
+            @NotNull JetType... argumentTypes
     ) {
         TemporaryBindingTrace traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name);
         int index = 0;
@@ -290,8 +292,8 @@ public class ExpressionTypingUtils {
 
     @NotNull
     public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
-            @NotNull ReceiverValue receiver,
             @NotNull ExpressionTypingContext context,
+            @NotNull ReceiverValue receiver,
             @NotNull Name name
     ) {
         return makeAndResolveFakeCall(receiver, context, Collections.<JetExpression>emptyList(), name).getSecond();
@@ -336,7 +338,7 @@ public class ExpressionTypingUtils {
 
             JetType expectedType = getExpectedTypeForComponent(context, entry);
             OverloadResolutionResults<FunctionDescriptor> results =
-                    resolveFakeCall(receiver, context.replaceExpectedType(expectedType), componentName);
+                    resolveFakeCall(context.replaceExpectedType(expectedType), receiver, componentName);
 
             JetType componentType = null;
             if (results.isSuccess()) {

@@ -376,7 +376,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = resolveFakeCall(
-                new TransientReceiver(iteratorType), context, Name.identifier(name));
+                context, new TransientReceiver(iteratorType), Name.identifier(name));
         if (nextResolutionResults.isAmbiguity()) {
             context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));
         }
