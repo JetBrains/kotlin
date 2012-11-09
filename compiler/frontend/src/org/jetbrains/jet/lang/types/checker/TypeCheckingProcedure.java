@@ -103,7 +103,7 @@ public class TypeCheckingProcedure {
         return true;
     }
 
-    private enum EnrichedProjectionKind {
+    public enum EnrichedProjectionKind {
         IN, OUT, INV, STAR;
 
         @NotNull
@@ -132,7 +132,10 @@ public class TypeCheckingProcedure {
     // inv * out = out
     // inv * in  = out
     // inv * inv = inv
-    private EnrichedProjectionKind getEffectiveProjectionKind(@NotNull TypeParameterDescriptor typeParameter, @NotNull TypeProjection typeArgument) {
+    public static EnrichedProjectionKind getEffectiveProjectionKind(
+            @NotNull TypeParameterDescriptor typeParameter,
+            @NotNull TypeProjection typeArgument
+    ) {
         Variance a = typeParameter.getVariance();
         Variance b = typeArgument.getProjectionKind();
 

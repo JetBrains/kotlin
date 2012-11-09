@@ -1371,6 +1371,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "kt", true);
                     }
                     
+                    @TestMetadata("InheritNullabilityGenericSubclassSimple.kt")
+                    public void testInheritNullabilityGenericSubclassSimple() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.kt");
+                    }
+                    
                     @TestMetadata("InheritNullabilityJavaSubtype.kt")
                     public void testInheritNullabilityJavaSubtype() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.kt");

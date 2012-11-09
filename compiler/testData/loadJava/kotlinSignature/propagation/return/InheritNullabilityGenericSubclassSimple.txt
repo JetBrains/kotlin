@@ -1,0 +1,10 @@
+namespace test
+
+public open class test.InheritNullabilityGenericSubclassSimple : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.InheritNullabilityGenericSubclassSimple
+    public open fun foo(): jet.MutableCollection<jet.String>
+    public open class test.InheritNullabilityGenericSubclassSimple.Sub : test.InheritNullabilityGenericSubclassSimple {
+        public final /*constructor*/ fun <init>(): test.InheritNullabilityGenericSubclassSimple.Sub
+        public open override /*1*/ fun foo(): jet.MutableList<jet.String>
+    }
+}

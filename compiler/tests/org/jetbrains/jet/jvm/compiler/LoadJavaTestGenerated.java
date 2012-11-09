@@ -476,6 +476,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "java", true);
                 }
                 
+                @TestMetadata("InheritNullabilityGenericSubclassSimple.java")
+                public void testInheritNullabilityGenericSubclassSimple() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.java");
+                }
+                
                 @TestMetadata("InheritNullabilityJavaSubtype.java")
                 public void testInheritNullabilityJavaSubtype() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.java");

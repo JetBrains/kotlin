@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.psi.PsiClass;
@@ -37,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
@@ -318,32 +320,69 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    private static List<TypeProjection> getTypeArgsOfReturnType(@NotNull JetType autoType, Collection<JetType> typesFromSuper) {
+    private static List<TypeProjection> getTypeArgsOfReturnType(@NotNull JetType autoType, @NotNull Collection<JetType> typesFromSuper) {
         TypeConstructor typeConstructor = autoType.getConstructor();
-        List<TypeProjection> autoTypeArguments = autoType.getArguments();
+        List<TypeProjection> autoArguments = autoType.getArguments();
 
-        // If class is changed, then we can't say anything about type arguments
-        for (JetType typeFromSuper : typesFromSuper) {
-            if (!TypeUtils.equalClasses(autoType, typeFromSuper)) {
-                return autoTypeArguments;
-            }
+        if (!(typeConstructor.getDeclarationDescriptor() instanceof ClassDescriptor)) {
+            return autoArguments;
         }
 
+        List<List<JetType>> typeArgumentsFromSuper = calculateTypeArgumentsFromSuper(autoType, typesFromSuper);
+
+        // Modify type arguments using info from typesFromSuper
         List<TypeProjection> resultArguments = Lists.newArrayList();
-        for (int i = 0; i < autoTypeArguments.size(); i++) {
-            TypeProjection argument = autoTypeArguments.get(i);
-            JetType argType = argument.getType();
-            Variance varianceInClass = typeConstructor.getParameters().get(i).getVariance();
+        for (int i = 0; i < autoArguments.size(); i++) {
+            TypeProjection argument = autoArguments.get(i);
 
-            List<JetType> argTypesFromSuper = Lists.newArrayList();
-            for (JetType typeFromSuper : typesFromSuper) {
-                argTypesFromSuper.add(typeFromSuper.getArguments().get(i).getType());
-            }
+            TypeCheckingProcedure.EnrichedProjectionKind effectiveProjectionKind =
+                    TypeCheckingProcedure.getEffectiveProjectionKind(typeConstructor.getParameters().get(i), argument);
 
-            JetType type = modifyReturnTypeAccordingToSuperMethods(argType, argTypesFromSuper, varianceInClass == Variance.OUT_VARIANCE);
+            JetType argumentType = argument.getType();
+            Collection<JetType> argumentTypesFromSuper = typeArgumentsFromSuper.get(i);
+            boolean covariantPosition = effectiveProjectionKind == TypeCheckingProcedure.EnrichedProjectionKind.OUT;
+
+            JetType type = modifyReturnTypeAccordingToSuperMethods(argumentType, argumentTypesFromSuper, covariantPosition);
             resultArguments.add(new TypeProjection(argument.getProjectionKind(), type));
         }
         return resultArguments;
+    }
+
+    // Returns list with type arguments info from supertypes
+    private static List<List<JetType>> calculateTypeArgumentsFromSuper(
+            @NotNull JetType autoType,
+            @NotNull Collection<JetType> typesFromSuper
+    ) {
+        ClassDescriptor klass = (ClassDescriptor) autoType.getConstructor().getDeclarationDescriptor();
+
+        // For each superclass of autoType's class and its parameters, hold their mapping to autoType's parameters
+        Multimap<TypeConstructor,TypeProjection> substitution = SubstitutionUtils.buildDeepSubstitutionMultimap(
+                TypeUtils.makeUnsubstitutedType(klass, null));
+
+        // for each parameter of autoType, hold arguments in corresponding supertypes
+        List<List<JetType>> parameterToArgTypesFromSuper = Lists.newArrayList();
+        for (TypeProjection ignored : autoType.getArguments()) {
+            parameterToArgTypesFromSuper.add(new ArrayList<JetType>());
+        }
+
+        // Enumerate all types from super and all its parameters
+        for (JetType typeFromSuper : typesFromSuper) {
+            List<TypeParameterDescriptor> typeFromSuperParameters = typeFromSuper.getConstructor().getParameters();
+            for (int i = 0; i < typeFromSuperParameters.size(); i++) {
+                TypeParameterDescriptor typeFromSuperParam = typeFromSuperParameters.get(i);
+                JetType typeFromSuperArgType = typeFromSuper.getArguments().get(i).getType();
+
+                // if it is mapped to autoType's parameter, then store it into map
+                for (TypeProjection projection : substitution.get(typeFromSuperParam.getTypeConstructor())) {
+                    ClassifierDescriptor classifier = projection.getType().getConstructor().getDeclarationDescriptor();
+
+                    if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == klass) {
+                        parameterToArgTypesFromSuper.get(((TypeParameterDescriptor) classifier).getIndex()).add(typeFromSuperArgType);
+                    }
+                }
+            }
+        }
+        return parameterToArgTypesFromSuper;
     }
 
     private static boolean returnTypeMustBeNullable(JetType autoType, Collection<JetType> typesFromSuper, boolean covariantPosition) {
