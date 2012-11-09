@@ -78,7 +78,7 @@ public class KotlinToJVMBytecodeCompiler {
     @Nullable
     public static ClassFileFactory compileModule(CompilerConfiguration configuration, Module moduleBuilder, File directory) {
         if (moduleBuilder.getSourceFiles().isEmpty()) {
-            throw new CompileEnvironmentException("No source files where defined");
+            throw new CompileEnvironmentException("No source files where defined in module " + moduleBuilder.getModuleName());
         }
 
         CompilerConfiguration compilerConfiguration = configuration.copy();
@@ -89,7 +89,7 @@ public class KotlinToJVMBytecodeCompiler {
             }
 
             if (!source.exists()) {
-                throw new CompileEnvironmentException("'" + source + "' does not exist");
+                throw new CompileEnvironmentException("'" + source + "' does not exist in module " + moduleBuilder.getModuleName());
             }
 
             compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, source.getPath());
