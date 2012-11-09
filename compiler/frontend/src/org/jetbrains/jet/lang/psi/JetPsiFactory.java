@@ -147,6 +147,11 @@ public class JetPsiFactory {
         return function.getBodyExpression();
     }
 
+    public static JetClassBody createEmptyClassBody(Project project) {
+        JetClass aClass = createClass(project, "class A(){}");
+        return aClass.getBody();
+    }
+
     public static JetParameter createParameter(Project project, String name, String type) {
         JetNamedFunction function = createFunction(project, "fun foo(" + name + " : " + type + ") {}");
         return function.getValueParameters().get(0);
