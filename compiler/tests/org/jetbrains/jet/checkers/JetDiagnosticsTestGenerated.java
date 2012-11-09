@@ -1733,6 +1733,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/arrayConstructor.kt");
             }
             
+            @TestMetadata("cannotCompleteResolve.kt")
+            public void testCannotCompleteResolve() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolve.kt");
+            }
+            
             @TestMetadata("completeInferenceIfManyFailed.kt")
             public void testCompleteInferenceIfManyFailed() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/completeInferenceIfManyFailed.kt");

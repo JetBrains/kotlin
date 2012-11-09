@@ -325,6 +325,7 @@ public interface Errors {
 
     AmbiguousDescriptorDiagnosticFactory OVERLOAD_RESOLUTION_AMBIGUITY = new AmbiguousDescriptorDiagnosticFactory();
     AmbiguousDescriptorDiagnosticFactory NONE_APPLICABLE = new AmbiguousDescriptorDiagnosticFactory();
+    AmbiguousDescriptorDiagnosticFactory CANNOT_COMPLETE_RESOLVE = new AmbiguousDescriptorDiagnosticFactory();
 
     SimpleDiagnosticFactory<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = SimpleDiagnosticFactory.create(WARNING);
 

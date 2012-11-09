@@ -74,6 +74,12 @@ public interface TracingStrategy {
         public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {}
 
         @Override
+        public <D extends CallableDescriptor> void cannotCompleteResolve(
+                @NotNull BindingTrace trace,
+                @NotNull Collection<ResolvedCallWithTrace<D>> descriptors
+        ) {}
+
+        @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {}
 
         @Override
@@ -117,6 +123,11 @@ public interface TracingStrategy {
     <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors);
 
     <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors);
+
+    <D extends CallableDescriptor> void cannotCompleteResolve(
+            @NotNull BindingTrace trace,
+            @NotNull Collection<ResolvedCallWithTrace<D>> descriptors
+    );
 
     void instantiationOfAbstractClass(@NotNull BindingTrace trace);
 

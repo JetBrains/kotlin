@@ -191,6 +191,14 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         }
 
         @Override
+        public <D extends CallableDescriptor> void cannotCompleteResolve(
+                @NotNull BindingTrace trace,
+                @NotNull Collection<ResolvedCallWithTrace<D>> descriptors
+        ) {
+            trace.report(CANNOT_COMPLETE_RESOLVE.on(reference, descriptors));
+        }
+
+        @Override
         public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
             trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(call.getCallElement()));
         }
