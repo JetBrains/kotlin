@@ -141,21 +141,21 @@ public class JetCompiler implements TranslatingCompiler {
             Module module,
             boolean tests, VirtualFile mainOutput, File outputDir
     ) {
-        ArrayList<String> sourceFilePaths = ContainerUtil.newArrayList(paths(files));
+        List<File> sourceFiles = ContainerUtil.newArrayList(ioFiles(files));
         ModuleChunk chunk = new ModuleChunk((CompileContextEx)compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
         String moduleName = moduleChunk.getNodes().iterator().next().getName();
-        String outputDirectoryForTests = path(compileContext.getModuleOutputDirectoryForTests(module));
-        String moduleOutputDirectory = path(compileContext.getModuleOutputDirectory(module));
+        File outputDirectoryForTests = ioFile(compileContext.getModuleOutputDirectoryForTests(module));
+        File moduleOutputDirectory = ioFile(compileContext.getModuleOutputDirectory(module));
 
         // Filter the output we are writing to
-        Set<String> outputDirectoriesToFilter = ContainerUtil.newHashSet(outputDirectoryForTests);
+        Set<File> outputDirectoriesToFilter = ContainerUtil.newHashSet(outputDirectoryForTests);
         if (!tests) {
             outputDirectoriesToFilter.add(moduleOutputDirectory);
         }
         CharSequence script = KotlinModuleScriptGenerator.generateModuleScript(
                 moduleName,
                 getDependencyProvider(chunk, tests, mainOutput),
-                sourceFilePaths,
+                sourceFiles,
                 tests,
                 outputDirectoriesToFilter
         );
@@ -180,16 +180,16 @@ public class JetCompiler implements TranslatingCompiler {
             @Override
             public void processClassPath(@NotNull KotlinModuleScriptGenerator.DependencyProcessor processor) {
                 // TODO: have a bootclasspath in script API
-                processor.processClassPathSection("Boot classpath", paths(chunk.getCompilationBootClasspathFiles()));
+                processor.processClassPathSection("Boot classpath", ioFiles(chunk.getCompilationBootClasspathFiles()));
 
-                processor.processClassPathSection("Compilation classpath", paths(chunk.getCompilationClasspathFiles()));
+                processor.processClassPathSection("Compilation classpath", ioFiles(chunk.getCompilationClasspathFiles()));
 
                 // This is for java files in same roots
-                processor.processClassPathSection("Java classpath (for Java sources)", paths(Arrays.asList(chunk.getSourceRoots())));
+                processor.processClassPathSection("Java classpath (for Java sources)", ioFiles(Arrays.asList(chunk.getSourceRoots())));
 
 
                 if (tests && mainOutputPath != null) {
-                    processor.processClassPathSection("Main output", Arrays.asList(path(mainOutputPath)));
+                    processor.processClassPathSection("Main output", Arrays.asList(ioFile(mainOutputPath)));
                 }
 
                 processor.processAnnotationRoots(getAnnotationRootPaths(chunk));
@@ -197,23 +197,27 @@ public class JetCompiler implements TranslatingCompiler {
         };
     }
 
-    private static List<String> getAnnotationRootPaths(ModuleChunk chunk) {
-        List<String> annotationPaths = ContainerUtil.newArrayList();
+    private static List<File> getAnnotationRootPaths(ModuleChunk chunk) {
+        List<File> annotationPaths = ContainerUtil.newArrayList();
         for (Module module : chunk.getModules()) {
             for (VirtualFile file : OrderEnumerator.orderEntries(module).roots(AnnotationOrderRootType.getInstance()).getRoots()) {
-                annotationPaths.add(path(file));
+                annotationPaths.add(ioFile(file));
             }
         }
         return annotationPaths;
     }
 
-    private static Collection<String> paths(Collection<VirtualFile> files) {
-        return ContainerUtil.map(files, new Function<VirtualFile, String>() {
+    private static Collection<File> ioFiles(Collection<VirtualFile> files) {
+        return ContainerUtil.map(files, new Function<VirtualFile, File>() {
             @Override
-            public String fun(VirtualFile file) {
-                return path(file);
+            public File fun(VirtualFile file) {
+                return ioFile(file);
             }
         });
+    }
+
+    private static File ioFile(VirtualFile file) {
+        return new File(path(file));
     }
 
     private static String path(VirtualFile root) {

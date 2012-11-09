@@ -18,6 +18,7 @@ package org.jetbrains.jet.compiler.runner;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -29,15 +30,15 @@ public class KotlinModuleScriptGenerator {
     }
 
     public interface DependencyProcessor {
-        void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<String> paths);
-        void processAnnotationRoots(@NotNull List<String> paths);
+        void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files);
+        void processAnnotationRoots(@NotNull List<File> files);
     }
 
     public static CharSequence generateModuleScript(String moduleName,
             DependencyProvider dependencyProvider,
-            List<String> sourceFilePaths,
+            List<File> sourceFiles,
             boolean tests,
-            final Set<String> directoriesToFilterOut) {
+            final Set<File> directoriesToFilterOut) {
         final StringBuilder script = new StringBuilder();
 
         if (tests) {
@@ -51,31 +52,31 @@ public class KotlinModuleScriptGenerator {
         script.append("fun project() {\n");
         script.append("    module(\"" + moduleName + "\") {\n");
 
-        for (String sourceFile : sourceFilePaths) {
-            script.append("        sources += \"" + sourceFile + "\"\n");
+        for (File sourceFile : sourceFiles) {
+            script.append("        sources += \"" + sourceFile.getPath() + "\"\n");
         }
 
         dependencyProvider.processClassPath(new DependencyProcessor() {
             @Override
-            public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<String> paths) {
+            public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files) {
                 script.append("        // " + sectionDescription + "\n");
-                for (String path : paths) {
-                    if (directoriesToFilterOut.contains(path)) {
+                for (File file : files) {
+                    if (directoriesToFilterOut.contains(file)) {
                         // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                         // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
                         // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
                         script.append("        // Output directory, commented out\n");
                         script.append("        // ");
                     }
-                    script.append("        classpath += \"" + path + "\"\n");
+                    script.append("        classpath += \"" + file.getPath() + "\"\n");
                 }
             }
 
             @Override
-            public void processAnnotationRoots(@NotNull List<String> paths) {
+            public void processAnnotationRoots(@NotNull List<File> files) {
                 script.append("        // External annotations\n");
-                for (String path : paths) {
-                    script.append("        annotationsPath += \"").append(path).append("\"\n");
+                for (File file : files) {
+                    script.append("        annotationsPath += \"").append(file.getPath()).append("\"\n");
                 }
             }
         });
