@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm.compiler;
+package org.jetbrains.jet.plugin.codeInsight;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
