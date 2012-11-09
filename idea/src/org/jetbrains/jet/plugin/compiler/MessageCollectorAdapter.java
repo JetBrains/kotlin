@@ -42,7 +42,7 @@ class MessageCollectorAdapter implements MessageCollector {
             @NotNull CompilerMessageLocation location
     ) {
         CompilerMessageCategory category = category(severity);
-        compileContext.addMessage(category, message, location.getPath(), location.getLine(), location.getColumn());
+        compileContext.addMessage(category, message, "file://" + location.getPath(), location.getLine(), location.getColumn());
         if (severity == CompilerMessageSeverity.EXCEPTION) {
             LOG.error(message);
         }

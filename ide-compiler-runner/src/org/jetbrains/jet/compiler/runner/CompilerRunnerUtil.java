@@ -208,7 +208,7 @@ public class CompilerRunnerUtil {
             message.setLength(0);
 
             String rawPath = attributes.getValue("path");
-            path = rawPath == null ? null : "file://" + rawPath;
+            path = rawPath == null ? null : rawPath;
             line = safeParseInt(attributes.getValue("line"), -1);
             column = safeParseInt(attributes.getValue("column"), -1);
         }
