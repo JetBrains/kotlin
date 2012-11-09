@@ -71,7 +71,7 @@ public class ClosureCodegen extends GenerationStateAware {
         assert descriptor != null;
 
         name = classNameForAnonymousClass(state.getBindingContext(), fun);
-        final ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName() + ".class");
+        final ClassBuilder cv = state.getFactory().newVisitor(name.getInternalName() + ".class", fun.getContainingFile());
 
         final FunctionDescriptor funDescriptor = bindingContext.get(BindingContext.FUNCTION, fun);
 

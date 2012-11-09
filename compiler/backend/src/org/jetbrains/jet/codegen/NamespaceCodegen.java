@@ -153,12 +153,11 @@ public class NamespaceCodegen extends MemberCodegen {
             }
 
             if (k > 0) {
-                PsiFile containingFile = file.getContainingFile();
                 String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(name.child(Name.identifier(JvmAbi.PACKAGE_CLASS))).getInternalName();
-                String className = getMultiFileNamespaceInternalName(namespaceInternalName, containingFile);
-                ClassBuilder builder = state.getFactory().forNamespacepart(className);
+                String className = getMultiFileNamespaceInternalName(namespaceInternalName, file);
+                ClassBuilder builder = state.getFactory().forNamespacepart(className, file);
 
-                builder.defineClass(containingFile, V1_6,
+                builder.defineClass(file, V1_6,
                                     ACC_PUBLIC/*|ACC_SUPER*/,
                                     className,
                                     null,
@@ -166,7 +165,7 @@ public class NamespaceCodegen extends MemberCodegen {
                                     "java/lang/Object",
                                     new String[0]
                 );
-                builder.visitSource(containingFile.getName(), null);
+                builder.visitSource(file.getName(), null);
 
                 for (JetDeclaration declaration : file.getDeclarations()) {
                     if (declaration instanceof JetNamedFunction) {

@@ -86,7 +86,7 @@ public class MemberCodegen extends GenerationStateAware {
         new ImplementationBodyCodegen(aClass, classContext, classBuilder, state).generate();
 
         if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
-            ClassBuilder traitBuilder = state.getFactory().forTraitImplementation(descriptor, state);
+            ClassBuilder traitBuilder = state.getFactory().forTraitImplementation(descriptor, state, aClass.getContainingFile());
             new TraitImplBodyCodegen(aClass, context.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state)
                     .generate();
             traitBuilder.done();
@@ -123,7 +123,7 @@ public class MemberCodegen extends GenerationStateAware {
             return;
         }
 
-        ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor);
+        ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor, aClass.getContainingFile());
 
         final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
 

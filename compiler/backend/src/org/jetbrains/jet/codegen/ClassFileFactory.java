@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -51,10 +52,14 @@ public final class ClassFileFactory extends GenerationStateAware {
         this.builderFactory = builderFactory;
     }
 
-    ClassBuilder newVisitor(String filePath) {
-        state.getProgress().log("Emitting: " + filePath);
+    ClassBuilder newVisitor(String outputFilePath, PsiFile sourceFile) {
+        return newVisitor(outputFilePath, Collections.singletonList(sourceFile));
+    }
+    
+    ClassBuilder newVisitor(String outputFilePath, Collection<? extends PsiFile> sourceFiles) {
+        state.getProgress().log("Emitting: " + outputFilePath);
         final ClassBuilder answer = builderFactory.newClassBuilder();
-        generators.put(filePath, answer);
+        generators.put(outputFilePath, answer);
         return answer;
     }
 
@@ -96,7 +101,7 @@ public final class ClassFileFactory extends GenerationStateAware {
         return answer.toString();
     }
 
-    public NamespaceCodegen forNamespace(final FqName fqName, Collection<JetFile> files) {
+    public NamespaceCodegen forNamespace(final FqName fqName, final Collection<JetFile> files) {
         assert !isDone : "Already done!";
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
@@ -104,7 +109,10 @@ public final class ClassFileFactory extends GenerationStateAware {
                 @NotNull
                 @Override
                 protected ClassBuilder createClassBuilder() {
-                    return newVisitor(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName() + ".class");
+                    return newVisitor(
+                            NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName() + ".class",
+                            files
+                    );
                 }
             };
             codegen = new NamespaceCodegen(onDemand, fqName, state, files);
@@ -114,20 +122,21 @@ public final class ClassFileFactory extends GenerationStateAware {
         return codegen;
     }
 
-    public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
+    public ClassBuilder forClassImplementation(ClassDescriptor aClass, PsiFile sourceFile) {
         Type type = state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.IMPL);
         if (isPrimitive(type)) {
             throw new IllegalStateException("Codegen for primitive type is not possible: " + aClass);
         }
-        return newVisitor(type.getInternalName() + ".class");
+        return newVisitor(type.getInternalName() + ".class", sourceFile);
     }
 
-    public ClassBuilder forNamespacepart(String name) {
-        return newVisitor(name + ".class");
+    public ClassBuilder forNamespacepart(String internalName, PsiFile sourceFile) {
+        return newVisitor(internalName + ".class", sourceFile);
     }
 
-    public ClassBuilder forTraitImplementation(ClassDescriptor aClass, GenerationState state) {
+    public ClassBuilder forTraitImplementation(ClassDescriptor aClass, GenerationState state, PsiFile sourceFile) {
         return newVisitor(
-                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName() + ".class");
+                state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName() + ".class",
+                sourceFile);
     }
 }
