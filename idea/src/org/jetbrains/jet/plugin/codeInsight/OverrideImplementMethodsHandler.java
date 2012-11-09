@@ -69,9 +69,10 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             List<DescriptorClassMember> selectedElements
     ) {
         JetClassBody body = classOrObject.getBody();
-        Project project = classOrObject.getProject();
         if (body == null) {
-            body = JetPsiFactory.createEmptyClassBody(project);
+            Project project = classOrObject.getProject();
+            classOrObject.add(JetPsiFactory.createWhiteSpace(project));
+            body = (JetClassBody) classOrObject.add(JetPsiFactory.createEmptyClassBody(project));
         }
 
         PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
@@ -87,12 +88,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             afterAnchor = added;
             elementsToCompact.add((JetElement) added);
         }
-        ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
 
-        if (!body.isPhysical()) {
-            classOrObject.add(JetPsiFactory.createWhiteSpace(project));
-            classOrObject.add(body);
-        }
+        ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
     }
 
     @Nullable
