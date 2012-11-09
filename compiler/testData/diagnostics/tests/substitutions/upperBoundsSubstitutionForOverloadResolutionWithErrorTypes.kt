@@ -3,5 +3,5 @@ fun f1<T>(<!UNUSED_PARAMETER!>l<!>: <!UNRESOLVED_REFERENCE!>List2<!><T>): T {thr
 fun f1<T>(<!UNUSED_PARAMETER!>c<!>: Collection<T>): T{throw Exception()}
 
 fun test<T>(l: List<T>) {
-    f1(l)
+    <!CANNOT_COMPLETE_RESOLVE!>f1<!>(l)
 }

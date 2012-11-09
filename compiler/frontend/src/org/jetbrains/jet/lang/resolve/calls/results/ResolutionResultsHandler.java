@@ -31,9 +31,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_RESULT;
-import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.SEVERITY_LEVELS;
-import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.STRONG_ERROR;
-import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
+import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 
 public class ResolutionResultsHandler {
     public static ResolutionResultsHandler INSTANCE = new ResolutionResultsHandler();
@@ -48,27 +46,30 @@ public class ResolutionResultsHandler {
     ) {
         Set<ResolvedCallWithTrace<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failedCandidates = Sets.newLinkedHashSet();
+        Set<ResolvedCallWithTrace<D>> incompleteCandidates = Sets.newLinkedHashSet();
         for (ResolvedCallWithTrace<D> candidateCall : candidates) {
             ResolutionStatus status = candidateCall.getStatus();
+            assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
             if (status.isSuccess()) {
                 successfulCandidates.add(candidateCall);
             }
-            else {
-                assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
-                if (candidateCall.getStatus() != STRONG_ERROR) {
-                    failedCandidates.add(candidateCall);
-                }
+            else if (status == INCOMPLETE_TYPE_INFERENCE) {
+                incompleteCandidates.add(candidateCall);
+            }
+            else if (candidateCall.getStatus() != STRONG_ERROR) {
+                failedCandidates.add(candidateCall);
             }
         }
-        return computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates);
+        return computeResultAndReportErrors(trace, tracing, successfulCandidates, failedCandidates, incompleteCandidates);
     }
 
     @NotNull
-    public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
             @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing,
             @NotNull Set<ResolvedCallWithTrace<D>> successfulCandidates,
-            @NotNull Set<ResolvedCallWithTrace<D>> failedCandidates
+            @NotNull Set<ResolvedCallWithTrace<D>> failedCandidates,
+            @NotNull Set<ResolvedCallWithTrace<D>> incompleteCandidates
     ) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
@@ -86,6 +87,13 @@ public class ResolutionResultsHandler {
                 tracing.recordAmbiguity(trace, results.getResultingCalls());
             }
             return results;
+        }
+        else if (!incompleteCandidates.isEmpty()) {
+            assert incompleteCandidates.size() > 1 :
+                    "One incomplete candidate should have been chosen as maximally specific and completed earlier";
+            tracing.cannotCompleteResolve(trace, incompleteCandidates);
+            tracing.recordAmbiguity(trace, incompleteCandidates);
+            return OverloadResolutionResultsImpl.incompleteTypeInference(incompleteCandidates);
         }
         else if (!failedCandidates.isEmpty()) {
             if (failedCandidates.size() != 1) {

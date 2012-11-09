@@ -1733,9 +1733,29 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/arrayConstructor.kt");
             }
             
-            @TestMetadata("cannotCompleteResolve.kt")
-            public void testCannotCompleteResolve() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolve.kt");
+            @TestMetadata("cannotCompleteResolveAmbiguity.kt")
+            public void testCannotCompleteResolveAmbiguity() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveAmbiguity.kt");
+            }
+            
+            @TestMetadata("cannotCompleteResolveFunctionLiteralsNoUse.kt")
+            public void testCannotCompleteResolveFunctionLiteralsNoUse() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveFunctionLiteralsNoUse.kt");
+            }
+            
+            @TestMetadata("cannotCompleteResolveNoInfoForParameter.kt")
+            public void testCannotCompleteResolveNoInfoForParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveNoInfoForParameter.kt");
+            }
+            
+            @TestMetadata("cannotCompleteResolveNoneApplicable.kt")
+            public void testCannotCompleteResolveNoneApplicable() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveNoneApplicable.kt");
+            }
+            
+            @TestMetadata("cannotCompleteResolveWithFunctionLiterals.kt")
+            public void testCannotCompleteResolveWithFunctionLiterals() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveWithFunctionLiterals.kt");
             }
             
             @TestMetadata("completeInferenceIfManyFailed.kt")

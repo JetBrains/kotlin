@@ -59,7 +59,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
         return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, candidates);
     }
 
-    private static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<ResolvedCallWithTrace<D>> candidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<ResolvedCallWithTrace<D>> candidates) {
         return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, candidates);
     }
 

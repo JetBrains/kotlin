@@ -10,5 +10,5 @@ import foo.*
 fun f<T>(<!UNUSED_PARAMETER!>l<!>: List<T>) {}
 
 fun test<T>(l: List<T>) {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f(l)<!>
+    <!CANNOT_COMPLETE_RESOLVE!>f<!>(l)
 }
