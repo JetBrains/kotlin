@@ -295,7 +295,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         }
 
         // FINAL
-        if (!classOrObject.hasModifier(OPEN_KEYWORD) && !classOrObject.hasModifier(ABSTRACT_KEYWORD)) {
+        if (!classOrObject.hasModifier(OPEN_KEYWORD) && !classOrObject.hasModifier(ABSTRACT_KEYWORD) && !isInterface()) {
             psiModifiers.add(PsiModifier.FINAL);
         }
 
