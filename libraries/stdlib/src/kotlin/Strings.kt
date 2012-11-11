@@ -63,3 +63,16 @@ public inline fun String.count(predicate: (Char) -> Boolean): Int {
     }
     return answer
 }
+
+/**
+ * Repeats a given string n times. With n <= 0, the empty string is returned.
+ * @includeFunctionBody ../../test/StringTest.kt times
+ */
+public inline fun String.times(var n: Int) : String {
+    var answer = "";
+    while (n > 0) {
+        answer = answer.concat(this)
+        n--;
+    }
+    return answer
+}
