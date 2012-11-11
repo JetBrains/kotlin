@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -40,11 +39,6 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     ) {
         super(descriptor, declarationProvider, semanticServices);
         this.packageFQN = packageFQN;
-    }
-
-    @Override
-    public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
     }
 
     @Override
