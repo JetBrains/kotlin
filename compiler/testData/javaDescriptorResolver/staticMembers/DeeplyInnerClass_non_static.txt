@@ -1,0 +1,17 @@
+namespace test
+
+public open class test.DeeplyInnerClass : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.DeeplyInnerClass
+    package open class test.DeeplyInnerClass.A : java.lang.Object {
+        package final /*constructor*/ fun <init>(): test.DeeplyInnerClass.A
+        package open fun a(): jet.Tuple0
+        package open class test.DeeplyInnerClass.A.B : java.lang.Object {
+            package final /*constructor*/ fun <init>(): test.DeeplyInnerClass.A.B
+            package open fun b(): jet.Tuple0
+            package open class test.DeeplyInnerClass.A.B.C : java.lang.Object {
+                package final /*constructor*/ fun <init>(): test.DeeplyInnerClass.A.B.C
+                package open fun c(): jet.Tuple0
+            }
+        }
+    }
+}
