@@ -84,7 +84,10 @@ var kotlin = {set:function (receiver, key, value) {
     Kotlin.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
     Kotlin.IOException = Kotlin.$createClass(Kotlin.Exception);
 
-    Kotlin.throwNPE = function () {
+    Kotlin.ensureNotNull = function (value) {
+        if (value !== null && value !== undefined)
+            return value;
+
         throw Kotlin.$new(Kotlin.NullPointerException)();
     };
 
