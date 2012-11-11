@@ -160,13 +160,18 @@ public final class JavaNamespaceResolver {
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
-        if (psiClass != null && !psiClass.isEnum()) {
-            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
-            return new JavaClassStaticMembersScope(namespaceDescriptor,
-                                                   createDeclarationProviderForClassStaticMembers(psiClass),
-                                                   fqName, javaSemanticServices);
+        if (psiClass == null) {
+            return null;
         }
-        return null;
+        if (psiClass.isEnum()) {
+            // NOTE: we don't want to create namespace for enum classes because we put
+            // static members of enum class into class object descriptor
+            return null;
+        }
+        trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
+        return new JavaClassStaticMembersScope(namespaceDescriptor,
+                                               createDeclarationProviderForClassStaticMembers(psiClass),
+                                               fqName, javaSemanticServices);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaBaseScope packageScope) {

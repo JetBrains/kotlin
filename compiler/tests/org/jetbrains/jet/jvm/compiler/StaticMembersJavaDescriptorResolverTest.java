@@ -50,6 +50,10 @@ public final class StaticMembersJavaDescriptorResolverTest extends AbstractJavaR
         doTest();
     }
 
+    public void testEnum() throws Exception {
+        doTest();
+    }
+
     private void doTest() throws IOException {
         String name = getTestName(false);
         compileJavaFile(name + ".java");
@@ -58,8 +62,12 @@ public final class StaticMembersJavaDescriptorResolverTest extends AbstractJavaR
         compareNamespaces(namespaceWithClass, namespaceWithClass, DONT_INCLUDE_METHODS_OF_OBJECT, new File(PATH + name + "_non_static.txt"));
 
         NamespaceDescriptor namespaceWithStaticMembers = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE + "." + name));
-        Assert.assertNotNull(namespaceWithStaticMembers);
-        compareNamespaces(namespaceWithStaticMembers, namespaceWithStaticMembers, DONT_INCLUDE_METHODS_OF_OBJECT,
-                          new File(PATH + name + "_static.txt"));
+        File fileWithStaticMembers = new File(PATH + name + "_static.txt");
+        if (namespaceWithStaticMembers == null) {
+            Assert.assertTrue(!fileWithStaticMembers.exists());
+        } else {
+            compareNamespaces(namespaceWithStaticMembers, namespaceWithStaticMembers, DONT_INCLUDE_METHODS_OF_OBJECT,
+                              fileWithStaticMembers);
+        }
     }
 }
