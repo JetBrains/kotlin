@@ -17,31 +17,22 @@
 package org.jetbrains.jet.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.AnnotationValue;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
-import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.JetTestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter;
@@ -49,12 +40,10 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.getVal
 /**
  * @author Natalia Ukhorskaya
  */
-public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
+public class AnnotationJavaDescriptorResolverTest extends AbstractJavaResolverDescriptorTest {
 
     private static final String PATH = "compiler/testData/javaDescriptorResolver/annotations/";
     private static final String DEFAULT_PACKAGE = "annotations";
-
-    private JavaDescriptorResolver javaDescriptorResolver;
 
     public void testCustomAnnotationWithKotlinEnum() throws IOException {
         File testFile = new File(PATH + "kotlinEnum.kt");
@@ -74,7 +63,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
             builder.append(annotationsPath.getAbsolutePath());
         }
 
-        setUpJavaDescriptorResolver();
         compileJavaFile("customAnnotationWithKotlinEnum.java", builder.toString());
 
         String annotationTypeName = DEFAULT_PACKAGE + ".MyAnnotation";
@@ -85,7 +73,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testCustomAnnotation() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("customAnnotation.java", null);
         String annotationTypeName = DEFAULT_PACKAGE + ".MyAnnotation";
         AnnotationDescriptor annotation = getAnnotationInClassByType("MyTest", annotationTypeName);
@@ -95,7 +82,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testCustomAnnotationWithDefaultParameter() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("customAnnotationWithDefaultParameter.java", null);
         String annotationTypeName = DEFAULT_PACKAGE + ".MyAnnotation";
         AnnotationDescriptor annotation = getAnnotationInClassByType("MyTest", annotationTypeName);
@@ -107,7 +93,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testAnnotationWithAnnotationInParam() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("annotationWithAnnotationInParam.java", null);
         String annotationTypeName = DEFAULT_PACKAGE + ".MyAnnotationWithParam";
         AnnotationDescriptor annotation = getAnnotationInClassByType("A",
@@ -136,7 +121,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testRecursiveAnnotation() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("recursiveAnnotation.java", null);
         String annotationTypeName = DEFAULT_PACKAGE + ".B";
         AnnotationDescriptor annotation = getAnnotationInClassByType("A", annotationTypeName);
@@ -153,7 +137,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testRecursiveAnnotation2() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("recursiveAnnotation2.java", null);
         String annotationTypeName = DEFAULT_PACKAGE + ".A";
         AnnotationDescriptor annotation = getAnnotationInClassByType("B", annotationTypeName);
@@ -164,7 +147,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testAnnotationWithEnumInParam() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("annotationWithEnumInParam.java", null);
         String annotationTypeName = "java.lang.annotation.Retention";
         AnnotationDescriptor annotation = getAnnotationInClassByType("retentionAnnotation", annotationTypeName);
@@ -173,7 +155,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testAnnotationWithArrayOfEnumInParam() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("annotationWithArrayOfEnumInParam.java", null);
         String annotationTypeName = "java.lang.annotation.Target";
         AnnotationDescriptor annotation = getAnnotationInClassByType("targetAnnotation", annotationTypeName);
@@ -187,7 +168,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testAnnotationWithArrayOfStringInParam() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("annotationWithArrayOfStringInParam.java", null);
         String annotationTypeName = DEFAULT_PACKAGE + ".MyAnnotation";
         AnnotationDescriptor annotation = getAnnotationInClassByType("A", annotationTypeName);
@@ -200,7 +180,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     public void testAnnotationWithEmptyArrayInParam() throws IOException {
-        setUpJavaDescriptorResolver();
         compileJavaFile("annotationWithEmptyArrayInParam.java", null);
         String annotationTypeName = DEFAULT_PACKAGE + ".MyAnnotation";
         AnnotationDescriptor annotation = getAnnotationInClassByType("A", annotationTypeName);
@@ -211,29 +190,6 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
         CompileTimeConstant<?> actualCompileTimeConstant = getCompileTimeConstant(annotation, annotationTypeName, "value");
         assert actualCompileTimeConstant instanceof ArrayValue;
         checkArrayCompileTimeConstant((ArrayValue) actualCompileTimeConstant, "jet.Array<out jet.String?>?", "jet.String", values);
-    }
-
-    private void compileJavaFile(@NotNull String fileRelativePath, @Nullable String classPath)
-            throws IOException {
-        File javaFile = new File(PATH + fileRelativePath);
-        assertNotNull(javaFile);
-        List<String> options = new ArrayList<String>();
-        options.add("-d");
-        options.add(tmpdir.getPath());
-        if (classPath != null) {
-            options.add("-cp");
-            options.add(classPath);
-        }
-        JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
-    }
-
-    private void setUpJavaDescriptorResolver() {
-        JetCoreEnvironment jetCoreEnvironment =
-                new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                        ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir));
-
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());
-        javaDescriptorResolver = injector.getJavaDescriptorResolver();
     }
 
     private static void compareJetTypeWithClass(@NotNull JetType actualType, @NotNull String expectedType) {
@@ -312,5 +268,11 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
             checkSimpleCompileTimeConstant(constant, expectedArgumentType, expectedValues[i]);
             i++;
         }
+    }
+
+    @NotNull
+    @Override
+    protected String getPath() {
+        return PATH;
     }
 }
