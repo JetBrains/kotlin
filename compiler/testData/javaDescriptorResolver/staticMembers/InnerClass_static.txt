@@ -1,0 +1,6 @@
+namespace InnerClass
+
+public open class test.InnerClass.Nested : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.InnerClass.Nested
+    public open fun bar(): jet.Tuple0
+}

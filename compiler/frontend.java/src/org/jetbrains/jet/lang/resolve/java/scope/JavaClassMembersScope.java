@@ -72,4 +72,10 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
         }
         return classifiersMap;
     }
+
+    @NotNull
+    @Override
+    protected Collection<ClassDescriptor> computeInnerClasses() {
+        return getResolver().resolveInnerClasses(descriptor, declarationProvider);
+    }
 }

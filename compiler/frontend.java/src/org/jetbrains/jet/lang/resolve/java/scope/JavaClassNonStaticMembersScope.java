@@ -47,10 +47,4 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
         }
         return constructors;
     }
-
-    @NotNull
-    @Override
-    protected Collection<ClassDescriptor> computeInnerClasses() {
-        return getResolver().resolveInnerClasses(descriptor, declarationProvider.getPsiClass(), declarationProvider.isStaticMembers());
-    }
 }

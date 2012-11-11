@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -172,7 +171,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
-        return innerClassResolver.resolveInnerClasses(owner, psiClass, staticMembers);
+    public List<ClassDescriptor> resolveInnerClasses(
+            @NotNull DeclarationDescriptor owner,
+            @NotNull ClassPsiDeclarationProvider declarationProvider)
+    {
+        return innerClassResolver.resolveInnerClasses(owner, declarationProvider);
     }
 }

@@ -26,12 +26,15 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
 public final class JavaInnerClassResolver {
 
@@ -46,20 +49,21 @@ public final class JavaInnerClassResolver {
     }
 
     @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass, boolean staticMembers) {
-        if (staticMembers) {
-            return resolveInnerClassesOfClassObject(owner, psiClass);
+    public List<ClassDescriptor> resolveInnerClasses(@NotNull DeclarationDescriptor owner,
+            @NotNull ClassPsiDeclarationProvider declarationProvider) {
+        if (declarationProvider.isStaticMembers() && declarationProvider.getDeclarationOrigin() == KOTLIN) {
+            return resolveInnerClassesOfClassObject(owner, declarationProvider.getPsiClass());
         }
 
-        return resolveInnerClasses(owner, psiClass);
+        return resolveInnerClasses(owner, declarationProvider.getPsiClass(), declarationProvider.isStaticMembers());
     }
 
     @NotNull
-    private List<ClassDescriptor> resolveInnerClasses(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass) {
+    private List<ClassDescriptor> resolveInnerClasses(@NotNull DeclarationDescriptor owner, @NotNull PsiClass psiClass, boolean isStatic) {
         PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
         for (PsiClass innerPsiClass : innerPsiClasses) {
-            if (shouldBeIgnored(owner, innerPsiClass)) {
+            if (shouldBeIgnored(owner, innerPsiClass, isStatic)) {
                 continue;
             }
             ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
@@ -68,9 +72,10 @@ public final class JavaInnerClassResolver {
         return result;
     }
 
-    private static boolean shouldBeIgnored(DeclarationDescriptor owner, PsiClass innerPsiClass) {
+    private static boolean shouldBeIgnored(DeclarationDescriptor owner, PsiClass innerPsiClass, boolean isStatic) {
         // TODO: hack against inner classes
         return innerPsiClass.hasModifierProperty(PsiModifier.PRIVATE)
+                || innerPsiClass.hasModifierProperty(PsiModifier.STATIC) != isStatic
                 || innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)
                 || DescriptorResolverUtils.isInnerEnum(innerPsiClass, owner);
     }

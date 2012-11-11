@@ -42,6 +42,10 @@ public final class StaticMembersJavaDescriptorResolverTest extends AbstractJavaR
         doTest();
     }
 
+    public void testInnerClass() throws Exception {
+        doTest();
+    }
+
     private void doTest() throws IOException {
         String name = getTestName(false);
         compileJavaFile(name + ".java");
