@@ -16,10 +16,21 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
-import com.intellij.codeInsight.generation.ClassMember;
+import com.intellij.codeInsight.generation.ClassMemberWithElement;
 import com.intellij.codeInsight.generation.MemberChooserObject;
+import com.intellij.openapi.util.Iconable;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.SimpleColoredComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import javax.swing.*;
@@ -27,27 +38,62 @@ import javax.swing.*;
 /**
  * @author yole
  */
-public class DescriptorClassMember implements ClassMember {
-    private final DeclarationDescriptor myDescriptor;
+public class DescriptorClassMember implements ClassMemberWithElement {
 
-    public DescriptorClassMember(DeclarationDescriptor descriptor) {
+    public static final String NO_PARENT_FOR = "No parent for ";
+    @NotNull
+    private final DeclarationDescriptor myDescriptor;
+    @NotNull
+    private final PsiElement myPsiElement;
+    @Nullable
+    private final Icon icon;
+
+    public DescriptorClassMember(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
+        myPsiElement = element;
         myDescriptor = descriptor;
+        if (myPsiElement.isValid()) {
+            boolean isClass = myPsiElement instanceof PsiClass || myPsiElement instanceof JetClass;
+            int flags = isClass ? 0 : Iconable.ICON_FLAG_VISIBILITY;
+            if (myPsiElement instanceof JetDeclaration) {  // kotlin declaration
+                // visibility and abstraction better detect by a descriptor
+                icon = JetDescriptorIconProvider.getIcon(myDescriptor, flags);
+            }
+            else {
+                // it is better to show java icons for java code
+                icon = myPsiElement.getIcon(flags);
+            }
+        }
+        else {
+            icon = JetDescriptorIconProvider.getIcon(myDescriptor, 0);
+        }
     }
 
     @Override
     public MemberChooserObject getParentNodeDelegate() {
         final DeclarationDescriptor parent = myDescriptor.getContainingDeclaration();
-        return new DescriptorClassMember(parent);
+        PsiElement declaration;
+        if (myPsiElement instanceof JetDeclaration) {
+            // kotlin
+            declaration = PsiTreeUtil.getStubOrPsiParentOfType(myPsiElement, JetNamedDeclaration.class);
+        }
+        else {
+            // java or bytecode
+            declaration = ((PsiMember) myPsiElement).getContainingClass();
+        }
+        assert parent != null : NO_PARENT_FOR + myDescriptor;
+        assert declaration != null : NO_PARENT_FOR + myPsiElement;
+        return new DescriptorClassMember(declaration, parent);
     }
 
     @Override
     public void renderTreeNode(SimpleColoredComponent component, JTree tree) {
         component.append(getText());
+        component.setIcon(icon);
     }
 
     @Override
     public String getText() {
-        return DescriptorRenderer.TEXT.render(myDescriptor);
+        return DescriptorRenderer.STARTS_FROM_NAME.render(myDescriptor);
     }
 
     public DeclarationDescriptor getDescriptor() {
@@ -61,13 +107,18 @@ public class DescriptorClassMember implements ClassMember {
 
         DescriptorClassMember that = (DescriptorClassMember) o;
 
-        if (myDescriptor != null ? !myDescriptor.equals(that.myDescriptor) : that.myDescriptor != null) return false;
+        if (!myDescriptor.equals(that.myDescriptor)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return myDescriptor != null ? myDescriptor.hashCode() : 0;
+        return myDescriptor.hashCode();
+    }
+
+    @Override
+    public PsiElement getElement() {
+        return myPsiElement;
     }
 }

@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -53,7 +54,7 @@ public class ResolveSession {
     private final ModuleDescriptor module;
     private final LazyPackageDescriptor rootPackage;
 
-    private final BindingTrace trace = new BindingTraceContext();
+    private final BindingTrace trace;
     private final DeclarationProviderFactory declarationProviderFactory;
 
     private final Predicate<FqNameUnsafe> specialClasses;
@@ -70,7 +71,25 @@ public class ResolveSession {
         @NotNull ModuleConfiguration moduleConfiguration,
         @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        this(project, rootDescriptor, moduleConfiguration, declarationProviderFactory, NO_ALIASES, Predicates.<FqNameUnsafe>alwaysFalse());
+        this(project, rootDescriptor, moduleConfiguration, declarationProviderFactory, NO_ALIASES,
+             Predicates.<FqNameUnsafe>alwaysFalse(),
+             new BindingTraceContext());
+    }
+
+    public ResolveSession(
+            @NotNull Project project,
+            @NotNull ModuleDescriptor rootDescriptor,
+            @NotNull ModuleConfiguration moduleConfiguration,
+            @NotNull DeclarationProviderFactory declarationProviderFactory,
+            @NotNull BindingTrace delegationTrace
+    ) {
+        this(project,
+             rootDescriptor,
+             moduleConfiguration,
+             declarationProviderFactory,
+             NO_ALIASES,
+             Predicates.<FqNameUnsafe>alwaysFalse(),
+             delegationTrace);
     }
 
     @Deprecated // Internal use only
@@ -80,10 +99,12 @@ public class ResolveSession {
             @NotNull ModuleConfiguration moduleConfiguration,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
-            @NotNull Predicate<FqNameUnsafe> specialClasses
+            @NotNull Predicate<FqNameUnsafe> specialClasses,
+            @NotNull BindingTrace delegationTrace
     ) {
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
+        this.trace = new ObservableBindingTrace(delegationTrace);
         this.injector = new InjectorForLazyResolve(project, this, trace, moduleConfiguration);
         this.module = rootDescriptor;
         this.moduleConfiguration = moduleConfiguration;

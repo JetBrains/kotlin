@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -42,6 +42,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
 public final class JavaSupertypeResolver {
 
@@ -71,11 +73,11 @@ public final class JavaSupertypeResolver {
     }
 
     public Collection<JetType> getSupertypes(
+            @NotNull ClassDescriptor classDescriptor,
             @NotNull PsiClassWrapper psiClass,
-            @NotNull ResolverClassData classData,
+            @NotNull ClassPsiDeclarationProvider classData,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
-        ClassDescriptor classDescriptor = classData.getClassDescriptor();
 
         final List<JetType> result = new ArrayList<JetType>();
 
@@ -138,11 +140,11 @@ public final class JavaSupertypeResolver {
 
     private void addBaseClass(
             @NotNull PsiClassWrapper psiClass,
-            @NotNull ResolverClassData classData,
+            @NotNull ClassPsiDeclarationProvider classData,
             @NotNull ClassDescriptor classDescriptor,
             @NotNull List<JetType> result
     ) {
-        if (classData.isKotlin()
+        if (classData.getDeclarationOrigin() == KOTLIN
             || DescriptorResolverUtils.OBJECT_FQ_NAME.equalsTo(psiClass.getQualifiedName())
             // TODO: annotations
             || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {

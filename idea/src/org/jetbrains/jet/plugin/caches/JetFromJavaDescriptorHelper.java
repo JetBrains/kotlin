@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.caches;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
@@ -24,10 +25,13 @@ import com.intellij.psi.impl.java.stubs.index.JavaMethodNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.psi.util.PsiTreeUtil;
+import jet.runtime.typeinfo.JetClass;
 import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -73,6 +77,25 @@ class JetFromJavaDescriptorHelper {
         }
 
         return result;
+    }
+
+    static Collection<PsiClass> getCompiledClassesForTopLevelObjects(Project project, GlobalSearchScope scope) {
+        Set<PsiClass> jetObjectClasses = Sets.newHashSet();
+
+        Collection<PsiAnnotation> annotations = JavaAnnotationIndex.getInstance().get(JetClass.class.getSimpleName(), project, scope);
+        for (PsiAnnotation annotation : annotations) {
+            PsiModifierList modifierList = (PsiModifierList)annotation.getParent();
+            final PsiElement owner = modifierList.getParent();
+            if (owner instanceof PsiClass) {
+                PsiClass psiClass = (PsiClass) owner;
+                JetClassAnnotation jetAnnotation = JetClassAnnotation.get(psiClass);
+                if (psiClass.getContainingClass() == null && jetAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
+                    jetObjectClasses.add(psiClass);
+                }
+            }
+        }
+
+        return jetObjectClasses;
     }
     
     static Collection<String> getTopExtensionFunctionNames(Project project, GlobalSearchScope scope) {

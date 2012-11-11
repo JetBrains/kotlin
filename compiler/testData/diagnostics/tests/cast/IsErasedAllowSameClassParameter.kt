@@ -1,3 +1,3 @@
 
-fun ff(l: Collection<String>) = l is List<String>
+fun ff(l: MutableCollection<String>) = l is MutableList<String>
 

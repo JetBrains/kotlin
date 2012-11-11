@@ -1,3 +1,3 @@
 
-fun ff(l: Any) = l as List<*>
+fun ff(l: Any) = l as MutableList<*>
 

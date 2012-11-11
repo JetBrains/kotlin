@@ -18,19 +18,13 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -92,7 +86,24 @@ public class ImportInsertHelper {
             PsiElement target = reference.resolve();
             if (target != null) {
                 boolean same = file.getManager().areElementsEquivalent(target, targetElement);
-                same |= target instanceof PsiClass && importFqn.getFqName().equals(((PsiClass)target).getQualifiedName());
+
+                if (!same) {
+                    same = target instanceof PsiClass && importFqn.getFqName().equals(((PsiClass)target).getQualifiedName());
+                }
+
+                if (!same) {
+                    if (target instanceof PsiMethod) {
+                        PsiMethod method = (PsiMethod) target;
+                        same = (method.isConstructor() && file.getManager().areElementsEquivalent(method.getContainingClass(), targetElement));
+                    }
+                }
+
+                if (!same) {
+                    if (target instanceof JetObjectDeclarationName) {
+                        same = file.getManager().areElementsEquivalent(target.getParent(), targetElement);
+                    }
+                }
+
                 if (!same) {
                     Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
                     TextRange refRange = reference.getElement().getTextRange();

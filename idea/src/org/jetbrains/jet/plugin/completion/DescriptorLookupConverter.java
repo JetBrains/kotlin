@@ -17,10 +17,13 @@
 package org.jetbrains.jet.plugin.completion;
 
 import com.google.common.collect.Lists;
+import com.intellij.codeInsight.completion.JavaMethodCallElement;
+import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.VariableLookupItem;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,6 +36,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
+import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
+import org.jetbrains.jet.plugin.libraries.DecompiledDataFactory;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.List;
@@ -56,6 +61,12 @@ public final class DescriptorLookupConverter {
     @NotNull
     public static LookupElement createLookupElement(@NotNull ResolveSession resolveSession,
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
+        if (declaration != null) {
+            LookupElement javaLookupElement = createJavaLookupElementIfPossible(declaration);
+            if (javaLookupElement != null) {
+                return javaLookupElement;
+            }
+        }
 
         LookupElementBuilder element = LookupElementBuilder.create(
                 new JetLookupObject(descriptor, resolveSession, declaration), descriptor.getName().getName());
@@ -111,6 +122,31 @@ public final class DescriptorLookupConverter {
         element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
         element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor));
         return element;
+    }
+
+    @Nullable
+    private static LookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration) {
+        if (declaration instanceof PsiClass) {
+            PsiClass psiClass = (PsiClass) declaration;
+            if (!DecompiledDataFactory.isCompiledFromKotlin(psiClass)) {
+                return new JavaPsiClassReferenceElement(psiClass).setInsertHandler(JetJavaClassInsertHandler.INSTANCE);
+            }
+        }
+
+        if (declaration instanceof PsiMember) {
+            PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
+            if (containingClass != null && !DecompiledDataFactory.isCompiledFromKotlin(containingClass)) {
+                if (declaration instanceof PsiMethod) {
+                    return new JavaMethodCallElement((PsiMethod) declaration);
+                }
+
+                if (declaration instanceof PsiField) {
+                    return new VariableLookupItem((PsiField) declaration);
+                }
+            }
+        }
+
+        return null;
     }
 
     @NotNull

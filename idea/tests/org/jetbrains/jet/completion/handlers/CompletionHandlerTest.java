@@ -45,6 +45,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testDoNotInsertImportIfResolvedIntoJavaConstructor() {
+        doTest();
+    }
+
     public void testNonStandardArray() {
         doTest(CompletionType.BASIC, 2, "Array", "java.lang.reflect", '\n');
     }
@@ -101,6 +105,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
 
     public void testHigherOrderFunction() {
         doTest();
+    }
+
+    public void testInsertFqnForJavaClass() {
+        doTest(CompletionType.BASIC, 2, "SortedSet", "java.util", '\n');
     }
 
     public void testHigherOrderFunctionWithArg() {

@@ -31,7 +31,7 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
  * @author Nikolay Krasko
  */
 public class JetJavaClassInsertHandler implements InsertHandler<JavaPsiClassReferenceElement> {
-    public static final InsertHandler<JavaPsiClassReferenceElement> JAVA_CLASS_INSERT_HANDLER = new JetJavaClassInsertHandler();
+    public static final InsertHandler<JavaPsiClassReferenceElement> INSTANCE = new JetJavaClassInsertHandler();
 
     @Override
     public void handleInsert(final InsertionContext context, final JavaPsiClassReferenceElement item) {

@@ -148,4 +148,9 @@ public class JvmMethodSignature {
     public String getName() {
         return asmMethod.getName();
     }
+
+    @Override
+    public String toString() {
+        return asmMethod.toString();
+    }
 }

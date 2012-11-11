@@ -16,18 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.java.descriptor;
 
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverBinaryClassData;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.LazyClassDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
@@ -39,8 +35,9 @@ import java.util.Collection;
 public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     @NotNull
     private final JavaDescriptorResolver javaDescriptorResolver;
+
     @NotNull
-    private final ResolverClassData resolverBinaryClassData;
+    private final ClassPsiDeclarationProvider resolverBinaryClassData;
 
 
     // lazy
@@ -48,23 +45,19 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration, @NotNull ClassKind kind,
-            @NotNull PsiClass psiClass, @Nullable FqName fqName,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver) {
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull ClassPsiDeclarationProvider data
+    ) {
         super(containingDeclaration, kind);
         this.javaDescriptorResolver = javaDescriptorResolver;
-        this.resolverBinaryClassData = new ResolverBinaryClassData(psiClass, fqName, this);
-    }
-
-    @NotNull
-    public ResolverClassData getResolverBinaryClassData() {
-        return resolverBinaryClassData;
+        this.resolverBinaryClassData = data;
     }
 
     @NotNull
     @Override
     public Collection<ConstructorDescriptor> getConstructors() {
         if (constructors == null) {
-            this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData);
+            this.constructors = javaDescriptorResolver.resolveConstructors(resolverBinaryClassData, this);
         }
         return constructors;
     }

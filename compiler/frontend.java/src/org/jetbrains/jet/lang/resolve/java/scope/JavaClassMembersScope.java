@@ -21,11 +21,12 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -39,16 +40,17 @@ import java.util.Map;
  * @author abreslav
  */
 public class JavaClassMembersScope extends JavaBaseScope {
+    @NotNull
     private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
+    @NotNull
+    private final ClassPsiDeclarationProvider classPsiDeclarationProvider;
 
     public JavaClassMembersScope(
+            @NotNull ClassOrNamespaceDescriptor descriptor,
             @NotNull JavaSemanticServices semanticServices,
-            @NotNull ResolverScopeData resolverScopeData) {
-        super(semanticServices, resolverScopeData);
-
-        if (resolverScopeData.getPsiClass() == null) {
-            throw new IllegalArgumentException("must pass PsiClass here");
-        }
+            @NotNull ClassPsiDeclarationProvider resolverScopeData) {
+        super(descriptor, semanticServices, resolverScopeData);
+        this.classPsiDeclarationProvider = resolverScopeData;
     }
 
     @NotNull
@@ -69,9 +71,9 @@ public class JavaClassMembersScope extends JavaBaseScope {
 
     private ClassifierDescriptor doGetClassifierDescriptor(Name name) {
         // TODO : suboptimal, walk the list only once
-        for (PsiClass innerClass : resolverScopeData.getPsiClass().getAllInnerClasses()) {
+        for (PsiClass innerClass : classPsiDeclarationProvider.getPsiClass().getAllInnerClasses()) {
             if (name.getName().equals(innerClass.getName())) {
-                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != resolverScopeData.isStaticMembers()) return null;
+                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != classPsiDeclarationProvider.isStaticMembers()) return null;
                 ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver()
                         .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {

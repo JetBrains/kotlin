@@ -124,7 +124,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
                 }
                 if (psiClassFinder.findPsiPackage(fqName) != null) {
-                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(fqName, namespaceDescriptor);
+                    JavaPackageScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
                     assert javaPackageScope != null;
                     namespaceMemberScope.importScope(javaPackageScope);
                 }
@@ -139,7 +139,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
 
-        return new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory);
+        return new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(

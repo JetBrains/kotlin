@@ -1428,8 +1428,10 @@ public class JetParsing extends AbstractJetParsing {
             //  A.(B) -> C
             //   ^
 
-            PsiBuilder.Marker precede = typeRefMarker.precede();
+            PsiBuilder.Marker functionType = typeRefMarker.precede();
+            PsiBuilder.Marker receiverType = typeRefMarker.precede();
             typeRefMarker.done(TYPE_REFERENCE);
+            receiverType.done(FUNCTION_TYPE_RECEIVER);
 
             advance(); // DOT
             
@@ -1439,9 +1441,9 @@ public class JetParsing extends AbstractJetParsing {
             else {
                 error("Expecting function type");
             }
-            typeRefMarker = precede.precede();
+            typeRefMarker = functionType.precede();
 
-            precede.done(FUNCTION_TYPE);
+            functionType.done(FUNCTION_TYPE);
         }
 //        myBuilder.restoreJoiningComplexTokensState();
         return typeRefMarker;
@@ -1607,7 +1609,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionType
-     *   : (type ".")? "(" (parameter | modifiers type){","}? ")" "->" type?
+     *   : "(" (parameter | modifiers type){","}? ")" "->" type?
      *   ;
      */
     private void parseFunctionType() {
@@ -1700,7 +1702,7 @@ public class JetParsing extends AbstractJetParsing {
         return parseValueParameter(true);
     }
 
-    private void parseValueParameter() {
+    public void parseValueParameter() {
         parseValueParameter(false);
     }
 

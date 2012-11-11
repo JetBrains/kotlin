@@ -48,12 +48,12 @@ public class TypeCheckingProcedure {
         return null;
     }
 
-    private static JetType getOutType(TypeParameterDescriptor parameter, TypeProjection argument) {
+    public static JetType getOutType(TypeParameterDescriptor parameter, TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == IN_VARIANCE || parameter.getVariance() == IN_VARIANCE;
         return isOutProjected ? parameter.getUpperBoundsAsType() : argument.getType();
     }
 
-    private static JetType getInType(TypeParameterDescriptor parameter, TypeProjection argument) {
+    public static JetType getInType(TypeParameterDescriptor parameter, TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == OUT_VARIANCE || parameter.getVariance() == OUT_VARIANCE;
         return isOutProjected ? KotlinBuiltIns.getInstance().getNothingType() : argument.getType();
     }

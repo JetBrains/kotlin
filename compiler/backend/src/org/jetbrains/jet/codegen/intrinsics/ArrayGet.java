@@ -44,7 +44,7 @@ public class ArrayGet implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
+        receiver.put(receiver.type, v);
         Type type = correctElementType(receiver.type);
 
         codegen.gen(arguments.get(0), Type.INT_TYPE);

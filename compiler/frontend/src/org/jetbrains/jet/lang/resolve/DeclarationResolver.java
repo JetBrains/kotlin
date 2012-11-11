@@ -180,7 +180,7 @@ public class DeclarationResolver {
                     SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(namespaceLike.getOwnerForChildren(), scopeForFunctions, function, trace);
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
-                    context.getDeclaringScopes().put(function, scopeForFunctions);
+                    context.registerDeclaringScope(function, scopeForFunctions);
                 }
 
                 @Override
@@ -188,12 +188,14 @@ public class DeclarationResolver {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(namespaceLike.getOwnerForChildren(), scopeForPropertyInitializers, property, trace);
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
-                    context.getDeclaringScopes().put(property, scopeForPropertyInitializers);
-                    if (property.getGetter() != null) {
-                        context.getDeclaringScopes().put(property.getGetter(), scopeForPropertyAccessors);
+                    context.registerDeclaringScope(property, scopeForPropertyInitializers);
+                    JetPropertyAccessor getter = property.getGetter();
+                    if (getter != null) {
+                        context.registerDeclaringScope(getter, scopeForPropertyAccessors);
                     }
-                    if (property.getSetter() != null) {
-                        context.getDeclaringScopes().put(property.getSetter(), scopeForPropertyAccessors);
+                    JetPropertyAccessor setter = property.getSetter();
+                    if (setter != null) {
+                        context.registerDeclaringScope(setter, scopeForPropertyAccessors);
                     }
                 }
 

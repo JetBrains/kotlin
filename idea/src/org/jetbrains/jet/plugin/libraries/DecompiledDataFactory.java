@@ -35,6 +35,8 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -44,7 +46,7 @@ import java.util.*;
  * @author Evgeny Gerashchenko
  * @since 3/11/12
  */
-class DecompiledDataFactory {
+public class DecompiledDataFactory {
     private static final String JET_CLASS = JetClass.class.getName();
     private static final String JET_METHOD = JetMethod.class.getName();
     private static final String DECOMPILED_COMMENT = "/* compiled code */";
@@ -196,11 +198,11 @@ class DecompiledDataFactory {
         return false;
     }
 
-    static boolean isKotlinClass(PsiClass psiClass) {
+    public static boolean isKotlinClass(@NotNull PsiClass psiClass) {
         return hasAnnotation(psiClass, JET_CLASS);
     }
 
-    static boolean isKotlinNamespaceClass(PsiClass psiClass) {
+    public static boolean isKotlinNamespaceClass(@NotNull PsiClass psiClass) {
         if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName()) && !isKotlinClass(psiClass)) {
             for (PsiMethod method : psiClass.getMethods()) {
                 if (hasAnnotation(method, JET_METHOD)) {
@@ -209,5 +211,13 @@ class DecompiledDataFactory {
             }
         }
         return false;
+    }
+
+    public static boolean isCompiledFromKotlin(@NotNull PsiClass psiClass) {
+        return isKotlinClass(psiClass) || isKotlinNamespaceClass(psiClass);
+    }
+
+    public static boolean isKotlinObject(PsiClass aClass) {
+        return JetClassAnnotation.get(aClass).kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT;
     }
 }

@@ -18,9 +18,11 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +41,22 @@ public class JetIconProvider extends IconProvider {
 
     public static JetIconProvider INSTANCE = new JetIconProvider();
 
+    @Nullable
+    public static JetClassOrObject getMainClass(@NotNull JetFile file) {
+        List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
+            @Override
+            public boolean value(JetDeclaration jetDeclaration) {
+                return jetDeclaration instanceof JetClassOrObject;
+            }
+        });
+        if (classes.size() == 1) {
+            if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
+                return (JetClassOrObject) classes.get(0);
+            }
+        }
+        return null;
+    }
+
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
         if (psiElement instanceof JetFile) {
@@ -46,6 +64,34 @@ public class JetIconProvider extends IconProvider {
             JetClassOrObject mainClass = getMainClass(file);
             return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : JetIcons.FILE;
         }
+
+        Icon result = getBaseIcon(psiElement);
+        if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof JetModifierListOwner) {
+            JetModifierList list = ((JetModifierListOwner) psiElement).getModifierList();
+            if (list != null) {
+                RowIcon rowIcon = new RowIcon(2);
+                rowIcon.setIcon(result, 0);
+                rowIcon.setIcon(getVisibilityIcon(list), 1);
+                result = rowIcon;
+            }
+        }
+        return result;
+    }
+
+    public static Icon getVisibilityIcon(JetModifierList list) {
+        if (list.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+            return PlatformIcons.PRIVATE_ICON;
+        }
+        if (list.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
+            return PlatformIcons.PROTECTED_ICON;
+        }
+        if (list.hasModifier(JetTokens.PUBLIC_KEYWORD)) {
+            return PlatformIcons.PUBLIC_ICON;
+        }
+        return PlatformIcons.PACKAGE_LOCAL_ICON;
+    }
+
+    public static Icon getBaseIcon(PsiElement psiElement) {
         if (psiElement instanceof JetNamespaceHeader) {
             return PlatformIcons.PACKAGE_ICON;
         }
@@ -54,9 +100,17 @@ public class JetIconProvider extends IconProvider {
                 return JetIcons.EXTENSION_FUNCTION;
             }
 
-            return PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass
-                   ? PlatformIcons.METHOD_ICON
-                   : JetIcons.FUNCTION;
+            if (PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass) {
+                if (JetPsiUtil.isAbstract((JetFunction) psiElement)) {
+                    return PlatformIcons.ABSTRACT_METHOD_ICON;
+                }
+                else {
+                    return PlatformIcons.METHOD_ICON;
+                }
+            }
+            else {
+                return JetIcons.FUNCTION;
+            }
         }
         if (psiElement instanceof JetClass) {
             JetClass jetClass = (JetClass) psiElement;
@@ -77,7 +131,7 @@ public class JetIconProvider extends IconProvider {
             return JetIcons.OBJECT;
         }
         if (psiElement instanceof JetParameter) {
-            JetParameter parameter = (JetParameter)psiElement;
+            JetParameter parameter = (JetParameter) psiElement;
             if (parameter.getValOrVarNode() != null) {
                 JetParameterList parameterList = PsiTreeUtil.getParentOfType(psiElement, JetParameterList.class);
                 if (parameterList != null && parameterList.getParent() instanceof JetClass) {
@@ -87,7 +141,7 @@ public class JetIconProvider extends IconProvider {
             return JetIcons.PARAMETER;
         }
         if (psiElement instanceof JetProperty) {
-            JetProperty property = (JetProperty)psiElement;
+            JetProperty property = (JetProperty) psiElement;
             return property.isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
         }
 
@@ -95,22 +149,6 @@ public class JetIconProvider extends IconProvider {
             return JetIcons.CLASS;
         }
 
-        return null;
-    }
-
-    @Nullable
-    public static JetClassOrObject getMainClass(@NotNull JetFile file) {
-        List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
-            @Override
-            public boolean value(JetDeclaration jetDeclaration) {
-                return jetDeclaration instanceof JetClassOrObject;
-            }
-        });
-        if (classes.size() == 1) {
-            if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
-                return (JetClassOrObject) classes.get(0);
-            }
-        }
         return null;
     }
 }

@@ -176,16 +176,13 @@ public class ClosureCodegen extends GenerationStateAware {
             final ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
             int count = 1;
             if (receiver != null) {
-                StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
-                StackValue.onStack(OBJECT_TYPE)
-                        .upcast(typeMapper.mapType(receiver.getType()), iv);
+                StackValue.local(count, OBJECT_TYPE).put(typeMapper.mapType(receiver.getType()), iv);
                 count++;
             }
 
             final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
             for (ValueParameterDescriptor param : params) {
-                StackValue.local(count, OBJECT_TYPE).put(OBJECT_TYPE, iv);
-                StackValue.onStack(OBJECT_TYPE).upcast(typeMapper.mapType(param.getType()), iv);
+                StackValue.local(count, OBJECT_TYPE).put(typeMapper.mapType(param.getType()), iv);
                 count++;
             }
 

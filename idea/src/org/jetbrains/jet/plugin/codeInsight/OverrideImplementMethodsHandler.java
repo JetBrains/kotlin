@@ -47,33 +47,31 @@ import java.util.Set;
  * @author yole
  */
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
-    public static List<DescriptorClassMember> membersFromDescriptors(Iterable<CallableMemberDescriptor> missingImplementations) {
+
+    public static List<DescriptorClassMember> membersFromDescriptors(
+            JetFile file, Iterable<CallableMemberDescriptor> missingImplementations,
+            BindingContext bindingContext
+    ) {
         List<DescriptorClassMember> members = new ArrayList<DescriptorClassMember>();
         for (CallableMemberDescriptor memberDescriptor : missingImplementations) {
-            members.add(new DescriptorClassMember(memberDescriptor));
+
+            PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(file, memberDescriptor, bindingContext);
+            assert declaration != null : "Can not find declaration for descriptor " + memberDescriptor;
+            DescriptorClassMember member = new DescriptorClassMember(declaration, memberDescriptor);
+            members.add(member);
         }
         return members;
     }
 
-    @NotNull
-    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject) {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)classOrObject.getContainingFile())
-                .getBindingContext();
-        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
-        if (descriptor instanceof MutableClassDescriptor) {
-            return collectMethodsToGenerate((MutableClassDescriptor)descriptor);
-        }
-        return Collections.emptySet();
-    }
-
-    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
-
-    public static void generateMethods(Editor editor,
+    public static void generateMethods(
+            Editor editor,
             JetClassOrObject classOrObject,
-            List<DescriptorClassMember> selectedElements) {
-        final JetClassBody body = classOrObject.getBody();
+            List<DescriptorClassMember> selectedElements
+    ) {
+        JetClassBody body = classOrObject.getBody();
+        Project project = classOrObject.getProject();
         if (body == null) {
-            return;
+            body = JetPsiFactory.createEmptyClassBody(project);
         }
 
         PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
@@ -83,15 +81,19 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
 
         List<JetElement> elementsToCompact = new ArrayList<JetElement>();
-        final JetFile file = (JetFile)classOrObject.getContainingFile();
+        final JetFile file = (JetFile) classOrObject.getContainingFile();
         for (JetElement element : generateOverridingMembers(selectedElements, file)) {
             PsiElement added = body.addAfter(element, afterAnchor);
             afterAnchor = added;
-            elementsToCompact.add((JetElement)added);
+            elementsToCompact.add((JetElement) added);
         }
         ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
-    }
 
+        if (!body.isPhysical()) {
+            classOrObject.add(JetPsiFactory.createWhiteSpace(project));
+            classOrObject.add(body);
+        }
+    }
 
     @Nullable
     private static PsiElement findInsertAfterAnchor(Editor editor, final JetClassBody body) {
@@ -121,10 +123,10 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         for (DescriptorClassMember selectedElement : selectedElements) {
             final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor)descriptor));
+                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor) descriptor));
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor)descriptor));
+                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
             }
         }
         return overridingMembers;
@@ -181,7 +183,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                         if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
                             if (firstUpperBound) {
                                 bodyBuilder.append(upperBoundText);
-                            } else {
+                            }
+                            else {
                                 whereRestrictions.add(param.getName() + upperBoundText);
                             }
                         }
@@ -267,11 +270,24 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     private static String displayableVisibility(MemberDescriptor descriptor) {
         Visibility visibility = descriptor.getVisibility();
-        return visibility != Visibilities.INTERNAL ? visibility.toString() + " ": "";
+        return visibility != Visibilities.INTERNAL ? visibility.toString() + " " : "";
     }
 
-    private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(Project project,
-                                                                              DescriptorClassMember[] members) {
+    @NotNull
+    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject, BindingContext bindingContext) {
+        final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+        if (descriptor instanceof MutableClassDescriptor) {
+            return collectMethodsToGenerate((MutableClassDescriptor) descriptor);
+        }
+        return Collections.emptySet();
+    }
+
+    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
+
+    private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(
+            Project project,
+            DescriptorClassMember[] members
+    ) {
         final MemberChooser<DescriptorClassMember> chooser = new MemberChooser<DescriptorClassMember>(members, true, true, project);
         chooser.setTitle(getChooserTitle());
         chooser.show();
@@ -299,12 +315,16 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
 
-        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
+        BindingContext bindingContext =
+                WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) classOrObject.getContainingFile())
+                        .getBindingContext();
+
+        Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject, bindingContext);
         if (missingImplementations.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
             return;
         }
-        List<DescriptorClassMember> members = membersFromDescriptors(missingImplementations);
+        List<DescriptorClassMember> members = membersFromDescriptors((JetFile) file, missingImplementations, bindingContext);
 
         final List<DescriptorClassMember> selectedElements;
         if (implementAll) {

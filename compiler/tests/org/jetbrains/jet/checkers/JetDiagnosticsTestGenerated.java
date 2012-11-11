@@ -713,6 +713,21 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/AsErasedWarning.kt");
             }
             
+            @TestMetadata("IsErasedAllowFromOut.kt")
+            public void testIsErasedAllowFromOut() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowFromOut.kt");
+            }
+            
+            @TestMetadata("IsErasedAllowFromOut2.kt")
+            public void testIsErasedAllowFromOut2() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowFromOut2.kt");
+            }
+            
+            @TestMetadata("IsErasedAllowFromOutAtClass.kt")
+            public void testIsErasedAllowFromOutAtClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowFromOutAtClass.kt");
+            }
+            
             @TestMetadata("IsErasedAllowParameterSubtype.kt")
             public void testIsErasedAllowParameterSubtype() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowParameterSubtype.kt");
@@ -728,14 +743,29 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedAllowSameParameterParameter.kt");
             }
             
+            @TestMetadata("IsErasedDisallowDifferentArgInvariantPosition.kt")
+            public void testIsErasedDisallowDifferentArgInvariantPosition() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/IsErasedDisallowDifferentArgInvariantPosition.kt");
+            }
+            
             @TestMetadata("IsErasedDisallowFromAny.kt")
             public void testIsErasedDisallowFromAny() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedDisallowFromAny.kt");
             }
             
+            @TestMetadata("IsErasedDisallowFromIn.kt")
+            public void testIsErasedDisallowFromIn() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/IsErasedDisallowFromIn.kt");
+            }
+            
             @TestMetadata("IsErasedDisallowFromOut.kt")
             public void testIsErasedDisallowFromOut() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/IsErasedDisallowFromOut.kt");
+            }
+            
+            @TestMetadata("IsErasedDisallowFromOutAtClass.kt")
+            public void testIsErasedDisallowFromOutAtClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/IsErasedDisallowFromOutAtClass.kt");
             }
             
             @TestMetadata("IsErasedStar.kt")
@@ -1654,6 +1684,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 @TestMetadata("funKeyword.kt")
                 public void testFunKeyword() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funKeyword.kt");
+                }
+                
+                @TestMetadata("funcitonTypes.kt")
+                public void testFuncitonTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funcitonTypes.kt");
                 }
                 
                 @TestMetadata("incompleteVal.kt")
@@ -2672,6 +2707,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("Redeclarations.kt")
             public void testRedeclarations() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/redeclarations/Redeclarations.kt");
+            }
+            
+            @TestMetadata("RedeclaredTypeParameters.kt")
+            public void testRedeclaredTypeParameters() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaredTypeParameters.kt");
             }
             
         }

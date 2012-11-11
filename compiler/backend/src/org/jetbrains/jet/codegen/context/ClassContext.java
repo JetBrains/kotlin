@@ -45,4 +45,9 @@ public class ClassContext extends CodegenContext {
     public boolean isStatic() {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "Class: " + getContextDescriptor();
+    }
 }

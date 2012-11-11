@@ -1425,9 +1425,29 @@ public class JetExpressionParsing extends AbstractJetParsing {
             PsiBuilder.Marker catchBlock = mark();
             advance(); // CATCH_KEYWORD
 
-            myJetParsing.parseValueParameterList(false, TokenSet.create(LBRACE, FINALLY_KEYWORD, CATCH_KEYWORD));
+            TokenSet recoverySet = TokenSet.create(LBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
+            if (atSet(recoverySet)) {
+                error("Expecting exception variable declaration");
+            }
+            else {
+                PsiBuilder.Marker parameters = mark();
+                expect(LPAR, "Expecting '('", recoverySet);
+                if (!atSet(recoverySet)) {
+                    myJetParsing.parseValueParameter();
+                    expect(RPAR, "Expecting ')'", recoverySet);
+                }
+                else {
+                    error("Expecting exception variable declaration");
+                }
+                parameters.done(VALUE_PARAMETER_LIST);
+            }
 
-            myJetParsing.parseBlock();
+            if (at(LBRACE)) {
+                myJetParsing.parseBlock();
+            }
+            else {
+                error("Expecting a block: { ... }");
+            }
             catchBlock.done(CATCH);
         }
 

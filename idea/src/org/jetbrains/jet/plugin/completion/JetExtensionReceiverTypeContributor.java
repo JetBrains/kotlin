@@ -17,11 +17,9 @@
 package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -41,18 +39,14 @@ public class JetExtensionReceiverTypeContributor extends CompletionContributor {
                                       ProcessingContext context,
                                       final @NotNull CompletionResultSet result
         ) {
-            ResolveSession resolveSession =
-                    WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) parameters.getPosition().getContainingFile());
+            ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(
+                    (JetFile) parameters.getPosition().getContainingFile());
+
+            JetCompletionResultSet jetCompletionResultSet = new JetCompletionResultSet(
+                    result, resolveSession, resolveSession.getBindingContext());
 
             if (parameters.getInvocationCount() > 0) {
-                JetClassCompletionContributor.addClasses(
-                        parameters, result,
-                        resolveSession.getBindingContext(), resolveSession, new Consumer<LookupElement>() {
-                    @Override
-                    public void consume(@NotNull LookupElement element) {
-                        result.addElement(element);
-                    }
-                });
+                JetTypesCompletionHelper.addJetTypes(parameters, jetCompletionResultSet);
             }
 
             result.stopHere();
@@ -60,8 +54,11 @@ public class JetExtensionReceiverTypeContributor extends CompletionContributor {
     }
 
     private static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
-        PlatformPatterns.psiElement().afterLeaf(JetTokens.FUN_KEYWORD.toString(), JetTokens.VAL_KEYWORD.toString(),
-                                                JetTokens.VAR_KEYWORD.toString());
+            // TODO: Check for fun with generic type parameters
+            PlatformPatterns.psiElement().afterLeaf(
+                    JetTokens.FUN_KEYWORD.toString(),
+                    JetTokens.VAL_KEYWORD.toString(),
+                    JetTokens.VAR_KEYWORD.toString());
 
     public JetExtensionReceiverTypeContributor() {
         extend(CompletionType.BASIC, ACTIVATION_PATTERN, new ReceiverTypeCompletionProvider());

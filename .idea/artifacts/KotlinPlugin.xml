@@ -15,6 +15,8 @@
             <element id="module-output" name="util" />
             <element id="module-output" name="j2k" />
             <element id="module-output" name="js.translator" />
+            <element id="module-output" name="cli-common" />
+            <element id="module-output" name="ide-compiler-runner" />
           </element>
           <element id="library" level="project" name="js-libs" />
           <element id="archive" name="kotlin-js-libraries.zip">

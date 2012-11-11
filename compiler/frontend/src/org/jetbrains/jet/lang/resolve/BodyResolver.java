@@ -399,7 +399,7 @@ public class BodyResolver {
                 if (initializer != null) {
                     ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
                     if (primaryConstructor != null) {
-                        JetScope declaringScopeForPropertyInitializer = this.context.getDeclaringScopes().get(property);
+                        JetScope declaringScopeForPropertyInitializer = this.context.getDeclaringScopes().apply(property);
                         resolvePropertyInitializer(property, propertyDescriptor, initializer, declaringScopeForPropertyInitializer);
                     }
                 }
@@ -419,7 +419,7 @@ public class BodyResolver {
 
             computeDeferredType(propertyDescriptor.getReturnType());
 
-            JetScope declaringScope = this.context.getDeclaringScopes().get(property);
+            JetScope declaringScope = this.context.getDeclaringScopes().apply(property);
 
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
@@ -431,7 +431,7 @@ public class BodyResolver {
     }
 
     private JetScope makeScopeForPropertyAccessor(@NotNull JetPropertyAccessor accessor, PropertyDescriptor propertyDescriptor) {
-        JetScope declaringScope = context.getDeclaringScopes().get(accessor);
+        JetScope declaringScope = context.getDeclaringScopes().apply(accessor);
 
         JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(
                 declaringScope, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter(), trace);
@@ -490,7 +490,7 @@ public class BodyResolver {
 
             computeDeferredType(descriptor.getReturnType());
 
-            JetScope declaringScope = this.context.getDeclaringScopes().get(declaration);
+            JetScope declaringScope = this.context.getDeclaringScopes().apply(declaration);
             assert declaringScope != null;
 
             resolveFunctionBody(trace, declaration, descriptor, declaringScope);

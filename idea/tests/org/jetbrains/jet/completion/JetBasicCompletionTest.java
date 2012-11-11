@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.completion;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -152,6 +153,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInLongDotQualifiedExpression() {
+        doTest();
+    }
+
     public void testInMiddleOfNamespace() {
         doTest();
     }
@@ -184,6 +189,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testLocalMultideclarationValues() {
+        doTest();
+    }
+
     public void testNamedObject() {
         doTest();
     }
@@ -192,7 +201,19 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testNoClassNameDuplicationForRuntimeClass() {
+        doTest();
+    }
+
     public void testNoEmptyNamespace() {
+        doTest();
+    }
+
+    public void testNoImportedJavaClassDuplication() {
+        doTest();
+    }
+
+    public void testNoObjectInTypePosition() {
         doTest();
     }
 
@@ -244,6 +265,11 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testCompletionInSetter() {
+        doTest();
+    }
+
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/basic").getPath() +

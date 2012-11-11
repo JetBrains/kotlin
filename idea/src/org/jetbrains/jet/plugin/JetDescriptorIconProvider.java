@@ -49,7 +49,7 @@ public final class JetDescriptorIconProvider {
 
     public static Icon getVisibilityIcon(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof DeclarationDescriptorWithVisibility) {
-            DeclarationDescriptorWithVisibility descriptorWithVisibility = (DeclarationDescriptorWithVisibility)descriptor;
+            DeclarationDescriptorWithVisibility descriptorWithVisibility = (DeclarationDescriptorWithVisibility) descriptor;
             Visibility visibility = descriptorWithVisibility.getVisibility();
             if (visibility == Visibilities.PUBLIC) {
                 return PlatformIcons.PUBLIC_ICON;
@@ -81,11 +81,20 @@ public final class JetDescriptorIconProvider {
                 return JetIcons.EXTENSION_FUNCTION;
             }
 
-            return descriptor.getContainingDeclaration() instanceof ClassDescriptor ?
-                   PlatformIcons.METHOD_ICON : JetIcons.FUNCTION;
+            if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                if (Modality.ABSTRACT == functionDescriptor.getModality()) {
+                    return PlatformIcons.ABSTRACT_METHOD_ICON;
+                }
+                else {
+                    return PlatformIcons.METHOD_ICON;
+                }
+            }
+            else {
+                return JetIcons.FUNCTION;
+            }
         }
         if (descriptor instanceof ClassDescriptor) {
-            switch (((ClassDescriptor)descriptor).getKind()) {
+            switch (((ClassDescriptor) descriptor).getKind()) {
                 case TRAIT:
                     return JetIcons.TRAIT;
                 case ENUM_CLASS:

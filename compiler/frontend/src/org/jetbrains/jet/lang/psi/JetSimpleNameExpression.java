@@ -49,9 +49,10 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
     public JetExpression getReceiverExpression() {
         PsiElement parent = getParent();
         if (parent instanceof JetQualifiedExpression && !isImportDirectiveExpression()) {
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
-            if (!isFirstPartInQualifiedExpression(qualifiedExpression)) {
-                return qualifiedExpression.getReceiverExpression();
+            JetExpression receiverExpression = ((JetQualifiedExpression) parent).getReceiverExpression();
+            // Name expression can't be receiver for itself
+            if (receiverExpression != this) {
+                return receiverExpression;
             }
         }
         else if (parent instanceof JetCallExpression) {
@@ -63,16 +64,8 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
                 return qualifiedExpression.getReceiverExpression();
             }
         }
+
         return null;
-    }
-
-    // Check that this is simple name expression is first part in full qualified name: firstPart.otherPart.otherPart.call()
-    private boolean isFirstPartInQualifiedExpression(JetQualifiedExpression qualifiedExpression) {
-        if (qualifiedExpression.getParent() instanceof JetQualifiedExpression) {
-            return isFirstPartInQualifiedExpression((JetQualifiedExpression) qualifiedExpression.getParent());
-        }
-
-        return qualifiedExpression.getFirstChild() == this;
     }
 
     public boolean isImportDirectiveExpression() {

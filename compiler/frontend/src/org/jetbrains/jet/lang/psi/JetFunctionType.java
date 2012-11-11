@@ -18,8 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -82,34 +80,15 @@ public class JetFunctionType extends JetTypeElement {
 
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            IElementType tt = child.getNode().getElementType();
-            if (tt == JetTokens.LPAR || tt == RETURN_TYPE_SEPARATOR) break;
-            if (child instanceof JetTypeReference) {
-                return (JetTypeReference) child;
-            }
-            child = child.getNextSibling();
+        JetFunctionTypeReceiver receiverDeclaration = (JetFunctionTypeReceiver) findChildByType(JetNodeTypes.FUNCTION_TYPE_RECEIVER);
+        if (receiverDeclaration == null) {
+            return null;
         }
-
-        return null;
+        return receiverDeclaration.getTypeReference();
     }
 
     @Nullable
     public JetTypeReference getReturnTypeRef() {
-        boolean colonPassed = false;
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            IElementType tt = child.getNode().getElementType();
-            if (tt == RETURN_TYPE_SEPARATOR) {
-                colonPassed = true;
-            }
-            if (colonPassed && child instanceof JetTypeReference) {
-                return (JetTypeReference) child;
-            }
-            child = child.getNextSibling();
-        }
-
-        return null;
+        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
     }
 }

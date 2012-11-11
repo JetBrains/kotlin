@@ -681,6 +681,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert function.getValueParameters().size() == constructor.getValueParameters().size() :
                 "Number of parameters of copy function and constructor are different. Copy: " + function.getValueParameters().size() + ", constructor: " + constructor.getValueParameters().size();
 
+        MutableClosure closure = context.closure;
+        if (closure != null && closure.getCaptureThis() != null) {
+            final Type type = typeMapper.mapType(enclosingClassDescriptor(bindingContext, descriptor));
+            iv.load(0, classAsmType);
+            iv.getfield(JvmClassName.byType(classAsmType).getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
+        }
+
         int parameterIndex = 0;
         for (ValueParameterDescriptor parameterDescriptor : function.getValueParameters()) {
             iv.load(parameterIndex + 1, typeMapper.mapType(parameterDescriptor.getType()));

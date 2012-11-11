@@ -112,7 +112,16 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
         public void testWithGenericParameter() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/withGenericParameter.kt");
         }
-        
+
+        @TestMetadata("copyInNestedDataClass.kt")
+        public void testCopyInNestedClasses() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/copyInNestedDataClass.kt");
+        }
+
+        @TestMetadata("copyInObjectNestedDataClass.kt")
+        public void testCopyInObjectNestedClasses() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/copyInObjectNestedDataClass.kt");
+        }
     }
     
     @TestMetadata("compiler/testData/codegen/dataClasses/equals")

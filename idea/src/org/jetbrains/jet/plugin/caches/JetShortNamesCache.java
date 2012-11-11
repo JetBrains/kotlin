@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.caches;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -27,6 +29,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -41,10 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex;
+import org.jetbrains.jet.plugin.stubindex.*;
 
 import java.util.*;
 
@@ -123,7 +123,56 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return functionNames;
     }
 
-    // TODO: Make it work for properties
+    @NotNull
+    public Collection<String> getAllTopLevelObjectNames() {
+        Set<String> topObjectNames = new HashSet<String>();
+        topObjectNames.addAll(JetTopLevelShortObjectNameIndex.getInstance().getAllKeys(project));
+
+        Collection<PsiClass> classObjects = JetFromJavaDescriptorHelper.getCompiledClassesForTopLevelObjects(project, GlobalSearchScope.allScope(project));
+        topObjectNames.addAll(Collections2.transform(classObjects, new Function<PsiClass, String>() {
+            @Override
+            public String apply(@Nullable PsiClass aClass) {
+                assert aClass != null;
+                return aClass.getName();
+            }
+        }));
+
+        return topObjectNames;
+    }
+
+    @NotNull
+    public Collection<ClassDescriptor> getTopLevelObjectsByName(
+            @NotNull String name,
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull ResolveSession resolveSession,
+            @NotNull GlobalSearchScope scope
+    ) {
+        BindingContext context = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
+        JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
+
+        if (jetScope == null) {
+            return Collections.emptyList();
+        }
+
+        Set<ClassDescriptor> result = Sets.newHashSet();
+
+        Collection<JetObjectDeclaration> topObjects = JetTopLevelShortObjectNameIndex.getInstance().get(name, project, scope);
+        for (JetObjectDeclaration objectDeclaration : topObjects) {
+            result.add(resolveSession.getClassDescriptor(objectDeclaration));
+        }
+
+        for (PsiClass psiClass : JetFromJavaDescriptorHelper
+                .getCompiledClassesForTopLevelObjects(project, GlobalSearchScope.allScope(project))) {
+            String qualifiedName = psiClass.getQualifiedName();
+            if (qualifiedName != null) {
+                FqName fqName = new FqName(qualifiedName);
+                result.addAll(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession, fqName));
+            }
+        }
+
+        return result;
+    }
+
     @NotNull
     public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
             @NotNull String name,

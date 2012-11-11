@@ -161,7 +161,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testNamedObject() {
         doBuildTest("object Test {}",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  OBJECT_DECLARATION:PsiJetObjectStubImpl[name=Test fqName=Test]\n");
+                    "  OBJECT_DECLARATION:PsiJetObjectStubImpl[top name=Test fqName=Test]\n");
     }
 
     public void testAnnotationOnClass() {

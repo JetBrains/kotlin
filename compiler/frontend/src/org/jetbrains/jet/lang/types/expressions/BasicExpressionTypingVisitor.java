@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -279,80 +280,145 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     /**
-     * Check if assignment from ActualType to TargetType is erased.
+     * Check if assignment from supertype to subtype is erased.
      * It is an error in "is" statement and warning in "as".
      */
-    public static boolean isCastErased(JetType actualType, JetType targetType, JetTypeChecker typeChecker) {
-
-        if (!(targetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
+    public static boolean isCastErased(@NotNull JetType supertype, @NotNull JetType subtype, @NotNull JetTypeChecker typeChecker) {
+        if (!(subtype.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
             // TODO: what if it is TypeParameterDescriptor?
             return false;
         }
 
         // do not crash on error types
-        if (ErrorUtils.isErrorType(actualType) || ErrorUtils.isErrorType(targetType)) {
+        if (ErrorUtils.isErrorType(supertype) || ErrorUtils.isErrorType(subtype)) {
             return false;
         }
 
-        {
-            Multimap<TypeConstructor, TypeProjection> typeSubstitutionMap =
-                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetType);
+        return hasDowncastsInTypeArguments(supertype, subtype, typeChecker) || hasErasedTypeArguments(supertype, subtype);
+    }
 
-            for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
-                TypeProjection actualTypeParameter = actualType.getArguments().get(i);
-                TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
+    /*
+      Check if type arguments are downcasted, which cannot be checked at run-time.
 
-                if (subjectTypeParameterDescriptor.isReified()) {
-                    continue;
-                }
+      Examples:
+      1. a: MutableList<out Any> is MutableList<String> - true, because 'String' is more specific
+      2. a: Collection<String> is List<Any> - false, because 'Any' is less specific, and it is guaranteed by static checker
+      3. a: MutableCollection<String> is MutableList<Any> - false, because these types have empty intersection (type parameter is invariant)
+     */
+    private static boolean hasDowncastsInTypeArguments(
+            @NotNull JetType supertype,
+            @NotNull JetType subtype,
+            @NotNull JetTypeChecker typeChecker
+    ) {
+        List<TypeParameterDescriptor> superParameters = supertype.getConstructor().getParameters();
 
-                Collection<TypeProjection> subst = typeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
-                for (TypeProjection proj : subst) {
-                    //if (!proj.getType().equals(actualTypeParameter.getType())) {
-                    if (!typeChecker.isSubtypeOf(actualTypeParameter.getType(), proj.getType())) {
-                        return true;
-                    }
-                }
-            }
-        }
+        // This map holds arguments for type parameters of all superclasses of a type (see method comment for sample)
+        Multimap<TypeConstructor, TypeProjection> subtypeSubstitutionMap = SubstitutionUtils.buildDeepSubstitutionMultimap(subtype);
 
-        {
-            JetType targetTypeClerared = TypeUtils.makeUnsubstitutedType(
-                    (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
+        for (int i = 0; i < superParameters.size(); i++) {
+            TypeProjection superArgument = supertype.getArguments().get(i);
+            TypeParameterDescriptor parameter = superParameters.get(i);
 
-            Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
-                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
-
-            Set<JetType> clearSubstituted = new HashSet<JetType>();
-
-            for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
-                TypeParameterDescriptor subjectTypeParameterDescriptor = actualType.getConstructor().getParameters().get(i);
-
-                Collection<TypeProjection> subst = clearTypeSubstitutionMap.get(subjectTypeParameterDescriptor.getTypeConstructor());
-                for (TypeProjection proj : subst) {
-                    clearSubstituted.add(proj.getType());
-                }
+            if (parameter.isReified()) {
+                continue;
             }
 
-            for (int i = 0; i < targetType.getConstructor().getParameters().size(); ++i) {
-                TypeParameterDescriptor typeParameter = targetType.getConstructor().getParameters().get(i);
-                TypeProjection typeProjection = targetType.getArguments().get(i);
+            Collection<TypeProjection> substituted = subtypeSubstitutionMap.get(parameter.getTypeConstructor());
+            for (TypeProjection substitutedArgument : substituted) {
+                // For sample #2 (a: Collection<String> is List<Any>):
+                // parameter = E declared in Collection
+                // superArgument = String
+                // substitutedArgument = Any, because Collection<Any> is the supertype of List<Any>
 
-                if (typeParameter.isReified()) {
-                    continue;
+                // 1. Any..Nothing
+                // 2. String..Nothing
+                // 3. String..String
+                JetType superOut = TypeCheckingProcedure.getOutType(parameter, superArgument);
+                JetType superIn = TypeCheckingProcedure.getInType(parameter, superArgument);
+
+                // 1. String..String
+                // 2. Any..Nothing
+                // 3. Any..Any
+                JetType subOut = TypeCheckingProcedure.getOutType(parameter, substitutedArgument);
+                JetType subIn = TypeCheckingProcedure.getInType(parameter, substitutedArgument);
+
+                // super type range must be a subset of sub type range
+                if (typeChecker.isSubtypeOf(superOut, subOut) && typeChecker.isSubtypeOf(subIn, superIn)) {
+                    // continue
                 }
-
-                // "is List<*>"
-                if (typeProjection.equals(SubstitutionUtils.makeStarProjection(typeParameter))) {
-                    continue;
-                }
-
-                // if parameter is mapped to nothing then it is erased
-                if (!clearSubstituted.contains(typeParameter.getDefaultType())) {
+                else {
                     return true;
                 }
             }
         }
+
+        return false;
+    }
+
+    /*
+      Check if type arguments are erased, that is they are not mapped to type parameters of supertype's class
+
+      Examples (MyMap is defined like this: trait MyMap<T>: Map<String, T>):
+      1. a: Any is List<String> - true
+      2. a: Collection<CharSequence> is List<String> - false
+      3. a: Map<String, String> is MyMap<String> - false
+     */
+    private static boolean hasErasedTypeArguments(
+            @NotNull JetType supertype,
+            @NotNull JetType subtype
+    ) {
+        // Erase all type arguments, replacing them with unsubstituted versions:
+        // 1. List<E>
+        // 2. List<E>
+        // 3. MyMap<T>
+        JetType subtypeCleared = TypeUtils.makeUnsubstitutedType(
+                (ClassDescriptor) subtype.getConstructor().getDeclarationDescriptor(), null);
+
+        // This map holds arguments for type parameters of all superclasses of a type (see method comment for sample)
+        // For all "E" declared in Collection, Iterable, etc., value will be type "E", where the latter E is declared in List
+        Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
+                SubstitutionUtils.buildDeepSubstitutionMultimap(subtypeCleared);
+
+
+        // This set will contain all arguments for type parameters of superclass which are mapped from type parameters of subtype's class
+        // 1. empty
+        // 2. [E declared in List]
+        // 3. [T declared in MyMap]
+        Set<JetType> clearSubstituted = new HashSet<JetType>();
+
+        List<TypeParameterDescriptor> superParameters = supertype.getConstructor().getParameters();
+        for (TypeParameterDescriptor superParameter : superParameters) {
+            Collection<TypeProjection> substituted = clearTypeSubstitutionMap.get(superParameter.getTypeConstructor());
+            for (TypeProjection substitutedProjection : substituted) {
+                clearSubstituted.add(substitutedProjection.getType());
+            }
+        }
+
+        // For each type parameter of subtype's class, we check that it is mapped to type parameters of supertype,
+        // that is its type is present in clearSubstituted set
+        List<TypeParameterDescriptor> subParameters = subtype.getConstructor().getParameters();
+        for (int i = 0; i < subParameters.size(); i++) {
+            TypeParameterDescriptor parameter = subParameters.get(i);
+            TypeProjection argument = subtype.getArguments().get(i);
+
+            if (parameter.isReified()) {
+                continue;
+            }
+
+            // "is List<*>", no check for type argument, actually
+            if (argument.equals(SubstitutionUtils.makeStarProjection(parameter))) {
+                continue;
+            }
+
+            // if parameter is mapped to nothing then it is erased
+            // 1. return from here
+            // 2. contains = true, don't return
+            // 3. contains = true, don't return
+            if (!clearSubstituted.contains(parameter.getDefaultType())) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -445,7 +511,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         JetType result = null;
         JetType thisType = thisReceiver.getType();
-        Collection<? extends JetType> supertypes = thisType.getConstructor().getSupertypes();
+        Collection<JetType> supertypes = thisType.getConstructor().getSupertypes();
         TypeSubstitutor substitutor = TypeSubstitutor.create(thisType);
 
         JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();

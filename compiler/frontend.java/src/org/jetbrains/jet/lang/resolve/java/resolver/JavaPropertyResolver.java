@@ -27,10 +27,12 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiData;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
@@ -43,6 +45,8 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 
 public final class JavaPropertyResolver {
 
@@ -83,26 +87,22 @@ public final class JavaPropertyResolver {
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroupByName(
             @NotNull Name fieldName,
-            @NotNull ResolverScopeData scopeData
+            @NotNull PsiDeclarationProvider scopeData,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
     ) {
-
-        PsiClass psiClass = scopeData.getPsiClass();
-
         NamedMembers namedMembers = scopeData.getMembersCache().get(fieldName);
         if (namedMembers == null) {
             return Collections.emptySet();
         }
 
-        //noinspection ConstantConditions
-        String qualifiedName = psiClass == null ? scopeData.getPsiPackage().getQualifiedName() : psiClass.getQualifiedName();
-        return resolveNamedGroupProperties(scopeData.getClassOrNamespaceDescriptor(), scopeData, namedMembers, fieldName,
-                                           "class or namespace " + qualifiedName);
+        return resolveNamedGroupProperties(ownerDescriptor, scopeData, namedMembers, fieldName,
+                                           "class or namespace " + DescriptorUtils.getFQName(ownerDescriptor));
     }
 
     @NotNull
     private Set<VariableDescriptor> resolveNamedGroupProperties(
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull PsiDeclarationProvider scopeData,
             @NotNull NamedMembers namedMembers,
             @NotNull Name propertyName,
             @NotNull String context
@@ -122,13 +122,13 @@ public final class JavaPropertyResolver {
                 continue;
             }
 
-            propertiesFromCurrent.add(resolveProperty(owner, scopeData, propertyName, context, propertyPsiData));
+            propertiesFromCurrent.add(resolveProperty(ownerDescriptor, scopeData, propertyName, context, propertyPsiData));
         }
 
-        Set<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(scopeData, propertyName);
+        Set<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(propertyName, ownerDescriptor);
         Set<PropertyDescriptor> properties = Sets.newHashSet();
 
-        generateOverrides(owner, propertyName, propertiesFromCurrent, propertiesFromSupertypes, properties);
+        generateOverrides(ownerDescriptor, propertyName, propertiesFromCurrent, propertiesFromSupertypes, properties);
         OverrideResolver.resolveUnknownVisibilities(properties, trace);
 
         properties.addAll(propertiesFromCurrent);
@@ -169,7 +169,7 @@ public final class JavaPropertyResolver {
     @NotNull
     private PropertyDescriptor resolveProperty(
             @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull PsiDeclarationProvider scopeData,
             @NotNull Name propertyName,
             @NotNull String context,
             @NotNull PropertyPsiData psiData
@@ -245,7 +245,7 @@ public final class JavaPropertyResolver {
 
         recordObjectDeclarationClassIfNeeded(psiData, realOwner, propertyDescriptor, propertyType);
 
-        if (!scopeData.isKotlin()) {
+        if (scopeData.getDeclarationOrigin() == JAVA) {
             trace.record(BindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
         }
         return propertyDescriptor;
@@ -422,17 +422,19 @@ public final class JavaPropertyResolver {
         return regularPropertiesCount;
     }
 
-    private static boolean isPropertyFinal(ResolverScopeData scopeData, PropertyPsiData psiData) {
-        if (!scopeData.isKotlin()) {
+    private static boolean isPropertyFinal(PsiDeclarationProvider scopeData, PropertyPsiData psiData) {
+        if (scopeData.getDeclarationOrigin() == JAVA) {
             return true;
         }
         return psiData.isFinal();
     }
 
     @NotNull
-    private static Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, Name propertyName) {
+    private static Set<PropertyDescriptor> getPropertiesFromSupertypes(
+            @NotNull Name propertyName, @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+    ) {
         Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
-        for (JetType supertype : DescriptorResolverUtils.getSupertypes(scopeData)) {
+        for (JetType supertype : DescriptorResolverUtils.getSupertypes(ownerDescriptor)) {
             for (VariableDescriptor property : supertype.getMemberScope().getProperties(propertyName)) {
                 r.add((PropertyDescriptor) property);
             }
@@ -443,21 +445,22 @@ public final class JavaPropertyResolver {
     @NotNull
     private ClassOrNamespaceDescriptor getRealOwner(
             @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull ResolverScopeData scopeData,
+            @NotNull PsiDeclarationProvider declarationProvider,
             boolean isStatic
     ) {
-        PsiClass psiClass = scopeData.getPsiClass();
-        if (psiClass != null && psiClass.isEnum() && isStatic) {
-            final String qualifiedName = psiClass.getQualifiedName();
-            assert qualifiedName != null;
-            final ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(qualifiedName));
-            assert classDescriptor != null;
-            final ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-            assert classObjectDescriptor != null;
-            return classObjectDescriptor;
-        }
-        else {
+        if (!(declarationProvider instanceof ClassPsiDeclarationProvider)) {
             return owner;
         }
+        PsiClass psiClass = ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
+        if (!psiClass.isEnum() || !isStatic) {
+            return owner;
+        }
+        final String qualifiedName = psiClass.getQualifiedName();
+        assert qualifiedName != null;
+        final ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(qualifiedName));
+        assert classDescriptor != null;
+        final ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+        assert classObjectDescriptor != null;
+        return classObjectDescriptor;
     }
 }

@@ -21,8 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverScopeData;
+import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -107,8 +108,10 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull ResolverClassData classData) {
-        return constructorResolver.resolveConstructors(classData);
+    public Collection<ConstructorDescriptor> resolveConstructors(
+            @NotNull ClassPsiDeclarationProvider classData, @NotNull ClassDescriptorFromJvmBytecode classDescriptor
+    ) {
+        return constructorResolver.resolveConstructors(classData, classDescriptor);
     }
 
     @Nullable
@@ -122,13 +125,17 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        return namespaceResolver.getJavaPackageScope(fqName, ns);
+    public JavaPackageScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(namespaceDescriptor);
     }
 
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroupByName(Name name, ResolverScopeData data) {
-        return propertiesResolver.resolveFieldGroupByName(name, data);
+    public Set<VariableDescriptor> resolveFieldGroupByName(
+            @NotNull Name name,
+            @NotNull PsiDeclarationProvider data,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+    ) {
+        return propertiesResolver.resolveFieldGroupByName(name, data, ownerDescriptor);
     }
 
     @Nullable
@@ -157,8 +164,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull Name methodName, @NotNull ResolverScopeData scopeData) {
-        return functionResolver.resolveFunctionGroup(methodName, scopeData);
+    public Set<FunctionDescriptor> resolveFunctionGroup(
+            @NotNull Name methodName,
+            @NotNull ClassPsiDeclarationProvider scopeData,
+            @NotNull ClassOrNamespaceDescriptor ownerDescriptor
+    ) {
+        return functionResolver.resolveFunctionGroup(methodName, scopeData, ownerDescriptor);
     }
 
     @NotNull

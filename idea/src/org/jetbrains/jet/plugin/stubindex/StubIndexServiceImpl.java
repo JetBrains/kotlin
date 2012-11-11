@@ -50,6 +50,10 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         sink.occurrence(JetIndexKeys.SHORT_NAME_KEY, name);
 
+        if (stub.isTopLevel()) {
+            sink.occurrence(JetIndexKeys.TOP_LEVEL_OBJECT_SHORT_NAME_KEY, name);
+        }
+
         FqName fqName = stub.getFQName();
         if (fqName != null) {
             sink.occurrence(JetIndexKeys.FQN_KEY, fqName.toString());

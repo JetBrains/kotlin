@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
@@ -29,10 +30,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverBinaryClassData;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverClassData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
+import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassMembersScope;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiClassWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -45,12 +46,14 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class JavaClassResolver {
 
     // NOTE: this complexity is introduced because class descriptors do not always have valid fqnames (class objects)
-    private final Map<FqNameBase, ResolverClassData> classDescriptorCache =
-            new THashMap<FqNameBase, ResolverClassData>(new TObjectHashingStrategy<FqNameBase>() {
+    @NotNull
+    private final Map<FqNameBase, ClassDescriptor> classDescriptorCache =
+            new THashMap<FqNameBase, ClassDescriptor>(new TObjectHashingStrategy<FqNameBase>() {
                 @Override
                 public int computeHashCode(FqNameBase o) {
                     if (o instanceof FqName) {
@@ -65,6 +68,9 @@ public final class JavaClassResolver {
                     return n1.equalsTo(n2.toString()) && n2.equalsTo(n1.toString());
                 }
             });
+
+    @NotNull
+    private final Set<FqNameBase> unresolvedCache = Sets.newHashSet();
 
     private BindingTrace trace;
     private JavaDescriptorResolver javaDescriptorResolver;
@@ -127,9 +133,9 @@ public final class JavaClassResolver {
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         PostponedTasks postponedTasks = new PostponedTasks();
-        ClassDescriptor clazz = resolveClass(qualifiedName, searchRule, postponedTasks);
+        ClassDescriptor classDescriptor = resolveClass(qualifiedName, searchRule, postponedTasks);
         postponedTasks.performTasks();
-        return clazz;
+        return classDescriptor;
     }
 
     @Nullable
@@ -154,9 +160,14 @@ public final class JavaClassResolver {
         }
 
         // Not let's take a descriptor of a Java class
-        ResolverClassData classData = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
-        if (classData != null) {
-            return classData.getClassDescriptor();
+        FqNameUnsafe fqName = javaClassToKotlinFqName(qualifiedName);
+        ClassDescriptor cachedDescriptor = classDescriptorCache.get(fqName);
+        if (cachedDescriptor != null) {
+            return cachedDescriptor;
+        }
+
+        if (unresolvedCache.contains(fqName)) {
+            return null;
         }
 
         return doResolveClass(qualifiedName, tasks);
@@ -166,18 +177,17 @@ public final class JavaClassResolver {
     private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
         PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
         if (psiClass == null) {
-            cacheNegativeValue(qualifiedName);
+            cacheNegativeValue(javaClassToKotlinFqName(qualifiedName));
             return null;
         }
-        ResolverClassData classData = createJavaClassDescriptor(qualifiedName, psiClass, tasks);
-        return classData.getClassDescriptor();
+        return createJavaClassDescriptor(qualifiedName, psiClass, tasks);
     }
 
-    private void cacheNegativeValue(@NotNull FqName qualifiedName) {
-        ResolverClassData oldValue = classDescriptorCache.put(javaClassToKotlinFqName(qualifiedName), ResolverBinaryClassData.NEGATIVE);
-        if (oldValue != null) {
+    private void cacheNegativeValue(@NotNull FqNameBase qualifiedName) {
+        if (unresolvedCache.contains(qualifiedName) || classDescriptorCache.containsKey(qualifiedName)) {
             throw new IllegalStateException("rewrite at " + qualifiedName);
         }
+        unresolvedCache.add(qualifiedName);
     }
 
     private static boolean isTraitImplementation(@NotNull FqName qualifiedName) {
@@ -186,7 +196,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ResolverClassData createJavaClassDescriptor(
+    private ClassDescriptor createJavaClassDescriptor(
             @NotNull FqName fqName, @NotNull final PsiClass psiClass,
             @NotNull PostponedTasks taskList
     ) {
@@ -196,16 +206,18 @@ public final class JavaClassResolver {
 
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         // class may be resolved during resolution of parent
-        ResolverClassData classData = classDescriptorCache.get(javaClassToKotlinFqName(fqName));
-        if (classData != null) {
-            return classData;
+        ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(fqName));
+        if (cachedDescriptor != null) {
+            return cachedDescriptor;
         }
+
+        assert (!unresolvedCache.contains(fqName)) : "We can resolve the class, so it can't be 'unresolved' during parent resolution";
 
         return doCreateClassDescriptor(fqName, psiClass, taskList, containingDeclaration);
     }
 
     @NotNull
-    private ResolverClassData doCreateClassDescriptor(
+    private ClassDescriptorFromJvmBytecode doCreateClassDescriptor(
             @NotNull FqName fqName,
             @NotNull PsiClass psiClass,
             @NotNull PostponedTasks taskList,
@@ -213,35 +225,35 @@ public final class JavaClassResolver {
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
+        ClassPsiDeclarationProvider classData = PsiDeclarationProviderFactory.createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classDescriptor
-                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, psiClass, fqName, javaDescriptorResolver);
+                = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind, javaDescriptorResolver, classData);
 
-        ResolverClassData classData = classDescriptor.getResolverBinaryClassData();
-        classDescriptorCache.put(javaClassToKotlinFqName(fqName), classData);
+        cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
-                = signatureResolver.createUninitializedClassTypeParameters(psiClass, classData);
+                = signatureResolver.createUninitializedClassTypeParameters(psiClass, classDescriptor);
 
         classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
         List<JetType> supertypes = Lists.newArrayList();
         classDescriptor.setSupertypes(supertypes);
         classDescriptor.setVisibility(DescriptorResolverUtils.resolveVisibility(psiClass, jetClassAnnotation));
-        classDescriptor.setModality(resolveModality(psiClass, classData));
+        classDescriptor.setModality(resolveModality(psiClass, classDescriptor));
         classDescriptor.createTypeConstructor();
-        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
+        classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classDescriptor, semanticServices, classData));
 
         String context = "class " + psiClass.getQualifiedName();
         signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor, context);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();
-        supertypes.addAll(supertypesResolver.getSupertypes(new PsiClassWrapper(psiClass), classData, classTypeParameters));
+        supertypes.addAll(supertypesResolver.getSupertypes(classDescriptor, new PsiClassWrapper(psiClass), classData, classTypeParameters
+        ));
 
-        ResolverClassData classObjectData = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
-        classDescriptorCache.put(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectData);
-        if (classObjectData != null) {
-            ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectData.getClassDescriptor();
+        ClassDescriptorFromJvmBytecode classObjectDescriptor = classObjectResolver.createClassObjectDescriptor(classDescriptor, psiClass);
+        cache(DescriptorResolverUtils.getFqNameForClassObject(psiClass), classObjectDescriptor);
+        if (classObjectDescriptor != null) {
             classDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
         }
 
@@ -249,7 +261,17 @@ public final class JavaClassResolver {
 
         trace.record(BindingContext.CLASS, psiClass, classDescriptor);
 
-        return classData;
+        return classDescriptor;
+    }
+
+    private void cache(@NotNull FqNameBase fqName, @Nullable ClassDescriptor classDescriptor) {
+        if (classDescriptor == null) {
+            cacheNegativeValue(fqName);
+        }
+        else {
+            ClassDescriptor oldValue = classDescriptorCache.put(fqName, classDescriptor);
+            assert oldValue == null;
+        }
     }
 
     @NotNull
@@ -264,8 +286,8 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private static Modality resolveModality(@NotNull PsiClass psiClass, @NotNull ResolverClassData classData) {
-        if (classData.getClassDescriptor().getKind() == ClassKind.ANNOTATION_CLASS) {
+    private static Modality resolveModality(@NotNull PsiClass psiClass, @NotNull ClassDescriptor classDescriptor) {
+        if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             return Modality.FINAL;
         }
         return Modality.convertFromFlags(
@@ -279,7 +301,8 @@ public final class JavaClassResolver {
 
         FqName fqName = new FqName(qualifiedName);
         assert fqName.equals(desiredFqName);
-        if (classDescriptorCache.containsKey(javaClassToKotlinFqName(fqName))) {
+        FqNameUnsafe correctedName = javaClassToKotlinFqName(fqName);
+        if (classDescriptorCache.containsKey(correctedName) || unresolvedCache.contains(correctedName)) {
             throw new IllegalStateException(qualifiedName);
         }
     }

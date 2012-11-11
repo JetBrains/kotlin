@@ -42,7 +42,7 @@ public class ArraySize implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
+        receiver.put(receiver.type, v);
         v.arraylength();
 
         return StackValue.onStack(Type.INT_TYPE);

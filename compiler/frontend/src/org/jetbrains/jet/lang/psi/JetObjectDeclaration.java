@@ -75,6 +75,15 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
         return JetPsiUtil.getFQName(this);
     }
 
+    public boolean isTopLevel() {
+        PsiJetObjectStub stub = getStub();
+        if (stub != null) {
+            return stub.isTopLevel();
+        }
+
+        return getParent() instanceof JetFile;
+    }
+
     @Override
     public PsiElement getNameIdentifier() {
         JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();

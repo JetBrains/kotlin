@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -138,8 +140,12 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     }
 
     @Override
-    public Map<JetDeclaration, JetScope> getDeclaringScopes() {
-        return declaringScopes;
+    public Function<JetDeclaration, JetScope> getDeclaringScopes() {
+        return Functions.forMap(declaringScopes);
+    }
+
+    public void registerDeclaringScope(@NotNull JetDeclaration declaration, @NotNull JetScope scope) {
+        declaringScopes.put(declaration, scope);
     }
 
     @Override

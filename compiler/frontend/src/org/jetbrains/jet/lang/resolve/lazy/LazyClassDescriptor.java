@@ -346,7 +346,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
         @NotNull
         @Override
-        public Collection<? extends JetType> getSupertypes() {
+        public Collection<JetType> getSupertypes() {
             if (supertypes == null) {
                 if (resolveSession.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
                     this.supertypes = Collections.emptyList();

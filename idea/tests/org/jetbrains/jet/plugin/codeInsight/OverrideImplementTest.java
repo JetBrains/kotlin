@@ -26,8 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +54,10 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement");
     }
 
+    public void testEmptyClassBodyFunctionMethod() {
+        doImplementFileTest();
+    }
+
     public void testFunctionMethod() {
         doImplementFileTest();
     }
@@ -70,7 +77,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     public void testJavaParameters() {
         doImplementDirectoryTest();
     }
-    
+
     public void testGenericMethod() {
         doImplementFileTest();
     }
@@ -194,7 +201,12 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
-        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
+
+        final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
+        final BindingContext bindingContext = WholeProjectAnalyzerFacade
+                .analyzeProjectWithCacheOnAFile(jetFile)
+                .getBindingContext();
+        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
         final CallableMemberDescriptor singleToOverride;
         if (memberToOverride == null) {
@@ -222,7 +234,8 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
                         myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler.membersFromDescriptors(Collections.singletonList(singleToOverride)));
+                        OverrideImplementMethodsHandler
+                                .membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride), bindingContext));
             }
         }.execute();
     }
@@ -231,7 +244,12 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
-        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
+
+        final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
+        final BindingContext bindingContext = WholeProjectAnalyzerFacade
+                .analyzeProjectWithCacheOnAFile(jetFile)
+                .getBindingContext();
+        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
         final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
         Collections.sort(descriptorsList, new Comparator<CallableMemberDescriptor>() {
@@ -246,7 +264,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
                         myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler.membersFromDescriptors(descriptorsList));
+                        OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList, bindingContext));
             }
         }.execute();
     }

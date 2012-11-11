@@ -182,7 +182,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> getSupertypesNameReferences() {
-        Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
         if (supertypes.isEmpty()) {
             return Collections.emptyList();
         }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
@@ -27,9 +28,11 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
-import org.jetbrains.jet.lang.resolve.java.data.ResolverNamespaceData;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -37,13 +40,17 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 public final class JavaNamespaceResolver {
 
     @NotNull
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
     @NotNull
-    private final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
+    private final Map<FqName, JavaPackageScope> resolvedNamespaceCache = Maps.newHashMap();
+    @NotNull
+    private final Set<FqName> unresolvedCache = Sets.newHashSet();
+
     private PsiClassFinder psiClassFinder;
     private BindingTrace trace;
     private JavaSemanticServices javaSemanticServices;
@@ -74,9 +81,12 @@ public final class JavaNamespaceResolver {
             return searchRule.processFoundInKotlin(kotlinNamespaceDescriptor);
         }
 
-        ResolverNamespaceData namespaceData = lookUpCache(qualifiedName);
-        if (namespaceData != null) {
-            return namespaceData.getNamespaceDescriptor();
+        if (unresolvedCache.contains(qualifiedName)) {
+            return null;
+        }
+        JavaPackageScope scope = resolvedNamespaceCache.get(qualifiedName);
+        if (scope != null) {
+            return (NamespaceDescriptor) scope.getContainingDeclaration();
         }
 
         NamespaceDescriptorParent parentNs = resolveParentNamespace(qualifiedName);
@@ -84,26 +94,22 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        JavaNamespaceDescriptor ns = new JavaNamespaceDescriptor(
+        JavaNamespaceDescriptor javaNamespaceDescriptor = new JavaNamespaceDescriptor(
                 parentNs,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 qualifiedName
         );
 
-        ResolverNamespaceData scopeData = createNamespaceResolverScopeData(qualifiedName, ns);
-        if (scopeData == null) {
+        JavaPackageScope newScope = createNamespaceScope(qualifiedName, javaNamespaceDescriptor);
+        if (newScope == null) {
             return null;
         }
 
-        trace.record(BindingContext.NAMESPACE, scopeData.getPsiPackageOrPsiClass(), ns);
+        trace.record(BindingContext.NAMESPACE, newScope.getPsiElement(), javaNamespaceDescriptor);
 
-        ns.setMemberScope(scopeData.getMemberScope());
+        javaNamespaceDescriptor.setMemberScope(newScope);
 
-        return scopeData.getNamespaceDescriptor();
-    }
-
-    private ResolverNamespaceData lookUpCache(FqName qualifiedName) {
-        return namespaceDescriptorCacheByFqn.get(qualifiedName);
+        return javaNamespaceDescriptor;
     }
 
     @Nullable
@@ -122,67 +128,70 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    private ResolverNamespaceData createNamespaceResolverScopeData(
+    private JavaPackageScope createNamespaceScope(
             @NotNull FqName fqName,
-            @NotNull NamespaceDescriptor ns
+            @NotNull NamespaceDescriptor namespaceDescriptor
     ) {
-        PsiPackage psiPackage;
-        PsiClass psiClass;
-
-        lookingForPsi:
-        {
-            psiClass = getPsiClassForJavaPackageScope(fqName);
-            psiPackage = psiClassFinder.findPsiPackage(fqName);
-            if (psiClass != null || psiPackage != null) {
-                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.PROPER);
-                break lookingForPsi;
-            }
-
-            psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
-            if (psiClass != null && !psiClass.isEnum()) {
-                trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.CLASS_STATICS);
-                break lookingForPsi;
-            }
-
-            cache(fqName, ResolverNamespaceData.NEGATIVE);
-            return null;
+        PsiDeclarationProvider namespaceData = createDeclarationProvider(fqName, namespaceDescriptor);
+        JavaPackageScope javaPackageScope;
+        if (namespaceData == null) {
+            javaPackageScope = null;
+        }
+        else {
+            //TODO:
+            javaPackageScope = new JavaPackageScope(namespaceDescriptor, fqName, javaSemanticServices, namespaceData);
         }
 
-        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
+        cache(fqName, javaPackageScope);
 
-        namespaceData.setMemberScope(new JavaPackageScope(fqName, javaSemanticServices, namespaceData));
-
-        cache(fqName, namespaceData);
-
-        return namespaceData;
+        return javaPackageScope;
     }
 
-    private void cache(@NotNull FqName fqName, @NotNull ResolverNamespaceData namespaceData) {
-        ResolverNamespaceData oldValue = namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
+    @Nullable
+    private PsiDeclarationProvider createDeclarationProvider(
+            @NotNull FqName fqName,
+            @NotNull NamespaceDescriptor namespaceDescriptor
+    ) {
+        PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
+        PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
+        if (psiClass != null || psiPackage != null) {
+            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
+            return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
+        }
+
+        psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        if (psiClass != null && !psiClass.isEnum()) {
+            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
+            return PsiDeclarationProviderFactory.createDeclarationProviderForPackage(psiPackage, psiClass, fqName);
+        }
+
+        return null;
+    }
+
+    private void cache(@NotNull FqName fqName, @Nullable JavaPackageScope packageScope) {
+        if (packageScope == null) {
+            unresolvedCache.add(fqName);
+            return;
+        }
+        JavaPackageScope oldValue = resolvedNamespaceCache.put(fqName, packageScope);
         if (oldValue != null) {
             throw new IllegalStateException("rewrite at " + fqName);
         }
     }
 
     @Nullable
-    public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        ResolverNamespaceData resolverNamespaceData = lookUpCache(fqName);
-        if (resolverNamespaceData == null) {
-            resolverNamespaceData = createNamespaceResolverScopeData(fqName, ns);
-        }
-        if (resolverNamespaceData == null) {
-            return null;
-        }
-        if (resolverNamespaceData == ResolverNamespaceData.NEGATIVE) {
+    public JavaPackageScope getJavaPackageScopeForExistingNamespaceDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
+        if (unresolvedCache.contains(fqName)) {
             throw new IllegalStateException(
                     "This means that we are trying to create a Java package, but have a package with the same FQN defined in Kotlin: " +
                     fqName);
         }
-        JavaPackageScope scope = resolverNamespaceData.getMemberScope();
-        if (scope == null) {
-            throw new IllegalStateException("fqn: " + fqName);
+        JavaPackageScope alreadyResolvedScope = resolvedNamespaceCache.get(fqName);
+        if (alreadyResolvedScope != null) {
+            return alreadyResolvedScope;
         }
-        return scope;
+        return createNamespaceScope(fqName, namespaceDescriptor);
     }
 
     @Nullable

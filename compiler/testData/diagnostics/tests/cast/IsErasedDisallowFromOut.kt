@@ -1,2 +1,2 @@
 
-fun f(a : List<out Any>) = a is <!CANNOT_CHECK_FOR_ERASED!>List<out Int><!>
+fun f(a : MutableList<out Any>) = a is <!CANNOT_CHECK_FOR_ERASED!>MutableList<out Int><!>

@@ -56,6 +56,10 @@ public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase 
         doFileTest(2);
     }
 
+    public void testNotImportedObject() throws Exception {
+        doFileTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/multifile/";

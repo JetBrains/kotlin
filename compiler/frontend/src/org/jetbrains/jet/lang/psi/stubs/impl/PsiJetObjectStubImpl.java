@@ -32,24 +32,28 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> implements PsiJetObjectStub {
     private final StringRef name;
     private final FqName fqName;
+    private final boolean isTopLevel;
 
     public PsiJetObjectStubImpl(
             @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
             @NotNull String name,
-            @Nullable FqName fqName) {
-        this(elementType, parent, StringRef.fromString(name), fqName);
+            @Nullable FqName fqName,
+            boolean isTopLevel) {
+        this(elementType, parent, StringRef.fromString(name), fqName, isTopLevel);
     }
 
     public PsiJetObjectStubImpl(
             @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
             @NotNull StringRef name,
-            @Nullable FqName fqName) {
+            @Nullable FqName fqName,
+            boolean isTopLevel) {
         super(parent, elementType);
 
         this.name = name;
         this.fqName = fqName;
+        this.isTopLevel = isTopLevel;
     }
 
     @Override
@@ -64,12 +68,21 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     }
 
     @Override
+    public boolean isTopLevel() {
+        return isTopLevel;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
         builder.append("PsiJetObjectStubImpl[");
-        builder.append("name=").append(getName());
 
+        if (isTopLevel) {
+            builder.append("top ");
+        }
+
+        builder.append("name=").append(getName());
         builder.append(" fqName=").append(fqName != null ? fqName.toString() : "null");
         builder.append("]");
 

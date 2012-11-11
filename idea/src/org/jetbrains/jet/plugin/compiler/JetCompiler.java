@@ -16,39 +16,31 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
-import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.SimpleJavaParameters;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
+import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.JavaSdkType;
-import com.intellij.openapi.projectRoots.JdkUtil;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
-import com.intellij.util.SystemProperties;
-import jet.Function1;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
+import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner;
+import org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.util.*;
-
-import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
-import static com.intellij.openapi.compiler.CompilerMessageCategory.INFORMATION;
 
 /**
  * @author yole
@@ -105,7 +97,8 @@ public class JetCompiler implements TranslatingCompiler {
         doCompile(compileContext, moduleChunk, testFiles, module, outputSink, true);
     }
 
-    private void doCompile(CompileContext compileContext,
+    private void doCompile(
+            final CompileContext compileContext,
             Chunk<Module> moduleChunk,
             List<VirtualFile> files,
             Module module,
@@ -113,222 +106,118 @@ public class JetCompiler implements TranslatingCompiler {
             boolean tests) {
         if (files.isEmpty()) return;
 
-        CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(compileContext, module, tests);
+        MessageCollector messageCollector = new MessageCollectorAdapter(compileContext);
+
+        CompilerEnvironment environment = CompilerUtils.getEnvironmentFor(compileContext, module, tests);
         if (!environment.success()) {
-            environment.reportErrorsTo(compileContext);
+            environment.reportErrorsTo(messageCollector);
             return;
         }
 
-        File scriptFile =
-                tryToWriteScriptFile(compileContext, moduleChunk, files, module, tests, compileContext.getModuleOutputDirectory(module),
-                                     environment.getOutput());
+        File scriptFile = tryToWriteScriptFile(compileContext, moduleChunk, files, module, tests,
+                                               compileContext.getModuleOutputDirectory(module),
+                                               environment.getOutput());
 
         if (scriptFile == null) return;
 
         CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
-        runCompiler(compileContext, environment, scriptFile, collector);
+        runCompiler(messageCollector, environment, scriptFile, collector);
         outputSink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
     }
 
-    private void runCompiler(CompileContext compileContext,
+    private static void runCompiler(
+            MessageCollector messageCollector,
             CompilerEnvironment environment,
             File scriptFile,
-            CompilerUtils.OutputItemsCollectorImpl collector) {
-        if (RUN_OUT_OF_PROCESS) {
-            runOutOfProcess(compileContext, collector, environment, scriptFile);
-        }
-        else {
-            runInProcess(compileContext, collector, environment, scriptFile);
-        }
+            CompilerUtils.OutputItemsCollectorImpl collector
+    ) {
+        KotlinCompilerRunner.runCompiler(messageCollector, environment, scriptFile, collector, RUN_OUT_OF_PROCESS);
     }
 
-    private static File tryToWriteScriptFile(CompileContext compileContext,
+    public static File tryToWriteScriptFile(
+            CompileContext compileContext,
             Chunk<Module> moduleChunk,
             List<VirtualFile> files,
             Module module,
-            boolean tests, VirtualFile mainOutput, VirtualFile outputDir) {
-        ModuleChunk
-                chunk = new ModuleChunk((CompileContextEx)compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
+            boolean tests, VirtualFile mainOutput, File outputDir
+    ) {
+        List<File> sourceFiles = ContainerUtil.newArrayList(ioFiles(files));
+        ModuleChunk chunk = new ModuleChunk((CompileContextEx)compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
         String moduleName = moduleChunk.getNodes().iterator().next().getName();
+        File outputDirectoryForTests = ioFile(compileContext.getModuleOutputDirectoryForTests(module));
+        File moduleOutputDirectory = ioFile(compileContext.getModuleOutputDirectory(module));
 
         // Filter the output we are writing to
-        Set<VirtualFile> outputDirectoriesToFilter = Sets.newHashSet(compileContext.getModuleOutputDirectoryForTests(module));
+        Set<File> outputDirectoriesToFilter = ContainerUtil.newHashSet(outputDirectoryForTests);
         if (!tests) {
-            outputDirectoriesToFilter.add(compileContext.getModuleOutputDirectory(module));
+            outputDirectoriesToFilter.add(moduleOutputDirectory);
         }
-        CharSequence script = generateModuleScript(moduleName, chunk, files, tests, mainOutput, outputDirectoriesToFilter);
+        CharSequence script = KotlinModuleScriptGenerator.generateModuleScript(
+                moduleName,
+                getDependencyProvider(chunk, tests, mainOutput),
+                sourceFiles,
+                tests,
+                outputDirectoriesToFilter
+        );
 
-        File scriptFile = new File(path(outputDir), "script.kts");
+        File scriptFile = new File(outputDir, "script.kts");
         try {
             FileUtil.writeToFile(scriptFile, script.toString());
         }
         catch (IOException e) {
-            compileContext.addMessage(ERROR, "[Internal Error] Cannot write script to " + scriptFile.getAbsolutePath(), "", -1, -1);
+            compileContext.addMessage(CompilerMessageCategory.ERROR, "[Internal Error] Cannot write script to " + scriptFile.getAbsolutePath(), "", -1, -1);
             return null;
         }
         return scriptFile;
     }
 
-    private static CharSequence generateModuleScript(String moduleName,
-            ModuleChunk chunk,
-            List<VirtualFile> files,
-            boolean tests,
-            VirtualFile mainOutput,
-            Set<VirtualFile> directoriesToFilterOut) {
-        StringBuilder script = new StringBuilder();
+    private static KotlinModuleScriptGenerator.DependencyProvider getDependencyProvider(
+            final ModuleChunk chunk,
+            final boolean tests,
+            final VirtualFile mainOutputPath
+    ) {
+        return new KotlinModuleScriptGenerator.DependencyProvider() {
+            @Override
+            public void processClassPath(@NotNull KotlinModuleScriptGenerator.DependencyProcessor processor) {
+                // TODO: have a bootclasspath in script API
+                processor.processClassPathSection("Boot classpath", ioFiles(chunk.getCompilationBootClasspathFiles()));
 
-        if (tests) {
-            script.append("// Module script for tests\n");
-        }
-        else {
-            script.append("// Module script for production\n");
-        }
+                processor.processClassPathSection("Compilation classpath", ioFiles(chunk.getCompilationClasspathFiles()));
 
-        script.append("import kotlin.modules.*\n");
-        script.append("fun project() {\n");
-        script.append("    module(\"" + moduleName + "\") {\n");
+                // This is for java files in same roots
+                processor.processClassPathSection("Java classpath (for Java sources)", ioFiles(Arrays.asList(chunk.getSourceRoots())));
 
-        for (VirtualFile sourceFile : files) {
-            script.append("        sources += \"" + path(sourceFile) + "\"\n");
-        }
 
-        // TODO: have a bootclasspath in script API
-        script.append("        // Boot classpath\n");
-        for (VirtualFile root : chunk.getCompilationBootClasspathFiles()) {
-            script.append("        classpath += \"" + path(root) + "\"\n");
-        }
+                if (tests && mainOutputPath != null) {
+                    processor.processClassPathSection("Main output", Arrays.asList(ioFile(mainOutputPath)));
+                }
 
-        script.append("        // Compilation classpath\n");
-        for (VirtualFile root : chunk.getCompilationClasspathFiles()) {
-            String path = path(root);
-            if (directoriesToFilterOut.contains(root)) {
-                // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
-                // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
-                // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
-                script.append("        // Output directory, commented out\n");
-                script.append("        // ");
+                processor.processAnnotationRoots(getAnnotationRootPaths(chunk));
             }
-            script.append("        classpath += \"" + path + "\"\n");
-        }
-
-        // This is for java files in same roots
-        script.append("        // Java classpath (for Java sources)\n");
-        for (VirtualFile root : chunk.getSourceRoots()) {
-            script.append("        classpath += \"" + path(root) + "\"\n");
-        }
-
-        script.append("        // Main output\n");
-        if (tests && mainOutput != null) {
-            script.append("        classpath += \"" + path(mainOutput) + "\"\n");
-        }
-
-        script.append("        // External annotations\n");
-        for (Module module : chunk.getModules()) {
-            for (VirtualFile file : OrderEnumerator.orderEntries(module).roots(AnnotationOrderRootType.getInstance()).getRoots()) {
-                script.append("        annotationsPath += \"").append(path(file)).append("\"\n");
-            }
-        }
-
-        script.append("    }\n");
-        script.append("}\n");
-        return script;
+        };
     }
 
-    private static void runInProcess(final CompileContext compileContext,
-            OutputItemsCollector collector,
-            final CompilerEnvironment environment,
-            final File scriptFile) {
-        CompilerUtils.outputCompilerMessagesAndHandleExitCode(compileContext, collector, new Function1<PrintStream, Integer>() {
+    private static List<File> getAnnotationRootPaths(ModuleChunk chunk) {
+        List<File> annotationPaths = ContainerUtil.newArrayList();
+        for (Module module : chunk.getModules()) {
+            for (VirtualFile file : OrderEnumerator.orderEntries(module).roots(AnnotationOrderRootType.getInstance()).getRoots()) {
+                annotationPaths.add(ioFile(file));
+            }
+        }
+        return annotationPaths;
+    }
+
+    private static Collection<File> ioFiles(Collection<VirtualFile> files) {
+        return ContainerUtil.map(files, new Function<VirtualFile, File>() {
             @Override
-            public Integer invoke(PrintStream stream) {
-                return execInProcess(environment, scriptFile, stream, compileContext);
+            public File fun(VirtualFile file) {
+                return ioFile(file);
             }
         });
     }
 
-    private static int execInProcess(CompilerEnvironment environment, File scriptFile, PrintStream out, CompileContext context) {
-        try {
-            String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
-            String[] arguments = commandLineArguments(environment.getOutput(), scriptFile);
-            context.addMessage(INFORMATION, "Using kotlinHome=" + environment.getKotlinHome(), "", -1, -1);
-            context.addMessage(INFORMATION,
-                               "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1,
-                               -1);
-            Object rc = CompilerUtils.invokeExecMethod(environment, out, context, arguments, compilerClassName);
-            // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
-            // so we take it's contents through reflection
-            return CompilerUtils.getReturnCodeFromObject(rc);
-        }
-        catch (Throwable e) {
-            CompilerUtils.LOG.error(e);
-            return -1;
-        }
-    }
-
-    private static String[] commandLineArguments(VirtualFile outputDir, File scriptFile) {
-        return new String[]{
-                "-module", scriptFile.getAbsolutePath(),
-                "-output", path(outputDir),
-                "-tags", "-verbose", "-version",
-                "-noStdlib", "-noJdkAnnotations", "-noJdk"};
-    }
-
-    private static void runOutOfProcess(final CompileContext compileContext,
-            final OutputItemsCollector collector,
-            CompilerEnvironment environment,
-            File scriptFile) {
-        final SimpleJavaParameters params = new SimpleJavaParameters();
-        params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
-        params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
-
-        for (String arg : commandLineArguments(environment.getOutput(), scriptFile)) {
-            params.getProgramParametersList().add(arg);
-        }
-
-        for (File jar : CompilerUtils.kompilerClasspath(environment.getKotlinHome(), compileContext)) {
-            params.getClassPath().add(jar);
-        }
-
-        params.getVMParametersList().addParametersString("-Djava.awt.headless=true -Xmx512m");
-        //        params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
-
-        Sdk sdk = params.getJdk();
-
-        final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
-                ((JavaSdkType)sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
-
-        compileContext.addMessage(INFORMATION, "Invoking out-of-process compiler with arguments: " + commandLine, "", -1, -1);
-
-        try {
-            final Process process = commandLine.createProcess();
-
-            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-                @Override
-                public void run() {
-                    CompilerUtils
-                            .parseCompilerMessagesFromReader(compileContext, new InputStreamReader(process.getInputStream()), collector);
-                }
-            });
-
-            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        FileUtil.loadBytes(process.getErrorStream());
-                    }
-                    catch (IOException e) {
-                        // Don't care
-                    }
-                }
-            });
-
-            int exitCode = process.waitFor();
-            CompilerUtils.handleProcessTermination(exitCode, compileContext);
-        }
-        catch (Exception e) {
-            compileContext.addMessage(ERROR, "[Internal Error] " + e.getLocalizedMessage(), "", -1, -1);
-            return;
-        }
+    private static File ioFile(VirtualFile file) {
+        return new File(path(file));
     }
 
     private static String path(VirtualFile root) {

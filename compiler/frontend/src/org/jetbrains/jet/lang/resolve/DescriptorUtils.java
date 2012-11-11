@@ -259,7 +259,7 @@ public class DescriptorUtils {
 
     @NotNull
     public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
-        Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        Collection<JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
         for (JetType type : superclassTypes) {
             ClassDescriptor result = getClassDescriptorForType(type);

@@ -149,6 +149,12 @@ public class TypeUtils {
                 }
             }
 
+            // Don't add type if it is already present, to avoid trivial type intersections in result
+            for (JetType other : resultingTypes) {
+                if (typeChecker.equalTypes(other, type)) {
+                    continue outer;
+                }
+            }
             resultingTypes.add(type);
         }
         
