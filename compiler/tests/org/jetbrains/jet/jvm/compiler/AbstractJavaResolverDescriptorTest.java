@@ -37,6 +37,11 @@ public abstract class AbstractJavaResolverDescriptorTest extends TestCaseWithTmp
 
     protected JavaDescriptorResolver javaDescriptorResolver;
 
+    protected void compileJavaFile(@NotNull String fileRelativePath)
+            throws IOException {
+        compileJavaFile(fileRelativePath, null);
+    }
+
     protected void compileJavaFile(@NotNull String fileRelativePath, @Nullable String classPath)
             throws IOException {
         File javaFile = new File(getPath() + fileRelativePath);
