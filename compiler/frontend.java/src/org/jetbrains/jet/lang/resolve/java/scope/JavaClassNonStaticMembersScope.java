@@ -16,26 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.google.common.collect.Maps;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
-import java.util.Map;
 
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
-
-    @NotNull
-    private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
 
     private Collection<ConstructorDescriptor> constructors = null;
     @NotNull
@@ -48,33 +37,6 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     ) {
         super(descriptor, psiDeclarationProvider, semanticServices);
         this.descriptor = descriptor;
-    }
-
-    @Override
-    public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassifierDescriptor classifierDescriptor = classifiers.get(name);
-        if (classifierDescriptor == null) {
-            classifierDescriptor = doGetClassifierDescriptor(name);
-            classifiers.put(name, classifierDescriptor);
-        }
-        return classifierDescriptor;
-    }
-
-    private ClassifierDescriptor doGetClassifierDescriptor(Name name) {
-        // TODO : suboptimal, walk the list only once
-        for (PsiClass innerClass : declarationProvider.getPsiClass().getAllInnerClasses()) {
-            if (name.getName().equals(innerClass.getName())) {
-                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != declarationProvider.isStaticMembers()) return null;
-                String qualifiedName = innerClass.getQualifiedName();
-                assert qualifiedName != null;
-                ClassDescriptor classDescriptor = getResolver()
-                        .resolveClass(new FqName(qualifiedName), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                if (classDescriptor != null) {
-                    return classDescriptor;
-                }
-            }
-        }
-        return null;
     }
 
 

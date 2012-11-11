@@ -42,19 +42,19 @@ public abstract class JavaBaseScope extends JetScopeImpl {
 
     @NotNull
     protected final JavaSemanticServices semanticServices;
-
     @NotNull
     protected final PsiDeclarationProvider declarationProvider;
-
     @NotNull
     private final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
-
     @NotNull
     private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
     @Nullable
     private Collection<DeclarationDescriptor> allDescriptors = null;
     @NotNull
     protected final ClassOrNamespaceDescriptor descriptor;
+
+    private Collection<ClassDescriptor> innerClasses = null;
+
 
     protected JavaBaseScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
@@ -130,7 +130,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = Sets.newHashSet();
         result.addAll(computeFieldAndFunctionDescriptors());
-        result.addAll(computeInnerClasses());
+        result.addAll(getInnerClasses());
         return result;
     }
 
@@ -165,5 +165,13 @@ public abstract class JavaBaseScope extends JetScopeImpl {
             return ((PackagePsiDeclarationProvider) declarationProvider).getPsiPackage();
         }
         throw new IllegalStateException();
+    }
+
+    @NotNull
+    protected Collection<ClassDescriptor> getInnerClasses() {
+        if (innerClasses == null) {
+            innerClasses = computeInnerClasses();
+        }
+        return innerClasses;
     }
 }

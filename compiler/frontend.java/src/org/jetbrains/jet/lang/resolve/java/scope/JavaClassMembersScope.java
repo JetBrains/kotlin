@@ -17,20 +17,22 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     protected final ClassPsiDeclarationProvider declarationProvider;
+
+    private Map<Name, ClassifierDescriptor> classifiersMap = null;
 
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
@@ -52,5 +54,22 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @Override
     protected Set<FunctionDescriptor> computeFunctionDescriptor(@NotNull Name name) {
         return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
+    }
+
+    @Override
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
+        return getClassifiersMap().get(name);
+    }
+
+    @NotNull
+    private Map<Name, ClassifierDescriptor> getClassifiersMap() {
+        if (classifiersMap == null) {
+            Collection<ClassDescriptor> innerClasses = getInnerClasses();
+            classifiersMap = new HashMap<Name, ClassifierDescriptor>();
+            for (ClassDescriptor innerClass : innerClasses) {
+                classifiersMap.put(innerClass.getName(), innerClass);
+            }
+        }
+        return classifiersMap;
     }
 }
