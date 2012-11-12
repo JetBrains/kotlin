@@ -122,4 +122,9 @@
             <val name="value" val="&quot;fun setIntercellSpacing(intercellSpacing : Dimension) : Unit&quot;"/>
         </annotation>
     </item>
+    <item name='javax.swing.JViewport java.awt.Rectangle getViewRect()'>
+        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+            <val name="value" val="&quot;fun getViewRect() : Rectangle&quot;"/>
+        </annotation>
+    </item>
 </root>

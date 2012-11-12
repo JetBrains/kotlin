@@ -3,14 +3,14 @@
 
     <target name="update" depends="fetch-third-party">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/71201:id"
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/71655:id"
             build.zip="ideaIC-122.SNAPSHOT.win.zip"
         />
     </target>
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt662/1598151:id"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt662/1615048:id"
             build.zip="ideaIC-122.SNAPSHOT.win.zip"
         />
     </target>
@@ -191,7 +191,7 @@
             <copy file="ideaSDK/lib/jdom.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/jna.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/xstream.jar" todir="${core}"/>
+            <copy file="ideaSDK/lib/xstream-1.4.3.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/asm4-all.jar" todir="${core}"/>
 
