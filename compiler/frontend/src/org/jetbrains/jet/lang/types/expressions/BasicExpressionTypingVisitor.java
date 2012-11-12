@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -1143,7 +1144,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     result = ErrorUtils.createErrorType("No right argument"); // TODO
                     return JetTypeInfo.create(null, dataFlowInfo);
                 }
-                checkInExpression(expression, expression.getOperationReference(), expression.getLeft(), expression.getRight(), context);
+                dataFlowInfo = checkInExpression(expression, expression.getOperationReference(), left, right, context).getSecond();
                 result = booleanType;
             }
             else if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationType)) {
@@ -1188,16 +1189,33 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType, dataFlowInfo);
     }
 
-    public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
+    @NotNull
+    public Pair<Boolean, DataFlowInfo> checkInExpression(
+            JetElement callElement,
+            @NotNull JetSimpleNameExpression operationSign,
+            @Nullable JetExpression left,
+            @NotNull JetExpression right,
+            ExpressionTypingContext context
+    ) {
+        ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
+        DataFlowInfo dataFlowInfo = facade.getTypeInfo(right, contextWithNoExpectedType).getDataFlowInfo();
+
         Name name = Name.identifier("contains");
-        ExpressionReceiver receiver = safeGetExpressionReceiver(facade, right, context.replaceExpectedType(NO_EXPECTED_TYPE));
-        OverloadResolutionResults<FunctionDescriptor> resolutionResult = context.resolveCallWithGivenName(
+        ExpressionReceiver receiver = safeGetExpressionReceiver(facade, right, contextWithNoExpectedType);
+        ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
+
+        OverloadResolutionResults<FunctionDescriptor> resolutionResult = contextWithDataFlow.resolveCallWithGivenName(
                 CallMaker.makeCallWithExpressions(callElement, receiver, null, operationSign, Collections.singletonList(left)),
                 operationSign,
                 name);
         JetType containsType = OverloadResolutionResultsUtil.getResultType(resolutionResult);
         ensureBooleanResult(operationSign, name, containsType, context);
-        return resolutionResult.isSuccess();
+
+        if (left != null) {
+            dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo();
+        }
+
+        return Pair.create(resolutionResult.isSuccess(), dataFlowInfo);
     }
 
     private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, ExpressionTypingContext context) {
