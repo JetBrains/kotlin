@@ -82,7 +82,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
 
-        CompilerEnvironment environment = CompilerUtils.getEnvironmentFor(context, module, /*tests = */ false);
+        CompilerEnvironment environment = TranslatingCompilerUtils.getEnvironmentFor(context, module, /*tests = */ false);
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector);
             return;
@@ -100,7 +100,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
                 return execInProcess(messageCollector, environment, stream, module);
             }
         });
-        CompilerUtils.reportOutputs(sink, environment.getOutput(), collector);
+        TranslatingCompilerUtils.reportOutputs(sink, environment.getOutput(), collector);
     }
 
     @Nullable

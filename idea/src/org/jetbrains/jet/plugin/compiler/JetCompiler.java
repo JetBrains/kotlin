@@ -106,7 +106,7 @@ public class JetCompiler implements TranslatingCompiler {
 
         MessageCollector messageCollector = new MessageCollectorAdapter(compileContext);
 
-        CompilerEnvironment environment = CompilerUtils.getEnvironmentFor(compileContext, module, tests);
+        CompilerEnvironment environment = TranslatingCompilerUtils.getEnvironmentFor(compileContext, module, tests);
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector);
             return;
@@ -129,7 +129,7 @@ public class JetCompiler implements TranslatingCompiler {
         };
         runCompiler(messageCollector, environment, scriptFile, collector);
 
-        CompilerUtils.reportOutputs(outputSink, outputDir, collector);
+        TranslatingCompilerUtils.reportOutputs(outputSink, outputDir, collector);
     }
 
     private static void runCompiler(

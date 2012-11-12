@@ -34,22 +34,19 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Pavel Talanov
- */
-public final class CompilerUtils {
-    private CompilerUtils() {
+public final class TranslatingCompilerUtils {
+    private TranslatingCompilerUtils() {
     }
 
     @NotNull
     public static CompilerEnvironment getEnvironmentFor(@NotNull CompileContext compileContext, @NotNull Module module, boolean tests) {
         VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
         VirtualFile outputDirectoryForTests = compileContext.getModuleOutputDirectoryForTests(module);
-        return CompilerEnvironment.getEnvironmentFor(tests, toIoFile(mainOutput), toIoFile(outputDirectoryForTests));
+        return CompilerEnvironment.getEnvironmentFor(tests, toNullableIoFile(mainOutput), toNullableIoFile(outputDirectoryForTests));
     }
 
     @Nullable
-    public static File toIoFile(@Nullable VirtualFile file) {
+    public static File toNullableIoFile(@Nullable VirtualFile file) {
         if (file == null) return null;
         return new File(file.getPath());
     }
