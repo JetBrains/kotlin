@@ -31,233 +31,233 @@ import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
 public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker")
     public static class Checker extends AbstractJetPsiCheckerTest {
-        @TestMetadata("Abstract.jet")
+        @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
-            doTest("idea/testData/checker/Abstract.jet");
+            doTest("idea/testData/checker/Abstract.kt");
         }
         
         public void testAllFilesPresentInChecker() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.GenerateTests", new File("idea/testData/checker"), "jet", false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.GenerateTests", new File("idea/testData/checker"), "kt", false);
         }
         
-        @TestMetadata("AnonymousInitializers.jet")
+        @TestMetadata("AnonymousInitializers.kt")
         public void testAnonymousInitializers() throws Exception {
-            doTest("idea/testData/checker/AnonymousInitializers.jet");
+            doTest("idea/testData/checker/AnonymousInitializers.kt");
         }
         
-        @TestMetadata("BinaryCallsOnNullableValues.jet")
+        @TestMetadata("BinaryCallsOnNullableValues.kt")
         public void testBinaryCallsOnNullableValues() throws Exception {
-            doTest("idea/testData/checker/BinaryCallsOnNullableValues.jet");
+            doTest("idea/testData/checker/BinaryCallsOnNullableValues.kt");
         }
         
-        @TestMetadata("Bounds.jet")
+        @TestMetadata("Bounds.kt")
         public void testBounds() throws Exception {
-            doTest("idea/testData/checker/Bounds.jet");
+            doTest("idea/testData/checker/Bounds.kt");
         }
         
-        @TestMetadata("Bounds2.jet")
+        @TestMetadata("Bounds2.kt")
         public void testBounds2() throws Exception {
-            doTest("idea/testData/checker/Bounds2.jet");
+            doTest("idea/testData/checker/Bounds2.kt");
         }
         
-        @TestMetadata("BoundsWithSubstitutors.jet")
+        @TestMetadata("BoundsWithSubstitutors.kt")
         public void testBoundsWithSubstitutors() throws Exception {
-            doTest("idea/testData/checker/BoundsWithSubstitutors.jet");
+            doTest("idea/testData/checker/BoundsWithSubstitutors.kt");
         }
         
-        @TestMetadata("BreakContinue.jet")
+        @TestMetadata("BreakContinue.kt")
         public void testBreakContinue() throws Exception {
-            doTest("idea/testData/checker/BreakContinue.jet");
+            doTest("idea/testData/checker/BreakContinue.kt");
         }
         
-        @TestMetadata("Builders.jet")
+        @TestMetadata("Builders.kt")
         public void testBuilders() throws Exception {
-            doTest("idea/testData/checker/Builders.jet");
+            doTest("idea/testData/checker/Builders.kt");
         }
         
-        @TestMetadata("Casts.jet")
+        @TestMetadata("Casts.kt")
         public void testCasts() throws Exception {
-            doTest("idea/testData/checker/Casts.jet");
+            doTest("idea/testData/checker/Casts.kt");
         }
         
-        @TestMetadata("ClassObjects.jet")
+        @TestMetadata("ClassObjects.kt")
         public void testClassObjects() throws Exception {
-            doTest("idea/testData/checker/ClassObjects.jet");
+            doTest("idea/testData/checker/ClassObjects.kt");
         }
         
-        @TestMetadata("Constants.jet")
+        @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
-            doTest("idea/testData/checker/Constants.jet");
+            doTest("idea/testData/checker/Constants.kt");
         }
         
-        @TestMetadata("Constructors.jet")
+        @TestMetadata("Constructors.kt")
         public void testConstructors() throws Exception {
-            doTest("idea/testData/checker/Constructors.jet");
+            doTest("idea/testData/checker/Constructors.kt");
         }
         
-        @TestMetadata("CyclicHierarchy.jet")
+        @TestMetadata("CyclicHierarchy.kt")
         public void testCyclicHierarchy() throws Exception {
-            doTest("idea/testData/checker/CyclicHierarchy.jet");
+            doTest("idea/testData/checker/CyclicHierarchy.kt");
         }
         
-        @TestMetadata("ExtensionFunctions.jet")
+        @TestMetadata("ExtensionFunctions.kt")
         public void testExtensionFunctions() throws Exception {
-            doTest("idea/testData/checker/ExtensionFunctions.jet");
+            doTest("idea/testData/checker/ExtensionFunctions.kt");
         }
         
-        @TestMetadata("ForRangeConventions.jet")
+        @TestMetadata("ForRangeConventions.kt")
         public void testForRangeConventions() throws Exception {
-            doTest("idea/testData/checker/ForRangeConventions.jet");
+            doTest("idea/testData/checker/ForRangeConventions.kt");
         }
         
-        @TestMetadata("FunctionReturnTypes.jet")
+        @TestMetadata("FunctionReturnTypes.kt")
         public void testFunctionReturnTypes() throws Exception {
-            doTest("idea/testData/checker/FunctionReturnTypes.jet");
+            doTest("idea/testData/checker/FunctionReturnTypes.kt");
         }
         
-        @TestMetadata("GenericArgumentConsistency.jet")
+        @TestMetadata("GenericArgumentConsistency.kt")
         public void testGenericArgumentConsistency() throws Exception {
-            doTest("idea/testData/checker/GenericArgumentConsistency.jet");
+            doTest("idea/testData/checker/GenericArgumentConsistency.kt");
         }
         
-        @TestMetadata("IncDec.jet")
+        @TestMetadata("IncDec.kt")
         public void testIncDec() throws Exception {
-            doTest("idea/testData/checker/IncDec.jet");
+            doTest("idea/testData/checker/IncDec.kt");
         }
         
-        @TestMetadata("IsExpressions.jet")
+        @TestMetadata("IsExpressions.kt")
         public void testIsExpressions() throws Exception {
-            doTest("idea/testData/checker/IsExpressions.jet");
+            doTest("idea/testData/checker/IsExpressions.kt");
         }
         
-        @TestMetadata("LocalObjects.jet")
+        @TestMetadata("LocalObjects.kt")
         public void testLocalObjects() throws Exception {
-            doTest("idea/testData/checker/LocalObjects.jet");
+            doTest("idea/testData/checker/LocalObjects.kt");
         }
         
-        @TestMetadata("MultipleBounds.jet")
+        @TestMetadata("MultipleBounds.kt")
         public void testMultipleBounds() throws Exception {
-            doTest("idea/testData/checker/MultipleBounds.jet");
+            doTest("idea/testData/checker/MultipleBounds.kt");
         }
         
-        @TestMetadata("NamespaceAsExpression.jet")
+        @TestMetadata("NamespaceAsExpression.kt")
         public void testNamespaceAsExpression() throws Exception {
-            doTest("idea/testData/checker/NamespaceAsExpression.jet");
+            doTest("idea/testData/checker/NamespaceAsExpression.kt");
         }
         
-        @TestMetadata("NamespaceQualified.jet")
+        @TestMetadata("NamespaceQualified.kt")
         public void testNamespaceQualified() throws Exception {
-            doTest("idea/testData/checker/NamespaceQualified.jet");
+            doTest("idea/testData/checker/NamespaceQualified.kt");
         }
         
-        @TestMetadata("NestedObjects.jet")
+        @TestMetadata("NestedObjects.kt")
         public void testNestedObjects() throws Exception {
-            doTest("idea/testData/checker/NestedObjects.jet");
+            doTest("idea/testData/checker/NestedObjects.kt");
         }
         
-        @TestMetadata("NotFinishedGenericDeclaration.jet")
+        @TestMetadata("NotFinishedGenericDeclaration.kt")
         public void testNotFinishedGenericDeclaration() throws Exception {
-            doTest("idea/testData/checker/NotFinishedGenericDeclaration.jet");
+            doTest("idea/testData/checker/NotFinishedGenericDeclaration.kt");
         }
         
-        @TestMetadata("Nullability.jet")
+        @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
-            doTest("idea/testData/checker/Nullability.jet");
+            doTest("idea/testData/checker/Nullability.kt");
         }
         
-        @TestMetadata("Objects.jet")
+        @TestMetadata("Objects.kt")
         public void testObjects() throws Exception {
-            doTest("idea/testData/checker/Objects.jet");
+            doTest("idea/testData/checker/Objects.kt");
         }
         
-        @TestMetadata("Override.jet")
+        @TestMetadata("Override.kt")
         public void testOverride() throws Exception {
-            doTest("idea/testData/checker/Override.jet");
+            doTest("idea/testData/checker/Override.kt");
         }
         
-        @TestMetadata("OverridesAndGenerics.jet")
+        @TestMetadata("OverridesAndGenerics.kt")
         public void testOverridesAndGenerics() throws Exception {
-            doTest("idea/testData/checker/OverridesAndGenerics.jet");
+            doTest("idea/testData/checker/OverridesAndGenerics.kt");
         }
         
-        @TestMetadata("PrimaryConstructors.jet")
+        @TestMetadata("PrimaryConstructors.kt")
         public void testPrimaryConstructors() throws Exception {
-            doTest("idea/testData/checker/PrimaryConstructors.jet");
+            doTest("idea/testData/checker/PrimaryConstructors.kt");
         }
         
-        @TestMetadata("ProjectionsInSupertypes.jet")
+        @TestMetadata("ProjectionsInSupertypes.kt")
         public void testProjectionsInSupertypes() throws Exception {
-            doTest("idea/testData/checker/ProjectionsInSupertypes.jet");
+            doTest("idea/testData/checker/ProjectionsInSupertypes.kt");
         }
         
-        @TestMetadata("Properties.jet")
+        @TestMetadata("Properties.kt")
         public void testProperties() throws Exception {
-            doTest("idea/testData/checker/Properties.jet");
+            doTest("idea/testData/checker/Properties.kt");
         }
         
-        @TestMetadata("QualifiedExpressions.jet")
+        @TestMetadata("QualifiedExpressions.kt")
         public void testQualifiedExpressions() throws Exception {
-            doTest("idea/testData/checker/QualifiedExpressions.jet");
+            doTest("idea/testData/checker/QualifiedExpressions.kt");
         }
         
-        @TestMetadata("QualifiedThis.jet")
+        @TestMetadata("QualifiedThis.kt")
         public void testQualifiedThis() throws Exception {
-            doTest("idea/testData/checker/QualifiedThis.jet");
+            doTest("idea/testData/checker/QualifiedThis.kt");
         }
         
-        @TestMetadata("QualifiedThisInClosures.jet")
+        @TestMetadata("QualifiedThisInClosures.kt")
         public void testQualifiedThisInClosures() throws Exception {
-            doTest("idea/testData/checker/QualifiedThisInClosures.jet");
+            doTest("idea/testData/checker/QualifiedThisInClosures.kt");
         }
         
-        @TestMetadata("RecursiveTypeInference.jet")
+        @TestMetadata("RecursiveTypeInference.kt")
         public void testRecursiveTypeInference() throws Exception {
-            doTest("idea/testData/checker/RecursiveTypeInference.jet");
+            doTest("idea/testData/checker/RecursiveTypeInference.kt");
         }
         
-        @TestMetadata("Redeclarations.jet")
+        @TestMetadata("Redeclarations.kt")
         public void testRedeclarations() throws Exception {
-            doTest("idea/testData/checker/Redeclarations.jet");
+            doTest("idea/testData/checker/Redeclarations.kt");
         }
         
-        @TestMetadata("ResolveToJava.jet")
+        @TestMetadata("ResolveToJava.kt")
         public void testResolveToJava() throws Exception {
-            doTest("idea/testData/checker/ResolveToJava.jet");
+            doTest("idea/testData/checker/ResolveToJava.kt");
         }
         
-        @TestMetadata("StringTemplates.jet")
+        @TestMetadata("StringTemplates.kt")
         public void testStringTemplates() throws Exception {
-            doTest("idea/testData/checker/StringTemplates.jet");
+            doTest("idea/testData/checker/StringTemplates.kt");
         }
         
-        @TestMetadata("SupertypeListChecks.jet")
+        @TestMetadata("SupertypeListChecks.kt")
         public void testSupertypeListChecks() throws Exception {
-            doTest("idea/testData/checker/SupertypeListChecks.jet");
+            doTest("idea/testData/checker/SupertypeListChecks.kt");
         }
         
-        @TestMetadata("TraitSupertypeList.jet")
+        @TestMetadata("TraitSupertypeList.kt")
         public void testTraitSupertypeList() throws Exception {
-            doTest("idea/testData/checker/TraitSupertypeList.jet");
+            doTest("idea/testData/checker/TraitSupertypeList.kt");
         }
         
-        @TestMetadata("UnreachableCode.jet")
+        @TestMetadata("UnreachableCode.kt")
         public void testUnreachableCode() throws Exception {
-            doTest("idea/testData/checker/UnreachableCode.jet");
+            doTest("idea/testData/checker/UnreachableCode.kt");
         }
         
-        @TestMetadata("Unresolved.jet")
+        @TestMetadata("Unresolved.kt")
         public void testUnresolved() throws Exception {
-            doTest("idea/testData/checker/Unresolved.jet");
+            doTest("idea/testData/checker/Unresolved.kt");
         }
         
-        @TestMetadata("Variance.jet")
+        @TestMetadata("Variance.kt")
         public void testVariance() throws Exception {
-            doTest("idea/testData/checker/Variance.jet");
+            doTest("idea/testData/checker/Variance.kt");
         }
         
-        @TestMetadata("When.jet")
+        @TestMetadata("When.kt")
         public void testWhen() throws Exception {
-            doTest("idea/testData/checker/When.jet");
+            doTest("idea/testData/checker/When.kt");
         }
         
     }
@@ -265,122 +265,122 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker/regression")
     public static class Regression extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInRegression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.GenerateTests", new File("idea/testData/checker/regression"), "jet", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.GenerateTests", new File("idea/testData/checker/regression"), "kt", true);
         }
         
-        @TestMetadata("AmbiguityOnLazyTypeComputation.jet")
+        @TestMetadata("AmbiguityOnLazyTypeComputation.kt")
         public void testAmbiguityOnLazyTypeComputation() throws Exception {
-            doTest("idea/testData/checker/regression/AmbiguityOnLazyTypeComputation.jet");
+            doTest("idea/testData/checker/regression/AmbiguityOnLazyTypeComputation.kt");
         }
         
-        @TestMetadata("AssignmentsUnderOperators.jet")
+        @TestMetadata("AssignmentsUnderOperators.kt")
         public void testAssignmentsUnderOperators() throws Exception {
-            doTest("idea/testData/checker/regression/AssignmentsUnderOperators.jet");
+            doTest("idea/testData/checker/regression/AssignmentsUnderOperators.kt");
         }
         
-        @TestMetadata("CoercionToUnit.jet")
+        @TestMetadata("CoercionToUnit.kt")
         public void testCoercionToUnit() throws Exception {
-            doTest("idea/testData/checker/regression/CoercionToUnit.jet");
+            doTest("idea/testData/checker/regression/CoercionToUnit.kt");
         }
         
-        @TestMetadata("DoubleDefine.jet")
+        @TestMetadata("DoubleDefine.kt")
         public void testDoubleDefine() throws Exception {
-            doTest("idea/testData/checker/regression/DoubleDefine.jet");
+            doTest("idea/testData/checker/regression/DoubleDefine.kt");
         }
         
-        @TestMetadata("Jet11.jet")
+        @TestMetadata("Jet11.kt")
         public void testJet11() throws Exception {
-            doTest("idea/testData/checker/regression/Jet11.jet");
+            doTest("idea/testData/checker/regression/Jet11.kt");
         }
         
-        @TestMetadata("Jet121.jet")
+        @TestMetadata("Jet121.kt")
         public void testJet121() throws Exception {
-            doTest("idea/testData/checker/regression/Jet121.jet");
+            doTest("idea/testData/checker/regression/Jet121.kt");
         }
         
-        @TestMetadata("Jet124.jet")
+        @TestMetadata("Jet124.kt")
         public void testJet124() throws Exception {
-            doTest("idea/testData/checker/regression/Jet124.jet");
+            doTest("idea/testData/checker/regression/Jet124.kt");
         }
         
-        @TestMetadata("Jet169.jet")
+        @TestMetadata("Jet169.kt")
         public void testJet169() throws Exception {
-            doTest("idea/testData/checker/regression/Jet169.jet");
+            doTest("idea/testData/checker/regression/Jet169.kt");
         }
         
-        @TestMetadata("Jet17.jet")
+        @TestMetadata("Jet17.kt")
         public void testJet17() throws Exception {
-            doTest("idea/testData/checker/regression/Jet17.jet");
+            doTest("idea/testData/checker/regression/Jet17.kt");
         }
         
-        @TestMetadata("Jet183.jet")
+        @TestMetadata("Jet183.kt")
         public void testJet183() throws Exception {
-            doTest("idea/testData/checker/regression/Jet183.jet");
+            doTest("idea/testData/checker/regression/Jet183.kt");
         }
         
-        @TestMetadata("Jet183-1.jet")
+        @TestMetadata("Jet183-1.kt")
         public void testJet183_1() throws Exception {
-            doTest("idea/testData/checker/regression/Jet183-1.jet");
+            doTest("idea/testData/checker/regression/Jet183-1.kt");
         }
         
-        @TestMetadata("Jet53.jet")
+        @TestMetadata("Jet53.kt")
         public void testJet53() throws Exception {
-            doTest("idea/testData/checker/regression/Jet53.jet");
+            doTest("idea/testData/checker/regression/Jet53.kt");
         }
         
-        @TestMetadata("Jet67.jet")
+        @TestMetadata("Jet67.kt")
         public void testJet67() throws Exception {
-            doTest("idea/testData/checker/regression/Jet67.jet");
+            doTest("idea/testData/checker/regression/Jet67.kt");
         }
         
-        @TestMetadata("Jet68.jet")
+        @TestMetadata("Jet68.kt")
         public void testJet68() throws Exception {
-            doTest("idea/testData/checker/regression/Jet68.jet");
+            doTest("idea/testData/checker/regression/Jet68.kt");
         }
         
-        @TestMetadata("Jet69.jet")
+        @TestMetadata("Jet69.kt")
         public void testJet69() throws Exception {
-            doTest("idea/testData/checker/regression/Jet69.jet");
+            doTest("idea/testData/checker/regression/Jet69.kt");
         }
         
-        @TestMetadata("Jet72.jet")
+        @TestMetadata("Jet72.kt")
         public void testJet72() throws Exception {
-            doTest("idea/testData/checker/regression/Jet72.jet");
+            doTest("idea/testData/checker/regression/Jet72.kt");
         }
         
-        @TestMetadata("Jet81.jet")
+        @TestMetadata("Jet81.kt")
         public void testJet81() throws Exception {
-            doTest("idea/testData/checker/regression/Jet81.jet");
+            doTest("idea/testData/checker/regression/Jet81.kt");
         }
         
-        @TestMetadata("kt251.jet")
+        @TestMetadata("kt251.kt")
         public void testKt251() throws Exception {
-            doTest("idea/testData/checker/regression/kt251.jet");
+            doTest("idea/testData/checker/regression/kt251.kt");
         }
         
-        @TestMetadata("kt303.jet")
+        @TestMetadata("kt303.kt")
         public void testKt303() throws Exception {
-            doTest("idea/testData/checker/regression/kt303.jet");
+            doTest("idea/testData/checker/regression/kt303.kt");
         }
         
-        @TestMetadata("OverrideResolution.jet")
+        @TestMetadata("OverrideResolution.kt")
         public void testOverrideResolution() throws Exception {
-            doTest("idea/testData/checker/regression/OverrideResolution.jet");
+            doTest("idea/testData/checker/regression/OverrideResolution.kt");
         }
         
-        @TestMetadata("ScopeForSecondaryConstructors.jet")
+        @TestMetadata("ScopeForSecondaryConstructors.kt")
         public void testScopeForSecondaryConstructors() throws Exception {
-            doTest("idea/testData/checker/regression/ScopeForSecondaryConstructors.jet");
+            doTest("idea/testData/checker/regression/ScopeForSecondaryConstructors.kt");
         }
         
-        @TestMetadata("SpecififcityByReceiver.jet")
+        @TestMetadata("SpecififcityByReceiver.kt")
         public void testSpecififcityByReceiver() throws Exception {
-            doTest("idea/testData/checker/regression/SpecififcityByReceiver.jet");
+            doTest("idea/testData/checker/regression/SpecififcityByReceiver.kt");
         }
         
-        @TestMetadata("WrongTraceInCallResolver.jet")
+        @TestMetadata("WrongTraceInCallResolver.kt")
         public void testWrongTraceInCallResolver() throws Exception {
-            doTest("idea/testData/checker/regression/WrongTraceInCallResolver.jet");
+            doTest("idea/testData/checker/regression/WrongTraceInCallResolver.kt");
         }
         
     }
@@ -401,22 +401,22 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker/infos")
     public static class Infos extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInInfos() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.GenerateTests", new File("idea/testData/checker/infos"), "jet", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.GenerateTests", new File("idea/testData/checker/infos"), "kt", true);
         }
         
-        @TestMetadata("Autocasts.jet")
+        @TestMetadata("Autocasts.kt")
         public void testAutocasts() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/Autocasts.jet");
+            doTest("idea/testData/checker/infos/Autocasts.kt");
         }
         
-        @TestMetadata("PropertiesWithBackingFields.jet")
+        @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/PropertiesWithBackingFields.jet");
+            doTest("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
         }
         
-        @TestMetadata("WrapIntoRef.jet")
+        @TestMetadata("WrapIntoRef.kt")
         public void testWrapIntoRef() throws Exception {
-            doTestWithInfos("idea/testData/checker/infos/WrapIntoRef.jet");
+            doTest("idea/testData/checker/infos/WrapIntoRef.kt");
         }
         
     }
