@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
+
 public class KotlinModuleScriptGenerator {
 
     public interface DependencyProvider {
@@ -53,7 +55,7 @@ public class KotlinModuleScriptGenerator {
         script.append("    module(\"" + moduleName + "\") {\n");
 
         for (File sourceFile : sourceFiles) {
-            script.append("        sources += \"" + sourceFile.getPath() + "\"\n");
+            script.append("        sources += \"" + toSystemIndependentName(sourceFile.getPath()) + "\"\n");
         }
 
         dependencyProvider.processClassPath(new DependencyProcessor() {
@@ -68,7 +70,7 @@ public class KotlinModuleScriptGenerator {
                         script.append("        // Output directory, commented out\n");
                         script.append("        // ");
                     }
-                    script.append("        classpath += \"" + file.getPath() + "\"\n");
+                    script.append("        classpath += \"" + toSystemIndependentName(file.getPath()) + "\"\n");
                 }
             }
 
@@ -76,7 +78,7 @@ public class KotlinModuleScriptGenerator {
             public void processAnnotationRoots(@NotNull List<File> files) {
                 script.append("        // External annotations\n");
                 for (File file : files) {
-                    script.append("        annotationsPath += \"").append(file.getPath()).append("\"\n");
+                    script.append("        annotationsPath += \"").append(toSystemIndependentName(file.getPath())).append("\"\n");
                 }
             }
         });
