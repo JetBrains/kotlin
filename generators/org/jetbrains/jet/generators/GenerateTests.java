@@ -60,43 +60,43 @@ public class GenerateTests {
                 "compiler/tests/",
                 "JetDiagnosticsTestGenerated",
                 AbstractDiagnosticsTestWithEagerResolve.class,
-                new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
-                new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")
+                testModel("compiler/testData/diagnostics/tests"),
+                testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest")
         );
 
         generateTest(
                 "compiler/tests/",
                 "DataClassCodegenTestGenerated",
                 AbstractDataClassCodegenTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/codegen/dataClasses"), true, "kt", "blackBoxFileByFullPath")
+                testModel("compiler/testData/codegen/dataClasses", "blackBoxFileByFullPath")
         );
 
         generateTest(
                 "compiler/tests/",
                 "IntrinsicsTestGenerated",
                 AbstractIntrinsicsTestCase.class,
-                new SimpleTestClassModel(new File("compiler/testData/codegen/intrinsics"), true, "kt", "blackBoxFileByFullPath")
+                testModel("compiler/testData/codegen/intrinsics", "blackBoxFileByFullPath")
         );
 
         generateTest(
                 "compiler/tests/",
                 "MultiDeclTestGenerated",
                 AbstractMultiDeclTestCase.class,
-                new SimpleTestClassModel(new File("compiler/testData/codegen/multiDecl"), true, "kt", "blackBoxFileByFullPath")
+                testModel("compiler/testData/codegen/multiDecl", "blackBoxFileByFullPath")
         );
 
         generateTest(
                 "compiler/tests/",
                 "WriteFlagsTestGenerated",
                 AbstractWriteFlagsTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/writeFlags"), true, "kt", "doTest")
+                testModel("compiler/testData/writeFlags")
         );
 
         generateTest(
                 "compiler/tests/",
                 "LabelGenTestGenerated",
                 AbstractLabelGenTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/codegen/label"), true, "kt", "doTest")
+                testModel("compiler/testData/codegen/label")
         );
 
 
@@ -104,7 +104,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LoadCompiledKotlinTestGenerated",
                 AbstractLoadCompiledKotlinTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/loadKotlin"), true, "kt", "doTest")
+                testModel("compiler/testData/loadKotlin")
         );
 
 
@@ -112,15 +112,15 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LoadJavaTestGenerated",
                 AbstractLoadJavaTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/loadJava"), true, "java", "doTest")
+                testModel("compiler/testData/loadJava", true, "java", "doTest")
         );
 
         generateTest(
                 "compiler/tests/",
                 "LazyResolveDescriptorRendererTestGenerated",
                 AbstractLazyResolveDescriptorRendererTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/renderer"), true, "kt", "doTest"),
-                new SimpleTestClassModel(new File("compiler/testData/lazyResolve/descriptorRenderer"), true, "kt", "doTest")
+                testModel("compiler/testData/renderer"),
+                testModel("compiler/testData/lazyResolve/descriptorRenderer")
         );
 
         // TODO test is temporarily disabled
@@ -136,27 +136,44 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LazyResolveNamespaceComparingTestGenerated",
                 AbstractLazyResolveNamespaceComparingTest.class,
-                new SimpleTestClassModel(new File("compiler/testData/loadKotlin"), true, "kt", "doTestSinglePackage"),
-                new SimpleTestClassModel(new File("compiler/testData/loadJava"), true, "kt", "doTestSinglePackage"),
-                new SimpleTestClassModel(new File("compiler/testData/lazyResolve/namespaceComparator"), true, "kt", "doTestSinglePackage")
+                testModel("compiler/testData/loadKotlin", "doTestSinglePackage"),
+                testModel("compiler/testData/loadJava", "doTestSinglePackage"),
+                testModel("compiler/testData/lazyResolve/namespaceComparator", "doTestSinglePackage")
         );
 
         generateTest(
                 "idea/tests/",
                 "JetPsiCheckerTestGenerated",
                 AbstractJetPsiCheckerTest.class,
-                new SimpleTestClassModel(new File("idea/testData/checker"), false, "kt", "doTest"),
-                new SimpleTestClassModel(new File("idea/testData/checker/regression"), true, "kt", "doTest"),
-                new SimpleTestClassModel(new File("idea/testData/checker/rendering"), true, "kt", "doTest"),
-                new SimpleTestClassModel(new File("idea/testData/checker/infos"), true, "kt", "doTestWithInfos")
+                testModel("idea/testData/checker", false, "kt", "doTest"),
+                testModel("idea/testData/checker/regression"),
+                testModel("idea/testData/checker/rendering"),
+                testModel("idea/testData/checker/infos")
         );
 
         generateTest(
                 "idea/tests/",
                 "DeprecatedHighlightingTestGenerated",
                 AbstractDeprecatedHighlightingTest.class,
-                new SimpleTestClassModel(new File("idea/testData/highlighter/deprecated"), true, "kt", "doTest")
+                testModel("idea/testData/highlighter/deprecated")
         );
+    }
+    
+    private static SimpleTestClassModel testModel(@NotNull String rootPath) {
+        return testModel(rootPath, true, "kt", "doTest");
+    }
+
+    private static SimpleTestClassModel testModel(@NotNull String rootPath, @NotNull String methodName) {
+        return testModel(rootPath, true, "kt", methodName);
+    }
+
+    private static SimpleTestClassModel testModel(
+            @NotNull String rootPath,
+            boolean recursive,
+            @NotNull String extension,
+            @NotNull String doTestMethodName
+    ) {
+        return new SimpleTestClassModel(new File(rootPath), recursive, extension, doTestMethodName);
     }
 
     private GenerateTests() {
