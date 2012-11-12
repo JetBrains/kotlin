@@ -40,6 +40,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerUtil;
+import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
@@ -92,14 +93,14 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
     private static void doCompile(@NotNull final MessageCollector messageCollector, @NotNull OutputSink sink, @NotNull final Module module,
             @NotNull final CompilerEnvironment environment) {
-        CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
+        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl(environment.getOutput());
         outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
             @Override
             public Integer fun(PrintStream stream) {
                 return execInProcess(messageCollector, environment, stream, module);
             }
         });
-        sink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
+        CompilerUtils.reportOutputs(sink, environment.getOutput(), collector);
     }
 
     @Nullable

@@ -14,27 +14,32 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
-package org.jetbrains.jet.codegen.state;
+package org.jetbrains.jet.compiler.runner;
 
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
-public interface Progress {
-    Progress DEAF = new Progress() {
-        @Override
-        public void reportOutput(@NotNull Collection<File> sourceFiles, @Nullable File outputFile) {
-        }
-    };
+public class OutputItemsCollectorImpl implements OutputItemsCollector {
+    private final List<SimpleOutputItem> outputs = ContainerUtil.newArrayList();
+    @Nullable
+    private final File outputDir;
 
-    /**
-     * @param sourceFiles a (possibly empty) collection of source files {@code outputFile} was generated from
-     * @param outputFile an output file
-     */
-    void reportOutput(@NotNull Collection<File> sourceFiles, @Nullable File outputFile);
+    public OutputItemsCollectorImpl(@Nullable File outputDir) {
+        this.outputDir = outputDir;
+    }
+
+    @Override
+    public void add(Collection<File> sourceFiles, File outputFile) {
+        outputs.add(new SimpleOutputItem(sourceFiles, new File(outputDir, outputFile.getPath())));
+    }
+
+    @NotNull
+    public List<SimpleOutputItem> getOutputs() {
+        return outputs;
+    }
 }

@@ -19,9 +19,25 @@ package org.jetbrains.jet.compiler.runner;
 import java.io.File;
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
-public interface OutputItemsCollector {
-    void add(Collection<File> sourceFiles, File outputFile);
+public class SimpleOutputItem {
+    private final Collection<File> sourceFiles;
+    private final File outputFile;
+
+    public SimpleOutputItem(Collection<File> sourceFiles, File outputFile) {
+        this.sourceFiles = sourceFiles;
+        this.outputFile = outputFile;
+    }
+
+    public Collection<File> getSourceFiles() {
+        return sourceFiles;
+    }
+
+    public File getOutputFile() {
+        return outputFile;
+    }
+
+    @Override
+    public String toString() {
+        return sourceFiles + " -> " + outputFile;
+    }
 }

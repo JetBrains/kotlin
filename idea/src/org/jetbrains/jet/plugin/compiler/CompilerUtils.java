@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.TranslatingCompiler;
@@ -24,11 +26,13 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.runner.AbstractOutputItemCollector;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
+import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
+import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -50,31 +54,24 @@ public final class CompilerUtils {
         return new File(file.getPath());
     }
 
-    public static class OutputItemsCollectorImpl extends AbstractOutputItemCollector<VirtualFile, TranslatingCompiler.OutputItem> {
+    public static void reportOutputs(
+            TranslatingCompiler.OutputSink outputSink,
+            File outputDir,
+            OutputItemsCollectorImpl outputItemsCollector
+    ) {
+        Set<VirtualFile> sources = Sets.newHashSet();
+        List<TranslatingCompiler.OutputItem> outputs = Lists.newArrayList();
 
-        public OutputItemsCollectorImpl(@NotNull String outputPath) {
-            super(outputPath);
-        }
-
-        @Override
-        protected TranslatingCompiler.OutputItem convertResult(String resultPath, VirtualFile correspondingSource) {
-            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(resultPath));
-            return new OutputItemImpl(resultPath, correspondingSource);
-        }
-
-        @Override
-        protected VirtualFile convertSource(String sourcePath) {
-            return LocalFileSystem.getInstance().findFileByPath(sourcePath);
-        }
-
-        @Override
-        public void add(Collection<File> sourceFiles, File outputFile) {
-            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputFile);
-            for (File sourceFile : sourceFiles) {
+        for (SimpleOutputItem output : outputItemsCollector.getOutputs()) {
+            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(output.getOutputFile());
+            for (File sourceFile : output.getSourceFiles()) {
                 VirtualFile virtualFileForSourceFile = LocalFileSystem.getInstance().findFileByIoFile(sourceFile);
-                addItem(new OutputItemImpl(outputFile.getPath(), virtualFileForSourceFile));
+
+                sources.add(virtualFileForSourceFile);
+                outputs.add(new OutputItemImpl(output.getOutputFile().getPath(), virtualFileForSourceFile));
             }
         }
+
+        outputSink.add(outputDir.getPath(), outputs, sources.toArray(VirtualFile.EMPTY_ARRAY));
     }
 }
-

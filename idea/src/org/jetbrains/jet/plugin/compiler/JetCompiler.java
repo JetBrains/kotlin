@@ -32,9 +32,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
-import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner;
-import org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator;
+import org.jetbrains.jet.compiler.runner.*;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
@@ -114,24 +112,33 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
+        final File outputDir = environment.getOutput();
+
         File scriptFile = tryToWriteScriptFile(compileContext, moduleChunk, files, module, tests,
                                                compileContext.getModuleOutputDirectory(module),
-                                               environment.getOutput());
+                                               outputDir);
 
         if (scriptFile == null) return;
 
-        CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
+        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl(outputDir) {
+            @Override
+            public void add(Collection<File> sourceFiles, File outputFile) {
+                super.add(sourceFiles, outputFile);
+                compileContext.getProgressIndicator().setText("Emitting: " + outputFile);
+            }
+        };
         runCompiler(messageCollector, environment, scriptFile, collector);
-        outputSink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
+
+        CompilerUtils.reportOutputs(outputSink, outputDir, collector);
     }
 
     private static void runCompiler(
             MessageCollector messageCollector,
             CompilerEnvironment environment,
             File scriptFile,
-            CompilerUtils.OutputItemsCollectorImpl collector
+            OutputItemsCollector outputItemsCollector
     ) {
-        KotlinCompilerRunner.runCompiler(messageCollector, environment, scriptFile, collector, RUN_OUT_OF_PROCESS);
+        KotlinCompilerRunner.runCompiler(messageCollector, environment, scriptFile, outputItemsCollector, RUN_OUT_OF_PROCESS);
     }
 
     public static File tryToWriteScriptFile(

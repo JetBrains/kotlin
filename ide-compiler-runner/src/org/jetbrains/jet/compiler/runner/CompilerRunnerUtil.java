@@ -180,6 +180,7 @@ public class CompilerRunnerUtil {
                 .put("error", ERROR)
                 .put("warning", WARNING)
                 .put("logging", LOGGING)
+                .put("output", OUTPUT)
                 .put("exception", ERROR)
                 .put("info", INFO)
                 .put("messages", INFO) // Root XML element

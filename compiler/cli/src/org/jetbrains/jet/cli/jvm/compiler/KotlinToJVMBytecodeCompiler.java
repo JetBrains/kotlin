@@ -336,11 +336,6 @@ public class KotlinToJVMBytecodeCompiler {
         final CompilerConfiguration configuration = environment.getConfiguration();
         Progress backendProgress = new Progress() {
             @Override
-            public void log(String message) {
-                configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
-            }
-
-            @Override
             public void reportOutput(@NotNull Collection<File> sourceFiles, @Nullable File outputFile) {
                 if (outputFile == null) return;
 

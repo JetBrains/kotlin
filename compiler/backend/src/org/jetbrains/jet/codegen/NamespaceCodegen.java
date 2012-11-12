@@ -92,14 +92,6 @@ public class NamespaceCodegen extends MemberCodegen {
             VirtualFile vFile = file.getVirtualFile();
             try {
                 final String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
-                if (progress != null) {
-                    v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
-                        @Override
-                        public void doSomething(@NotNull ClassBuilder classBuilder) {
-                            progress.log("For source: " + path);
-                        }
-                    });
-                }
                 generate(file, multiFile);
             }
             catch (ProcessCanceledException e) {
