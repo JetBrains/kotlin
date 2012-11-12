@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -104,7 +105,8 @@ public class CompileEnvironmentUtil {
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment, false);
         if (generationState == null) {
-            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed");
+            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed:\n" +
+                                                  loadModuleScriptText(moduleScriptFile));
         }
 
         List<Module> modules = runDefineModules(moduleScriptFile, generationState.getFactory());
@@ -245,5 +247,17 @@ public class CompileEnvironmentUtil {
                 throw new CompileEnvironmentException(e);
             }
         }
+    }
+
+    // Used for debug output only
+    private static String loadModuleScriptText(String moduleScriptFile) {
+        String moduleScriptText;
+        try {
+            moduleScriptText = FileUtil.loadFile(new File(moduleScriptFile));
+        }
+        catch (IOException e) {
+            moduleScriptText = "Can't load module script text:\n" + MessageRenderer.PLAIN.renderException(e);
+        }
+        return moduleScriptText;
     }
 }

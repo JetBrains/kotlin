@@ -98,4 +98,9 @@ public final class Message {
         }
         Assert.assertEquals(other.message, this.message);
     }
+
+    @Override
+    public String toString() {
+        return category + ": " + message + " at " + line + ":" + column + " in " + url;
+    }
 }

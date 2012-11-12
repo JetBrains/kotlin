@@ -43,7 +43,16 @@ public final class MessageChecker {
 
     public void finish() {
         if (iterator.hasNext()) {
-            fail("More message than expected:\n" + iterator.next().message);
+            StringBuilder builder = messagesToString(iterator);
+            fail("More messages than expected:\n" + builder.toString());
         }
+    }
+
+    private StringBuilder messagesToString(Iterator<Message> iterator) {
+        StringBuilder builder = new StringBuilder();
+        while (iterator.hasNext()) {
+            builder.append(iterator.next()).append("\n\n");
+        }
+        return builder;
     }
 }
