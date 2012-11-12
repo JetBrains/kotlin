@@ -26,7 +26,8 @@ public enum CompilerMessageSeverity {
     ERROR,
     WARNING,
     EXCEPTION,
-    LOGGING;
+    LOGGING,
+    OUTPUT;
 
     public static final EnumSet<CompilerMessageSeverity> ERRORS = EnumSet.of(ERROR, EXCEPTION);
 }

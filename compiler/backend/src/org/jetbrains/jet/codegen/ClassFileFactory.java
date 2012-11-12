@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
@@ -27,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
@@ -56,7 +59,8 @@ public final class ClassFileFactory extends GenerationStateAware {
         return newVisitor(outputFilePath, Collections.singletonList(sourceFile));
     }
     
-    ClassBuilder newVisitor(String outputFilePath, Collection<? extends PsiFile> sourceFiles) {
+    private ClassBuilder newVisitor(String outputFilePath, Collection<? extends PsiFile> sourceFiles) {
+        state.getProgress().reportOutput(toIoFilesIgnoringNonPhysical(sourceFiles), new File(outputFilePath));
         state.getProgress().log("Emitting: " + outputFilePath);
         final ClassBuilder answer = builderFactory.newClassBuilder();
         generators.put(outputFilePath, answer);
@@ -139,4 +143,18 @@ public final class ClassFileFactory extends GenerationStateAware {
                 state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL).getInternalName() + ".class",
                 sourceFile);
     }
+
+    private static Collection<File> toIoFilesIgnoringNonPhysical(Collection<? extends PsiFile> psiFiles) {
+        List<File> result = Lists.newArrayList();
+        for (PsiFile psiFile : psiFiles) {
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs
+            // a non-physical file cannot be processed by make
+            if (virtualFile != null) {
+                result.add(new File(virtualFile.getPath()));
+            }
+        }
+        return result;
+    }
+
 }

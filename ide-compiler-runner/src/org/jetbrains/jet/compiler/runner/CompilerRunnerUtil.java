@@ -21,10 +21,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,6 +42,7 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_L
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
 
 public class CompilerRunnerUtil {
+
     private static SoftReference<URLClassLoader> ourClassLoaderRef = new SoftReference<URLClassLoader>(null);
 
     public static List<File> kompilerClasspath(File kotlinHome, MessageCollector messageCollector) {
@@ -241,13 +239,20 @@ public class CompilerRunnerUtil {
             }
             String text = message.toString();
 
-            if (category == LOGGING) {
-                collector.learn(text);
+            if (category == OUTPUT) {
+                reportToCollector(text);
             }
             else {
                 messageCollector.report(category, text, CompilerMessageLocation.create(path, line, column));
             }
             tags.pop();
+        }
+
+        private void reportToCollector(String text) {
+            OutputMessageUtil.Output output = OutputMessageUtil.parseOutputMessage(text);
+            if (output != null) {
+                collector.add(output.sourceFiles, output.outputFile);
+            }
         }
 
         private static int safeParseInt(@Nullable String value, int defaultValue) {

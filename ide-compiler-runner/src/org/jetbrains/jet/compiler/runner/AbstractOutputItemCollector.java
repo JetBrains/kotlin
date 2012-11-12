@@ -34,6 +34,10 @@ public abstract class AbstractOutputItemCollector<S, R> implements OutputItemsCo
         this.outputPath = outputPath;
     }
 
+    protected void addItem(R item) {
+        answer.add(item);
+    }
+
     @Override
     public final void learn(String message) {
         message = message.trim();

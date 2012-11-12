@@ -19,10 +19,6 @@ package org.jetbrains.jet.cli.common.messages;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -52,7 +48,7 @@ public class PrintingMessageCollector implements MessageCollector {
             @NotNull String message,
             @NotNull CompilerMessageLocation location) {
         String text = messageRenderer.render(severity, message, location);
-        if (severity == CompilerMessageSeverity.LOGGING) {
+        if (severity == CompilerMessageSeverity.LOGGING || severity == CompilerMessageSeverity.OUTPUT) {
             if (!verbose) {
                 return;
             }

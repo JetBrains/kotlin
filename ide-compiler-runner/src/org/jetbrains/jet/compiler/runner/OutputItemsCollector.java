@@ -16,9 +16,14 @@
 
 package org.jetbrains.jet.compiler.runner;
 
+import java.io.File;
+import java.util.Collection;
+
 /**
  * @author abreslav
  */
 public interface OutputItemsCollector {
+    @Deprecated
     void learn(String message);
+    void add(Collection<File> sourceFiles, File outputFile);
 }

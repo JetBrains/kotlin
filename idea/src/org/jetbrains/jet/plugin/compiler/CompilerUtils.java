@@ -28,6 +28,7 @@ import org.jetbrains.jet.compiler.runner.AbstractOutputItemCollector;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * @author Pavel Talanov
@@ -64,6 +65,15 @@ public final class CompilerUtils {
         @Override
         protected VirtualFile convertSource(String sourcePath) {
             return LocalFileSystem.getInstance().findFileByPath(sourcePath);
+        }
+
+        @Override
+        public void add(Collection<File> sourceFiles, File outputFile) {
+            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputFile);
+            for (File sourceFile : sourceFiles) {
+                VirtualFile virtualFileForSourceFile = LocalFileSystem.getInstance().findFileByIoFile(sourceFile);
+                addItem(new OutputItemImpl(outputFile.getPath(), virtualFileForSourceFile));
+            }
         }
     }
 }
