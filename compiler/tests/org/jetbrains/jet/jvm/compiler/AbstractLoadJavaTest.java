@@ -20,13 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.analyzeKotlinAndLoadTestNamespace;
@@ -51,20 +47,5 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         NamespaceDescriptor nsb = compileJavaAndLoadTestNamespaceFromBinary(Collections.singletonList(javaFile),
                                                                             tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         compareNamespaces(nsa, nsb, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
-    }
-
-    public static void main(String[] args) throws IOException {
-        String aPackage = "org.jetbrains.jet.jvm.compiler";
-        String extension = "java";
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "LoadJavaTestGenerated",
-                AbstractLoadJavaTest.class,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/loadJava"), true, extension, "doTest")
-                ),
-                AbstractLoadJavaTest.class
-        ).generateAndSave();
     }
 }

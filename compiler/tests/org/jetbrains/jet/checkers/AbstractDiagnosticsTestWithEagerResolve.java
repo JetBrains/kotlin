@@ -22,12 +22,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,21 +51,4 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
 
         assertTrue("Diagnostics mismatch. See the output above", ok);
     }
-
-    public static void main(String[] args) throws IOException {
-        String aPackage = "org.jetbrains.jet.checkers";
-        Class<AbstractDiagnosticsTestWithEagerResolve> thisClass = AbstractDiagnosticsTestWithEagerResolve.class;
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "JetDiagnosticsTestGenerated",
-                thisClass,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests"), true, "kt", "doTest"),
-                        new SimpleTestClassModel(new File("compiler/testData/diagnostics/tests/script"), true, "ktscript", "doTest")
-                ),
-                thisClass
-        ).generateAndSave();
-    }
-
 }

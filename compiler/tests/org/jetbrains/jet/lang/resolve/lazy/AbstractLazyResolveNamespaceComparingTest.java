@@ -26,13 +26,10 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -77,30 +74,5 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
 
     protected void doTestSinglePackage(String testFileName) throws Exception {
         doTest(testFileName);
-    }
-
-    public static void main(String[] args) throws IOException {
-        String extension = "kt";
-        new TestGenerator(
-            "compiler/tests/",
-            AbstractLazyResolveNamespaceComparingTest.class.getPackage().getName(),
-            "LazyResolveNamespaceComparingTestGenerated",
-            AbstractLazyResolveNamespaceComparingTest.class,
-            Arrays.asList(
-                    new SimpleTestClassModel(new File("compiler/testData/loadKotlin"),
-                                             true,
-                                             extension,
-                                             "doTestSinglePackage"),
-                    new SimpleTestClassModel(new File("compiler/testData/loadJava"),
-                                             true,
-                                             extension,
-                                             "doTestSinglePackage"),
-                    new SimpleTestClassModel(new File("compiler/testData/lazyResolve/namespaceComparator"),
-                                             true,
-                                             extension,
-                                             "doTestSinglePackage")
-            ),
-            AbstractLazyResolveNamespaceComparingTest.class
-        ).generateAndSave();
     }
 }

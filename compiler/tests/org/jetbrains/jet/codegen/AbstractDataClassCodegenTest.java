@@ -16,13 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
 /**
  * @author udalov
  */
@@ -31,20 +24,5 @@ public abstract class AbstractDataClassCodegenTest extends CodegenTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithFullJdk();
-    }
-
-    public static void main(String[] args) throws IOException {
-        Class<AbstractDataClassCodegenTest> thisClass = AbstractDataClassCodegenTest.class;
-        String aPackage = thisClass.getPackage().getName();
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "DataClassCodegenTestGenerated",
-                thisClass,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/codegen/dataClasses"), true, "kt", "blackBoxFileByFullPath")
-                ),
-                thisClass
-        ).generateAndSave();
     }
 }

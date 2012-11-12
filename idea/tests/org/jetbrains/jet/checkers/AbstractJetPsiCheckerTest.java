@@ -20,12 +20,6 @@ import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * @author abreslav
@@ -47,23 +41,5 @@ public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestC
     @Override
     protected Sdk getProjectJDK() {
         return PluginTestCaseBase.jdkFromIdeaHome();
-    }
-
-    public static void main(String[] args) throws IOException {
-        Class<AbstractJetPsiCheckerTest> thisClass = AbstractJetPsiCheckerTest.class;
-        String aPackage = thisClass.getPackage().getName();
-        new TestGenerator(
-                "idea/tests/",
-                aPackage,
-                "JetPsiCheckerTestGenerated",
-                thisClass,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("idea/testData/checker"), false, "jet", "doTest"),
-                        new SimpleTestClassModel(new File("idea/testData/checker/regression"), true, "jet", "doTest"),
-                        new SimpleTestClassModel(new File("idea/testData/checker/rendering"), true, "kt", "doTest"),
-                        new SimpleTestClassModel(new File("idea/testData/checker/infos"), true, "jet", "doTestWithInfos")
-                ),
-                thisClass
-        ).generateAndSave();
     }
 }

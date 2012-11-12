@@ -16,13 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
 /**
  * @author svtk
  */
@@ -36,21 +29,5 @@ public abstract class AbstractMultiDeclTestCase extends CodegenTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations();
-    }
-
-    public static void main(String[] args) throws IOException {
-        Class<AbstractMultiDeclTestCase> thisClass = AbstractMultiDeclTestCase.class;
-        String aPackage = thisClass.getPackage().getName();
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "MultiDeclTestGenerated",
-                thisClass,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/codegen/multiDecl"), true, "kt", "blackBoxFileByFullPath")
-                ),
-                thisClass
-        ).generateAndSave();
-
     }
 }

@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.intellij.openapi.util.io.FileUtil;
-import junit.framework.TestCase;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -26,13 +25,9 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +36,7 @@ import java.util.Set;
  */
 public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
 
-    private static final File TEST_DATA_DIR = new File("compiler/testData/diagnostics/tests");
+    public static final File TEST_DATA_DIR = new File("compiler/testData/diagnostics/tests");
 
     @Override
     protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files) {
@@ -73,20 +68,4 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
                 }),
                 txtFile);
     }
-
-    public static void main(String[] args) throws IOException {
-        Class<? extends TestCase> thisClass = AbstractLazyResolveDiagnosticsTest.class;
-        new TestGenerator(
-                "compiler/tests/",
-                thisClass.getPackage().getName(),
-                "LazyResolveDiagnosticsTestGenerated",
-                thisClass,
-                Arrays.asList(
-                        new SimpleTestClassModel(TEST_DATA_DIR, true, "kt", "doTest")
-                ),
-                thisClass
-        ).generateAndSave();
-    }
-
-
 }

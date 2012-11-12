@@ -23,13 +23,9 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.TEST_PACKAGE_FQNAME;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
@@ -55,20 +51,5 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
         NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceFromBinaries(tmpdir, getTestRootDisposable(),
                                                                                                   ConfigurationKind.JDK_ONLY);
         compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
-    }
-
-    public static void main(String[] args) throws IOException {
-        String aPackage = "org.jetbrains.jet.jvm.compiler";
-        String extension = "kt";
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "LoadCompiledKotlinTestGenerated",
-                AbstractLoadCompiledKotlinTest.class,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/loadKotlin"), true, extension, "doTest")
-                ),
-                AbstractLoadCompiledKotlinTest.class
-        ).generateAndSave();
     }
 }

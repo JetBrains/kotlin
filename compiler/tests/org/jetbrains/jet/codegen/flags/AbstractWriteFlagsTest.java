@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen.flags;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.asm4.*;
@@ -26,13 +25,10 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefix;
@@ -83,21 +79,6 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         if (!isClassFound) {
             throw new AssertionError("Couldn't find a class file with name " + testedObject.containingClass);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        String aPackage = "org.jetbrains.jet.codegen.flags";
-        Class<AbstractWriteFlagsTest> thisClass = AbstractWriteFlagsTest.class;
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "WriteFlagsTestGenerated",
-                thisClass,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/writeFlags"), true, "kt", "doTest")
-                ),
-                thisClass
-        ).generateAndSave();
     }
 
     private static TestedObject parseExpectedTestedObject(String fileText) {

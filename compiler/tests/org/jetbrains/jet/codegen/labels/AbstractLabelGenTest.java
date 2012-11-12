@@ -17,14 +17,9 @@
 package org.jetbrains.jet.codegen.labels;
 
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestCase;
-import org.jetbrains.jet.test.generator.SimpleTestClassModel;
-import org.jetbrains.jet.test.generator.TestGenerator;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public abstract class AbstractLabelGenTest extends CodegenTestCase {
 
@@ -39,20 +34,5 @@ public abstract class AbstractLabelGenTest extends CodegenTestCase {
     protected void doTest(String path) throws IOException {
         String relativePath = path.substring(REDUNDANT_PATH_PREFIX.length());
         blackBoxFile(relativePath);
-    }
-
-    public static void main(String[] args) throws IOException {
-        String aPackage = "org.jetbrains.jet.codegen.labels";
-        Class<AbstractLabelGenTest> thisClass = AbstractLabelGenTest.class;
-        new TestGenerator(
-                "compiler/tests/",
-                aPackage,
-                "LabelGenTestGenerated",
-                thisClass,
-                Arrays.asList(
-                        new SimpleTestClassModel(new File("compiler/testData/codegen/label"), true, "kt", "doTest")
-                ),
-                thisClass
-        ).generateAndSave();
     }
 }
