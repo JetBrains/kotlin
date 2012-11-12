@@ -304,7 +304,7 @@ public final class JavaFunctionResolver {
         boolean resultNullable = returnTypeMustBeNullable(autoType, typesFromSuper, covariantPosition);
         List<TypeProjection> resultArguments = getTypeArgsOfReturnType(autoType, typesFromSuper);
         JetScope resultScope;
-        ClassifierDescriptor classifierDescriptor = autoType.getConstructor().getDeclarationDescriptor();
+        ClassifierDescriptor classifierDescriptor = getReturnTypeClassifier(autoType, typesFromSuper);
         if (classifierDescriptor instanceof ClassDescriptor) {
             resultScope = ((ClassDescriptor) classifierDescriptor).getMemberScope(resultArguments);
         }
@@ -313,7 +313,7 @@ public final class JavaFunctionResolver {
         }
 
         return new JetTypeImpl(autoType.getAnnotations(),
-                               autoType.getConstructor(),
+                               classifierDescriptor.getTypeConstructor(),
                                resultNullable,
                                resultArguments,
                                resultScope);
@@ -412,6 +412,41 @@ public final class JavaFunctionResolver {
         }
 
         return someSupersNullable && autoType.isNullable();
+    }
+
+    @NotNull
+    private static ClassifierDescriptor getReturnTypeClassifier(@NotNull JetType autoType, @NotNull Collection<JetType> typesFromSuper) {
+        ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
+        if (!(classifier instanceof ClassDescriptor)) {
+            return classifier;
+        }
+        ClassDescriptor clazz = (ClassDescriptor) classifier;
+
+        MutableReadOnlyCollectionsMap collectionsMap = MutableReadOnlyCollectionsMap.getInstance();
+
+        if (collectionsMap.isMutableCollection(clazz)) {
+
+            boolean someSupersMutable = false;
+            boolean someSupersReadOnly = false;
+            for (JetType typeFromSuper : typesFromSuper) {
+                ClassifierDescriptor classifierFromSuper = typeFromSuper.getConstructor().getDeclarationDescriptor();
+                if (classifierFromSuper instanceof ClassDescriptor) {
+                    ClassDescriptor classFromSuper = (ClassDescriptor) classifierFromSuper;
+
+                    if (collectionsMap.isMutableCollection(classFromSuper)) {
+                        someSupersMutable = true;
+                    }
+                    else if (collectionsMap.isReadOnlyCollection(classFromSuper)) {
+                        someSupersReadOnly = true;
+                    }
+                }
+            }
+
+            if (someSupersReadOnly && !someSupersMutable) {
+                return collectionsMap.convertMutableToReadOnly(clazz);
+            }
+        }
+        return classifier;
     }
 
     private static boolean isEnumSpecialMethod(@NotNull FunctionDescriptor functionDescriptor) {

@@ -1,0 +1,10 @@
+namespace test
+
+public open class test.InheritReadOnlinessSubclass : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.InheritReadOnlinessSubclass
+    public open fun foo(): jet.Collection<jet.String>
+    public open class test.InheritReadOnlinessSubclass.Sub : test.InheritReadOnlinessSubclass {
+        public final /*constructor*/ fun <init>(): test.InheritReadOnlinessSubclass.Sub
+        public open override /*1*/ fun foo(): jet.List<jet.String>
+    }
+}

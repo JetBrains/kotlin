@@ -1391,6 +1391,21 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.kt");
                     }
                     
+                    @TestMetadata("InheritReadOnlinessOfArgument.kt")
+                    public void testInheritReadOnlinessOfArgument() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.kt");
+                    }
+                    
+                    @TestMetadata("InheritReadOnlinessSameClass.kt")
+                    public void testInheritReadOnlinessSameClass() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessSameClass.kt");
+                    }
+                    
+                    @TestMetadata("InheritReadOnlinessSubclass.kt")
+                    public void testInheritReadOnlinessSubclass() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.kt");
+                    }
+                    
                 }
                 
                 public static Test innerSuite() {

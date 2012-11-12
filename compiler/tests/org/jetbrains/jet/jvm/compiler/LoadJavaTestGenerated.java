@@ -496,6 +496,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.java");
                 }
                 
+                @TestMetadata("InheritReadOnlinessOfArgument.java")
+                public void testInheritReadOnlinessOfArgument() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.java");
+                }
+                
+                @TestMetadata("InheritReadOnlinessSameClass.java")
+                public void testInheritReadOnlinessSameClass() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessSameClass.java");
+                }
+                
+                @TestMetadata("InheritReadOnlinessSubclass.java")
+                public void testInheritReadOnlinessSubclass() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.java");
+                }
+                
             }
             
             public static Test innerSuite() {
