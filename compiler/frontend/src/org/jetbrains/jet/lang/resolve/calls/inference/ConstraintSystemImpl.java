@@ -337,7 +337,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @Override
     public boolean isSuccessful() {
-        return !hasTypeConstructorMismatch() && !hasUnknownParameters() && !hasConflictingConstraints();
+        return !hasContradiction() && !hasUnknownParameters();
     }
 
     @Override
