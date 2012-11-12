@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -417,37 +418,49 @@ public class CandidateResolver {
                 }
                 JetTypeInfo typeInfo = expressionTypingServices.getTypeInfo(context.scope, expression, expectedType, dataFlowInfo, trace);
                 JetType type = typeInfo.getType();
-                argumentTypes.add(type);
                 dataFlowInfo = dataFlowInfo.and(typeInfo.getDataFlowInfo());
+
                 if (type == null || ErrorUtils.isErrorType(type)) {
                     candidateCall.argumentHasNoType();
+                    argumentTypes.add(type);
                 }
-                else if (expectedType != NO_EXPECTED_TYPE && !typeChecker.isSubtypeOf(type, expectedType)) {
-                    //                    VariableDescriptor variableDescriptor = AutoCastUtils.getVariableDescriptorFromSimpleName(temporaryTrace.getBindingContext(), argument);
-                    //                    if (variableDescriptor != null) {
-                    //                        JetType autoCastType = null;
-                    //                        for (JetType possibleType : dataFlowInfo.getPossibleTypesForVariable(variableDescriptor)) {
-                    //                            if (semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
-                    //                                autoCastType = possibleType;
-                    //                                break;
-                    //                            }
-                    //                        }
-                    //                        if (autoCastType != null) {
-                    //                            if (AutoCastUtils.isStableVariable(variableDescriptor)) {
-                    //                                temporaryTrace.record(AUTOCAST, argument, autoCastType);
-                    //                            }
-                    //                            else {
-                    //                                temporaryTrace.report(AUTOCAST_IMPOSSIBLE.on(argument, autoCastType, variableDescriptor));
-                    //                                resultStatus = false;
-                    //                            }
-                    //                        }
-                    //                    }
-                    //                    else {
-                    resultStatus = OTHER_ERROR;
+                else {
+                    JetType resultingType;
+                    if (expectedType == NO_EXPECTED_TYPE || typeChecker.isSubtypeOf(type, expectedType)) {
+                        resultingType = type;
+                    }
+                    else {
+                        resultingType = autocastValueArgumentTypeIfPossible(expression, expectedType, type, trace, dataFlowInfo);
+                        if (resultingType == null) {
+                            resultingType = type;
+                            resultStatus = OTHER_ERROR;
+                        }
+                    }
+
+                    argumentTypes.add(resultingType);
                 }
             }
         }
         return new ValueArgumentsCheckingResult(resultStatus, argumentTypes);
+    }
+
+    @Nullable
+    private JetType autocastValueArgumentTypeIfPossible(
+            @NotNull JetExpression expression,
+            @NotNull JetType expectedType,
+            @NotNull JetType actualType,
+            @NotNull BindingTrace trace,
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        ExpressionReceiver receiverToCast = new ExpressionReceiver(expression, actualType);
+        List<ReceiverValue> variants = AutoCastUtils.getAutoCastVariants(trace.getBindingContext(), dataFlowInfo, receiverToCast);
+        for (ReceiverValue receiverValue : variants) {
+            JetType possibleType = receiverValue.getType();
+            if (typeChecker.isSubtypeOf(possibleType, expectedType)) {
+                return possibleType;
+            }
+        }
+        return null;
     }
 
     private void checkUnmappedArgumentTypes(ResolutionContext context, Set<ValueArgument> unmappedArguments) {

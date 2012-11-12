@@ -1058,17 +1058,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetExpression left = expression.getLeft();
         JetExpression right = expression.getRight();
+        IElementType operationType = operationSign.getReferencedNameElementType();
 
         JetType result = null;
-        IElementType operationType = operationSign.getReferencedNameElementType();
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (operationType == JetTokens.IDENTIFIER) {
             Name referencedName = operationSign.getReferencedNameAsName();
             if (referencedName != null) {
-                result = getTypeForBinaryCall(context.scope, referencedName, context, expression);
+                JetTypeInfo typeInfo = getTypeInfoForBinaryCall(context.scope, referencedName, context, expression);
+                result = typeInfo.getType();
+                dataFlowInfo = typeInfo.getDataFlowInfo();
             }
         }
         else if (OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)) {
-            result = getTypeForBinaryCall(context.scope, OperatorConventions.BINARY_OPERATION_NAMES.get(operationType), context, expression);
+            JetTypeInfo typeInfo = getTypeInfoForBinaryCall(context.scope, OperatorConventions.BINARY_OPERATION_NAMES.get(operationType),
+                                                            context, expression);
+            result = typeInfo.getType();
+            dataFlowInfo = typeInfo.getDataFlowInfo();
         }
         else if (operationType == JetTokens.EQ) {
             result = visitAssignment(expression, contextWithExpectedType);
@@ -1077,7 +1083,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = visitAssignmentOperation(expression, contextWithExpectedType);
         }
         else if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
-            JetType compareToReturnType = getTypeForBinaryCall(context.scope, Name.identifier("compareTo"), context, expression);
+            JetTypeInfo typeInfo = getTypeInfoForBinaryCall(context.scope, Name.identifier("compareTo"), context, expression);
+            dataFlowInfo = typeInfo.getDataFlowInfo();
+            JetType compareToReturnType = typeInfo.getType();
             if (compareToReturnType != null && !ErrorUtils.isErrorType(compareToReturnType)) {
                 TypeConstructor constructor = compareToReturnType.getConstructor();
                 KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
@@ -1128,7 +1136,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             else if (OperatorConventions.IN_OPERATIONS.contains(operationType)) {
                 if (right == null) {
                     result = ErrorUtils.createErrorType("No right argument"); // TODO
-                    return JetTypeInfo.create(null, context.dataFlowInfo);
+                    return JetTypeInfo.create(null, dataFlowInfo);
                 }
                 checkInExpression(expression, expression.getOperationReference(), expression.getLeft(), expression.getRight(), context);
                 result = booleanType;
@@ -1164,7 +1172,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                         DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
                         return JetTypeInfo.create(TypeUtils.makeNullableAsSpecified(
                                 CommonSupertypes.commonSupertype(Arrays.asList(leftType, rightType)), rightType.isNullable()),
-                                                  context.dataFlowInfo);
+                                                  dataFlowInfo);
                     }
                 }
             }
@@ -1172,7 +1180,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             }
         }
-        return DataFlowUtils.checkType(result, expression, contextWithExpectedType, context.dataFlowInfo);
+        return DataFlowUtils.checkType(result, expression, contextWithExpectedType, dataFlowInfo);
     }
 
     public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
@@ -1255,10 +1263,28 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return JetTypeInfo.create(type, context.dataFlowInfo);
     }
 
-    @Nullable
-    public JetType getTypeForBinaryCall(JetScope scope, Name name, ExpressionTypingContext context, JetBinaryExpression binaryExpression) {
-        ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
-        return OverloadResolutionResultsUtil.getResultType(getResolutionResultsForBinaryCall(scope, name, context, binaryExpression, receiver));
+    @NotNull
+    public JetTypeInfo getTypeInfoForBinaryCall(
+            JetScope scope,
+            Name name,
+            ExpressionTypingContext contextWithOldScope,
+            JetBinaryExpression binaryExpression
+    ) {
+        ExpressionTypingContext context = contextWithOldScope.replaceScope(scope);
+        JetExpression left = binaryExpression.getLeft();
+        DataFlowInfo dataFlowInfo = facade.getTypeInfo(left, context).getDataFlowInfo();
+
+        ExpressionReceiver receiver = safeGetExpressionReceiver(facade, left, context);
+        ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults =
+                getResolutionResultsForBinaryCall(scope, name, contextWithDataFlow, binaryExpression, receiver);
+
+        JetExpression right = binaryExpression.getRight();
+        if (right != null) {
+            dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
+        }
+
+        return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultType(resolutionResults), dataFlowInfo);
     }
 
     @NotNull
