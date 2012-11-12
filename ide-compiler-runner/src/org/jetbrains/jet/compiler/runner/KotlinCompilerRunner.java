@@ -80,7 +80,7 @@ public class KotlinCompilerRunner {
             return CompilerRunnerUtil.getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {
-            CompilerRunnerUtil.reportException(messageCollector, e);
+            CompilerOutputParser.reportException(messageCollector, e);
             return -1;
         }
     }
@@ -129,8 +129,9 @@ public class KotlinCompilerRunner {
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
                 @Override
                 public void run() {
-                    CompilerRunnerUtil
-                            .parseCompilerMessagesFromReader(messageCollector, new InputStreamReader(process.getInputStream()), itemCollector);
+                    CompilerOutputParser
+                            .parseCompilerMessagesFromReader(messageCollector, new InputStreamReader(process.getInputStream()),
+                                                             itemCollector);
                 }
             });
 
