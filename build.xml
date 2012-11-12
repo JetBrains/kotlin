@@ -305,6 +305,7 @@
 
                     -dontwarn org.jetbrains.jet.internal.com.intellij.util.**
                     -dontwarn org.jetbrains.jet.internal.com.intellij.codeInsight.**
+                    -dontwarn org.jetbrains.jet.internal.com.thoughtworks.xstream.**
 
                     -libraryjars '${rtjar}'
 
