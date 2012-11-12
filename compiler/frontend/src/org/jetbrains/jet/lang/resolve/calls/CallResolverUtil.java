@@ -43,6 +43,7 @@ public class CallResolverUtil {
         call.getTrace().addAllMyDataTo(trace);
         trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);
 
+        copy.addStatus(call.getStatus());
         if (call.isDirty()) {
             copy.argumentHasNoType();
         }
