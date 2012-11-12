@@ -688,10 +688,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.getfield(JvmClassName.byType(classAsmType).getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
         }
 
-        int parameterIndex = 0;
+        int parameterIndex = 1; // localVariable 0 = this
         for (ValueParameterDescriptor parameterDescriptor : function.getValueParameters()) {
-            iv.load(parameterIndex + 1, typeMapper.mapType(parameterDescriptor.getType()));
-            parameterIndex++;
+            Type type = typeMapper.mapType(parameterDescriptor.getType());
+            iv.load(parameterIndex, type);
+            parameterIndex += type.getSize();
         }
 
         String constructorJvmDescriptor = typeMapper.mapToCallableMethod(constructor).getSignature().getAsmMethod().getDescriptor();

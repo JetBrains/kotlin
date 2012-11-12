@@ -84,13 +84,27 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
     @TestMetadata("compiler/testData/codegen/dataClasses/copy")
     public static class Copy extends AbstractDataClassCodegenTest {
         public void testAllFilesPresentInCopy() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractDataClassCodegenTest",
-                                                         new File("compiler/testData/codegen/dataClasses/copy"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.codegen.AbstractDataClassCodegenTest", new File("compiler/testData/codegen/dataClasses/copy"), "kt", true);
         }
         
         @TestMetadata("constructorWithDefaultParam.kt")
         public void testConstructorWithDefaultParam() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/constructorWithDefaultParam.kt");
+        }
+        
+        @TestMetadata("copyInNestedDataClass.kt")
+        public void testCopyInNestedDataClass() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/copyInNestedDataClass.kt");
+        }
+        
+        @TestMetadata("copyInObjectNestedDataClass.kt")
+        public void testCopyInObjectNestedDataClass() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/copyInObjectNestedDataClass.kt");
+        }
+        
+        @TestMetadata("kt3033.kt")
+        public void testKt3033() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/kt3033.kt");
         }
         
         @TestMetadata("paramWithoutProperty.kt")
@@ -112,16 +126,7 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
         public void testWithGenericParameter() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/withGenericParameter.kt");
         }
-
-        @TestMetadata("copyInNestedDataClass.kt")
-        public void testCopyInNestedClasses() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/copyInNestedDataClass.kt");
-        }
-
-        @TestMetadata("copyInObjectNestedDataClass.kt")
-        public void testCopyInObjectNestedClasses() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/copy/copyInObjectNestedDataClass.kt");
-        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/dataClasses/equals")
