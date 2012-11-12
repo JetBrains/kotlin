@@ -1103,10 +1103,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (OperatorConventions.EQUALS_OPERATIONS.contains(operationType)) {
                 Name name = Name.identifier("equals");
                 if (right != null) {
-                    ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
+                    ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
+
+                    dataFlowInfo = facade.getTypeInfo(left, context).getDataFlowInfo();
+                    ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
                     OverloadResolutionResults<FunctionDescriptor> resolutionResults = resolveFakeCall(
-                            context, receiver, name, KotlinBuiltIns.getInstance().getNullableAnyType());
+                            contextWithDataFlow, receiver, name, KotlinBuiltIns.getInstance().getNullableAnyType());
+
+                    dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
 
                     if (resolutionResults.isSuccess()) {
                         FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
