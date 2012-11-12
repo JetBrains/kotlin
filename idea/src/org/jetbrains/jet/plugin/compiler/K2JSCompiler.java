@@ -129,7 +129,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
     private static Integer doExec(@NotNull MessageCollector messageCollector, @NotNull CompilerEnvironment environment, @NotNull PrintStream out,
             @NotNull Module module) throws Exception {
         File outDir = environment.getOutput();
-        String outFile = outDir.getPath() + "/" + module.getName() + ".js";
+        File outFile = new File(outDir, module.getName() + ".js");
         String[] commandLineArgs = constructArguments(module, outFile);
         Object rc = invokeExecMethod(environment, out, messageCollector, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
 
@@ -142,7 +142,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
     }
 
     @NotNull
-    private static String[] constructArguments(@NotNull Module module, @Nullable String outFile) {
+    private static String[] constructArguments(@NotNull Module module, @NotNull File outFile) {
         VirtualFile[] sourceFiles = getSourceFiles(module);
 
         ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
@@ -234,11 +234,9 @@ public final class K2JSCompiler implements TranslatingCompiler {
         }
     }
 
-    private static void addOutputPath(@Nullable String outFile, @NotNull ArrayList<String> args) {
-        if (outFile != null) {
-            args.add("-output");
-            args.add(outFile);
-        }
+    private static void addOutputPath(@NotNull File outFile, @NotNull ArrayList<String> args) {
+        args.add("-output");
+        args.add(outFile.getPath());
     }
 
     @NotNull
