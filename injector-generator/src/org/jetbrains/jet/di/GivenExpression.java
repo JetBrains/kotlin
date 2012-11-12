@@ -26,7 +26,7 @@ import java.util.Collections;
 /**
 * @author abreslav
 */
-class GivenExpression implements Expression {
+public class GivenExpression implements Expression {
     private final String expression;
     private final Collection<DiType> typesToImport;
 

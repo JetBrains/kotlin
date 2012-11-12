@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-class DiType {
+public class DiType {
     @NotNull
     private final Class<?> clazz;
     @NotNull

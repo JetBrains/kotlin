@@ -124,9 +124,9 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             TypeProjection argument = arguments.get(i);
             JetType alternativeType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters);
             Variance variance = argument.getProjectionKind();
+            Variance altVariance;
             if (type instanceof JetUserType) {
                 JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
-                Variance altVariance = Variance.INVARIANT;
                 switch (typeProjection.getProjectionKind()) {
                     case IN:
                         altVariance = Variance.IN_VARIANCE;
@@ -137,12 +137,16 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                     case STAR:
                         throw new AlternativeSignatureMismatchException("Star projection is not available in alternative signatures");
                     default:
+                        altVariance = Variance.INVARIANT;
                 }
                 if (altVariance != variance && variance != Variance.INVARIANT) {
                     throw new AlternativeSignatureMismatchException("Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance);
                 }
             }
-            altArguments.add(new TypeProjection(variance, alternativeType));
+            else {
+                altVariance = variance;
+            }
+            altArguments.add(new TypeProjection(altVariance, alternativeType));
         }
 
         TypeConstructor typeConstructor;
