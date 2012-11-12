@@ -1148,9 +1148,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = booleanType;
             }
             else if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationType)) {
-                JetType leftType = facade.getTypeInfo(left, context.replaceScope(context.scope)).getType();
+                JetTypeInfo leftTypeInfo = facade.getTypeInfo(left, context);
+                JetType leftType = leftTypeInfo.getType();
+                dataFlowInfo = leftTypeInfo.getDataFlowInfo();
+
                 WritableScopeImpl leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
-                DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
+                // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
+                DataFlowInfo flowInfoLeft =
+                        DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, context).and(dataFlowInfo);
                 WritableScopeImpl rightScope = operationType == JetTokens.ANDAND
                                                ? leftScope
                                                : newWritableScopeImpl(context, "Right scope of && or ||");

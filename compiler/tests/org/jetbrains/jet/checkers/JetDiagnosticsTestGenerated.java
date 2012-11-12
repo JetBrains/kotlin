@@ -1146,6 +1146,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpression.kt");
             }
             
+            @TestMetadata("BinaryExpressionBooleanOperations.kt")
+            public void testBinaryExpressionBooleanOperations() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpressionBooleanOperations.kt");
+            }
+            
             @TestMetadata("BinaryExpressionCompareToConvention.kt")
             public void testBinaryExpressionCompareToConvention() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpressionCompareToConvention.kt");
@@ -1169,6 +1174,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("BinaryExpressionPlusConvention.kt")
             public void testBinaryExpressionPlusConvention() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpressionPlusConvention.kt");
+            }
+            
+            @TestMetadata("Condition.kt")
+            public void testCondition() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/Condition.kt");
             }
             
             @TestMetadata("DeepIf.kt")
