@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators;
+package org.jetbrains.jet.generators.tests;
 
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;

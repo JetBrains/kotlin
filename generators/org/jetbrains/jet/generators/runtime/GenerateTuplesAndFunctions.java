@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators;
+package org.jetbrains.jet.generators.runtime;
 
 import java.io.File;
 import java.io.FileNotFoundException;

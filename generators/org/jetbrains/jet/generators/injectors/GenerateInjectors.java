@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators;
+package org.jetbrains.jet.generators.injectors;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.*;
