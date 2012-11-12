@@ -1171,10 +1171,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 result = booleanType;
             }
             else if (operationType == JetTokens.ELVIS) {
-                JetType leftType = facade.getTypeInfo(left, context.replaceScope(context.scope)).getType();
-                JetType rightType = right == null
-                                    ? null
-                                    : facade.getTypeInfo(right, contextWithExpectedType.replaceScope(context.scope)).getType();
+                JetTypeInfo leftTypeInfo = facade.getTypeInfo(left, context);
+                JetType leftType = leftTypeInfo.getType();
+                dataFlowInfo = leftTypeInfo.getDataFlowInfo();
+
+                ExpressionTypingContext newContext = contextWithExpectedType.replaceDataFlowInfo(dataFlowInfo).replaceScope(context.scope);
+                JetType rightType = right == null ? null : facade.getTypeInfo(right, newContext).getType();
                 if (leftType != null) {
                     if (!leftType.isNullable()) {
                         context.trace.report(USELESS_ELVIS.on(left, leftType));

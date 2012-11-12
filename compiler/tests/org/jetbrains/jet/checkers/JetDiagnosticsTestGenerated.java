@@ -1161,6 +1161,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpressionContainsConvention.kt");
             }
             
+            @TestMetadata("BinaryExpressionElvis.kt")
+            public void testBinaryExpressionElvis() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpressionElvis.kt");
+            }
+            
             @TestMetadata("BinaryExpressionEqualsConvention.kt")
             public void testBinaryExpressionEqualsConvention() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/BinaryExpressionEqualsConvention.kt");
