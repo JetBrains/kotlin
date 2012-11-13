@@ -336,9 +336,18 @@ public abstract class StackValue {
             @Nullable CallableMethod callableMethod
     ) {
         if (resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists()) {
-            return new CallReceiver(resolvedCall, receiver, codegen, callableMethod);
+            return new CallReceiver(resolvedCall, receiver, codegen, callableMethod, true);
         }
         return receiver;
+    }
+
+    public static StackValue receiverWithoutReceiverArgument(StackValue receiverWithParameter) {
+        if (receiverWithParameter instanceof CallReceiver) {
+            CallReceiver callReceiver = (CallReceiver) receiverWithParameter;
+            return new CallReceiver(callReceiver.resolvedCall, callReceiver.receiver,
+                                    callReceiver.codegen, callReceiver.callableMethod, false);
+        }
+        return receiverWithParameter;
     }
 
     public static StackValue singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
@@ -1228,18 +1237,21 @@ public abstract class StackValue {
         final StackValue receiver;
         private final ExpressionCodegen codegen;
         private final CallableMethod callableMethod;
+        private final boolean putReceiverArgumentOnStack;
 
         public CallReceiver(
                 ResolvedCall<? extends CallableDescriptor> resolvedCall,
                 StackValue receiver,
                 ExpressionCodegen codegen,
-                CallableMethod callableMethod
+                CallableMethod callableMethod,
+                boolean putReceiverArgumentOnStack
         ) {
             super(calcType(resolvedCall, codegen, callableMethod));
             this.resolvedCall = resolvedCall;
             this.receiver = receiver;
             this.codegen = codegen;
             this.callableMethod = callableMethod;
+            this.putReceiverArgumentOnStack = putReceiverArgumentOnStack;
         }
 
         private static Type calcType(
@@ -1301,14 +1313,16 @@ public abstract class StackValue {
                         codegen.generateFromResolvedCall(thisObject, codegen.typeMapper
                                 .mapType(descriptor.getExpectedThisObject().getType()));
                     }
-                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 1);
+                    if (putReceiverArgumentOnStack) {
+                        genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 1);
+                    }
                 }
                 else {
                     genReceiver(v, thisObject, type, null, 0);
                 }
             }
             else {
-                if (receiverArgument.exists()) {
+                if (putReceiverArgumentOnStack && receiverArgument.exists()) {
                     genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 0);
                 }
             }

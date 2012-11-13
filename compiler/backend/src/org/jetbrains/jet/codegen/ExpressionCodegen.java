@@ -1409,6 +1409,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                             }
                         }
                     }
+                    if (directToField) {
+                        receiver = StackValue.receiverWithoutReceiverArgument(receiver);
+                    }
                     JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
                     receiver.put(receiverType != null && !isSuper ? asmType(receiverType) : OBJECT_TYPE, v);
                     if (receiverType != null) {
@@ -1535,11 +1538,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         PropertyDescriptor initialDescriptor = propertyDescriptor;
         propertyDescriptor = initialDescriptor.getOriginal();
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
+        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
         Method getter = null;
         Method setter = null;
         if (!forceField) {
             //noinspection ConstantConditions
             if (isInsideClass &&
+                !isExtensionProperty &&
                 (propertyDescriptor.getGetter() == null ||
                  !DescriptorUtils.isExternallyAccessible(propertyDescriptor) ||
                  propertyDescriptor.getGetter().isDefault() && propertyDescriptor.getGetter().getModality() == Modality.FINAL)) {
@@ -1576,7 +1581,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
             //noinspection ConstantConditions
-            if (!propertyDescriptor.isVar() || isInsideClass &&
+            if (!propertyDescriptor.isVar() || isInsideClass && !isExtensionProperty &&
                                                (propertyDescriptor.getSetter() == null ||
                                                 !DescriptorUtils.isExternallyAccessible(propertyDescriptor) ||
                                                 propertyDescriptor.getSetter().isDefault() &&

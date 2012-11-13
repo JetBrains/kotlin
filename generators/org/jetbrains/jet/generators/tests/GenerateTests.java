@@ -23,6 +23,7 @@ import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
 import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
 import org.jetbrains.jet.codegen.AbstractMultiDeclTestCase;
+import org.jetbrains.jet.codegen.extension.AbstractExtensionPropertiesTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.labels.AbstractLabelGenTest;
 import org.jetbrains.jet.jvm.compiler.AbstractLoadCompiledKotlinTest;
@@ -99,6 +100,12 @@ public class GenerateTests {
                 testModel("compiler/testData/codegen/label")
         );
 
+        generateTest(
+                "compiler/tests/",
+                "ExtensionPropertiesTestGenerated",
+                AbstractExtensionPropertiesTest.class,
+                testModel("compiler/testData/codegen/extensionProperties")
+        );
 
         generateTest(
                 "compiler/tests/",
