@@ -66,7 +66,7 @@ public class TestGenerator {
         StringBuilder out = new StringBuilder();
         Printer p = new Printer(out);
 
-        p.print(FileUtil.loadFile(new File("injector-generator/copyright.txt"), true));
+        p.print(FileUtil.loadFile(new File("injector-generator/copyright.txt")));
         p.println("package ", suiteClassPackage, ";");
         p.println();
         for (String importedClassName : JUNIT3_IMPORTS) {
