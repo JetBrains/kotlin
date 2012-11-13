@@ -1296,6 +1296,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/TryCatch.kt");
             }
             
+            @TestMetadata("TryFinally.kt")
+            public void testTryFinally() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/TryFinally.kt");
+            }
+            
             @TestMetadata("UnaryExpression.kt")
             public void testUnaryExpression() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/UnaryExpression.kt");

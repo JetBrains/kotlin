@@ -425,18 +425,22 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
         }
+
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (finallyBlock != null) {
-            facade.getTypeInfo(finallyBlock.getFinalExpression(), context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
+            dataFlowInfo = facade.getTypeInfo(finallyBlock.getFinalExpression(),
+                                              context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)).getDataFlowInfo();
         }
+
         JetType type = facade.getTypeInfo(tryBlock, context).getType();
         if (type != null) {
             types.add(type);
         }
         if (types.isEmpty()) {
-            return JetTypeInfo.create(null, context.dataFlowInfo);
+            return JetTypeInfo.create(null, dataFlowInfo);
         }
         else {
-            return JetTypeInfo.create(CommonSupertypes.commonSupertype(types), context.dataFlowInfo);
+            return JetTypeInfo.create(CommonSupertypes.commonSupertype(types), dataFlowInfo);
         }
     }
 
