@@ -1231,6 +1231,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/FunctionLiteral.kt");
             }
             
+            @TestMetadata("IfStatement.kt")
+            public void testIfStatement() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/IfStatement.kt");
+            }
+            
             @TestMetadata("IfThenElse.kt")
             public void testIfThenElse() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/IfThenElse.kt");

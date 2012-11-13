@@ -63,14 +63,19 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         super(facade);
     }
 
-    private void checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
+    @NotNull
+    private DataFlowInfo checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
         if (condition != null) {
-            JetType conditionType = facade.getTypeInfo(condition, context.replaceScope(scope)).getType();
+            JetTypeInfo typeInfo = facade.getTypeInfo(condition, context.replaceScope(scope));
+            JetType conditionType = typeInfo.getType();
 
             if (conditionType != null && !isBoolean(conditionType)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(condition, conditionType));
             }
+
+            return typeInfo.getDataFlowInfo();
         }
+        return context.dataFlowInfo;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,15 +89,15 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitIfExpression(JetIfExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression condition = expression.getCondition();
-        checkCondition(context.scope, condition, context);
+        DataFlowInfo conditionDataFlowInfo = checkCondition(context.scope, condition, context);
 
         JetExpression elseBranch = expression.getElse();
         JetExpression thenBranch = expression.getThen();
 
         WritableScopeImpl thenScope = newWritableScopeImpl(context, "Then scope");
         WritableScopeImpl elseScope = newWritableScopeImpl(context, "Else scope");
-        DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context);
-        DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context);
+        DataFlowInfo thenInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
+        DataFlowInfo elseInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
 
         if (elseBranch == null) {
             if (thenBranch != null) {
