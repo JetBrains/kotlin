@@ -116,36 +116,36 @@ public class SignaturesPropagation {
             boolean covariantPosition = effectiveProjectionKind == TypeCheckingProcedure.EnrichedProjectionKind.OUT;
 
             JetType type = modifyReturnTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, covariantPosition);
-            Variance variance = calculateArgumentVarianceFromSuper(argument, projectionsFromSuper);
+            Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper);
 
-            resultArguments.add(new TypeProjection(variance, type));
+            resultArguments.add(new TypeProjection(projectionKind, type));
         }
         return resultArguments;
     }
 
-    private static Variance calculateArgumentVarianceFromSuper(TypeProjection argument, List<TypeProjection> projectionsFromSuper) {
-        Set<Variance> variancesInSuper = Sets.newHashSet();
+    private static Variance calculateArgumentProjectionKindFromSuper(TypeProjection argument, List<TypeProjection> projectionsFromSuper) {
+        Set<Variance> projectionKindsInSuper = Sets.newHashSet();
         for (TypeProjection projection : projectionsFromSuper) {
-            variancesInSuper.add(projection.getProjectionKind());
+            projectionKindsInSuper.add(projection.getProjectionKind());
         }
 
-        Variance defaultVariance = argument.getProjectionKind();
-        if (variancesInSuper.size() == 0) {
-            return defaultVariance;
+        Variance defaultProjectionKind = argument.getProjectionKind();
+        if (projectionKindsInSuper.size() == 0) {
+            return defaultProjectionKind;
         }
-        else if (variancesInSuper.size() == 1) {
-            Variance varianceInSuper = variancesInSuper.iterator().next();
-            if (defaultVariance == Variance.INVARIANT || defaultVariance == varianceInSuper) {
-                return varianceInSuper;
+        else if (projectionKindsInSuper.size() == 1) {
+            Variance projectionKindInSuper = projectionKindsInSuper.iterator().next();
+            if (defaultProjectionKind == Variance.INVARIANT || defaultProjectionKind == projectionKindInSuper) {
+                return projectionKindInSuper;
             }
             else {
                 // TODO report error
-                return defaultVariance;
+                return defaultProjectionKind;
             }
         }
         else {
             // TODO report error
-            return defaultVariance;
+            return defaultProjectionKind;
         }
     }
 

@@ -123,30 +123,30 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
             TypeProjection argument = arguments.get(i);
             JetType alternativeType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters);
-            Variance variance = argument.getProjectionKind();
-            Variance altVariance;
+            Variance projectionKind = argument.getProjectionKind();
+            Variance altProjectionKind;
             if (type instanceof JetUserType) {
                 JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
                 switch (typeProjection.getProjectionKind()) {
                     case IN:
-                        altVariance = Variance.IN_VARIANCE;
+                        altProjectionKind = Variance.IN_VARIANCE;
                         break;
                     case OUT:
-                        altVariance = Variance.OUT_VARIANCE;
+                        altProjectionKind = Variance.OUT_VARIANCE;
                         break;
                     case STAR:
                         throw new AlternativeSignatureMismatchException("Star projection is not available in alternative signatures");
                     default:
-                        altVariance = Variance.INVARIANT;
+                        altProjectionKind = Variance.INVARIANT;
                 }
-                if (altVariance != variance && variance != Variance.INVARIANT) {
-                    throw new AlternativeSignatureMismatchException("Variance mismatch, actual: %s, in alternative signature: %s", variance, altVariance);
+                if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
+                    throw new AlternativeSignatureMismatchException("Variance mismatch, actual: %s, in alternative signature: %s", projectionKind, altProjectionKind);
                 }
             }
             else {
-                altVariance = variance;
+                altProjectionKind = projectionKind;
             }
-            altArguments.add(new TypeProjection(altVariance, alternativeType));
+            altArguments.add(new TypeProjection(altProjectionKind, alternativeType));
         }
 
         TypeConstructor typeConstructor;
