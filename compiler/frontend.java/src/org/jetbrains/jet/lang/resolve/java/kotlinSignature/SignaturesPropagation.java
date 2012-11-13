@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.MutableReadOnlyCollectionsMap;
+import org.jetbrains.jet.lang.resolve.java.CollectionClassMapping;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -235,9 +235,9 @@ public class SignaturesPropagation {
         }
         ClassDescriptor clazz = (ClassDescriptor) classifier;
 
-        MutableReadOnlyCollectionsMap collectionsMap = MutableReadOnlyCollectionsMap.getInstance();
+        CollectionClassMapping collectionMapping = CollectionClassMapping.getInstance();
 
-        if (collectionsMap.isMutableCollection(clazz)) {
+        if (collectionMapping.isMutableCollection(clazz)) {
 
             boolean someSupersMutable = false;
             boolean someSupersReadOnly = false;
@@ -246,17 +246,17 @@ public class SignaturesPropagation {
                 if (classifierFromSuper instanceof ClassDescriptor) {
                     ClassDescriptor classFromSuper = (ClassDescriptor) classifierFromSuper;
 
-                    if (collectionsMap.isMutableCollection(classFromSuper)) {
+                    if (collectionMapping.isMutableCollection(classFromSuper)) {
                         someSupersMutable = true;
                     }
-                    else if (collectionsMap.isReadOnlyCollection(classFromSuper)) {
+                    else if (collectionMapping.isReadOnlyCollection(classFromSuper)) {
                         someSupersReadOnly = true;
                     }
                 }
             }
 
             if (someSupersReadOnly && !someSupersMutable) {
-                return collectionsMap.convertMutableToReadOnly(clazz);
+                return collectionMapping.convertMutableToReadOnly(clazz);
             }
         }
         return classifier;

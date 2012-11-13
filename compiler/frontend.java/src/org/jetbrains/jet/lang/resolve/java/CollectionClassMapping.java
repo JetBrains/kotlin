@@ -20,13 +20,13 @@ import com.google.common.collect.ImmutableBiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
-public class MutableReadOnlyCollectionsMap extends JavaToKotlinClassMapBuilder {
-    private static MutableReadOnlyCollectionsMap instance = null;
+public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
+    private static CollectionClassMapping instance = null;
 
     @NotNull
-    public static MutableReadOnlyCollectionsMap getInstance() {
+    public static CollectionClassMapping getInstance() {
         if (instance == null) {
-            instance = new MutableReadOnlyCollectionsMap();
+            instance = new CollectionClassMapping();
         }
         return instance;
     }
@@ -34,7 +34,7 @@ public class MutableReadOnlyCollectionsMap extends JavaToKotlinClassMapBuilder {
     private ImmutableBiMap.Builder<ClassDescriptor, ClassDescriptor> mapBuilder = ImmutableBiMap.builder();
     private final ImmutableBiMap<ClassDescriptor, ClassDescriptor> mutableToReadOnlyMap;
 
-    private MutableReadOnlyCollectionsMap() {
+    private CollectionClassMapping() {
         init();
         mutableToReadOnlyMap = mapBuilder.build();
         mapBuilder = null;
