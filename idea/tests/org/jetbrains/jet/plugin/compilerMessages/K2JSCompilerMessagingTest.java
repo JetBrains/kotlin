@@ -23,6 +23,7 @@ import org.jetbrains.jet.plugin.compiler.K2JSCompiler;
 import org.jetbrains.jet.plugin.project.K2JSModuleComponent;
 
 import static org.jetbrains.jet.plugin.compilerMessages.Message.error;
+import static org.jetbrains.jet.plugin.compilerMessages.Message.stats;
 import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
 
 /**
@@ -84,5 +85,6 @@ public final class K2JSCompilerMessagingTest extends IDECompilerMessagingTest {
     @Override
     protected void checkHeader(@NotNull MessageChecker checker) {
         checker.expect(Message.info().textStartsWith("Kotlin Compiler version"));
+        checker.expect(stats().textMatchesRegexp("Compiling source files: .*/src/test.kt"));
     }
 }

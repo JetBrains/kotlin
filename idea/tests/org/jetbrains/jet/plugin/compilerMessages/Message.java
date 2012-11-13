@@ -43,6 +43,11 @@ public final class Message {
     }
 
     @NotNull
+    public static Message stats() {
+        return new Message(CompilerMessageCategory.STATISTICS);
+    }
+
+    @NotNull
     public CompilerMessageCategory category;
     @Nullable
     public String url = null;
@@ -50,6 +55,8 @@ public final class Message {
     public String message = null;
     @Nullable
     public String textStartsWith = null;
+    @Nullable
+    private String textMatchesRegexp = null;
     public int column = -1;
     public int line = -1;
 
@@ -80,6 +87,11 @@ public final class Message {
         return this;
     }
 
+    public Message textMatchesRegexp(String regexp) {
+        this.textMatchesRegexp = regexp;
+        return this;
+    }
+
     public void check(@NotNull Message other) {
         checkMessages(other);
         Assert.assertEquals(other.category, this.category);
@@ -94,6 +106,11 @@ public final class Message {
         if (textStartsWith != null) {
             Assert.assertTrue("Message should start with:\n" + textStartsWith + "\nBut it is:\n" + other.message,
                               other.message.startsWith(textStartsWith));
+            return;
+        }
+        if (textMatchesRegexp != null) {
+            Assert.assertTrue("Message should match regexp:\n" + textMatchesRegexp + "\nBut it is:\n" + other.message,
+                              other.message.matches(textMatchesRegexp));
             return;
         }
         Assert.assertEquals(other.message, this.message);

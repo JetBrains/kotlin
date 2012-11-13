@@ -36,7 +36,7 @@ public final class MessageChecker {
 
     @NotNull
     public MessageChecker expect(@NotNull Message message) {
-        assertTrue("More messages expected:\n" + message.message, iterator.hasNext());
+        assertTrue("Expected message not present:\n" + message, iterator.hasNext());
         message.check(iterator.next());
         return this;
     }

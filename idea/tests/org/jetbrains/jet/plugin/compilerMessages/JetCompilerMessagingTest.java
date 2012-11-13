@@ -73,5 +73,6 @@ public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
         checker.expect(Message.info().textStartsWith("Using kotlinHome="));
         checker.expect(Message.info().textStartsWith("Invoking in-process compiler"));
         checker.expect(Message.info().textStartsWith("Kotlin Compiler version"));
+        checker.expect(Message.stats().text("Configuring the compilation environment"));
     }
 }
