@@ -1,11 +1,12 @@
 package test
 
-import org.jetbrains.annotations.NotNull
+public trait InheritVariance: Object {
 
-public open class InheritVariance : java.lang.Object() {
-    public open fun foo(): MutableCollection<out Number> = throw UnsupportedOperationException()
+    public trait Super: Object {
+        public fun foo(): MutableCollection<out Number>
+    }
 
-    public open class Sub: InheritVariance() {
-        override fun foo(): MutableList<out Number> = throw UnsupportedOperationException()
+    public trait Sub: Super {
+        override fun foo(): MutableList<out Number>
     }
 }

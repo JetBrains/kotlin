@@ -1,11 +1,12 @@
 package test
 
-import org.jetbrains.annotations.NotNull
+public trait InheritNullabilityJavaSubtype: Object {
 
-public open class InheritNullabilityJavaSubtype : java.lang.Object() {
-    public open fun foo(): CharSequence = throw UnsupportedOperationException()
+    public trait Super: Object {
+        public fun foo(): CharSequence
+    }
 
-    public open class Sub: InheritNullabilityJavaSubtype() {
-        override fun foo(): String = throw UnsupportedOperationException()
+    public trait Sub: Super {
+        override fun foo(): String
     }
 }

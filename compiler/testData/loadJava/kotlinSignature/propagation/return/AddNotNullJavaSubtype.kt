@@ -1,11 +1,12 @@
 package test
 
-import org.jetbrains.annotations.NotNull
+public trait AddNotNullJavaSubtype : Object {
 
-public open class AddNotNullJavaSubtype : java.lang.Object() {
-    public open fun foo(): CharSequence? = throw UnsupportedOperationException()
+    public trait Super: Object {
+        public fun foo(): CharSequence?
+    }
 
-    public open class Sub: AddNotNullJavaSubtype() {
-        override fun foo(): String = throw UnsupportedOperationException()
+    public trait Sub: Super {
+        override fun foo(): String
     }
 }

@@ -1,19 +1,15 @@
 package test;
 
 import org.jetbrains.annotations.NotNull;
-import java.lang.CharSequence;
 
-import jet.runtime.typeinfo.KotlinSignature;
+public interface AddNotNullSameJavaType {
 
-public class AddNotNullSameJavaType {
-    public CharSequence foo() {
-        throw new UnsupportedOperationException();
+    public interface Super {
+        CharSequence foo();
     }
 
-    public class Sub extends AddNotNullSameJavaType {
+    public interface Sub extends Super {
         @NotNull
-        public CharSequence foo() {
-            throw new UnsupportedOperationException();
-        }
+        CharSequence foo();
     }
 }

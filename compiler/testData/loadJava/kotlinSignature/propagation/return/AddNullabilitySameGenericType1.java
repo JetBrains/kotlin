@@ -2,19 +2,17 @@ package test;
 
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
-
 import jet.runtime.typeinfo.KotlinSignature;
 
-public class AddNullabilitySameGenericType1 {
-    @KotlinSignature("fun foo(): MutableList<String>")
-    public List<String> foo() {
-        throw new UnsupportedOperationException();
+public interface AddNullabilitySameGenericType1 {
+
+    public interface Super {
+        @KotlinSignature("fun foo(): MutableList<String>")
+        List<String> foo();
     }
 
-    public class Sub extends AddNullabilitySameGenericType1 {
+    public interface Sub extends Super {
         @KotlinSignature("fun foo(): MutableList<String?>")
-        public List<String> foo() {
-            throw new UnsupportedOperationException();
-        }
+        List<String> foo();
     }
 }

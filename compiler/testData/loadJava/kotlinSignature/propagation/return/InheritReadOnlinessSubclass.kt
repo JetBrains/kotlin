@@ -1,11 +1,12 @@
 package test
 
-import org.jetbrains.annotations.NotNull
+public trait InheritReadOnlinessSubclass: Object {
 
-public open class InheritReadOnlinessSubclass : java.lang.Object() {
-    public open fun foo(): Collection<String> = throw UnsupportedOperationException()
+    public trait Super: Object {
+        public fun foo(): Collection<String>
+    }
 
-    public open class Sub: InheritReadOnlinessSubclass() {
-        override fun foo(): List<String> = throw UnsupportedOperationException()
+    public trait Sub: Super {
+        override fun foo(): List<String>
     }
 }

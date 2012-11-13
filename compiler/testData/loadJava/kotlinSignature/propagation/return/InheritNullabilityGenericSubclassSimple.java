@@ -6,15 +6,14 @@ import java.util.Collection;
 
 import jet.runtime.typeinfo.KotlinSignature;
 
-public class InheritNullabilityGenericSubclassSimple {
-    @KotlinSignature("fun foo(): MutableCollection<String>")
-    public Collection<String> foo() {
-        throw new UnsupportedOperationException();
+public interface InheritNullabilityGenericSubclassSimple {
+
+    public interface Super {
+        @KotlinSignature("fun foo(): MutableCollection<String>")
+        Collection<String> foo();
     }
 
-    public class Sub extends InheritNullabilityGenericSubclassSimple {
-        public List<String> foo() {
-            throw new UnsupportedOperationException();
-        }
+    public interface Sub extends Super {
+        List<String> foo();
     }
 }

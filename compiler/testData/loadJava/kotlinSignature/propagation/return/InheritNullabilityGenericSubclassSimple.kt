@@ -1,11 +1,12 @@
 package test
 
-import org.jetbrains.annotations.NotNull
+public trait InheritNullabilityGenericSubclassSimple: Object {
 
-public open class InheritNullabilityGenericSubclassSimple : java.lang.Object() {
-    public open fun foo(): MutableCollection<String> = throw UnsupportedOperationException()
+    public trait Super: Object {
+        public fun foo(): MutableCollection<String>
+    }
 
-    public open class Sub: InheritNullabilityGenericSubclassSimple() {
-        override fun foo(): MutableList<String> = throw UnsupportedOperationException()
+    public trait Sub: Super {
+        override fun foo(): MutableList<String>
     }
 }

@@ -1,10 +1,10 @@
 namespace test
 
-public open class test.AddNotNullSameJavaType : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.AddNotNullSameJavaType
-    public open fun foo(): jet.CharSequence?
-    public open class test.AddNotNullSameJavaType.Sub : test.AddNotNullSameJavaType {
-        public final /*constructor*/ fun <init>(): test.AddNotNullSameJavaType.Sub
-        public open override /*1*/ fun foo(): jet.CharSequence
+public abstract trait test.AddNotNullSameJavaType : java.lang.Object {
+    public abstract trait test.AddNotNullSameJavaType.Sub : test.AddNotNullSameJavaType.Super {
+        public abstract override /*1*/ fun foo(): jet.CharSequence
+    }
+    public abstract trait test.AddNotNullSameJavaType.Super : java.lang.Object {
+        public abstract fun foo(): jet.CharSequence?
     }
 }

@@ -5,15 +5,14 @@ import java.util.List;
 
 import jet.runtime.typeinfo.KotlinSignature;
 
-public class InheritNullabilitySameGenericType {
-    @KotlinSignature("fun foo(): MutableList<String>")
-    public List<String> foo() {
-        throw new UnsupportedOperationException();
+public interface InheritNullabilitySameGenericType {
+
+    public interface Super {
+        @KotlinSignature("fun foo(): MutableList<String>")
+        List<String> foo();
     }
 
-    public class Sub extends InheritNullabilitySameGenericType {
-        public List<String> foo() {
-            throw new UnsupportedOperationException();
-        }
+    public interface Sub extends Super {
+        List<String> foo();
     }
 }

@@ -6,15 +6,14 @@ import java.util.Collection;
 
 import jet.runtime.typeinfo.KotlinSignature;
 
-public class InheritReadOnlinessOfArgument {
-    @KotlinSignature("fun foo(): List<List<String>>>")
-    public List<List<String>> foo() {
-        throw new UnsupportedOperationException();
+public interface InheritReadOnlinessOfArgument {
+
+    public interface Super {
+        @KotlinSignature("fun foo(): List<List<String>>>")
+        List<List<String>> foo();
     }
 
-    public class Sub extends InheritReadOnlinessOfArgument {
-        public List<List<String>> foo() {
-            throw new UnsupportedOperationException();
-        }
+    public interface Sub extends Super {
+        List<List<String>> foo();
     }
 }

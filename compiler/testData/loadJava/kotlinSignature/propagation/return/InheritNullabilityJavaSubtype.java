@@ -5,15 +5,14 @@ import java.lang.CharSequence;
 
 import jet.runtime.typeinfo.KotlinSignature;
 
-public class InheritNullabilityJavaSubtype {
-    @NotNull
-    public CharSequence foo() {
-        throw new UnsupportedOperationException();
+public interface InheritNullabilityJavaSubtype {
+
+    public interface Super {
+        @NotNull
+        CharSequence foo();
     }
 
-    public class Sub extends InheritNullabilityJavaSubtype {
-        public String foo() {
-            throw new UnsupportedOperationException();
-        }
+    public interface Sub extends Super {
+        String foo();
     }
 }

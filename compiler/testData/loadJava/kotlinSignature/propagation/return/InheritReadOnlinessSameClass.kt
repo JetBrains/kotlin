@@ -1,11 +1,12 @@
 package test
 
-import org.jetbrains.annotations.NotNull
+public trait InheritReadOnlinessSameClass: Object {
 
-public open class InheritReadOnlinessSameClass : java.lang.Object() {
-    public open fun foo(): List<String> = throw UnsupportedOperationException()
+    public trait Super: Object {
+        public fun foo(): List<String>
+    }
 
-    public open class Sub: InheritReadOnlinessSameClass() {
-        override fun foo(): List<String> = throw UnsupportedOperationException()
+    public trait Sub: Super {
+        override fun foo(): List<String>
     }
 }

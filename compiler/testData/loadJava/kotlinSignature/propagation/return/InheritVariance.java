@@ -6,15 +6,14 @@ import java.util.Collection;
 
 import jet.runtime.typeinfo.KotlinSignature;
 
-public class InheritVariance {
-    @KotlinSignature("fun foo(): MutableCollection<out Number>")
-    public Collection<Number> foo() {
-        throw new UnsupportedOperationException();
+public interface InheritVariance {
+
+    public interface Super {
+        @KotlinSignature("fun foo(): MutableCollection<out Number>")
+        Collection<Number> foo();
     }
 
-    public class Sub extends InheritVariance {
-        public List<Number> foo() {
-            throw new UnsupportedOperationException();
-        }
+    public interface Sub extends Super {
+        List<Number> foo();
     }
 }
