@@ -23,6 +23,7 @@ import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -109,12 +110,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Override
             public String apply(@Nullable JetFile file) {
                 assert file != null;
-                String packageName = file.getPackageName();
-                if (packageName != null && packageName.length() > 0) {
-                    return packageName + "." + file.getName();
-                } else {
-                    return file.getName();
+                VirtualFile virtualFile = file.getVirtualFile();
+                if (virtualFile != null) {
+                    return virtualFile.getPath();
                 }
+                return file.getName() + "(no virtual file)";
             }
         });
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Compiling source files: " + Joiner.on(", ").join(fileNames),
