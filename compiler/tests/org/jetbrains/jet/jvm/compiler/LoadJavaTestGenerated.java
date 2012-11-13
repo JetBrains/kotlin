@@ -516,6 +516,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.java");
                 }
                 
+                @TestMetadata("InheritVariance.java")
+                public void testInheritVariance() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritVariance.java");
+                }
+                
             }
             
             public static Test innerSuite() {

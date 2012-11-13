@@ -1,0 +1,10 @@
+namespace test
+
+public open class test.InheritVariance : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.InheritVariance
+    public open fun foo(): jet.MutableCollection<out jet.Number>
+    public open class test.InheritVariance.Sub : test.InheritVariance {
+        public final /*constructor*/ fun <init>(): test.InheritVariance.Sub
+        public open override /*1*/ fun foo(): jet.MutableList<out jet.Number>
+    }
+}

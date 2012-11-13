@@ -1411,6 +1411,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.kt");
                     }
                     
+                    @TestMetadata("InheritVariance.kt")
+                    public void testInheritVariance() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritVariance.kt");
+                    }
+                    
                 }
                 
                 public static Test innerSuite() {
