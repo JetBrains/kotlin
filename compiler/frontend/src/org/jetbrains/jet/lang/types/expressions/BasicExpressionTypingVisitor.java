@@ -1289,9 +1289,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext context) {
-        JetType type = resolveArrayAccessGetMethod(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
-        DataFlowUtils.checkType(type, expression, context);
-        return JetTypeInfo.create(type, context.dataFlowInfo);
+        JetTypeInfo typeInfo = resolveArrayAccessGetMethod(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        return DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
     }
 
     @NotNull
@@ -1406,38 +1405,51 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
-    @Nullable
-        /*package*/ JetType resolveArrayAccessSetMethod(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull JetExpression rightHandSide, @NotNull ExpressionTypingContext context, @NotNull BindingTrace traceForResolveResult) {
+    @NotNull
+        /*package*/ JetTypeInfo resolveArrayAccessSetMethod(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull JetExpression rightHandSide, @NotNull ExpressionTypingContext context, @NotNull BindingTrace traceForResolveResult) {
         return resolveArrayAccessSpecialMethod(arrayAccessExpression, rightHandSide, context, traceForResolveResult, false);
     }
 
-    @Nullable
-        /*package*/ JetType resolveArrayAccessGetMethod(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull ExpressionTypingContext context) {
+    @NotNull
+        /*package*/ JetTypeInfo resolveArrayAccessGetMethod(@NotNull JetArrayAccessExpression arrayAccessExpression, @NotNull ExpressionTypingContext context) {
         return resolveArrayAccessSpecialMethod(arrayAccessExpression, null, context, context.trace, true);
     }
 
-    @Nullable
-    private JetType resolveArrayAccessSpecialMethod(@NotNull JetArrayAccessExpression arrayAccessExpression,
+    @NotNull
+    private JetTypeInfo resolveArrayAccessSpecialMethod(@NotNull JetArrayAccessExpression arrayAccessExpression,
                                                     @Nullable JetExpression rightHandSide, //only for 'set' method
-                                                    @NotNull ExpressionTypingContext context,
+                                                    @NotNull ExpressionTypingContext oldContext,
                                                     @NotNull BindingTrace traceForResolveResult,
                                                     boolean isGet) {
-        JetType arrayType = facade.getTypeInfo(arrayAccessExpression.getArrayExpression(), context).getType();
-        if (arrayType == null) return null;
+        JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayAccessExpression.getArrayExpression(), oldContext);
+        JetType arrayType = arrayTypeInfo.getType();
+        if (arrayType == null) return arrayTypeInfo;
 
+        DataFlowInfo dataFlowInfo = arrayTypeInfo.getDataFlowInfo();
+        ExpressionTypingContext context = oldContext.replaceDataFlowInfo(dataFlowInfo);
         ExpressionReceiver receiver = new ExpressionReceiver(arrayAccessExpression.getArrayExpression(), arrayType);
         if (!isGet) assert rightHandSide != null;
+
         OverloadResolutionResults<FunctionDescriptor> functionResults = context.resolveCallWithGivenName(
                 isGet
                 ? CallMaker.makeArrayGetCall(receiver, arrayAccessExpression, Call.CallType.ARRAY_GET_METHOD)
                 : CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide, Call.CallType.ARRAY_SET_METHOD),
                 arrayAccessExpression,
                 Name.identifier(isGet ? "get" : "set"));
+
+        List<JetExpression> indices = arrayAccessExpression.getIndexExpressions();
+        // The accumulated data flow info of all index expressions is saved on the last index
+        dataFlowInfo = facade.getTypeInfo(indices.get(indices.size() - 1), context).getDataFlowInfo();
+
+        if (!isGet) {
+            dataFlowInfo = facade.getTypeInfo(rightHandSide, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
+        }
+
         if (!functionResults.isSuccess()) {
             traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
-            return null;
+            return JetTypeInfo.create(null, dataFlowInfo);
         }
         traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression, functionResults.getResultingCall());
-        return functionResults.getResultingDescriptor().getReturnType();
+        return JetTypeInfo.create(functionResults.getResultingDescriptor().getReturnType(), dataFlowInfo);
     }
 }

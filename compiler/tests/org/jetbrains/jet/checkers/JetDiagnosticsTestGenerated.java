@@ -1141,6 +1141,21 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ArrayAccess.kt");
             }
             
+            @TestMetadata("ArrayExpression.kt")
+            public void testArrayExpression() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ArrayExpression.kt");
+            }
+            
+            @TestMetadata("ArrayGetSetConvention.kt")
+            public void testArrayGetSetConvention() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ArrayGetSetConvention.kt");
+            }
+            
+            @TestMetadata("ArrayIndices.kt")
+            public void testArrayIndices() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ArrayIndices.kt");
+            }
+            
             @TestMetadata("Assignment.kt")
             public void testAssignment() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/Assignment.kt");
@@ -1154,6 +1169,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("AssignmentOperation.kt")
             public void testAssignmentOperation() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/AssignmentOperation.kt");
+            }
+            
+            @TestMetadata("AssignmentToArrayElement.kt")
+            public void testAssignmentToArrayElement() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/AssignmentToArrayElement.kt");
             }
             
             @TestMetadata("BinaryExpression.kt")

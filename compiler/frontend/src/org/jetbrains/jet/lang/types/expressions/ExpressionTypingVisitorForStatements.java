@@ -278,9 +278,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
             if (right == null) return JetTypeInfo.create(null, context.dataFlowInfo);
-            JetType assignmentType = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
+            JetTypeInfo typeInfo = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
             basic.checkLValue(context.trace, arrayAccessExpression);
-            return JetTypeInfo.create(checkAssignmentType(assignmentType, expression, contextWithExpectedType), context.dataFlowInfo);
+            return JetTypeInfo.create(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType),
+                                      typeInfo.getDataFlowInfo());
         }
         JetTypeInfo leftInfo = facade.getTypeInfo(expression.getLeft(), context);
         JetType leftType = leftInfo.getType();
