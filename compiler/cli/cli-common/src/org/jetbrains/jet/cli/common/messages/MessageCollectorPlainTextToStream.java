@@ -19,21 +19,33 @@ package org.jetbrains.jet.cli.common.messages;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * @author Stepan Koltsov
  */
 public class MessageCollectorPlainTextToStream implements MessageCollector {
+    public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT);
+    public static final EnumSet<CompilerMessageSeverity> NON_VERBOSE = EnumSet.complementOf(VERBOSE);
+
+    public static final MessageCollector PLAIN_TEXT_TO_SYSTEM_ERR = new MessageCollectorPlainTextToStream(System.err, NON_VERBOSE);
+
     @NotNull
     private final PrintStream stream;
+    @NotNull
+    private final Set<CompilerMessageSeverity> severitiesToPrint;
 
-    public MessageCollectorPlainTextToStream(@NotNull PrintStream stream) {
+    public MessageCollectorPlainTextToStream(@NotNull PrintStream stream, @NotNull Set<CompilerMessageSeverity> severities) {
         this.stream = stream;
+        this.severitiesToPrint = severities;
     }
 
     @Override
     public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
-        stream.println(MessageRenderer.PLAIN.render(severity, message, location));
+        if (severitiesToPrint.contains(severity)) {
+            stream.println(MessageRenderer.PLAIN.render(severity, message, location));
+        }
     }
 
 }

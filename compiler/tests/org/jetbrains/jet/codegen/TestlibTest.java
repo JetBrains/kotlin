@@ -25,7 +25,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
-import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
@@ -166,7 +166,7 @@ public class TestlibTest extends CodegenTestCase {
 
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test");
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src");
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
     }

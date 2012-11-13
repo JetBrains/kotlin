@@ -28,8 +28,8 @@ import java.nio.charset.Charset;
  */
 public class MessageCollectorToString implements MessageCollector {
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    private final MessageCollector actualCollector = new MessageCollectorPlainTextToStream(new PrintStream(outputStream));
-
+    private final MessageCollector actualCollector = new MessageCollectorPlainTextToStream(new PrintStream(outputStream),
+                                                                                           MessageCollectorPlainTextToStream.NON_VERBOSE);
 
     @Override
     public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
