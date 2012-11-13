@@ -375,6 +375,7 @@ public class KotlinToJVMBytecodeCompiler {
             CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
             compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             compilerConfiguration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(parentLoader));
+            compilerConfiguration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
             compilerConfiguration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Collections.singletonList(
                     PathUtil.getJdkAnnotationsPath()));
             compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, scriptPath);
