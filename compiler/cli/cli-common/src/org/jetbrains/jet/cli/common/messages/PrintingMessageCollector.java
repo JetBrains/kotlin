@@ -54,7 +54,9 @@ public class PrintingMessageCollector implements MessageCollector {
             }
             errStream.println(text);
         }
-        groupedMessages.put(location.getPath(), text);
+        else {
+            groupedMessages.put(location.getPath(), text);
+        }
     }
 
     public void printToErrStream() {
