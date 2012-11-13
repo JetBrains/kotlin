@@ -1231,6 +1231,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/For.kt");
             }
             
+            @TestMetadata("ForLoopRange.kt")
+            public void testForLoopRange() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ForLoopRange.kt");
+            }
+            
             @TestMetadata("FunctionLiteral.kt")
             public void testFunctionLiteral() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/FunctionLiteral.kt");

@@ -258,8 +258,10 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression loopRange = expression.getLoopRange();
         JetType expectedParameterType = null;
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (loopRange != null) {
             ExpressionReceiver loopRangeReceiver = getExpressionReceiver(facade, loopRange, context.replaceScope(context.scope));
+            dataFlowInfo = facade.getTypeInfo(loopRange, context).getDataFlowInfo();
             if (loopRangeReceiver != null) {
                 expectedParameterType = checkIterableConvention(loopRangeReceiver, context);
             }
@@ -284,10 +286,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         JetExpression body = expression.getBody();
         if (body != null) {
-            context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context, context.trace);
+            context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body),
+                    CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(dataFlowInfo), context.trace);
         }
 
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType, context.dataFlowInfo);
+        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
 
     private static VariableDescriptor createLoopParameterDescriptor(
