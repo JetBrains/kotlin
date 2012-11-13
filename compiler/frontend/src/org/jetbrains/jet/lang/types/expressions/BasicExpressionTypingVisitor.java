@@ -1348,6 +1348,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
         final StringBuilder builder = new StringBuilder();
         final CompileTimeConstant<?>[] value = new CompileTimeConstant<?>[1];
+        final DataFlowInfo[] dataFlowInfo = new DataFlowInfo[1];
+        dataFlowInfo[0] = context.dataFlowInfo;
+
         for (JetStringTemplateEntry entry : expression.getEntries()) {
             entry.accept(new JetVisitorVoid() {
 
@@ -1355,7 +1358,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
                     JetExpression entryExpression = entry.getExpression();
                     if (entryExpression != null) {
-                        facade.getTypeInfo(entryExpression, context);
+                        JetTypeInfo typeInfo = facade.getTypeInfo(entryExpression, context.replaceDataFlowInfo(dataFlowInfo[0]));
+                        dataFlowInfo[0] = typeInfo.getDataFlowInfo();
                     }
                     value[0] = CompileTimeConstantResolver.OUT_OF_RANGE;
                 }
@@ -1383,7 +1387,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (value[0] != CompileTimeConstantResolver.OUT_OF_RANGE) {
             context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new StringValue(builder.toString()));
         }
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getStringType(), expression, contextWithExpectedType, context.dataFlowInfo);
+        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getStringType(), expression, contextWithExpectedType, dataFlowInfo[0]);
     }
 
     @Override

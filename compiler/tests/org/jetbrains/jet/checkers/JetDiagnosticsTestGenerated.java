@@ -1261,6 +1261,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/Return.kt");
             }
             
+            @TestMetadata("StringTemplate.kt")
+            public void testStringTemplate() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/StringTemplate.kt");
+            }
+            
             @TestMetadata("ThisSuper.kt")
             public void testThisSuper() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ThisSuper.kt");
