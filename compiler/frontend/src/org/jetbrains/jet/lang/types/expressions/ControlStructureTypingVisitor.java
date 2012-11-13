@@ -162,19 +162,17 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         JetExpression condition = expression.getCondition();
-        checkCondition(context.scope, condition, context);
+        DataFlowInfo dataFlowInfo = checkCondition(context.scope, condition, context);
+
         JetExpression body = expression.getBody();
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
-            DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context);
+            DataFlowInfo conditionInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
             context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
         }
-        DataFlowInfo dataFlowInfo;
+
         if (!containsBreak(expression, context)) {
-            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context);
-        }
-        else {
-            dataFlowInfo = context.dataFlowInfo;
+            dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(dataFlowInfo);
         }
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }

@@ -1301,6 +1301,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/While.kt");
             }
             
+            @TestMetadata("WhileCondition.kt")
+            public void testWhileCondition() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhileCondition.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/declarationChecks")
