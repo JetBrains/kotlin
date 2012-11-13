@@ -25,7 +25,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.MutableReadOnlyCollectionsMap;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
@@ -37,7 +39,7 @@ import java.util.Set;
 
 public class SignaturesPropagation {
     public static JetType modifyReturnTypeAccordingToSuperMethods(
-            @NotNull JetType autoType,
+            @NotNull JetType autoType, // type built by JavaTypeTransformer
             @NotNull PsiMethodWrapper method,
             @NotNull BindingTrace trace
     ) {
@@ -46,6 +48,13 @@ public class SignaturesPropagation {
             DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superSignature.getMethod());
             if (superFun instanceof FunctionDescriptor) {
                 typesFromSuperMethods.add(((FunctionDescriptor) superFun).getReturnType());
+            }
+            else {
+                // Function descriptor can't be find iff superclass is java.lang.Collection or similar (translated to jet.* collections)
+                assert !JavaToKotlinClassMap.getInstance().mapPlatformClass(
+                        new FqName(superSignature.getMethod().getContainingClass().getQualifiedName())).isEmpty():
+                            "Can't find super function for " + method.getPsiMethod() + " defined in "
+                            +  method.getPsiMethod().getContainingClass();
             }
         }
 
@@ -86,6 +95,8 @@ public class SignaturesPropagation {
         List<TypeProjection> autoArguments = autoType.getArguments();
 
         if (!(typeConstructor.getDeclarationDescriptor() instanceof ClassDescriptor)) {
+            assert autoArguments.isEmpty() :
+                    "Unexpected type arguments when type constructor is not ClassDescriptor, type = " + autoType;
             return autoArguments;
         }
 
@@ -155,8 +166,8 @@ public class SignaturesPropagation {
         ClassDescriptor klass = (ClassDescriptor) autoType.getConstructor().getDeclarationDescriptor();
 
         // For each superclass of autoType's class and its parameters, hold their mapping to autoType's parameters
-        Multimap<TypeConstructor,TypeProjection> substitution = SubstitutionUtils.buildDeepSubstitutionMultimap(
-                TypeUtils.makeUnsubstitutedType(klass, null));
+        Multimap<TypeConstructor, TypeProjection> substitution = SubstitutionUtils.buildDeepSubstitutionMultimap(
+                TypeUtils.makeUnsubstitutedType(klass, JetScope.EMPTY));
 
         // for each parameter of autoType, hold arguments in corresponding supertypes
         List<List<TypeProjection>> parameterToArgTypesFromSuper = Lists.newArrayList();
@@ -185,6 +196,10 @@ public class SignaturesPropagation {
     }
 
     private static boolean returnTypeMustBeNullable(JetType autoType, Collection<JetType> typesFromSuper, boolean covariantPosition) {
+        if (typesFromSuper.isEmpty()) {
+            return autoType.isNullable();
+        }
+
         boolean someSupersNullable = false;
         boolean someSupersNotNull = false;
         for (JetType typeFromSuper : typesFromSuper) {
@@ -206,9 +221,7 @@ public class SignaturesPropagation {
             }
         }
 
-        if (!someSupersNotNull && !someSupersNullable) { // no types from super
-            return autoType.isNullable();
-        }
+        assert someSupersNotNull || someSupersNullable; // we have at least one type, which is either not-null or nullable
 
         return someSupersNullable && autoType.isNullable();
     }
@@ -217,6 +230,7 @@ public class SignaturesPropagation {
     private static ClassifierDescriptor getReturnTypeClassifier(@NotNull JetType autoType, @NotNull Collection<JetType> typesFromSuper) {
         ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
         if (!(classifier instanceof ClassDescriptor)) {
+            assert classifier != null : "no declaration descriptor for type " + autoType;
             return classifier;
         }
         ClassDescriptor clazz = (ClassDescriptor) classifier;
