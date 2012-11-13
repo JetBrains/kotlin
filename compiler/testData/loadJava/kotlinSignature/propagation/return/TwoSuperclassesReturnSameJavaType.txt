@@ -1,0 +1,11 @@
+namespace test
+
+public abstract trait test.TwoSuperclassesReturnSameJavaType : java.lang.Object {
+    public abstract fun foo(): jet.CharSequence?
+    public abstract trait test.TwoSuperclassesReturnSameJavaType.Other : java.lang.Object {
+        public abstract fun foo(): jet.CharSequence
+    }
+    public abstract trait test.TwoSuperclassesReturnSameJavaType.Sub : test.TwoSuperclassesReturnSameJavaType, test.TwoSuperclassesReturnSameJavaType.Other {
+        public abstract override /*2*/ fun foo(): jet.CharSequence
+    }
+}

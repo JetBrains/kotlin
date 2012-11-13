@@ -1416,6 +1416,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritVariance.kt");
                     }
                     
+                    @TestMetadata("TwoSuperclassesReturnJavaSubtype.kt")
+                    public void testTwoSuperclassesReturnJavaSubtype() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.kt");
+                    }
+                    
+                    @TestMetadata("TwoSuperclassesReturnSameJavaType.kt")
+                    public void testTwoSuperclassesReturnSameJavaType() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.kt");
+                    }
+                    
                 }
                 
                 public static Test innerSuite() {

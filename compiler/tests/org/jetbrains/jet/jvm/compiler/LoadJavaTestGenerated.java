@@ -521,6 +521,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritVariance.java");
                 }
                 
+                @TestMetadata("TwoSuperclassesReturnJavaSubtype.java")
+                public void testTwoSuperclassesReturnJavaSubtype() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.java");
+                }
+                
+                @TestMetadata("TwoSuperclassesReturnSameJavaType.java")
+                public void testTwoSuperclassesReturnSameJavaType() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.java");
+                }
+                
             }
             
             public static Test innerSuite() {
