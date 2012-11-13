@@ -46,7 +46,7 @@ class MessageCollectorAdapter implements MessageCollector {
         if (severity == CompilerMessageSeverity.EXCEPTION) {
             LOG.error(message);
         }
-        if (category == STATISTICS) {
+        if (severity == CompilerMessageSeverity.LOGGING) {
             compileContext.getProgressIndicator().setText(message);
         }
     }
@@ -62,6 +62,7 @@ class MessageCollectorAdapter implements MessageCollector {
             case EXCEPTION:
                 return ERROR;
             case LOGGING:
+            case OUTPUT:
                 return STATISTICS;
         }
         throw new IllegalArgumentException("Unknown severity: " + severity);
