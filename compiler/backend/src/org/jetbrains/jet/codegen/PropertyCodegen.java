@@ -288,7 +288,10 @@ public class PropertyCodegen extends GenerationStateAware {
                         iv.load(0, OBJECT_TYPE);
                         paramCode = 1;
                     }
-
+                    ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
+                    if (receiverParameter != null) {
+                        paramCode += typeMapper.mapType(receiverParameter.getType()).getSize();
+                    }
                     iv.load(paramCode, type);
                     iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? PUTSTATIC : PUTFIELD,
                                       typeMapper.getOwner(propertyDescriptor, kind).getInternalName(),
