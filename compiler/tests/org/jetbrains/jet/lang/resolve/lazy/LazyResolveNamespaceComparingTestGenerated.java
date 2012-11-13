@@ -1155,6 +1155,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/ConstructorWithoutParams.kt");
             }
             
+            @TestMetadata("CustomVariance.kt")
+            public void testCustomVariance() throws Exception {
+                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/CustomVariance.kt");
+            }
+            
             @TestMetadata("MethodWithFunctionTypes.kt")
             public void testMethodWithFunctionTypes() throws Exception {
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/MethodWithFunctionTypes.kt");

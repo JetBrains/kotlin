@@ -260,6 +260,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTest("compiler/testData/loadJava/kotlinSignature/ConstructorWithoutParams.java");
         }
         
+        @TestMetadata("CustomVariance.java")
+        public void testCustomVariance() throws Exception {
+            doTest("compiler/testData/loadJava/kotlinSignature/CustomVariance.java");
+        }
+        
         @TestMetadata("MethodWithFunctionTypes.java")
         public void testMethodWithFunctionTypes() throws Exception {
             doTest("compiler/testData/loadJava/kotlinSignature/MethodWithFunctionTypes.java");
