@@ -26,6 +26,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPostfixExpression;
@@ -112,19 +113,23 @@ public class ExclExclCallFix implements IntentionAction {
 
     private static PsiElement getExclExclElement(Editor editor, PsiFile file) {
         final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
-        if (elementAtCaret instanceof LeafPsiElement) {
-            LeafPsiElement leafElement = (LeafPsiElement) elementAtCaret;
-            if (leafElement.getElementType() == JetTokens.EXCLEXCL) {
-                return elementAtCaret;
-            }
+        if (isExclExclLeaf(elementAtCaret)) {
+            return elementAtCaret;
+        }
 
-            LeafPsiElement prevLeaf = (LeafPsiElement) PsiTreeUtil.prevLeaf(leafElement);
-            if (prevLeaf != null && prevLeaf.getElementType() == JetTokens.EXCLEXCL) {
+        if (elementAtCaret != null) {
+            // Case when caret is placed right after !!
+            PsiElement prevLeaf = PsiTreeUtil.prevLeaf(elementAtCaret);
+            if (isExclExclLeaf(prevLeaf)) {
                 return prevLeaf;
             }
         }
 
         return null;
+    }
+
+    private static boolean isExclExclLeaf(@Nullable PsiElement element) {
+        return (element instanceof LeafPsiElement) && ((LeafPsiElement) element).getElementType() == JetTokens.EXCLEXCL;
     }
 
     private static JetExpression getExpressionForIntroduceCall(Editor editor, PsiFile file) {
