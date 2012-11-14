@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -30,14 +29,12 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
-import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiData;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PropertyPsiDataElement;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -54,7 +51,6 @@ public final class JavaPropertyResolver {
     private JavaSignatureResolver javaSignatureResolver;
     private BindingTrace trace;
     private JavaAnnotationResolver annotationResolver;
-    private JavaClassResolver classResolver;
 
     public JavaPropertyResolver() {
     }
@@ -77,11 +73,6 @@ public final class JavaPropertyResolver {
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
-    }
-
-    @Inject
-    public void setClassResolver(JavaClassResolver classResolver) {
-        this.classResolver = classResolver;
     }
 
     @NotNull
@@ -189,10 +180,9 @@ public final class JavaPropertyResolver {
             kind = DescriptorKindUtils.flagsToKind(methodAnnotation.kind());
         }
 
-        DeclarationDescriptor realOwner = getRealOwner(owner, scopeData, psiData.isStatic());
-        boolean isEnumEntry = DescriptorUtils.isEnumClassObject(realOwner);
+        boolean isEnumEntry = DescriptorUtils.isEnumClassObject(owner);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
-                realOwner,
+                owner,
                 annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
                 DescriptorResolverUtils.resolveModality(characteristicMember.getMember(),
                                                         isFinal || isEnumEntry || psiData.isPropertyForNamedObject()),
@@ -206,7 +196,7 @@ public final class JavaPropertyResolver {
         // remove this when JavaDescriptorResolver gets rewritten
         if (isEnumEntry) {
             ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
-                    new ClassDescriptorImpl(realOwner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
+                    new ClassDescriptorImpl(owner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
             dummyClassDescriptorForEnumEntryObject.initialize(
                     true,
                     Collections.<TypeParameterDescriptor>emptyList(),
@@ -234,7 +224,7 @@ public final class JavaPropertyResolver {
         propertyDescriptor.setType(
                 propertyType,
                 typeParameters,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(realOwner),
+                DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
                 receiverType
         );
         initializeSetterAndGetter(propertyDescriptor, getterDescriptor, setterDescriptor, propertyType);
@@ -243,7 +233,7 @@ public final class JavaPropertyResolver {
             trace.record(BindingContext.VARIABLE, psiData.getCharacteristicPsi(), propertyDescriptor);
         }
 
-        recordObjectDeclarationClassIfNeeded(psiData, realOwner, propertyDescriptor, propertyType);
+        recordObjectDeclarationClassIfNeeded(psiData, owner, propertyDescriptor, propertyType);
 
         if (scopeData.getDeclarationOrigin() == JAVA) {
             trace.record(BindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
@@ -441,27 +431,5 @@ public final class JavaPropertyResolver {
             }
         }
         return r;
-    }
-
-    @NotNull
-    private ClassOrNamespaceDescriptor getRealOwner(
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull PsiDeclarationProvider declarationProvider,
-            boolean isStatic
-    ) {
-        if (!(declarationProvider instanceof ClassPsiDeclarationProvider)) {
-            return owner;
-        }
-        PsiClass psiClass = ((ClassPsiDeclarationProvider) declarationProvider).getPsiClass();
-        if (!psiClass.isEnum() || !isStatic) {
-            return owner;
-        }
-        final String qualifiedName = psiClass.getQualifiedName();
-        assert qualifiedName != null;
-        final ClassDescriptor classDescriptor = classResolver.resolveClass(new FqName(qualifiedName));
-        assert classDescriptor != null;
-        final ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-        assert classObjectDescriptor != null;
-        return classObjectDescriptor;
     }
 }
