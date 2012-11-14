@@ -7,13 +7,13 @@ import b.ext      //extension function
 import b.value    //property
 import b.C.<!CANNOT_BE_IMPORTED!>bar<!>    //function from class object
 import b.C.<!CANNOT_BE_IMPORTED!>cValue<!> //property from class object
-import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.fff     //function from val
-import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.dValue  //property from val
+import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>fff<!>     //function from val
+import b.<!CANNOT_IMPORT_FROM_ELEMENT!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>dValue<!>  //property from val
 import b.constant
 import b.E.<!CANNOT_BE_IMPORTED!>f<!>      //val from class object
-import <!UNRESOLVED_REFERENCE!>smth<!>.illegal
-import b.C.<!UNRESOLVED_REFERENCE!>smth<!>.illegal
-import b.<!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.smth
+import <!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
+import b.C.<!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
+import b.<!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>smth<!>
 import b.<!CANNOT_IMPORT_FROM_ELEMENT!>bar<!>.*
 
 fun test(arg: B) {

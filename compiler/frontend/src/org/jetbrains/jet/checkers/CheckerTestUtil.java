@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -75,7 +76,34 @@ public class CheckerTestUtil {
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
             diagnostics.add(new SyntaxErrorDiagnostic(errorElement));
         }
+        final List<Diagnostic> debugAnnotations = getDebugInfoDiagnostics(root, bindingContext);
+        diagnostics.addAll(debugAnnotations);
         return diagnostics;
+    }
+
+    public static List<Diagnostic> getDebugInfoDiagnostics(@NotNull PsiElement root, @NotNull BindingContext bindingContext) {
+        final List<Diagnostic> debugAnnotations = Lists.newArrayList();
+        DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
+            @Override
+            public void reportErrorElement(@NotNull JetReferenceExpression expression) {
+                newDiagnostic(expression, DebugInfoDiagnosticFactory.ERROR_ELEMENT);
+            }
+
+            @Override
+            public void reportMissingUnresolved(@NotNull JetReferenceExpression expression) {
+                newDiagnostic(expression, DebugInfoDiagnosticFactory.MISSING_UNRESOLVED);
+            }
+
+            @Override
+            public void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target) {
+                newDiagnostic(expression, DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET);
+            }
+
+            private void newDiagnostic(JetReferenceExpression expression, DebugInfoDiagnosticFactory factory) {
+                debugAnnotations.add(new DebugInfoDiagnostic(expression, factory));
+            }
+        });
+        return debugAnnotations;
     }
 
     public interface DiagnosticDiffCallbacks {
@@ -287,27 +315,19 @@ public class CheckerTestUtil {
         result.append("<!>");
     }
 
-    private static class SyntaxErrorDiagnosticFactory extends AbstractDiagnosticFactory {
-        private static final SyntaxErrorDiagnosticFactory instance = new SyntaxErrorDiagnosticFactory();
+    public static class AbstractDiagnosticForTests implements Diagnostic {
+        private final PsiElement element;
+        private final AbstractDiagnosticFactory factory;
 
-        @NotNull
-        @Override
-        public String getName() {
-            return "SYNTAX";
-        }
-    }
-
-    public static class SyntaxErrorDiagnostic implements Diagnostic {
-        private final PsiErrorElement errorElement;
-
-        public SyntaxErrorDiagnostic(@NotNull PsiErrorElement errorElement) {
-            this.errorElement = errorElement;
+        public AbstractDiagnosticForTests(@NotNull PsiElement element, @NotNull AbstractDiagnosticFactory factory) {
+            this.element = element;
+            this.factory = factory;
         }
 
         @NotNull
         @Override
         public AbstractDiagnosticFactory getFactory() {
-            return SyntaxErrorDiagnosticFactory.instance;
+            return factory;
         }
 
         @NotNull
@@ -318,20 +338,20 @@ public class CheckerTestUtil {
 
         @NotNull
         @Override
-        public PsiErrorElement getPsiElement() {
-            return errorElement;
+        public PsiElement getPsiElement() {
+            return element;
         }
 
         @NotNull
         @Override
         public List<TextRange> getTextRanges() {
-            return Collections.singletonList(errorElement.getTextRange());
+            return Collections.singletonList(element.getTextRange());
         }
 
         @NotNull
         @Override
         public PsiFile getPsiFile() {
-            return errorElement.getContainingFile();
+            return element.getContainingFile();
         }
 
         @Override
@@ -339,7 +359,48 @@ public class CheckerTestUtil {
             return true;
         }
     }
-    
+
+    private static class SyntaxErrorDiagnosticFactory extends AbstractDiagnosticFactory {
+        public static final SyntaxErrorDiagnosticFactory INSTANCE = new SyntaxErrorDiagnosticFactory();
+
+        private SyntaxErrorDiagnosticFactory() {}
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "SYNTAX";
+        }
+    }
+
+    public static class SyntaxErrorDiagnostic extends AbstractDiagnosticForTests {
+        public SyntaxErrorDiagnostic(@NotNull PsiErrorElement errorElement) {
+            super(errorElement, SyntaxErrorDiagnosticFactory.INSTANCE);
+        }
+    }
+
+    public static class DebugInfoDiagnosticFactory extends AbstractDiagnosticFactory {
+        public static final DebugInfoDiagnosticFactory ERROR_ELEMENT = new DebugInfoDiagnosticFactory("ERROR_ELEMENT");
+        public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
+        public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");
+
+        private final String name;
+        private DebugInfoDiagnosticFactory(String name) {
+            this.name = name;
+        }
+
+        @NotNull
+        @Override
+        public String getName() {
+            return "DEBUG_INFO_" + name;
+        }
+    }
+
+    public static class DebugInfoDiagnostic extends AbstractDiagnosticForTests {
+        public DebugInfoDiagnostic(@NotNull JetReferenceExpression reference, @NotNull DebugInfoDiagnosticFactory factory) {
+            super(reference, factory);
+        }
+    }
+
     private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(Collection<Diagnostic> diagnostics) {
         List<Diagnostic> list = Lists.newArrayList(diagnostics);
         Collections.sort(list, DIAGNOSTIC_COMPARATOR);

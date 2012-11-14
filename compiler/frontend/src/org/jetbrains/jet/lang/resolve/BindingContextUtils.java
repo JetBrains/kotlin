@@ -261,9 +261,8 @@ public class BindingContextUtils {
         Collection<PsiElement> targets = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : declarationsByLabel) {
             PsiElement element = descriptorToDeclaration(trace.getBindingContext(), descriptor);
-            if (element != null) {
-                targets.add(element);
-            }
+            assert element != null : "Label can only point to something in the same lexical scope";
+            targets.add(element);
         }
         if (!targets.isEmpty()) {
             trace.record(AMBIGUOUS_LABEL_TARGET, targetLabel, targets);

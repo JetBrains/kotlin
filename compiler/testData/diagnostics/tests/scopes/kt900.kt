@@ -35,7 +35,7 @@ object N {
 //FILE:b.kt
 package b
 
-import b.<!CANNOT_IMPORT_FROM_ELEMENT!>N<!>.M
+import b.<!CANNOT_IMPORT_FROM_ELEMENT!>N<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>M<!>
 import b.A.P
 import b.A.B
 

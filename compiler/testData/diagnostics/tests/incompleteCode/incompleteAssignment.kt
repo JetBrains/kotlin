@@ -5,7 +5,7 @@ fun sum(a : IntArray) : Int {
     // Write your solution here
     <!UNRESOLVED_REFERENCE!>res<!> = 0
     for (e in a)
-        res +=<!SYNTAX!><!>
+        <!DEBUG_INFO_MISSING_UNRESOLVED!>res<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+=<!><!SYNTAX!><!>
 }
 fun main(args : Array<String>) {
     test(0)

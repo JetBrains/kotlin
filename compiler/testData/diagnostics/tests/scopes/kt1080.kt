@@ -3,7 +3,7 @@
 
 package kt1080
 
-import <!UNRESOLVED_REFERENCE!>reflect<!>.Constructor
+import <!UNRESOLVED_REFERENCE!>reflect<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Constructor<!>
 
 import b.*
 import <!UNRESOLVED_REFERENCE!>d<!>
