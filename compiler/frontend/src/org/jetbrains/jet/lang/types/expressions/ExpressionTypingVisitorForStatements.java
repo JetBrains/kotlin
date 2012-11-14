@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -193,9 +192,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        JetExpression right = expression.getRight();
-        if (right == null) return null;
-
         //There is a temporary binding trace for an opportunity to resolve set method for array if needed (the initial trace should be used there)
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
                 contextWithExpectedType.trace, "trace to resolve array set method for binary expression", expression);
@@ -203,10 +199,15 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         IElementType operationType = operationSign.getReferencedNameElementType();
-        JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
-        if (left == null) return null;
+        JetType leftType = facade.getTypeInfo(expression.getLeft(), context).getType();
 
-        JetType leftType = facade.getTypeInfo(left, context).getType();
+        JetExpression right = expression.getRight();
+        JetExpression left = JetPsiUtil.deparenthesize(expression.getLeft());
+        if (right == null || left == null) {
+            temporaryBindingTrace.commit();
+            return null;
+        }
+
         if (leftType == null) {
             facade.getTypeInfo(right, context);
             context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
