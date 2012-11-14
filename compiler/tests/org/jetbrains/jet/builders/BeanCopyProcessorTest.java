@@ -21,10 +21,7 @@ import beans.impl.*;
 import beans.references.impl.LiteralClassDescriptorBeanReference;
 import beans.references.impl.LiteralClassifierDescriptorBeanReference;
 import beans.references.impl.LiteralTypeConstructorBeanReference;
-import beans.util.BeanUtil;
-import beans.util.CopyProcessor;
-import beans.util.DataToBean;
-import beans.util.ToString;
+import beans.util.*;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +33,8 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.Printer;
 
@@ -109,6 +108,34 @@ public class BeanCopyProcessorTest extends KotlinTestWithEnvironment {
         assertSame(typeConstructorT, typeT_copy.getConstructor().resolveTo(TypeConstructorBean.class));
     }
 
+    public void testReferencesInDataToBean() throws Exception {
+        ClassDescriptor listClass = KotlinBuiltIns.getInstance().getList();
+        JetType unsubstitutedListType = listClass.getDefaultType();
+        JetTypeBean unsubstitutedListTypeBean = new DataToBeanProcessor().processJetType(unsubstitutedListType);
+        TypeConstructor constructor = unsubstitutedListType.getArguments().get(0).getType().getConstructor();
+        TypeConstructor constructorFromReference =
+                unsubstitutedListTypeBean.getArguments().get(0).getType().getConstructor().resolveTo(TypeConstructor.class);
+        assertSame(constructor, constructorFromReference);
+
+
+        FunctionDescriptor synchronizedFD =
+                KotlinBuiltIns.getInstance().getBuiltInsScope().getFunctions(Name.identifier("synchronized")).iterator().next();
+        FunctionDescriptorBean synchronizedBean = new DataToBeanProcessor().processFunctionDescriptor(synchronizedFD);
+        JetTypeBean returnTypeBean = synchronizedBean.getReturnType();
+
+        TypeConstructorBean typeConstructorOfTFromRef =
+                returnTypeBean.getConstructor().resolveTo(TypeConstructorBean.class);
+        assertSame(
+            synchronizedBean.getTypeParameters().get(0).getTypeConstructor(),
+            typeConstructorOfTFromRef);
+
+        JetTypeBean firstParameterTypeBean = synchronizedBean.getValueParameters().get(0).getReturnType();
+        assertSame(
+                KotlinBuiltIns.getInstance().getAny().getTypeConstructor(),
+                firstParameterTypeBean.getConstructor().resolveTo(TypeConstructor.class)
+        );
+    }
+
     public void testBuiltInFunctions() throws Exception {
         printAll(KotlinBuiltIns.getInstance().getBuiltInsScope());
     }
@@ -151,7 +178,7 @@ public class BeanCopyProcessorTest extends KotlinTestWithEnvironment {
         p.println();
         p.println(f);
         p.println();
-        FunctionDescriptorBean functionDescriptorBean = DataToBean.toBean(f);
+        FunctionDescriptorBean functionDescriptorBean = new DataToBeanProcessor().processFunctionDescriptor(f);// DataToBean.toBean(f);//
         FunctionDescriptorBean copy = BeanUtil.deepCopy(functionDescriptorBean);
         FunctionDescriptorBean copy2 = new CopyProcessor().processFunctionDescriptor(functionDescriptorBean);
         String result = functionDescriptorBeanToString(copy);
@@ -163,12 +190,12 @@ public class BeanCopyProcessorTest extends KotlinTestWithEnvironment {
     private String functionDescriptorBeanToString(FunctionDescriptorBean copy) {
         ToString toString = new ToString() {
             @Override
-            public void processFunctionDescriptor_OverriddenDescriptors(@NotNull FunctionDescriptorBean in, Void out) {
+            protected void processFunctionDescriptor_OverriddenDescriptors(@NotNull FunctionDescriptorBean in, CharSequence out) {
                 // Do nothing, they are not ordered, and will disturb the output
             }
 
             @Override
-            public void processValueParameterDescriptor_OverriddenDescriptors(@NotNull ValueParameterDescriptorBean in, Void out) {
+            protected void processValueParameterDescriptor_OverriddenDescriptors(@NotNull ValueParameterDescriptorBean in, CharSequence out) {
                 // Do nothing, they are not ordered, and will disturb the output
             }
         };
