@@ -1144,8 +1144,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     result = ErrorUtils.createErrorType("No right argument"); // TODO
                     return JetTypeInfo.create(null, dataFlowInfo);
                 }
-                dataFlowInfo = checkInExpression(expression, expression.getOperationReference(), left, right, context).getSecond();
-                result = booleanType;
+                JetTypeInfo typeInfo = checkInExpression(expression, expression.getOperationReference(), left, right, context);
+                dataFlowInfo = typeInfo.getDataFlowInfo();
+                result = typeInfo.getType();
             }
             else if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationType)) {
                 JetTypeInfo leftTypeInfo = facade.getTypeInfo(left, context);
@@ -1197,7 +1198,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    public Pair<Boolean, DataFlowInfo> checkInExpression(
+    public JetTypeInfo checkInExpression(
             JetElement callElement,
             @NotNull JetSimpleNameExpression operationSign,
             @Nullable JetExpression left,
@@ -1219,10 +1220,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ensureBooleanResult(operationSign, name, containsType, context);
 
         if (left != null) {
-            dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo();
+            dataFlowInfo = facade.getTypeInfo(left, contextWithDataFlow).getDataFlowInfo().and(dataFlowInfo);
         }
 
-        return Pair.create(resolutionResult.isSuccess(), dataFlowInfo);
+        return JetTypeInfo.create(resolutionResult.isSuccess() ? KotlinBuiltIns.getInstance().getBooleanType() : null, dataFlowInfo);
     }
 
     private void ensureNonemptyIntersectionOfOperandTypes(JetBinaryExpression expression, ExpressionTypingContext context) {

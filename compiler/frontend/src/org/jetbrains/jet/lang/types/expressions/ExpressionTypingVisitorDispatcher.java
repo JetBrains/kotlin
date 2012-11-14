@@ -72,9 +72,10 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
         return basic.getSelectorReturnTypeInfo(receiver, callOperationNode, selectorExpression, context);
     }
 
+    @NotNull
     @Override
-    public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
-        return basic.checkInExpression(callElement, operationSign, left, right, context).getFirst();
+    public JetTypeInfo checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
+        return basic.checkInExpression(callElement, operationSign, left, right, context);
     }
 
     @Override

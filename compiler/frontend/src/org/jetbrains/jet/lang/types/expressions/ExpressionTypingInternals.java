@@ -33,7 +33,8 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
     @NotNull
     JetTypeInfo getSelectorReturnTypeInfo(@NotNull ReceiverValue receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context);
 
-    boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context);
+    @NotNull
+    JetTypeInfo checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context);
 
     void checkStatementType(@NotNull JetExpression expression, ExpressionTypingContext context);
 }

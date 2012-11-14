@@ -1316,6 +1316,21 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/When.kt");
             }
             
+            @TestMetadata("WhenEntry.kt")
+            public void testWhenEntry() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhenEntry.kt");
+            }
+            
+            @TestMetadata("WhenIn.kt")
+            public void testWhenIn() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhenIn.kt");
+            }
+            
+            @TestMetadata("WhenSubject.kt")
+            public void testWhenSubject() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhenSubject.kt");
+            }
+            
             @TestMetadata("While.kt")
             public void testWhile() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/While.kt");

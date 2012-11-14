@@ -71,9 +71,15 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         // TODO :change scope according to the bound value in the when header
         final JetExpression subjectExpression = expression.getSubjectExpression();
 
-        final JetType subjectType = subjectExpression != null
-                                    ? context.expressionTypingServices.safeGetType(context.scope, subjectExpression, TypeUtils.NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace)
-                                    : ErrorUtils.createErrorType("Unknown type");
+        final JetType subjectType;
+        if (subjectExpression == null) {
+            subjectType = ErrorUtils.createErrorType("Unknown type");
+        }
+        else {
+            JetTypeInfo typeInfo = facade.safeGetTypeInfo(subjectExpression, context);
+            subjectType = typeInfo.getType();
+            context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
+        }
         final DataFlowValue variableDescriptor = subjectExpression != null ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext()) : DataFlowValue.NULL;
 
         // TODO : exhaustive patterns
@@ -158,17 +164,21 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     ) {
         final Ref<DataFlowInfos> newDataFlowInfo = new Ref<DataFlowInfos>(noChange(context));
         condition.accept(new JetVisitorVoid() {
-
             @Override
             public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
                 JetExpression rangeExpression = condition.getRangeExpression();
                 if (rangeExpression == null) return;
                 if (expectedCondition) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
-                    facade.getTypeInfo(rangeExpression, context);
+                    DataFlowInfo dataFlowInfo = facade.getTypeInfo(rangeExpression, context).getDataFlowInfo();
+                    newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
                     return;
                 }
-                if (!facade.checkInExpression(condition, condition.getOperationReference(), subjectExpression, rangeExpression, context)) {
+                JetTypeInfo typeInfo = facade.checkInExpression(condition, condition.getOperationReference(),
+                                                                subjectExpression, rangeExpression, context);
+                DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
+                newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
+                if (!KotlinBuiltIns.getInstance().getBooleanType().equals(typeInfo.getType())) {
                     context.trace.report(TYPE_MISMATCH_IN_RANGE.on(condition));
                 }
             }
@@ -231,6 +241,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (type == null) {
             return noChange(context);
         }
+        context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         if (conditionExpected) {
             JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
             if (!JetTypeChecker.INSTANCE.equalTypes(booleanType, type)) {
