@@ -233,6 +233,8 @@ public interface BindingContext {
     WritableSlice<ClassDescriptor, Boolean> IS_ENUM_MOVED_TO_CLASS_OBJECT = Slices.createSimpleSlice();
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
+    WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET =
+            Slices.<JetReferenceExpression, Collection<? extends PsiElement>>sliceBuilder().build();
     WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =
             Slices.<ValueParameterDescriptor, PropertyDescriptor>sliceBuilder().build();
 

@@ -90,7 +90,7 @@ public class LabelResolver {
         else if (size == 0) {
             return resolveNamedLabel(labelName, labelExpression, reportUnresolved, context);
         }
-        context.trace.report(AMBIGUOUS_LABEL.on(labelExpression));
+        BindingContextUtils.reportAmbiguousLabel(context.trace, labelExpression, declarationsByLabel);
         return null;
     }
 
@@ -117,7 +117,7 @@ public class LabelResolver {
         }
 
         JetElement result = stack.peek();
-        context.trace.record(BindingContext.LABEL_TARGET, labelExpression, result);
+        context.trace.record(LABEL_TARGET, labelExpression, result);
         return result;
     }
 
@@ -172,7 +172,7 @@ public class LabelResolver {
             }
         }
         else {
-            context.trace.report(AMBIGUOUS_LABEL.on(targetLabel));
+            BindingContextUtils.reportAmbiguousLabel(context.trace, targetLabel, declarationsByLabel);
         }
         return LabeledReceiverResolutionResult.labelResolutionFailed();
     }

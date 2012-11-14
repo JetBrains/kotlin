@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
@@ -125,6 +126,10 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
             List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
             if (psiElements.size() > 1) {
                 return PsiElementResolveResult.createResults(psiElements);
+            }
+            Collection<? extends PsiElement> labelTargets = bindingContext.get(AMBIGUOUS_LABEL_TARGET, myExpression);
+            if (labelTargets != null && !labelTargets.isEmpty()) {
+                return PsiElementResolveResult.createResults(labelTargets);
             }
             Collection<PsiElement> standardLibraryElements = resolveStandardLibrarySymbol(bindingContext);
             if (standardLibraryElements.size() > 1) {

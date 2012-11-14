@@ -26,11 +26,10 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.AMBIGUOUS_LABEL;
+import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
 /**
@@ -252,5 +251,23 @@ public class BindingContextUtils {
         DeclarationDescriptor descriptor = context.get(DECLARATION_TO_DESCRIPTOR, declaration);
         assert descriptor != null : "No descriptor for named declaration: " + declaration.getText() + "\n(of type " + declaration.getClass() + ")";
         return descriptor;
+    }
+
+    public static void reportAmbiguousLabel(
+            @NotNull BindingTrace trace,
+            @NotNull JetSimpleNameExpression targetLabel,
+            @NotNull Collection<DeclarationDescriptor> declarationsByLabel
+    ) {
+        Collection<PsiElement> targets = Lists.newArrayList();
+        for (DeclarationDescriptor descriptor : declarationsByLabel) {
+            PsiElement element = descriptorToDeclaration(trace.getBindingContext(), descriptor);
+            if (element != null) {
+                targets.add(element);
+            }
+        }
+        if (!targets.isEmpty()) {
+            trace.record(AMBIGUOUS_LABEL_TARGET, targetLabel, targets);
+        }
+        trace.report(AMBIGUOUS_LABEL.on(targetLabel));
     }
 }
