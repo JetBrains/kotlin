@@ -11,7 +11,7 @@ class A<E>() : C(), T {
 
     fun test() {
         <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
-        <!SUPER_IS_NOT_AN_EXPRESSION!>super<<!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>><!>
+        <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
         <!AMBIGUOUS_SUPER!>super<!>.foo()
         super<T>.foo()
         super<C>.bar()
@@ -23,8 +23,8 @@ class A<E>() : C(), T {
         super<<!SYNTAX!><!>>.foo()
         super<<!NOT_A_SUPERTYPE!>() -> Unit<!>>.foo()
         super<<!NOT_A_SUPERTYPE!>Unit<!>>.foo()
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>><!UNRESOLVED_REFERENCE!>@B<!>.foo()
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>C<!>><!UNRESOLVED_REFERENCE!>@B<!>.bar()
+        <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><T><!UNRESOLVED_REFERENCE!>@B<!>.foo()
+        <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><C><!UNRESOLVED_REFERENCE!>@B<!>.bar()
     }
 
     class B : T {
@@ -37,7 +37,7 @@ class A<E>() : C(), T {
             super<<!NOT_A_SUPERTYPE!>C<!>>@B.foo()
             super.foo()
             <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
-            <!SUPER_IS_NOT_AN_EXPRESSION!>super<<!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>><!>
+            <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
         }
     }
 }

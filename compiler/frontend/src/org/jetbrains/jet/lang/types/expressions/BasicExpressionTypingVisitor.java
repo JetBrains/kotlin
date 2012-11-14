@@ -481,19 +481,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitSuperExpression(JetSuperExpression expression, ExpressionTypingContext context) {
+        LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
+
         if (!context.namespacesAllowed) {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(expression, expression.getText()));
-            return JetTypeInfo.create(null, context.dataFlowInfo);
+            return errorInSuper(expression, context);
         }
-
-        LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
         switch (resolutionResult.getCode()) {
             case LABEL_RESOLUTION_ERROR:
                 // The error is already reported
-                return JetTypeInfo.create(null, context.dataFlowInfo);
+                return errorInSuper(expression, context);
             case NO_THIS:
                 context.trace.report(SUPER_NOT_AVAILABLE.on(expression));
-                return JetTypeInfo.create(null, context.dataFlowInfo);
+                return errorInSuper(expression, context);
             case SUCCESS:
                 JetType result = checkPossiblyQualifiedSuper(expression, context, resolutionResult.getReceiverParameterDescriptor());
                 if (result != null) {
@@ -502,6 +502,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 return DataFlowUtils.checkType(result, expression, context, context.dataFlowInfo);
         }
         throw new IllegalStateException("Unknown code: " + resolutionResult.getCode());
+    }
+
+    private JetTypeInfo errorInSuper(JetSuperExpression expression, ExpressionTypingContext context) {
+        JetTypeReference superTypeQualifier = expression.getSuperTypeQualifier();
+        if (superTypeQualifier != null) {
+            context.expressionTypingServices.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
+        }
+        return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 
     private JetType checkPossiblyQualifiedSuper(
