@@ -49,7 +49,9 @@ public final class PsiCodegenPredictor {
         PsiElement element = descriptorToDeclaration(bindingTrace.getBindingContext(), descriptor);
         if (element instanceof JetDeclaration) {
             JvmClassName classNameFromPsi = getPredefinedJvmClassName((JetDeclaration) element);
-            assert classNameFromPsi == null || classNameFromPsi.equals(nameFromDescriptors) : "Invalid algorithm for getting qualified name from psi!";
+            assert classNameFromPsi == null || classNameFromPsi.equals(nameFromDescriptors) :
+                    String.format("Invalid algorithm for getting qualified name from psi! Predicted: %s, actual %s\n" +
+                                  "Element: %s", classNameFromPsi, nameFromDescriptors, element.getText());
         }
 
         return true;
