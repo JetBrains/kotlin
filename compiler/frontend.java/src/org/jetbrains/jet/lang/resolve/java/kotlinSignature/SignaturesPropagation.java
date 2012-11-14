@@ -92,15 +92,16 @@ public class SignaturesPropagation {
     @NotNull
     private static List<TypeProjection> getTypeArgsOfReturnType(@NotNull JetType autoType, @NotNull Collection<JetType> typesFromSuper) {
         TypeConstructor typeConstructor = autoType.getConstructor();
+        ClassifierDescriptor classifier = typeConstructor.getDeclarationDescriptor();
         List<TypeProjection> autoArguments = autoType.getArguments();
 
-        if (!(typeConstructor.getDeclarationDescriptor() instanceof ClassDescriptor)) {
+        if (!(classifier instanceof ClassDescriptor)) {
             assert autoArguments.isEmpty() :
                     "Unexpected type arguments when type constructor is not ClassDescriptor, type = " + autoType;
             return autoArguments;
         }
 
-        List<List<TypeProjection>> typeArgumentsFromSuper = calculateTypeArgumentsFromSuper(autoType, typesFromSuper);
+        List<List<TypeProjection>> typeArgumentsFromSuper = calculateTypeArgumentsFromSuper((ClassDescriptor) classifier, typesFromSuper);
 
         // Modify type arguments using info from typesFromSuper
         List<TypeProjection> resultArguments = Lists.newArrayList();
@@ -159,40 +160,60 @@ public class SignaturesPropagation {
     }
 
     // Returns list with type arguments info from supertypes
+    // Example:
+    //     - Foo<A, B> is a subtype of Bar<A, List<B>>, Baz<Boolean, A>
+    //     - input: klass = Foo, typesFromSuper = [Bar<String, List<Int>>, Baz<Boolean, CharSequence>]
+    //     - output[0] = [String, CharSequence], output[1] = []
     private static List<List<TypeProjection>> calculateTypeArgumentsFromSuper(
-            @NotNull JetType autoType,
+            @NotNull ClassDescriptor klass,
             @NotNull Collection<JetType> typesFromSuper
     ) {
-        ClassDescriptor klass = (ClassDescriptor) autoType.getConstructor().getDeclarationDescriptor();
-
-        // For each superclass of autoType's class and its parameters, hold their mapping to autoType's parameters
+        // For each superclass of klass and its parameters, hold their mapping to klass' parameters
+        // #0 of Bar ->  A
+        // #1 of Bar ->  List<B>
+        // #0 of Baz ->  Boolean
+        // #1 of Baz ->  A
+        // #0 of Foo ->  A (mapped to itself)
+        // #1 of Foo ->  B (mapped to itself)
         Multimap<TypeConstructor, TypeProjection> substitution = SubstitutionUtils.buildDeepSubstitutionMultimap(
                 TypeUtils.makeUnsubstitutedType(klass, JetScope.EMPTY));
 
-        // for each parameter of autoType, hold arguments in corresponding supertypes
-        List<List<TypeProjection>> parameterToArgTypesFromSuper = Lists.newArrayList();
-        for (TypeProjection ignored : autoType.getArguments()) {
-            parameterToArgTypesFromSuper.add(new ArrayList<TypeProjection>());
+        // for each parameter of klass, hold arguments in corresponding supertypes
+        List<List<TypeProjection>> parameterToArgumentsFromSuper = Lists.newArrayList();
+        for (TypeParameterDescriptor ignored : klass.getTypeConstructor().getParameters()) {
+            parameterToArgumentsFromSuper.add(new ArrayList<TypeProjection>());
         }
 
         // Enumerate all types from super and all its parameters
         for (JetType typeFromSuper : typesFromSuper) {
             List<TypeParameterDescriptor> typeFromSuperParameters = typeFromSuper.getConstructor().getParameters();
             for (int i = 0; i < typeFromSuperParameters.size(); i++) {
-                TypeParameterDescriptor typeFromSuperParam = typeFromSuperParameters.get(i);
-                TypeProjection typeFromSuperArgType = typeFromSuper.getArguments().get(i);
+                TypeParameterDescriptor parameter = typeFromSuperParameters.get(i);
+                TypeProjection argument = typeFromSuper.getArguments().get(i);
 
-                // if it is mapped to autoType's parameter, then store it into map
-                for (TypeProjection projection : substitution.get(typeFromSuperParam.getTypeConstructor())) {
+                // for given example, this block is executed four times:
+                // 1. typeFromSuper = Bar<String, List<Int>>,     i = 0,  parameter = "#0 of Bar",  argument = String
+                // 2. typeFromSuper = Bar<String, List<Int>>,     i = 1,  parameter = "#1 of Bar",  argument = List<Int>
+                // 3. typeFromSuper = Baz<Boolean, CharSequence>, i = 0,  parameter = "#0 of Baz",  argument = Boolean
+                // 4. typeFromSuper = Baz<Boolean, CharSequence>, i = 1,  parameter = "#1 of Baz",  argument = CharSequence
+
+                // if it is mapped to klass' parameter, then store it into map
+                for (TypeProjection projection : substitution.get(parameter.getTypeConstructor())) {
+                    // 1. projection = A
+                    // 2. projection = List<B>
+                    // 3. projection = Boolean
+                    // 4. projection = A
                     ClassifierDescriptor classifier = projection.getType().getConstructor().getDeclarationDescriptor();
 
+                    // this condition is true for 1 and 4, false for 2 and 3
                     if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == klass) {
-                        parameterToArgTypesFromSuper.get(((TypeParameterDescriptor) classifier).getIndex()).add(typeFromSuperArgType);
+                        int parameterIndex = ((TypeParameterDescriptor) classifier).getIndex();
+                        parameterToArgumentsFromSuper.get(parameterIndex).add(argument);
                     }
                 }
             }
         }
-        return parameterToArgTypesFromSuper;
+        return parameterToArgumentsFromSuper;
     }
 
     private static boolean returnTypeMustBeNullable(JetType autoType, Collection<JetType> typesFromSuper, boolean covariantPosition) {
