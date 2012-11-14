@@ -209,16 +209,6 @@ public class CheckerTestUtil {
         return matcher.replaceAll("");
     }
     
-    public static StringBuffer addDiagnosticMarkersToText(PsiFile psiFile, BindingContext bindingContext, List<PsiErrorElement> syntaxErrors) {
-        Collection<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
-        diagnostics.addAll(bindingContext.getDiagnostics());
-        for (PsiErrorElement syntaxError : syntaxErrors) {
-            diagnostics.add(new SyntaxErrorDiagnostic(syntaxError));
-        }
-
-        return addDiagnosticMarkersToText(psiFile, diagnostics);
-    }
-
     public static StringBuffer addDiagnosticMarkersToText(@NotNull final PsiFile psiFile, Collection<Diagnostic> diagnostics) {
         StringBuffer result = new StringBuffer();
         String text = psiFile.getText();
