@@ -51,7 +51,7 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetExpression deparenthesize(@NotNull JetExpression expression) {
+    public static JetExpression deparenthesizeWithNoTypeResolution(@NotNull JetExpression expression) {
         if (expression instanceof JetBinaryExpressionWithTypeRHS) {
             JetSimpleNameExpression operationSign = ((JetBinaryExpressionWithTypeRHS) expression).getOperationSign();
             if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
@@ -68,7 +68,7 @@ public class JetPsiUtil {
         }
         if (expression instanceof JetParenthesizedExpression) {
             JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
-            return innerExpression != null ? deparenthesize(innerExpression) : null;
+            return innerExpression != null ? deparenthesizeWithNoTypeResolution(innerExpression) : null;
         }
         return expression;
     }
@@ -416,7 +416,7 @@ public class JetPsiUtil {
     }
 
     public static boolean isNullConstant(@NotNull JetExpression expression) {
-        JetExpression deparenthesized = deparenthesize(expression);
+        JetExpression deparenthesized = deparenthesizeWithNoTypeResolution(expression);
         return deparenthesized instanceof JetConstantExpression && deparenthesized.getNode().getElementType() == JetNodeTypes.NULL;
     }
 

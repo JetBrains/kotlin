@@ -41,7 +41,7 @@ public class LabelResolver {
     public LabelResolver() {}
 
     public void enterLabeledElement(@NotNull LabelName labelName, @NotNull JetExpression labeledExpression) {
-        JetExpression deparenthesized = JetPsiUtil.deparenthesize(labeledExpression);
+        JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(labeledExpression);
         if (deparenthesized != null) {
             Stack<JetElement> stack = labeledElements.get(labelName);
             if (stack == null) {
@@ -53,7 +53,7 @@ public class LabelResolver {
     }
 
     public void exitLabeledElement(@NotNull JetExpression expression) {
-        JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
+        JetExpression deparenthesized = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression);
         // TODO : really suboptimal
         for (Iterator<Map.Entry<LabelName,Stack<JetElement>>> mapIter = labeledElements.entrySet().iterator(); mapIter.hasNext(); ) {
             Map.Entry<LabelName, Stack<JetElement>> entry = mapIter.next();

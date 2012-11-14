@@ -1039,7 +1039,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private void checkLValue(BindingTrace trace, JetExpression expressionWithParenthesis, boolean canBeThis) {
-        JetExpression expression = JetPsiUtil.deparenthesize(expressionWithParenthesis);
+        JetExpression expression = JetPsiUtil.deparenthesizeWithNoTypeResolution(expressionWithParenthesis);
         if (expression instanceof JetArrayAccessExpression) {
             checkLValue(trace, ((JetArrayAccessExpression) expression).getArrayExpression(), true);
             return;
