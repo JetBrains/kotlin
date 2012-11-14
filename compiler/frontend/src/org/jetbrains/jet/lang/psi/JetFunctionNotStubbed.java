@@ -105,6 +105,6 @@ abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNot
     @Override
     public boolean isLocal() {
         PsiElement parent = getParent();
-        return !(parent instanceof JetFile || parent instanceof JetClassBody || parent instanceof JetNamespaceBody);
+        return !(parent instanceof JetFile || parent instanceof JetClassBody);
     }
 }

@@ -76,10 +76,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitJetElement(classBody, data);
     }
 
-    public R visitNamespaceBody(JetNamespaceBody body, D data) {
-        return visitJetElement(body, data);
-    }
-
     public R visitModifierList(JetModifierList list, D data) {
         return visitJetElement(list, data);
     }

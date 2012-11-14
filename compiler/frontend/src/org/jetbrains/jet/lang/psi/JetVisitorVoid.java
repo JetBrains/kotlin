@@ -66,10 +66,6 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitJetElement(classBody);
     }
 
-    public void visitNamespaceBody(JetNamespaceBody body) {
-        visitJetElement(body);
-    }
-
     public void visitModifierList(JetModifierList list) {
         visitJetElement(list);
     }
