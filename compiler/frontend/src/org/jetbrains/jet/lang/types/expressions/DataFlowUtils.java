@@ -59,19 +59,17 @@ public class DataFlowUtils {
             public void visitBinaryExpression(JetBinaryExpression expression) {
                 IElementType operationToken = expression.getOperationToken();
                 if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
-
                     DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, context);
                     JetExpression expressionRight = expression.getRight();
                     if (expressionRight != null) {
                         DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, context);
-                        DataFlowInfo.CompositionOperator operator;
-                        if (operationToken == JetTokens.ANDAND) {
-                            operator = conditionValue ? DataFlowInfo.AND : DataFlowInfo.OR;
+                        boolean and = operationToken == JetTokens.ANDAND;
+                        if (and == conditionValue) { // this means: and && conditionValue || !and && !conditionValue
+                            dataFlowInfo = dataFlowInfo.and(rightInfo);
                         }
                         else {
-                            operator = conditionValue ? DataFlowInfo.OR : DataFlowInfo.AND;
+                            dataFlowInfo = dataFlowInfo.or(rightInfo);
                         }
-                        dataFlowInfo = operator.compose(dataFlowInfo, rightInfo);
                     }
                     result.set(dataFlowInfo);
                 }

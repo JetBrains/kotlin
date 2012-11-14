@@ -26,30 +26,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NULL;
 
-/**
- * @author abreslav
- */
-
 public class DataFlowInfo {
-
-    public static abstract class CompositionOperator {
-        public abstract DataFlowInfo compose(DataFlowInfo a, DataFlowInfo b);
-    }
-
-    public static final CompositionOperator AND = new CompositionOperator() {
-        @Override
-        public DataFlowInfo compose(DataFlowInfo a, DataFlowInfo b) {
-            return a.and(b);
-        }
-    };
-
-    public static final CompositionOperator OR = new CompositionOperator() {
-        @Override
-        public DataFlowInfo compose(DataFlowInfo a, DataFlowInfo b) {
-            return a.or(b);
-        }
-    };
-
     public static DataFlowInfo EMPTY = new DataFlowInfo(
             ImmutableMap.<DataFlowValue, Nullability>of(),
             Multimaps.newListMultimap(Collections.<DataFlowValue, Collection<JetType>>emptyMap(), CommonSuppliers.<JetType>getArrayListSupplier()));
