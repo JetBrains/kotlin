@@ -71,7 +71,9 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         JetTypeReference typeRef = psi.getTypeRef();
         JetExpression expression = psi.getInitializer();
 
-        assert !psi.isLocal() : "Should not store local property";
+        assert !psi.isLocal() :
+                String.format("Should not store local property: %s, parent %s",
+                              psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
         return new PsiJetPropertyStubImpl(JetStubElementTypes.PROPERTY, parentStub,
             psi.getName(), psi.isVar(), psi.isTopLevel(), JetPsiUtil.getFQName(psi),
