@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.CommonSuppliers;
@@ -29,15 +30,25 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NULL;
 
-public class DataFlowInfoImpl implements DataFlowInfo {
+/* package */ class DelegatingDataFlowInfo implements DataFlowInfo {
+    @Nullable
+    private final DataFlowInfo parent;
+
+    @NotNull
     private final ImmutableMap<DataFlowValue, Nullability> nullabilityInfo;
+
     /** Also immutable */
+    @NotNull
     private final ListMultimap<DataFlowValue, JetType> typeInfo;
 
-    /* package */ DataFlowInfoImpl(
+    private static final ListMultimap<DataFlowValue, JetType> EMPTY_TYPE_INFO = newTypeInfo();
+
+    /* package */ DelegatingDataFlowInfo(
+            @Nullable DataFlowInfo parent,
             @NotNull ImmutableMap<DataFlowValue, Nullability> nullabilityInfo,
             @NotNull ListMultimap<DataFlowValue, JetType> typeInfo
     ) {
+        this.parent = parent;
         this.nullabilityInfo = nullabilityInfo;
         this.typeInfo = typeInfo;
     }
@@ -47,87 +58,98 @@ public class DataFlowInfoImpl implements DataFlowInfo {
     public Nullability getNullability(@NotNull DataFlowValue key) {
         if (!key.isStableIdentifier()) return key.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(key);
-        if (nullability == null) {
-            nullability = key.getImmanentNullability();
-        }
-        return nullability;
+        return nullability != null ? nullability :
+               parent != null ? parent.getNullability(key) :
+               key.getImmanentNullability();
     }
 
     private boolean putNullability(@NotNull Map<DataFlowValue, Nullability> map, @NotNull DataFlowValue value, @NotNull Nullability nullability) {
         if (!value.isStableIdentifier()) return false;
-        return map.put(value, nullability) != nullability;
+        map.put(value, nullability);
+        return nullability != getNullability(value);
     }
 
     @Override
     @NotNull
     public List<JetType> getPossibleTypes(@NotNull DataFlowValue key) {
-        JetType originalType = key.getType();
         List<JetType> types = typeInfo.get(key);
-        Nullability nullability = getNullability(key);
-        if (nullability.canBeNull()) {
+        if (getNullability(key).canBeNull()) {
+            if (parent != null) {
+                types = Lists.newArrayList(types);
+                addAllUnique(types, parent.getPossibleTypes(key));
+            }
             return types;
         }
-        List<JetType> enrichedTypes = Lists.newArrayListWithCapacity(types.size());
+
+        List<JetType> enrichedTypes = Lists.newArrayListWithCapacity(types.size() + 1);
+        JetType originalType = key.getType();
         if (originalType.isNullable()) {
             enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
         }
-        for (JetType type: types) {
-            if (type.isNullable()) {
-                enrichedTypes.add(TypeUtils.makeNotNullable(type));
-            }
-            else {
-                enrichedTypes.add(type);
+        for (JetType type : types) {
+            enrichedTypes.add(TypeUtils.makeNotNullable(type));
+        }
+
+        if (parent != null) {
+            addAllUnique(enrichedTypes, parent.getPossibleTypes(key));
+        }
+
+        return enrichedTypes;
+    }
+
+    private static void addAllUnique(@NotNull List<JetType> toList, @NotNull List<JetType> fromList) {
+        for (JetType type : fromList) {
+            if (!toList.contains(type)) {
+                toList.add(type);
             }
         }
-        return enrichedTypes;
     }
 
     @Override
     @NotNull
     public DataFlowInfo equate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
-        Map<DataFlowValue, Nullability> builder = Maps.newHashMap(nullabilityInfo);
+        Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
         Nullability nullabilityOfA = getNullability(a);
         Nullability nullabilityOfB = getNullability(b);
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
         changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
-        return changed ? new DataFlowInfoImpl(ImmutableMap.copyOf(builder), typeInfo) : this;
+        return changed ? new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(builder), EMPTY_TYPE_INFO) : this;
     }
 
     @Override
     @NotNull
     public DataFlowInfo disequate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
-        Map<DataFlowValue, Nullability> builder = Maps.newHashMap(nullabilityInfo);
+        Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
         Nullability nullabilityOfA = getNullability(a);
         Nullability nullabilityOfB = getNullability(b);
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert()));
         changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA.invert()));
-        return changed ? new DataFlowInfoImpl(ImmutableMap.copyOf(builder), typeInfo) : this;
+        return changed ? new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(builder), EMPTY_TYPE_INFO) : this;
     }
 
     @Override
     @NotNull
     public DataFlowInfo establishSubtyping(@NotNull DataFlowValue[] values, @NotNull JetType type) {
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = copyTypeInfo();
-        Map<DataFlowValue, Nullability> newNullabilityInfo = Maps.newHashMap(nullabilityInfo);
-        boolean changed = false;
+        if (values.length == 0) return this;
+
+        ListMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
+        Map<DataFlowValue, Nullability> newNullabilityInfo = Maps.newHashMap();
         for (DataFlowValue value : values) {
-//            if (!value.isStableIdentifier()) continue;
-            changed = true;
             newTypeInfo.put(value, type);
             if (!type.isNullable()) {
                 putNullability(newNullabilityInfo, value, NOT_NULL);
             }
         }
-        if (!changed) return this;
-        return new DataFlowInfoImpl(ImmutableMap.copyOf(newNullabilityInfo), newTypeInfo);
+        return new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(newNullabilityInfo), newTypeInfo);
     }
 
+    @NotNull
     private ListMultimap<DataFlowValue, JetType> copyTypeInfo() {
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
+        ListMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
         newTypeInfo.putAll(typeInfo);
         return newTypeInfo;
     }
@@ -135,7 +157,11 @@ public class DataFlowInfoImpl implements DataFlowInfo {
     @NotNull
     @Override
     public DataFlowInfo and(@NotNull DataFlowInfo otherInfo) {
-        DataFlowInfoImpl other = (DataFlowInfoImpl) otherInfo;
+        if (otherInfo == EMPTY) return this;
+
+        assert otherInfo instanceof DelegatingDataFlowInfo : "Unknown DataFlowInfo type: " + otherInfo;
+        DelegatingDataFlowInfo other = (DelegatingDataFlowInfo) otherInfo;
+
         Map<DataFlowValue, Nullability> nullabilityMapBuilder = Maps.newHashMap();
         nullabilityMapBuilder.putAll(nullabilityInfo);
         for (Map.Entry<DataFlowValue, Nullability> entry : other.nullabilityInfo.entrySet()) {
@@ -152,13 +178,17 @@ public class DataFlowInfoImpl implements DataFlowInfo {
 
         ListMultimap<DataFlowValue, JetType> newTypeInfo = copyTypeInfo();
         newTypeInfo.putAll(other.typeInfo);
-        return new DataFlowInfoImpl(ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
+        return new DelegatingDataFlowInfo(null, ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
     }
 
     @NotNull
     @Override
     public DataFlowInfo or(@NotNull DataFlowInfo otherInfo) {
-        DataFlowInfoImpl other = (DataFlowInfoImpl) otherInfo;
+        if (otherInfo == EMPTY) return EMPTY;
+
+        assert otherInfo instanceof DelegatingDataFlowInfo : "Unknown DataFlowInfo type: " + otherInfo;
+        DelegatingDataFlowInfo other = (DelegatingDataFlowInfo) otherInfo;
+
         Map<DataFlowValue, Nullability> builder = Maps.newHashMap(nullabilityInfo);
         builder.keySet().retainAll(other.nullabilityInfo.keySet());
         for (Map.Entry<DataFlowValue, Nullability> entry : builder.entrySet()) {
@@ -169,7 +199,7 @@ public class DataFlowInfoImpl implements DataFlowInfo {
             builder.put(key, thisFlags.or(otherFlags));
         }
 
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = Multimaps.newListMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
+        ListMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
 
         Set<DataFlowValue> keys = Sets.newHashSet(typeInfo.keySet());
         keys.retainAll(other.typeInfo.keySet());
@@ -184,7 +214,12 @@ public class DataFlowInfoImpl implements DataFlowInfo {
             newTypeInfo.putAll(key, newTypes);
         }
 
-        return new DataFlowInfoImpl(ImmutableMap.copyOf(builder), newTypeInfo);
+        return new DelegatingDataFlowInfo(null, ImmutableMap.copyOf(builder), newTypeInfo);
+    }
+
+    @NotNull
+    /* package */ static ListMultimap<DataFlowValue, JetType> newTypeInfo() {
+        return Multimaps.newListMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
     }
 
     @Override

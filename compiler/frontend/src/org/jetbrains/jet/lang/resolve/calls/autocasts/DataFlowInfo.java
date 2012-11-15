@@ -17,20 +17,14 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimaps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.util.CommonSuppliers;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public interface DataFlowInfo {
-    public static final DataFlowInfo EMPTY = new DataFlowInfoImpl(
-            ImmutableMap.<DataFlowValue, Nullability>of(),
-            Multimaps.newListMultimap(Collections.<DataFlowValue, Collection<JetType>>emptyMap(),
-                                      CommonSuppliers.<JetType>getArrayListSupplier()));
+    DataFlowInfo EMPTY = new DelegatingDataFlowInfo(null, ImmutableMap.<DataFlowValue, Nullability>of(),
+                                                    DelegatingDataFlowInfo.newTypeInfo());
 
     @NotNull
     Nullability getNullability(@NotNull DataFlowValue key);
