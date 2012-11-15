@@ -39,7 +39,7 @@ public interface DataFlowInfo {
     DataFlowInfo disequate(@NotNull DataFlowValue a, @NotNull DataFlowValue b);
 
     @NotNull
-    DataFlowInfo establishSubtyping(@NotNull DataFlowValue[] values, @NotNull JetType type);
+    DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull JetType type);
 
     @NotNull
     DataFlowInfo and(@NotNull DataFlowInfo other);

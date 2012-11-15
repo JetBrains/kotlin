@@ -23,10 +23,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.CommonSuppliers;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NULL;
 
@@ -41,6 +38,8 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
     @NotNull
     private final ListMultimap<DataFlowValue, JetType> typeInfo;
 
+    private static final ImmutableMap<DataFlowValue,Nullability> EMPTY_NULLABILITY_INFO =
+            ImmutableMap.copyOf(Collections.<DataFlowValue, Nullability>emptyMap());
     private static final ListMultimap<DataFlowValue, JetType> EMPTY_TYPE_INFO = newTypeInfo();
 
     /* package */ DelegatingDataFlowInfo(
@@ -133,18 +132,13 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
 
     @Override
     @NotNull
-    public DataFlowInfo establishSubtyping(@NotNull DataFlowValue[] values, @NotNull JetType type) {
-        if (values.length == 0) return this;
-
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
-        Map<DataFlowValue, Nullability> newNullabilityInfo = Maps.newHashMap();
-        for (DataFlowValue value : values) {
-            newTypeInfo.put(value, type);
-            if (!type.isNullable()) {
-                putNullability(newNullabilityInfo, value, NOT_NULL);
-            }
-        }
-        return new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(newNullabilityInfo), newTypeInfo);
+    public DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull JetType type) {
+        if (value.getType().equals(type)) return this;
+        if (getPossibleTypes(value).contains(type)) return this;
+        ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
+                type.isNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
+        ListMultimap<DataFlowValue, JetType> newTypeInfo = ImmutableListMultimap.of(value, type);
+        return new DelegatingDataFlowInfo(this, newNullabilityInfo, newTypeInfo);
     }
 
     @NotNull

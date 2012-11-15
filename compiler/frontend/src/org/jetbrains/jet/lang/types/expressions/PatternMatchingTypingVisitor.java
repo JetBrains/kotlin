@@ -80,7 +80,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             subjectType = typeInfo.getType();
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
-        final DataFlowValue variableDescriptor = subjectExpression != null ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext()) : DataFlowValue.NULL;
+        final DataFlowValue subjectDataFlowValue = subjectExpression != null
+                ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext())
+                : DataFlowValue.NULL;
 
         // TODO : exhaustive patterns
 
@@ -103,7 +105,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     DataFlowInfos infos = checkWhenCondition(
                             subjectExpression, subjectExpression == null,
                             subjectType, condition,
-                            context, variableDescriptor);
+                            context, subjectDataFlowValue);
                     newDataFlowInfo = infos.thenInfo;
                     elseDataFlowInfo = elseDataFlowInfo.and(infos.elseInfo);
                 }
@@ -113,7 +115,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 newDataFlowInfo = null;
                 for (JetWhenCondition condition : conditions) {
                     DataFlowInfos infos = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition,
-                                                             context, variableDescriptor);
+                                                             context, subjectDataFlowValue);
                     if (newDataFlowInfo == null) {
                         newDataFlowInfo = infos.thenInfo;
                     }
@@ -160,7 +162,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             final JetType subjectType,
             JetWhenCondition condition,
             final ExpressionTypingContext context,
-            final DataFlowValue... subjectVariables
+            final DataFlowValue subjectDataFlowValue
     ) {
         final Ref<DataFlowInfos> newDataFlowInfo = new Ref<DataFlowInfos>(noChange(context));
         condition.accept(new JetVisitorVoid() {
@@ -189,7 +191,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
                 }
                 if (condition.getTypeRef() != null) {
-                    DataFlowInfos result = checkTypeForIs(context, subjectType, condition.getTypeRef(), subjectVariables);
+                    DataFlowInfos result = checkTypeForIs(context, subjectType, condition.getTypeRef(), subjectDataFlowValue);
                     if (condition.isNegated()) {
                         newDataFlowInfo.set(new DataFlowInfos(result.elseInfo, result.thenInfo));
                     }
@@ -204,7 +206,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 JetExpression expression = condition.getExpression();
                 if (expression != null) {
                     newDataFlowInfo.set(checkTypeForExpressionCondition(context, expression, subjectType, subjectExpression == null,
-                                                                        subjectVariables));
+                                                                        subjectDataFlowValue));
                 }
             }
 
@@ -231,7 +233,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             JetExpression expression,
             JetType subjectType,
             boolean conditionExpected,
-            DataFlowValue... subjectVariables
+            DataFlowValue subjectDataFlowValue
     ) {
         if (expression == null) {
             return noChange(context);
@@ -258,12 +260,10 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         DataFlowValue expressionDataFlowValue =
                 DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext());
         DataFlowInfos result = noChange(context);
-        for (DataFlowValue subjectVariable : subjectVariables) {
-            result = new DataFlowInfos(
-                    result.thenInfo.equate(subjectVariable, expressionDataFlowValue),
-                    result.elseInfo.disequate(subjectVariable, expressionDataFlowValue)
-            );
-        }
+        result = new DataFlowInfos(
+                result.thenInfo.equate(subjectDataFlowValue, expressionDataFlowValue),
+                result.elseInfo.disequate(subjectDataFlowValue, expressionDataFlowValue)
+        );
         return result;
     }
 
@@ -271,7 +271,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             ExpressionTypingContext context,
             JetType subjectType,
             JetTypeReference typeReferenceAfterIs,
-            DataFlowValue... subjectVariables
+            DataFlowValue subjectDataFlowValue
     ) {
         if (typeReferenceAfterIs == null) {
             return noChange(context);
@@ -281,7 +281,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (BasicExpressionTypingVisitor.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, type));
         }
-        return new DataFlowInfos(context.dataFlowInfo.establishSubtyping(subjectVariables, type), context.dataFlowInfo);
+        return new DataFlowInfos(context.dataFlowInfo.establishSubtyping(subjectDataFlowValue, type), context.dataFlowInfo);
     }
 
     private static DataFlowInfos noChange(ExpressionTypingContext context) {

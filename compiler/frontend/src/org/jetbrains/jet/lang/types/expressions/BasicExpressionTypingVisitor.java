@@ -222,7 +222,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     dataFlowInfo = typeInfo.getDataFlowInfo();
                     if (operationType == JetTokens.AS_KEYWORD) {
                         DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(left, typeInfo.getType(), context.trace.getBindingContext());
-                        dataFlowInfo = dataFlowInfo.establishSubtyping(new DataFlowValue[]{value}, targetType);
+                        dataFlowInfo = dataFlowInfo.establishSubtyping(value, targetType);
                     }
                 }
             }
