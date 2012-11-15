@@ -57,7 +57,7 @@
   <item name='java.io.File java.lang.String[] list()'>
     <annotation name='org.jetbrains.annotations.Nullable'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun list() : Array&lt;String&gt;?&quot;"/>
+      <val name="value" val="&quot;fun list() : Array&lt;out String&gt;?&quot;"/>
     </annotation>
   </item>
   <item name='java.io.File java.lang.String[] list(java.io.FilenameFilter) 0'>
@@ -66,22 +66,22 @@
   <item name='java.io.File java.lang.String[] list(java.io.FilenameFilter)'>
     <annotation name='org.jetbrains.annotations.Nullable'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun list(filter : FilenameFilter?) : Array&lt;String&gt;?&quot;"/>
+      <val name="value" val="&quot;fun list(filter : FilenameFilter?) : Array&lt;out String&gt;?&quot;"/>
     </annotation>
   </item>
   <item name='java.io.File java.io.File[] listFiles()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listFiles() : Array&lt;File&gt;?&quot;"/>
+      <val name="value" val="&quot;fun listFiles() : Array&lt;out File&gt;?&quot;"/>
     </annotation>
   </item>
   <item name='java.io.File java.io.File[] listFiles(java.io.FilenameFilter)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listFiles(filter : FilenameFilter?) : Array&lt;File&gt;?&quot;"/>
+      <val name="value" val="&quot;fun listFiles(filter : FilenameFilter?) : Array&lt;out File&gt;?&quot;"/>
     </annotation>
   </item>
   <item name='java.io.File java.io.File[] listFiles(java.io.FileFilter)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listFiles(filter : FileFilter?) : Array&lt;File&gt;?&quot;"/>
+      <val name="value" val="&quot;fun listFiles(filter : FileFilter?) : Array&lt;out File&gt;?&quot;"/>
     </annotation>
   </item>
   <item name='java.io.File boolean renameTo(java.io.File) 0'>
@@ -89,7 +89,7 @@
   </item>
   <item name='java.io.File java.io.File[] listRoots()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun listRoots() : Array&lt;File&gt;?&quot;"/>
+      <val name="value" val="&quot;fun listRoots() : Array&lt;out File&gt;?&quot;"/>
     </annotation>
   </item>
   <item name='java.io.File java.io.File createTempFile(java.lang.String, java.lang.String, java.io.File) 0'>

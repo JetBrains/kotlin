@@ -123,7 +123,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
         actualCompileTimeConstant = getCompileTimeConstant(annotation2, annotationTypeName2, "value");
         assert actualCompileTimeConstant instanceof AnnotationValue;
         checkAnnotationCompileTimeConstant((AnnotationValue) actualCompileTimeConstant, "value",
-                                           DEFAULT_PACKAGE + ".MyAnnotation2", "jet.Array<jet.String?>?", "[\"test\", \"test2\"]");
+                                           DEFAULT_PACKAGE + ".MyAnnotation2", "jet.Array<out jet.String?>?", "[\"test\", \"test2\"]");
 
         String annotationTypeName3 = DEFAULT_PACKAGE + ".MyAnnotationWithParam3";
         AnnotationDescriptor annotation3 = getAnnotationInClassByType("C", annotationTypeName3);
@@ -183,7 +183,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
         CompileTimeConstant<?> actualCompileTimeConstant = getCompileTimeConstant(annotation, annotationTypeName, "value");
         assert actualCompileTimeConstant instanceof ArrayValue;
-        checkArrayCompileTimeConstant((ArrayValue) actualCompileTimeConstant, "jet.Array<java.lang.annotation.ElementType?>?",
+        checkArrayCompileTimeConstant((ArrayValue) actualCompileTimeConstant, "jet.Array<out java.lang.annotation.ElementType?>?",
                                       "java.lang.annotation.ElementType", values);
     }
 
@@ -197,7 +197,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
         CompileTimeConstant<?> actualCompileTimeConstant = getCompileTimeConstant(annotation, annotationTypeName, "value");
         assert actualCompileTimeConstant instanceof ArrayValue;
-        checkArrayCompileTimeConstant((ArrayValue) actualCompileTimeConstant, "jet.Array<jet.String?>?", "jet.String", values);
+        checkArrayCompileTimeConstant((ArrayValue) actualCompileTimeConstant, "jet.Array<out jet.String?>?", "jet.String", values);
     }
 
     public void testAnnotationWithEmptyArrayInParam() throws IOException {
@@ -211,7 +211,7 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
         CompileTimeConstant<?> actualCompileTimeConstant = getCompileTimeConstant(annotation, annotationTypeName, "value");
         assert actualCompileTimeConstant instanceof ArrayValue;
-        checkArrayCompileTimeConstant((ArrayValue) actualCompileTimeConstant, "jet.Array<jet.String?>?", "jet.String", values);
+        checkArrayCompileTimeConstant((ArrayValue) actualCompileTimeConstant, "jet.Array<out jet.String?>?", "jet.String", values);
     }
 
     private void compileJavaFile(@NotNull String fileRelativePath, @Nullable String classPath)

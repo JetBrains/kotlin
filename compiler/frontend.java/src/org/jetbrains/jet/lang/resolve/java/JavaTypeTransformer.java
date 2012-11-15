@@ -210,7 +210,7 @@ public class JavaTypeTransformer {
                 }
 
                 Variance variance;
-                if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !(arrayType instanceof PsiEllipsisType)) {
+                if (!(arrayType instanceof PsiEllipsisType)) {
                     variance = Variance.OUT_VARIANCE;
                 }
                 else {

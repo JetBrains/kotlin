@@ -36,7 +36,7 @@
   <item name='java.util.regex.Pattern java.lang.String[] split(java.lang.CharSequence, int)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun split(input : CharSequence, limit : Int) : Array&lt;String&gt;&quot;"/>
+      <val name="value" val="&quot;fun split(input : CharSequence, limit : Int) : Array&lt;out String&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.regex.Pattern java.lang.String[] split(java.lang.CharSequence) 0'>
@@ -44,7 +44,7 @@
   </item>
   <item name='java.util.regex.Pattern java.lang.String[] split(java.lang.CharSequence)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun split(input : CharSequence) : Array&lt;String&gt;&quot;"/>
+      <val name="value" val="&quot;fun split(input : CharSequence) : Array&lt;out String&gt;&quot;"/>
     </annotation>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

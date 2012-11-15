@@ -25,6 +25,6 @@ public open class test.ModalityOfFakeOverrides : java.util.AbstractList<jet.Stri
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ p0: jet.Int, /*1*/ p1: jet.String): jet.String
     public open override /*1*/ fun size(): jet.Int
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ p0: jet.Int, /*1*/ p1: jet.Int): jet.MutableList<jet.String>
-    public open override /*1*/ /*fake_override*/ fun toArray(): jet.Array<jet.Any?>
-    public open override /*1*/ /*fake_override*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ p0: jet.Array<out T>): jet.Array<T>
+    public open override /*1*/ /*fake_override*/ fun toArray(): jet.Array<out jet.Any?>
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : jet.Any?>toArray(/*0*/ p0: jet.Array<out T>): jet.Array<out T>
 }
