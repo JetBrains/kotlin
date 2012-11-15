@@ -74,7 +74,7 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
         final BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
-        final Map<DeclarationDescriptor, String> errors = Maps.newHashMap();
+        final Map<DeclarationDescriptor, String> errors = Maps.newLinkedHashMap();
 
         Iterable<FqName> affectedClasses = getAffectedClasses(kotlinAnnotationsRoot);
         AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
