@@ -38,7 +38,9 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -74,7 +76,7 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
         final BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
-        final Map<DeclarationDescriptor, String> errors = Maps.newLinkedHashMap();
+        final Map<DeclarationDescriptor, String> errors = Maps.newHashMap();
 
         Iterable<FqName> affectedClasses = getAffectedClasses(kotlinAnnotationsRoot);
         AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
@@ -218,6 +220,11 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
+            // skip java.util.Collection, etc.
+            if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(DescriptorUtils.getFQName(descriptor).toSafe()).isEmpty()) {
+                return null;
+            }
+
             return visitDeclarationRecursively(descriptor, descriptor.getDefaultType().getMemberScope());
         }
 
