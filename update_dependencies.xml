@@ -95,6 +95,11 @@
              dest="dependencies/download/jansi-1.9-sources.jar" usetimestamp="true"/>
         <copy file="dependencies/download/jansi-1.9-sources.jar" tofile="dependencies/jansi-sources.jar" overwrite="true"/>
 
+        <!-- Guava 12 sources-->
+        <get src="http://search.maven.org/remotecontent?filepath=com/google/guava/guava/12.0/guava-12.0-sources.jar"
+             dest="dependencies/download/guava-12.0-sources.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/guava-12.0-sources.jar" tofile="dependencies/guava-12.0-sources.jar" overwrite="true"/>
+
         <!-- ASM 4 -->
         <get-asm4-and-rename-packages/>
     </target>
