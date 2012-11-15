@@ -59,7 +59,7 @@ public class TypeSubstitutor {
 
     public static final TypeSubstitutor EMPTY = create(TypeSubstitution.EMPTY);
 
-    private static final class SubstitutionException extends Exception {
+    public static final class SubstitutionException extends RuntimeException {
         public SubstitutionException(String message) {
             super(message);
         }
@@ -205,19 +205,19 @@ public class TypeSubstitutor {
         return substitutedArguments;
     }
 
-    private static Variance combine(Variance typeParameterVariance, Variance projectionKind) {
+    public static Variance combine(Variance typeParameterVariance, Variance projectionKind) {
         if (typeParameterVariance == Variance.INVARIANT) return projectionKind;
         if (projectionKind == Variance.INVARIANT) return typeParameterVariance;
         return typeParameterVariance.superpose(projectionKind);
     }
 
-    private enum VarianceConflictType {
+    public enum VarianceConflictType {
         NO_CONFLICT,
         IN_IN_OUT_POSITION,
-        OUT_IN_IN_POSITION;
+        OUT_IN_IN_POSITION
     }
 
-    private static VarianceConflictType conflictType(Variance position, Variance argument) {
+    public static VarianceConflictType conflictType(Variance position, Variance argument) {
         if (position == Variance.IN_VARIANCE && argument == Variance.OUT_VARIANCE) {
             return VarianceConflictType.OUT_IN_IN_POSITION;
         }
