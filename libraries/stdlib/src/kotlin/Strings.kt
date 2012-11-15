@@ -65,14 +65,16 @@ public inline fun String.count(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Repeats a given string n times. With n <= 0, the empty string is returned.
- * @includeFunctionBody ../../test/StringTest.kt times
+ * Repeats a given string n times.
+ * When n < 0, IllegalArgumentException is thrown.
+ * @includeFunctionBody ../../test/StringTest.kt repeat
  */
-public inline fun String.times(var n: Int) : String {
-    var answer = "";
-    while (n > 0) {
-        answer = answer.concat(this)
-        n--;
+public inline fun String.repeat(n: Int): String {
+    require(n >= 0, { "Cannot repeat string $n times" })
+
+    var sb = StringBuilder()
+    for(i in 1..n) {
+        sb.append(this)
     }
-    return answer
+    return sb.toString()
 }
