@@ -52,6 +52,36 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
         this.typeInfo = typeInfo;
     }
 
+    @NotNull
+    private Map<DataFlowValue, Nullability> getCompleteNullabilityInfo() {
+        Map<DataFlowValue, Nullability> result = Maps.newHashMap();
+        DelegatingDataFlowInfo info = this;
+        while (info != null) {
+            for (Map.Entry<DataFlowValue, Nullability> entry : info.nullabilityInfo.entrySet()) {
+                DataFlowValue key = entry.getKey();
+                Nullability value = entry.getValue();
+                if (!result.containsKey(key)) {
+                    result.put(key, value);
+                }
+            }
+            info = (DelegatingDataFlowInfo) info.parent;
+        }
+        return result;
+    }
+
+    @NotNull
+    private ListMultimap<DataFlowValue, JetType> getCompleteTypeInfo() {
+        ListMultimap<DataFlowValue, JetType> result = newTypeInfo();
+        DelegatingDataFlowInfo info = this;
+        while (info != null) {
+            for (DataFlowValue key : info.typeInfo.keySet()) {
+                result.putAll(key, info.typeInfo.get(key));
+            }
+            info = (DelegatingDataFlowInfo) info.parent;
+        }
+        return result;
+    }
+
     @Override
     @NotNull
     public Nullability getNullability(@NotNull DataFlowValue key) {
@@ -152,27 +182,29 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
     @Override
     public DataFlowInfo and(@NotNull DataFlowInfo otherInfo) {
         if (otherInfo == EMPTY) return this;
+        if (this == EMPTY) return otherInfo;
+        if (this == otherInfo) return this;
 
         assert otherInfo instanceof DelegatingDataFlowInfo : "Unknown DataFlowInfo type: " + otherInfo;
         DelegatingDataFlowInfo other = (DelegatingDataFlowInfo) otherInfo;
 
         Map<DataFlowValue, Nullability> nullabilityMapBuilder = Maps.newHashMap();
-        nullabilityMapBuilder.putAll(nullabilityInfo);
-        for (Map.Entry<DataFlowValue, Nullability> entry : other.nullabilityInfo.entrySet()) {
+        for (Map.Entry<DataFlowValue, Nullability> entry : other.getCompleteNullabilityInfo().entrySet()) {
             DataFlowValue key = entry.getKey();
             Nullability otherFlags = entry.getValue();
-            Nullability thisFlags = nullabilityInfo.get(key);
-            if (thisFlags != null) {
-                nullabilityMapBuilder.put(key, thisFlags.and(otherFlags));
-            }
-            else {
-                nullabilityMapBuilder.put(key, otherFlags);
+            Nullability thisFlags = getNullability(key);
+            Nullability flags = thisFlags.and(otherFlags);
+            if (flags != thisFlags) {
+                nullabilityMapBuilder.put(key, flags);
             }
         }
 
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = copyTypeInfo();
-        newTypeInfo.putAll(other.typeInfo);
-        return new DelegatingDataFlowInfo(null, ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
+        ListMultimap<DataFlowValue, JetType> newTypeInfo = other.getCompleteTypeInfo();
+        if (nullabilityMapBuilder.isEmpty() && newTypeInfo.isEmpty()) {
+            return this;
+        }
+
+        return new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
     }
 
     @NotNull
