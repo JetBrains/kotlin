@@ -36,16 +36,16 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
 
     /** Also immutable */
     @NotNull
-    private final ListMultimap<DataFlowValue, JetType> typeInfo;
+    private final SetMultimap<DataFlowValue, JetType> typeInfo;
 
     private static final ImmutableMap<DataFlowValue,Nullability> EMPTY_NULLABILITY_INFO =
             ImmutableMap.copyOf(Collections.<DataFlowValue, Nullability>emptyMap());
-    private static final ListMultimap<DataFlowValue, JetType> EMPTY_TYPE_INFO = newTypeInfo();
+    private static final SetMultimap<DataFlowValue, JetType> EMPTY_TYPE_INFO = newTypeInfo();
 
     /* package */ DelegatingDataFlowInfo(
             @Nullable DataFlowInfo parent,
             @NotNull ImmutableMap<DataFlowValue, Nullability> nullabilityInfo,
-            @NotNull ListMultimap<DataFlowValue, JetType> typeInfo
+            @NotNull SetMultimap<DataFlowValue, JetType> typeInfo
     ) {
         this.parent = parent;
         this.nullabilityInfo = nullabilityInfo;
@@ -70,8 +70,8 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
     }
 
     @NotNull
-    private ListMultimap<DataFlowValue, JetType> getCompleteTypeInfo() {
-        ListMultimap<DataFlowValue, JetType> result = newTypeInfo();
+    private SetMultimap<DataFlowValue, JetType> getCompleteTypeInfo() {
+        SetMultimap<DataFlowValue, JetType> result = newTypeInfo();
         DelegatingDataFlowInfo info = this;
         while (info != null) {
             for (DataFlowValue key : info.typeInfo.keySet()) {
@@ -100,17 +100,13 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
 
     @Override
     @NotNull
-    public List<JetType> getPossibleTypes(@NotNull DataFlowValue key) {
-        List<JetType> types = typeInfo.get(key);
+    public Set<JetType> getPossibleTypes(@NotNull DataFlowValue key) {
+        Set<JetType> types = typeInfo.get(key);
         if (getNullability(key).canBeNull()) {
-            if (parent != null) {
-                types = Lists.newArrayList(types);
-                addAllUnique(types, parent.getPossibleTypes(key));
-            }
-            return types;
+            return parent == null ? types : Sets.union(types, parent.getPossibleTypes(key));
         }
 
-        List<JetType> enrichedTypes = Lists.newArrayListWithCapacity(types.size() + 1);
+        Set<JetType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
         JetType originalType = key.getType();
         if (originalType.isNullable()) {
             enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
@@ -119,19 +115,7 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
             enrichedTypes.add(TypeUtils.makeNotNullable(type));
         }
 
-        if (parent != null) {
-            addAllUnique(enrichedTypes, parent.getPossibleTypes(key));
-        }
-
-        return enrichedTypes;
-    }
-
-    private static void addAllUnique(@NotNull List<JetType> toList, @NotNull List<JetType> fromList) {
-        for (JetType type : fromList) {
-            if (!toList.contains(type)) {
-                toList.add(type);
-            }
-        }
+        return parent == null ? enrichedTypes : Sets.union(enrichedTypes, parent.getPossibleTypes(key));
     }
 
     @Override
@@ -167,7 +151,7 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
         if (getPossibleTypes(value).contains(type)) return this;
         ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
                 type.isNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = ImmutableListMultimap.of(value, type);
+        SetMultimap<DataFlowValue, JetType> newTypeInfo = ImmutableSetMultimap.of(value, type);
         return new DelegatingDataFlowInfo(this, newNullabilityInfo, newTypeInfo);
     }
 
@@ -192,12 +176,17 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
             }
         }
 
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = other.getCompleteTypeInfo();
-        if (nullabilityMapBuilder.isEmpty() && newTypeInfo.isEmpty()) {
+        SetMultimap<DataFlowValue, JetType> myTypeInfo = getCompleteTypeInfo();
+        SetMultimap<DataFlowValue, JetType> otherTypeInfo = other.getCompleteTypeInfo();
+        if (nullabilityMapBuilder.isEmpty() && containsAll(myTypeInfo, otherTypeInfo)) {
             return this;
         }
 
-        return new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(nullabilityMapBuilder), newTypeInfo);
+        return new DelegatingDataFlowInfo(this, ImmutableMap.copyOf(nullabilityMapBuilder), otherTypeInfo);
+    }
+
+    private static boolean containsAll(SetMultimap<DataFlowValue, JetType> first, SetMultimap<DataFlowValue, JetType> second) {
+        return first.entries().containsAll(second.entries());
     }
 
     @NotNull
@@ -218,21 +207,14 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
             nullabilityMapBuilder.put(key, thisFlags.or(otherFlags));
         }
 
-        ListMultimap<DataFlowValue, JetType> myTypeInfo = getCompleteTypeInfo();
-        ListMultimap<DataFlowValue, JetType> otherTypeInfo = other.getCompleteTypeInfo();
-        ListMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
+        SetMultimap<DataFlowValue, JetType> myTypeInfo = getCompleteTypeInfo();
+        SetMultimap<DataFlowValue, JetType> otherTypeInfo = other.getCompleteTypeInfo();
+        SetMultimap<DataFlowValue, JetType> newTypeInfo = newTypeInfo();
 
-        Set<DataFlowValue> keys = Sets.newHashSet(myTypeInfo.keySet());
-        keys.retainAll(otherTypeInfo.keySet());
-
-        for (DataFlowValue key : keys) {
-            Collection<JetType> thisTypes = myTypeInfo.get(key);
-            Collection<JetType> otherTypes = otherTypeInfo.get(key);
-
-            Collection<JetType> newTypes = Sets.newHashSet(thisTypes);
-            newTypes.retainAll(otherTypes);
-
-            newTypeInfo.putAll(key, newTypes);
+        for (DataFlowValue key : Sets.intersection(myTypeInfo.keySet(), otherTypeInfo.keySet())) {
+            Set<JetType> thisTypes = myTypeInfo.get(key);
+            Set<JetType> otherTypes = otherTypeInfo.get(key);
+            newTypeInfo.putAll(key, Sets.intersection(thisTypes, otherTypes));
         }
 
         if (nullabilityMapBuilder.isEmpty() && newTypeInfo.isEmpty()) {
@@ -243,8 +225,9 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
     }
 
     @NotNull
-    /* package */ static ListMultimap<DataFlowValue, JetType> newTypeInfo() {
-        return Multimaps.newListMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(), CommonSuppliers.<JetType>getArrayListSupplier());
+    /* package */ static SetMultimap<DataFlowValue, JetType> newTypeInfo() {
+        return Multimaps.newSetMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(),
+                                        CommonSuppliers.<JetType>getLinkedHashSetSupplier());
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.List;
+import java.util.Set;
 
 public interface DataFlowInfo {
     DataFlowInfo EMPTY = new DelegatingDataFlowInfo(null, ImmutableMap.<DataFlowValue, Nullability>of(),
@@ -30,7 +30,7 @@ public interface DataFlowInfo {
     Nullability getNullability(@NotNull DataFlowValue key);
 
     @NotNull
-    List<JetType> getPossibleTypes(@NotNull DataFlowValue key);
+    Set<JetType> getPossibleTypes(@NotNull DataFlowValue key);
 
     @NotNull
     DataFlowInfo equate(@NotNull DataFlowValue a, @NotNull DataFlowValue b);
