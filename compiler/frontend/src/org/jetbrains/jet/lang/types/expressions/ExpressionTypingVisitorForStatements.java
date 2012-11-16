@@ -262,7 +262,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     protected JetType visitAssignment(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
-        JetExpression left = JetPsiUtil.deparenthesizeWithNoTypeResolution(expression.getLeft());
+        JetExpression left = context.expressionTypingServices.deparenthesize(expression.getLeft(), context);
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.base.Function;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -52,10 +53,24 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetExpression deparenthesizeWithNoTypeResolution(@NotNull JetExpression expression) {
+        return deparenthesizeWithResolutionStrategy(expression, null);
+    }
+
+    @Nullable
+    @Deprecated //Use JetPsiUtil.deparenthesizeWithNoTypeResolution() or ExpressionTypingServices.deparenthesize()
+    public static JetExpression deparenthesizeWithResolutionStrategy(
+            @NotNull JetExpression expression,
+            @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
+    ) {
         if (expression instanceof JetBinaryExpressionWithTypeRHS) {
-            JetSimpleNameExpression operationSign = ((JetBinaryExpressionWithTypeRHS) expression).getOperationSign();
+            JetBinaryExpressionWithTypeRHS binaryExpression = (JetBinaryExpressionWithTypeRHS) expression;
+            JetSimpleNameExpression operationSign = binaryExpression.getOperationSign();
             if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
-                expression = ((JetBinaryExpressionWithTypeRHS) expression).getLeft();
+                expression = binaryExpression.getLeft();
+                JetTypeReference typeReference = binaryExpression.getRight();
+                if (typeResolutionStrategy != null && typeReference != null) {
+                    typeResolutionStrategy.apply(typeReference);
+                }
             }
         }
         else if (expression instanceof JetPrefixExpression) {
@@ -68,7 +83,7 @@ public class JetPsiUtil {
         }
         if (expression instanceof JetParenthesizedExpression) {
             JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
-            return innerExpression != null ? deparenthesizeWithNoTypeResolution(innerExpression) : null;
+            return innerExpression != null ? deparenthesizeWithResolutionStrategy(innerExpression, typeResolutionStrategy) : null;
         }
         return expression;
     }

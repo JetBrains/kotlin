@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -373,5 +374,18 @@ public class ExpressionTypingServices {
                 super.report(diagnostic);
             }
         };
+    }
+
+    @Nullable
+    public JetExpression deparenthesize(
+            @NotNull JetExpression expression,
+            @NotNull final ExpressionTypingContext context) {
+        return JetPsiUtil.deparenthesizeWithResolutionStrategy(expression, new Function<JetTypeReference, Void>() {
+            @Override
+            public Void apply(JetTypeReference reference) {
+                getTypeResolver().resolveType(context.scope, reference, context.trace, true);
+                return null;
+            }
+        });
     }
 }
