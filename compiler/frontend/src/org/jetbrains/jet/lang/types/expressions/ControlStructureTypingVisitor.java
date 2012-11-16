@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -171,32 +172,47 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
         }
 
-        if (!containsBreak(expression, context)) {
+        if (!containsJumpOutOfLoop(expression, context)) {
             dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(dataFlowInfo);
         }
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
 
-    private boolean containsBreak(final JetLoopExpression loopExpression, final ExpressionTypingContext context) {
+    private boolean containsJumpOutOfLoop(final JetLoopExpression loopExpression, final ExpressionTypingContext context) {
         final boolean[] result = new boolean[1];
         result[0] = false;
         //todo breaks in inline function literals
-        loopExpression.accept(new JetTreeVisitor<JetLoopExpression>() {
+        loopExpression.accept(new JetTreeVisitor<List<JetLoopExpression>>() {
             @Override
-            public Void visitBreakExpression(JetBreakExpression breakExpression, JetLoopExpression outerLoop) {
+            public Void visitBreakExpression(JetBreakExpression breakExpression, List<JetLoopExpression> outerLoops) {
                 JetSimpleNameExpression targetLabel = breakExpression.getTargetLabel();
                 PsiElement element = targetLabel != null ? context.trace.get(LABEL_TARGET, targetLabel) : null;
-                if (element == loopExpression || (targetLabel == null && outerLoop == loopExpression)) {
+                if (element == loopExpression || (targetLabel == null && outerLoops.get(outerLoops.size() - 1) == loopExpression)) {
                     result[0] = true;
                 }
                 return null;
             }
 
             @Override
-            public Void visitLoopExpression(JetLoopExpression loopExpression, JetLoopExpression outerLoop) {
-                return super.visitLoopExpression(loopExpression, loopExpression);
+            public Void visitContinueExpression(JetContinueExpression expression, List<JetLoopExpression> outerLoops) {
+                // continue@someOuterLoop is also considered as break
+                JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+                if (targetLabel != null) {
+                    PsiElement element = context.trace.get(LABEL_TARGET, targetLabel);
+                    if (element instanceof JetLoopExpression && !outerLoops.contains(element)) {
+                        result[0] = true;
+                    }
+                }
+                return null;
             }
-        }, loopExpression);
+
+            @Override
+            public Void visitLoopExpression(JetLoopExpression loopExpression, List<JetLoopExpression> outerLoops) {
+                List<JetLoopExpression> newOuterLoops = Lists.newArrayList(outerLoops);
+                newOuterLoops.add(loopExpression);
+                return super.visitLoopExpression(loopExpression, newOuterLoops);
+            }
+        }, Lists.newArrayList(loopExpression));
 
         return result[0];
     }
@@ -238,7 +254,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression condition = expression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(conditionScope, condition, context);
         DataFlowInfo dataFlowInfo;
-        if (!containsBreak(expression, context)) {
+        if (!containsJumpOutOfLoop(expression, context)) {
             dataFlowInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
         }
         else {

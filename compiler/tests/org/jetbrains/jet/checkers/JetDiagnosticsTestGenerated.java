@@ -1221,6 +1221,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/Condition.kt");
             }
             
+            @TestMetadata("ContinueOuterLoop.kt")
+            public void testContinueOuterLoop() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ContinueOuterLoop.kt");
+            }
+            
             @TestMetadata("DeepIf.kt")
             public void testDeepIf() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/DeepIf.kt");
