@@ -7,5 +7,5 @@ private enum class TheEnum(val rgb : Int) {
 //package rendererTest defined in root package
 //private final enum class TheEnum : jet.Enum<rendererTest.TheEnum> defined in rendererTest
 //value-parameter val rgb : jet.Int defined in rendererTest.TheEnum.<init>
-//internal final class VAL1 : rendererTest.TheEnum defined in rendererTest.TheEnum.<class-object-for-TheEnum>
-//internal final val VAL1 : rendererTest.TheEnum.<class-object-for-TheEnum>.VAL1 defined in rendererTest.TheEnum.<class-object-for-TheEnum>
+//private final class VAL1 : rendererTest.TheEnum defined in rendererTest.TheEnum.<class-object-for-TheEnum>
+//public final val VAL1 : rendererTest.TheEnum.<class-object-for-TheEnum>.VAL1 defined in rendererTest.TheEnum.<class-object-for-TheEnum>

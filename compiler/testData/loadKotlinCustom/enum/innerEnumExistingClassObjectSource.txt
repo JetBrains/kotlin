@@ -10,8 +10,8 @@ internal final class test.A : jet.Any {
             public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
             internal final class object test.A.<class-object-for-A>.E.<class-object-for-E> {
                 private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>.E.<class-object-for-E>
-                internal final val ENTRY: test.A.<class-object-for-A>.E.<class-object-for-E>.ENTRY
-                internal final enum entry test.A.<class-object-for-A>.E.<class-object-for-E>.ENTRY : test.A.<class-object-for-A>.E {
+                public final val ENTRY: test.A.<class-object-for-A>.E.<class-object-for-E>.ENTRY
+                private final enum entry test.A.<class-object-for-A>.E.<class-object-for-E>.ENTRY : test.A.<class-object-for-A>.E {
                     private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>.E.<class-object-for-E>.ENTRY
                     public final override /*1*/ /*fake_override*/ fun name(): jet.String
                     public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int

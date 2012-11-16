@@ -50,8 +50,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getDefaultConstructorVisibility;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getExpectedThisObjectIfNeeded;
-import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveModalityFromModifiers;
-import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
+import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 
 /**
@@ -116,7 +115,7 @@ public class DescriptorResolver {
         descriptor.setTypeParameterDescriptors(typeParameters);
         Modality defaultModality = descriptor.getKind() == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
         descriptor.setModality(resolveModalityFromModifiers(classElement, defaultModality));
-        descriptor.setVisibility(resolveVisibilityFromModifiers(classElement));
+        descriptor.setVisibility(resolveVisibilityFromModifiers(classElement, getDefaultClassVisibility(descriptor)));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
@@ -804,7 +803,7 @@ public class DescriptorResolver {
                 containingDeclaration,
                 annotationResolver.getResolvedAnnotations(modifierList, trace),
                 Modality.FINAL,
-                resolveVisibilityFromModifiers(objectDeclaration),
+                resolveVisibilityFromModifiers(objectDeclaration, getDefaultVisibilityForObjectPropertyDescriptor(classDescriptor)),
                 false,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION

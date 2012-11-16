@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.Map;
@@ -194,5 +193,22 @@ public class ModifiersChecker {
         if (modifierList.hasModifier(PROTECTED_KEYWORD)) return Visibilities.PROTECTED;
         if (modifierList.hasModifier(INTERNAL_KEYWORD)) return Visibilities.INTERNAL;
         return defaultVisibility;
+    }
+
+    @NotNull
+    public static Visibility getDefaultClassVisibility(@NotNull ClassDescriptor descriptor) {
+        ClassKind kind = descriptor.getKind();
+        if (kind == ClassKind.ENUM_ENTRY) {
+            return Visibilities.PRIVATE;
+        }
+        return Visibilities.INTERNAL;
+    }
+
+    @NotNull
+    public static Visibility getDefaultVisibilityForObjectPropertyDescriptor(@NotNull ClassDescriptor objectClassDescriptor) {
+        if (objectClassDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return Visibilities.PUBLIC;
+        }
+        return Visibilities.INTERNAL;
     }
 }

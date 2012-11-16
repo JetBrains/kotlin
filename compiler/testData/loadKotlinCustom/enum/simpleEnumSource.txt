@@ -6,8 +6,8 @@ internal final enum class test.MyEnum : jet.Enum<test.MyEnum> {
     public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     internal final class object test.MyEnum.<class-object-for-MyEnum> {
         private final /*constructor*/ fun <init>(): test.MyEnum.<class-object-for-MyEnum>
-        internal final val ENTRY: test.MyEnum.<class-object-for-MyEnum>.ENTRY
-        internal final enum entry test.MyEnum.<class-object-for-MyEnum>.ENTRY : test.MyEnum {
+        public final val ENTRY: test.MyEnum.<class-object-for-MyEnum>.ENTRY
+        private final enum entry test.MyEnum.<class-object-for-MyEnum>.ENTRY : test.MyEnum {
             private final /*constructor*/ fun <init>(): test.MyEnum.<class-object-for-MyEnum>.ENTRY
             public final override /*1*/ /*fake_override*/ fun name(): jet.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
