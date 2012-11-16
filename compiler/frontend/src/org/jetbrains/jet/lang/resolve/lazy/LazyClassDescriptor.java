@@ -40,6 +40,8 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveModalityFromModifiers;
+import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 
 /**
  * @author abreslav
@@ -108,10 +110,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         else {
             Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
             JetModifierList modifierList = classLikeInfo.getModifierList();
-            this.modality = ModifiersChecker.resolveModalityFromModifiers(modifierList, defaultModality);
+            this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
         JetModifierList modifierList = classLikeInfo.getModifierList();
-        this.visibility = ModifiersChecker.resolveVisibilityFromModifiers(modifierList, Visibilities.INTERNAL);
+        this.visibility = resolveVisibilityFromModifiers(modifierList, Visibilities.INTERNAL);
     }
 
     @Override

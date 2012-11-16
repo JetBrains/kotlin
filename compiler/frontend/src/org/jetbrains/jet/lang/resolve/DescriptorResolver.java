@@ -50,6 +50,8 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getDefaultConstructorVisibility;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getExpectedThisObjectIfNeeded;
+import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveModalityFromModifiers;
+import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 
 /**
@@ -113,8 +115,8 @@ public class DescriptorResolver {
         }
         descriptor.setTypeParameterDescriptors(typeParameters);
         Modality defaultModality = descriptor.getKind() == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
-        descriptor.setModality(ModifiersChecker.resolveModalityFromModifiers(classElement, defaultModality));
-        descriptor.setVisibility(ModifiersChecker.resolveVisibilityFromModifiers(classElement));
+        descriptor.setModality(resolveModalityFromModifiers(classElement, defaultModality));
+        descriptor.setVisibility(resolveVisibilityFromModifiers(classElement));
 
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
@@ -305,8 +307,8 @@ public class DescriptorResolver {
             }
         }
         boolean hasBody = function.getBodyExpression() != null;
-        Modality modality = ModifiersChecker.resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, hasBody));
-        Visibility visibility = ModifiersChecker.resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor));
+        Modality modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, hasBody));
+        Visibility visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor));
         JetModifierList modifierList = function.getModifierList();
         boolean isInline = (modifierList != null) && modifierList.hasModifier(JetTokens.INLINE_KEYWORD);
         functionDescriptor.initialize(
@@ -802,7 +804,7 @@ public class DescriptorResolver {
                 containingDeclaration,
                 annotationResolver.getResolvedAnnotations(modifierList, trace),
                 Modality.FINAL,
-                ModifiersChecker.resolveVisibilityFromModifiers(objectDeclaration),
+                resolveVisibilityFromModifiers(objectDeclaration),
                 false,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
@@ -895,9 +897,9 @@ public class DescriptorResolver {
 
         boolean hasBody = hasBody(property);
         Modality modality = containingDeclaration instanceof ClassDescriptor
-                            ? ModifiersChecker.resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, hasBody))
+                            ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, hasBody))
                             : Modality.FINAL;
-        Visibility visibility = ModifiersChecker.resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
+        Visibility visibility = resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList, trace),
@@ -1022,8 +1024,8 @@ public class DescriptorResolver {
 
             setterDescriptor = new PropertySetterDescriptor(
                     propertyDescriptor, annotations,
-                    ModifiersChecker.resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
-                    ModifiersChecker.resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
+                    resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
+                    resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
                     setter.getBodyExpression() != null, false, CallableMemberDescriptor.Kind.DECLARATION);
             if (parameter != null) {
 
@@ -1108,8 +1110,8 @@ public class DescriptorResolver {
 
             getterDescriptor = new PropertyGetterDescriptor(
                     propertyDescriptor, annotations,
-                    ModifiersChecker.resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
-                    ModifiersChecker.resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
+                    resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
+                    resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
                     getter.getBodyExpression() != null, false, CallableMemberDescriptor.Kind.DECLARATION);
             getterDescriptor.initialize(returnType);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
@@ -1154,7 +1156,7 @@ public class DescriptorResolver {
                         constructorDescriptor,
                         parameterScope,
                         valueParameters, trace),
-                ModifiersChecker.resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)));
+                resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)));
     }
 
     @Nullable
@@ -1196,8 +1198,8 @@ public class DescriptorResolver {
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
                 valueParameter.getAnnotations(),
-                ModifiersChecker.resolveModalityFromModifiers(parameter, Modality.FINAL),
-                ModifiersChecker.resolveVisibilityFromModifiers(parameter),
+                resolveModalityFromModifiers(parameter, Modality.FINAL),
+                resolveVisibilityFromModifiers(parameter),
                 isMutable,
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION
