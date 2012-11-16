@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -39,6 +38,6 @@ public interface DeclarationProvider {
     @NotNull
     Collection<JetProperty> getPropertyDeclarations(@NotNull Name name);
 
-    @Nullable
-    JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name);
+    @NotNull
+    Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name);
 }

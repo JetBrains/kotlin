@@ -65,21 +65,27 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         if (allDescriptorsComputed) return null;
 
-        JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
-        if (classOrObjectDeclaration == null) return null;
+        Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
+        if (classOrObjectDeclarations.isEmpty()) return null;
 
-        // TODO: when enum entries with constructors are dropped, replace with declaresObjectOrEnumConstant()
-        if (object != declaresObjectOrEnumConstant(classOrObjectDeclaration)) return null;
+        ClassDescriptor result = null;
 
-        ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
-                                                      JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
+        for (JetClassOrObject classOrObjectDeclaration : classOrObjectDeclarations) {
 
-        cache.put(name, classDescriptor);
-        if (!object) {
-            allDescriptors.add(classDescriptor);
+            // TODO: when enum entries with constructors are dropped, replace with declaresObjectOrEnumConstant()
+            if (object != declaresObjectOrEnumConstant(classOrObjectDeclaration)) continue;
+
+            ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
+                                                                      JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
+
+            cache.put(name, classDescriptor);
+            if (!object) {
+                allDescriptors.add(classDescriptor);
+            }
+
+            result = classDescriptor;
         }
-
-        return classDescriptor;
+        return result;
     }
 
     private static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
@@ -149,15 +155,17 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         }
 
         // Objects are also properties
-        JetClassOrObject classOrObjectDeclaration = declarationProvider.getClassOrObjectDeclaration(name);
-        if (declaresObjectOrEnumConstant(classOrObjectDeclaration)) {
-            ClassDescriptor classifier = getObjectDescriptor(name);
-            if (classifier == null) {
-                throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
+        Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
+        for (JetClassOrObject classOrObjectDeclaration : classOrObjectDeclarations) {
+            if (declaresObjectOrEnumConstant(classOrObjectDeclaration)) {
+                ClassDescriptor classifier = getObjectDescriptor(name);
+                if (classifier == null) {
+                    throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
+                }
+                VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
+                        .resolveObjectDeclaration(thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
+                result.add(propertyDescriptor);
             }
-            VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                    .resolveObjectDeclaration(thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
-            result.add(propertyDescriptor);
         }
 
         getNonDeclaredProperties(name, result);

@@ -16,16 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author abreslav
@@ -34,7 +34,7 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
     private final List<JetDeclaration> allDeclarations = Lists.newArrayList();
     private final Multimap<Name, JetNamedFunction> functions = HashMultimap.create();
     private final Multimap<Name, JetProperty> properties = HashMultimap.create();
-    private final Map<Name, JetClassOrObject> classesAndObjects = Maps.newHashMap();
+    private final Multimap<Name, JetClassOrObject> classesAndObjects = ArrayListMultimap.create(); // order matters here
 
     private boolean indexCreated = false;
 
@@ -92,8 +92,9 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
         return Lists.newArrayList(properties.get(name));
     }
 
+    @NotNull
     @Override
-    public JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name) {
+    public Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name) {
         createIndex();
         return classesAndObjects.get(name);
     }

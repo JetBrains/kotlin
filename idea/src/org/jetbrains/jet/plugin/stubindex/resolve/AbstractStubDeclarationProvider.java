@@ -22,6 +22,8 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.lazy.DeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,9 +36,10 @@ public abstract class AbstractStubDeclarationProvider implements DeclarationProv
         return null;
     }
 
+    @NotNull
     @Override
-    public JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name) {
+    public Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name) {
         // TODO:
-        return null;
+        return Collections.emptyList();
     }
 }

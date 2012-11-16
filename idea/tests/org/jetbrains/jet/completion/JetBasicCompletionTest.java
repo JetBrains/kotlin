@@ -269,6 +269,22 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testClassRedeclaration1() {
+        doTest();
+    }
+
+    public void testClassRedeclaration2() {
+        doTest();
+    }
+
+    public void testObjectRedeclaration1() {
+        doTest();
+    }
+
+    public void testObjectRedeclaration2() {
+        doTest();
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {

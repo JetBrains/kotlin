@@ -308,7 +308,20 @@ public class ResolveSessionUtils {
         return null;
     }
 
-    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull ResolveSession resolveSession, @NotNull FqName fqName) {
+    @NotNull
+    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(
+                @NotNull ResolveSession resolveSession,
+                @NotNull FqName fqName
+    ) {
+        return getClassOrObjectDescriptorsByFqName(resolveSession, fqName, false);
+    }
+
+    @NotNull
+    public static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
+            @NotNull ResolveSession resolveSession,
+            @NotNull FqName fqName,
+            boolean includeObjectDeclarations
+    ) {
         if (fqName.isRoot()) {
             return Collections.emptyList();
         }
@@ -320,7 +333,8 @@ public class ResolveSessionUtils {
             NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(packageFqName);
             if (packageDescriptor != null) {
                 FqName classInPackagePath = new FqName(QualifiedNamesUtil.tail(packageFqName, fqName));
-                Collection<ClassDescriptor> descriptors = getClassDescriptorsByFqName(packageDescriptor, classInPackagePath);
+                Collection<ClassDescriptor> descriptors = getClassOrObjectDescriptorsByFqName(packageDescriptor, classInPackagePath,
+                                                                                              includeObjectDeclarations);
                 classDescriptors.addAll(descriptors);
             }
 
@@ -335,7 +349,11 @@ public class ResolveSessionUtils {
         return classDescriptors;
     }
 
-    private static Collection<ClassDescriptor> getClassDescriptorsByFqName(NamespaceDescriptor packageDescriptor, FqName path) {
+    private static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
+            NamespaceDescriptor packageDescriptor,
+            FqName path,
+            boolean includeObjectDeclarations
+    ) {
         if (path.isRoot()) {
             return Collections.emptyList();
         }
@@ -358,14 +376,20 @@ public class ResolveSessionUtils {
         }
 
         Name shortName = path.shortName();
-        Collection<ClassDescriptor> resultClassDescriptors = Lists.newArrayList();
+        Collection<ClassDescriptor> resultClassifierDescriptors = Lists.newArrayList();
         for (JetScope scope : scopes) {
             ClassifierDescriptor classifier = scope.getClassifier(shortName);
             if (classifier instanceof ClassDescriptor) {
-                resultClassDescriptors.add((ClassDescriptor) classifier);
+                resultClassifierDescriptors.add((ClassDescriptor) classifier);
+            }
+            if (includeObjectDeclarations) {
+                ClassDescriptor objectDescriptor = scope.getObjectDescriptor(shortName);
+                if (objectDescriptor != null) {
+                    resultClassifierDescriptors.add(objectDescriptor);
+                }
             }
         }
 
-        return resultClassDescriptors;
+        return resultClassifierDescriptors;
     }
 }

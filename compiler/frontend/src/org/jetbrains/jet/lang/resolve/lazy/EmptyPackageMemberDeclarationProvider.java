@@ -64,8 +64,9 @@ public class EmptyPackageMemberDeclarationProvider implements PackageMemberDecla
         return Collections.emptyList();
     }
 
+    @NotNull
     @Override
-    public JetClassOrObject getClassOrObjectDeclaration(@NotNull Name name) {
-        return null;
+    public Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name) {
+        return Collections.emptyList();
     }
 }

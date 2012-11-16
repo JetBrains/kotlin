@@ -28,10 +28,7 @@ import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -158,14 +155,23 @@ public class ResolveSession {
         JetScope resolutionScope = getInjector().getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
         Name name = classOrObject.getNameAsName();
         assert name != null : "Name is null for " + classOrObject + " " + classOrObject.getText();
-        ClassifierDescriptor classifier = resolutionScope.getClassifier(name);
-        if (classifier == null) {
-            classifier = resolutionScope.getObjectDescriptor(name);
+
+        // Why not use the result here. Because it may be that there is a redeclaration:
+        //     class A {} class A { fun foo(): A<completion here>}
+        // and if we find teh class by name only, we may b-not get the right one.
+        // This call is only needed to make sure the classes are written to trace
+        resolutionScope.getClassifier(name);
+        DeclarationDescriptor declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+
+        if (declaration == null) {
+            // Why not use the result here. See the comment
+            resolutionScope.getObjectDescriptor(name);
+            declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
         }
-        if (classifier == null) {
+        if (declaration == null) {
             throw new IllegalArgumentException("Could not find a classifier for " + classOrObject + " " + classOrObject.getText());
         }
-        return (ClassDescriptor) classifier;
+        return (ClassDescriptor) declaration;
     }
 
     /*package*/ LazyClassDescriptor getClassObjectDescriptor(JetClassObject classObject) {
