@@ -105,14 +105,14 @@ public class SignaturesPropagation {
 
         // Modify type arguments using info from typesFromSuper
         List<TypeProjection> resultArguments = Lists.newArrayList();
-        for (int i = 0; i < autoArguments.size(); i++) {
-            TypeProjection argument = autoArguments.get(i);
+        for (TypeParameterDescriptor parameter : typeConstructor.getParameters()) {
+            TypeProjection argument = autoArguments.get(parameter.getIndex());
 
             TypeCheckingProcedure.EnrichedProjectionKind effectiveProjectionKind =
-                    TypeCheckingProcedure.getEffectiveProjectionKind(typeConstructor.getParameters().get(i), argument);
+                    TypeCheckingProcedure.getEffectiveProjectionKind(parameter, argument);
 
             JetType argumentType = argument.getType();
-            List<TypeProjection> projectionsFromSuper = typeArgumentsFromSuper.get(i);
+            List<TypeProjection> projectionsFromSuper = typeArgumentsFromSuper.get(parameter.getIndex());
             Collection<JetType> argTypesFromSuper = getTypes(projectionsFromSuper);
             boolean covariantPosition = effectiveProjectionKind == TypeCheckingProcedure.EnrichedProjectionKind.OUT;
 
@@ -186,16 +186,14 @@ public class SignaturesPropagation {
 
         // Enumerate all types from super and all its parameters
         for (JetType typeFromSuper : typesFromSuper) {
-            List<TypeParameterDescriptor> typeFromSuperParameters = typeFromSuper.getConstructor().getParameters();
-            for (int i = 0; i < typeFromSuperParameters.size(); i++) {
-                TypeParameterDescriptor parameter = typeFromSuperParameters.get(i);
-                TypeProjection argument = typeFromSuper.getArguments().get(i);
+            for (TypeParameterDescriptor parameter : typeFromSuper.getConstructor().getParameters()) {
+                TypeProjection argument = typeFromSuper.getArguments().get(parameter.getIndex());
 
                 // for given example, this block is executed four times:
-                // 1. typeFromSuper = Bar<String, List<Int>>,     i = 0,  parameter = "#0 of Bar",  argument = String
-                // 2. typeFromSuper = Bar<String, List<Int>>,     i = 1,  parameter = "#1 of Bar",  argument = List<Int>
-                // 3. typeFromSuper = Baz<Boolean, CharSequence>, i = 0,  parameter = "#0 of Baz",  argument = Boolean
-                // 4. typeFromSuper = Baz<Boolean, CharSequence>, i = 1,  parameter = "#1 of Baz",  argument = CharSequence
+                // 1. typeFromSuper = Bar<String, List<Int>>,      parameter = "#0 of Bar",  argument = String
+                // 2. typeFromSuper = Bar<String, List<Int>>,      parameter = "#1 of Bar",  argument = List<Int>
+                // 3. typeFromSuper = Baz<Boolean, CharSequence>,  parameter = "#0 of Baz",  argument = Boolean
+                // 4. typeFromSuper = Baz<Boolean, CharSequence>,  parameter = "#1 of Baz",  argument = CharSequence
 
                 // if it is mapped to klass' parameter, then store it into map
                 for (TypeProjection projection : substitution.get(parameter.getTypeConstructor())) {
