@@ -49,4 +49,12 @@ class StringTest {
         assertEquals("uRL", "URL".decapitalize())
     }
 
+    test fun repeat() {
+        fails({ "foo".repeat(-1) })
+        assertEquals("", "foo".repeat(0))
+        assertEquals("foo", "foo".repeat(1))
+        assertEquals("foofoo", "foo".repeat(2))
+        assertEquals("foofoofoo", "foo".repeat(3))
+    }
+
 }

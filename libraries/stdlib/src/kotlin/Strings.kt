@@ -63,3 +63,18 @@ public inline fun String.count(predicate: (Char) -> Boolean): Int {
     }
     return answer
 }
+
+/**
+ * Repeats a given string n times.
+ * When n < 0, IllegalArgumentException is thrown.
+ * @includeFunctionBody ../../test/StringTest.kt repeat
+ */
+public inline fun String.repeat(n: Int): String {
+    require(n >= 0, { "Cannot repeat string $n times" })
+
+    var sb = StringBuilder()
+    for(i in 1..n) {
+        sb.append(this)
+    }
+    return sb.toString()
+}
