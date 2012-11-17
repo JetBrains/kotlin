@@ -17,8 +17,6 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -37,7 +35,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -50,7 +47,7 @@ public class DebugInfoUtil {
 
     public interface DebugInfoReporter {
 
-        void reportErrorElement(@NotNull JetReferenceExpression expression);
+        void reportElementWithErrorType(@NotNull JetReferenceExpression expression);
 
         void reportMissingUnresolved(@NotNull JetReferenceExpression expression);
 
@@ -122,13 +119,14 @@ public class DebugInfoUtil {
                 boolean resolved = target != null;
                 boolean markedWithError = markedWithErrorElements.containsKey(expression);
                 JetType expressionType = bindingContext.get(EXPRESSION_TYPE, expression);
+                AbstractDiagnosticFactory factory = markedWithErrorElements.get(expression);
                 if (declarationDescriptor != null &&
-                    !ApplicationManager.getApplication().isUnitTestMode() &&
                     (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {
-                    debugInfoReporter.reportErrorElement(expression);
+                    if (factory != Errors.EXPRESSION_EXPECTED_NAMESPACE_FOUND) {
+                        debugInfoReporter.reportElementWithErrorType(expression);
+                    }
                 }
                 if (resolved && markedWithError) {
-                    AbstractDiagnosticFactory factory = markedWithErrorElements.get(expression);
                     if (factory instanceof UnresolvedReferenceDiagnosticFactory) {
                         debugInfoReporter.reportUnresolvedWithTarget(expression, target);
                     }

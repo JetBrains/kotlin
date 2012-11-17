@@ -25,4 +25,4 @@ package nestedObjects
   val b = B
   val c = A.B
   val d = A.B.A
-  val e = B.<error>A</error>.B
+  val e = B.<error>A</error>.<error>B</error>

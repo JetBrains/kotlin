@@ -55,7 +55,7 @@ public class DebugInfoAnnotator implements Annotator {
                 final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
                 DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
                     @Override
-                    public void reportErrorElement(@NotNull JetReferenceExpression expression) {
+                    public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {
                         holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element")
                                 .setTextAttributes(JetHighlightingColors.RESOLVED_TO_ERROR);
                     }

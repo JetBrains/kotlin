@@ -27,7 +27,7 @@ fun test(arg: B) {
 
     constant.fff(constant.dValue)
 
-    <!UNRESOLVED_REFERENCE!>f<!>.f()
+    <!UNRESOLVED_REFERENCE!>f<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>f<!>()
 }
 
 // FILE:b.kt
@@ -79,7 +79,7 @@ object C {
 }
 
 fun foo() {
-    if (<!UNRESOLVED_REFERENCE!>i<!> == 3) <!UNRESOLVED_REFERENCE!>f<!>()
+    if (<!UNRESOLVED_REFERENCE!>i<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> 3) <!UNRESOLVED_REFERENCE!>f<!>()
 }
 
 //FILE:d.kt

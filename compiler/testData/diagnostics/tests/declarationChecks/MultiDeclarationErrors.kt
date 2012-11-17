@@ -14,7 +14,7 @@ fun test(mc1: MyClass, mc2: MyClass2) {
     val (c) = <!COMPONENT_FUNCTION_AMBIGUITY!>mc2<!>
 
     //a,b,c are error types
-    a : Boolean
-    b : Boolean
-    c : Boolean
+    use(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>, <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!>, <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>c<!>)
 }
+
+fun use(vararg a: Any?) = a

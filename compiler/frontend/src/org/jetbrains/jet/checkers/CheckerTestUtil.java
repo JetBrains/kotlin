@@ -85,8 +85,8 @@ public class CheckerTestUtil {
         final List<Diagnostic> debugAnnotations = Lists.newArrayList();
         DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
-            public void reportErrorElement(@NotNull JetReferenceExpression expression) {
-                newDiagnostic(expression, DebugInfoDiagnosticFactory.ERROR_ELEMENT);
+            public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {
+                newDiagnostic(expression, DebugInfoDiagnosticFactory.ELEMENT_WITH_ERROR_TYPE);
             }
 
             @Override
@@ -379,7 +379,7 @@ public class CheckerTestUtil {
     }
 
     public static class DebugInfoDiagnosticFactory extends AbstractDiagnosticFactory {
-        public static final DebugInfoDiagnosticFactory ERROR_ELEMENT = new DebugInfoDiagnosticFactory("ERROR_ELEMENT");
+        public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");
 

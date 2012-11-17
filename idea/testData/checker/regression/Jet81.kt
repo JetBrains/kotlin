@@ -4,7 +4,7 @@ val y = object {
   val a = <error>y</error>
 }
 
-val z = y.a;
+val z = y.<error>a</error>;
 
 object A {
   val x = A
@@ -12,11 +12,11 @@ object A {
 
 val a = object {
   {
-    b + 1
+    <error>b</error> <error>+</error> 1
   }
-  val x = b
+  val x = <error>b</error>
   val y = 1
 }
 
-val b = <error>a</error>.x
+val b = <error>a</error>.<error>x</error>
 val c = a.y

@@ -26,5 +26,4 @@ val a = A
 val b = B
 val c = A.B
 val d = A.B.A
-val e = B.<!UNRESOLVED_REFERENCE!>A<!>.B
-
+val e = B.<!UNRESOLVED_REFERENCE!>A<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>B<!>

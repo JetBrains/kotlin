@@ -4,7 +4,7 @@ val <T> List<T>.length = <!UNRESOLVED_REFERENCE!>size<!>()
 
 val <T> List<T>.length1 : Int get() = size()
 
-val String.bd = <!NO_THIS!>this<!> + "!"
+val String.bd = <!NO_THIS!>this<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> "!"
 
 val String.bd1 : String get() = this + "!"
 

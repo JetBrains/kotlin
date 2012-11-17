@@ -88,17 +88,17 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.bar()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
 
   a?.foo()
   if (!(a is B)) {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.bar()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
   else {
     a.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.bar()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
 
   a?.foo()
@@ -108,7 +108,7 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.bar()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
 
   if (!(a is B) || !(a is C)) {
@@ -195,7 +195,7 @@ fun mergeAutocasts(a: Any?) {
     val <!UNUSED_VARIABLE!>i<!>: Int = a.compareTo("")
   }
   if (a is String && a.compareTo("") == 0) {}
-  if (a is String || a.<!UNRESOLVED_REFERENCE!>compareTo<!>("") == 0) {}
+  if (a is String || a.<!UNRESOLVED_REFERENCE!>compareTo<!>("") <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> 0) {}
 }
 
 //mutability

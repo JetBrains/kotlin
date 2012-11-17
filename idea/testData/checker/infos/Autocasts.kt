@@ -85,7 +85,7 @@ fun f13(a : A?) {
   }
   else {
     a<info>?.</info>foo()
-    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.bar()
+    <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: c">c</error>.<error>bar</error>()
   }
 
   a<info>?.</info>foo()
@@ -191,7 +191,7 @@ fun mergeAutocasts(a: Any?) {
     val <warning>i</warning>: Int = <info descr="Automatically cast to jet.String">a</info>.compareTo("")
   }
   if (a is String && <info descr="Automatically cast to jet.String">a</info>.compareTo("") == 0) {}
-  if (a is String || a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("") == 0) {}
+  if (a is String || a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("") <error>==</error> 0) {}
 }
 
 //mutability

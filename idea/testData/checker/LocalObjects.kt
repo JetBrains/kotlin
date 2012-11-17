@@ -18,4 +18,4 @@
     B.foo()
   }
 
-  val bb = <error>B</error>.foo()
+  val bb = <error>B</error>.<error>foo</error>()

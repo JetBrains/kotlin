@@ -24,9 +24,9 @@ fun testUnresolved() {
     }
 
     for (j in <error>collection</error>) {
-       var i: Int = j
+       var i: Int = <error>j</error>
        i += 1
-       foo1(j)
+       foo1(<error>j</error>)
     }
 }
 

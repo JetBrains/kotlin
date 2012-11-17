@@ -23,9 +23,9 @@ fun testUnresolved() {
     }
 
     for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
-       var i: Int = j
+       var i: Int = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>j<!>
        i += 1
-       foo1(j)
+       foo1(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>j<!>)
     }
 }
 
