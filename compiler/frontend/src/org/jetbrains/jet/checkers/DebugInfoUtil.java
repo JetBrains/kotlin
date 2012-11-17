@@ -70,6 +70,9 @@ public class DebugInfoUtil {
                 JetSuperExpression superExpression = (JetSuperExpression) diagnostic.getPsiElement();
                 markedWithErrorElements.put(superExpression.getInstanceReference(), factory);
             }
+            else if (factory == Errors.EXPRESSION_EXPECTED_NAMESPACE_FOUND) {
+                markedWithErrorElements.put((JetSimpleNameExpression) diagnostic.getPsiElement(), factory);
+            }
         }
 
         root.acceptChildren(new JetTreeVisitorVoid() {
