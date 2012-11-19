@@ -808,7 +808,7 @@ public class DescriptorResolver {
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
-        propertyDescriptor.setType(classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
+        propertyDescriptor.setType(getTypeForObjectDeclaration(classDescriptor), Collections.<TypeParameterDescriptor>emptyList(),
                                    getExpectedThisObjectIfNeeded(containingDeclaration), NO_RECEIVER_PARAMETER);
         propertyDescriptor.initialize(createDefaultGetter(propertyDescriptor), null);
         trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, classDescriptor);
@@ -817,6 +817,18 @@ public class DescriptorResolver {
             trace.record(BindingContext.OBJECT_DECLARATION, nameAsDeclaration, propertyDescriptor);
         }
         return propertyDescriptor;
+    }
+
+    @NotNull
+    private static JetType getTypeForObjectDeclaration(@NotNull ClassDescriptor objectClassDescriptor) {
+        if (objectClassDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            DeclarationDescriptor containingDeclaration = objectClassDescriptor.getContainingDeclaration().getContainingDeclaration();
+            assert containingDeclaration instanceof ClassDescriptor;
+            ClassDescriptor enumClass = (ClassDescriptor) containingDeclaration;
+            assert enumClass.getKind() == ClassKind.ENUM_CLASS;
+            return enumClass.getDefaultType();
+        }
+        return objectClassDescriptor.getDefaultType();
     }
 
     @NotNull

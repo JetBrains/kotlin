@@ -6,8 +6,8 @@ internal final enum class test.Test : jet.Enum<test.Test> {
     public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     internal final class object test.Test.<class-object-for-Test> {
         private final /*constructor*/ fun <init>(): test.Test.<class-object-for-Test>
-        public final val A: test.Test.<class-object-for-Test>.A
-        public final val B: test.Test.<class-object-for-Test>.B
+        public final val A: test.Test
+        public final val B: test.Test
         private final enum entry test.Test.<class-object-for-Test>.A : test.Test {
             private final /*constructor*/ fun <init>(): test.Test.<class-object-for-Test>.A
             public final override /*1*/ /*fake_override*/ fun name(): jet.String
