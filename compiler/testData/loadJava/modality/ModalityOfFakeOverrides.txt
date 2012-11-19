@@ -4,11 +4,11 @@ public open class test.ModalityOfFakeOverrides : java.util.AbstractList<jet.Stri
     public final /*constructor*/ fun <init>(): test.ModalityOfFakeOverrides
     public open override /*1*/ /*fake_override*/ fun add(/*0*/ p0: jet.Int, /*1*/ p1: jet.String): jet.Tuple0
     public open override /*1*/ /*fake_override*/ fun add(/*0*/ p0: jet.String): jet.Boolean
-    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ p0: jet.Collection<out jet.String>): jet.Boolean
-    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ p0: jet.Int, /*1*/ p1: jet.Collection<out jet.String>): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ p0: jet.Collection<jet.String>): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ p0: jet.Int, /*1*/ p1: jet.Collection<jet.String>): jet.Boolean
     public open override /*1*/ /*fake_override*/ fun clear(): jet.Tuple0
     public open override /*1*/ /*fake_override*/ fun contains(/*0*/ p0: jet.Any?): jet.Boolean
-    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ p0: jet.Collection<out jet.Any?>): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ p0: jet.Collection<jet.Any?>): jet.Boolean
     public open override /*1*/ fun get(/*0*/ p0: jet.Int): jet.String
     public open override /*1*/ /*fake_override*/ fun indexOf(/*0*/ p0: jet.Any?): jet.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
@@ -19,9 +19,9 @@ public open class test.ModalityOfFakeOverrides : java.util.AbstractList<jet.Stri
     protected final override /*1*/ /*fake_override*/ var modCount: jet.Int
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ p0: jet.Any?): jet.Boolean
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ p0: jet.Int): jet.String?
-    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ p0: jet.Collection<out jet.Any?>): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ p0: jet.Collection<jet.Any?>): jet.Boolean
     protected open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ p0: jet.Int, /*1*/ p1: jet.Int): jet.Tuple0
-    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ p0: jet.Collection<out jet.Any?>): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ p0: jet.Collection<jet.Any?>): jet.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ p0: jet.Int, /*1*/ p1: jet.String): jet.String
     public open override /*1*/ fun size(): jet.Int
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ p0: jet.Int, /*1*/ p1: jet.Int): jet.MutableList<jet.String>
