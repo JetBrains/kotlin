@@ -1,11 +1,12 @@
 enum class Direction() {
     NORTH {
         val someSpecialValue = "OK"
+
+        override fun f() = someSpecialValue
     }
 
-    SOUTH
-    WEST
-    EAST
+
+    abstract fun f():String
 }
 
-fun box() = Direction.NORTH.someSpecialValue
+fun box() = Direction.NORTH.f()
