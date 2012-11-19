@@ -140,10 +140,12 @@ public final class JavaFunctionResolver {
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
+        final List<String> signatureErrors = Lists.newArrayList();
+
         returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, method, trace, new Function1<String, Void>() {
             @Override
             public Void invoke(String error) {
-                trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, functionDescriptorImpl, error);
+                signatureErrors.add(error);
                 return null;
             }
         });
@@ -157,8 +159,7 @@ public final class JavaFunctionResolver {
             methodTypeParameters = alternativeMethodSignatureData.getTypeParameters();
         }
         else if (alternativeMethodSignatureData.hasErrors()) {
-            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, functionDescriptorImpl,
-                         alternativeMethodSignatureData.getError());
+            signatureErrors.add(alternativeMethodSignatureData.getError());
         }
 
         functionDescriptorImpl.initialize(
@@ -184,7 +185,10 @@ public final class JavaFunctionResolver {
             throw new IllegalStateException("non-static method in subclass");
         }
 
-        if (trace.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, functionDescriptorImpl) == null) {
+        if (!signatureErrors.isEmpty()) {
+            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
+        }
+        if (signatureErrors.isEmpty()) {
             List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
             for (FunctionDescriptor superFunction : superFunctions) {
                 TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(((ClassDescriptor) ownerDescriptor).getDefaultType());

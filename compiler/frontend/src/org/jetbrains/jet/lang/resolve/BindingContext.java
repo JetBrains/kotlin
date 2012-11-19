@@ -38,6 +38,7 @@ import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
@@ -256,8 +257,8 @@ public interface BindingContext {
 
     WritableSlice<ClassDescriptor, Boolean> INCOMPLETE_HIERARCHY = Slices.createCollectiveSetSlice();
 
-    WritableSlice<DeclarationDescriptor, String> LOAD_FROM_JAVA_SIGNATURE_ERROR =
-            new BasicWritableSlice<DeclarationDescriptor, String>(Slices.ONLY_REWRITE_TO_EQUAL, true);
+    WritableSlice<DeclarationDescriptor, List<String>> LOAD_FROM_JAVA_SIGNATURE_ERRORS =
+            new BasicWritableSlice<DeclarationDescriptor, List<String>>(Slices.ONLY_REWRITE_TO_EQUAL, true);
 
     WritableSlice<CallableDescriptor, Boolean> IS_DECLARED_IN_JAVA = Slices.createSimpleSlice();
 
