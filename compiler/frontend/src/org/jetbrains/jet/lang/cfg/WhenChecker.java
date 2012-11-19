@@ -35,7 +35,10 @@ import java.util.Collections;
 /**
  * @author svtk
  */
-public class WhenChecker {
+public final class WhenChecker {
+    private WhenChecker() {
+    }
+
     public static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
         JetExpression subjectExpression = expression.getSubjectExpression();
         if (subjectExpression == null) return false;
@@ -75,20 +78,28 @@ public class WhenChecker {
         assert enumEntry.getKind() == ClassKind.ENUM_ENTRY;
         for (JetWhenEntry whenEntry : whenExpression.getEntries()) {
             for (JetWhenCondition condition : whenEntry.getConditions()) {
-                if (condition instanceof JetWhenConditionWithExpression) {
-                    JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-                    JetSimpleNameExpression reference = getReference(patternExpression);
-                    if (reference == null) continue;
-                    DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
-                    if (target == null) continue;
-                    ClassDescriptor classDescriptor = trace.get(BindingContext.OBJECT_DECLARATION_CLASS, (VariableDescriptor) target);
-                    if (classDescriptor == enumEntry) {
-                        return true;
-                    }
+                if (!(condition instanceof JetWhenConditionWithExpression)) {
+                    continue;
+                }
+                if (isCheckForEnumEntry((JetWhenConditionWithExpression) condition, enumEntry, trace)) {
+                    return true;
                 }
             }
         }
         return false;
+    }
+
+    private static boolean isCheckForEnumEntry(
+            @NotNull JetWhenConditionWithExpression whenExpression,
+            @NotNull ClassDescriptor enumEntry,
+            @NotNull BindingTrace trace
+    ) {
+        JetSimpleNameExpression reference = getReference(whenExpression.getExpression());
+        if (reference == null) return false;
+        DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
+        if (target == null) return false;
+        ClassDescriptor classDescriptor = trace.get(BindingContext.OBJECT_DECLARATION_CLASS, (VariableDescriptor) target);
+        return classDescriptor == enumEntry;
     }
 
     @Nullable
