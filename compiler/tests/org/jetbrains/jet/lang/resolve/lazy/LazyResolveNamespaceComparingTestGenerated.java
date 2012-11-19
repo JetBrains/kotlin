@@ -1391,6 +1391,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "kt", true);
                     }
                     
+                    @TestMetadata("HalfSubstitutedTypeParameters.kt")
+                    public void testHalfSubstitutedTypeParameters() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.kt");
+                    }
+                    
                     @TestMetadata("InheritNullabilityGenericSubclassSimple.kt")
                     public void testInheritNullabilityGenericSubclassSimple() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.kt");
@@ -1431,6 +1436,21 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritVariance.kt");
                     }
                     
+                    @TestMetadata("SameProjectionKind.kt")
+                    public void testSameProjectionKind() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/SameProjectionKind.kt");
+                    }
+                    
+                    @TestMetadata("TwoSuperclassesConflictingProjectionKinds.kt")
+                    public void testTwoSuperclassesConflictingProjectionKinds() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.kt");
+                    }
+                    
+                    @TestMetadata("TwoSuperclassesMutableAndNot.kt")
+                    public void testTwoSuperclassesMutableAndNot() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.kt");
+                    }
+                    
                     @TestMetadata("TwoSuperclassesReturnJavaSubtype.kt")
                     public void testTwoSuperclassesReturnJavaSubtype() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.kt");
@@ -1439,6 +1459,26 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     @TestMetadata("TwoSuperclassesReturnSameJavaType.kt")
                     public void testTwoSuperclassesReturnSameJavaType() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.kt");
+                    }
+                    
+                    @TestMetadata("TwoSuperclassesSupplementNotNull.kt")
+                    public void testTwoSuperclassesSupplementNotNull() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesSupplementNotNull.kt");
+                    }
+                    
+                    @TestMetadata("TypeParamOfClass.kt")
+                    public void testTypeParamOfClass() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TypeParamOfClass.kt");
+                    }
+                    
+                    @TestMetadata("TypeParamOfClassSubstituted.kt")
+                    public void testTypeParamOfClassSubstituted() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TypeParamOfClassSubstituted.kt");
+                    }
+                    
+                    @TestMetadata("TypeParamOfFun.kt")
+                    public void testTypeParamOfFun() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TypeParamOfFun.kt");
                     }
                     
                 }

@@ -1,0 +1,10 @@
+namespace test
+
+public abstract trait test.TypeParamOfClassSubstituted : java.lang.Object {
+    public abstract trait test.TypeParamOfClassSubstituted.Sub : test.TypeParamOfClassSubstituted.Super<jet.String> {
+        public abstract override /*1*/ fun foo(): jet.String
+    }
+    public abstract trait test.TypeParamOfClassSubstituted.Super</*0*/ T : jet.Any?> : java.lang.Object {
+        public abstract fun foo(): T
+    }
+}

@@ -481,6 +481,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "java", true);
                 }
                 
+                @TestMetadata("HalfSubstitutedTypeParameters.java")
+                public void testHalfSubstitutedTypeParameters() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.java");
+                }
+                
                 @TestMetadata("InheritNullabilityGenericSubclassSimple.java")
                 public void testInheritNullabilityGenericSubclassSimple() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.java");
@@ -521,6 +526,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritVariance.java");
                 }
                 
+                @TestMetadata("SameProjectionKind.java")
+                public void testSameProjectionKind() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SameProjectionKind.java");
+                }
+                
+                @TestMetadata("TwoSuperclassesConflictingProjectionKinds.java")
+                public void testTwoSuperclassesConflictingProjectionKinds() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.java");
+                }
+                
+                @TestMetadata("TwoSuperclassesMutableAndNot.java")
+                public void testTwoSuperclassesMutableAndNot() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.java");
+                }
+                
                 @TestMetadata("TwoSuperclassesReturnJavaSubtype.java")
                 public void testTwoSuperclassesReturnJavaSubtype() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.java");
@@ -529,6 +549,26 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("TwoSuperclassesReturnSameJavaType.java")
                 public void testTwoSuperclassesReturnSameJavaType() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.java");
+                }
+                
+                @TestMetadata("TwoSuperclassesSupplementNotNull.java")
+                public void testTwoSuperclassesSupplementNotNull() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesSupplementNotNull.java");
+                }
+                
+                @TestMetadata("TypeParamOfClass.java")
+                public void testTypeParamOfClass() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TypeParamOfClass.java");
+                }
+                
+                @TestMetadata("TypeParamOfClassSubstituted.java")
+                public void testTypeParamOfClassSubstituted() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TypeParamOfClassSubstituted.java");
+                }
+                
+                @TestMetadata("TypeParamOfFun.java")
+                public void testTypeParamOfFun() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TypeParamOfFun.java");
                 }
                 
             }

@@ -1,0 +1,10 @@
+namespace test
+
+public abstract trait test.TypeParamOfFun : java.lang.Object {
+    public abstract trait test.TypeParamOfFun.Sub : test.TypeParamOfFun.Super {
+        public abstract override /*1*/ fun </*0*/ E : jet.Any?>foo(): E
+    }
+    public abstract trait test.TypeParamOfFun.Super : java.lang.Object {
+        public abstract fun </*0*/ T : jet.Any?>foo(): T
+    }
+}

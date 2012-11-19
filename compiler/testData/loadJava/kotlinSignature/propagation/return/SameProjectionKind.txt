@@ -1,0 +1,10 @@
+namespace test
+
+public abstract trait test.SameProjectionKind : java.lang.Object {
+    public abstract trait test.SameProjectionKind.Sub : test.SameProjectionKind.Super {
+        public abstract override /*1*/ fun foo(): jet.MutableCollection<out jet.Number?>?
+    }
+    public abstract trait test.SameProjectionKind.Super : java.lang.Object {
+        public abstract fun foo(): jet.MutableCollection<out jet.Number?>?
+    }
+}
