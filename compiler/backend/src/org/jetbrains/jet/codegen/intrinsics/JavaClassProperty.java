@@ -44,13 +44,12 @@ public class JavaClassProperty implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(receiver.type, v);
         JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(receiver.type);
         if (primitiveType != null) {
-            v.pop();
             v.getstatic(primitiveType.getWrapper().getAsmType().getInternalName(), "TYPE", "Ljava/lang/Class;");
         }
         else {
+            receiver.put(receiver.type, v);
             v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;");
         }
         return StackValue.onStack(AsmTypeConstants.getType(Class.class));
