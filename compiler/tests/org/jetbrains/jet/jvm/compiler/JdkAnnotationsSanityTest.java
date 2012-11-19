@@ -239,7 +239,7 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
         }
 
         private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
-            String error = bindingContext.get(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, descriptor);
+            String error = bindingContext.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, descriptor);
             if (error != null) {
                 errors.put(descriptor, error);
             }

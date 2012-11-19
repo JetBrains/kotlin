@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiFormatUtil;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -117,7 +118,7 @@ public final class JavaFunctionResolver {
             return trace.get(BindingContext.FUNCTION, psiMethod);
         }
 
-        SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
+        final SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 ownerDescriptor,
                 annotationResolver.resolveAnnotations(psiMethod),
                 Name.identifier(method.getName()),
@@ -139,7 +140,13 @@ public final class JavaFunctionResolver {
                 .resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         JetType returnType = makeReturnType(returnPsiType, method, methodTypeVariableResolver);
 
-        returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, method, trace);
+        returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, method, trace, new Function1<String, Void>() {
+            @Override
+            public Void invoke(String error) {
+                trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, functionDescriptorImpl, error);
+                return null;
+            }
+        });
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =
@@ -150,7 +157,7 @@ public final class JavaFunctionResolver {
             methodTypeParameters = alternativeMethodSignatureData.getTypeParameters();
         }
         else if (alternativeMethodSignatureData.hasErrors()) {
-            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, functionDescriptorImpl,
+            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, functionDescriptorImpl,
                          alternativeMethodSignatureData.getError());
         }
 
@@ -177,22 +184,24 @@ public final class JavaFunctionResolver {
             throw new IllegalStateException("non-static method in subclass");
         }
 
-        List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
-        for (FunctionDescriptor superFunction : superFunctions) {
-            TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(((ClassDescriptor) ownerDescriptor).getDefaultType());
-            FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
+        if (trace.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, functionDescriptorImpl) == null) {
+            List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
+            for (FunctionDescriptor superFunction : superFunctions) {
+                TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(((ClassDescriptor) ownerDescriptor).getDefaultType());
+                FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
 
-            // TODO replace asserted condition when propagation for parameters is supported
-            //OverridingUtil.OverrideCompatibilityInfo.Result overridableResult =
-            //        OverridingUtil.isOverridableBy(superFunctionSubstituted, functionDescriptorImpl).getResult();
-            //if (overridableResult != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-            //    || !OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
-            if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
-                throw new IllegalStateException("Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
-                    + "super function = " + superFunction + "\n"
-                    + "this function = " + functionDescriptorImpl + "\n"
-                    + "this method = " + PsiFormatUtil.getExternalName(psiMethod) + "\n"
-                    + "@KotlinSignature = " + method.getSignatureAnnotation().signature());
+                // TODO replace asserted condition when propagation for parameters is supported
+                //OverridingUtil.OverrideCompatibilityInfo.Result overridableResult =
+                //        OverridingUtil.isOverridableBy(superFunctionSubstituted, functionDescriptorImpl).getResult();
+                //if (overridableResult != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+                //    || !OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
+                if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
+                    throw new IllegalStateException("Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
+                                                    + "super function = " + superFunction + "\n"
+                                                    + "this function = " + functionDescriptorImpl + "\n"
+                                                    + "this method = " + PsiFormatUtil.getExternalName(psiMethod) + "\n"
+                                                    + "@KotlinSignature = " + method.getSignatureAnnotation().signature());
+                }
             }
         }
 

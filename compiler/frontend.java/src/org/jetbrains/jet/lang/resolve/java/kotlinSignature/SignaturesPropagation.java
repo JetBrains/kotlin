@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.HierarchicalMethodSignature;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -41,14 +42,15 @@ public class SignaturesPropagation {
     public static JetType modifyReturnTypeAccordingToSuperMethods(
             @NotNull JetType autoType, // type built by JavaTypeTransformer
             @NotNull PsiMethodWrapper method,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull Function1<String, Void> reportError
     ) {
         Set<JetType> typesFromSuperMethods = Sets.newHashSet();
         for (FunctionDescriptor superFunction : getSuperFunctionsForMethod(method, trace)) {
             typesFromSuperMethods.add(superFunction.getReturnType());
         }
 
-        return modifyReturnTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true);
+        return modifyReturnTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true, reportError);
     }
 
     public static List<FunctionDescriptor> getSuperFunctionsForMethod(
@@ -77,14 +79,15 @@ public class SignaturesPropagation {
     private static JetType modifyReturnTypeAccordingToSuperMethods(
             @NotNull JetType autoType,
             @NotNull Collection<JetType> typesFromSuper,
-            boolean covariantPosition
+            boolean covariantPosition,
+            @NotNull Function1<String, Void> reportError
     ) {
         if (ErrorUtils.isErrorType(autoType)) {
             return autoType;
         }
 
-        boolean resultNullable = returnTypeMustBeNullable(autoType, typesFromSuper, covariantPosition);
-        List<TypeProjection> resultArguments = getTypeArgsOfReturnType(autoType, typesFromSuper);
+        boolean resultNullable = returnTypeMustBeNullable(autoType, typesFromSuper, covariantPosition, reportError);
+        List<TypeProjection> resultArguments = getTypeArgsOfReturnType(autoType, typesFromSuper, reportError);
         JetScope resultScope;
         ClassifierDescriptor classifierDescriptor = getReturnTypeClassifier(autoType, typesFromSuper);
         if (classifierDescriptor instanceof ClassDescriptor) {
@@ -102,7 +105,11 @@ public class SignaturesPropagation {
     }
 
     @NotNull
-    private static List<TypeProjection> getTypeArgsOfReturnType(@NotNull JetType autoType, @NotNull Collection<JetType> typesFromSuper) {
+    private static List<TypeProjection> getTypeArgsOfReturnType(
+            @NotNull JetType autoType,
+            @NotNull Collection<JetType> typesFromSuper,
+            @NotNull Function1<String, Void> reportError
+    ) {
         TypeConstructor typeConstructor = autoType.getConstructor();
         ClassifierDescriptor classifier = typeConstructor.getDeclarationDescriptor();
         List<TypeProjection> autoArguments = autoType.getArguments();
@@ -128,15 +135,19 @@ public class SignaturesPropagation {
             Collection<JetType> argTypesFromSuper = getTypes(projectionsFromSuper);
             boolean covariantPosition = effectiveProjectionKind == TypeCheckingProcedure.EnrichedProjectionKind.OUT;
 
-            JetType type = modifyReturnTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, covariantPosition);
-            Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper);
+            JetType type = modifyReturnTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, covariantPosition, reportError);
+            Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper, reportError);
 
             resultArguments.add(new TypeProjection(projectionKind, type));
         }
         return resultArguments;
     }
 
-    private static Variance calculateArgumentProjectionKindFromSuper(TypeProjection argument, List<TypeProjection> projectionsFromSuper) {
+    private static Variance calculateArgumentProjectionKindFromSuper(
+            @NotNull TypeProjection argument,
+            @NotNull List<TypeProjection> projectionsFromSuper,
+            @NotNull Function1<String, Void> reportError
+    ) {
         Set<Variance> projectionKindsInSuper = Sets.newHashSet();
         for (TypeProjection projection : projectionsFromSuper) {
             projectionKindsInSuper.add(projection.getProjectionKind());
@@ -152,12 +163,13 @@ public class SignaturesPropagation {
                 return projectionKindInSuper;
             }
             else {
-                // TODO report error
+                reportError.invoke("Incompatible projection kinds in type arguments of super methods' return types: "
+                       + projectionsFromSuper + ", defined in current: " + argument);
                 return defaultProjectionKind;
             }
         }
         else {
-            // TODO report error
+            reportError.invoke("Incompatible projection kinds in type arguments of super methods' return types: " + projectionsFromSuper);
             return defaultProjectionKind;
         }
     }
@@ -226,7 +238,12 @@ public class SignaturesPropagation {
         return parameterToArgumentsFromSuper;
     }
 
-    private static boolean returnTypeMustBeNullable(JetType autoType, Collection<JetType> typesFromSuper, boolean covariantPosition) {
+    private static boolean returnTypeMustBeNullable(
+            @NotNull JetType autoType,
+            @NotNull Collection<JetType> typesFromSuper,
+            boolean covariantPosition,
+            @NotNull Function1<String, Void> reportError
+    ) {
         if (typesFromSuper.isEmpty()) {
             return autoType.isNullable();
         }
@@ -247,8 +264,7 @@ public class SignaturesPropagation {
                 return false;
             }
             else {
-                // TODO error!
-                return true;
+                reportError.invoke("Incompatible return types in super types: " + typesFromSuper);
             }
         }
 

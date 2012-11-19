@@ -118,7 +118,7 @@ public final class AnalyzerWithCompilerReport {
     private void reportAlternativeSignatureErrors() {
         assert analyzeExhaust != null;
         BindingContext bc = analyzeExhaust.getBindingContext();
-        Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR);
+        Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR);
         if (!descriptorsWithErrors.isEmpty()) {
             StringBuilder message = new StringBuilder("The following Java entities have annotations wrong Kotlin signatures:\n");
             for (DeclarationDescriptor descriptor : descriptorsWithErrors) {
@@ -126,7 +126,7 @@ public final class AnalyzerWithCompilerReport {
                 assert declaration instanceof PsiModifierListOwner;
                 String externalName = PsiFormatUtil.getExternalName((PsiModifierListOwner) declaration);
                 message.append(externalName).append(": ");
-                message.append(bc.get(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, descriptor)).append("\n");
+                message.append(bc.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, descriptor)).append("\n");
             }
             messageCollectorWrapper.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }

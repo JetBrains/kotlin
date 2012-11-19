@@ -269,7 +269,7 @@ public final class JavaPropertyResolver {
             }
         }
         else {
-            trace.record(BindingContext.ALTERNATIVE_SIGNATURE_DATA_ERROR, propertyDescriptor, signatureData.getError());
+            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERROR, propertyDescriptor, signatureData.getError());
         }
         return propertyType;
     }
