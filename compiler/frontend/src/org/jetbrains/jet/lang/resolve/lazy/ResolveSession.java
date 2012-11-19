@@ -36,6 +36,8 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
+
 /**
  * @author abreslav
  */
@@ -153,8 +155,7 @@ public class ResolveSession {
             return getClassObjectDescriptor((JetClassObject) classOrObject.getParent());
         }
         JetScope resolutionScope = getInjector().getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
-        Name name = classOrObject.getNameAsName();
-        assert name != null : "Name is null for " + classOrObject + " " + classOrObject.getText();
+        Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
@@ -252,7 +253,7 @@ public class ResolveSession {
             @Override
             public DeclarationDescriptor visitNamedFunction(JetNamedFunction function, Void data) {
                 JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(function);
-                scopeForDeclaration.getFunctions(function.getNameAsName());
+                scopeForDeclaration.getFunctions(safeNameForLazyResolve(function));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
@@ -263,7 +264,7 @@ public class ResolveSession {
                     JetClass jetClass = (JetClass) grandFather;
                     // This is a primary constructor parameter
                     if (parameter.getValOrVarNode() != null) {
-                        getClassDescriptor(jetClass).getDefaultType().getMemberScope().getProperties(parameter.getNameAsName());
+                        getClassDescriptor(jetClass).getDefaultType().getMemberScope().getProperties(safeNameForLazyResolve(parameter));
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }
                 }
@@ -273,15 +274,14 @@ public class ResolveSession {
             @Override
             public DeclarationDescriptor visitProperty(JetProperty property, Void data) {
                 JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(property);
-                scopeForDeclaration.getProperties(property.getNameAsName());
+                scopeForDeclaration.getProperties(safeNameForLazyResolve(property));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 
             @Override
             public DeclarationDescriptor visitObjectDeclarationName(JetObjectDeclarationName declarationName, Void data) {
-                JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(
-                        (JetDeclaration) declarationName.getParent());
-                scopeForDeclaration.getProperties(declarationName.getNameAsName());
+                JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(declarationName.getParent());
+                scopeForDeclaration.getProperties(safeNameForLazyResolve(declarationName));
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationName);
             }
 

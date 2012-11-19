@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -41,6 +42,12 @@ import java.util.*;
  * @author Nikolay Krasko
  */
 public class ResolveSessionUtils {
+
+    // This name is used as a key for the case when something has no name _due to a syntactic error_
+    // Example: fun (x: Int) = 5
+    //          There's no name for this function in the PSI
+    // The name contains a GUID to avoid clashes, if a clash happens, it's not a big deal: the code does not compile anyway
+    public static final Name NO_NAME_FOR_LAZY_RESOLVE = Name.identifier("no_name_in_PSI_for_lazy_resolve_3d19d79d_1ba9_4cd0_b7f5_b46aa3cd5d40");
 
     private ResolveSessionUtils() {
     }
@@ -391,5 +398,16 @@ public class ResolveSessionUtils {
         }
 
         return resultClassifierDescriptors;
+    }
+
+    @NotNull
+    public static Name safeNameForLazyResolve(@NotNull JetNamed named) {
+        Name name = named.getNameAsName();
+        return safeNameForLazyResolve(name);
+    }
+
+    @NotNull
+    public static Name safeNameForLazyResolve(@Nullable Name name) {
+        return name != null ? name : NO_NAME_FOR_LAZY_RESOLVE;
     }
 }

@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
+
 /**
  * @author abreslav
  */
@@ -216,15 +218,15 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             for (JetDeclaration declaration : declarationProvider.getAllDeclarations()) {
                 if (declaration instanceof JetEnumEntry) {
                     JetEnumEntry jetEnumEntry = (JetEnumEntry) declaration;
-                    Name name = jetEnumEntry.getNameAsName();
+                    Name name = safeNameForLazyResolve(jetEnumEntry);
                     if (name != null) {
                         getProperties(name);
                         getObjectDescriptor(name);
                     }
                 }
                 else if (declaration instanceof JetObjectDeclaration) {
-                    JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                    Name name = classOrObject.getNameAsName();
+                    JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) declaration;
+                    Name name = safeNameForLazyResolve(objectDeclaration.getNameAsDeclaration());
                     if (name != null) {
                         getProperties(name);
                         getObjectDescriptor(name);
@@ -232,25 +234,23 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 }
                 else if (declaration instanceof JetClassOrObject) {
                     JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                    Name name = classOrObject.getNameAsName();
+                    Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
                     if (name != null) {
                         getClassifier(name);
                     }
                 }
                 else if (declaration instanceof JetFunction) {
                     JetFunction function = (JetFunction) declaration;
-                    getFunctions(function.getNameAsSafeName());
+                    getFunctions(safeNameForLazyResolve(function));
                 }
                 else if (declaration instanceof JetProperty) {
                     JetProperty property = (JetProperty) declaration;
-                    getProperties(property.getNameAsSafeName());
+                    getProperties(safeNameForLazyResolve(property));
                 }
                 else if (declaration instanceof JetParameter) {
                     JetParameter parameter = (JetParameter) declaration;
-                    Name name = parameter.getNameAsName();
-                    if (name != null) {
-                        getProperties(name);
-                    }
+                    Name name = safeNameForLazyResolve(parameter);
+                    getProperties(name);
                 }
                 else if (declaration instanceof JetTypedef || declaration instanceof JetMultiDeclaration) {
                     // Do nothing for typedefs as they are not supported.

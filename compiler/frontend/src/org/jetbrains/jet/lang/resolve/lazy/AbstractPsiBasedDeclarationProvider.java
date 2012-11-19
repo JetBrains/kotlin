@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
+
 /**
  * @author abreslav
  */
@@ -54,15 +56,15 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
         allDeclarations.add(declaration);
         if (declaration instanceof JetNamedFunction) {
             JetNamedFunction namedFunction = (JetNamedFunction) declaration;
-            functions.put(namedFunction.getNameAsName(), namedFunction);
+            functions.put(safeNameForLazyResolve(namedFunction), namedFunction);
         }
         else if (declaration instanceof JetProperty) {
             JetProperty property = (JetProperty) declaration;
-            properties.put(property.getNameAsName(), property);
+            properties.put(safeNameForLazyResolve(property), property);
         }
         else if (declaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-            classesAndObjects.put(classOrObject.getNameAsName(), classOrObject);
+            classesAndObjects.put(safeNameForLazyResolve(classOrObject.getNameAsName()), classOrObject);
         }
         else if (declaration instanceof JetParameter || declaration instanceof JetTypedef || declaration instanceof JetMultiDeclaration) {
             // Do nothing, just put it into allDeclarations is enough
