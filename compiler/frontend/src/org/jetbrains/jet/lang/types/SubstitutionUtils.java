@@ -120,7 +120,9 @@ public class SubstitutionUtils {
 
     @NotNull
     public static TypeProjection makeStarProjection(@NotNull TypeParameterDescriptor parameterDescriptor) {
-        return new TypeProjection(Variance.OUT_VARIANCE, parameterDescriptor.getUpperBoundsAsType());
+        return new TypeProjection(parameterDescriptor.getVariance() == Variance.OUT_VARIANCE
+                                  ? Variance.INVARIANT
+                                  : Variance.OUT_VARIANCE, parameterDescriptor.getUpperBoundsAsType());
     }
 
     public static boolean hasUnsubstitutedTypeParameters(JetType type) {

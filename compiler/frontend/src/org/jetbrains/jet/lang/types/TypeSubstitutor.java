@@ -159,14 +159,16 @@ public class TypeSubstitutor {
                 case OUT_IN_IN_POSITION:
                     throw new SubstitutionException("Out-projection in in-position");
                 case IN_IN_OUT_POSITION:
-                    replacement = SubstitutionUtils.makeStarProjection(typeParameter);
-                    break;
-            }
-            boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
-            JetType substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
-            Variance resultingProjectionKind = combine(originalProjection.getProjectionKind(), replacement.getProjectionKind());
+                    return SubstitutionUtils.makeStarProjection(typeParameter);
+                case NO_CONFLICT:
+                    boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
+                    JetType substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
+                    Variance resultingProjectionKind = combine(originalProjection.getProjectionKind(), replacement.getProjectionKind());
 
-            return new TypeProjection(resultingProjectionKind, substitutedType);
+                    return new TypeProjection(resultingProjectionKind, substitutedType);
+                default:
+                    throw new IllegalStateException();
+            }
         }
         else {
             // The type is not within the substitution range, i.e. Foo, Bar<T> etc.
@@ -192,9 +194,13 @@ public class TypeSubstitutor {
             TypeProjection substitutedTypeArgument = unsafeSubstitute(typeArgument, recursionDepth + 1);
 
             switch (conflictType(typeParameter.getVariance(), substitutedTypeArgument.getProjectionKind())) {
-                case OUT_IN_IN_POSITION:
-                    substitutedTypeArgument = new TypeProjection(Variance.IN_VARIANCE, typeParameter.getLowerBoundsAsType());
+                case NO_CONFLICT:
+                    // if the corresponding type parameter is already co/contra-variant, there's not need for an explicit projection
+                    if (typeParameter.getVariance() != Variance.INVARIANT) {
+                        substitutedTypeArgument = new TypeProjection(Variance.INVARIANT, substitutedTypeArgument.getType());
+                    }
                     break;
+                case OUT_IN_IN_POSITION:
                 case IN_IN_OUT_POSITION:
                     substitutedTypeArgument = SubstitutionUtils.makeStarProjection(typeParameter);
                     break;
@@ -208,7 +214,8 @@ public class TypeSubstitutor {
     private static Variance combine(Variance typeParameterVariance, Variance projectionKind) {
         if (typeParameterVariance == Variance.INVARIANT) return projectionKind;
         if (projectionKind == Variance.INVARIANT) return typeParameterVariance;
-        return typeParameterVariance.superpose(projectionKind);
+        if (typeParameterVariance == projectionKind) return projectionKind;
+        return Variance.IN_VARIANCE;
     }
 
     private enum VarianceConflictType {
