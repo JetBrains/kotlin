@@ -17,7 +17,9 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +45,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 /**
@@ -267,4 +270,17 @@ public class CodegenUtil {
                  (context.getParentContext() instanceof NamespaceContext && context.getParentContext().getContextDescriptor() == containingDeclaration))
                 && context.getContextKind() != OwnerKind.TRAIT_IMPL);
     }
+
+    public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
+        return ContainerUtil.exists(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
+                new Condition<DeclarationDescriptor>() {
+                    @Override
+                    public boolean value(DeclarationDescriptor declaration) {
+                        if (!(declaration instanceof MemberDescriptor)) {
+                            return false;
+                        }
+                        return ((MemberDescriptor) declaration).getModality() == ABSTRACT;
+                    }
+                });
+}
 }

@@ -171,4 +171,8 @@ public class EnumGenTest extends CodegenTestCase {
     public void testInnerWithExistingClassObject() {
         blackBoxFile("enum/innerWithExistingClassObject.kt");
     }
+
+    public void testAbstractMethodInEnum() {
+        blackBoxFile("enum/abstractMethodInEnum.kt");
+    }
 }
