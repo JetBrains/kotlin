@@ -44,22 +44,34 @@ public class SignaturesPropagation {
             @NotNull BindingTrace trace
     ) {
         Set<JetType> typesFromSuperMethods = Sets.newHashSet();
+        for (FunctionDescriptor superFunction : getSuperFunctionsForMethod(method, trace)) {
+            typesFromSuperMethods.add(superFunction.getReturnType());
+        }
+
+        return modifyReturnTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true);
+    }
+
+    public static List<FunctionDescriptor> getSuperFunctionsForMethod(
+            @NotNull PsiMethodWrapper method,
+            @NotNull BindingTrace trace
+    ) {
+        List<FunctionDescriptor> superFunctions = Lists.newArrayList();
         for (HierarchicalMethodSignature superSignature : method.getPsiMethod().getHierarchicalMethodSignature().getSuperSignatures()) {
             DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superSignature.getMethod());
             if (superFun instanceof FunctionDescriptor) {
-                typesFromSuperMethods.add(((FunctionDescriptor) superFun).getReturnType());
+                superFunctions.add(((FunctionDescriptor) superFun));
             }
             else {
                 // Function descriptor can't be find iff superclass is java.lang.Collection or similar (translated to jet.* collections)
                 assert !JavaToKotlinClassMap.getInstance().mapPlatformClass(
                         new FqName(superSignature.getMethod().getContainingClass().getQualifiedName())).isEmpty():
-                            "Can't find super function for " + method.getPsiMethod() + " defined in "
-                            +  method.getPsiMethod().getContainingClass();
+                        "Can't find super function for " + method.getPsiMethod() + " defined in "
+                        +  method.getPsiMethod().getContainingClass();
             }
         }
-
-        return modifyReturnTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true);
+        return superFunctions;
     }
+
 
     @NotNull
     private static JetType modifyReturnTypeAccordingToSuperMethods(

@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -35,6 +36,8 @@ import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.SubstitutionUtils;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -173,6 +176,26 @@ public final class JavaFunctionResolver {
         if (containingClass != psiClass && !method.isStatic()) {
             throw new IllegalStateException("non-static method in subclass");
         }
+
+        List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
+        for (FunctionDescriptor superFunction : superFunctions) {
+            TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(((ClassDescriptor) ownerDescriptor).getDefaultType());
+            FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
+
+            // TODO replace asserted condition when propagation for parameters is supported
+            //OverridingUtil.OverrideCompatibilityInfo.Result overridableResult =
+            //        OverridingUtil.isOverridableBy(superFunctionSubstituted, functionDescriptorImpl).getResult();
+            //if (overridableResult != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+            //    || !OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
+            if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
+                throw new IllegalStateException("Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
+                    + "super function = " + superFunction + "\n"
+                    + "this function = " + functionDescriptorImpl + "\n"
+                    + "this method = " + PsiFormatUtil.getExternalName(psiMethod) + "\n"
+                    + "@KotlinSignature = " + method.getSignatureAnnotation().signature());
+            }
+        }
+
         return functionDescriptorImpl;
     }
 
