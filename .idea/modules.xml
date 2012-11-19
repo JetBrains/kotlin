@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/compiler/tests/compiler-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/compiler/frontend/frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bean-generator/generated-beans/generated-beans.iml" filepath="$PROJECT_DIR$/bean-generator/generated-beans/generated-beans.iml" />
       <module fileurl="file://$PROJECT_DIR$/generators/generators.iml" filepath="$PROJECT_DIR$/generators/generators.iml" />
       <module fileurl="file://$PROJECT_DIR$/grammar/grammar.iml" filepath="$PROJECT_DIR$/grammar/grammar.iml" />
       <module fileurl="file://$PROJECT_DIR$/ide-compiler-runner/ide-compiler-runner.iml" filepath="$PROJECT_DIR$/ide-compiler-runner/ide-compiler-runner.iml" />
