@@ -185,31 +185,36 @@ public final class JavaFunctionResolver {
             throw new IllegalStateException("non-static method in subclass");
         }
 
-        if (!signatureErrors.isEmpty()) {
-            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
-        }
         if (signatureErrors.isEmpty()) {
-            List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
-            for (FunctionDescriptor superFunction : superFunctions) {
-                TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(((ClassDescriptor) ownerDescriptor).getDefaultType());
-                FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
-
-                // TODO replace asserted condition when propagation for parameters is supported
-                //OverridingUtil.OverrideCompatibilityInfo.Result overridableResult =
-                //        OverridingUtil.isOverridableBy(superFunctionSubstituted, functionDescriptorImpl).getResult();
-                //if (overridableResult != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-                //    || !OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
-                if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptorImpl)) {
-                    throw new IllegalStateException("Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
-                                                    + "super function = " + superFunction + "\n"
-                                                    + "this function = " + functionDescriptorImpl + "\n"
-                                                    + "this method = " + PsiFormatUtil.getExternalName(psiMethod) + "\n"
-                                                    + "@KotlinSignature = " + method.getSignatureAnnotation().signature());
-                }
-            }
+            checkFunctionsOverrideCorrectly(method, functionDescriptorImpl);
+        }
+        else {
+            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
         }
 
         return functionDescriptorImpl;
+    }
+
+    private void checkFunctionsOverrideCorrectly(PsiMethodWrapper method, FunctionDescriptor functionDescriptor) {
+        List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
+        for (FunctionDescriptor superFunction : superFunctions) {
+            TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(
+                    ((ClassDescriptor) functionDescriptor.getContainingDeclaration()).getDefaultType());
+            FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
+
+            // TODO replace asserted condition when propagation for parameters is supported
+            //OverridingUtil.OverrideCompatibilityInfo.Result overridableResult =
+            //        OverridingUtil.isOverridableBy(superFunctionSubstituted, functionDescriptor).getResult();
+            //if (overridableResult != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+            //    || !OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptor)) {
+            if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptor)) {
+                throw new IllegalStateException("Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
+                                                + "super function = " + superFunction + "\n"
+                                                + "this function = " + functionDescriptor + "\n"
+                                                + "this method = " + PsiFormatUtil.getExternalName(method.getPsiMethod()) + "\n"
+                                                + "@KotlinSignature = " + method.getSignatureAnnotation().signature());
+            }
+        }
     }
 
     @NotNull
