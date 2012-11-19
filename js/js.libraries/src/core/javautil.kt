@@ -22,10 +22,10 @@ public abstract class AbstractCollection<E>() : MutableCollection<E> {
     override fun add(e: E): Boolean = js.noImpl
     override fun remove(o: Any?): Boolean = js.noImpl
 
-    override fun addAll(c: Collection<out E>): Boolean = js.noImpl
-    override fun containsAll(c : Collection<out Any?>) : Boolean = js.noImpl
-    override fun removeAll(c : Collection<out Any?>) : Boolean = js.noImpl
-    override fun retainAll(c : Collection<out Any?>) : Boolean = js.noImpl
+    override fun addAll(c: Collection<E>): Boolean = js.noImpl
+    override fun containsAll(c : Collection<Any?>) : Boolean = js.noImpl
+    override fun removeAll(c : Collection<Any?>) : Boolean = js.noImpl
+    override fun retainAll(c : Collection<Any?>) : Boolean = js.noImpl
 
     override fun clear(): Unit = js.noImpl
     override fun size(): Int = js.noImpl
@@ -41,7 +41,7 @@ public abstract class AbstractList<E>(): AbstractCollection<E>(), MutableList<E>
 
     library("addAt")
     override fun add(index: Int, element: E): Unit = js.noImpl
-    override fun addAll(index : Int, c : Collection<out E>) : Boolean = js.noImpl
+    override fun addAll(index : Int, c : Collection<E>) : Boolean = js.noImpl
 
     library("removeAt")
     override fun remove(index: Int): E = js.noImpl

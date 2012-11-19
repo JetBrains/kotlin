@@ -10,7 +10,7 @@ public trait Collection<out E> : Iterable<E>, Hashable {
     public fun <T> toArray(a : Array<out T>) : Array<T>
 
     // Bulk Operations
-    public fun containsAll(c : Collection<out Any?>) : Boolean
+    public fun containsAll(c : Collection<Any?>) : Boolean
 }
 
 public trait MutableCollection<E> : Collection<E>, MutableIterable<E> {
@@ -22,9 +22,9 @@ public trait MutableCollection<E> : Collection<E>, MutableIterable<E> {
     public fun remove(o : Any?) : Boolean
 
     // Bulk Modification Operations
-    public fun addAll(c : Collection<out E>) : Boolean
-    public fun removeAll(c : Collection<out Any?>) : Boolean
-    public fun retainAll(c : Collection<out Any?>) : Boolean
+    public fun addAll(c : Collection<E>) : Boolean
+    public fun removeAll(c : Collection<Any?>) : Boolean
+    public fun retainAll(c : Collection<Any?>) : Boolean
     public fun clear()
 }
 
@@ -38,7 +38,7 @@ public trait List<out E> : Collection<E> {
     override fun <T> toArray(a : Array<out T>) : Array<T>
 
     // Bulk Operations
-    override fun containsAll(c : Collection<out Any?>) : Boolean
+    override fun containsAll(c : Collection<Any?>) : Boolean
 
     // Positional Access Operations
     public fun get(index : Int) : E
@@ -61,10 +61,10 @@ public trait MutableList<E> : List<E>, MutableCollection<E> {
     override fun remove(o : Any?) : Boolean
 
     // Bulk Modification Operations
-    override fun addAll(c : Collection<out E>) : Boolean
-    public fun addAll(index : Int, c : Collection<out E>) : Boolean
-    override fun removeAll(c : Collection<out Any?>) : Boolean
-    override fun retainAll(c : Collection<out Any?>) : Boolean
+    override fun addAll(c : Collection<E>) : Boolean
+    public fun addAll(index : Int, c : Collection<E>) : Boolean
+    override fun removeAll(c : Collection<Any?>) : Boolean
+    override fun retainAll(c : Collection<Any?>) : Boolean
     override fun clear()
 
     // Positional Access Operations
@@ -90,7 +90,7 @@ public trait Set<out E> : Collection<E> {
     override fun <T> toArray(a : Array<out T>) : Array<T>
 
     // Bulk Operations
-    override fun containsAll(c : Collection<out Any?>) : Boolean
+    override fun containsAll(c : Collection<Any?>) : Boolean
 }
 
 public trait MutableSet<E> : Set<E>, MutableCollection<E> {
@@ -102,9 +102,9 @@ public trait MutableSet<E> : Set<E>, MutableCollection<E> {
     override fun remove(o : Any?) : Boolean
 
     // Bulk Modification Operations
-    override fun addAll(c : Collection<out E>) : Boolean
-    override fun removeAll(c : Collection<out Any?>) : Boolean
-    override fun retainAll(c : Collection<out Any?>) : Boolean
+    override fun addAll(c : Collection<E>) : Boolean
+    override fun removeAll(c : Collection<Any?>) : Boolean
+    override fun retainAll(c : Collection<Any?>) : Boolean
     override fun clear()
 }
 
