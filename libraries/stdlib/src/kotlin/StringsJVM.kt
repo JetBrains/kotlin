@@ -192,3 +192,17 @@ public inline fun String.decapitalize(): String {
     return if (notEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
+/**
+ * Repeats a given string n times.
+ * When n < 0, IllegalArgumentException is thrown.
+ * @includeFunctionBody ../../test/StringTest.kt repeat
+ */
+public inline fun String.repeat(n: Int): String {
+    require(n >= 0, { "Cannot repeat string $n times" })
+
+    var sb = StringBuilder()
+    for (i in 1..n) {
+        sb.append(this)
+    }
+    return sb.toString()
+}
