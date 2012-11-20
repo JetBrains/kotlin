@@ -199,7 +199,7 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    private JetType resolveTypeRefWithDefault(
+    public JetType resolveTypeRefWithDefault(
             @Nullable JetTypeReference returnTypeRef,
             @NotNull JetScope scope,
             @NotNull BindingTrace trace,

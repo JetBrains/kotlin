@@ -136,13 +136,8 @@ public class CandidateResolver {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
                 }
-                JetTypeReference typeReference = projection.getTypeReference();
-                if (typeReference != null) {
-                    typeArguments.add(typeResolver.resolveType(context.scope, typeReference, context.trace, true));
-                }
-                else {
-                    typeArguments.add(ErrorUtils.createErrorType("Star projection in a call"));
-                }
+                typeArguments.add(argumentTypeResolver.resolveTypeRefWithDefault(
+                        projection.getTypeReference(), context.scope, context.trace, ErrorUtils.createErrorType("Star projection in a call")));
             }
             int expectedTypeArgumentCount = candidate.getTypeParameters().size();
             if (expectedTypeArgumentCount == jetTypeArguments.size()) {
