@@ -122,8 +122,6 @@ public class InjectorForBodyResolve {
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
-        candidateResolver.setExpressionTypingServices(expressionTypingServices);
-        candidateResolver.setTypeResolver(typeResolver);
 
         controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         controlFlowAnalyzer.setTrace(bindingTrace);

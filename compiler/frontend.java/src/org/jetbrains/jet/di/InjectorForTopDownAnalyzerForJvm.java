@@ -235,8 +235,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
-        candidateResolver.setExpressionTypingServices(expressionTypingServices);
-        candidateResolver.setTypeResolver(typeResolver);
 
         importsResolver.setConfiguration(moduleConfiguration);
         importsResolver.setContext(topDownAnalysisContext);

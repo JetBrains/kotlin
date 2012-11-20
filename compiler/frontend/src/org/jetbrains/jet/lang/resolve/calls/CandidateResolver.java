@@ -58,20 +58,6 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class CandidateResolver {
     @NotNull
     private ArgumentTypeResolver argumentTypeResolver;
-    @NotNull
-    private TypeResolver typeResolver;
-    @NotNull
-    private ExpressionTypingServices expressionTypingServices;
-
-    @Inject
-    public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Inject
-    public void setTypeResolver(@NotNull TypeResolver typeResolver) {
-        this.typeResolver = typeResolver;
-    }
 
     @Inject
     public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {

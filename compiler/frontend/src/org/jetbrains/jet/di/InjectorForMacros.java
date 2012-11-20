@@ -85,8 +85,6 @@ public class InjectorForMacros {
         descriptorResolver.setTypeResolver(typeResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
-        candidateResolver.setExpressionTypingServices(expressionTypingServices);
-        candidateResolver.setTypeResolver(typeResolver);
 
     }
 
