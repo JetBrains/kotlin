@@ -172,7 +172,13 @@ public class JetSignatureReader {
                 return pos;
 
             case '[':
-                return parseType(signature, pos, v.visitArrayType(nullable));
+                switch (c = signature.charAt(pos)) {
+                    case '+':
+                    case '-':
+                        return parseType(signature, pos + 1, v.visitArrayType(nullable, JetSignatureVariance.parseVariance(c)));
+                    default:
+                        return parseType(signature, pos, v.visitArrayType(nullable, JetSignatureVariance.INVARIANT));
+                }
 
             case 'T':
                 end = signature.indexOf(';', pos);

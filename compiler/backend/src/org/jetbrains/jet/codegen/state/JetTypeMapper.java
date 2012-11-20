@@ -266,10 +266,11 @@ public class JetTypeMapper extends BindingTraceAware {
             if (jetType.getArguments().size() != 1) {
                 throw new UnsupportedOperationException("arrays must have one type argument");
             }
-            JetType memberType = jetType.getArguments().get(0).getType();
+            TypeProjection memberProjection = jetType.getArguments().get(0);
+            JetType memberType = memberProjection.getType();
 
             if (signatureVisitor != null) {
-                signatureVisitor.writeArrayType(jetType.isNullable());
+                signatureVisitor.writeArrayType(jetType.isNullable(), memberProjection.getProjectionKind());
                 mapType(memberType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
                 signatureVisitor.writeArrayEnd();
             }

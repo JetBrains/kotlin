@@ -161,7 +161,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     }
 
     @Override
-    public JetSignatureVisitor visitArrayType(final boolean nullable) {
+    public JetSignatureVisitor visitArrayType(final boolean nullable, final JetSignatureVariance wildcard) {
         return new JetTypeJetSignatureReader(javaSemanticServices, kotlinBuiltIns, typeVariableResolver) {
             @Override
             public void visitBaseType(char descriptor, boolean nullable) {
@@ -178,7 +178,8 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
             @Override
             protected void done(@NotNull JetType jetType) {
-                JetType arrayType = TypeUtils.makeNullableAsSpecified(KotlinBuiltIns.getInstance().getArrayType(jetType), nullable);
+                JetType arrayType = TypeUtils.makeNullableAsSpecified(KotlinBuiltIns.getInstance().getArrayType(
+                        parseVariance(wildcard), jetType), nullable);
                 JetTypeJetSignatureReader.this.done(arrayType);
             }
         };

@@ -78,7 +78,7 @@ public class JetSignatureExceptionsAdapter implements JetSignatureVisitor {
     }
 
     @Override
-    public JetSignatureVisitor visitArrayType(boolean nullable) {
+    public JetSignatureVisitor visitArrayType(boolean nullable, JetSignatureVariance wildcard) {
         throw new IllegalStateException();
     }
 

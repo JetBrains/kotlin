@@ -166,7 +166,7 @@ public class BothSignatureWriter {
                 writeClassEnd();
                 return;
             case Type.ARRAY:
-                writeArrayType(nullable);
+                writeArrayType(nullable, Variance.INVARIANT);
                 writeAsmType(asmType.getElementType(), false, kotlinTypeName);
                 writeArrayEnd();
                 return;
@@ -235,9 +235,9 @@ public class BothSignatureWriter {
         jetSignatureWriter.visitEnd();
     }
 
-    public void writeArrayType(boolean nullable) {
+    public void writeArrayType(boolean nullable, Variance projectionKind) {
         push(signatureVisitor().visitArrayType());
-        jetSignatureWriter.visitArrayType(nullable);
+        jetSignatureWriter.visitArrayType(nullable, toJetSignatureVariance(projectionKind));
         if (jvmCurrentType == null) {
             ++jvmCurrentTypeArrayLevel;
         }

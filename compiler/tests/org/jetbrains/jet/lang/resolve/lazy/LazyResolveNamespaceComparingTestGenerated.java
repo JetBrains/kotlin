@@ -726,6 +726,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/loadKotlin/type/AnyQ.kt");
             }
             
+            @TestMetadata("ArrayOfInNumber.kt")
+            public void testArrayOfInNumber() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/type/ArrayOfInNumber.kt");
+            }
+            
             @TestMetadata("ArrayOfInt.kt")
             public void testArrayOfInt() throws Exception {
                 doTestSinglePackage("compiler/testData/loadKotlin/type/ArrayOfInt.kt");
@@ -734,6 +739,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("ArrayOfInteger.kt")
             public void testArrayOfInteger() throws Exception {
                 doTestSinglePackage("compiler/testData/loadKotlin/type/ArrayOfInteger.kt");
+            }
+            
+            @TestMetadata("ArrayOfOutNumber.kt")
+            public void testArrayOfOutNumber() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/type/ArrayOfOutNumber.kt");
+            }
+            
+            @TestMetadata("ArrayOfOutT.kt")
+            public void testArrayOfOutT() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/type/ArrayOfOutT.kt");
             }
             
             @TestMetadata("ArrayOfString.kt")

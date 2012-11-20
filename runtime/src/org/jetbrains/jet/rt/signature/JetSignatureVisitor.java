@@ -123,7 +123,7 @@ public interface JetSignatureVisitor {
      * @return a non null visitor to visit the signature of the array element
      *         type.
      */
-    JetSignatureVisitor visitArrayType(boolean nullable);
+    JetSignatureVisitor visitArrayType(boolean nullable, JetSignatureVariance wildcard);
 
     /**
      * Starts the visit of a signature corresponding to a class or interface

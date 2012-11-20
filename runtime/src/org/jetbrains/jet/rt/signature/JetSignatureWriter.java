@@ -157,9 +157,12 @@ public class JetSignatureWriter implements JetSignatureVisitor {
     }
 
     @Override
-    public JetSignatureWriter visitArrayType(boolean nullable) {
+    public JetSignatureWriter visitArrayType(boolean nullable, JetSignatureVariance wildcard) {
         visitNullabe(nullable);
         buf.append('[');
+        if (wildcard != JetSignatureVariance.INVARIANT) {
+            buf.append(wildcard.getC());
+        }
         return this;
     }
 
@@ -195,7 +198,7 @@ public class JetSignatureWriter implements JetSignatureVisitor {
             ++argumentStack;
             buf.append('<');
         }
-        if (variance.getC() != '=') {
+        if (variance != JetSignatureVariance.INVARIANT) {
             buf.append(variance.getC());
         }
         return this;
