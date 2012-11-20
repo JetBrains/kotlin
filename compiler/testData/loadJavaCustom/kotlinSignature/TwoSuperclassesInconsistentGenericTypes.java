@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import jet.runtime.typeinfo.KotlinSignature;
+import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
 
 public interface TwoSuperclassesInconsistentGenericTypes {
     @KotlinSignature("fun foo(): MutableList<String?>")
@@ -15,6 +16,7 @@ public interface TwoSuperclassesInconsistentGenericTypes {
     }
 
     public class Sub implements TwoSuperclassesInconsistentGenericTypes, Other {
+        @ExpectLoadError("Incompatible return types in super types: [String?, String]")
         public List<String> foo() {
             throw new UnsupportedOperationException();
         }

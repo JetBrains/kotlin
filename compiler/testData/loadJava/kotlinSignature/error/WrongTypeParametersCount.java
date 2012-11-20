@@ -1,13 +1,12 @@
 package test;
 
-import java.lang.UnsupportedOperationException;
 import java.util.*;
-import java.util.BitSet;
-import java.util.List;
 
 import jet.runtime.typeinfo.KotlinSignature;
+import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
 
 public class WrongTypeParametersCount {
+    @ExpectLoadError("Method signature has 2 type parameters, but alternative signature has 3")
     @KotlinSignature("fun <A, B, C> foo(a : A, b : List<out B>)")
     public <A, B> void foo(A a, List<? extends B> b) {
     }
