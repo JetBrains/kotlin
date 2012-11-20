@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
+import org.jetbrains.jet.codegen.generated.AbstractCodegenTest;
 import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
 import org.jetbrains.jet.codegen.AbstractMultiDeclTestCase;
@@ -98,6 +99,13 @@ public class GenerateTests {
                 "LabelGenTestGenerated",
                 AbstractLabelGenTest.class,
                 testModel("compiler/testData/codegen/label")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "InstructionsTestGenerated",
+                AbstractCodegenTest.class,
+                testModel("compiler/testData/codegen/instructions")
         );
 
         generateTest(

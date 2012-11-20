@@ -1062,7 +1062,7 @@ public abstract class StackValue {
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             v.load(index, OBJECT_TYPE);
-            v.swap();
+            AsmUtil.swap(v, sharedTypeForType(this.type), topOfStackType);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
             v.visitFieldInsn(PUTFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());

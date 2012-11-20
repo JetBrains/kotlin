@@ -443,6 +443,24 @@ public class AsmUtil {
         genMethodThrow(mv, STUB_EXCEPTION, STUB_EXCEPTION_MESSAGE);
     }
 
+    public static void swap(InstructionAdapter v, Type stackTop, Type afterTop) {
+        if (stackTop.getSize() == 1) {
+            if (afterTop.getSize() == 1) {
+                v.swap();
+            } else {
+                v.dupX2();
+                v.pop();
+            }
+        } else {
+            if (afterTop.getSize() == 1) {
+                v.dup2X1();
+            } else {
+                v.dup2X2();
+            }
+            v.pop2();
+        }
+    }
+
     public static void genNotNullAssertionsForParameters(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,
