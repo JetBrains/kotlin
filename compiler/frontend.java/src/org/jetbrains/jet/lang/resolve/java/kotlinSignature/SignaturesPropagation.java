@@ -20,21 +20,22 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.HierarchicalMethodSignature;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.CollectionClassMapping;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SignaturesPropagation {
     public static JetType modifyReturnTypeAccordingToSuperMethods(
@@ -43,10 +44,13 @@ public class SignaturesPropagation {
             @NotNull BindingTrace trace,
             @NotNull Function1<String, Void> reportError
     ) {
-        Set<JetType> typesFromSuperMethods = Sets.newHashSet();
-        for (FunctionDescriptor superFunction : getSuperFunctionsForMethod(method, trace)) {
-            typesFromSuperMethods.add(superFunction.getReturnType());
-        }
+        List<JetType> typesFromSuperMethods = ContainerUtil.map(getSuperFunctionsForMethod(method, trace),
+                                                                new Function<FunctionDescriptor, JetType>() {
+                                                                    @Override
+                                                                    public JetType fun(FunctionDescriptor superFunction) {
+                                                                        return superFunction.getReturnType();
+                                                                    }
+                                                                });
 
         return modifyReturnTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true, reportError);
     }
@@ -73,6 +77,16 @@ public class SignaturesPropagation {
                 //        +  method.getPsiMethod().getContainingClass();
             }
         }
+
+        // sorting for diagnostic stability
+        Collections.sort(superFunctions, new Comparator<FunctionDescriptor>() {
+            @Override
+            public int compare(FunctionDescriptor fun1, FunctionDescriptor fun2) {
+                FqNameUnsafe fqName1 = DescriptorUtils.getFQName(fun1.getContainingDeclaration());
+                FqNameUnsafe fqName2 = DescriptorUtils.getFQName(fun2.getContainingDeclaration());
+                return fqName1.getFqName().compareTo(fqName2.getFqName());
+            }
+        });
         return superFunctions;
     }
 
@@ -80,7 +94,7 @@ public class SignaturesPropagation {
     @NotNull
     private static JetType modifyReturnTypeAccordingToSuperMethods(
             @NotNull JetType autoType,
-            @NotNull Collection<JetType> typesFromSuper,
+            @NotNull List<JetType> typesFromSuper,
             boolean covariantPosition,
             @NotNull Function1<String, Void> reportError
     ) {
@@ -109,7 +123,7 @@ public class SignaturesPropagation {
     @NotNull
     private static List<TypeProjection> getTypeArgsOfReturnType(
             @NotNull JetType autoType,
-            @NotNull Collection<JetType> typesFromSuper,
+            @NotNull List<JetType> typesFromSuper,
             @NotNull Function1<String, Void> reportError
     ) {
         TypeConstructor typeConstructor = autoType.getConstructor();
@@ -134,7 +148,7 @@ public class SignaturesPropagation {
 
             JetType argumentType = argument.getType();
             List<TypeProjection> projectionsFromSuper = typeArgumentsFromSuper.get(parameter.getIndex());
-            Collection<JetType> argTypesFromSuper = getTypes(projectionsFromSuper);
+            List<JetType> argTypesFromSuper = getTypes(projectionsFromSuper);
             boolean covariantPosition = effectiveProjectionKind == TypeCheckingProcedure.EnrichedProjectionKind.OUT;
 
             JetType type = modifyReturnTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, covariantPosition, reportError);
@@ -150,7 +164,7 @@ public class SignaturesPropagation {
             @NotNull List<TypeProjection> projectionsFromSuper,
             @NotNull Function1<String, Void> reportError
     ) {
-        Set<Variance> projectionKindsInSuper = Sets.newHashSet();
+        Set<Variance> projectionKindsInSuper = Sets.newLinkedHashSet();
         for (TypeProjection projection : projectionsFromSuper) {
             projectionKindsInSuper.add(projection.getProjectionKind());
         }
@@ -242,7 +256,7 @@ public class SignaturesPropagation {
 
     private static boolean returnTypeMustBeNullable(
             @NotNull JetType autoType,
-            @NotNull Collection<JetType> typesFromSuper,
+            @NotNull List<JetType> typesFromSuper,
             boolean covariantPosition,
             @NotNull Function1<String, Void> reportError
     ) {
@@ -276,7 +290,7 @@ public class SignaturesPropagation {
     }
 
     @NotNull
-    private static ClassifierDescriptor getReturnTypeClassifier(@NotNull JetType autoType, @NotNull Collection<JetType> typesFromSuper) {
+    private static ClassifierDescriptor getReturnTypeClassifier(@NotNull JetType autoType, @NotNull List<JetType> typesFromSuper) {
         ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
         if (!(classifier instanceof ClassDescriptor)) {
             assert classifier != null : "no declaration descriptor for type " + autoType;
