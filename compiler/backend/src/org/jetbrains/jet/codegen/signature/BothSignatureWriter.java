@@ -262,7 +262,7 @@ public class BothSignatureWriter {
 
     public void writeTypeArgument(Variance variance) {
         JetSignatureVariance jsVariance = toJetSignatureVariance(variance);
-        push(signatureVisitor().visitTypeArgument(jsVariance.getC()));
+        push(signatureVisitor().visitTypeArgument(jsVariance.getChar()));
         jetSignatureWriter.visitTypeArgument(jsVariance);
         generic = true;
     }

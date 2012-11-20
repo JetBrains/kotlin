@@ -161,7 +161,7 @@ public class JetSignatureWriter implements JetSignatureVisitor {
         visitNullabe(nullable);
         buf.append('[');
         if (wildcard != JetSignatureVariance.INVARIANT) {
-            buf.append(wildcard.getC());
+            buf.append(wildcard.getChar());
         }
         return this;
     }
@@ -199,7 +199,7 @@ public class JetSignatureWriter implements JetSignatureVisitor {
             buf.append('<');
         }
         if (variance != JetSignatureVariance.INVARIANT) {
-            buf.append(variance.getC());
+            buf.append(variance.getChar());
         }
         return this;
     }

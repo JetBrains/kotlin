@@ -31,7 +31,7 @@ public enum JetSignatureVariance {
         this.c = c;
     }
 
-    public char getC() {
+    public char getChar() {
         return c;
     }
     
