@@ -35,10 +35,11 @@ import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
+import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
@@ -82,10 +83,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
     private CallResolver callResolver;
-    private CandidateResolver candidateResolver;
+    private ArgumentTypeResolver argumentTypeResolver;
     private ExpressionTypingServices expressionTypingServices;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private CandidateResolver candidateResolver;
     private ImportsResolver importsResolver;
     private ScriptHeaderResolver scriptHeaderResolver;
     private OverloadResolver overloadResolver;
@@ -130,10 +132,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
-        this.candidateResolver = new CandidateResolver();
+        this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.candidateResolver = new CandidateResolver();
         this.importsResolver = new ImportsResolver();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.overloadResolver = new OverloadResolver();
@@ -213,12 +216,13 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
+        callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
         callResolver.setTypeResolver(typeResolver);
 
-        candidateResolver.setExpressionTypingServices(expressionTypingServices);
-        candidateResolver.setTypeResolver(typeResolver);
+        argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
+        argumentTypeResolver.setTypeResolver(typeResolver);
 
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
@@ -229,6 +233,10 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
+
+        candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
+        candidateResolver.setExpressionTypingServices(expressionTypingServices);
+        candidateResolver.setTypeResolver(typeResolver);
 
         importsResolver.setConfiguration(moduleConfiguration);
         importsResolver.setContext(topDownAnalysisContext);

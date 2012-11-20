@@ -21,11 +21,12 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
+import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -36,11 +37,12 @@ public class InjectorForMacros {
     private final Project project;
     private final ModuleConfiguration moduleConfiguration;
     private CallResolver callResolver;
-    private CandidateResolver candidateResolver;
+    private ArgumentTypeResolver argumentTypeResolver;
     private TypeResolver typeResolver;
     private AnnotationResolver annotationResolver;
     private DescriptorResolver descriptorResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private CandidateResolver candidateResolver;
 
     public InjectorForMacros(
         @NotNull Project project,
@@ -50,23 +52,25 @@ public class InjectorForMacros {
         this.project = project;
         this.moduleConfiguration = moduleConfiguration;
         this.callResolver = new CallResolver();
-        this.candidateResolver = new CandidateResolver();
+        this.argumentTypeResolver = new ArgumentTypeResolver();
         this.typeResolver = new TypeResolver();
         this.annotationResolver = new AnnotationResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.candidateResolver = new CandidateResolver();
 
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
+        callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
         callResolver.setTypeResolver(typeResolver);
 
-        candidateResolver.setExpressionTypingServices(expressionTypingServices);
-        candidateResolver.setTypeResolver(typeResolver);
+        argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
+        argumentTypeResolver.setTypeResolver(typeResolver);
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
@@ -79,6 +83,10 @@ public class InjectorForMacros {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         descriptorResolver.setTypeResolver(typeResolver);
+
+        candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
+        candidateResolver.setExpressionTypingServices(expressionTypingServices);
+        candidateResolver.setTypeResolver(typeResolver);
 
     }
 

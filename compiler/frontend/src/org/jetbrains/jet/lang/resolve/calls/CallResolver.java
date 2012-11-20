@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
@@ -40,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -60,14 +57,14 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  * @author abreslav
  */
 public class CallResolver {
-    private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
-
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
     private TypeResolver typeResolver;
     @NotNull
     private CandidateResolver candidateResolver;
+    @NotNull
+    private ArgumentTypeResolver argumentTypeResolver;
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -82,6 +79,11 @@ public class CallResolver {
     @Inject
     public void setCandidateResolver(@NotNull CandidateResolver candidateResolver) {
         this.candidateResolver = candidateResolver;
+    }
+
+    @Inject
+    public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {
+        this.argumentTypeResolver = argumentTypeResolver;
     }
 
     @NotNull
@@ -341,7 +343,7 @@ public class CallResolver {
         OverloadResolutionResultsImpl<D> results = ResolutionResultsHandler.INSTANCE.computeResultAndReportErrors(
                 context.trace, tracing, candidates);
         if (!results.isSingleResult()) {
-            candidateResolver.checkTypesWithNoCallee(context);
+            argumentTypeResolver.checkTypesWithNoCallee(context);
         }
         return results;
     }
@@ -369,7 +371,7 @@ public class CallResolver {
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResults<D> checkArgumentTypesAndFail(BasicResolutionContext context) {
-        candidateResolver.checkTypesWithNoCallee(context);
+        argumentTypeResolver.checkTypesWithNoCallee(context);
         return OverloadResolutionResultsImpl.nameNotFound();
     }
 
@@ -423,7 +425,7 @@ public class CallResolver {
         }
         else {
             context.trace.report(UNRESOLVED_REFERENCE.on(reference));
-            candidateResolver.checkTypesWithNoCallee(context);
+            argumentTypeResolver.checkTypesWithNoCallee(context);
         }
         return resultsForFirstNonemptyCandidateSet != null ? resultsForFirstNonemptyCandidateSet : OverloadResolutionResultsImpl.<F>nameNotFound();
     }
@@ -515,7 +517,7 @@ public class CallResolver {
         OverloadResolutionResultsImpl<F> results = ResolutionResultsHandler.INSTANCE.computeResultAndReportErrors(
                 task.trace, task.tracing, task.getResolvedCalls());
         if (!results.isSingleResult() && !results.isIncomplete()) {
-            candidateResolver.checkTypesWithNoCallee(task.toBasic());
+            argumentTypeResolver.checkTypesWithNoCallee(task.toBasic());
         }
         return results;
     }

@@ -24,14 +24,12 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
@@ -58,6 +56,8 @@ public class CandidateResolver {
     @NotNull
     private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
     @NotNull
+    private ArgumentTypeResolver argumentTypeResolver;
+    @NotNull
     private TypeResolver typeResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
@@ -72,28 +72,9 @@ public class CandidateResolver {
         this.typeResolver = typeResolver;
     }
 
-
-    public void checkTypesWithNoCallee(@NotNull ResolutionContext context) {
-        for (ValueArgument valueArgument : context.call.getValueArguments()) {
-            JetExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression != null) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
-            }
-        }
-
-        for (JetExpression expression : context.call.getFunctionLiteralArguments()) {
-            expressionTypingServices.getType(context.scope, expression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
-        }
-
-        for (JetTypeProjection typeProjection : context.call.getTypeArguments()) {
-            JetTypeReference typeReference = typeProjection.getTypeReference();
-            if (typeReference == null) {
-                context.trace.report(Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(typeProjection));
-            }
-            else {
-                typeResolver.resolveType(context.scope, typeReference, context.trace, true);
-            }
-        }
+    @Inject
+    public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {
+        this.argumentTypeResolver = argumentTypeResolver;
     }
 
     public <D extends CallableDescriptor, F extends D> void performResolutionForCandidateCall(
@@ -107,7 +88,7 @@ public class CandidateResolver {
 
         if (ErrorUtils.isError(candidate)) {
             candidateCall.addStatus(SUCCESS);
-            checkTypesWithNoCallee(context.toBasic());
+            argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
             return;
         }
 
@@ -130,10 +111,10 @@ public class CandidateResolver {
             }
             if ((argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR && candidate.getTypeParameters().isEmpty()) ||
                 argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                checkTypesWithNoCallee(context.toBasic());
+                argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
                 return;
             }
-            checkUnmappedArgumentTypes(context.toBasic(), unmappedArguments);
+            argumentTypeResolver.checkUnmappedArgumentTypes(context.toBasic(), unmappedArguments);
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
@@ -377,7 +358,8 @@ public class CandidateResolver {
     }
 
     private <D extends CallableDescriptor, F extends D> ValueArgumentsCheckingResult checkAllValueArguments(CallResolutionContext<D, F> context) {
-        ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall, context.candidateCall.getTrace());
+        ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall,
+                                                                              context.candidateCall.getTrace());
         ResolutionStatus resultStatus = checkingResult.status;
         ResolvedCall<D> candidateCall = context.candidateCall;
 
@@ -461,15 +443,6 @@ public class CandidateResolver {
             }
         }
         return null;
-    }
-
-    private void checkUnmappedArgumentTypes(ResolutionContext context, Set<ValueArgument> unmappedArguments) {
-        for (ValueArgument valueArgument : unmappedArguments) {
-            JetExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression != null) {
-                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
-            }
-        }
     }
 
     private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ResolvedCall<D> candidateCall,

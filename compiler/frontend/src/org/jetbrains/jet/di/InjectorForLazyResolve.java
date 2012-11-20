@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -46,6 +47,7 @@ public class InjectorForLazyResolve {
     private AnnotationResolver annotationResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private CallResolver callResolver;
+    private ArgumentTypeResolver argumentTypeResolver;
     private CandidateResolver candidateResolver;
 
     public InjectorForLazyResolve(
@@ -65,6 +67,7 @@ public class InjectorForLazyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.callResolver = new CallResolver();
+        this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -84,10 +87,15 @@ public class InjectorForLazyResolve {
         this.annotationResolver.setCallResolver(callResolver);
         this.annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
+        callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
         callResolver.setTypeResolver(typeResolver);
 
+        argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
+        argumentTypeResolver.setTypeResolver(typeResolver);
+
+        candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
         candidateResolver.setExpressionTypingServices(expressionTypingServices);
         candidateResolver.setTypeResolver(typeResolver);
 

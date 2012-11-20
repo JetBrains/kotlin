@@ -24,12 +24,13 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
+import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
@@ -47,12 +48,13 @@ public class InjectorForBodyResolve {
     private final BodiesResolveContext bodiesResolveContext;
     private final ModuleConfiguration moduleConfiguration;
     private CallResolver callResolver;
-    private CandidateResolver candidateResolver;
+    private ArgumentTypeResolver argumentTypeResolver;
     private ExpressionTypingServices expressionTypingServices;
     private DescriptorResolver descriptorResolver;
     private AnnotationResolver annotationResolver;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private CandidateResolver candidateResolver;
     private ControlFlowAnalyzer controlFlowAnalyzer;
     private DeclarationsChecker declarationsChecker;
     private ScriptBodyResolver scriptBodyResolver;
@@ -72,12 +74,13 @@ public class InjectorForBodyResolve {
         this.bodiesResolveContext = bodiesResolveContext;
         this.moduleConfiguration = moduleConfiguration;
         this.callResolver = new CallResolver();
-        this.candidateResolver = new CandidateResolver();
+        this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
         this.descriptorResolver = new DescriptorResolver();
         this.annotationResolver = new AnnotationResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.candidateResolver = new CandidateResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
         this.scriptBodyResolver = new ScriptBodyResolver();
@@ -93,12 +96,13 @@ public class InjectorForBodyResolve {
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(bindingTrace);
 
+        callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
         callResolver.setTypeResolver(typeResolver);
 
-        candidateResolver.setExpressionTypingServices(expressionTypingServices);
-        candidateResolver.setTypeResolver(typeResolver);
+        argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
+        argumentTypeResolver.setTypeResolver(typeResolver);
 
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
@@ -116,6 +120,10 @@ public class InjectorForBodyResolve {
         typeResolver.setDescriptorResolver(descriptorResolver);
         typeResolver.setModuleConfiguration(moduleConfiguration);
         typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
+
+        candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
+        candidateResolver.setExpressionTypingServices(expressionTypingServices);
+        candidateResolver.setTypeResolver(typeResolver);
 
         controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         controlFlowAnalyzer.setTrace(bindingTrace);
