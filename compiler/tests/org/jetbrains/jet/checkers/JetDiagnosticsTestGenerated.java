@@ -3378,6 +3378,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve"), "kt", true);
             }
             
+            @TestMetadata("resolveWithFunctionLiterals.kt")
+            public void testResolveWithFunctionLiterals() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/resolve/resolveWithFunctionLiterals.kt");
+            }
+            
+            @TestMetadata("resolveWithFunctionLiteralsOverload.kt")
+            public void testResolveWithFunctionLiteralsOverload() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/resolve/resolveWithFunctionLiteralsOverload.kt");
+            }
+            
             @TestMetadata("resolveWithGenerics.kt")
             public void testResolveWithGenerics() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/resolve/resolveWithGenerics.kt");

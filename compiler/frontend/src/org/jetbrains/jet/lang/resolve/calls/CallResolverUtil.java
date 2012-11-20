@@ -26,11 +26,22 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Map;
 
 public class CallResolverUtil {
+
+    public static final JetType PLACEHOLDER_FUNCTION_TYPE = ErrorUtils.createErrorType("Function type");
+    public static final JetType PLACEHOLDER_FUNCTION_PARAMETER_TYPE = ErrorUtils.createErrorType("Function parameter type");
+
+    public enum ResolveMode {
+        RESOLVE_FUNCTION_ARGUMENTS,
+        SKIP_FUNCTION_ARGUMENTS
+    }
+
+    private CallResolverUtil() {}
 
     public static <D extends CallableDescriptor> ResolvedCallImpl<D> copy(@NotNull ResolvedCallImpl<D> call, @NotNull ResolutionContext context) {
         ResolutionCandidate<D> candidate = ResolutionCandidate.create(call.getCandidateDescriptor(), call.getThisObject(),
