@@ -1,3 +1,4 @@
 package test;
 
-val x = ClassWithWrongKotlinSignature.foo()
+val x = ClassWithWrongKotlinSignatures.foo()
+val y = ClassWithWrongKotlinSignatures.bar()

@@ -121,19 +121,23 @@ public final class AnalyzerWithCompilerReport {
         BindingContext bc = analyzeExhaust.getBindingContext();
         Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         if (!descriptorsWithErrors.isEmpty()) {
-            StringBuilder messageStart = new StringBuilder("The following Java entities have annotations wrong Kotlin signatures:\n");
+            StringBuilder message = new StringBuilder("The following Java entities have annotations wrong Kotlin signatures:\n");
             for (DeclarationDescriptor descriptor : descriptorsWithErrors) {
                 PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, descriptor);
                 assert declaration instanceof PsiModifierListOwner;
-                String externalName = PsiFormatUtil.getExternalName((PsiModifierListOwner) declaration);
-                messageStart.append(externalName).append(": ");
+
                 List<String> errors = bc.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
-                assert errors != null;
+                assert errors != null && !errors.isEmpty();
+
+                String externalName = PsiFormatUtil.getExternalName((PsiModifierListOwner) declaration);
+                message.append(externalName).append(":\n");
+
                 for (String error : errors) {
-                    messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                                   messageStart + error + "\n", CompilerMessageLocation.NO_LOCATION);
+                    message.append("    ").append(error).append("\n");
                 }
             }
+            messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
+                                           message.toString(), CompilerMessageLocation.NO_LOCATION);
         }
     }
 
