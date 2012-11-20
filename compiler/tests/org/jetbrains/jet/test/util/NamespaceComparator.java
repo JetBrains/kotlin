@@ -21,9 +21,12 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
+import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -382,14 +385,28 @@ public class NamespaceComparator {
             }
         }
 
+        // We want to skip @ExpectLoadErrors annotations when comparing
+        private static List<AnnotationDescriptor> filterAnnotations(List<AnnotationDescriptor> annotations) {
+            return ContainerUtil.filter(annotations, new Condition<AnnotationDescriptor>() {
+                @Override
+                public boolean value(AnnotationDescriptor annotation) {
+                    ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
+                    assert annotationClass != null;
+
+                    return !DescriptorUtils.getFQName(annotationClass).getFqName().equals(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME);
+                }
+            });
+        }
+
         public void serialize(FunctionDescriptor fun) {
             serialize(fun.getVisibility());
             sb.append(" ");
             serialize(fun.getModality());
             sb.append(" ");
 
-            if (!fun.getAnnotations().isEmpty()) {
-                new Serializer(sb).serializeSeparated(fun.getAnnotations(), " ");
+            List<AnnotationDescriptor> annotations = filterAnnotations(fun.getAnnotations());
+            if (!annotations.isEmpty()) {
+                new Serializer(sb).serializeSeparated(annotations, " ");
                 sb.append(" ");
             }
 
@@ -464,8 +481,9 @@ public class NamespaceComparator {
             serialize(prop.getModality());
             sb.append(" ");
 
-            if (!prop.getAnnotations().isEmpty()) {
-                new Serializer(sb).serializeSeparated(prop.getAnnotations(), " ");
+            List<AnnotationDescriptor> annotations = filterAnnotations(prop.getAnnotations());
+            if (!annotations.isEmpty()) {
+                new Serializer(sb).serializeSeparated(annotations, " ");
                 sb.append(" ");
             }
 

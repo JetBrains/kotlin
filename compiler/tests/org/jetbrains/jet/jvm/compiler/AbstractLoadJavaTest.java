@@ -16,17 +16,19 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.Arrays;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.analyzeKotlinAndLoadTestNamespace;
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceFromBinary;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceAndBindingContextFromBinary;
 import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
@@ -44,8 +46,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
         NamespaceDescriptor nsa = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-        NamespaceDescriptor nsb = compileJavaAndLoadTestNamespaceFromBinary(Collections.singletonList(javaFile),
-                                                                            tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        Pair<NamespaceDescriptor, BindingContext> nsbAndBindingContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+                Arrays.asList(javaFile, ExpectedLoadErrorsUtil.ANNOTATION_SOURCE_FILE),
+                tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        NamespaceDescriptor nsb = nsbAndBindingContext.first;
+        ExpectedLoadErrorsUtil.checkForLoadErrors(nsb, nsbAndBindingContext.second);
         compareNamespaces(nsa, nsb, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 }

@@ -16,21 +16,23 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
-import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceFromBinary;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceAndBindingContextFromBinary;
 
 /**
  * @author Pavel Talanov
@@ -48,17 +50,23 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
     }
 
     private void doTest(@NotNull String expectedFileName, @NotNull String... javaFileNames) throws Exception {
-        Collection<File> files = Collections2.transform(Arrays.asList(javaFileNames), new Function<String, File>() {
+        List<File> files = ContainerUtil.map(Arrays.asList(javaFileNames), new Function<String, File>() {
             @Override
-            public File apply(String s) {
+            public File fun(String s) {
                 return new File(s);
             }
         });
+        files.add(ExpectedLoadErrorsUtil.ANNOTATION_SOURCE_FILE);
         File expected = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expected.getName());
-        NamespaceDescriptor javaNamespaceDescriptor = compileJavaAndLoadTestNamespaceFromBinary(files, tmpDir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+                = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
+                                                                             ConfigurationKind.JDK_ONLY);
+        NamespaceDescriptor javaNamespace = javaNamespaceAndBindingContext.first;
         //NOTE: comparing namespace to file (hack)
-        NamespaceComparator.compareNamespaces(javaNamespaceDescriptor, javaNamespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expected);
+        NamespaceComparator.compareNamespaces(javaNamespace, javaNamespace, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expected);
+        ExpectedLoadErrorsUtil.checkForLoadErrors(javaNamespace, javaNamespaceAndBindingContext.second);
     }
 
     public void testPackageLocalVisibility() throws Exception {

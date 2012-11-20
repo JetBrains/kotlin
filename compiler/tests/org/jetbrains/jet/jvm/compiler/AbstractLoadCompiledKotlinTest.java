@@ -48,8 +48,8 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
         Assert.assertEquals("test", namespaceFromSource.getName().getName());
-        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceFromBinaries(tmpdir, getTestRootDisposable(),
-                                                                                                  ConfigurationKind.JDK_ONLY);
+        NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromBinaries(
+                tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
         compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
     }
 }

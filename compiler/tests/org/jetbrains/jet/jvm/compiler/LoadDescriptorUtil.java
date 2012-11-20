@@ -18,6 +18,7 @@ package org.jetbrains.jet.jvm.compiler;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
@@ -70,7 +71,7 @@ public final class LoadDescriptorUtil {
     )
             throws IOException {
         compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, outDir, disposable, configurationKind);
-        return loadTestNamespaceFromBinaries(outDir, disposable, ConfigurationKind.JDK_ONLY);
+        return loadTestNamespaceAndBindingContextFromBinaries(outDir, disposable, ConfigurationKind.JDK_ONLY).first;
     }
 
     @NotNull
@@ -89,7 +90,11 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor loadTestNamespaceFromBinaries(@NotNull File outDir, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) {
+    public static Pair<NamespaceDescriptor, BindingContext> loadTestNamespaceAndBindingContextFromBinaries(
+            @NotNull File outDir,
+            @NotNull Disposable disposable,
+            @NotNull ConfigurationKind configurationKind
+    ) {
         Disposer.dispose(disposable);
 
         CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
@@ -101,11 +106,11 @@ public final class LoadDescriptorUtil {
         NamespaceDescriptor namespaceDescriptor =
                 javaDescriptorResolver.resolveNamespace(TEST_PACKAGE_FQNAME, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         assert namespaceDescriptor != null;
-        return namespaceDescriptor;
+        return Pair.create(namespaceDescriptor, injector.getBindingTrace().getBindingContext());
     }
 
     @NotNull
-    public static NamespaceDescriptor compileJavaAndLoadTestNamespaceFromBinary(
+    public static Pair<NamespaceDescriptor, BindingContext> compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
             @NotNull Collection<File> javaFiles,
             @NotNull File outDir,
             @NotNull Disposable disposable,
@@ -113,7 +118,7 @@ public final class LoadDescriptorUtil {
     )
             throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return loadTestNamespaceFromBinaries(outDir, disposable, configurationKind);
+        return loadTestNamespaceAndBindingContextFromBinaries(outDir, disposable, configurationKind);
     }
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
