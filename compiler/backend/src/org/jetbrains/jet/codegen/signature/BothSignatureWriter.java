@@ -260,10 +260,12 @@ public class BothSignatureWriter {
         }
     }
 
-    public void writeTypeArgument(Variance variance) {
-        JetSignatureVariance jsVariance = toJetSignatureVariance(variance);
-        push(signatureVisitor().visitTypeArgument(jsVariance.getChar()));
-        jetSignatureWriter.visitTypeArgument(jsVariance);
+    public void writeTypeArgument(Variance projectionKindForKotlin, Variance projectionKindForJava) {
+        push(signatureVisitor().visitTypeArgument(
+                toJetSignatureVariance(projectionKindForJava).getChar()
+        ));
+
+        jetSignatureWriter.visitTypeArgument(toJetSignatureVariance(projectionKindForKotlin));
         generic = true;
     }
 
