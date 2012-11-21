@@ -16,20 +16,30 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
-import com.intellij.openapi.compiler.CompilerManager;
+import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.Collections;
 
+import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
+import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
+
 /**
  * @author yole
  */
 public class JetCompilerManager implements ProjectComponent {
-    public JetCompilerManager(CompilerManager manager) {
+    private static final Logger LOG = Logger.getInstance(JetCompilerManager.class);
+
+    // Comes from external make
+    private static final String PREFIX_WITH_COMPILER_NAME = KOTLIN_COMPILER_NAME + ": " + INTERNAL_ERROR_PREFIX;
+
+    public JetCompilerManager(Project project, CompilerManager manager) {
         manager.addTranslatingCompiler(new JetCompiler(),
                                        Collections.<FileType>singleton(JetFileType.INSTANCE),
                                        Collections.singleton(StdFileTypes.CLASS));
@@ -37,6 +47,24 @@ public class JetCompilerManager implements ProjectComponent {
                                        Collections.<FileType>singleton(JetFileType.INSTANCE),
                                        Collections.<FileType>singleton(StdFileTypes.JS));
         manager.addCompilableFileType(JetFileType.INSTANCE);
+
+        manager.addCompilationStatusListener(new CompilationStatusListener() {
+            @Override
+            public void compilationFinished(
+                    boolean aborted, int errors, int warnings, CompileContext compileContext
+            ) {
+                for (CompilerMessage error : compileContext.getMessages(CompilerMessageCategory.ERROR)) {
+                    String message = error.getMessage();
+                    if (message.startsWith(INTERNAL_ERROR_PREFIX) || message.startsWith(PREFIX_WITH_COMPILER_NAME)) {
+                        LOG.error(message);
+                    }
+                }
+            }
+
+            @Override
+            public void fileGenerated(String outputRoot, String relativePath) {
+            }
+        }, project);
     }
 
     @Override

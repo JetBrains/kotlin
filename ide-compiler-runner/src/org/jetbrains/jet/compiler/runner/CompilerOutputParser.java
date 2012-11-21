@@ -104,7 +104,7 @@ public class CompilerOutputParser {
                 .put("warning", WARNING)
                 .put("logging", LOGGING)
                 .put("output", OUTPUT)
-                .put("exception", ERROR)
+                .put("exception", EXCEPTION)
                 .put("info", INFO)
                 .put("messages", INFO) // Root XML element
                 .build();
