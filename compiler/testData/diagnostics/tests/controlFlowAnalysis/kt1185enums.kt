@@ -9,6 +9,12 @@ enum class Direction {
     EAST
 }
 
+class A {
+    class object {
+
+    }
+}
+
 enum class Color(val rgb : Int) {
     RED : Color(0xFF0000)
     GREEN : Color(0x00FF00)
@@ -18,6 +24,7 @@ enum class Color(val rgb : Int) {
 fun foo(d: Direction) = when(d) { //no 'else' should be requested
     Direction.NORTH -> 1
     Direction.SOUTH -> 2
+    <!INCOMPATIBLE_TYPES!>A<!> -> 1
     Direction.WEST -> 3
     Direction.EAST -> 4
 }

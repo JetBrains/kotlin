@@ -96,8 +96,12 @@ public final class WhenChecker {
     ) {
         JetSimpleNameExpression reference = getReference(whenExpression.getExpression());
         if (reference == null) return false;
+
         DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
-        if (target == null) return false;
+        if (!(target instanceof VariableDescriptor)) {
+            return false;
+        }
+
         ClassDescriptor classDescriptor = trace.get(BindingContext.OBJECT_DECLARATION_CLASS, (VariableDescriptor) target);
         return classDescriptor == enumEntry;
     }
