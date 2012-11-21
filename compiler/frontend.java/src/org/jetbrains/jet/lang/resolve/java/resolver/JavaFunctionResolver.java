@@ -144,13 +144,15 @@ public final class JavaFunctionResolver {
 
         List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
 
-        returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, superFunctions, new Function1<String, Void>() {
+        Function1<String, Void> reportError = new Function1<String, Void>() {
             @Override
             public Void invoke(String error) {
                 signatureErrors.add(error);
                 return null;
             }
-        });
+        };
+        returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, superFunctions, reportError);
+        valueParameterDescriptors = SignaturesPropagation.modifyValueParametersAccordingToSuperMethods(valueParameterDescriptors, superFunctions, reportError);
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =

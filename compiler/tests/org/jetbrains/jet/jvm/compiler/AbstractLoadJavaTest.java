@@ -50,7 +50,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 Arrays.asList(javaFile, ExpectedLoadErrorsUtil.ANNOTATION_SOURCE_FILE),
                 tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
         NamespaceDescriptor nsb = nsbAndBindingContext.first;
-        ExpectedLoadErrorsUtil.checkForLoadErrors(nsb, nsbAndBindingContext.second);
+
+
         compareNamespaces(nsa, nsb, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+        ExpectedLoadErrorsUtil.checkForLoadErrors(nsb, nsbAndBindingContext.second);
     }
 }

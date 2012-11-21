@@ -1,0 +1,10 @@
+namespace test
+
+public abstract trait test.NotNullToNullable : java.lang.Object {
+    public abstract trait test.NotNullToNullable.Sub : test.NotNullToNullable.Super {
+        public abstract override /*1*/ fun foo(/*0*/ p0: jet.String): jet.Tuple0
+    }
+    public abstract trait test.NotNullToNullable.Super : java.lang.Object {
+        public abstract fun foo(/*0*/ p0: jet.String): jet.Tuple0
+    }
+}

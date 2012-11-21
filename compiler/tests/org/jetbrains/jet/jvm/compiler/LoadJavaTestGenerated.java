@@ -439,10 +439,33 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         }
         
         @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation")
-        @InnerTestClasses({Propagation.Return.class})
+        @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class})
         public static class Propagation extends AbstractLoadJavaTest {
             public void testAllFilesPresentInPropagation() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), "java", true);
+            }
+            
+            @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/parameter")
+            public static class Parameter extends AbstractLoadJavaTest {
+                public void testAllFilesPresentInParameter() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), "java", true);
+                }
+                
+                @TestMetadata("InheritNullability.java")
+                public void testInheritNullability() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNullability.java");
+                }
+                
+                @TestMetadata("NotNullToNullable.java")
+                public void testNotNullToNullable() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NotNullToNullable.java");
+                }
+                
+                @TestMetadata("NullableToNotNull.java")
+                public void testNullableToNotNull() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NullableToNotNull.java");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/return")
@@ -576,6 +599,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Propagation");
                 suite.addTestSuite(Propagation.class);
+                suite.addTestSuite(Parameter.class);
                 suite.addTestSuite(Return.class);
                 return suite;
             }
