@@ -12,8 +12,8 @@ public interface AddNullabilityJavaSubtype {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Alternative signature has 2 syntax errors, first is at 10: Expecting '(")
-        @KotlinSignature("fun String? foo()")
+        @ExpectLoadError("Auto type 'jet.String' is not-null, while type in alternative signature is nullable: 'String?'")
+        @KotlinSignature("fun foo(): String?")
         String foo();
     }
 }
