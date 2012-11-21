@@ -37,10 +37,10 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.EXCEPTION;
 
 public class KotlinBuilder extends ModuleLevelBuilder {
 
-    private static final String KOTLIN_COMPILER_NAME = "Kotlin";
     private static final String KOTLIN_BUILDER_NAME = "Kotlin Builder";
 
     protected KotlinBuilder() {
@@ -133,10 +133,14 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 @NotNull String message,
                 @NotNull CompilerMessageLocation location
         ) {
+            String prefix = "";
+            if (severity == EXCEPTION) {
+                prefix = CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
+            }
             context.processMessage(new CompilerMessage(
-                    KOTLIN_COMPILER_NAME,
+                    CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
                     kind(severity),
-                    message,
+                    prefix + message,
                     location.getPath(),
                     -1, -1, -1,
                     location.getLine(),
