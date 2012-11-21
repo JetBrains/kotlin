@@ -49,8 +49,10 @@ public final class JavaInnerClassResolver {
     }
 
     @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(@NotNull DeclarationDescriptor owner,
-            @NotNull ClassPsiDeclarationProvider declarationProvider) {
+    public List<ClassDescriptor> resolveInnerClasses(
+            @NotNull DeclarationDescriptor owner,
+            @NotNull ClassPsiDeclarationProvider declarationProvider
+    ) {
         if (declarationProvider.isStaticMembers() && declarationProvider.getDeclarationOrigin() == KOTLIN) {
             return resolveInnerClassesOfClassObject(owner, declarationProvider.getPsiClass());
         }
@@ -63,7 +65,7 @@ public final class JavaInnerClassResolver {
         PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
         for (PsiClass innerPsiClass : innerPsiClasses) {
-            if (shouldBeIgnored(owner, innerPsiClass, isStatic)) {
+            if (shouldBeIgnored(owner, psiClass, innerPsiClass, isStatic)) {
                 continue;
             }
             ClassDescriptor classDescriptor = resolveInnerClass(innerPsiClass);
@@ -72,12 +74,20 @@ public final class JavaInnerClassResolver {
         return result;
     }
 
-    private static boolean shouldBeIgnored(DeclarationDescriptor owner, PsiClass innerPsiClass, boolean isStatic) {
-        // TODO: hack against inner classes
-        return innerPsiClass.hasModifierProperty(PsiModifier.PRIVATE)
-                || innerPsiClass.hasModifierProperty(PsiModifier.STATIC) != isStatic
-                || innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)
-                || DescriptorResolverUtils.isInnerEnum(innerPsiClass, owner);
+    private static boolean shouldBeIgnored(DeclarationDescriptor owner, PsiClass psiClass, PsiClass innerPsiClass, boolean isStatic) {
+        if (innerPsiClass.hasModifierProperty(PsiModifier.PRIVATE)
+            || innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)
+            || DescriptorResolverUtils.isInnerEnum(innerPsiClass, owner)) {
+            return true;
+        }
+        //TODO: this is a hack that puts interfaces and inner classes of interfaces (which are always static)
+        // inside NonStaticMemberScope
+        if (innerPsiClass.isInterface() || psiClass.isInterface()) {
+            return isStatic;
+        }
+        else {
+            return innerPsiClass.hasModifierProperty(PsiModifier.STATIC) != isStatic;
+        }
     }
 
     private List<ClassDescriptor> resolveInnerClassesOfClassObject(@NotNull DeclarationDescriptor classObject, @NotNull PsiClass psiClass) {
