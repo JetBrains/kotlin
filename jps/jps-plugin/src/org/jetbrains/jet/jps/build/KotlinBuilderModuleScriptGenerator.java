@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.runner.KotlinModuleScriptGenerator;
+import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
@@ -31,10 +32,7 @@ import org.jetbrains.jps.model.java.JpsJavaDependenciesEnumerator;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsLibraryRoot;
-import org.jetbrains.jps.model.module.JpsDependencyElement;
-import org.jetbrains.jps.model.module.JpsLibraryDependency;
-import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.model.module.JpsSdkDependency;
+import org.jetbrains.jps.model.module.*;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
@@ -51,7 +49,7 @@ public class KotlinBuilderModuleScriptGenerator {
     {
         CharSequence moduleScriptText = KotlinModuleScriptGenerator.generateModuleScript(
                 target.getId(),
-                getKotlinModuleDependencies(target),
+                getKotlinModuleDependencies(context, target),
                 sourceFiles,
                 target.isTests(),
                 // this excludes the output directory from the class path, to be removed for true incremental compilation
@@ -65,11 +63,12 @@ public class KotlinBuilderModuleScriptGenerator {
         return scriptFile;
     }
 
-    private static DependencyProvider getKotlinModuleDependencies(final ModuleBuildTarget target) {
+    private static DependencyProvider getKotlinModuleDependencies(final CompileContext context, final ModuleBuildTarget target) {
         return new DependencyProvider() {
             @Override
             public void processClassPath(@NotNull KotlinModuleScriptGenerator.DependencyProcessor processor) {
-                processor.processClassPathSection("All", findClassPathRoots(target));
+                processor.processClassPathSection("Classpath", findClassPathRoots(target));
+                processor.processClassPathSection("Java Source Roots", findSourceRoots(context, target));
                 processor.processAnnotationRoots(findAnnotationRoots(target));
             }
         };
@@ -91,6 +90,19 @@ public class KotlinBuilderModuleScriptGenerator {
                 .includedIn(JpsJavaClasspathKind.compile(target.isTests()));
 
         return dependencies.classes().getRoots();
+    }
+
+    @NotNull
+    private static Collection<File> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
+        List<JavaSourceRootDescriptor> roots = context.getProjectDescriptor().getBuildRootIndex().getTargetRoots(target, context);
+        Collection<File> result = ContainerUtil.newArrayList();
+        for (JavaSourceRootDescriptor root : roots) {
+            File file = root.getRootFile();
+            if (file.exists()) {
+                result.add(file);
+            }
+        }
+        return result;
     }
 
     @NotNull
