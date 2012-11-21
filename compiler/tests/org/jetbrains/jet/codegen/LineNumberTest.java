@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
@@ -92,24 +93,33 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         return JetTestUtils.createFile(file.getName(), text, environment.getProject());
     }
 
-    private void doTest(@NotNull String filename) {
+    private void doTest(@NotNull String filename, boolean custom) {
         JetFile psiFile = createPsiFile(filename);
         GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
 
-        List<Integer> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
-        List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state);
+        List<Integer> expectedLineNumbers, actualLineNumbers;
+        if (custom) {
+            expectedLineNumbers = extractCustomLineNumbersFromSource(psiFile);
+            actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
+            assertEquals(expectedLineNumbers, actualLineNumbers);
+        }
+        else {
+            expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
+            actualLineNumbers = extractActualLineNumbersFromBytecode(state, true);
+            assertSameElements(actualLineNumbers, expectedLineNumbers);
+        }
 
-        assertSameElements(actualLineNumbers, expectedLineNumbers);
     }
 
     @NotNull
-    private List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state) {
+    private List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
         ClassFileFactory factory = state.getFactory();
         List<Integer> actualLineNumbers = Lists.newArrayList();
         for (String filename : factory.files()) {
             ClassReader cr = new ClassReader(factory.asBytes(filename));
             try {
-                actualLineNumbers.addAll(readLineNumbers(cr));
+                List<Integer> lineNumbers = testFunInvoke ? readTestFunLineNumbers(cr) : readAllLineNumbers(cr);
+                actualLineNumbers.addAll(lineNumbers);
             }
             catch (Throwable e) {
                 System.out.println(factory.createText());
@@ -121,7 +131,29 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     private void doTest() {
-        doTest(getTestName(true) + ".kt");
+        doTest(getTestName(true) + ".kt", false);
+    }
+
+    private void doTestCustom() {
+        doTest("custom/" + getTestName(true) + ".kt", true);
+    }
+
+    @NotNull
+    private List<Integer> extractCustomLineNumbersFromSource(@NotNull JetFile file) {
+        String fileContent = file.getText();
+        List<Integer> lineNumbers = Lists.newArrayList();
+        String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
+
+        for (String line : lines) {
+            if (line.startsWith("//")) {
+                String[] numbers = line.substring("//".length()).trim().split(" +");
+                for (String number : numbers) {
+                    lineNumbers.add(Integer.parseInt(number));
+                }
+            }
+        }
+
+        return lineNumbers;
     }
 
     @NotNull
@@ -141,7 +173,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private List<Integer> readLineNumbers(@NotNull ClassReader cr) {
+    private List<Integer> readTestFunLineNumbers(@NotNull ClassReader cr) {
         final List<Label> labels = Lists.newArrayList();
         final Map<Label, Integer> labels2LineNumbers = Maps.newHashMap();
 
@@ -185,6 +217,22 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         return lineNumbers;
     }
 
+    @NotNull
+    private List<Integer> readAllLineNumbers(@NotNull ClassReader reader) {
+        final List<Integer> result = new ArrayList<Integer>();
+        reader.accept(new ClassVisitor(Opcodes.ASM4) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+                return new MethodVisitor(Opcodes.ASM4) {
+                    @Override
+                    public void visitLineNumber(int line, Label label) {
+                        result.add(line);
+                    }
+                };
+            }
+        }, ClassReader.SKIP_FRAMES);
+        return result;
+    }
 
 
     public void testAnonymousFunction() {
@@ -256,20 +304,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         // There must be exactly one line number attribute for each static delegate in namespace.class, and it should point to the first
         // line. There are two static delegates in this test, hence the [1, 1]
         List<Integer> expectedLineNumbers = Arrays.asList(1, 1);
-
-        final List<Integer> actualLineNumbers = new ArrayList<Integer>();
-
-        reader.accept(new ClassVisitor(Opcodes.ASM4) {
-            @Override
-            public MethodVisitor visitMethod(int access, String name, final String desc, final String signature, String[] exceptions) {
-                return new MethodVisitor(Opcodes.ASM4) {
-                    @Override
-                    public void visitLineNumber(int line, Label label) {
-                        actualLineNumbers.add(line);
-                    }
-                };
-            }
-        }, ClassReader.SKIP_FRAMES);
+        List<Integer> actualLineNumbers = readAllLineNumbers(reader);
 
         assertSameElements(actualLineNumbers, expectedLineNumbers);
     }
