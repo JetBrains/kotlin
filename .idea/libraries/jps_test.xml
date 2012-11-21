@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jps-test">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/ideaSDK/jps/test" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/jps/test" recursive="false" />
+  </library>
+</component>

@@ -163,6 +163,8 @@
         <sequential>
             <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
             <property name="core" value="ideaSDK/core"/>
+            <property name="jps" value="ideaSDK/jps"/>
+            <property name="jps-test" value="${jps}/test"/>
 
             <if>
                 <istrue value="${idea.sdk.fetch.needed}"/>
@@ -175,12 +177,31 @@
                     </delete>
 
                     <mkdir dir="${core}"/>
+                    <mkdir dir="${jps}"/>
+                    <mkdir dir="${jps-test}"/>
                     <get src="@{base.url.for.core}/core/intellij-core.jar" dest="${core}/intellij-core.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/annotations.jar" dest="${core}/annotations.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/cli-parser-1.1.jar" dest="${core}/cli-parser-1.1.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/guava-12.0.jar" dest="${core}/guava-12.0.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/picocontainer.jar" dest="${core}/picocontainer.jar" usetimestamp="true"/>
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
+
+                    <get src="@{base.url}/jps/asm4-all.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/groovy_rt.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/jdom.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/jgoodies-forms.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/jna.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/jps-builders.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/jps-model.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/log4j.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/nanoxml-2.2.3.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/protobuf-2.4.1.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/trove4j.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/ui-designer-jps-plugin.jar" dest="${jps}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/util.jar" dest="${jps}/" usetimestamp="true"/>
+
+                    <get src="@{base.url}/jps/test/jps-build-test.jar" dest="${jps-test}/" usetimestamp="true"/>
 
                     <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
