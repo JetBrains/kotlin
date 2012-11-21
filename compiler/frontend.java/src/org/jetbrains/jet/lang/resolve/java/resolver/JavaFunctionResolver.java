@@ -142,7 +142,9 @@ public final class JavaFunctionResolver {
 
         final List<String> signatureErrors = Lists.newArrayList();
 
-        returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, method, trace, new Function1<String, Void>() {
+        List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
+
+        returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, superFunctions, new Function1<String, Void>() {
             @Override
             public Void invoke(String error) {
                 signatureErrors.add(error);
@@ -186,7 +188,7 @@ public final class JavaFunctionResolver {
         }
 
         if (signatureErrors.isEmpty()) {
-            checkFunctionsOverrideCorrectly(method, functionDescriptorImpl);
+            checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
         }
         else {
             trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
@@ -195,8 +197,11 @@ public final class JavaFunctionResolver {
         return functionDescriptorImpl;
     }
 
-    private void checkFunctionsOverrideCorrectly(PsiMethodWrapper method, FunctionDescriptor functionDescriptor) {
-        List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
+    private static void checkFunctionsOverrideCorrectly(
+            PsiMethodWrapper method,
+            List<FunctionDescriptor> superFunctions,
+            FunctionDescriptor functionDescriptor
+    ) {
         for (FunctionDescriptor superFunction : superFunctions) {
             TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(
                     ((ClassDescriptor) functionDescriptor.getContainingDeclaration()).getDefaultType());

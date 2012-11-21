@@ -40,11 +40,10 @@ import java.util.*;
 public class SignaturesPropagation {
     public static JetType modifyReturnTypeAccordingToSuperMethods(
             @NotNull JetType autoType, // type built by JavaTypeTransformer
-            @NotNull PsiMethodWrapper method,
-            @NotNull BindingTrace trace,
+            @NotNull List<FunctionDescriptor> superFunctions,
             @NotNull Function1<String, Void> reportError
     ) {
-        List<JetType> typesFromSuperMethods = ContainerUtil.map(getSuperFunctionsForMethod(method, trace),
+        List<JetType> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                                                                 new Function<FunctionDescriptor, JetType>() {
                                                                     @Override
                                                                     public JetType fun(FunctionDescriptor superFunction) {
