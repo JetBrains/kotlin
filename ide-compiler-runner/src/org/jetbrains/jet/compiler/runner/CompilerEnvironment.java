@@ -32,13 +32,17 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERRO
 public final class CompilerEnvironment {
 
     @NotNull
-    public static CompilerEnvironment getEnvironmentFor(boolean tests, File mainOutput, File outputDirectoryForTests) {
+    public static CompilerEnvironment getEnvironmentFor(boolean tests, @Nullable File mainOutput, @Nullable File outputDirectoryForTests) {
         final File outputDir = tests ? outputDirectoryForTests : mainOutput;
         return getEnvironmentFor(outputDir);
     }
 
-    public static CompilerEnvironment getEnvironmentFor(File outputDir) {
+    public static CompilerEnvironment getEnvironmentFor(@Nullable File outputDir) {
         File kotlinHome = PathUtil.getDefaultCompilerPath();
+        return getEnvironmentFor(kotlinHome, outputDir);
+    }
+
+    public static CompilerEnvironment getEnvironmentFor(@Nullable File kotlinHome, @Nullable File outputDir) {
         return new CompilerEnvironment(kotlinHome, outputDir);
     }
 

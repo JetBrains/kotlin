@@ -67,6 +67,20 @@ public class PathUtil {
         return null;
     }
 
+    public static File getCompilerPathForJpsPlugin() {
+        File plugin_jar_path = new File(getJarPathForClass(PathUtil.class));
+
+        if (!plugin_jar_path.exists()) return null;
+
+        if (plugin_jar_path.getName().equals("kotlin-jps-plugin.jar")) {
+            File pluginHome = plugin_jar_path.getParentFile().getParentFile().getParentFile();
+            File answer = new File(pluginHome, "kotlinc");
+            return answer.exists() ? answer : null;
+        }
+
+        return null;
+    }
+
     @Nullable
     public static File getDefaultRuntimePath() {
         return getFilePackedIntoLib("kotlin-runtime.jar");
