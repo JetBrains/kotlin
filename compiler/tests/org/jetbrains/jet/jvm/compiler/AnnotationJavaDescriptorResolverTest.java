@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,14 +63,14 @@ public class AnnotationJavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
         StringBuilder builder = new StringBuilder(tmpdir.getAbsolutePath());
         builder.append(File.pathSeparator);
-        File runtimePath = PathUtil.getDefaultRuntimePath();
-        if (runtimePath != null) {
+        File runtimePath = JetTestUtils.getPathsForTests().getRuntimePath();
+        if (runtimePath.exists()) {
             builder.append(runtimePath.getAbsolutePath());
             builder.append(File.pathSeparator);
         }
 
-        File annotationsPath = PathUtil.getJdkAnnotationsPath();
-        if (annotationsPath != null) {
+        File annotationsPath = JetTestUtils.getPathsForTests().getJdkAnnotationsPath();
+        if (annotationsPath.exists()) {
             builder.append(annotationsPath.getAbsolutePath());
         }
 

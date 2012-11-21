@@ -35,6 +35,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -81,7 +82,7 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static List<Module> loadModuleScript(String moduleScriptFile, MessageCollector messageCollector) {
+    public static List<Module> loadModuleScript(KotlinPaths paths, String moduleScriptFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
             @Override
             public void dispose() {
@@ -89,13 +90,13 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerConfiguration configuration = new CompilerConfiguration();
-        File defaultRuntimePath = PathUtil.getDefaultRuntimePath();
-        if (defaultRuntimePath != null) {
-            configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, defaultRuntimePath);
+        File runtimePath = paths.getRuntimePath();
+        if (runtimePath.exists()) {
+            configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, runtimePath);
         }
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
-        File jdkAnnotationsPath = PathUtil.getJdkAnnotationsPath();
-        if (jdkAnnotationsPath != null) {
+        File jdkAnnotationsPath = paths.getJdkAnnotationsPath();
+        if (jdkAnnotationsPath.exists()) {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, moduleScriptFile);
@@ -109,7 +110,7 @@ public class CompileEnvironmentUtil {
                                                   loadModuleScriptText(moduleScriptFile));
         }
 
-        List<Module> modules = runDefineModules(moduleScriptFile, generationState.getFactory());
+        List<Module> modules = runDefineModules(paths, moduleScriptFile, generationState.getFactory());
 
         Disposer.dispose(disposable);
 
@@ -123,10 +124,10 @@ public class CompileEnvironmentUtil {
         return modules;
     }
 
-    private static List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        File stdlibJar = PathUtil.getDefaultRuntimePath();
+    private static List<Module> runDefineModules(KotlinPaths paths, String moduleFile, ClassFileFactory factory) {
+        File stdlibJar = paths.getRuntimePath();
         GeneratedClassLoader loader;
-        if (stdlibJar != null) {
+        if (stdlibJar.exists()) {
             try {
                 loader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{stdlibJar.toURI().toURL()},
                                                                               AllModules.class.getClassLoader()));

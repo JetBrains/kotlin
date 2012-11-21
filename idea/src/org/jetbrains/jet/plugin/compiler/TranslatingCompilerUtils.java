@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.compiler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.module.Module;
@@ -29,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
+import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +45,11 @@ public final class TranslatingCompilerUtils {
     public static CompilerEnvironment getEnvironmentFor(@NotNull CompileContext compileContext, @NotNull Module module, boolean tests) {
         VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
         VirtualFile outputDirectoryForTests = compileContext.getModuleOutputDirectoryForTests(module);
-        return CompilerEnvironment.getEnvironmentFor(tests, toNullableIoFile(mainOutput), toNullableIoFile(outputDirectoryForTests));
+        File outputDir = tests ? toNullableIoFile(outputDirectoryForTests) : toNullableIoFile(mainOutput);
+        KotlinPaths kotlinPaths = ApplicationManager.getApplication().isUnitTestMode()
+                                        ? PathUtil.getKotlinPathsForDistDirectory()
+                                        : PathUtil.getKotlinPathsForIdeaPlugin();
+        return CompilerEnvironment.getEnvironmentFor(kotlinPaths, outputDir);
     }
 
     @Nullable

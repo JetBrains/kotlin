@@ -19,7 +19,7 @@ package org.jetbrains.jet.compiler.runner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.jet.utils.KotlinPaths;
 
 import java.io.File;
 
@@ -31,39 +31,26 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERRO
  */
 public final class CompilerEnvironment {
 
-    @NotNull
-    public static CompilerEnvironment getEnvironmentFor(boolean tests, @Nullable File mainOutput, @Nullable File outputDirectoryForTests) {
-        final File outputDir = tests ? outputDirectoryForTests : mainOutput;
-        return getEnvironmentFor(outputDir);
+    public static CompilerEnvironment getEnvironmentFor(@NotNull KotlinPaths kotlinPaths, @Nullable File outputDir) {
+        return new CompilerEnvironment(kotlinPaths, outputDir);
     }
 
-    public static CompilerEnvironment getEnvironmentFor(@Nullable File outputDir) {
-        File kotlinHome = PathUtil.getDefaultCompilerPath();
-        return getEnvironmentFor(kotlinHome, outputDir);
-    }
-
-    public static CompilerEnvironment getEnvironmentFor(@Nullable File kotlinHome, @Nullable File outputDir) {
-        return new CompilerEnvironment(kotlinHome, outputDir);
-    }
-
-    @Nullable
-    private final File kotlinHome;
+    private final KotlinPaths kotlinPaths;
     @Nullable
     private final File output;
 
-    public CompilerEnvironment(@Nullable File home, @Nullable File output) {
-        this.kotlinHome = home;
+    private CompilerEnvironment(@NotNull KotlinPaths kotlinPaths, @Nullable File output) {
+        this.kotlinPaths = kotlinPaths;
         this.output = output;
     }
 
     public boolean success() {
-        return kotlinHome != null && output != null;
+        return kotlinPaths.getHomePath().exists() && output != null;
     }
 
     @NotNull
-    public File getKotlinHome() {
-        assert kotlinHome != null;
-        return kotlinHome;
+    public KotlinPaths getKotlinPaths() {
+        return kotlinPaths;
     }
 
     @NotNull
@@ -76,8 +63,8 @@ public final class CompilerEnvironment {
         if (output == null) {
             messageCollector.report(ERROR, "[Internal Error] No output directory", NO_LOCATION);
         }
-        if (kotlinHome == null) {
-            messageCollector.report(ERROR, "Cannot find kotlinc home. Make sure plugin is properly installed", NO_LOCATION);
+        if (!kotlinPaths.getHomePath().exists()) {
+            messageCollector.report(ERROR, "Cannot find kotlinc home: " + kotlinPaths.getHomePath() + ". Make sure plugin is properly installed", NO_LOCATION);
         }
     }
 

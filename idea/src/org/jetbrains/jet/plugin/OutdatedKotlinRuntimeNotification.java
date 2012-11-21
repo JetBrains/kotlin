@@ -105,8 +105,8 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                File runtimePath = PathUtil.getDefaultRuntimePath();
-                if (runtimePath == null) {
+                File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
+                if (!runtimePath.exists()) {
                     Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
                                              "No Runtime Found");
                     return;

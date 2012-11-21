@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.jvm;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
@@ -170,7 +171,7 @@ public class CliTest {
         AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
         scriptParameters.add(parameter);
         Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.ktscript", scriptParameters, null);
+                .compileScript(getClass().getClassLoader(), JetTestUtils.getPathsForTests(), "compiler/testData/cli/fib.ktscript", scriptParameters, null);
         Assert.assertNotNull(aClass);
 
         try {
@@ -187,7 +188,7 @@ public class CliTest {
         AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
         scriptParameters.add(parameter);
         Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.kt", scriptParameters, null);
+                .compileScript(getClass().getClassLoader(), JetTestUtils.getPathsForTests(), "compiler/testData/cli/fib.kt", scriptParameters, null);
         Assert.assertNotNull(aClass);
 
         try {
@@ -205,7 +206,7 @@ public class CliTest {
         AnalyzerScriptParameter parameter = new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int"));
         scriptParameters.add(parameter);
         Class aClass = KotlinToJVMBytecodeCompiler
-                .compileScript(getClass().getClassLoader(), "compiler/testData/cli/fib.fib.kt", null, Arrays.asList(new JetScriptDefinition(".fib.kt",scriptParameters)));
+                .compileScript(getClass().getClassLoader(), JetTestUtils.getPathsForTests(), "compiler/testData/cli/fib.fib.kt", null, Arrays.asList(new JetScriptDefinition(".fib.kt",scriptParameters)));
         Assert.assertNotNull(aClass);
 
         try {

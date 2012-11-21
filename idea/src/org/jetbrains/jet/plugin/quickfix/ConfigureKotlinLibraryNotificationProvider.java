@@ -118,8 +118,8 @@ public class ConfigureKotlinLibraryNotificationProvider extends EditorNotificati
             }
         }
 
-        File runtimePath = PathUtil.getDefaultRuntimePath();
-        if (runtimePath == null) {
+        File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
+        if (!runtimePath.exists()) {
             Messages.showErrorDialog(myProject, "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
                                      "No Runtime Found");
             return null;
@@ -215,8 +215,8 @@ public class ConfigureKotlinLibraryNotificationProvider extends EditorNotificati
     /* package */ static void addJdkAnnotations(Module module) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         assert sdk != null;
-        File annotationsIoFile = PathUtil.getJdkAnnotationsPath();
-        if (annotationsIoFile != null) {
+        File annotationsIoFile = PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath();
+        if (annotationsIoFile.exists()) {
             VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsIoFile);
             if (jdkAnnotationsJar != null) {
                 SdkModificator modificator = sdk.getSdkModificator();

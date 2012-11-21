@@ -24,7 +24,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -34,87 +33,86 @@ public class PathUtil {
     public static final String JS_LIB_JS_NAME = "kotlinEcma3.js";
     public static final String JDK_ANNOTATIONS_JAR = "kotlin-jdk-annotations.jar";
 
+    private static final File NO_PATH = new File("<no_path>");
+
     private PathUtil() {}
 
-    public static File getDefaultCompilerPath() {
-        File plugin_jar_path = new File(getJarPathForClass(PathUtil.class));
-
-        if (!plugin_jar_path.exists()) return null;
-
-        if (plugin_jar_path.getName().equals("kotlin-plugin.jar")) {
-            File lib = plugin_jar_path.getParentFile();
-            File pluginHome = lib.getParentFile();
-
-            File answer = new File(pluginHome, "kotlinc");
-
-            return answer.exists() ? answer : null;
-        }
-
-        if (plugin_jar_path.getName().equals("kotlin-compiler.jar")) {
-            File lib = plugin_jar_path.getParentFile();
-            File answer = lib.getParentFile();
-            return answer.exists() ? answer : null;
-        }
-        
-        File current = new File("").getAbsoluteFile(); // CWD
-
-        do {
-            File atDevHome = new File(current, "dist/kotlinc");
-            if (atDevHome.exists()) return atDevHome;
-            current = current.getParentFile();
-        } while (current != null);
-
-        return null;
-    }
-
-    public static File getCompilerPathForJpsPlugin() {
-        File plugin_jar_path = new File(getJarPathForClass(PathUtil.class));
-
-        if (!plugin_jar_path.exists()) return null;
-
-        if (plugin_jar_path.getName().equals("kotlin-jps-plugin.jar")) {
-            File pluginHome = plugin_jar_path.getParentFile().getParentFile().getParentFile();
-            File answer = new File(pluginHome, "kotlinc");
-            return answer.exists() ? answer : null;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static File getDefaultRuntimePath() {
-        return getFilePackedIntoLib("kotlin-runtime.jar");
-    }
-
-    @Nullable
-    public static File getDefaultJsLibJsPath() {
-        return getFilePackedIntoLib(JS_LIB_JS_NAME);
-    }
-
-    @Nullable
-    public static File getDefaultJsLibJarPath() {
-        return getFilePackedIntoLib(JS_LIB_JAR_NAME);
-    }
-
-    @Nullable
-    private static File getFilePackedIntoLib(@NotNull String filePathFromLib) {
-        File compilerPath = getDefaultCompilerPath();
-        if (compilerPath == null) return null;
-
-        File answer = new File(compilerPath, "lib/" + filePathFromLib);
-
-        return answer.exists() ? answer : null;
-    }
-
-    @Nullable
-    public static File getJdkAnnotationsPath() {
-        return getFilePackedIntoLib(JDK_ANNOTATIONS_JAR);
+    @NotNull
+    public static KotlinPaths getKotlinPathsForIdeaPlugin() {
+        return new KotlinPaths(getCompilerPathForIdeaPlugin());
     }
 
     @NotNull
-    public static String getJarPathForClass(@NotNull Class aClass) {
+    public static KotlinPaths getKotlinPathsForJpsPlugin() {
+        return new KotlinPaths(getCompilerPathForJpsPlugin());
+    }
+
+    @NotNull
+    public static KotlinPaths getKotlinPathsForCompiler() {
+        if (!getPathUtilJar().isFile()) {
+            // Not running from a jar, i.e. it is it must be a unit test
+            return getKotlinPathsForDistDirectory();
+        }
+        return new KotlinPaths(getCompilerPathForCompilerJar());
+    }
+
+    @NotNull
+    public static KotlinPaths getKotlinPathsForDistDirectory() {
+        return new KotlinPaths(new File("dist/kotlinc"));
+    }
+
+    @NotNull
+    private static File getCompilerPathForCompilerJar() {
+        File jar = getPathUtilJar();
+
+        if (!jar.exists()) return NO_PATH;
+
+        if (jar.getName().equals("kotlin-compiler.jar")) {
+            File lib = jar.getParentFile();
+            return lib.getParentFile();
+        }
+
+        return NO_PATH;
+    }
+
+    @NotNull
+    private static File getCompilerPathForJpsPlugin() {
+        File jar = getPathUtilJar();
+
+        if (!jar.exists()) return NO_PATH;
+
+        if (jar.getName().equals("kotlin-jps-plugin.jar")) {
+            File pluginHome = jar.getParentFile().getParentFile().getParentFile();
+            return new File(pluginHome, "kotlinc");
+        }
+
+        return NO_PATH;
+    }
+
+    @NotNull
+    private static File getCompilerPathForIdeaPlugin() {
+        File jar = getPathUtilJar();
+
+        if (!jar.exists()) return NO_PATH;
+
+        if (jar.getName().equals("kotlin-plugin.jar")) {
+            File lib = jar.getParentFile();
+            File pluginHome = lib.getParentFile();
+
+            return new File(pluginHome, "kotlinc");
+        }
+
+        return NO_PATH;
+    }
+
+    private static File getPathUtilJar() {
+        return getJarPathForClass(PathUtil.class);
+    }
+
+    @NotNull
+    public static File getJarPathForClass(@NotNull Class aClass) {
         String resourceRoot = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
-        return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
+        return new File(resourceRoot).getAbsoluteFile();
     }
 
     @NotNull

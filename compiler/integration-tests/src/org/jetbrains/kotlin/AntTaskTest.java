@@ -25,10 +25,11 @@ import static junit.framework.Assert.assertEquals;
 public class AntTaskTest extends KotlinIntegrationTestBase {
     @Test
     public void antTaskJvm() throws Exception {
-        final String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
+        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
+        String runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar").getAbsolutePath();
 
         assertEquals("compilation failed", 0, runAnt("build.log", "build.xml"));
-        runJava("hello.run", "-cp", jar, "Hello.namespace");
+        runJava("hello.run", "-cp", jar + ":" + runtime, "Hello.namespace");
     }
 
     @Override

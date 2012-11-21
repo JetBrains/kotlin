@@ -25,6 +25,7 @@ import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -62,14 +63,15 @@ public class BytecodeCompiler {
     }
 
     private CompilerConfiguration createConfiguration(String stdlib, String[] classpath, String[] sourceRoots) {
+        KotlinPaths paths = getKotlinPathsForAntTask();
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
         if ((stdlib != null) && (stdlib.trim().length() > 0)) {
             configuration.add(CLASSPATH_KEY, new File(stdlib));
         }
         else {
-            File path = PathUtil.getDefaultRuntimePath();
-            if (path != null) {
+            File path = paths.getRuntimePath();
+            if (path.exists()) {
                 configuration.add(CLASSPATH_KEY, path);
             }
         }
@@ -78,8 +80,8 @@ public class BytecodeCompiler {
                 configuration.add(CLASSPATH_KEY, new File(path));
             }
         }
-        File jdkAnnotationsPath = PathUtil.getJdkAnnotationsPath();
-        if (jdkAnnotationsPath != null) {
+        File jdkAnnotationsPath = paths.getJdkAnnotationsPath();
+        if (jdkAnnotationsPath.exists()) {
             configuration.add(ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
         }
 
@@ -90,7 +92,6 @@ public class BytecodeCompiler {
         configuration.addAll(CLIConfigurationKeys.COMPILER_PLUGINS, getCompilerPlugins());
         return configuration;
     }
-
 
     /**
      * Retrieves compilation error message.
@@ -172,7 +173,7 @@ public class BytecodeCompiler {
             @Nullable String stdlib,
             @Nullable String[] classpath) {
         try {
-            List<Module> modules = CompileEnvironmentUtil.loadModuleScript(module, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+            List<Module> modules = CompileEnvironmentUtil.loadModuleScript(getKotlinPathsForAntTask(), module, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
             List<String> sourcesRoots = new ArrayList<String>();
             for (Module m : modules) {
                 sourcesRoots.addAll(m.getSourceFiles());
@@ -196,4 +197,9 @@ public class BytecodeCompiler {
     public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
         this.compilerPlugins = compilerPlugins;
     }
+
+    private static KotlinPaths getKotlinPathsForAntTask() {
+        return new KotlinPaths(PathUtil.getJarPathForClass(BytecodeCompiler.class).getParentFile().getParentFile());
+    }
+
 }

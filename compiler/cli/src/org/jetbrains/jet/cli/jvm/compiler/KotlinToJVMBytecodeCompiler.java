@@ -51,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -222,9 +223,10 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileAndExecuteScript(
+            @NotNull KotlinPaths paths,
             @NotNull JetCoreEnvironment environment,
             @NotNull List<String> scriptArgs) {
-        Class<?> scriptClass = compileScript(environment, null);
+        Class<?> scriptClass = compileScript(paths, environment, null);
         if(scriptClass == null)
             return false;
 
@@ -240,8 +242,8 @@ public class KotlinToJVMBytecodeCompiler {
         return true;
     }
 
-    public static Class<?> compileScript(
-            @NotNull JetCoreEnvironment environment, ClassLoader parentLoader) {
+    private static Class<?> compileScript(
+            @NotNull KotlinPaths paths, @NotNull JetCoreEnvironment environment, @Nullable ClassLoader parentLoader) {
 
         GenerationState generationState = analyzeAndGenerate(environment);
         if (generationState == null) {
@@ -253,7 +255,7 @@ public class KotlinToJVMBytecodeCompiler {
             try {
                 GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
                         // TODO: add all classpath
-                        PathUtil.getDefaultRuntimePath().toURI().toURL()
+                        paths.getRuntimePath().toURI().toURL()
                 },
                         parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
                 JetFile scriptFile = environment.getSourceFiles().get(0);
@@ -364,8 +366,9 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static Class compileScript(
-            ClassLoader parentLoader,
-            String scriptPath,
+            @NotNull ClassLoader parentLoader,
+            @NotNull KotlinPaths paths,
+            @NotNull String scriptPath,
             @Nullable List<AnalyzerScriptParameter> scriptParameters,
             @Nullable List<JetScriptDefinition> scriptDefinitions) {
         final MessageRenderer messageRenderer = MessageRenderer.PLAIN;
@@ -377,7 +380,7 @@ public class KotlinToJVMBytecodeCompiler {
             compilerConfiguration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(parentLoader));
             compilerConfiguration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
             compilerConfiguration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, Collections.singletonList(
-                    PathUtil.getJdkAnnotationsPath()));
+                    paths.getJdkAnnotationsPath()));
             compilerConfiguration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, scriptPath);
             compilerConfiguration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY,
                                          scriptDefinitions != null ? scriptDefinitions : Collections.<JetScriptDefinition>emptyList());
@@ -387,7 +390,7 @@ public class KotlinToJVMBytecodeCompiler {
 
             try {
                 JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
-                return compileScript(environment, parentLoader);
+                return compileScript(paths, environment, parentLoader);
             }
             catch (CompilationException e) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),

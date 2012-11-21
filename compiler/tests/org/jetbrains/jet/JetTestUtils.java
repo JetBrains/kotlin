@@ -49,6 +49,7 @@ import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.jet.utils.KotlinPaths;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -468,5 +469,9 @@ public class JetTestUtils {
 
     private static String getSimpleName(String generatorClassFqName) {
         return generatorClassFqName.substring(generatorClassFqName.lastIndexOf(".") + 1);
+    }
+
+    public static KotlinPaths getPathsForTests() {
+        return new KotlinPaths(new File("dist/kotlinc"));
     }
 }

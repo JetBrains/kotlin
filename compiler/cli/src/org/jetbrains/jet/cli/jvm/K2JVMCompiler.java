@@ -36,6 +36,7 @@ import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -60,9 +61,10 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @Override
     @NotNull
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
+        KotlinPaths paths = PathUtil.getKotlinPathsForCompiler();
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(arguments));
-        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(arguments));
+        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
+        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
@@ -124,7 +126,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             if (arguments.module != null) {
                 boolean oldVerbose = messageCollector.isVerbose();
                 messageCollector.setVerbose(false);
-                List<Module> modules = CompileEnvironmentUtil.loadModuleScript(arguments.module, messageCollector);
+                List<Module> modules = CompileEnvironmentUtil.loadModuleScript(paths, arguments.module, messageCollector);
                 messageCollector.setVerbose(oldVerbose);
                 File directory = new File(arguments.module).getParentFile();
                 noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
@@ -134,7 +136,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
                 JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
-                noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(environment, scriptArgs);
+                noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(paths, environment, scriptArgs);
             }
             else {
                 JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
@@ -180,13 +182,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     }
 
     @NotNull
-    private static List<File> getClasspath(@NotNull K2JVMCompilerArguments arguments) {
+    private static List<File> getClasspath(@NotNull KotlinPaths paths, @NotNull K2JVMCompilerArguments arguments) {
         List<File> classpath = Lists.newArrayList();
         if (!arguments.noJdk) {
             classpath.add(PathUtil.findRtJar());
         }
         if (!arguments.noStdlib) {
-            classpath.add(PathUtil.getDefaultRuntimePath());
+            classpath.add(paths.getRuntimePath());
         }
         if (arguments.classpath != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
@@ -197,10 +199,10 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     }
 
     @NotNull
-    private static List<File> getAnnotationsPath(@NotNull K2JVMCompilerArguments arguments) {
+    private static List<File> getAnnotationsPath(@NotNull KotlinPaths paths, @NotNull K2JVMCompilerArguments arguments) {
         List<File> annotationsPath = Lists.newArrayList();
         if (!arguments.noJdkAnnotations) {
-            annotationsPath.add(PathUtil.getJdkAnnotationsPath());
+            annotationsPath.add(paths.getJdkAnnotationsPath());
         }
         if (arguments.annotations != null) {
             for (String element : Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {

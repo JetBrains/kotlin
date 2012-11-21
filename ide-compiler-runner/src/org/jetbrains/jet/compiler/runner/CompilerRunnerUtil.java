@@ -19,6 +19,7 @@ package org.jetbrains.jet.compiler.runner;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.utils.KotlinPaths;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
@@ -36,8 +37,8 @@ public class CompilerRunnerUtil {
 
     private static SoftReference<URLClassLoader> ourClassLoaderRef = new SoftReference<URLClassLoader>(null);
 
-    public static List<File> kompilerClasspath(File kotlinHome, MessageCollector messageCollector) {
-        File libs = new File(kotlinHome, "lib");
+    public static List<File> kompilerClasspath(KotlinPaths paths, MessageCollector messageCollector) {
+        File libs = paths.getLibPath();
 
         if (!libs.exists() || libs.isFile()) {
             messageCollector.report(ERROR, "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed", NO_LOCATION);
@@ -49,17 +50,17 @@ public class CompilerRunnerUtil {
         return answer;
     }
 
-    public static URLClassLoader getOrCreateClassLoader(File kotlinHome, MessageCollector messageCollector) {
+    public static URLClassLoader getOrCreateClassLoader(KotlinPaths paths, MessageCollector messageCollector) {
         URLClassLoader answer = ourClassLoaderRef.get();
         if (answer == null) {
-            answer = createClassloader(kotlinHome, messageCollector);
+            answer = createClassloader(paths, messageCollector);
             ourClassLoaderRef = new SoftReference<URLClassLoader>(answer);
         }
         return answer;
     }
 
-    private static URLClassLoader createClassloader(File kotlinHome, MessageCollector messageCollector) {
-        List<File> jars = kompilerClasspath(kotlinHome, messageCollector);
+    private static URLClassLoader createClassloader(KotlinPaths paths, MessageCollector messageCollector) {
+        List<File> jars = kompilerClasspath(paths, messageCollector);
         URL[] urls = new URL[jars.size()];
         for (int i = 0; i < urls.length; i++) {
             try {
@@ -90,7 +91,7 @@ public class CompilerRunnerUtil {
     public static Object invokeExecMethod(CompilerEnvironment environment,
             PrintStream out,
             MessageCollector messageCollector, String[] arguments, String name) throws Exception {
-        URLClassLoader loader = getOrCreateClassLoader(environment.getKotlinHome(), messageCollector);
+        URLClassLoader loader = getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
         Class<?> kompiler = Class.forName(name, true, loader);
         Method exec = kompiler.getMethod("exec", PrintStream.class, String[].class);
         return exec.invoke(kompiler.newInstance(), out, arguments);
