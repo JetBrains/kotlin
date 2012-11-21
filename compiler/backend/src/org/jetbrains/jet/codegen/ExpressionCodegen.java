@@ -94,6 +94,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private final BindingContext bindingContext;
     final CodegenContext context;
+    private final CodegenStatementVisitor statementVisitor;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
     private final Collection<String> localVariableNames = new HashSet<String>();
@@ -181,6 +182,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         };
         this.bindingContext = state.getBindingContext();
         this.context = context;
+        this.statementVisitor = new CodegenStatementVisitor(this);
     }
 
     public GenerationState getState() {
@@ -217,6 +219,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public StackValue genQualified(StackValue receiver, JetElement selector) {
+        return genQualified(receiver, selector, this);
+    }
+
+    private StackValue genQualified(StackValue receiver, JetElement selector, JetVisitor<StackValue, StackValue> visitor) {
         if (tempVariables.containsKey(selector)) {
             throw new IllegalStateException("Inconsistent state: expression saved to a temporary variable is a selector");
         }
@@ -224,7 +230,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             markLineNumber(selector);
         }
         try {
-            return selector.accept(this, receiver);
+            return selector.accept(visitor, receiver);
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -260,6 +266,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     public void genToJVMStack(JetExpression expr) {
         gen(expr, expressionType(expr));
+    }
+
+    private StackValue genStatement(JetElement statement) {
+        return genQualified(StackValue.none(), statement, statementVisitor);
     }
 
     @Override
@@ -1186,11 +1196,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 generateLocalFunctionDeclaration((JetNamedFunction) statement, leaveTasks);
             }
 
+            boolean isStatement = iterator.hasNext() || !isInsideNonUnitFunction();
+
+            StackValue result = isStatement ? genStatement(statement) : gen(statement);
+
             if (!iterator.hasNext()) {
-                answer = gen(statement);
+                answer = result;
             }
             else {
-                gen(statement, Type.VOID_TYPE);
+                result.put(Type.VOID_TYPE, v);
             }
         }
 
@@ -1201,6 +1215,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         return answer;
+    }
+
+    private boolean isInsideNonUnitFunction() {
+        DeclarationDescriptor descriptor = context.getContextDescriptor();
+        JetType unit = KotlinBuiltIns.getInstance().getUnitType();
+        return descriptor instanceof CallableDescriptor && !unit.equals(((CallableDescriptor) descriptor).getReturnType());
     }
 
     private void generateLocalVariableDeclaration(
