@@ -347,16 +347,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
                 doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunGenericParam.kt");
             }
             
-            @TestMetadata("FunInParam.kt")
-            public void testFunInParam() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunInParam.kt");
-            }
-            
-            @TestMetadata("FunOutParam.kt")
-            public void testFunOutParam() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunOutParam.kt");
-            }
-            
             @TestMetadata("FunParamParam.kt")
             public void testFunParamParam() throws Exception {
                 doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamParam.kt");
@@ -370,11 +360,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("FunParamReferencesParam.kt")
             public void testFunParamReferencesParam() throws Exception {
                 doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamReferencesParam.kt");
-            }
-            
-            @TestMetadata("FunParamReferencesParam2.kt")
-            public void testFunParamReferencesParam2() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamReferencesParam2.kt");
             }
             
             @TestMetadata("FunParamTwoUpperBounds.kt")
@@ -410,11 +395,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("FunTwoTypeParams.kt")
             public void testFunTwoTypeParams() throws Exception {
                 doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunTwoTypeParams.kt");
-            }
-            
-            @TestMetadata("FunTwoTypeParams2.kt")
-            public void testFunTwoTypeParams2() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunTwoTypeParams2.kt");
             }
             
         }

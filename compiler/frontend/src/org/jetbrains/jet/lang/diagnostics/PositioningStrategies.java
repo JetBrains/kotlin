@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -178,6 +179,27 @@ public class PositioningStrategies {
                 ASTNode node = modifierList.getModifierNode(token);
                 assert node != null;
                 return markNode(node);
+            }
+        };
+    }
+
+    public static final PositioningStrategy<JetModifierListOwner> VARIANCE_MODIFIER = modifierSetPosition(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD);
+
+    public static PositioningStrategy<JetModifierListOwner> modifierSetPosition(final JetKeywordToken... tokens) {
+        return new PositioningStrategy<JetModifierListOwner>() {
+            @NotNull
+            @Override
+            public List<TextRange> mark(@NotNull JetModifierListOwner modifierListOwner) {
+                JetModifierList modifierList = modifierListOwner.getModifierList();
+                assert modifierList != null : "No modifier list, but modifier has been found by the analyzer";
+
+                for (JetKeywordToken token : tokens) {
+                    ASTNode node = modifierList.getModifierNode(token);
+                    if (node != null) {
+                        return markNode(node);
+                    }
+                }
+                throw new IllegalStateException("None of the modifiers is found: " + Arrays.asList(tokens));
             }
         };
     }

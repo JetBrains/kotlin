@@ -35,7 +35,7 @@ fun <T, R, C: MutableCollection<in R>> Collection<T>.mapTo(result: C, transform 
   return result
 }
 
-fun <in T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
+fun <T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }

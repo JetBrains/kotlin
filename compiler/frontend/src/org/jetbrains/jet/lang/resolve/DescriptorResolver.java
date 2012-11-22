@@ -522,6 +522,11 @@ public class DescriptorResolver {
             int index,
             BindingTrace trace
     ) {
+        if (typeParameter.getVariance() != Variance.INVARIANT) {
+            assert !(containingDescriptor instanceof ClassifierDescriptor) : "This method is intended for functions/properties";
+            trace.report(VARIANCE_ON_FUNCTION_OR_PROPERTY_PARAMETER.on(typeParameter));
+        }
+
         // TODO: Annotations are not resolved!
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,

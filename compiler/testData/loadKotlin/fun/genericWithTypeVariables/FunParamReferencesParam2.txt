@@ -1,3 +1,0 @@
-namespace test
-
-internal final fun </*0*/ in P : jet.Any?, /*1*/ Q : P>funParamReferencesParam(): jet.Int

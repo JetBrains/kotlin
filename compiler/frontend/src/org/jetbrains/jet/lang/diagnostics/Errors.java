@@ -187,6 +187,8 @@ public interface Errors {
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER =
             DiagnosticFactory2.create(ERROR);
 
+    SimpleDiagnosticFactory<JetTypeParameter> VARIANCE_ON_FUNCTION_OR_PROPERTY_PARAMETER = SimpleDiagnosticFactory.create(ERROR, VARIANCE_MODIFIER);
+
     // Members
 
     SimpleDiagnosticFactory<PsiElement> PACKAGE_MEMBER_CANNOT_BE_PROTECTED = SimpleDiagnosticFactory.create(ERROR);

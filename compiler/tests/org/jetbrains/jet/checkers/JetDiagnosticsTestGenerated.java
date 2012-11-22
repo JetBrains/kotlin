@@ -1462,6 +1462,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDecl.kt");
             }
             
+            @TestMetadata("VarianceOnFunctionAndPropertyTypeParameters.kt")
+            public void testVarianceOnFunctionAndPropertyTypeParameters() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/VarianceOnFunctionAndPropertyTypeParameters.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/declarationChecks/multiDeclarations")
             public static class MultiDeclarations extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInMultiDeclarations() throws Exception {

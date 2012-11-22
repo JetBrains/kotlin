@@ -319,6 +319,8 @@ public class DefaultErrorMessages {
         MAP.put(AUTOCAST_IMPOSSIBLE, "Automatic cast to ''{0}'' is impossible, because ''{1}'' could have changed since the is-check", RENDER_TYPE,
                 NAME);
 
+        MAP.put(VARIANCE_ON_FUNCTION_OR_PROPERTY_PARAMETER, "Variance annotations are only allowed for type parameters of classes and traits");
+
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "The loop iterates over values of type {0} but the parameter is declared to be {1}", RENDER_TYPE,
                 RENDER_TYPE);
         MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type jet.Boolean, but is of type {0}", RENDER_TYPE);

@@ -1,3 +1,0 @@
-namespace test
-
-internal final fun </*0*/ out T : jet.Any?>f(): jet.Int
