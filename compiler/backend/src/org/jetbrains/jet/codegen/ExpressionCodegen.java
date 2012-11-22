@@ -229,6 +229,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (!(selector instanceof JetBlockExpression)) {
             markLineNumber(selector);
         }
+        if (selector instanceof JetExpression) {
+            JetExpression expression = (JetExpression) selector;
+            CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
+            if (constant != null) {
+                return StackValue.constant(constant.getValue(), expressionType(expression));
+            }
+        }
         try {
             return selector.accept(visitor, receiver);
         }
@@ -246,17 +253,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     public StackValue gen(JetElement expr) {
         StackValue tempVar = tempVariables.get(expr);
-        if (tempVar != null) {
-            return tempVar;
-        }
-        if (expr instanceof JetExpression) {
-            JetExpression expression = (JetExpression) expr;
-            CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
-            if (constant != null) {
-                return StackValue.constant(constant.getValue(), expressionType(expression));
-            }
-        }
-        return genQualified(StackValue.none(), expr);
+        return tempVar != null ? tempVar : genQualified(StackValue.none(), expr);
     }
 
     public void gen(JetElement expr, Type type) {
