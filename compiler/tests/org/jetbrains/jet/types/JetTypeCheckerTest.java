@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
@@ -28,13 +27,18 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptorImpl;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -46,8 +50,9 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetTokens;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -56,7 +61,6 @@ import java.util.*;
 public class JetTypeCheckerTest extends JetLiteFixture {
 
     private KotlinBuiltIns builtIns;
-    private ClassDefinitions classDefinitions;
     private DescriptorResolver descriptorResolver;
     private JetScope scopeWithImports;
     private TypeResolver typeResolver;
@@ -77,14 +81,13 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         super.setUp();
 
         builtIns = KotlinBuiltIns.getInstance();
-        classDefinitions = new ClassDefinitions();
 
         InjectorForTests injector = new InjectorForTests(getProject());
         descriptorResolver = injector.getDescriptorResolver();
         typeResolver = injector.getTypeResolver();
         expressionTypingServices = injector.getExpressionTypingServices();
 
-        scopeWithImports = addImports(classDefinitions.BASIC_SCOPE);
+        scopeWithImports = getDeclarationsScope("compiler/testData/type-checker-test.kt");
     }
 
     @Override
@@ -576,12 +579,12 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     private void assertType(String contextType, final String expression, String expectedType) {
         final JetType thisType = makeType(contextType);
-        JetScope scope = new JetScopeAdapter(classDefinitions.BASIC_SCOPE) {
+        JetScope scope = new JetScopeAdapter(scopeWithImports) {
             @NotNull
             @Override
             public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
                 return Lists.<ReceiverParameterDescriptor>newArrayList(new ReceiverParameterDescriptorImpl(
-                        classDefinitions.BASIC_SCOPE.getContainingDeclaration(),
+                        getContainingDeclaration(),
                         thisType,
                         new ExpressionReceiver(JetPsiFactory.createExpression(getProject(), expression), thisType)
                 ));
@@ -602,10 +605,19 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertEquals(expectedType, type);
     }
 
+    private WritableScope getDeclarationsScope(String path) throws IOException {
+        ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolveEagerly(
+                Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path))),
+                getEnvironment()
+        );
+
+        NamespaceDescriptor testData = moduleDescriptor.getRootNamespace().getMemberScope().getNamespace(Name.identifier("testData"));
+        return addImports(testData.getMemberScope());
+    }
+
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
-        writableScope.importScope(builtIns.getBuiltInsScope());
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
@@ -613,6 +625,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),
                 DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        writableScope.importScope(builtIns.getBuiltInsScope());
         return writableScope;
     }
 
@@ -622,166 +635,5 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     private JetType makeType(JetScope scope, String typeStr) {
         return typeResolver.resolveType(scope, JetPsiFactory.createType(getProject(), typeStr), JetTestUtils.DUMMY_TRACE, true);
-    }
-
-    private class ClassDefinitions {
-        private Map<String, ClassDescriptor> CLASSES = new HashMap<String, ClassDescriptor>();
-        private String[] CLASS_DECLARATIONS = {
-            "open class Base_T<T>()",
-            "open class Derived_T<T>() : Base_T<T>",
-            "open class DDerived_T<T>() : Derived_T<T>",
-            "open class DDerived1_T<T>() : Derived_T<T>",
-            "open class DDerived2_T<T>() : Derived_T<T>, Base_T<T>",
-            "open class Base_inT<in T>()",
-            "open class Derived_inT<in T>() : Base_inT<T>",
-            "open class Derived1_inT<in T>() : Base_inT<T>, Derived_T<T>",
-            "open class Base_outT<out T>()",
-            "open class Derived_outT<out T>() : Base_outT<T>",
-            "open class MDerived_T<T>() : Base_outT<out T>, Base_T<T>",
-            "class Properties() { val p : Int }",
-            "class Props<T>() { val p : T }",
-            "class Functions<T>() { " +
-                    "fun f() : Unit {} " +
-                    "fun f(a : Int) : Int {} " +
-                    "fun f(a : T) : Any {} " +
-                    "fun f(a : #(Int, Int)) : T {} " +
-                    "fun f<E>(a : E) : T {} " +
-                    "}",
-            "class WithPredicate() { " +
-                    "fun isValid() : Boolean " +
-                    "fun isValid(x : Int) : Boolean " +
-                    "val p : Boolean " +
-            "}",
-
-            "open class List<E>()",
-            "open class AbstractList<E> : List<E?>",
-            "open class ArrayList<E>() : Any, AbstractList<E?>, List<E?>"
-
-        };
-        private String[] FUNCTION_DECLARATIONS = {
-            "fun f() : Unit {}",
-            "fun f(a : Int) : Int {a}",
-            "fun f(a : Float, b : Int) : Float {a}",
-            "fun f<T>(a : Float) : T {a}",
-        };
-
-        public JetScope BASIC_SCOPE = new JetScopeAdapter(builtIns.getBuiltInsScope()) {
-            @Override
-            public ClassifierDescriptor getClassifier(@NotNull Name name) {
-                if (CLASSES.isEmpty()) {
-                    for (String classDeclaration : CLASS_DECLARATIONS) {
-                        JetClass classElement = JetPsiFactory.createClass(getProject(), classDeclaration);
-                        ClassDescriptor classDescriptor = resolveClassDescriptor(this, classElement);
-                        CLASSES.put(classDescriptor.getName().getName(), classDescriptor);
-                    }
-                }
-                ClassDescriptor classDescriptor = CLASSES.get(name.getName());
-                if (classDescriptor != null) {
-                    return classDescriptor;
-                }
-                return super.getClassifier(name);
-            }
-
-            @NotNull
-            @Override
-            public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
-                Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
-                for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(this.getContainingDeclaration(), this, JetPsiFactory.createFunction(getProject(), funDecl), JetTestUtils.DUMMY_TRACE);
-                    if (name.equals(functionDescriptor.getName())) {
-                        writableFunctionGroup.add(functionDescriptor);
-                    }
-                }
-                return writableFunctionGroup;
-            }
-        };
-
-        @Nullable
-        public ClassDescriptor resolveClassDescriptor(@NotNull JetScope scope, @NotNull JetClass classElement) {
-            final ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
-                    scope.getContainingDeclaration(),
-                    Collections.<AnnotationDescriptor>emptyList(),
-                    Modality.FINAL,
-                    JetPsiUtil.safeName(classElement.getName()));
-
-            BindingTrace trace = JetTestUtils.DUMMY_TRACE;
-
-            trace.record(BindingContext.CLASS, classElement, classDescriptor);
-
-            final WritableScope parameterScope = new WritableScopeImpl(
-                    scope, classDescriptor, new TraceBasedRedeclarationHandler(trace), "JetTypeCheckerTest.resolveClassDescriptor");
-            parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-            // This call has side-effects on the parameterScope (fills it in)
-            List<TypeParameterDescriptorImpl> typeParameters
-                    = descriptorResolver.resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters(), JetTestUtils.DUMMY_TRACE);
-            descriptorResolver.resolveGenericBounds(classElement, parameterScope, typeParameters, JetTestUtils.DUMMY_TRACE);
-
-            List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
-            // TODO : assuming that the hierarchy is acyclic
-            Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
-                    ? Collections.singleton(KotlinBuiltIns.getInstance().getAnyType())
-                    : descriptorResolver.resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver, JetTestUtils.DUMMY_TRACE, true);
-    //        for (JetType supertype: supertypes) {
-    //            if (supertype.getConstructor().isSealed()) {
-    //                trace.getErrorHandler().genericError(classElement.getNameAsDeclaration().getNode(), "Class " + classElement.getName() + " can not extend final type " + supertype);
-    //            }
-    //        }
-            boolean open = classElement.hasModifier(JetTokens.OPEN_KEYWORD);
-
-            final WritableScope memberDeclarations = new WritableScopeImpl(
-                    JetScope.EMPTY, classDescriptor, new TraceBasedRedeclarationHandler(trace), "JetTypeCheckerTest.resolveClassDescriptor");
-            memberDeclarations.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-            List<JetDeclaration> declarations = classElement.getDeclarations();
-            for (JetDeclaration declaration : declarations) {
-                declaration.accept(new JetVisitorVoid() {
-                    @Override
-                    public void visitProperty(JetProperty property) {
-                        if (property.getTypeRef() != null) {
-                            memberDeclarations.addPropertyDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property, JetTestUtils.DUMMY_TRACE));
-                        }
-                        else {
-                            // TODO : Caution: a cyclic dependency possible
-                            throw new UnsupportedOperationException();
-                        }
-                    }
-
-                    @Override
-                    public void visitNamedFunction(JetNamedFunction function) {
-                        if (function.getReturnTypeRef() != null) {
-                            memberDeclarations.addFunctionDescriptor(descriptorResolver.resolveFunctionDescriptor(classDescriptor, parameterScope, function, JetTestUtils.DUMMY_TRACE));
-                        }
-                        else {
-                            // TODO : Caution: a cyclic dependency possible
-                            throw new UnsupportedOperationException();
-                        }
-                    }
-
-                    @Override
-                    public void visitJetElement(JetElement element) {
-                        throw new UnsupportedOperationException(element.toString());
-                    }
-                });
-            }
-
-            Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
-            classDescriptor.initialize(
-                    !open,
-                    typeParameters,
-                    supertypes,
-                    memberDeclarations,
-                    constructors,
-                    null
-            );
-            ConstructorDescriptorImpl primaryConstructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement, JetTestUtils.DUMMY_TRACE);
-            if (primaryConstructorDescriptor != null) {
-                primaryConstructorDescriptor.setReturnType(classDescriptor.getDefaultType());
-                constructors.add(primaryConstructorDescriptor);
-                classDescriptor.setPrimaryConstructor(primaryConstructorDescriptor);
-            }
-            return classDescriptor;
-        }
-
     }
 }

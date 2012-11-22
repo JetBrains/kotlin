@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -492,5 +493,10 @@ public class JetTestUtils {
 
     public static KotlinPaths getPathsForTests() {
         return new KotlinPaths(new File("dist/kotlinc"));
+    }
+
+    public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
+        String text = FileUtil.loadFile(ioFile);
+        return JetPsiFactory.createFile(project, text);
     }
 }
