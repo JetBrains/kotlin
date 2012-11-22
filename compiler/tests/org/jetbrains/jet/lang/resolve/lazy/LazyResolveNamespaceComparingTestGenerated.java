@@ -1351,6 +1351,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNullability.kt");
                     }
                     
+                    @TestMetadata("InheritProjectionKind.kt")
+                    public void testInheritProjectionKind() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritProjectionKind.kt");
+                    }
+                    
                     @TestMetadata("InheritReadOnliness.kt")
                     public void testInheritReadOnliness() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.kt");

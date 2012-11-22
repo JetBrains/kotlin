@@ -461,6 +461,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNullability.java");
                 }
                 
+                @TestMetadata("InheritProjectionKind.java")
+                public void testInheritProjectionKind() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritProjectionKind.java");
+                }
+                
                 @TestMetadata("InheritReadOnliness.java")
                 public void testInheritReadOnliness() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.java");
