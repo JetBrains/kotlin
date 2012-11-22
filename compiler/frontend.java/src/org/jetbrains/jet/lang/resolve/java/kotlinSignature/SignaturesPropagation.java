@@ -140,18 +140,18 @@ public class SignaturesPropagation {
         }
 
         boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, covariantPosition, reportError);
-        List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, typesFromSuper, reportError);
+        ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper);
+        List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper, reportError);
         JetScope resultScope;
-        ClassifierDescriptor classifierDescriptor = modifyTypeClassifier(autoType, typesFromSuper);
-        if (classifierDescriptor instanceof ClassDescriptor) {
-            resultScope = ((ClassDescriptor) classifierDescriptor).getMemberScope(resultArguments);
+        if (resultClassifier instanceof ClassDescriptor) {
+            resultScope = ((ClassDescriptor) resultClassifier).getMemberScope(resultArguments);
         }
         else {
             resultScope = autoType.getMemberScope();
         }
 
         return new JetTypeImpl(autoType.getAnnotations(),
-                               classifierDescriptor.getTypeConstructor(),
+                               resultClassifier.getTypeConstructor(),
                                resultNullable,
                                resultArguments,
                                resultScope);
@@ -160,11 +160,10 @@ public class SignaturesPropagation {
     @NotNull
     private static List<TypeProjection> getTypeArgsOfType(
             @NotNull JetType autoType,
+            @NotNull ClassifierDescriptor classifier,
             @NotNull List<JetType> typesFromSuper,
             @NotNull Function1<String, Void> reportError
     ) {
-        TypeConstructor typeConstructor = autoType.getConstructor();
-        ClassifierDescriptor classifier = typeConstructor.getDeclarationDescriptor();
         List<TypeProjection> autoArguments = autoType.getArguments();
 
         if (!(classifier instanceof ClassDescriptor)) {
@@ -177,7 +176,7 @@ public class SignaturesPropagation {
 
         // Modify type arguments using info from typesFromSuper
         List<TypeProjection> resultArguments = Lists.newArrayList();
-        for (TypeParameterDescriptor parameter : typeConstructor.getParameters()) {
+        for (TypeParameterDescriptor parameter : classifier.getTypeConstructor().getParameters()) {
             TypeProjection argument = autoArguments.get(parameter.getIndex());
 
             TypeCheckingProcedure.EnrichedProjectionKind effectiveProjectionKind =
