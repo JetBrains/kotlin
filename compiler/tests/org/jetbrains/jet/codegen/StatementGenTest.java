@@ -52,4 +52,12 @@ public class StatementGenTest extends CodegenTestCase {
     public void testTryCatchFinally() {
         doTest();
     }
+
+    public void testWhen() {
+        doTest();
+    }
+
+    public void testWhenSubject() {
+        doTest();
+    }
 }

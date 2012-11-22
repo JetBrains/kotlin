@@ -39,4 +39,9 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     public StackValue visitTryExpression(JetTryExpression expression, StackValue data) {
         return codegen.generateTryExpression(expression, true);
     }
+
+    @Override
+    public StackValue visitWhenExpression(JetWhenExpression expression, StackValue data) {
+        return codegen.generateWhenExpression(expression, true);
+    }
 }

@@ -3378,10 +3378,14 @@ The "returned" value of try expression with no finally is either the last expres
 
     @Override
     public StackValue visitWhenExpression(JetWhenExpression expression, StackValue receiver) {
+        return generateWhenExpression(expression, false);
+    }
+
+    public StackValue generateWhenExpression(JetWhenExpression expression, boolean isStatement) {
         JetExpression expr = expression.getSubjectExpression();
         JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
         final Type subjectType = asmTypeOrVoid(subjectJetType);
-        final Type resultType = expressionType(expression);
+        final Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
         final int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;
         if (subjectLocal != -1) {
             gen(expr, subjectType);
@@ -3432,6 +3436,8 @@ The "returned" value of try expression with no finally is either the last expres
             v.mark(nextCondition);
             throwNewException(CLASS_NO_PATTERN_MATCHED_EXCEPTION);
         }
+
+        markLineNumber(expression);
         v.mark(end);
 
         myFrameMap.leaveTemp(subjectType);
