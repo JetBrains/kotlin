@@ -163,11 +163,11 @@ public class PositioningStrategies {
         }
     };
 
-    public static final PositioningStrategy<JetModifierListOwner> ABSTRACT_MODIFIER = positionModifier(JetTokens.ABSTRACT_KEYWORD);
+    public static final PositioningStrategy<JetModifierListOwner> ABSTRACT_MODIFIER = modifierPosition(JetTokens.ABSTRACT_KEYWORD);
 
-    public static final PositioningStrategy<JetModifierListOwner> OVERRIDE_MODIFIER = positionModifier(JetTokens.OVERRIDE_KEYWORD);
+    public static final PositioningStrategy<JetModifierListOwner> OVERRIDE_MODIFIER = modifierPosition(JetTokens.OVERRIDE_KEYWORD);
 
-    public static PositioningStrategy<JetModifierListOwner> positionModifier(final JetKeywordToken token) {
+    public static PositioningStrategy<JetModifierListOwner> modifierPosition(final JetKeywordToken token) {
         return new PositioningStrategy<JetModifierListOwner>() {
             @NotNull
             @Override
