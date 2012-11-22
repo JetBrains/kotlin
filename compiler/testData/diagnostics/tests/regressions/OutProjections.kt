@@ -13,7 +13,7 @@ fun foo() : G<Point> {
 
 class Out<out T>() {}
 
-fun fout<T>(<!UNUSED_PARAMETER!>expression<!> : T) : Out<out T> = Out<T>()
+fun fout<T>(<!UNUSED_PARAMETER!>expression<!> : T) : Out<<!REDUNDANT_PROJECTION!>out<!> T> = Out<T>()
 
 fun fooout() : Out<Point> {
   val p = Point();

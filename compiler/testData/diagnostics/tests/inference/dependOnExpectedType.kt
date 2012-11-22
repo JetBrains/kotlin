@@ -36,8 +36,8 @@ fun test1() {
 
     val i = both(1, "")
     val j = both(id(1), id(""))
-    i : Comparable<out Any?>
-    j : Comparable<out Any?>
+    i : Comparable<*>
+    j : Comparable<*>
 }
 
 fun list<T>(value: T) : ArrayList<T> {

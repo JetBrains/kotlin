@@ -7,7 +7,7 @@ import <!UNRESOLVED_REFERENCE!>utils<!>.*
 import java.io.PrintStream
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Com
 
-val l : List<in Int> = ArrayList<Int>()
+val l : MutableList<in Int> = ArrayList<Int>()
 
 fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
   val <!UNUSED_VARIABLE!>x<!> : java.<!UNRESOLVED_REFERENCE!>List<!>

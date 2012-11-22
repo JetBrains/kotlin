@@ -5,7 +5,7 @@ import <error>utils</error>.*
 import java.io.PrintStream
 import <warning>java.lang.Comparable</warning> as Com
 
-val l : List<in Int> = ArrayList<Int>()
+val l : MutableList<in Int> = ArrayList<Int>()
 
 fun test(<warning>l</warning> : List<Int>) {
   val <warning>x</warning> : java.<error>List</error>

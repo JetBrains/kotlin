@@ -183,7 +183,8 @@ public class PositioningStrategies {
         };
     }
 
-    public static final PositioningStrategy<JetModifierListOwner> VARIANCE_MODIFIER = modifierSetPosition(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD);
+    public static final PositioningStrategy<JetModifierListOwner> VARIANCE_MODIFIER = modifierSetPosition(JetTokens.IN_KEYWORD,
+                                                                                                          JetTokens.OUT_KEYWORD);
 
     public static PositioningStrategy<JetModifierListOwner> modifierSetPosition(final JetKeywordToken... tokens) {
         return new PositioningStrategy<JetModifierListOwner>() {
@@ -233,7 +234,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static final PositioningStrategy<JetTypeProjection> PROJECTION_MODIFIER = new PositioningStrategy<JetTypeProjection>() {
+    public static final PositioningStrategy<JetTypeProjection> VARIANCE_IN_PROJECTION = new PositioningStrategy<JetTypeProjection>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetTypeProjection element) {

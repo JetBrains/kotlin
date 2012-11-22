@@ -86,11 +86,13 @@ public interface Errors {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, PROJECTION_MODIFIER);
+    SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, VARIANCE_IN_PROJECTION);
     DiagnosticFactory2<JetTypeReference, JetType, JetType> UPPER_BOUND_VIOLATED = DiagnosticFactory2.create(ERROR);
     SimpleDiagnosticFactory<JetNullableType> REDUNDANT_NULLABLE = SimpleDiagnosticFactory.create(WARNING, NULLABLE_TYPE);
     DiagnosticFactory1<JetNullableType, JetType> BASE_WITH_NULLABLE_UPPER_BOUND = DiagnosticFactory1.create(WARNING, NULLABLE_TYPE);
     DiagnosticFactory1<JetElement, Integer> WRONG_NUMBER_OF_TYPE_ARGUMENTS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetTypeProjection, ClassifierDescriptor> CONFLICTING_PROJECTION = DiagnosticFactory1.create(ERROR, VARIANCE_IN_PROJECTION);
+    DiagnosticFactory1<JetTypeProjection, ClassifierDescriptor> REDUNDANT_PROJECTION = DiagnosticFactory1.create(WARNING, VARIANCE_IN_PROJECTION);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,7 +123,7 @@ public interface Errors {
     // Classes and traits
 
     SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
-            SimpleDiagnosticFactory.create(ERROR, PROJECTION_MODIFIER);
+            SimpleDiagnosticFactory.create(ERROR, VARIANCE_IN_PROJECTION);
 
     SimpleDiagnosticFactory<PsiElement> CYCLIC_INHERITANCE_HIERARCHY = SimpleDiagnosticFactory.create(ERROR);
 

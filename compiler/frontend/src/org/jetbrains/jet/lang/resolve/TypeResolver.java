@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.types.Variance.*;
 
 /**
  * @author abreslav
@@ -269,7 +270,7 @@ public class TypeResolver {
                     arguments.add(SubstitutionUtils.makeStarProjection(parameterDescriptor));
                 }
                 else {
-                    arguments.add(new TypeProjection(Variance.OUT_VARIANCE, ErrorUtils.createErrorType("*")));
+                    arguments.add(new TypeProjection(OUT_VARIANCE, ErrorUtils.createErrorType("*")));
                 }
             }
             else {
@@ -278,16 +279,27 @@ public class TypeResolver {
                 Variance kind = null;
                 switch (projectionKind) {
                     case IN:
-                        kind = Variance.IN_VARIANCE;
+                        kind = IN_VARIANCE;
                         break;
                     case OUT:
-                        kind = Variance.OUT_VARIANCE;
+                        kind = OUT_VARIANCE;
                         break;
                     case NONE:
-                        kind = Variance.INVARIANT;
+                        kind = INVARIANT;
                         break;
                 }
                 assert kind != null;
+                if (constructor.getParameters().size() > i) {
+                    TypeParameterDescriptor parameterDescriptor = constructor.getParameters().get(i);
+                    if (kind != INVARIANT && parameterDescriptor.getVariance() != INVARIANT) {
+                        if (kind == parameterDescriptor.getVariance()) {
+                            trace.report(REDUNDANT_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()));
+                        }
+                        else {
+                            trace.report(CONFLICTING_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()));
+                        }
+                    }
+                }
                 arguments.add(new TypeProjection(kind, type));
             }
         }
