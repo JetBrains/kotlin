@@ -27,8 +27,7 @@ class KDocConfig() {
      * Returns a map of the package prefix to the HTML URL for the root of the apidoc using javadoc/kdoc style
      * directory layouts so that this API doc report can link to external packages
      */
-    private val mutablePackagePrefixToUrls: MutableMap<String, String> = TreeMap<String, String>(LongestFirstStringComparator())
-    public val packagePrefixToUrls: Map<String, String> = mutablePackagePrefixToUrls
+    public val packagePrefixToUrls: MutableMap<String, String> = TreeMap<String, String>(LongestFirstStringComparator())
 
     /**
      * Returns a Set of the package name prefixes to ignore from the KDoc report
@@ -55,12 +54,12 @@ class KDocConfig() {
      * A map of package name to html or markdown files used to describe the package. If none is
      * speciied we will look for a package.html or package.md file in the source tree
      */
-    public var packageDescriptionFiles: Map<String,String> = HashMap<String,String>()
+    public var packageDescriptionFiles: MutableMap<String,String> = HashMap<String,String>()
 
     /**
      * A map of package name to summary text used in the package overviews
      */
-    public var packageSummaryText: Map<String,String> = HashMap<String,String>()
+    public var packageSummaryText: MutableMap<String,String> = HashMap<String, String>()
 
     /**
     * Returns true if protected functions and properties should be documented
@@ -84,7 +83,7 @@ class KDocConfig() {
      */
     fun addPackageLink(url: String, vararg packagePrefixes: String): Unit {
         for (p in packagePrefixes) {
-            mutablePackagePrefixToUrls.put(p, url)
+            packagePrefixToUrls.put(p, url)
         }
     }
 
