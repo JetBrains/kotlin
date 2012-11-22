@@ -32,4 +32,9 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     public StackValue visitJetElement(JetElement element, StackValue receiver) {
         return element.accept(codegen, receiver);
     }
+
+    @Override
+    public StackValue visitIfExpression(JetIfExpression expression, StackValue receiver) {
+        return codegen.generateIfExpression(expression, true);
+    }
 }

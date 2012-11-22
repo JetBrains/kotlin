@@ -36,4 +36,8 @@ public class StatementGenTest extends CodegenTestCase {
     private void assertNoGetStatic(@NotNull String text) {
         assertFalse(text, text.toLowerCase().contains("getstatic"));
     }
+
+    public void testIfSingleBranch() {
+        doTest();
+    }
 }

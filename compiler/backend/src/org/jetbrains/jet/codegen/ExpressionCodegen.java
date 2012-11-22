@@ -358,6 +358,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitIfExpression(JetIfExpression expression, StackValue receiver) {
+        return generateIfExpression(expression, false);
+    }
+
+    /* package */ StackValue generateIfExpression(JetIfExpression expression, boolean isStatement) {
         Type asmType = expressionType(expression);
 
         JetExpression thenExpression = expression.getThen();
@@ -376,12 +380,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return StackValue.onStack(asmType);
             }
             StackValue condition = gen(expression.getCondition());
-            return generateSingleBranchIf(condition, elseExpression, false);
+            return generateSingleBranchIf(condition, expression, elseExpression, false, isStatement);
         }
         else {
             if (isEmptyExpression(elseExpression)) {
                 StackValue condition = gen(expression.getCondition());
-                return generateSingleBranchIf(condition, thenExpression, true);
+                return generateSingleBranchIf(condition, expression, thenExpression, true, isStatement);
             }
         }
 
@@ -967,27 +971,37 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         throw new UnsupportedOperationException();
     }
 
-    private StackValue generateSingleBranchIf(StackValue condition, JetExpression expression, boolean inverse) {
-        Type expressionType = expressionType(expression);
-        Type targetType = expressionType;
-        if (!expressionType.equals(JET_TUPLE0_TYPE)) {
-            targetType = OBJECT_TYPE;
-        }
-
+    private StackValue generateSingleBranchIf(
+            StackValue condition,
+            JetIfExpression ifExpression,
+            JetExpression expression,
+            boolean inverse,
+            boolean isStatement
+    ) {
         Label elseLabel = new Label();
         condition.condJump(elseLabel, inverse, v);
 
-        gen(expression, expressionType);
-        StackValue.coerce(expressionType, targetType, v);
+        if (isStatement) {
+            gen(expression, Type.VOID_TYPE);
+            v.mark(elseLabel);
+            return StackValue.none();
+        }
+        else {
+            Type type = expressionType(expression);
+            Type targetType = type.equals(JET_TUPLE0_TYPE) ? type : OBJECT_TYPE;
 
-        Label end = new Label();
-        v.goTo(end);
+            gen(expression, targetType);
 
-        v.mark(elseLabel);
-        StackValue.putTuple0Instance(v);
+            Label end = new Label();
+            v.goTo(end);
 
-        v.mark(end);
-        return StackValue.onStack(targetType);
+            markLineNumber(ifExpression);
+            v.mark(elseLabel);
+            StackValue.putTuple0Instance(v);
+
+            v.mark(end);
+            return StackValue.onStack(targetType);
+        }
     }
 
     @Override
