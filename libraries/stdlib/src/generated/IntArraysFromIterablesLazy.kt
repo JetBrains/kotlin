@@ -51,7 +51,7 @@ public inline fun <R> IntArray.flatMap(transform: (Int)-> Collection<R>) : Colle
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun  IntArray.plus(element: Int): List<Int> {
+public inline fun IntArray.plus(element: Int): List<Int> {
     val list = toCollection(ArrayList<Int>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun  IntArray.plus(element: Int): List<Int> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun  IntArray.plus(elements: IntArray): List<Int> {
+public inline fun IntArray.plus(elements: IntArray): List<Int> {
     val list = toCollection(ArrayList<Int>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun  IntArray.plus(elements: IntArray): List<Int> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  IntArray.requireNoNulls() : List<Int> {
+public inline fun IntArray.requireNoNulls() : List<Int> {
     val list = ArrayList<Int>()
     for (element in this) {
         if (element == null) {

@@ -12,5 +12,5 @@ package kotlin
 import java.util.*
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun  ByteArray.toSortedSet() : SortedSet<Byte> = toCollection(TreeSet<Byte>())
+public inline fun ByteArray.toSortedSet() : SortedSet<Byte> = toCollection(TreeSet<Byte>())
 

@@ -106,13 +106,13 @@ public fun <T> Iterable<T>.withIndices(): List<Pair<Int, T>> {
     return answer
 }
 
-public inline fun <in T: Comparable<T>> MutableIterable<T>.sort() : List<T> {
+public inline fun <T: Comparable<T>> MutableIterable<T>.sort() : List<T> {
     val list = toCollection(ArrayList<T>())
     java.util.Collections.sort(list)
     return list
 }
 
-public inline fun <in T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+public inline fun <T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
     val list = toCollection(ArrayList<T>())
     java.util.Collections.sort(list, comparator)
     return list

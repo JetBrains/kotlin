@@ -265,16 +265,16 @@ public inline fun IntArray.reverse() : List<Int> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun  IntArray.toLinkedList() : LinkedList<Int> = toCollection(LinkedList<Int>())
+public inline fun IntArray.toLinkedList() : LinkedList<Int> = toCollection(LinkedList<Int>())
 
 /** Copies all elements into a [[List]] */
-public inline fun  IntArray.toList() : List<Int> = toCollection(ArrayList<Int>())
+public inline fun IntArray.toList() : List<Int> = toCollection(ArrayList<Int>())
 
 /** Copies all elements into a [[List] */
-public inline fun  IntArray.toCollection() : Collection<Int> = toCollection(ArrayList<Int>())
+public inline fun IntArray.toCollection() : Collection<Int> = toCollection(ArrayList<Int>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun  IntArray.toSet() : Set<Int> = toCollection(HashSet<Int>())
+public inline fun IntArray.toSet() : Set<Int> = toCollection(HashSet<Int>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

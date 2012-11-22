@@ -33,5 +33,5 @@ public inline val           DoubleArray.lastIndex : Int
 public inline val             CharArray.lastIndex : Int
     get() = this.size - 1
 
-public inline val <in T: Any?> Array<T>.lastIndex : Int
+public inline val <T: Any?> Array<T>.lastIndex : Int
     get() = this.size - 1

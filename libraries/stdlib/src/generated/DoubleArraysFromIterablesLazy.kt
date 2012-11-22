@@ -51,7 +51,7 @@ public inline fun <R> DoubleArray.flatMap(transform: (Double)-> Collection<R>) :
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun  DoubleArray.plus(element: Double): List<Double> {
+public inline fun DoubleArray.plus(element: Double): List<Double> {
     val list = toCollection(ArrayList<Double>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun  DoubleArray.plus(element: Double): List<Double> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun  DoubleArray.plus(elements: DoubleArray): List<Double> {
+public inline fun DoubleArray.plus(elements: DoubleArray): List<Double> {
     val list = toCollection(ArrayList<Double>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun  DoubleArray.plus(elements: DoubleArray): List<Double> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  DoubleArray.requireNoNulls() : List<Double> {
+public inline fun DoubleArray.requireNoNulls() : List<Double> {
     val list = ArrayList<Double>()
     for (element in this) {
         if (element == null) {

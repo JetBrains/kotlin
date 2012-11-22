@@ -265,16 +265,16 @@ public inline fun CharArray.reverse() : List<Char> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun  CharArray.toLinkedList() : LinkedList<Char> = toCollection(LinkedList<Char>())
+public inline fun CharArray.toLinkedList() : LinkedList<Char> = toCollection(LinkedList<Char>())
 
 /** Copies all elements into a [[List]] */
-public inline fun  CharArray.toList() : List<Char> = toCollection(ArrayList<Char>())
+public inline fun CharArray.toList() : List<Char> = toCollection(ArrayList<Char>())
 
 /** Copies all elements into a [[List] */
-public inline fun  CharArray.toCollection() : Collection<Char> = toCollection(ArrayList<Char>())
+public inline fun CharArray.toCollection() : Collection<Char> = toCollection(ArrayList<Char>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun  CharArray.toSet() : Set<Char> = toCollection(HashSet<Char>())
+public inline fun CharArray.toSet() : Set<Char> = toCollection(HashSet<Char>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

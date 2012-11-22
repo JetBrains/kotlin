@@ -265,16 +265,16 @@ public inline fun LongArray.reverse() : List<Long> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun  LongArray.toLinkedList() : LinkedList<Long> = toCollection(LinkedList<Long>())
+public inline fun LongArray.toLinkedList() : LinkedList<Long> = toCollection(LinkedList<Long>())
 
 /** Copies all elements into a [[List]] */
-public inline fun  LongArray.toList() : List<Long> = toCollection(ArrayList<Long>())
+public inline fun LongArray.toList() : List<Long> = toCollection(ArrayList<Long>())
 
 /** Copies all elements into a [[List] */
-public inline fun  LongArray.toCollection() : Collection<Long> = toCollection(ArrayList<Long>())
+public inline fun LongArray.toCollection() : Collection<Long> = toCollection(ArrayList<Long>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun  LongArray.toSet() : Set<Long> = toCollection(HashSet<Long>())
+public inline fun LongArray.toSet() : Set<Long> = toCollection(HashSet<Long>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

@@ -265,16 +265,16 @@ public inline fun BooleanArray.reverse() : List<Boolean> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun  BooleanArray.toLinkedList() : LinkedList<Boolean> = toCollection(LinkedList<Boolean>())
+public inline fun BooleanArray.toLinkedList() : LinkedList<Boolean> = toCollection(LinkedList<Boolean>())
 
 /** Copies all elements into a [[List]] */
-public inline fun  BooleanArray.toList() : List<Boolean> = toCollection(ArrayList<Boolean>())
+public inline fun BooleanArray.toList() : List<Boolean> = toCollection(ArrayList<Boolean>())
 
 /** Copies all elements into a [[List] */
-public inline fun  BooleanArray.toCollection() : Collection<Boolean> = toCollection(ArrayList<Boolean>())
+public inline fun BooleanArray.toCollection() : Collection<Boolean> = toCollection(ArrayList<Boolean>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun  BooleanArray.toSet() : Set<Boolean> = toCollection(HashSet<Boolean>())
+public inline fun BooleanArray.toSet() : Set<Boolean> = toCollection(HashSet<Boolean>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

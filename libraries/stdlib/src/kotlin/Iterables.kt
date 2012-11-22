@@ -239,7 +239,7 @@ public inline fun <T, C: MutableCollection<in T>> Iterable<T>.takeWhileTo(result
 }
 
 /** Copies all elements into the given collection */
-public inline fun <in T, C: MutableCollection<in T>> Iterable<T>.toCollection(result: C) : C {
+public inline fun <T, C: MutableCollection<in T>> Iterable<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -256,16 +256,16 @@ public inline fun <T> Iterable<T>.reverse() : List<T> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun <in T> Iterable<T>.toLinkedList() : LinkedList<T> = toCollection(LinkedList<T>())
+public inline fun <T> Iterable<T>.toLinkedList() : LinkedList<T> = toCollection(LinkedList<T>())
 
 /** Copies all elements into a [[List]] */
-public inline fun <in T> Iterable<T>.toList() : List<T> = toCollection(ArrayList<T>())
+public inline fun <T> Iterable<T>.toList() : List<T> = toCollection(ArrayList<T>())
 
 /** Copies all elements into a [[List] */
-public inline fun <in T> Iterable<T>.toCollection() : Collection<T> = toCollection(ArrayList<T>())
+public inline fun <T> Iterable<T>.toCollection() : Collection<T> = toCollection(ArrayList<T>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun <in T> Iterable<T>.toSet() : Set<T> = toCollection(HashSet<T>())
+public inline fun <T> Iterable<T>.toSet() : Set<T> = toCollection(HashSet<T>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

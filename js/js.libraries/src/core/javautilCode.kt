@@ -26,12 +26,12 @@ public object Collections {
     public fun <K,V> emptyMap(): Map<K,V> = emptyMap as Map<K,V>
 
     library
-    public fun <in T> sort(list: List<T>): Unit {
+    public fun <T> sort(list: MutableList<T>): Unit {
         throw UnsupportedOperationException()
     }
 
     library("sortWithComp")
-    public fun <in T> sort(list: List<T>, comparator: java.util.Comparator<T>): Unit {
+    public fun <T> sort(list: MutableList<T>, comparator: java.util.Comparator<T>): Unit {
         throw UnsupportedOperationException()
     }
 

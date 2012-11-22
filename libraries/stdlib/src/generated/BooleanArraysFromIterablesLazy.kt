@@ -51,7 +51,7 @@ public inline fun <R> BooleanArray.flatMap(transform: (Boolean)-> Collection<R>)
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun  BooleanArray.plus(element: Boolean): List<Boolean> {
+public inline fun BooleanArray.plus(element: Boolean): List<Boolean> {
     val list = toCollection(ArrayList<Boolean>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun  BooleanArray.plus(element: Boolean): List<Boolean> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun  BooleanArray.plus(elements: BooleanArray): List<Boolean> {
+public inline fun BooleanArray.plus(elements: BooleanArray): List<Boolean> {
     val list = toCollection(ArrayList<Boolean>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun  BooleanArray.plus(elements: BooleanArray): List<Boolean> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  BooleanArray.requireNoNulls() : List<Boolean> {
+public inline fun BooleanArray.requireNoNulls() : List<Boolean> {
     val list = ArrayList<Boolean>()
     for (element in this) {
         if (element == null) {

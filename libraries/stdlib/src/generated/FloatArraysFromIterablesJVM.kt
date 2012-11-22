@@ -12,5 +12,5 @@ package kotlin
 import java.util.*
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun  FloatArray.toSortedSet() : SortedSet<Float> = toCollection(TreeSet<Float>())
+public inline fun FloatArray.toSortedSet() : SortedSet<Float> = toCollection(TreeSet<Float>())
 

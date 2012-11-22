@@ -51,7 +51,7 @@ public inline fun <R> LongArray.flatMap(transform: (Long)-> Collection<R>) : Col
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun  LongArray.plus(element: Long): List<Long> {
+public inline fun LongArray.plus(element: Long): List<Long> {
     val list = toCollection(ArrayList<Long>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun  LongArray.plus(element: Long): List<Long> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun  LongArray.plus(elements: LongArray): List<Long> {
+public inline fun LongArray.plus(elements: LongArray): List<Long> {
     val list = toCollection(ArrayList<Long>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun  LongArray.plus(elements: LongArray): List<Long> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  LongArray.requireNoNulls() : List<Long> {
+public inline fun LongArray.requireNoNulls() : List<Long> {
     val list = ArrayList<Long>()
     for (element in this) {
         if (element == null) {

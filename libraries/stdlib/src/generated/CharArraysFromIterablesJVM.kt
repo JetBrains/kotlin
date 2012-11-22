@@ -12,5 +12,5 @@ package kotlin
 import java.util.*
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun  CharArray.toSortedSet() : SortedSet<Char> = toCollection(TreeSet<Char>())
+public inline fun CharArray.toSortedSet() : SortedSet<Char> = toCollection(TreeSet<Char>())
 

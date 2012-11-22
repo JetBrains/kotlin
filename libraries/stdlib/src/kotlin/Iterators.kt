@@ -99,7 +99,7 @@ private class FlatMapIterator<T, R>(val iterator : Iterator<T>, val transform: (
  *
  * @includeFunctionBody ../../test/iterators/IteratorsTest.kt plus
  */
-public inline fun <in T> Iterator<T>.plus(element: T): Iterator<T> {
+public inline fun <T> Iterator<T>.plus(element: T): Iterator<T> {
     return CompositeIterator<T>(this, SingleIterator(element))
 }
 
@@ -109,7 +109,7 @@ public inline fun <in T> Iterator<T>.plus(element: T): Iterator<T> {
  *
  * @includeFunctionBody ../../test/iterators/IteratorsTest.kt plusCollection
  */
-public inline fun <in T> Iterator<T>.plus(iterator: Iterator<T>): Iterator<T> {
+public inline fun <T> Iterator<T>.plus(iterator: Iterator<T>): Iterator<T> {
     return CompositeIterator<T>(this, iterator)
 }
 
@@ -118,7 +118,7 @@ public inline fun <in T> Iterator<T>.plus(iterator: Iterator<T>): Iterator<T> {
  *
  * @includeFunctionBody ../../test/iterators/IteratorsTest.kt plusCollection
  */
-public inline fun <in T> Iterator<T>.plus(collection: Iterable<T>): Iterator<T> = plus(collection.iterator())
+public inline fun <T> Iterator<T>.plus(collection: Iterable<T>): Iterator<T> = plus(collection.iterator())
 
 /**
  * Returns an iterator containing all the non-*null* elements, lazily throwing an [[IllegalArgumentException]]
@@ -126,7 +126,7 @@ public inline fun <in T> Iterator<T>.plus(collection: Iterable<T>): Iterator<T> 
  *
  * @includeFunctionBody ../../test/iterators/IteratorsTest.kt requireNoNulls
  */
-public inline fun <in T> Iterator<T?>.requireNoNulls(): Iterator<T> {
+public inline fun <T> Iterator<T?>.requireNoNulls(): Iterator<T> {
     return map<T?, T>{
         if (it == null) throw IllegalArgumentException("null element in iterator $this") else it
     }

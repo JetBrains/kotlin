@@ -51,7 +51,7 @@ public inline fun <R> FloatArray.flatMap(transform: (Float)-> Collection<R>) : C
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun  FloatArray.plus(element: Float): List<Float> {
+public inline fun FloatArray.plus(element: Float): List<Float> {
     val list = toCollection(ArrayList<Float>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun  FloatArray.plus(element: Float): List<Float> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun  FloatArray.plus(elements: FloatArray): List<Float> {
+public inline fun FloatArray.plus(elements: FloatArray): List<Float> {
     val list = toCollection(ArrayList<Float>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun  FloatArray.plus(elements: FloatArray): List<Float> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  FloatArray.requireNoNulls() : List<Float> {
+public inline fun FloatArray.requireNoNulls() : List<Float> {
     val list = ArrayList<Float>()
     for (element in this) {
         if (element == null) {

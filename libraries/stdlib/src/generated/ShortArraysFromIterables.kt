@@ -265,16 +265,16 @@ public inline fun ShortArray.reverse() : List<Short> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun  ShortArray.toLinkedList() : LinkedList<Short> = toCollection(LinkedList<Short>())
+public inline fun ShortArray.toLinkedList() : LinkedList<Short> = toCollection(LinkedList<Short>())
 
 /** Copies all elements into a [[List]] */
-public inline fun  ShortArray.toList() : List<Short> = toCollection(ArrayList<Short>())
+public inline fun ShortArray.toList() : List<Short> = toCollection(ArrayList<Short>())
 
 /** Copies all elements into a [[List] */
-public inline fun  ShortArray.toCollection() : Collection<Short> = toCollection(ArrayList<Short>())
+public inline fun ShortArray.toCollection() : Collection<Short> = toCollection(ArrayList<Short>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun  ShortArray.toSet() : Set<Short> = toCollection(HashSet<Short>())
+public inline fun ShortArray.toSet() : Set<Short> = toCollection(HashSet<Short>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

@@ -12,5 +12,5 @@ package kotlin
 import java.util.*
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun  DoubleArray.toSortedSet() : SortedSet<Double> = toCollection(TreeSet<Double>())
+public inline fun DoubleArray.toSortedSet() : SortedSet<Double> = toCollection(TreeSet<Double>())
 

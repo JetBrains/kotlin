@@ -265,16 +265,16 @@ public inline fun ByteArray.reverse() : List<Byte> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun  ByteArray.toLinkedList() : LinkedList<Byte> = toCollection(LinkedList<Byte>())
+public inline fun ByteArray.toLinkedList() : LinkedList<Byte> = toCollection(LinkedList<Byte>())
 
 /** Copies all elements into a [[List]] */
-public inline fun  ByteArray.toList() : List<Byte> = toCollection(ArrayList<Byte>())
+public inline fun ByteArray.toList() : List<Byte> = toCollection(ArrayList<Byte>())
 
 /** Copies all elements into a [[List] */
-public inline fun  ByteArray.toCollection() : Collection<Byte> = toCollection(ArrayList<Byte>())
+public inline fun ByteArray.toCollection() : Collection<Byte> = toCollection(ArrayList<Byte>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun  ByteArray.toSet() : Set<Byte> = toCollection(HashSet<Byte>())
+public inline fun ByteArray.toSet() : Set<Byte> = toCollection(HashSet<Byte>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

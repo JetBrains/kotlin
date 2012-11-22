@@ -12,5 +12,5 @@ package kotlin
 import java.util.*
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun  ShortArray.toSortedSet() : SortedSet<Short> = toCollection(TreeSet<Short>())
+public inline fun ShortArray.toSortedSet() : SortedSet<Short> = toCollection(TreeSet<Short>())
 

@@ -265,16 +265,16 @@ public inline fun FloatArray.reverse() : List<Float> {
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun  FloatArray.toLinkedList() : LinkedList<Float> = toCollection(LinkedList<Float>())
+public inline fun FloatArray.toLinkedList() : LinkedList<Float> = toCollection(LinkedList<Float>())
 
 /** Copies all elements into a [[List]] */
-public inline fun  FloatArray.toList() : List<Float> = toCollection(ArrayList<Float>())
+public inline fun FloatArray.toList() : List<Float> = toCollection(ArrayList<Float>())
 
 /** Copies all elements into a [[List] */
-public inline fun  FloatArray.toCollection() : Collection<Float> = toCollection(ArrayList<Float>())
+public inline fun FloatArray.toCollection() : Collection<Float> = toCollection(ArrayList<Float>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun  FloatArray.toSet() : Set<Float> = toCollection(HashSet<Float>())
+public inline fun FloatArray.toSet() : Set<Float> = toCollection(HashSet<Float>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

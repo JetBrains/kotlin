@@ -51,7 +51,7 @@ public inline fun <T, R> Array<T>.flatMap(transform: (T)-> Collection<R>) : Coll
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun <in T> Array<T>.plus(element: T): List<in T> {
+public inline fun <T> Array<T>.plus(element: T): List<T> {
     val list = toCollection(ArrayList<T>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun <in T> Array<T>.plus(element: T): List<in T> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun <in T> Array<T>.plus(elements: Array<T>): List<T> {
+public inline fun <T> Array<T>.plus(elements: Array<T>): List<T> {
     val list = toCollection(ArrayList<T>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun <in T> Array<T>.plus(elements: Array<T>): List<T> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun <in T> Array<T?>.requireNoNulls() : List<T> {
+public inline fun <T> Array<T?>.requireNoNulls() : List<T> {
     val list = ArrayList<T>()
     for (element in this) {
         if (element == null) {

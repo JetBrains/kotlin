@@ -12,5 +12,5 @@ package kotlin
 import java.util.*
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun  BooleanArray.toSortedSet() : SortedSet<Boolean> = toCollection(TreeSet<Boolean>())
+public inline fun BooleanArray.toSortedSet() : SortedSet<Boolean> = toCollection(TreeSet<Boolean>())
 

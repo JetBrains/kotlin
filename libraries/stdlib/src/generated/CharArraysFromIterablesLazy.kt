@@ -51,7 +51,7 @@ public inline fun <R> CharArray.flatMap(transform: (Char)-> Collection<R>) : Col
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun  CharArray.plus(element: Char): List<Char> {
+public inline fun CharArray.plus(element: Char): List<Char> {
     val list = toCollection(ArrayList<Char>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun  CharArray.plus(element: Char): List<Char> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun  CharArray.plus(elements: CharArray): List<Char> {
+public inline fun CharArray.plus(elements: CharArray): List<Char> {
     val list = toCollection(ArrayList<Char>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun  CharArray.plus(elements: CharArray): List<Char> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  CharArray.requireNoNulls() : List<Char> {
+public inline fun CharArray.requireNoNulls() : List<Char> {
     val list = ArrayList<Char>()
     for (element in this) {
         if (element == null) {

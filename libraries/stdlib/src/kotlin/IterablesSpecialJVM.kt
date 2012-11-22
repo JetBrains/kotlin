@@ -13,7 +13,7 @@ import java.util.ArrayList
  *
  * @includeFunctionBody ../../test/CollectionTest.kt sortBy
  */
-public inline fun <in T, R: Comparable<in R>> Iterable<T>.sortBy(f: (T) -> R): List<T> {
+public inline fun <T, R: Comparable<in R>> Iterable<T>.sortBy(f: (T) -> R): List<T> {
     val sortedList = toCollection(ArrayList<T>())
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
         val xr = f(x)

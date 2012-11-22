@@ -57,7 +57,7 @@ public inline fun     FloatArray.fill(value: Float) : Unit   = Arrays.fill(this,
 public inline fun    DoubleArray.fill(value: Double) : Unit  = Arrays.fill(this, value)
 public inline fun      CharArray.fill(value: Char) : Unit    = Arrays.fill(this, value)
 
-public inline fun  <in T: Any?>  Array<T>.fill(value: T) : Unit = Arrays.fill(this, value)
+public inline fun  <T: Any?>  Array<T>.fill(value: T) : Unit = Arrays.fill(this, value)
 
 public inline fun   ByteArray.sort() : Unit = Arrays.sort(this)
 public inline fun  ShortArray.sort() : Unit = Arrays.sort(this)

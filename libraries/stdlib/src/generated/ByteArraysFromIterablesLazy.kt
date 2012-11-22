@@ -51,7 +51,7 @@ public inline fun <R> ByteArray.flatMap(transform: (Byte)-> Collection<R>) : Col
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
-public inline fun  ByteArray.plus(element: Byte): List<Byte> {
+public inline fun ByteArray.plus(element: Byte): List<Byte> {
     val list = toCollection(ArrayList<Byte>())
     list.add(element)
     return list
@@ -63,7 +63,7 @@ public inline fun  ByteArray.plus(element: Byte): List<Byte> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
-public inline fun  ByteArray.plus(elements: ByteArray): List<Byte> {
+public inline fun ByteArray.plus(elements: ByteArray): List<Byte> {
     val list = toCollection(ArrayList<Byte>())
     list.addAll(elements.toCollection())
     return list
@@ -74,7 +74,7 @@ public inline fun  ByteArray.plus(elements: ByteArray): List<Byte> {
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
  */
-public inline fun  ByteArray.requireNoNulls() : List<Byte> {
+public inline fun ByteArray.requireNoNulls() : List<Byte> {
     val list = ArrayList<Byte>()
     for (element in this) {
         if (element == null) {
