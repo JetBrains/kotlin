@@ -1332,6 +1332,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.areturn(returnType);
         }
         else {
+            doFinallyOnReturn();
             v.visitInsn(RETURN);
         }
         return StackValue.none();

@@ -469,4 +469,9 @@ public class ControlStructuresTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/conditionOfEmptyIf.kt");
     }
+
+    public void testFinallyOnEmptyReturn() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("controlStructures/finallyOnEmptyReturn.kt");
+    }
 }
