@@ -303,6 +303,18 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         doTestCustom();
     }
 
+    public void testTryCatchExpression() {
+        doTestCustom();
+    }
+
+    public void testTryCatchFinally() {
+        doTestCustom();
+    }
+
+    public void testTryFinally() {
+        doTestCustom();
+    }
+
     public void testStaticDelegate() {
         JetFile foo = createPsiFile("staticDelegate/foo.kt");
         JetFile bar = createPsiFile("staticDelegate/bar.kt");

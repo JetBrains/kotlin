@@ -48,4 +48,8 @@ public class StatementGenTest extends CodegenTestCase {
     public void testIfThenElseEmpty() {
         doTest();
     }
+
+    public void testTryCatchFinally() {
+        doTest();
+    }
 }

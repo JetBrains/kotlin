@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetIfExpression;
-import org.jetbrains.jet.lang.psi.JetReturnExpression;
-import org.jetbrains.jet.lang.psi.JetVisitor;
+import org.jetbrains.jet.lang.psi.*;
 
 public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> {
     private final ExpressionCodegen codegen;
@@ -36,5 +33,10 @@ public class CodegenStatementVisitor extends JetVisitor<StackValue, StackValue> 
     @Override
     public StackValue visitIfExpression(JetIfExpression expression, StackValue receiver) {
         return codegen.generateIfExpression(expression, true);
+    }
+
+    @Override
+    public StackValue visitTryExpression(JetTryExpression expression, StackValue data) {
+        return codegen.generateTryExpression(expression, true);
     }
 }

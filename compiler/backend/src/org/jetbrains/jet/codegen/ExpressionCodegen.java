@@ -3146,6 +3146,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitTryExpression(JetTryExpression expression, StackValue receiver) {
+        return generateTryExpression(expression, false);
+    }
+
+    public StackValue generateTryExpression(JetTryExpression expression, boolean isStatement) {
         /*
 The "returned" value of try expression with no finally is either the last expression in the try block or the last expression in the catch block
 (or blocks).
@@ -3159,7 +3163,7 @@ The "returned" value of try expression with no finally is either the last expres
 
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         assert jetType != null;
-        Type expectedAsmType = asmType(jetType);
+        Type expectedAsmType = isStatement ? Type.VOID_TYPE : asmType(jetType);
 
         Label tryStart = new Label();
         v.mark(tryStart);
@@ -3167,8 +3171,11 @@ The "returned" value of try expression with no finally is either the last expres
 
         gen(expression.getTryBlock(), expectedAsmType);
 
-        int savedValue = myFrameMap.enterTemp(expectedAsmType);
-        v.store(savedValue, expectedAsmType);
+        int savedValue = -1;
+        if (!isStatement) {
+            savedValue = myFrameMap.enterTemp(expectedAsmType);
+            v.store(savedValue, expectedAsmType);
+        }
 
         Label tryEnd = new Label();
         v.mark(tryEnd);
@@ -3196,7 +3203,9 @@ The "returned" value of try expression with no finally is either the last expres
 
             gen(clause.getCatchBody(), expectedAsmType);
 
-            v.store(savedValue, expectedAsmType);
+            if (!isStatement) {
+                v.store(savedValue, expectedAsmType);
+            }
 
             myFrameMap.leave(descriptor);
 
@@ -3231,10 +3240,14 @@ The "returned" value of try expression with no finally is either the last expres
 
             v.visitTryCatchBlock(tryStart, tryEnd, finallyStart, null);
         }
+
+        markLineNumber(expression);
         v.mark(end);
 
-        v.load(savedValue, expectedAsmType);
-        myFrameMap.leaveTemp(expectedAsmType);
+        if (!isStatement) {
+            v.load(savedValue, expectedAsmType);
+            myFrameMap.leaveTemp(expectedAsmType);
+        }
 
         if (finallyBlock != null) {
             blockStackElements.pop();
