@@ -363,6 +363,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     /* package */ StackValue generateIfExpression(JetIfExpression expression, boolean isStatement) {
         Type asmType = expressionType(expression);
+        StackValue condition = gen(expression.getCondition());
 
         JetExpression thenExpression = expression.getThen();
         JetExpression elseExpression = expression.getElse();
@@ -376,22 +377,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (!asmType.equals(JET_TUPLE0_TYPE)) {
                     throw new CompilationException("Completely empty 'if' is expected to have Unit type", null, expression);
                 }
-                StackValue.putTuple0Instance(v);
+                condition.put(asmType, v);
                 return StackValue.onStack(asmType);
             }
-            StackValue condition = gen(expression.getCondition());
             return generateSingleBranchIf(condition, expression, elseExpression, false, isStatement);
         }
         else {
             if (isEmptyExpression(elseExpression)) {
-                StackValue condition = gen(expression.getCondition());
                 return generateSingleBranchIf(condition, expression, thenExpression, true, isStatement);
             }
         }
 
 
         Label elseLabel = new Label();
-        StackValue condition = gen(expression.getCondition());
         condition.condJump(elseLabel, true, v);   // == 0, i.e. false
 
         Label end = new Label();

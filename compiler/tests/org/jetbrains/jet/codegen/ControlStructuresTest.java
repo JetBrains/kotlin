@@ -463,6 +463,10 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testForInSmartCastedToArray() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/forInSmartCastedToArray.kt");
-        //System.out.println(generateToText());
+    }
+
+    public void testConditionOfEmptyIf() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFile("controlStructures/conditionOfEmptyIf.kt");
     }
 }
