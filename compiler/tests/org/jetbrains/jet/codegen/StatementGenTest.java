@@ -40,4 +40,12 @@ public class StatementGenTest extends CodegenTestCase {
     public void testIfSingleBranch() {
         doTest();
     }
+
+    public void testIfThenElse() {
+        doTest();
+    }
+
+    public void testIfThenElseEmpty() {
+        doTest();
+    }
 }

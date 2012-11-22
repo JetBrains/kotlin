@@ -299,6 +299,10 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         doTestCustom();
     }
 
+    public void testIfThenElse() {
+        doTestCustom();
+    }
+
     public void testStaticDelegate() {
         JetFile foo = createPsiFile("staticDelegate/foo.kt");
         JetFile bar = createPsiFile("staticDelegate/bar.kt");
