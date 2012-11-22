@@ -98,6 +98,12 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
                dir + "TwoSuperclassesInconsistentGenericTypes.java");
     }
 
+    public void testKotlinSignatureTwoSuperclassesVarargAndNot() throws Exception {
+        String dir = PATH + "/kotlinSignature/";
+        doTest(dir + "TwoSuperclassesVarargAndNot.txt",
+               dir + "TwoSuperclassesVarargAndNot.java");
+    }
+
     //TODO: move to LoadJavaTestGenerated when possible
     public void testEnum() throws Exception {
         String dir = PATH + "/enum";

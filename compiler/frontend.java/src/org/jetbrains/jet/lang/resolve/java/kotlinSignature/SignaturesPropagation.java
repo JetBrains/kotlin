@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -75,7 +76,10 @@ public class SignaturesPropagation {
                         }
                     });
 
-            JetType altType = modifyTypeAccordingToSuperMethods(originalParam.getType(), typesFromSuperMethods, false, reportError);
+            VarargCheckResult varargCheckResult =
+                    checkVarargInSuperFunctions(originalParam, superFunctions, reportError);
+
+            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, false, reportError);
 
             resultParameters.add(new ValueParameterDescriptorImpl(
                     originalParam.getContainingDeclaration(),
@@ -85,7 +89,7 @@ public class SignaturesPropagation {
                     originalParam.isVar(),
                     altType,
                     originalParam.declaresDefaultValue(),
-                    originalParam.getVarargElementType()
+                    varargCheckResult.isVararg ? KotlinBuiltIns.getInstance().getArrayElementType(altType) : null
             ));
         }
 
@@ -127,6 +131,49 @@ public class SignaturesPropagation {
         return superFunctions;
     }
 
+    @NotNull
+    private static VarargCheckResult checkVarargInSuperFunctions(
+            @NotNull ValueParameterDescriptor originalParam,
+            @NotNull List<FunctionDescriptor> superFunctions,
+            @NotNull Function1<String, Void> reportError
+    ) {
+        boolean someSupersVararg = false;
+        boolean someSupersNotVararg = false;
+        for (FunctionDescriptor superFunction : superFunctions) {
+            if (superFunction.getValueParameters().get(originalParam.getIndex()).getVarargElementType() != null) {
+                someSupersVararg = true;
+            }
+            else {
+                someSupersNotVararg = true;
+            }
+        }
+
+        JetType originalVarargElementType = originalParam.getVarargElementType();
+        JetType originalType = originalParam.getType();
+
+        if (someSupersVararg && someSupersNotVararg) {
+            reportError.invoke("Incompatible super methods: some have vararg parameter, some have not");
+            return new VarargCheckResult(originalType, originalVarargElementType != null);
+        }
+
+        if (someSupersVararg && originalVarargElementType == null) {
+            assert KotlinBuiltIns.getInstance().isArray(originalType);
+
+            // convert to vararg; replace Array<out Foo>? with Array<Foo>
+            JetType varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(originalType);
+            return new VarargCheckResult(KotlinBuiltIns.getInstance().getArrayType(varargElementType), true);
+        }
+        else if (someSupersNotVararg && originalVarargElementType != null) {
+            assert KotlinBuiltIns.getInstance().isArray(originalType);
+
+            // convert to non-vararg; replace Array<Foo> with Array<out Foo>?
+            return new VarargCheckResult(
+                    TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(Variance.OUT_VARIANCE, originalVarargElementType)),
+                    false);
+        }
+
+        return new VarargCheckResult(originalType, originalVarargElementType != null);
+    }
 
     @NotNull
     private static JetType modifyTypeAccordingToSuperMethods(
@@ -393,5 +440,15 @@ public class SignaturesPropagation {
     }
 
     private SignaturesPropagation() {
+    }
+
+    private static class VarargCheckResult {
+        public final JetType parameterType;
+        public final boolean isVararg;
+
+        private VarargCheckResult(JetType parameterType, boolean isVararg) {
+            this.parameterType = parameterType;
+            this.isVararg = isVararg;
+        }
     }
 }

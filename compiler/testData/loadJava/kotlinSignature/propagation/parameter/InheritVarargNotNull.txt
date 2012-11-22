@@ -1,0 +1,10 @@
+namespace test
+
+public abstract trait test.InheritVarargNotNull : java.lang.Object {
+    public abstract trait test.InheritVarargNotNull.Sub : test.InheritVarargNotNull.Super {
+        public abstract override /*1*/ fun foo(/*0*/ vararg p0: jet.String /*jet.Array<jet.String>*/): jet.Tuple0
+    }
+    public abstract trait test.InheritVarargNotNull.Super : java.lang.Object {
+        public abstract fun foo(/*0*/ vararg p0: jet.String /*jet.Array<jet.String>*/): jet.Tuple0
+    }
+}

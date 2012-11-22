@@ -456,6 +456,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritMutability.java");
                 }
                 
+                @TestMetadata("InheritNotVararg.java")
+                public void testInheritNotVararg() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVararg.java");
+                }
+                
+                @TestMetadata("InheritNotVarargNotNull.java")
+                public void testInheritNotVarargNotNull() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.java");
+                }
+                
                 @TestMetadata("InheritNullability.java")
                 public void testInheritNullability() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNullability.java");
@@ -469,6 +479,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("InheritReadOnliness.java")
                 public void testInheritReadOnliness() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.java");
+                }
+                
+                @TestMetadata("InheritVararg.java")
+                public void testInheritVararg() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVararg.java");
+                }
+                
+                @TestMetadata("InheritVarargNotNull.java")
+                public void testInheritVarargNotNull() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.java");
                 }
                 
                 @TestMetadata("NotNullToNullable.java")

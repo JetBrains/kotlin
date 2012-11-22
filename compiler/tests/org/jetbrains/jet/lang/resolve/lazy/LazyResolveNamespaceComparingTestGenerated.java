@@ -1346,6 +1346,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritMutability.kt");
                     }
                     
+                    @TestMetadata("InheritNotVararg.kt")
+                    public void testInheritNotVararg() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVararg.kt");
+                    }
+                    
+                    @TestMetadata("InheritNotVarargNotNull.kt")
+                    public void testInheritNotVarargNotNull() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.kt");
+                    }
+                    
                     @TestMetadata("InheritNullability.kt")
                     public void testInheritNullability() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNullability.kt");
@@ -1359,6 +1369,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     @TestMetadata("InheritReadOnliness.kt")
                     public void testInheritReadOnliness() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.kt");
+                    }
+                    
+                    @TestMetadata("InheritVararg.kt")
+                    public void testInheritVararg() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVararg.kt");
+                    }
+                    
+                    @TestMetadata("InheritVarargNotNull.kt")
+                    public void testInheritVarargNotNull() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.kt");
                     }
                     
                     @TestMetadata("NotNullToNullable.kt")
