@@ -451,9 +451,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), "java", true);
                 }
                 
+                @TestMetadata("InheritMutability.java")
+                public void testInheritMutability() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritMutability.java");
+                }
+                
                 @TestMetadata("InheritNullability.java")
                 public void testInheritNullability() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNullability.java");
+                }
+                
+                @TestMetadata("InheritReadOnliness.java")
+                public void testInheritReadOnliness() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.java");
                 }
                 
                 @TestMetadata("NotNullToNullable.java")

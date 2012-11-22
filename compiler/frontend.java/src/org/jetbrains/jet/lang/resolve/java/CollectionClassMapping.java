@@ -65,10 +65,19 @@ public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
 
     @NotNull
     public ClassDescriptor convertMutableToReadOnly(@NotNull ClassDescriptor mutable) {
-        ClassDescriptor immutable = mutableToReadOnlyMap.get(mutable);
-        if (immutable == null) {
+        ClassDescriptor readOnly = mutableToReadOnlyMap.get(mutable);
+        if (readOnly == null) {
             throw new IllegalArgumentException("Given class " + mutable + " is not a mutable collection");
         }
-        return immutable;
+        return readOnly;
+    }
+
+    @NotNull
+    public ClassDescriptor convertReadOnlyToMutable(@NotNull ClassDescriptor readOnly) {
+        ClassDescriptor mutable = mutableToReadOnlyMap.inverse().get(readOnly);
+        if (mutable == null) {
+            throw new IllegalArgumentException("Given class " + readOnly + " is not a read-only collection");
+        }
+        return mutable;
     }
 }

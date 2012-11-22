@@ -140,7 +140,7 @@ public class SignaturesPropagation {
         }
 
         boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, covariantPosition, reportError);
-        ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper);
+        ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper, covariantPosition, reportError);
         List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper, reportError);
         JetScope resultScope;
         if (resultClassifier instanceof ClassDescriptor) {
@@ -334,7 +334,12 @@ public class SignaturesPropagation {
     }
 
     @NotNull
-    private static ClassifierDescriptor modifyTypeClassifier(@NotNull JetType autoType, @NotNull List<JetType> typesFromSuper) {
+    private static ClassifierDescriptor modifyTypeClassifier(
+            @NotNull JetType autoType,
+            @NotNull List<JetType> typesFromSuper,
+            boolean covariantPosition,
+            @NotNull Function1<String, Void> reportError
+    ) {
         ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
         if (!(classifier instanceof ClassDescriptor)) {
             assert classifier != null : "no declaration descriptor for type " + autoType;
@@ -344,25 +349,43 @@ public class SignaturesPropagation {
 
         CollectionClassMapping collectionMapping = CollectionClassMapping.getInstance();
 
-        if (collectionMapping.isMutableCollection(clazz)) {
+        boolean someSupersMutable = false;
+        boolean someSupersReadOnly = false;
+        for (JetType typeFromSuper : typesFromSuper) {
+            ClassifierDescriptor classifierFromSuper = typeFromSuper.getConstructor().getDeclarationDescriptor();
+            if (classifierFromSuper instanceof ClassDescriptor) {
+                ClassDescriptor classFromSuper = (ClassDescriptor) classifierFromSuper;
 
-            boolean someSupersMutable = false;
-            boolean someSupersReadOnly = false;
-            for (JetType typeFromSuper : typesFromSuper) {
-                ClassifierDescriptor classifierFromSuper = typeFromSuper.getConstructor().getDeclarationDescriptor();
-                if (classifierFromSuper instanceof ClassDescriptor) {
-                    ClassDescriptor classFromSuper = (ClassDescriptor) classifierFromSuper;
-
-                    if (collectionMapping.isMutableCollection(classFromSuper)) {
-                        someSupersMutable = true;
-                    }
-                    else if (collectionMapping.isReadOnlyCollection(classFromSuper)) {
-                        someSupersReadOnly = true;
-                    }
+                if (collectionMapping.isMutableCollection(classFromSuper)) {
+                    someSupersMutable = true;
+                }
+                else if (collectionMapping.isReadOnlyCollection(classFromSuper)) {
+                    someSupersReadOnly = true;
                 }
             }
+        }
 
-            if (someSupersReadOnly && !someSupersMutable) {
+        if (covariantPosition) {
+            if (collectionMapping.isMutableCollection(clazz)) {
+                if (someSupersReadOnly && !someSupersMutable) {
+                    return collectionMapping.convertMutableToReadOnly(clazz);
+                }
+            }
+        }
+        else {
+            if (someSupersMutable == someSupersReadOnly) {
+                //noinspection ConstantConditions
+                if (someSupersMutable && someSupersReadOnly) {
+                    reportError.invoke("Incompatible types in superclasses: " + typesFromSuper);
+                }
+                return classifier;
+            }
+
+            if (someSupersMutable && collectionMapping.isReadOnlyCollection(clazz)) {
+                return collectionMapping.convertReadOnlyToMutable(clazz);
+            }
+
+            if (someSupersReadOnly && collectionMapping.isMutableCollection(clazz)) {
                 return collectionMapping.convertMutableToReadOnly(clazz);
             }
         }
