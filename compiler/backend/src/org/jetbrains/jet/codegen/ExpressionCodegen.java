@@ -2519,14 +2519,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(exprType);
     }
 
-    private static boolean isClass(DeclarationDescriptor descriptor, String name) {
-        if (!(descriptor instanceof ClassDescriptor)) {
-            return false;
-        }
-        String className = descriptor.getName().getName();
-        return className.equals(name);
-    }
-
     private StackValue generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {
         gen(left, operandType);
         gen(right, operandType);
