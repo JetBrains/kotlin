@@ -164,24 +164,9 @@ public class PositioningStrategies {
         }
     };
 
-    public static final PositioningStrategy<JetModifierListOwner> ABSTRACT_MODIFIER = modifierPosition(JetTokens.ABSTRACT_KEYWORD);
+    public static final PositioningStrategy<JetModifierListOwner> ABSTRACT_MODIFIER = modifierSetPosition(JetTokens.ABSTRACT_KEYWORD);
 
-    public static final PositioningStrategy<JetModifierListOwner> OVERRIDE_MODIFIER = modifierPosition(JetTokens.OVERRIDE_KEYWORD);
-
-    public static PositioningStrategy<JetModifierListOwner> modifierPosition(final JetKeywordToken token) {
-        return new PositioningStrategy<JetModifierListOwner>() {
-            @NotNull
-            @Override
-            public List<TextRange> mark(@NotNull JetModifierListOwner modifierListOwner) {
-                assert modifierListOwner.hasModifier(token);
-                JetModifierList modifierList = modifierListOwner.getModifierList();
-                assert modifierList != null;
-                ASTNode node = modifierList.getModifierNode(token);
-                assert node != null;
-                return markNode(node);
-            }
-        };
-    }
+    public static final PositioningStrategy<JetModifierListOwner> OVERRIDE_MODIFIER = modifierSetPosition(JetTokens.OVERRIDE_KEYWORD);
 
     public static final PositioningStrategy<JetModifierListOwner> VARIANCE_MODIFIER = modifierSetPosition(JetTokens.IN_KEYWORD,
                                                                                                           JetTokens.OUT_KEYWORD);
