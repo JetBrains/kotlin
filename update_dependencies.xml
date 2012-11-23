@@ -3,15 +3,15 @@
 
     <target name="update" depends="fetch-third-party">
         <execute_update
-            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/71935:id"
-            build.zip="ideaIC-122.SNAPSHOT.win.zip"
+            base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/72290:id"
+            build.zip="ideaIC-123.SNAPSHOT.win.zip"
         />
     </target>
 
     <target name="jb_update" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt662/1625050:id"
-            build.zip="ideaIC-122.SNAPSHOT.win.zip"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3446/1634820:id"
+            build.zip="ideaIC-123.SNAPSHOT.win.zip"
         />
     </target>
 

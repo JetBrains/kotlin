@@ -24,7 +24,6 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.compiler.runner.*;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
-import org.jetbrains.jps.builders.ChunkBuildOutputConsumer;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
@@ -58,7 +57,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             CompileContext context,
             ModuleChunk chunk,
             DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
-            ChunkBuildOutputConsumer outputConsumer
+            OutputConsumer outputConsumer
     ) throws ProjectBuildException, IOException {
 
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
@@ -104,7 +103,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
             outputConsumer.registerOutputFile(
                     representativeTarget,
-                    outputItem.getOutputFile().getPath(),
+                    outputItem.getOutputFile(),
                     paths(outputItem.getSourceFiles()));
         }
 
