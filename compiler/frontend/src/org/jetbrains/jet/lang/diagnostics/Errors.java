@@ -189,7 +189,7 @@ public interface Errors {
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER =
             DiagnosticFactory2.create(ERROR);
 
-    SimpleDiagnosticFactory<JetTypeParameter> VARIANCE_ON_FUNCTION_OR_PROPERTY_PARAMETER = SimpleDiagnosticFactory.create(ERROR, VARIANCE_MODIFIER);
+    SimpleDiagnosticFactory<JetTypeParameter> VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY = SimpleDiagnosticFactory.create(ERROR, VARIANCE_MODIFIER);
 
     // Members
 

@@ -524,7 +524,7 @@ public class DescriptorResolver {
     ) {
         if (typeParameter.getVariance() != Variance.INVARIANT) {
             assert !(containingDescriptor instanceof ClassifierDescriptor) : "This method is intended for functions/properties";
-            trace.report(VARIANCE_ON_FUNCTION_OR_PROPERTY_PARAMETER.on(typeParameter));
+            trace.report(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY.on(typeParameter));
         }
 
         // TODO: Annotations are not resolved!
