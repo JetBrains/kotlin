@@ -49,12 +49,7 @@ public final class WhenChecker {
         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
         if (classDescriptor.getKind() != ClassKind.ENUM_CLASS || classDescriptor.getModality().isOverridable()) return false;
         ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-        //TODO: workaround for KT-2619 Exception on using java enum in when.
-        // should provide correct checks for java enums
-        // may be obsolete once java and kotlin enum work the same way
-        if (classObjectDescriptor == null) {
-            return false;
-        }
+        assert classObjectDescriptor != null : "Enum classes must have class object.";
         JetScope memberScope = classObjectDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
         Collection<ClassDescriptor> objectDescriptors = memberScope.getObjectDescriptors();
         boolean isExhaust = true;
