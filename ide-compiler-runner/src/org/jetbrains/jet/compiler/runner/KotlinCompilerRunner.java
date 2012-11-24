@@ -69,7 +69,7 @@ public class KotlinCompilerRunner {
             String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
             String[] arguments = commandLineArguments(environment.getOutput(), scriptFile);
             messageCollector.report(CompilerMessageSeverity.INFO,
-                                    "Using kotlinHome=" + environment.getKotlinPaths(),
+                                    "Using kotlinHome=" + environment.getKotlinPaths().getHomePath(),
                                     CompilerMessageLocation.NO_LOCATION);
             messageCollector.report(CompilerMessageSeverity.INFO,
                                "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments),
