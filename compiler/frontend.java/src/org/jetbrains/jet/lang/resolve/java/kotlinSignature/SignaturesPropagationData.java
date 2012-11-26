@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -52,17 +51,10 @@ public class SignaturesPropagationData {
             @NotNull PsiMethodWrapper method,
             @NotNull BindingTrace trace
     ) {
-        Function1<String, Void> reportError = new Function1<String, Void>() {
-            @Override
-            public Void invoke(String error) {
-                signatureErrors.add(error);
-                return null;
-            }
-        };
         superFunctions = getSuperFunctionsForMethod(method, trace);
 
-        modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType, superFunctions, reportError);
-        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters, superFunctions, reportError);
+        modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType);
+        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters);
     }
 
     public JavaDescriptorResolver.ValueParameterDescriptors getModifiedValueParameters() {
@@ -80,11 +72,13 @@ public class SignaturesPropagationData {
     public List<FunctionDescriptor> getSuperFunctions() {
         return superFunctions;
     }
+    
+    private void reportError(String error) {
+        signatureErrors.add(error);
+    }
 
-    private static JetType modifyReturnTypeAccordingToSuperMethods(
-            @NotNull JetType autoType, // type built by JavaTypeTransformer
-            @NotNull List<FunctionDescriptor> superFunctions,
-            @NotNull Function1<String, Void> reportError
+    private JetType modifyReturnTypeAccordingToSuperMethods(
+            @NotNull JetType autoType // type built by JavaTypeTransformer
     ) {
         List<JetType> typesFromSuperMethods = ContainerUtil.map(superFunctions,
                                                                 new Function<FunctionDescriptor, JetType>() {
@@ -94,13 +88,11 @@ public class SignaturesPropagationData {
                                                                     }
                                                                 });
 
-        return modifyTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true, reportError);
+        return modifyTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true);
     }
 
-    private static JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
-            @NotNull JavaDescriptorResolver.ValueParameterDescriptors parameters, // descriptors built by parameters resolver
-            @NotNull List<FunctionDescriptor> superFunctions,
-            @NotNull Function1<String, Void> reportError
+    private JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
+            @NotNull JavaDescriptorResolver.ValueParameterDescriptors parameters // descriptors built by parameters resolver
     ) {
         // we are not processing receiver type specifically:
         // if this function comes from Kotlin, then we don't need to do it, if it doesn't, then it can't have receiver
@@ -118,9 +110,9 @@ public class SignaturesPropagationData {
                     });
 
             VarargCheckResult varargCheckResult =
-                    checkVarargInSuperFunctions(originalParam, superFunctions, reportError);
+                    checkVarargInSuperFunctions(originalParam);
 
-            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, false, reportError);
+            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, false);
 
             resultParameters.add(new ValueParameterDescriptorImpl(
                     originalParam.getContainingDeclaration(),
@@ -173,11 +165,7 @@ public class SignaturesPropagationData {
     }
 
     @NotNull
-    private static VarargCheckResult checkVarargInSuperFunctions(
-            @NotNull ValueParameterDescriptor originalParam,
-            @NotNull List<FunctionDescriptor> superFunctions,
-            @NotNull Function1<String, Void> reportError
-    ) {
+    private VarargCheckResult checkVarargInSuperFunctions(@NotNull ValueParameterDescriptor originalParam) {
         boolean someSupersVararg = false;
         boolean someSupersNotVararg = false;
         for (FunctionDescriptor superFunction : superFunctions) {
@@ -193,7 +181,7 @@ public class SignaturesPropagationData {
         JetType originalType = originalParam.getType();
 
         if (someSupersVararg && someSupersNotVararg) {
-            reportError.invoke("Incompatible super methods: some have vararg parameter, some have not");
+            reportError("Incompatible super methods: some have vararg parameter, some have not");
             return new VarargCheckResult(originalType, originalVarargElementType != null);
         }
 
@@ -217,19 +205,18 @@ public class SignaturesPropagationData {
     }
 
     @NotNull
-    private static JetType modifyTypeAccordingToSuperMethods(
+    private JetType modifyTypeAccordingToSuperMethods(
             @NotNull JetType autoType,
             @NotNull List<JetType> typesFromSuper,
-            boolean covariantPosition,
-            @NotNull Function1<String, Void> reportError
+            boolean covariantPosition
     ) {
         if (ErrorUtils.isErrorType(autoType)) {
             return autoType;
         }
 
-        boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, covariantPosition, reportError);
-        ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper, covariantPosition, reportError);
-        List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper, reportError);
+        boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, covariantPosition);
+        ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper, covariantPosition);
+        List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper);
         JetScope resultScope;
         if (resultClassifier instanceof ClassDescriptor) {
             resultScope = ((ClassDescriptor) resultClassifier).getMemberScope(resultArguments);
@@ -246,11 +233,10 @@ public class SignaturesPropagationData {
     }
 
     @NotNull
-    private static List<TypeProjection> getTypeArgsOfType(
+    private List<TypeProjection> getTypeArgsOfType(
             @NotNull JetType autoType,
             @NotNull ClassifierDescriptor classifier,
-            @NotNull List<JetType> typesFromSuper,
-            @NotNull Function1<String, Void> reportError
+            @NotNull List<JetType> typesFromSuper
     ) {
         List<TypeProjection> autoArguments = autoType.getArguments();
 
@@ -275,18 +261,17 @@ public class SignaturesPropagationData {
             List<JetType> argTypesFromSuper = getTypes(projectionsFromSuper);
             boolean covariantPosition = effectiveProjectionKind == TypeCheckingProcedure.EnrichedProjectionKind.OUT;
 
-            JetType type = modifyTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, covariantPosition, reportError);
-            Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper, reportError);
+            JetType type = modifyTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, covariantPosition);
+            Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper);
 
             resultArguments.add(new TypeProjection(projectionKind, type));
         }
         return resultArguments;
     }
 
-    private static Variance calculateArgumentProjectionKindFromSuper(
+    private Variance calculateArgumentProjectionKindFromSuper(
             @NotNull TypeProjection argument,
-            @NotNull List<TypeProjection> projectionsFromSuper,
-            @NotNull Function1<String, Void> reportError
+            @NotNull List<TypeProjection> projectionsFromSuper
     ) {
         Set<Variance> projectionKindsInSuper = Sets.newLinkedHashSet();
         for (TypeProjection projection : projectionsFromSuper) {
@@ -303,13 +288,13 @@ public class SignaturesPropagationData {
                 return projectionKindInSuper;
             }
             else {
-                reportError.invoke("Incompatible projection kinds in type arguments of super methods' return types: "
-                       + projectionsFromSuper + ", defined in current: " + argument);
+                reportError("Incompatible projection kinds in type arguments of super methods' return types: "
+                            + projectionsFromSuper + ", defined in current: " + argument);
                 return defaultProjectionKind;
             }
         }
         else {
-            reportError.invoke("Incompatible projection kinds in type arguments of super methods' return types: " + projectionsFromSuper);
+            reportError("Incompatible projection kinds in type arguments of super methods' return types: " + projectionsFromSuper);
             return defaultProjectionKind;
         }
     }
@@ -378,11 +363,10 @@ public class SignaturesPropagationData {
         return parameterToArgumentsFromSuper;
     }
 
-    private static boolean typeMustBeNullable(
+    private boolean typeMustBeNullable(
             @NotNull JetType autoType,
             @NotNull List<JetType> typesFromSuper,
-            boolean covariantPosition,
-            @NotNull Function1<String, Void> reportError
+            boolean covariantPosition
     ) {
         if (typesFromSuper.isEmpty()) {
             return autoType.isNullable();
@@ -404,7 +388,7 @@ public class SignaturesPropagationData {
                 return false;
             }
             else {
-                reportError.invoke("Incompatible types in superclasses: " + typesFromSuper);
+                reportError("Incompatible types in superclasses: " + typesFromSuper);
             }
         }
 
@@ -414,7 +398,7 @@ public class SignaturesPropagationData {
         // We want to handle case when parameter of super method is nullable, but parameter of sub method claims to be not null:
         // of course, it is an error in annotations, and parameter of sub method should be nullable.
         if (!covariantPosition && someSupersNullable && !autoType.isNullable()) {
-            reportError.invoke("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + autoType);
+            reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + autoType);
             return true;
         }
 
@@ -422,11 +406,10 @@ public class SignaturesPropagationData {
     }
 
     @NotNull
-    private static ClassifierDescriptor modifyTypeClassifier(
+    private ClassifierDescriptor modifyTypeClassifier(
             @NotNull JetType autoType,
             @NotNull List<JetType> typesFromSuper,
-            boolean covariantPosition,
-            @NotNull Function1<String, Void> reportError
+            boolean covariantPosition
     ) {
         ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
         if (!(classifier instanceof ClassDescriptor)) {
@@ -464,7 +447,7 @@ public class SignaturesPropagationData {
             if (someSupersMutable == someSupersReadOnly) {
                 //noinspection ConstantConditions
                 if (someSupersMutable && someSupersReadOnly) {
-                    reportError.invoke("Incompatible types in superclasses: " + typesFromSuper);
+                    reportError("Incompatible types in superclasses: " + typesFromSuper);
                 }
                 return classifier;
             }
