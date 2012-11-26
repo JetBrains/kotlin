@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +48,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     private JetType altReturnType;
     private List<TypeParameterDescriptor> altTypeParameters;
 
-    private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters =
-            new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
+    private Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
     public AlternativeMethodSignatureData(
             @NotNull PsiMethodWrapper method,
@@ -70,16 +68,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         Project project = method.getPsiMethod().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
-        for (TypeParameterDescriptor typeParameter : methodTypeParameters) {
-            originalToAltTypeParameters.put(typeParameter,
-                                            TypeParameterDescriptorImpl.createForFurtherModification(
-                                                    typeParameter.getContainingDeclaration(),
-                                                    typeParameter.getAnnotations(),
-                                                    typeParameter.isReified(),
-                                                    typeParameter.getVariance(),
-                                                    typeParameter.getName(),
-                                                    typeParameter.getIndex()));
-        }
+        originalToAltTypeParameters = SignaturesUtil.recreateTypeParametersAndReturnMapping(methodTypeParameters);
 
         try {
             checkForSyntaxErrors(altFunDeclaration);
