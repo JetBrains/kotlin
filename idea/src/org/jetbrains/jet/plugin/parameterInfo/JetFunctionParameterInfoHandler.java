@@ -151,7 +151,7 @@ public class JetFunctionParameterInfoHandler implements
             builder.append("vararg ");
         }
         builder.append(descriptor.getName()).append(": ").
-                append(DescriptorRenderer.TEXT.renderType(getActualParameterType(descriptor)));
+                append(DescriptorRenderer.TEXT.renderTypeWithShortNames(getActualParameterType(descriptor)));
         if (descriptor.hasDefaultValue()) {
             PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
             String defaultExpression = "?";
