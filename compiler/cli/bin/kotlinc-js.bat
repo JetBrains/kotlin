@@ -1,3 +1,4 @@
+@echo off
 rem based on scalac.bat from the Scala distribution
 rem ##########################################################################
 rem # Copyright 2002-2011, LAMP/EPFL
@@ -7,7 +8,6 @@ rem # This is free software; see the distribution for copying conditions.
 rem # There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
 rem # PARTICULAR PURPOSE.
 rem ##########################################################################
-@echo off
 
 @setlocal
 call :set_home
