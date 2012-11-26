@@ -71,6 +71,7 @@
         <copy todir="${kotlin-home}/bin">
             <fileset dir="${basedir}/compiler/cli/bin"/>
         </copy>
+        <fixcrlf srcdir="${kotlin-home}/bin" excludes="**/*.bat" eol="unix"/>
 
         <copy todir="${kotlin-home}/license">
             <fileset dir="${basedir}/license"/>
