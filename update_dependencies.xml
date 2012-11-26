@@ -78,13 +78,13 @@
         <copy file="dependencies/download/dx-1.7-sources.jar" tofile="dependencies/dx-sources.jar" overwrite="true"/>
 
         <!-- jline -->
-        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.6/jline-2.6.jar"
-             dest="dependencies/download/jline-2.6.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jline-2.6.jar" tofile="dependencies/jline.jar" overwrite="true"/>
+        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.9/jline-2.9.jar"
+             dest="dependencies/download/jline-2.9.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jline-2.9.jar" tofile="dependencies/jline.jar" overwrite="true"/>
 
-        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.6/jline-2.6-sources.jar"
-             dest="dependencies/download/jline-2.6-sources.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jline-2.6-sources.jar" tofile="dependencies/jline-sources.jar" overwrite="true"/>
+        <get src="http://repository.jetbrains.com/remote-repos/jline/jline/2.9/jline-2.9-sources.jar"
+             dest="dependencies/download/jline-2.9-sources.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jline-2.9-sources.jar" tofile="dependencies/jline-sources.jar" overwrite="true"/>
 
         <!-- jansi -->
         <!--
