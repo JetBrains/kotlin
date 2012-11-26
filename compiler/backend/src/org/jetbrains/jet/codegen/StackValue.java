@@ -488,20 +488,8 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            if (type == Type.VOID_TYPE) {
-                return;
-            }
-            if (type.equals(JET_TUPLE0_TYPE)) {
-                putTuple0Instance(v);
-                return;
-            }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(getType(Boolean.class))) {
-                throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type " + type);
-            }
             putAsBoolean(v);
-            if (type != Type.BOOLEAN_TYPE) {
-                box(Type.BOOLEAN_TYPE, type, v);
-            }
+            coerceTo(type, v);
         }
 
         @Override
@@ -580,17 +568,8 @@ public abstract class StackValue {
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            if (type == Type.VOID_TYPE) {
-                myOperand.put(type, v);    // the operand will remove itself from the stack if needed
-                return;
-            }
-            if (type != Type.BOOLEAN_TYPE && !type.equals(OBJECT_TYPE) && !type.equals(getType(Boolean.class))) {
-                throw new UnsupportedOperationException("don't know how to put a compare as a non-boolean type");
-            }
             putAsBoolean(v);
-            if (type != Type.BOOLEAN_TYPE) {
-                box(Type.BOOLEAN_TYPE, type, v);
-            }
+            coerceTo(type, v);
         }
 
         @Override
