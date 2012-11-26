@@ -235,10 +235,10 @@ public abstract class StackValue {
     public static void coerce(Type fromType, Type toType, InstructionAdapter v) {
         if (toType.equals(fromType)) return;
 
-        if (toType.getSort() == Type.VOID && fromType.getSort() != Type.VOID) {
+        if (toType.getSort() == Type.VOID) {
             pop(fromType, v);
         }
-        else if (toType.getSort() != Type.VOID && fromType.getSort() == Type.VOID) {
+        else if (fromType.getSort() == Type.VOID) {
             if (toType.getSort() == Type.OBJECT) {
                 putTuple0Instance(v);
             }
@@ -255,22 +255,24 @@ public abstract class StackValue {
                 v.iconst(0);
             }
         }
-        else if (toType.equals(JET_TUPLE0_TYPE) && !fromType.equals(JET_TUPLE0_TYPE)) {
+        else if (toType.equals(JET_TUPLE0_TYPE)) {
             pop(fromType, v);
             putTuple0Instance(v);
         }
-        else if (toType.getSort() == Type.OBJECT && fromType.equals(OBJECT_TYPE) || toType.getSort() == Type.ARRAY) {
+        else if (toType.getSort() == Type.ARRAY) {
             v.checkcast(toType);
         }
         else if (toType.getSort() == Type.OBJECT) {
-            if (fromType.getSort() == Type.OBJECT && !toType.equals(OBJECT_TYPE)) {
-                v.checkcast(toType);
+            if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
+                if (!toType.equals(OBJECT_TYPE)) {
+                    v.checkcast(toType);
+                }
             }
             else {
                 box(fromType, toType, v);
             }
         }
-        else if (fromType.getSort() == Type.OBJECT && toType.getSort() <= Type.DOUBLE) {
+        else if (fromType.getSort() == Type.OBJECT) {
             if (toType.getSort() == Type.BOOLEAN) {
                 coerce(fromType, JvmPrimitiveType.BOOLEAN.getWrapper().getAsmType(), v);
             }
