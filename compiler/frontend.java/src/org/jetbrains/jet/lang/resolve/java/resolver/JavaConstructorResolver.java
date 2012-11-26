@@ -192,7 +192,7 @@ public final class JavaConstructorResolver {
 
         AlternativeMethodSignatureData alternativeMethodSignatureData =
                 new AlternativeMethodSignatureData(constructor, valueParameterDescriptors, null,
-                                                   Collections.<TypeParameterDescriptor>emptyList());
+                                                   Collections.<TypeParameterDescriptor>emptyList(), false);
         if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
             valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
         }

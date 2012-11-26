@@ -156,7 +156,8 @@ public final class JavaFunctionResolver {
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =
-                new AlternativeMethodSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters);
+                new AlternativeMethodSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters,
+                                                   !superFunctions.isEmpty());
         if (alternativeMethodSignatureData.isAnnotated() && !alternativeMethodSignatureData.hasErrors()) {
             valueParameterDescriptors = alternativeMethodSignatureData.getValueParameters();
             returnType = alternativeMethodSignatureData.getReturnType();

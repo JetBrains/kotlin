@@ -1,0 +1,20 @@
+package test;
+
+import org.jetbrains.annotations.NotNull;
+import jet.runtime.typeinfo.KotlinSignature;
+import org.jetbrains.jet.jvm.compiler.annotation.ExpectLoadError;
+import java.util.*;
+
+public interface ChangeProjectionKind1 {
+
+    public interface Super {
+        @KotlinSignature("fun foo(p: MutableList<in String>)")
+        void foo(List<String> p);
+    }
+
+    public interface Sub extends Super {
+        @ExpectLoadError("Variance mismatch, actual: in, in alternative signature: ")
+        @KotlinSignature("fun foo(p: MutableList<String>)")
+        void foo(List<String> p);
+    }
+}

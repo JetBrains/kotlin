@@ -451,6 +451,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), "java", true);
                 }
                 
+                @TestMetadata("ChangeProjectionKind1.java")
+                public void testChangeProjectionKind1() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind1.java");
+                }
+                
+                @TestMetadata("ChangeProjectionKind2.java")
+                public void testChangeProjectionKind2() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind2.java");
+                }
+                
                 @TestMetadata("InheritMutability.java")
                 public void testInheritMutability() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritMutability.java");
@@ -491,6 +501,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.java");
                 }
                 
+                @TestMetadata("MutableToReadOnly.java")
+                public void testMutableToReadOnly() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/MutableToReadOnly.java");
+                }
+                
                 @TestMetadata("NotNullToNullable.java")
                 public void testNotNullToNullable() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NotNullToNullable.java");
@@ -499,6 +514,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("NullableToNotNull.java")
                 public void testNullableToNotNull() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NullableToNotNull.java");
+                }
+                
+                @TestMetadata("NullableToNotNullKotlinSignature.java")
+                public void testNullableToNotNullKotlinSignature() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.java");
+                }
+                
+                @TestMetadata("ReadOnlyToMutable.java")
+                public void testReadOnlyToMutable() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.java");
                 }
                 
             }

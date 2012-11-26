@@ -1341,6 +1341,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), "kt", true);
                     }
                     
+                    @TestMetadata("ChangeProjectionKind1.kt")
+                    public void testChangeProjectionKind1() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind1.kt");
+                    }
+                    
+                    @TestMetadata("ChangeProjectionKind2.kt")
+                    public void testChangeProjectionKind2() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind2.kt");
+                    }
+                    
                     @TestMetadata("InheritMutability.kt")
                     public void testInheritMutability() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritMutability.kt");
@@ -1381,6 +1391,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.kt");
                     }
                     
+                    @TestMetadata("MutableToReadOnly.kt")
+                    public void testMutableToReadOnly() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/MutableToReadOnly.kt");
+                    }
+                    
                     @TestMetadata("NotNullToNullable.kt")
                     public void testNotNullToNullable() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NotNullToNullable.kt");
@@ -1389,6 +1404,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     @TestMetadata("NullableToNotNull.kt")
                     public void testNullableToNotNull() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NullableToNotNull.kt");
+                    }
+                    
+                    @TestMetadata("NullableToNotNullKotlinSignature.kt")
+                    public void testNullableToNotNullKotlinSignature() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.kt");
+                    }
+                    
+                    @TestMetadata("ReadOnlyToMutable.kt")
+                    public void testReadOnlyToMutable() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.kt");
                     }
                     
                 }
