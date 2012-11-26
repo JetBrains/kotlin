@@ -40,7 +40,48 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 public class SignaturesPropagationData {
-    public static JetType modifyReturnTypeAccordingToSuperMethods(
+    private final JavaDescriptorResolver.ValueParameterDescriptors modifiedValueParameters;
+    private final JetType modifiedReturnType;
+
+    private final List<String> signatureErrors = Lists.newArrayList();
+    private final List<FunctionDescriptor> superFunctions;
+
+    public SignaturesPropagationData(
+            @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
+            @NotNull JavaDescriptorResolver.ValueParameterDescriptors autoValueParameters, // descriptors built by parameters resolver
+            @NotNull PsiMethodWrapper method,
+            @NotNull BindingTrace trace
+    ) {
+        Function1<String, Void> reportError = new Function1<String, Void>() {
+            @Override
+            public Void invoke(String error) {
+                signatureErrors.add(error);
+                return null;
+            }
+        };
+        superFunctions = getSuperFunctionsForMethod(method, trace);
+
+        modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType, superFunctions, reportError);
+        modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters, superFunctions, reportError);
+    }
+
+    public JavaDescriptorResolver.ValueParameterDescriptors getModifiedValueParameters() {
+        return modifiedValueParameters;
+    }
+
+    public JetType getModifiedReturnType() {
+        return modifiedReturnType;
+    }
+
+    public List<String> getSignatureErrors() {
+        return signatureErrors;
+    }
+
+    public List<FunctionDescriptor> getSuperFunctions() {
+        return superFunctions;
+    }
+
+    private static JetType modifyReturnTypeAccordingToSuperMethods(
             @NotNull JetType autoType, // type built by JavaTypeTransformer
             @NotNull List<FunctionDescriptor> superFunctions,
             @NotNull Function1<String, Void> reportError
@@ -56,7 +97,7 @@ public class SignaturesPropagationData {
         return modifyTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true, reportError);
     }
 
-    public static JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
+    private static JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors parameters, // descriptors built by parameters resolver
             @NotNull List<FunctionDescriptor> superFunctions,
             @NotNull Function1<String, Void> reportError
@@ -96,7 +137,7 @@ public class SignaturesPropagationData {
         return new JavaDescriptorResolver.ValueParameterDescriptors(parameters.getReceiverType(), resultParameters);
     }
 
-    public static List<FunctionDescriptor> getSuperFunctionsForMethod(
+    private static List<FunctionDescriptor> getSuperFunctionsForMethod(
             @NotNull PsiMethodWrapper method,
             @NotNull BindingTrace trace
     ) {
@@ -437,9 +478,6 @@ public class SignaturesPropagationData {
             }
         }
         return classifier;
-    }
-
-    private SignaturesPropagationData() {
     }
 
     private static class VarargCheckResult {

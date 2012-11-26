@@ -22,7 +22,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiFormatUtil;
-import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -142,18 +141,14 @@ public final class JavaFunctionResolver {
 
         final List<String> signatureErrors = Lists.newArrayList();
 
-        List<FunctionDescriptor> superFunctions = SignaturesPropagationData.getSuperFunctionsForMethod(method, trace);
+        SignaturesPropagationData signaturesPropagationData =
+                new SignaturesPropagationData(returnType, valueParameterDescriptors, method, trace);
+        List<FunctionDescriptor> superFunctions = signaturesPropagationData.getSuperFunctions();
 
-        Function1<String, Void> reportError = new Function1<String, Void>() {
-            @Override
-            public Void invoke(String error) {
-                signatureErrors.add(error);
-                return null;
-            }
-        };
-        returnType = SignaturesPropagationData.modifyReturnTypeAccordingToSuperMethods(returnType, superFunctions, reportError);
-        valueParameterDescriptors = SignaturesPropagationData
-                .modifyValueParametersAccordingToSuperMethods(valueParameterDescriptors, superFunctions, reportError);
+        returnType = signaturesPropagationData.getModifiedReturnType();
+        valueParameterDescriptors = signaturesPropagationData.getModifiedValueParameters();
+
+        signatureErrors.addAll(signaturesPropagationData.getSignatureErrors());
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =
