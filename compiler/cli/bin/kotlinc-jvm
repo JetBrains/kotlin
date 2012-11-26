@@ -82,5 +82,5 @@ CPSELECT="-cp "
 "${JAVACMD:=java}" \
   $JAVA_OPTS \
   "${java_args[@]}" \
-  ${CPSELECT}${KOTLIN_HOME}"/lib/kotlin-compiler.jar" \
+  ${CPSELECT}"${KOTLIN_HOME}/lib/kotlin-compiler.jar" \
    org.jetbrains.jet.cli.jvm.K2JVMCompiler  "$@"
