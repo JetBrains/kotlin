@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
-import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagation;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
@@ -142,7 +142,7 @@ public final class JavaFunctionResolver {
 
         final List<String> signatureErrors = Lists.newArrayList();
 
-        List<FunctionDescriptor> superFunctions = SignaturesPropagation.getSuperFunctionsForMethod(method, trace);
+        List<FunctionDescriptor> superFunctions = SignaturesPropagationData.getSuperFunctionsForMethod(method, trace);
 
         Function1<String, Void> reportError = new Function1<String, Void>() {
             @Override
@@ -151,8 +151,9 @@ public final class JavaFunctionResolver {
                 return null;
             }
         };
-        returnType = SignaturesPropagation.modifyReturnTypeAccordingToSuperMethods(returnType, superFunctions, reportError);
-        valueParameterDescriptors = SignaturesPropagation.modifyValueParametersAccordingToSuperMethods(valueParameterDescriptors, superFunctions, reportError);
+        returnType = SignaturesPropagationData.modifyReturnTypeAccordingToSuperMethods(returnType, superFunctions, reportError);
+        valueParameterDescriptors = SignaturesPropagationData
+                .modifyValueParametersAccordingToSuperMethods(valueParameterDescriptors, superFunctions, reportError);
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =

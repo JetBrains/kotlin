@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
-public class SignaturesPropagation {
+public class SignaturesPropagationData {
     public static JetType modifyReturnTypeAccordingToSuperMethods(
             @NotNull JetType autoType, // type built by JavaTypeTransformer
             @NotNull List<FunctionDescriptor> superFunctions,
@@ -439,7 +439,7 @@ public class SignaturesPropagation {
         return classifier;
     }
 
-    private SignaturesPropagation() {
+    private SignaturesPropagationData() {
     }
 
     private static class VarargCheckResult {
