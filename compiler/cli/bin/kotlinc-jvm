@@ -36,7 +36,6 @@ KOTLIN_HOME=`cd "$KOTLIN_HOME"/..; pwd`
 # Remove spaces from KOTLIN_HOME on windows
 if $cygwin; then
     KOTLIN_HOME=`cygpath --windows --short-name "$KOTLIN_HOME"`
-    KOTLIN_HOME=`cygpath --unix "$KOTLIN_HOME"`
 fi
 
 [ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
