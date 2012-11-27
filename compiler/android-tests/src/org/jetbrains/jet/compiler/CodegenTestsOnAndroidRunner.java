@@ -62,9 +62,6 @@ public class CodegenTestsOnAndroidRunner {
 
         // If map is empty => there are no failed tests
         if (resultMap.isEmpty()) {
-            // Clear tmp folder where we run android tests
-            FileUtil.delete(new File(pathManager.getTmpFolder()));
-
             statistics = parseOutputForTestsNumberIfTestsPassed(resultOutput);
         }
         else {
