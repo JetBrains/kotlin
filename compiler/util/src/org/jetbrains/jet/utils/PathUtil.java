@@ -49,7 +49,7 @@ public class PathUtil {
 
     @NotNull
     public static KotlinPaths getKotlinPathsForJpsPluginOrJpsTests() {
-        if (System.getProperty("kotlin.jps.tests").equals("true")) {
+        if ("true".equalsIgnoreCase(System.getProperty("kotlin.jps.tests"))) {
             return getKotlinPathsForDistDirectory();
         }
         return getKotlinPathsForJpsPlugin();
