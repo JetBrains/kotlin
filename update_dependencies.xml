@@ -203,7 +203,7 @@
                     <get src="@{base.url}/jps/ui-designer-jps-plugin.jar" dest="${jps}/ui-designer-jps-plugin.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/util.jar" dest="${jps}/util.jar" usetimestamp="true"/>
 
-                    <get src="@{base.url}/jps/test/jps-build-test.jar" dest="${jps-test}/" usetimestamp="true"/>
+                    <get src="@{base.url}/jps/test/jps-build-test.jar" dest="${jps-test}/jps-build-test.jar" usetimestamp="true"/>
 
                     <get src="@{base.url}/@{build.zip}" dest="dependencies/download/@{build.zip}" usetimestamp="true"/>
 
