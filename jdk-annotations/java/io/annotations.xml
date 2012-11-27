@@ -252,6 +252,12 @@
   <item name='java.io.DataOutput void write(byte[], int, int) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='java.io.DataOutput void writeBytes(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.io.DataOutput void writeChars(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='java.io.DataOutput void writeUTF(java.lang.String) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -682,13 +688,7 @@
   <item name='java.io.PrintWriter java.io.PrintWriter append(char)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='java.io.PrintWriter java.io.PrintWriter append(java.lang.CharSequence, int, int) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
   <item name='java.io.PrintWriter java.io.PrintWriter append(java.lang.CharSequence, int, int)'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='java.io.PrintWriter java.io.PrintWriter append(java.lang.CharSequence) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='java.io.PrintWriter java.io.PrintWriter append(java.lang.CharSequence)'>

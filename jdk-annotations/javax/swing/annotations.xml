@@ -1,4 +1,7 @@
 <root>
+  <item name='javax.swing.JComponent java.lang.String getToolTipText(java.awt.event.MouseEvent) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='javax.swing.JTable void setModel(javax.swing.table.TableModel) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

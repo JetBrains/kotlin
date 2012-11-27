@@ -1,0 +1,12 @@
+<root>
+  <item name='java.awt.geom.Rectangle2D java.awt.geom.Rectangle2D createIntersection(java.awt.geom.Rectangle2D)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun createIntersection(r : Rectangle2D) : Rectangle2D&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.awt.geom.Rectangle2D java.awt.geom.Rectangle2D createUnion(java.awt.geom.Rectangle2D)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun createUnion(r : Rectangle2D) : Rectangle2D&quot;"/>
+    </annotation>
+  </item>
+</root>

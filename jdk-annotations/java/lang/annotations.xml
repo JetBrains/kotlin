@@ -929,7 +929,7 @@
   <item name='java.lang.Class A getAnnotation(java.lang.Class&lt;A&gt;)'>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
-               val="&quot;fun &lt;A : Annotation?&gt; getAnnotation(annotationClass : Class&lt;A&gt;) : A?&quot;"/>
+               val="&quot;fun &lt;A : Annotation&gt; getAnnotation(annotationClass : Class&lt;A&gt;) : A?&quot;"/>
       </annotation>
       <annotation name='org.jetbrains.annotations.Nullable'/>
   </item>
