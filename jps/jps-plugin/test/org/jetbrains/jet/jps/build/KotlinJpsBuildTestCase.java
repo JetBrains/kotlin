@@ -29,7 +29,7 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        File sourceFilesRoot = new File(TEST_DATA_PATH + File.separator + getTestName(true));
+        File sourceFilesRoot = new File(TEST_DATA_PATH + getTestName(false));
         workDir = copyTestDataToTmpDir(sourceFilesRoot);
     }
 
@@ -49,11 +49,11 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         makeAll().assertSuccessful();
     }
 
-    public void testSimpleKotlinProject() {
+    public void testKotlinProject() {
         doTest();
     }
 
-    public void testSimpleKotlinJavaProject() {
+    public void testKotlinJavaProject() {
         doTest();
     }
 
@@ -69,11 +69,7 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         doTest();
     }
 
-    public void testTwoModules() {
-        doTest();
-    }
-
-    public void testTestOnlyDependency() throws Throwable {
+    public void testTestDependencyLibrary() throws Throwable {
         initProject();
         addKotlinRuntimeDependency(JpsJavaDependencyScope.TEST);
         makeAll().assertSuccessful();
