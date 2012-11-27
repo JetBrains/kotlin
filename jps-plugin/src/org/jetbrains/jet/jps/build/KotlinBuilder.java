@@ -83,7 +83,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         File outputDir = representativeTarget.getOutputDir();
 
-        CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(PathUtil.getKotlinPathsForJpsPlugin(), outputDir);
+        CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir);
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector);
             return ExitCode.ABORT;

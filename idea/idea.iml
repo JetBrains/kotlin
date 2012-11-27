@@ -31,6 +31,7 @@
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="ide-compiler-runner" />
     <orderEntry type="module" module-name="cli-common" />
+    <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
   </component>
 </module>
 

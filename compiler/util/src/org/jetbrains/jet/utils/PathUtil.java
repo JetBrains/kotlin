@@ -48,6 +48,14 @@ public class PathUtil {
     }
 
     @NotNull
+    public static KotlinPaths getKotlinPathsForJpsPluginOrJpsTests() {
+        if (System.getProperty("kotlin.jps.tests").equals("true")) {
+            return getKotlinPathsForDistDirectory();
+        }
+        return getKotlinPathsForJpsPlugin();
+    }
+
+    @NotNull
     public static KotlinPaths getKotlinPathsForCompiler() {
         if (!getPathUtilJar().isFile()) {
             // Not running from a jar, i.e. it is it must be a unit test
