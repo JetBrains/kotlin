@@ -1774,6 +1774,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/generics/RawTypeInIsExpression.kt");
             }
             
+            @TestMetadata("RawTypeInIsPattern.kt")
+            public void testRawTypeInIsPattern() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/generics/RawTypeInIsPattern.kt");
+            }
+            
             @TestMetadata("RecursiveUpperBoundCheck.kt")
             public void testRecursiveUpperBoundCheck() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/generics/RecursiveUpperBoundCheck.kt");

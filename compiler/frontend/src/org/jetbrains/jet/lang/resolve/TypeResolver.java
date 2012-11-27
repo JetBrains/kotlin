@@ -143,7 +143,7 @@ public class TypeResolver {
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
                                 if (actualArgumentCount == 0) {
-                                    if (rhsOfIsExpression(type)) {
+                                    if (rhsOfIsExpression(type) || rhsOfIsPattern(type)) {
                                         trace.report(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION.on(type, expectedArgumentCount, allStarProjectionsString(typeConstructor)));
                                     }
                                     else {
@@ -250,6 +250,14 @@ public class TypeResolver {
             }
         }
         return false;
+    }
+
+    private static boolean rhsOfIsPattern(@NotNull JetUserType type) {
+        // Look for the is-pattern containing this type
+        JetWhenConditionIsPattern outerPattern = PsiTreeUtil.getParentOfType(type, JetWhenConditionIsPattern.class, false, JetExpression.class);
+        if (outerPattern == null) return false;
+        // We are interested only in the outermost type on the RHS
+        return type.getParent() == outerPattern.getTypeRef();
     }
 
     private JetScope getScopeForTypeParameter(final TypeParameterDescriptor typeParameterDescriptor, boolean checkBounds) {
