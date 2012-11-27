@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -142,7 +143,12 @@ public class TypeResolver {
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
                                 if (actualArgumentCount == 0) {
-                                    trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
+                                    if (rhsOfIsExpression(type)) {
+                                        trace.report(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION.on(type, expectedArgumentCount, allStarProjectionsString(typeConstructor)));
+                                    }
+                                    else {
+                                        trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
+                                    }
                                 }
                                 else {
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
@@ -233,6 +239,19 @@ public class TypeResolver {
         return result[0];
     }
 
+    private static boolean rhsOfIsExpression(@NotNull JetUserType type) {
+        // Look for the FIRST expression containing this type
+        JetExpression outerExpression = PsiTreeUtil.getParentOfType(type, JetExpression.class);
+        if (outerExpression instanceof JetIsExpression) {
+            JetIsExpression isExpression = (JetIsExpression) outerExpression;
+            // If this expression is JetIsExpression, and the type is the outermost on the RHS
+            if (type.getParent() == isExpression.getTypeRef()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private JetScope getScopeForTypeParameter(final TypeParameterDescriptor typeParameterDescriptor, boolean checkBounds) {
         if (checkBounds) {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
@@ -316,5 +335,16 @@ public class TypeResolver {
             }
         }
         return null;
+    }
+
+    @NotNull
+    private static String allStarProjectionsString(@NotNull TypeConstructor constructor) {
+        int size = constructor.getParameters().size();
+        assert size != 0 : "No projections possible for a nilary type constructor" + constructor;
+        ClassifierDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
+        assert declarationDescriptor != null : "No declaration descriptor for type constructor " + constructor;
+        String name = declarationDescriptor.getName().getName();
+
+        return TypeUtils.getTypeNameAndStarProjectionsString(name, size);
     }
 }

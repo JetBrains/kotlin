@@ -497,4 +497,18 @@ public class TypeUtils {
         }
         return false;
     }
+
+    @NotNull
+    public static String getTypeNameAndStarProjectionsString(@NotNull String name, int size) {
+        StringBuilder builder = new StringBuilder(name);
+        builder.append("<");
+        for (int i = 0; i < size; i++) {
+            builder.append("*");
+            if (i == size - 1) break;
+            builder.append(", ");
+        }
+        builder.append(">");
+
+        return builder.toString();
+    }
 }
