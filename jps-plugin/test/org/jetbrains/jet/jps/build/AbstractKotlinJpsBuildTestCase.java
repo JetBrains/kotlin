@@ -53,7 +53,7 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
     }
 
     protected static File copyTestDataToTmpDir(File testDataDir) throws IOException {
-        assert testDataDir.exists() : "Cannot find source folder";
+        assert testDataDir.exists() : "Cannot find source folder " + testDataDir.getAbsolutePath();
         File tmpDir = FileUtil.createTempDirectory("jps-build", null);
         FileUtil.copyDir(testDataDir, tmpDir);
         return tmpDir;
