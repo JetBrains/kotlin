@@ -48,6 +48,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.OverridingUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
@@ -207,12 +208,12 @@ public final class JavaFunctionResolver {
                     ((ClassDescriptor) functionDescriptor.getContainingDeclaration()).getDefaultType());
             FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
 
-            // TODO replace asserted condition when propagation for parameters is supported
-            //OverridingUtil.OverrideCompatibilityInfo.Result overridableResult =
-            //        OverridingUtil.isOverridableBy(superFunctionSubstituted, functionDescriptor).getResult();
-            //if (overridableResult != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-            //    || !OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptor)) {
-            if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptor)) {
+            OverrideCompatibilityInfo.Result overridableResult =
+                    isOverridableBy(superFunctionSubstituted, functionDescriptor).getResult();
+            boolean paramsOk = overridableResult == OverrideCompatibilityInfo.Result.OVERRIDABLE;
+            boolean returnTypeOk =
+                    isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptor);
+            if (!paramsOk || !returnTypeOk) {
                 throw new IllegalStateException("Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
                                                 + "super function = " + superFunction + "\n"
                                                 + "this function = " + functionDescriptor + "\n"
