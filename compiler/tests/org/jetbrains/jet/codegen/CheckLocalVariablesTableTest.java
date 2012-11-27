@@ -62,9 +62,19 @@ public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
     }
 
     @Override
-    protected void runTest() throws Throwable {
+    protected void setUp() throws Exception {
+        super.setUp();
         jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
+    }
 
+    @Override
+    protected void tearDown() throws Exception {
+        jetCoreEnvironment = null;
+        super.tearDown();
+    }
+
+    @Override
+    protected void runTest() throws Throwable {
         String text = FileUtil.loadFile(ktFile);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());

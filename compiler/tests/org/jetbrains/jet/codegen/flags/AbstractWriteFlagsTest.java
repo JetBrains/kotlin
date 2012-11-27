@@ -50,6 +50,12 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        jetCoreEnvironment = null;
+        super.tearDown();
+    }
+
     protected void doTest(String path) throws IOException {
         File ktFile = new File(path);
         assertTrue("Cannot find a file " + ktFile.getAbsolutePath(), ktFile.exists());

@@ -91,6 +91,19 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     @Override
+    protected void tearDown() throws Exception {
+        scopeWithImports = null;
+
+        expressionTypingServices = null;
+        typeResolver = null;
+        descriptorResolver = null;
+
+        builtIns = null;
+
+        super.tearDown();
+    }
+
+    @Override
     protected String getTestDataPath() {
         return JetTestCaseBuilder.getTestDataPathBase();
     }

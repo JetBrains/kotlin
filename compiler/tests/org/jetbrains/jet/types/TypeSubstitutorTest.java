@@ -70,6 +70,13 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         scope = getContextScope();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        injector = null;
+        scope = null;
+        super.tearDown();
+    }
+
     private JetScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"));

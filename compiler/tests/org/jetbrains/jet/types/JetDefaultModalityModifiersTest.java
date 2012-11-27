@@ -55,6 +55,12 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.setUp();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        tc.tearDown();
+        super.tearDown();
+    }
+
     public class JetDefaultModalityModifiersTestCase  {
         private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
         private DescriptorResolver descriptorResolver;
@@ -65,6 +71,11 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             KotlinBuiltIns builtIns = injector.getKotlinBuiltIns();
             descriptorResolver = injector.getDescriptorResolver();
             scope = createScope(builtIns.getBuiltInsScope());
+        }
+
+        public void tearDown() throws Exception {
+            scope = null;
+            descriptorResolver = null;
         }
 
         private JetScope createScope(JetScope libraryScope) {

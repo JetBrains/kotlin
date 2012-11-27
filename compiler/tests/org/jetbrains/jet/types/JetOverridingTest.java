@@ -54,6 +54,13 @@ public class JetOverridingTest extends JetLiteFixture {
     }
 
     @Override
+    protected void tearDown() throws Exception {
+        builtIns = null;
+        descriptorResolver = null;
+        super.tearDown();
+    }
+
+    @Override
     protected String getTestDataPath() {
         return JetTestCaseBuilder.getTestDataPathBase();
     }

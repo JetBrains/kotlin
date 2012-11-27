@@ -54,6 +54,13 @@ public class JetOverloadTest extends JetLiteFixture {
     }
 
     @Override
+    protected void tearDown() throws Exception {
+        builtIns = null;
+        descriptorResolver = null;
+        super.tearDown();
+    }
+
+    @Override
     protected String getTestDataPath() {
         return JetTestCaseBuilder.getTestDataPathBase();
     }
@@ -180,5 +187,4 @@ public class JetOverloadTest extends JetLiteFixture {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
         return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsScope(), function, JetTestUtils.DUMMY_TRACE);
     }
-
 }

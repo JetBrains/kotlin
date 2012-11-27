@@ -71,6 +71,13 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
         ideaAnnotationsRoot = VirtualFileManager.getInstance().findFileByUrl("jar://ideaSDK/lib/jdkAnnotations.jar!/");
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        ideaAnnotationsRoot = null;
+        kotlinAnnotationsRoot = null;
+        super.tearDown();
+    }
+
     public void testNoErrorsInAlternativeSignatures() {
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(getProject());
 

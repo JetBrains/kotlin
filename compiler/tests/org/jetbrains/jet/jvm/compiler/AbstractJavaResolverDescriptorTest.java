@@ -66,6 +66,12 @@ public abstract class AbstractJavaResolverDescriptorTest extends TestCaseWithTmp
         setUpJavaDescriptorResolver();
     }
 
+    @Override
+    public void tearDown() throws Exception {
+        javaDescriptorResolver = null;
+        super.tearDown();
+    }
+
     private void setUpJavaDescriptorResolver() {
         JetCoreEnvironment jetCoreEnvironment =
                 new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
