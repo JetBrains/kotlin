@@ -439,7 +439,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         }
         
         @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation")
-        @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class})
+        @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class, Propagation.TypeParameter.class})
         public static class Propagation extends AbstractLoadJavaTest {
             public void testAllFilesPresentInPropagation() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), "java", true);
@@ -656,11 +656,60 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 
             }
             
+            @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter")
+            public static class TypeParameter extends AbstractLoadJavaTest {
+                public void testAllFilesPresentInTypeParameter() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter"), "java", true);
+                }
+                
+                @TestMetadata("InheritMutability.java")
+                public void testInheritMutability() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/InheritMutability.java");
+                }
+                
+                @TestMetadata("InheritNullability.java")
+                public void testInheritNullability() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/InheritNullability.java");
+                }
+                
+                @TestMetadata("InheritReadOnliness.java")
+                public void testInheritReadOnliness() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/InheritReadOnliness.java");
+                }
+                
+                @TestMetadata("TwoBounds.java")
+                public void testTwoBounds() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/TwoBounds.java");
+                }
+                
+                @TestMetadata("TwoSuperclasses.java")
+                public void testTwoSuperclasses() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/TwoSuperclasses.java");
+                }
+                
+                @TestMetadata("TwoTypeParameters.java")
+                public void testTwoTypeParameters() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/TwoTypeParameters.java");
+                }
+                
+                @TestMetadata("UseParameterAsUpperBound.java")
+                public void testUseParameterAsUpperBound() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterAsUpperBound.java");
+                }
+                
+                @TestMetadata("UseParameterInUpperBound.java")
+                public void testUseParameterInUpperBound() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.java");
+                }
+                
+            }
+            
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Propagation");
                 suite.addTestSuite(Propagation.class);
                 suite.addTestSuite(Parameter.class);
                 suite.addTestSuite(Return.class);
+                suite.addTestSuite(TypeParameter.class);
                 return suite;
             }
         }

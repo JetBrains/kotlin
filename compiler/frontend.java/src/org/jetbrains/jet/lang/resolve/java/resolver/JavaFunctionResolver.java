@@ -142,11 +142,12 @@ public final class JavaFunctionResolver {
         final List<String> signatureErrors = Lists.newArrayList();
 
         SignaturesPropagationData signaturesPropagationData =
-                new SignaturesPropagationData(returnType, valueParameterDescriptors, method, trace);
+                new SignaturesPropagationData(returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
         List<FunctionDescriptor> superFunctions = signaturesPropagationData.getSuperFunctions();
 
         returnType = signaturesPropagationData.getModifiedReturnType();
         valueParameterDescriptors = signaturesPropagationData.getModifiedValueParameters();
+        methodTypeParameters = signaturesPropagationData.getModifiedTypeParameters();
 
         signatureErrors.addAll(signaturesPropagationData.getSignatureErrors());
 

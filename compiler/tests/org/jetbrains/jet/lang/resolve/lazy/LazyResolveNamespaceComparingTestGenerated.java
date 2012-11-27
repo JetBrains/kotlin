@@ -1329,7 +1329,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             }
             
             @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation")
-            @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class})
+            @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class, Propagation.TypeParameter.class})
             public static class Propagation extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInPropagation() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), "kt", true);
@@ -1546,11 +1546,60 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     
                 }
                 
+                @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter")
+                public static class TypeParameter extends AbstractLazyResolveNamespaceComparingTest {
+                    public void testAllFilesPresentInTypeParameter() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter"), "kt", true);
+                    }
+                    
+                    @TestMetadata("InheritMutability.kt")
+                    public void testInheritMutability() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/InheritMutability.kt");
+                    }
+                    
+                    @TestMetadata("InheritNullability.kt")
+                    public void testInheritNullability() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/InheritNullability.kt");
+                    }
+                    
+                    @TestMetadata("InheritReadOnliness.kt")
+                    public void testInheritReadOnliness() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/InheritReadOnliness.kt");
+                    }
+                    
+                    @TestMetadata("TwoBounds.kt")
+                    public void testTwoBounds() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/TwoBounds.kt");
+                    }
+                    
+                    @TestMetadata("TwoSuperclasses.kt")
+                    public void testTwoSuperclasses() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/TwoSuperclasses.kt");
+                    }
+                    
+                    @TestMetadata("TwoTypeParameters.kt")
+                    public void testTwoTypeParameters() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/TwoTypeParameters.kt");
+                    }
+                    
+                    @TestMetadata("UseParameterAsUpperBound.kt")
+                    public void testUseParameterAsUpperBound() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterAsUpperBound.kt");
+                    }
+                    
+                    @TestMetadata("UseParameterInUpperBound.kt")
+                    public void testUseParameterInUpperBound() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.kt");
+                    }
+                    
+                }
+                
                 public static Test innerSuite() {
                     TestSuite suite = new TestSuite("Propagation");
                     suite.addTestSuite(Propagation.class);
                     suite.addTestSuite(Parameter.class);
                     suite.addTestSuite(Return.class);
+                    suite.addTestSuite(TypeParameter.class);
                     return suite;
                 }
             }

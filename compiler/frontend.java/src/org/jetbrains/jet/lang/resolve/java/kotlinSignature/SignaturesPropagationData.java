@@ -39,22 +39,32 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 public class SignaturesPropagationData {
+    private final List<TypeParameterDescriptor> modifiedTypeParameters;
     private final JavaDescriptorResolver.ValueParameterDescriptors modifiedValueParameters;
     private final JetType modifiedReturnType;
 
     private final List<String> signatureErrors = Lists.newArrayList();
     private final List<FunctionDescriptor> superFunctions;
+    private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> autoTypeParameterToModified;
 
     public SignaturesPropagationData(
             @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors autoValueParameters, // descriptors built by parameters resolver
+            @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
             @NotNull PsiMethodWrapper method,
             @NotNull BindingTrace trace
     ) {
         superFunctions = getSuperFunctionsForMethod(method, trace);
 
+        autoTypeParameterToModified = SignaturesUtil.recreateTypeParametersAndReturnMapping(autoTypeParameters);
+
+        modifiedTypeParameters = modifyTypeParametersAccordingToSuperMethods(autoTypeParameters);
         modifiedReturnType = modifyReturnTypeAccordingToSuperMethods(autoReturnType);
         modifiedValueParameters = modifyValueParametersAccordingToSuperMethods(autoValueParameters);
+    }
+
+    public List<TypeParameterDescriptor> getModifiedTypeParameters() {
+        return modifiedTypeParameters;
     }
 
     public JavaDescriptorResolver.ValueParameterDescriptors getModifiedValueParameters() {
@@ -89,6 +99,41 @@ public class SignaturesPropagationData {
                                                                 });
 
         return modifyTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, true);
+    }
+
+    private List<TypeParameterDescriptor> modifyTypeParametersAccordingToSuperMethods(List<TypeParameterDescriptor> autoTypeParameters) {
+        List<TypeParameterDescriptor> result = Lists.newArrayList();
+
+        for (TypeParameterDescriptor autoParameter : autoTypeParameters) {
+            int index = autoParameter.getIndex();
+            TypeParameterDescriptorImpl modifiedTypeParameter = autoTypeParameterToModified.get(autoParameter);
+
+            List<Iterator<JetType>> upperBoundFromSuperFunctionsIterators = Lists.newArrayList();
+            for (FunctionDescriptor superFunction : superFunctions) {
+                upperBoundFromSuperFunctionsIterators.add(superFunction.getTypeParameters().get(index).getUpperBounds().iterator());
+            }
+
+            for (JetType autoUpperBound : autoParameter.getUpperBounds()) {
+                List<JetType> upperBoundsFromSuperFunctions = Lists.newArrayList();
+
+                for (Iterator<JetType> iterator : upperBoundFromSuperFunctionsIterators) {
+                    assert iterator.hasNext();
+                    upperBoundsFromSuperFunctions.add(iterator.next());
+                }
+
+                JetType modifiedUpperBound = modifyTypeAccordingToSuperMethods(autoUpperBound, upperBoundsFromSuperFunctions, false);
+                modifiedTypeParameter.addUpperBound(modifiedUpperBound);
+            }
+
+            for (Iterator<JetType> iterator : upperBoundFromSuperFunctionsIterators) {
+                assert !iterator.hasNext();
+            }
+
+            modifiedTypeParameter.setInitialized();
+            result.add(modifiedTypeParameter);
+        }
+
+        return result;
     }
 
     private JavaDescriptorResolver.ValueParameterDescriptors modifyValueParametersAccordingToSuperMethods(
@@ -126,7 +171,16 @@ public class SignaturesPropagationData {
             ));
         }
 
-        return new JavaDescriptorResolver.ValueParameterDescriptors(parameters.getReceiverType(), resultParameters);
+        JetType originalReceiverType = parameters.getReceiverType();
+        if (originalReceiverType != null) {
+            JetType substituted = SignaturesUtil.createSubstitutorForFunctionTypeParameters(autoTypeParameterToModified)
+                    .substitute(originalReceiverType, Variance.INVARIANT);
+            assert substituted != null;
+            return new JavaDescriptorResolver.ValueParameterDescriptors(substituted, resultParameters);
+        }
+        else {
+            return new JavaDescriptorResolver.ValueParameterDescriptors(null, resultParameters);
+        }
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
@@ -414,6 +468,10 @@ public class SignaturesPropagationData {
         ClassifierDescriptor classifier = autoType.getConstructor().getDeclarationDescriptor();
         if (!(classifier instanceof ClassDescriptor)) {
             assert classifier != null : "no declaration descriptor for type " + autoType;
+
+            if (classifier instanceof TypeParameterDescriptor && autoTypeParameterToModified.containsKey(classifier)) {
+                return autoTypeParameterToModified.get(classifier);
+            }
             return classifier;
         }
         ClassDescriptor clazz = (ClassDescriptor) classifier;
