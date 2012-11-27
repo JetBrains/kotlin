@@ -2311,7 +2311,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else if (opToken == JetTokens.LT || opToken == JetTokens.LTEQ ||
                  opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-            return generateCompareOp(expression.getLeft(), expression.getRight(), opToken, expressionType(expression.getLeft()));
+            return generateCompareTo(expression);
         }
         else if (opToken == JetTokens.ELVIS) {
             return generateElvis(expression);
@@ -2519,10 +2519,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(exprType);
     }
 
-    private StackValue generateCompareOp(JetExpression left, JetExpression right, IElementType opToken, Type operandType) {
-        gen(left, operandType);
-        gen(right, operandType);
-        return compareExpressionsOnStack(v, opToken, operandType);
+    private StackValue generateCompareTo(JetBinaryExpression expression) {
+        DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
+        assert target instanceof FunctionDescriptor : "compareTo target should be a function: " + target;
+        FunctionDescriptor descriptor = (FunctionDescriptor) target;
+
+        StackValue receiver = gen(expression.getLeft());
+        Callable callable = resolveToCallable(descriptor, false);
+
+        StackValue result;
+        if (callable instanceof IntrinsicMethod) {
+            result = ((IntrinsicMethod) callable).generate(
+                    this, v, Type.INT_TYPE, expression, Collections.singletonList(expression.getRight()), receiver, state);
+        } else {
+            result = invokeOperation(expression, descriptor, (CallableMethod) callable);
+        }
+
+        result.put(Type.INT_TYPE, v);
+        v.iconst(0);
+        return StackValue.cmp(expression.getOperationToken(), Type.INT_TYPE);
     }
 
     private StackValue generateAssignmentExpression(JetBinaryExpression expression) {

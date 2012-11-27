@@ -116,6 +116,13 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
+                "OperatorConventionsTestGenerated",
+                AbstractCodegenTest.class,
+                testModel("compiler/testData/codegen/operatorConventions")
+        );
+
+        generateTest(
+                "compiler/tests/",
                 "ExtensionPropertiesTestGenerated",
                 AbstractCodegenTest.class,
                 testModel("compiler/testData/codegen/extensionProperties")
