@@ -29,8 +29,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
@@ -94,10 +93,16 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters
     ) {
+        TypeSubstitutor substitutor = SignaturesUtil.createSubstitutorForFunctionTypeParameters(originalToAltTypeParameters);
+
         for (ValueParameterDescriptor parameter : valueParameterDescriptors.getDescriptors()) {
             int index = parameter.getIndex();
             ValueParameterDescriptor altParameter = altValueParameters.getDescriptors().get(index);
-            if (!TypeUtils.equalTypes(parameter.getType(), altParameter.getType())) {
+
+            JetType substituted = substitutor.substitute(parameter.getType(), Variance.INVARIANT);
+            assert substituted != null;
+
+            if (!TypeUtils.equalTypes(substituted, altParameter.getType())) {
                 throw new AlternativeSignatureMismatchException(
                         "Parameter type changed for method which overrides another: " + altParameter.getType()
                         + ", was: " + parameter.getType());
@@ -108,7 +113,11 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
         for (TypeParameterDescriptor parameter : methodTypeParameters) {
             int index = parameter.getIndex();
-            if (!TypeUtils.equalTypes(altTypeParameters.get(index).getUpperBoundsAsType(), parameter.getUpperBoundsAsType())) {
+
+            JetType substituted = substitutor.substitute(altTypeParameters.get(index).getUpperBoundsAsType(), Variance.INVARIANT);
+            assert substituted != null;
+
+            if (!TypeUtils.equalTypes(substituted, parameter.getUpperBoundsAsType())) {
                 throw new AlternativeSignatureMismatchException(
                         "Type parameter's upper bound changed for method which overrides another: "
                         + altTypeParameters.get(index).getUpperBoundsAsType() + ", was: " + parameter.getUpperBoundsAsType());

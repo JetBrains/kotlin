@@ -20,6 +20,9 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 import java.util.Map;
@@ -40,6 +43,18 @@ public class SignaturesUtil {
                                typeParameter.getIndex()));
         }
         return result;
+    }
+
+    public static TypeSubstitutor createSubstitutorForFunctionTypeParameters(
+            @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters
+    ) {
+        Map<TypeConstructor, TypeProjection> typeSubstitutionContext = Maps.newHashMap();
+        for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameter : originalToAltTypeParameters
+                .entrySet()) {
+            typeSubstitutionContext.put(originalToAltTypeParameter.getKey().getTypeConstructor(),
+                                        new TypeProjection(originalToAltTypeParameter.getValue().getDefaultType()));
+        }
+        return TypeSubstitutor.create(typeSubstitutionContext);
     }
 
     private SignaturesUtil() {
