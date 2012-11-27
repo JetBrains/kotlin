@@ -19,19 +19,12 @@ package org.jetbrains.jet.codegen;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.testFramework.LightVirtualFile;
-import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.*;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,18 +40,12 @@ import java.util.regex.Pattern;
  * @author Natalia.Ukhorskaya
  */
 
-public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
+public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithTmpdir {
 
-    private final File ktFile;
+    private File ktFile;
     private JetCoreEnvironment jetCoreEnvironment;
 
-    public CheckLocalVariablesTableTest(File ktFile) {
-        this.ktFile = ktFile;
-    }
-
-    @Override
-    public String getName() {
-        return ktFile.getName();
+    public AbstractCheckLocalVariablesTableTest() {
     }
 
     @Override
@@ -73,8 +60,8 @@ public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
         super.tearDown();
     }
 
-    @Override
-    protected void runTest() throws Throwable {
+    protected void doTest(@NotNull String ktFileName) throws Exception {
+        ktFile = new File(ktFileName);
         String text = FileUtil.loadFile(ktFile);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
@@ -82,7 +69,7 @@ public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
 
         final ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        String modifiedTestName = this.getName().replace(".kt", ".class");
+        String modifiedTestName = ktFile.getName().replace(".kt", ".class");
         boolean isClassFound = false;
         for (String filename : factory.files()) {
             if (filename.equals(modifiedTestName)) {
@@ -112,19 +99,6 @@ public class CheckLocalVariablesTableTest extends TestCaseWithTmpdir {
         Disposer.dispose(myTestRootDisposable);
     }
 
-
-    public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/checkLocalVariablesTable", true,
-                                                    new JetTestCaseBuilder.NamedTestFactory() {
-                                                        @NotNull
-                                                        @Override
-                                                        public Test createTest(@NotNull String dataPath,
-                                                                @NotNull String name,
-                                                                @NotNull File file) {
-                                                            return new CheckLocalVariablesTableTest(file);
-                                                        }
-                                                    });
-    }
 
     private static class LocalVariable {
         private final String name;

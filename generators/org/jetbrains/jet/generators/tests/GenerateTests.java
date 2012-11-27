@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
+import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
 import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
 import org.jetbrains.jet.codegen.AbstractMultiDeclTestCase;
@@ -69,6 +70,13 @@ public class GenerateTests {
                 "DataClassCodegenTestGenerated",
                 AbstractDataClassCodegenTest.class,
                 testModel("compiler/testData/codegen/dataClasses", "blackBoxFileByFullPath")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "CheckLocalVariablesTableTestGenerated",
+                AbstractCheckLocalVariablesTableTest.class,
+                testModel("compiler/testData/checkLocalVariablesTable", "doTest")
         );
 
         generateTest(
