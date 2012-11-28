@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -219,12 +218,6 @@ public class IntrinsicMethods {
 
         if (descriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
-            if (functionDescriptor.getReceiverParameter() == null) {
-                FqNameUnsafe ownerFqName = DescriptorUtils.getFQName(descriptor.getContainingDeclaration());
-                if (ownerFqName.equalsTo("jet.String")) {
-                    return new PsiMethodCall(functionDescriptor);
-                }
-            }
 
             if (isEnumClassObject(functionDescriptor.getContainingDeclaration())) {
                 if ("values".equals(functionDescriptor.getName().getName())) {
