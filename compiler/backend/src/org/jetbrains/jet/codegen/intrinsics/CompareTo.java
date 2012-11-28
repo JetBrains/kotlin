@@ -51,9 +51,6 @@ public class CompareTo implements IntrinsicMethod {
         else if (receiver.type == Type.INT_TYPE) {
             v.invokestatic("jet/runtime/Intrinsics", "compare", "(II)I");
         }
-        else if (receiver.type == Type.BOOLEAN_TYPE) {
-            v.invokestatic("jet/runtime/Intrinsics", "compare", "(ZZ)I");
-        }
         else if (receiver.type == Type.LONG_TYPE) {
             v.invokestatic("jet/runtime/Intrinsics", "compare", "(JJ)I");
         }

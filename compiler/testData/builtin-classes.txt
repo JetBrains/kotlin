@@ -13,10 +13,9 @@ public final class jet.Array</*0,r*/ T : jet.Any?> : jet.Any {
     public final fun set(/*0*/ index: jet.Int, /*1*/ value: T): jet.Tuple0
     public final val size: jet.Int
 }
-public final class jet.Boolean : jet.Comparable<jet.Boolean> {
+public final class jet.Boolean : jet.Any {
     public final /*constructor*/ fun <init>(): jet.Boolean
     public final fun and(/*0*/ other: jet.Boolean): jet.Boolean
-    public open override /*1*/ fun compareTo(/*0*/ that: jet.Boolean): jet.Int
     public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public final fun not(): jet.Boolean
     public final fun or(/*0*/ other: jet.Boolean): jet.Boolean
