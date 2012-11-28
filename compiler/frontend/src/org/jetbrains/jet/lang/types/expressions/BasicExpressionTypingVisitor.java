@@ -1437,7 +1437,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         List<JetExpression> indices = arrayAccessExpression.getIndexExpressions();
         // The accumulated data flow info of all index expressions is saved on the last index
-        dataFlowInfo = facade.getTypeInfo(indices.get(indices.size() - 1), context).getDataFlowInfo();
+        if (!indices.isEmpty()) {
+            dataFlowInfo = facade.getTypeInfo(indices.get(indices.size() - 1), context).getDataFlowInfo();
+        }
 
         if (!isGet) {
             dataFlowInfo = facade.getTypeInfo(rightHandSide, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();

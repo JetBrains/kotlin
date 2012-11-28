@@ -2955,6 +2955,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/regressions/DoubleDefine.kt");
             }
             
+            @TestMetadata("ea40964.kt")
+            public void testEa40964() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/regressions/ea40964.kt");
+            }
+            
             @TestMetadata("ErrorsOnIbjectExpressionsAsParameters.kt")
             public void testErrorsOnIbjectExpressionsAsParameters() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/regressions/ErrorsOnIbjectExpressionsAsParameters.kt");
