@@ -86,11 +86,6 @@ public fun File.relativePath(descendant: File): String {
 public inline fun File.reader(): FileReader = FileReader(this)
 
 /**
- * Iterates through each line of this file then closing the underlying [[Reader]] when its completed
- */
-public inline fun File.forEachLine(block: (String) -> Any): Unit = reader().forEachLine(block)
-
-/**
  * Reads the entire content of the file as bytes
  *
  * This method is not recommended on huge files.

@@ -72,6 +72,20 @@ class IoTest(){
     assertEquals(arrayList("Hello", "World"), list)
   }
   
+  test fun testForEachLineFile() {
+    val file = File.createTempFile("temp", System.nanoTime().toString())
+    file.writeText("Hello\nWorld")
+
+
+    val list = ArrayList<String>()
+    file.forEachLine{
+      list.add(it)
+    }
+
+    assertEquals(arrayList("Hello", "World"), list)
+    file.deleteOnExit()
+  }
+
   test fun testListFiles() {
     val dir = File.createTempFile("temp", System.nanoTime().toString())
     dir.delete()
