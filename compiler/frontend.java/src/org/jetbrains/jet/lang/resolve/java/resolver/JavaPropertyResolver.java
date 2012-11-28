@@ -379,7 +379,7 @@ public final class JavaPropertyResolver {
         JetType propertyType = semanticServices.getTypeTransformer().transformToType(
                 characteristicMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
 
-        boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotation(
+        boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
                 characteristicMember.getType().getPsiNotNullOwner(),
                 JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null;
 

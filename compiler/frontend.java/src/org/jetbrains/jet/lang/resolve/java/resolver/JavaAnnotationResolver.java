@@ -24,8 +24,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -146,13 +149,23 @@ public final class JavaAnnotationResolver {
     }
 
     @Nullable
-    public static PsiAnnotation findAnnotation(@NotNull PsiModifierListOwner owner, @NotNull String fqName) {
+    public static PsiAnnotation findOwnAnnotation(@NotNull PsiModifierListOwner owner, @NotNull String fqName) {
         PsiModifierList list = owner.getModifierList();
         if (list != null) {
             PsiAnnotation found = list.findAnnotation(fqName);
             if (found != null) {
                 return found;
             }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static PsiAnnotation findAnnotationWithExternal(@NotNull PsiModifierListOwner owner, @NotNull String fqName) {
+        PsiAnnotation annotation = findOwnAnnotation(owner, fqName);
+        if (annotation != null) {
+            return annotation;
         }
 
         return ExternalAnnotationsManager.getInstance(owner.getProject()).findExternalAnnotation(owner, fqName);
