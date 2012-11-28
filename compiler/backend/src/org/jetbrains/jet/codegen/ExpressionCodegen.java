@@ -2311,7 +2311,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else if (opToken == JetTokens.LT || opToken == JetTokens.LTEQ ||
                  opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-            return generateCompareTo(expression);
+            return generateComparison(expression);
         }
         else if (opToken == JetTokens.ELVIS) {
             return generateElvis(expression);
@@ -2519,25 +2519,29 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(exprType);
     }
 
-    private StackValue generateCompareTo(JetBinaryExpression expression) {
+    private StackValue generateComparison(JetBinaryExpression expression) {
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         assert target instanceof FunctionDescriptor : "compareTo target should be a function: " + target;
         FunctionDescriptor descriptor = (FunctionDescriptor) target;
 
-        StackValue receiver = gen(expression.getLeft());
+        JetExpression left = expression.getLeft();
+        JetExpression right = expression.getRight();
+        StackValue receiver = gen(left);
         Callable callable = resolveToCallable(descriptor, false);
 
-        StackValue result;
+        Type type;
         if (callable instanceof IntrinsicMethod) {
-            result = ((IntrinsicMethod) callable).generate(
-                    this, v, Type.INT_TYPE, expression, Collections.singletonList(expression.getRight()), receiver, state);
+            // Compare two primitive values
+            type = comparisonOperandType(expressionType(left), expressionType(right));
+            receiver.put(type, v);
+            gen(right, type);
         } else {
-            result = invokeOperation(expression, descriptor, (CallableMethod) callable);
+            type = Type.INT_TYPE;
+            StackValue result = invokeOperation(expression, descriptor, (CallableMethod) callable);
+            result.put(type, v);
+            v.iconst(0);
         }
-
-        result.put(Type.INT_TYPE, v);
-        v.iconst(0);
-        return StackValue.cmp(expression.getOperationToken(), Type.INT_TYPE);
+        return StackValue.cmp(expression.getOperationToken(), type);
     }
 
     private StackValue generateAssignmentExpression(JetBinaryExpression expression) {
