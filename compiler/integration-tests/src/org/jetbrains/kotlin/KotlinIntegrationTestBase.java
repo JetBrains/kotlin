@@ -57,7 +57,7 @@ public abstract class KotlinIntegrationTestBase {
         @Override
         protected void starting(Description description) {
             final File baseTestDataDir =
-                    new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
+                    new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "testData");
             testDataDir = new File(baseTestDataDir, description.getMethodName());
         }
 
