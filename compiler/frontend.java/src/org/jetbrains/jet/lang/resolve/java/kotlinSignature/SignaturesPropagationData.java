@@ -240,19 +240,17 @@ public class SignaturesPropagationData {
         }
 
         if (someSupersVararg && originalVarargElementType == null) {
-            assert KotlinBuiltIns.getInstance().isArray(originalType);
+            assert isArrayType(originalType);
 
             // convert to vararg; replace Array<out Foo>? with Array<Foo>
             JetType varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(originalType);
-            return new VarargCheckResult(KotlinBuiltIns.getInstance().getArrayType(varargElementType), true);
+            return new VarargCheckResult(getArrayType(varargElementType, Variance.INVARIANT), true);
         }
         else if (someSupersNotVararg && originalVarargElementType != null) {
-            assert KotlinBuiltIns.getInstance().isArray(originalType);
+            assert isArrayType(originalType);
 
             // convert to non-vararg; replace Array<Foo> with Array<out Foo>?
-            return new VarargCheckResult(
-                    TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(Variance.OUT_VARIANCE, originalVarargElementType)),
-                    false);
+            return new VarargCheckResult(TypeUtils.makeNullable(getArrayType(originalVarargElementType, Variance.OUT_VARIANCE)), false);
         }
 
         return new VarargCheckResult(originalType, originalVarargElementType != null);
@@ -519,6 +517,23 @@ public class SignaturesPropagationData {
             }
         }
         return classifier;
+    }
+
+    private static boolean isArrayType(@NotNull JetType type) {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        return builtIns.isArray(type) || builtIns.isPrimitiveArray(type);
+    }
+
+    @NotNull
+    private static JetType getArrayType(@NotNull JetType elementType, @NotNull Variance projectionKind) {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        JetType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+        if (primitiveArrayType != null) {
+            return primitiveArrayType;
+        }
+        else {
+            return builtIns.getArrayType(projectionKind, elementType);
+        }
     }
 
     private static class VarargCheckResult {

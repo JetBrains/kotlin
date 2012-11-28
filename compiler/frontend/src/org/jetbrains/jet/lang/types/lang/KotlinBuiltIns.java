@@ -726,14 +726,13 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getArrayElementType(@NotNull JetType arrayType) {
-        // make non-null?
         if (arrayType.getConstructor().getDeclarationDescriptor() == getArray()) {
             if (arrayType.getArguments().size() != 1) {
                 throw new IllegalStateException();
             }
             return arrayType.getArguments().get(0).getType();
         }
-        JetType primitiveType = jetArrayTypeToPrimitiveJetType.get(arrayType);
+        JetType primitiveType = jetArrayTypeToPrimitiveJetType.get(TypeUtils.makeNotNullable(arrayType));
         if (primitiveType == null) {
             throw new IllegalStateException("not array: " + arrayType);
         }
@@ -821,6 +820,10 @@ public class KotlinBuiltIns {
 
     public boolean isArray(@NotNull JetType type) {
         return getArray().equals(type.getConstructor().getDeclarationDescriptor());
+    }
+
+    public boolean isPrimitiveArray(@NotNull JetType type) {
+        return jetArrayTypeToPrimitiveJetType.containsKey(TypeUtils.makeNotNullable(type));
     }
 
     // Functions

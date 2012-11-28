@@ -471,9 +471,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVararg.java");
                 }
                 
+                @TestMetadata("InheritNotVarargInteger.java")
+                public void testInheritNotVarargInteger() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVarargInteger.java");
+                }
+                
                 @TestMetadata("InheritNotVarargNotNull.java")
                 public void testInheritNotVarargNotNull() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.java");
+                }
+                
+                @TestMetadata("InheritNotVarargPrimitive.java")
+                public void testInheritNotVarargPrimitive() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritNotVarargPrimitive.java");
                 }
                 
                 @TestMetadata("InheritNullability.java")
@@ -496,9 +506,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVararg.java");
                 }
                 
+                @TestMetadata("InheritVarargInteger.java")
+                public void testInheritVarargInteger() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargInteger.java");
+                }
+                
                 @TestMetadata("InheritVarargNotNull.java")
                 public void testInheritVarargNotNull() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.java");
+                }
+                
+                @TestMetadata("InheritVarargPrimitive.java")
+                public void testInheritVarargPrimitive() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.java");
                 }
                 
                 @TestMetadata("MutableToReadOnly.java")
