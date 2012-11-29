@@ -1,0 +1,8 @@
+namespace test
+
+public final class test.UnboundWildcard : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.UnboundWildcard
+    public final fun foo(): test.UnboundWildcard.MyClass<out jet.CharSequence?>?
+    public abstract trait test.UnboundWildcard.MyClass</*0*/ T : jet.CharSequence?> : java.lang.Object {
+    }
+}

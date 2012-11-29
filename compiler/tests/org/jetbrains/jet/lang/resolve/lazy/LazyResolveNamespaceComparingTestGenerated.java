@@ -1039,6 +1039,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestSinglePackage("compiler/testData/loadJava/TwoFields.kt");
         }
         
+        @TestMetadata("UnboundWildcard.kt")
+        public void testUnboundWildcard() throws Exception {
+            doTestSinglePackage("compiler/testData/loadJava/UnboundWildcard.kt");
+        }
+        
         @TestMetadata("compiler/testData/loadJava/annotation")
         public static class Annotation extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInAnnotation() throws Exception {

@@ -149,6 +149,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         doTest("compiler/testData/loadJava/TwoFields.java");
     }
     
+    @TestMetadata("UnboundWildcard.java")
+    public void testUnboundWildcard() throws Exception {
+        doTest("compiler/testData/loadJava/UnboundWildcard.java");
+    }
+    
     @TestMetadata("compiler/testData/loadJava/annotation")
     public static class Annotation extends AbstractLoadJavaTest {
         public void testAllFilesPresentInAnnotation() throws Exception {
