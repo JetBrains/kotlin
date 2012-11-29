@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
     static {
         CompilerConfiguration config = new CompilerConfiguration();
 
-        config.add(JVMConfigurationKeys.CLASSPATH_KEY, JavaToKotlinTranslator.findRtJar());
+        config.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
         File annotations = JavaToKotlinTranslator.findAnnotations();
         if (annotations != null && annotations.exists()) {
             config.add(JVMConfigurationKeys.CLASSPATH_KEY, annotations);
@@ -74,9 +75,9 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
         if (!kotlinFile.exists()) {
             FileUtil.writeToFile(kotlinFile, "");
         }
-        final String expected = FileUtil.loadFile(kotlinFile);
+        final String expected = FileUtil.loadFile(kotlinFile, true);
         final File javaFile = new File(javaPath);
-        final String javaCode = FileUtil.loadFile(javaFile);
+        final String javaCode = FileUtil.loadFile(javaFile, true);
 
         String actual = "";
         String parentFileName = javaFile.getParentFile().getName();

@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="j2k" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="frontend" scope="TEST" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>
 
