@@ -1200,6 +1200,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/PropertySimpleType.kt");
             }
             
+            @TestMetadata("StarProjection.kt")
+            public void testStarProjection() throws Exception {
+                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/StarProjection.kt");
+            }
+            
             @TestMetadata("compiler/testData/loadJava/kotlinSignature/error")
             public static class Error extends AbstractLazyResolveNamespaceComparingTest {
                 @TestMetadata("AddingNullability.kt")

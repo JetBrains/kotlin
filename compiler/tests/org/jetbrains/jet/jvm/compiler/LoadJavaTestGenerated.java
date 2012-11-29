@@ -310,6 +310,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTest("compiler/testData/loadJava/kotlinSignature/PropertySimpleType.java");
         }
         
+        @TestMetadata("StarProjection.java")
+        public void testStarProjection() throws Exception {
+            doTest("compiler/testData/loadJava/kotlinSignature/StarProjection.java");
+        }
+        
         @TestMetadata("compiler/testData/loadJava/kotlinSignature/error")
         public static class Error extends AbstractLoadJavaTest {
             @TestMetadata("AddingNullability.java")

@@ -118,11 +118,23 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
         List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
         for (int i = 0, size = arguments.size(); i < size; i++) {
-            JetTypeElement argumentAlternativeTypeElement = type.getTypeArgumentsAsTypes().get(i).getTypeElement();
+            JetTypeReference typeReference = type.getTypeArgumentsAsTypes().get(i);
+
+            if (typeReference == null) {
+                // star projection
+                assert type instanceof JetUserType
+                       && ((JetUserType) type).getTypeArguments().get(i).getProjectionKind() == JetProjectionKind.STAR;
+
+                altArguments.add(arguments.get(i));
+
+                continue;
+            }
+
+            JetTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
             assert argumentAlternativeTypeElement != null;
 
             TypeProjection argument = arguments.get(i);
-            JetType alternativeType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters);
+            JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters);
             Variance projectionKind = argument.getProjectionKind();
             Variance altProjectionKind;
             if (type instanceof JetUserType) {
@@ -135,18 +147,19 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                         altProjectionKind = Variance.OUT_VARIANCE;
                         break;
                     case STAR:
-                        throw new AlternativeSignatureMismatchException("Star projection is not available in alternative signatures");
+                        throw new IllegalStateException("star projection should have been processed above");
                     default:
                         altProjectionKind = Variance.INVARIANT;
                 }
                 if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
-                    throw new AlternativeSignatureMismatchException("Variance mismatch, actual: %s, in alternative signature: %s", projectionKind, altProjectionKind);
+                    throw new AlternativeSignatureMismatchException("Variance mismatch, actual: %s, in alternative signature: %s",
+                                                                    projectionKind, altProjectionKind);
                 }
             }
             else {
                 altProjectionKind = projectionKind;
             }
-            altArguments.add(new TypeProjection(altProjectionKind, alternativeType));
+            altArguments.add(new TypeProjection(altProjectionKind, alternativeArgumentType));
         }
 
         TypeConstructor typeConstructor;
