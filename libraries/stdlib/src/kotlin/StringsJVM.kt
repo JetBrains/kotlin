@@ -34,9 +34,9 @@ public inline fun String.toCharList(): List<Char> = toCharArray().toList()
 
 public inline fun String.format(format : String, vararg args : Any?) : String = java.lang.String.format(format, args)
 
-public inline fun String.split(regex : String) : Array<out String> = (this as java.lang.String).split(regex)
+public inline fun String.split(regex : String) : Array<String> = (this as java.lang.String).split(regex)
 
-public inline fun String.split(ch : Char) : Array<out String> = (this as java.lang.String).split(java.util.regex.Pattern.quote(ch.toString()))
+public inline fun String.split(ch : Char) : Array<String> = (this as java.lang.String).split(java.util.regex.Pattern.quote(ch.toString()))
 
 public inline fun String.substring(beginIndex : Int) : String = (this as java.lang.String).substring(beginIndex)
 
@@ -78,7 +78,7 @@ public inline fun String.replaceFirst(regex : String, replacement : String) : St
 
 public inline fun String.charAt(index : Int) : Char = (this as java.lang.String).charAt(index)
 
-public inline fun String.split(regex : String, limit : Int) : Array<out String> = (this as java.lang.String).split(regex, limit)
+public inline fun String.split(regex : String, limit : Int) : Array<String> = (this as java.lang.String).split(regex, limit)
 
 public inline fun String.codePointAt(index : Int) : Int = (this as java.lang.String).codePointAt(index)
 

@@ -81,12 +81,12 @@
   </item>
   <item name='java.util.ArrayList java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : Array&lt;out Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;out T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList java.util.Iterator&lt;E&gt; iterator()'>
@@ -169,7 +169,7 @@
   </item>
   <item name='java.util.List T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;out T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.HashSet boolean add(E)'>
@@ -219,7 +219,7 @@
   </item>
   <item name='java.util.Collection T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;out T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Map.Entry K getKey()'>
@@ -304,7 +304,7 @@
   </item>
   <item name='java.util.Set T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;out T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean add(E)'>
@@ -339,12 +339,12 @@
   </item>
   <item name='java.util.AbstractCollection java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : Array&lt;out Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;out T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Enumeration E nextElement()'>
@@ -554,12 +554,12 @@
   </item>
   <item name='java.util.LinkedList java.lang.Object[] toArray()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun toArray() : Array&lt;out Any?&gt;&quot;"/>
+      <val name="value" val="&quot;fun toArray() : Array&lt;Any?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList T[] toArray(T[])'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;out T&gt;&quot;"/>
+      <val name="value" val="&quot;fun &lt;T&gt; toArray(a : Array&lt;out T&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Iterator E next()'>
@@ -1102,7 +1102,7 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun &lt;T, U&gt; copyOf(original : Array&lt;out U&gt;, newLength : Int, newType : Class&lt;out Array&lt;out T&gt;&gt;) : Array&lt;out T&gt;&quot;"/>
+           val="&quot;fun &lt;T, U&gt; copyOf(original : Array&lt;out U&gt;, newLength : Int, newType : Class&lt;out Array&lt;T&gt;&gt;) : Array&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Arrays byte[] copyOf(byte[], int)'>
@@ -1157,7 +1157,7 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
-               val="&quot;fun &lt;T&gt; copyOfRange(original : Array&lt;out T&gt;, from : Int, to : Int) : Array&lt;out T&gt;&quot;"/>
+               val="&quot;fun &lt;T&gt; copyOfRange(original : Array&lt;out T&gt;, from : Int, to : Int) : Array&lt;T&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.util.Arrays T[] copyOfRange(T[], int, int) 0'>
@@ -1167,7 +1167,7 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
-               val="&quot;fun &lt;T, U&gt; copyOfRange(original : Array&lt;out U&gt;, from : Int, to : Int, newType : Class&lt;out Array&lt;out T&gt;&gt;) : Array&lt;out T&gt;&quot;"/>
+               val="&quot;fun &lt;T, U&gt; copyOfRange(original : Array&lt;out U&gt;, from : Int, to : Int, newType : Class&lt;out Array&lt;T&gt;&gt;) : Array&lt;T&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.util.Arrays T[] copyOfRange(U[], int, int, java.lang.Class&lt;? extends T[]&gt;) 0'>
@@ -1227,7 +1227,7 @@
   <item name='java.util.Arrays T[] copyOf(T[], int)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun &lt;T&gt; copyOf(original : Array&lt;out T&gt;, newLength : Int) : Array&lt;out T?&gt;&quot;"/>
+           val="&quot;fun &lt;T&gt; copyOf(original : Array&lt;out T&gt;, newLength : Int) : Array&lt;T?&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Arrays java.lang.String toString(long[]) 0'>

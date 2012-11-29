@@ -9,7 +9,6 @@ import java.util.ArrayList
 import java.util.TreeMap
 import org.w3c.dom.*
 import org.w3c.dom.events.*
-import java.lang.reflect.*
 
 /**
 * This tool generates JavaScript stubs for classes available in the JDK which are already available in the browser environment
@@ -140,7 +139,7 @@ import js.noImpl
                     }
                 }
                 for (method in validMethods) {
-                    val parameterTypes = method.getParameterTypes()!! as jet.Array<Class<out Any?>?>
+                    val parameterTypes = method.getParameterTypes()!!
 
                     // TODO in java 7 its not easy with reflection to get the parameter argument name...
                     var counter = 0
@@ -149,7 +148,7 @@ import js.noImpl
                     println("    public fun ${method.getName()}($parameters): $returnType = js.noImpl")
                 }
             }
-            val fields = klass.getDeclaredFields() as jet.Array<Field>
+            val fields = klass.getDeclaredFields()
             if (fields != null) {
                 if (fields.notEmpty()) {
                     println("")

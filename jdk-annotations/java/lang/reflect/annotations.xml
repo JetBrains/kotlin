@@ -1,4 +1,10 @@
 <root>
+  <item name='java.lang.reflect.GenericDeclaration java.lang.reflect.TypeVariable&lt;?&gt;[] getTypeParameters()'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun getTypeParameters() : Array&lt;out TypeVariable&lt;out GenericDeclaration?&gt;?&gt;?&quot;"/>
+    </annotation>
+  </item>
   <!-- java.lang.reflect.AnnotatedElement -->
   <item
       name='java.lang.reflect.AnnotatedElement boolean isAnnotationPresent(java.lang.Class&lt;? extends java.lang.annotation.Annotation&gt;) 0'>
@@ -153,7 +159,7 @@
   <!-- java.lang.reflect.Method -->
   <item name='java.lang.reflect.Method java.lang.annotation.Annotation[][] getParameterAnnotations()'>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getParameterAnnotations() : Array&lt;out Array&lt;out Annotation&gt;&gt;&quot;"/>
+          <val name="value" val="&quot;fun getParameterAnnotations() : Array&lt;Array&lt;Annotation&gt;&gt;&quot;"/>
       </annotation>
   </item>
 </root>

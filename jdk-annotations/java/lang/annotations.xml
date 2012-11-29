@@ -428,7 +428,7 @@
   <item name='java.lang.Thread java.lang.StackTraceElement[] getStackTrace()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun getStackTrace() : Array&lt;out StackTraceElement&gt;&quot;"/>
+      <val name="value" val="&quot;fun getStackTrace() : Array&lt;StackTraceElement&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.lang.Thread java.util.Map&lt;java.lang.Thread,java.lang.StackTraceElement[]&gt; getAllStackTraces()'>
@@ -637,7 +637,7 @@
   <item name='java.lang.String java.lang.String[] split(java.lang.String, int)'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun split(regex : String, limit : Int) : Array&lt;out String&gt;&quot;"/>
+          <val name="value" val="&quot;fun split(regex : String, limit : Int) : Array&lt;String&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.String java.lang.String[] split(java.lang.String, int) 0'>
@@ -649,7 +649,7 @@
   <item name='java.lang.String java.lang.String[] split(java.lang.String)'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun split(regex : String) : Array&lt;out String&gt;&quot;"/>
+          <val name="value" val="&quot;fun split(regex : String) : Array&lt;String&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.String java.lang.String toLowerCase(java.util.Locale) 0'>
@@ -823,24 +823,24 @@
   <item name='java.lang.Class java.lang.Class&lt;?&gt;[] getClasses()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getClasses() : Array&lt;out Class&lt;out Any?&gt;&gt;&quot;"/>
+          <val name="value" val="&quot;fun getClasses() : Array&lt;Class&lt;out Any?&gt;&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Field[] getFields()'>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getFields() : Array&lt;out Field&gt;&quot;"/>
+          <val name="value" val="&quot;fun getFields() : Array&lt;Field&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Method[] getMethods()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getMethods() : Array&lt;out Method&gt;&quot;"/>
+          <val name="value" val="&quot;fun getMethods() : Array&lt;Method&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Constructor&lt;?&gt;[] getConstructors()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getConstructors() : Array&lt;out Constructor&lt;out Any?&gt;&gt;&quot;"/>
+          <val name="value" val="&quot;fun getConstructors() : Array&lt;Constructor&lt;out Any?&gt;&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Field getField(java.lang.String)'>
@@ -863,26 +863,26 @@
   <item name='java.lang.Class java.lang.Class&lt;?&gt;[] getDeclaredClasses()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getDeclaredClasses() : Array&lt;out Class&lt;out Any?&gt;&gt;&quot;"/>
+          <val name="value" val="&quot;fun getDeclaredClasses() : Array&lt;Class&lt;out Any?&gt;&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Field[] getDeclaredFields()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getDeclaredFields() : Array&lt;out Field&gt;&quot;"/>
+          <val name="value" val="&quot;fun getDeclaredFields() : Array&lt;Field&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Method[] getDeclaredMethods()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getDeclaredMethods() : Array&lt;out Method&gt;&quot;"/>
+          <val name="value" val="&quot;fun getDeclaredMethods() : Array&lt;Method&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Constructor&lt;?&gt;[] getDeclaredConstructors()'>
       <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
-               val="&quot;fun getDeclaredConstructors() : Array&lt;out Constructor&lt;out Any?&gt;&gt;&quot;"/>
+               val="&quot;fun getDeclaredConstructors() : Array&lt;Constructor&lt;out Any?&gt;&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.reflect.Field getDeclaredField(java.lang.String)'>
@@ -920,7 +920,7 @@
   <item name='java.lang.Class T[] getEnumConstants()'>
       <annotation name='org.jetbrains.annotations.Nullable'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-          <val name="value" val="&quot;fun getEnumConstants() : Array&lt;out T&gt;?&quot;"/>
+          <val name="value" val="&quot;fun getEnumConstants() : Array&lt;T&gt;?&quot;"/>
       </annotation>
   </item>
   <item name='java.lang.Class java.lang.Class&lt;? extends U&gt; asSubclass(java.lang.Class&lt;U&gt;)'>
