@@ -132,8 +132,10 @@ public final class LoadDescriptorUtil {
     @NotNull
     public static NamespaceDescriptor analyzeKotlinAndLoadTestNamespace(@NotNull File ktFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind) throws Exception {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable, configurationKind);
-        //noinspection ConstantConditions
-        return fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
+        NamespaceDescriptor namespace =
+                fileAndExhaust.getExhaust().getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, TEST_PACKAGE_FQNAME);
+        assert namespace != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
+        return namespace;
     }
 
     private static class JetFileAndExhaust {
@@ -142,7 +144,7 @@ public final class LoadDescriptorUtil {
         public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind)
                 throws IOException {
             JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            JetFile jetFile = createFile(jetCoreEnvironment.getProject(), FileUtil.loadFile(kotlinFile, true));
+            JetFile jetFile = createFile(jetCoreEnvironment.getProject(), kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true));
             AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                     jetFile, Collections.<AnalyzerScriptParameter>emptyList());
             return new JetFileAndExhaust(jetFile, exhaust);

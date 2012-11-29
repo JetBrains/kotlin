@@ -39,7 +39,7 @@ public interface DiagnosticHolder {
                 PsiFile psiFile = diagnostic.getPsiFile();
                 List<TextRange> textRanges = diagnostic.getTextRanges();
                 String diagnosticText = DefaultErrorMessages.RENDERER.render(diagnostic);
-                throw new IllegalStateException(diagnostic.getFactory().getName() + ": " + diagnosticText + " " + psiFile.getName() + " " + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
+                throw new IllegalStateException(diagnostic.getFactory().getName() + ": " + diagnosticText + " " + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
             }
         }
     };
