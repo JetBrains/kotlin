@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.CollectionClassMapping;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
@@ -37,6 +36,9 @@ import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getVarargParameterType;
 
 public class SignaturesPropagationData {
     private final List<TypeParameterDescriptor> modifiedTypeParameters;
@@ -210,8 +212,8 @@ public class SignaturesPropagationData {
         Collections.sort(superFunctions, new Comparator<FunctionDescriptor>() {
             @Override
             public int compare(FunctionDescriptor fun1, FunctionDescriptor fun2) {
-                FqNameUnsafe fqName1 = DescriptorUtils.getFQName(fun1.getContainingDeclaration());
-                FqNameUnsafe fqName2 = DescriptorUtils.getFQName(fun2.getContainingDeclaration());
+                FqNameUnsafe fqName1 = getFQName(fun1.getContainingDeclaration());
+                FqNameUnsafe fqName2 = getFQName(fun2.getContainingDeclaration());
                 return fqName1.getFqName().compareTo(fqName2.getFqName());
             }
         });
@@ -244,13 +246,14 @@ public class SignaturesPropagationData {
 
             // convert to vararg; replace Array<out Foo>? with Array<Foo>
             JetType varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(originalType);
-            return new VarargCheckResult(getArrayType(varargElementType, Variance.INVARIANT), true);
+            return new VarargCheckResult(getVarargParameterType(varargElementType), true);
         }
         else if (someSupersNotVararg && originalVarargElementType != null) {
             assert isArrayType(originalType);
 
             // convert to non-vararg; replace Array<Foo> with Array<out Foo>?
-            return new VarargCheckResult(TypeUtils.makeNullable(getArrayType(originalVarargElementType, Variance.OUT_VARIANCE)), false);
+            return new VarargCheckResult(TypeUtils.makeNullable(getVarargParameterType(originalVarargElementType, Variance.OUT_VARIANCE)),
+                                         false);
         }
 
         return new VarargCheckResult(originalType, originalVarargElementType != null);
@@ -522,18 +525,6 @@ public class SignaturesPropagationData {
     private static boolean isArrayType(@NotNull JetType type) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         return builtIns.isArray(type) || builtIns.isPrimitiveArray(type);
-    }
-
-    @NotNull
-    private static JetType getArrayType(@NotNull JetType elementType, @NotNull Variance projectionKind) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        JetType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
-        if (primitiveArrayType != null) {
-            return primitiveArrayType;
-        }
-        else {
-            return builtIns.getArrayType(projectionKind, elementType);
-        }
     }
 
     private static class VarargCheckResult {

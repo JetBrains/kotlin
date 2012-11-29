@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -390,5 +391,22 @@ public class DescriptorUtils {
     public static boolean isExternallyAccessible(PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.getVisibility() != Visibilities.PRIVATE || isClassObject(propertyDescriptor.getContainingDeclaration())
                || propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+    }
+
+    @NotNull
+    public static JetType getVarargParameterType(@NotNull JetType elementType) {
+        return getVarargParameterType(elementType, Variance.INVARIANT);
+    }
+
+    @NotNull
+    public static JetType getVarargParameterType(@NotNull JetType elementType, @NotNull Variance projectionKind) {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        JetType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+        if (primitiveArrayType != null) {
+            return primitiveArrayType;
+        }
+        else {
+            return builtIns.getArrayType(projectionKind, elementType);
+        }
     }
 }

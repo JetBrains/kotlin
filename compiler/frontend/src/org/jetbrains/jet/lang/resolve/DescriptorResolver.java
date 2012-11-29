@@ -474,7 +474,7 @@ public class DescriptorResolver {
         JetType variableType = type;
         if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
             varargElementType = type;
-            variableType = getVarargParameterType(type);
+            variableType = DescriptorUtils.getVarargParameterType(type);
         }
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
@@ -489,16 +489,6 @@ public class DescriptorResolver {
 
         trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
         return valueParameterDescriptor;
-    }
-
-    private JetType getVarargParameterType(JetType type) {
-        JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(type);
-        if (arrayType != null) {
-            return arrayType;
-        }
-        else {
-            return KotlinBuiltIns.getInstance().getArrayType(type);
-        }
     }
 
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForCallableDescriptor(
@@ -705,7 +695,7 @@ public class DescriptorResolver {
             type = ErrorUtils.createErrorType("Annotation is absent");
         }
         if (parameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
-            return getVarargParameterType(type);
+            return DescriptorUtils.getVarargParameterType(type);
         }
         return type;
     }
