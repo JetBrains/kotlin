@@ -160,6 +160,15 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
         return hasModifier(JetTokens.ANNOTATION_KEYWORD);
     }
 
+    public boolean isInner() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.isInner();
+        }
+
+        return hasModifier(JetTokens.INNER_KEYWORD);
+    }
+
     @NotNull
     @Override
     public IStubElementType getElementType() {

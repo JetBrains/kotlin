@@ -55,7 +55,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         FqName fqName = JetPsiUtil.getFQName(psi);
         boolean isEnumEntry = psi instanceof JetEnumEntry;
         return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, fqName != null ? fqName.getFqName() : null, psi.getName(),
-                                       psi.getSuperNames(), psi.isTrait(), psi.isEnum(), isEnumEntry, psi.isAnnotation());
+                                       psi.getSuperNames(), psi.isTrait(), psi.isEnum(), isEnumEntry, psi.isAnnotation(), psi.isInner());
     }
 
     @Override
@@ -66,6 +66,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         dataStream.writeBoolean(stub.isEnumClass());
         dataStream.writeBoolean(stub.isEnumEntry());
         dataStream.writeBoolean(stub.isAnnotation());
+        dataStream.writeBoolean(stub.isInner());
 
         List<String> superNames = stub.getSuperNames();
         dataStream.writeVarInt(superNames.size());
@@ -82,6 +83,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         boolean isEnumClass = dataStream.readBoolean();
         boolean isEnumEntry = dataStream.readBoolean();
         boolean isAnnotation = dataStream.readBoolean();
+        boolean isInner = dataStream.readBoolean();
 
         int superCount = dataStream.readVarInt();
         StringRef[] superNames = StringRef.createArray(superCount);
@@ -89,7 +91,8 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
             superNames[i] = dataStream.readName();
         }
 
-        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, qualifiedName, name, superNames, isTrait, isEnumClass, isEnumEntry, isAnnotation);
+        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, qualifiedName, name, superNames,
+                                       isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner);
     }
 
     @Override

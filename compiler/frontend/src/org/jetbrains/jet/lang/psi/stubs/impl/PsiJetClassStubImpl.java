@@ -38,6 +38,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     private final boolean isEnumClass;
     private final boolean isEnumEntry;
     private final boolean isAnnotation;
+    private final boolean isInner;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
@@ -45,9 +46,9 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             @Nullable final String qualifiedName,
             String name,
             List<String> superNames,
-            boolean isTrait, boolean isEnumClass, boolean isEnumEntry, boolean isAnnotation) {
+            boolean isTrait, boolean isEnumClass, boolean isEnumEntry, boolean isAnnotation, boolean isInner) {
         this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames),
-             isTrait, isEnumClass, isEnumEntry, isAnnotation);
+             isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner);
     }
 
     public PsiJetClassStubImpl(
@@ -59,7 +60,8 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             boolean isTrait,
             boolean isEnumClass,
             boolean isEnumEntry,
-            boolean isAnnotation) {
+            boolean isAnnotation,
+            boolean isInner) {
         super(parent, type);
         this.qualifiedName = qualifiedName;
         this.name = name;
@@ -68,6 +70,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
         this.isEnumClass = isEnumClass;
         this.isEnumEntry = isEnumEntry;
         this.isAnnotation = isAnnotation;
+        this.isInner = isInner;
     }
 
     private static StringRef[] wrapStrings(List<String> names) {
@@ -101,6 +104,11 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     @Override
     public boolean isEnumEntry() {
         return isEnumEntry;
+    }
+    
+    @Override
+    public boolean isInner() {
+        return isInner;
     }
 
     @Override
@@ -137,6 +145,10 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
 
         if (isAnnotation()) {
             builder.append("isAnnotation ");
+        }
+
+        if (isInner()) {
+            builder.append("inner ");
         }
 
         builder.append("name=").append(getName());

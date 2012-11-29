@@ -155,6 +155,15 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
     }
 
+    public void testInnerClass() {
+        doBuildTest("class A { inner class B { } }",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
+                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
+                    "    CLASS:PsiJetClassStubImpl[inner name=B fqn=A.B superNames=[]]\n" +
+                    "      TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n");
+    }
+
     public void testNamedObject() {
         doBuildTest("object Test {}",
                     "PsiJetFileStubImpl[package=]\n" +
