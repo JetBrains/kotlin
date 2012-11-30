@@ -1029,6 +1029,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestSinglePackage("compiler/testData/loadJava/MyException.kt");
         }
         
+        @TestMetadata("RemoveRedundantProjectionKind.kt")
+        public void testRemoveRedundantProjectionKind() throws Exception {
+            doTestSinglePackage("compiler/testData/loadJava/RemoveRedundantProjectionKind.kt");
+        }
+        
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             doTestSinglePackage("compiler/testData/loadJava/Simple.kt");

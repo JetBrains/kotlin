@@ -125,7 +125,6 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
 
     @Override
     public Variance getVariance() {
-        checkInitialized();
         return variance;
     }
 

@@ -3,7 +3,7 @@ package test
 import java.util.*
 
 public open class WrongTypeVariance : Object() {
-    public open fun copy(p0 : List<out jet.Number?>?, p1 : List<out jet.Number?>?) : MutableList<jet.Number?>? {
+    public open fun copy(p0 : Array<out Number?>?, p1 : Array<out Number?>?) : MutableList<Number?>? {
         throw UnsupportedOperationException()
     }
 }

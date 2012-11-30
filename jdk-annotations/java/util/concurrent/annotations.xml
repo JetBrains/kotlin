@@ -112,14 +112,14 @@
     <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;) 0'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
             <val name="value"
-                 val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;out Callable&lt;T&gt;&gt;) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
+                 val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;Callable&lt;T&gt;&gt;) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
         </annotation>
     </item>
     <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;, long, java.util.concurrent.TimeUnit)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
             <val name="value"
-                 val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;out Callable&lt;T&gt;&gt;, timeout : Long, unit : TimeUnit) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
+                 val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;Callable&lt;T&gt;&gt;, timeout : Long, unit : TimeUnit) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
         </annotation>
     </item>
     <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;, long, java.util.concurrent.TimeUnit) 0'>
@@ -134,14 +134,14 @@
     <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
             <val name="value"
-                 val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;out Callable&lt;T&gt;&gt;) : T?&quot;"/>
+                 val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;Callable&lt;T&gt;&gt;) : T?&quot;"/>
         </annotation>
     </item>
     <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;, long, java.util.concurrent.TimeUnit)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
-               val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;out Callable&lt;T&gt;&gt;, timeout : Long, unit : TimeUnit) : T&quot;"/>
+               val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;Callable&lt;T&gt;&gt;, timeout : Long, unit : TimeUnit) : T&quot;"/>
       </annotation>
     </item>
     <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;, long, java.util.concurrent.TimeUnit) 0'>
@@ -359,7 +359,7 @@
   <item name='java.util.concurrent.ExecutorService java.util.List&lt;java.util.concurrent.Future&lt;T&gt;&gt; invokeAll(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;)'>
       <annotation name='jet.runtime.typeinfo.KotlinSignature'>
           <val name="value"
-               val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;out Callable&lt;T&gt;&gt;) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
+               val="&quot;fun &lt;T&gt; invokeAll(tasks : Collection&lt;Callable&lt;T&gt;&gt;) : MutableList&lt;Future&lt;T&gt;&gt;&quot;"/>
       </annotation>
   </item>
   <item name='java.util.concurrent.CompletionService java.util.concurrent.Future&lt;V&gt; poll(long, java.util.concurrent.TimeUnit)'>

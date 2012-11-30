@@ -139,6 +139,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         doTest("compiler/testData/loadJava/MyException.java");
     }
     
+    @TestMetadata("RemoveRedundantProjectionKind.java")
+    public void testRemoveRedundantProjectionKind() throws Exception {
+        doTest("compiler/testData/loadJava/RemoveRedundantProjectionKind.java");
+    }
+    
     @TestMetadata("Simple.java")
     public void testSimple() throws Exception {
         doTest("compiler/testData/loadJava/Simple.java");

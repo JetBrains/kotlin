@@ -2,5 +2,5 @@ namespace test
 
 public open class test.WrongTypeParametersCount : java.lang.Object {
     public final /*constructor*/ fun <init>(): test.WrongTypeParametersCount
-    public open fun </*0*/ A : jet.Any?, /*1*/ B : jet.Any?>foo(/*0*/ p0: A?, /*1*/ p1: jet.List<out B>?): jet.Tuple0
+    public open fun </*0*/ A : jet.Any?, /*1*/ B : jet.Any?>foo(/*0*/ p0: A?, /*1*/ p1: jet.List<B>?): jet.Tuple0
 }

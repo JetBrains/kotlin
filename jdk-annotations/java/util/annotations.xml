@@ -11,7 +11,7 @@
   </item>
   <item name='java.util.AbstractList boolean addAll(int, java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractList E get(int)'>
@@ -56,12 +56,12 @@
   </item>
   <item name='java.util.ArrayList boolean addAll(java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList boolean addAll(int, java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.ArrayList E get(int)'>
@@ -104,17 +104,17 @@
   </item>
   <item name='java.util.List boolean addAll(java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean addAll(int, java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean containsAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List E get(int)'>
@@ -144,12 +144,12 @@
   </item>
   <item name='java.util.List boolean removeAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List boolean retainAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.List E set(int, E)'>
@@ -189,12 +189,12 @@
   </item>
   <item name='java.util.Collection boolean addAll(java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean containsAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection java.util.Iterator<E> iterator()'>
@@ -204,12 +204,12 @@
   </item>
   <item name='java.util.Collection boolean removeAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection boolean retainAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collection java.lang.Object[] toArray()'>
@@ -274,12 +274,12 @@
   </item>
   <item name='java.util.Set boolean addAll(java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean containsAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set java.util.Iterator<E> iterator()'>
@@ -289,12 +289,12 @@
   </item>
   <item name='java.util.Set boolean removeAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set boolean retainAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Set java.lang.Object[] toArray()'>
@@ -314,12 +314,12 @@
   </item>
   <item name='java.util.AbstractCollection boolean addAll(java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean containsAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun containsAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun containsAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection java.util.Iterator<E> iterator()'>
@@ -329,12 +329,12 @@
   </item>
   <item name='java.util.AbstractCollection boolean removeAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection boolean retainAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun retainAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun retainAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractCollection java.lang.Object[] toArray()'>
@@ -379,7 +379,7 @@
   </item>
   <item name='java.util.AbstractSet boolean removeAll(java.util.Collection<?>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun removeAll(c : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun removeAll(c : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Queue boolean add(E)'>
@@ -424,12 +424,12 @@
   </item>
   <item name='java.util.LinkedList boolean addAll(java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList boolean addAll(int, java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.LinkedList void addFirst(E)'>
@@ -709,7 +709,7 @@
   </item>
   <item name='java.util.AbstractSequentialList boolean addAll(int, java.util.Collection<? extends E>)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;out E&gt;) : Boolean&quot;"/>
+      <val name="value" val="&quot;fun addAll(index : Int, c : Collection&lt;E&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList E get(int)'>
@@ -1431,7 +1431,7 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun &lt;T: Comparable<in T>&gt; min(coll : Collection&lt;out T&gt;) : T&quot;"/>
+           val="&quot;fun &lt;T: Comparable<in T>&gt; min(coll : Collection&lt;T&gt;) : T&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections T min(java.util.Collection&lt;? extends T&gt;, java.util.Comparator&lt;? super T&gt;) 0'>
@@ -1444,7 +1444,7 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun &lt;T&gt; min(coll : Collection&lt;out T&gt;, comp : Comparator&lt;in T&gt;) : T&quot;"/>
+           val="&quot;fun &lt;T&gt; min(coll : Collection&lt;T&gt;, comp : Comparator&lt;in T&gt;) : T&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections T max(java.util.Collection&lt;? extends T&gt;) 0'>
@@ -1454,7 +1454,7 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun &lt;T: Comparable<in T>&gt; max(coll : Collection&lt;out T&gt;) : T&quot;"/>
+           val="&quot;fun &lt;T: Comparable<in T>&gt; max(coll : Collection&lt;T&gt;) : T&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections T max(java.util.Collection&lt;? extends T&gt;, java.util.Comparator&lt;? super T&gt;) 0'>
@@ -1467,7 +1467,7 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun &lt;T&gt; max(coll : Collection&lt;out T&gt;, comp : Comparator&lt;in T&gt;) : T&quot;"/>
+           val="&quot;fun &lt;T&gt; max(coll : Collection&lt;T&gt;, comp : Comparator&lt;in T&gt;) : T&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections int indexOfSubList(java.util.List&lt;?&gt;, java.util.List&lt;?&gt;) 0'>
@@ -1707,7 +1707,7 @@
   <item name='java.util.Collections java.util.Collection&lt;T&gt; unmodifiableCollection(java.util.Collection&lt;? extends T&gt;)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun &lt;T&gt; unmodifiableCollection(c : Collection&lt;out T&gt;) : MutableCollection&lt;T&gt;&quot;"/>
+           val="&quot;fun &lt;T&gt; unmodifiableCollection(c : Collection&lt;T&gt;) : MutableCollection&lt;T&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections java.util.Set&lt;T&gt; unmodifiableSet(java.util.Set&lt;? extends T&gt;)'>
@@ -1833,13 +1833,13 @@
   </item>
   <item name='java.util.Collections int frequency(java.util.Collection&lt;?&gt;, java.lang.Object)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun frequency(c : Collection&lt;out Any?&gt;, o : Any?) : Int&quot;"/>
+      <val name="value" val="&quot;fun frequency(c : Collection&lt;Any?&gt;, o : Any?) : Int&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections boolean disjoint(java.util.Collection&lt;?&gt;, java.util.Collection&lt;?&gt;)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value"
-           val="&quot;fun disjoint(c1 : Collection&lt;out Any?&gt;, c2 : Collection&lt;out Any?&gt;) : Boolean&quot;"/>
+           val="&quot;fun disjoint(c1 : Collection&lt;Any?&gt;, c2 : Collection&lt;Any?&gt;) : Boolean&quot;"/>
     </annotation>
   </item>
   <item name='java.util.Collections boolean addAll(java.util.Collection&lt;? super T&gt;, T...)'>
