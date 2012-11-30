@@ -38,7 +38,7 @@ public class PluginTestCaseBase {
     }
 
     public static Sdk jdkFromIdeaHome() {
-        Sdk sdk = new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK-1.7/jre", true);
+        Sdk sdk = new JavaSdkImpl().createJdk("JDK", "compiler/testData/mockJDK/jre", true);
         SdkModificator modificator = sdk.getSdkModificator();
         VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(ForTestPackJdkAnnotations.jdkAnnotationsForTests());
         assert file != null;

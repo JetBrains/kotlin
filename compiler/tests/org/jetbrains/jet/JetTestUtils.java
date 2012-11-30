@@ -220,11 +220,11 @@ public class JetTestUtils {
     }
 
     public static File findMockJdkRtJar() {
-        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
+        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
     }
 
     public static File getAnnotationsJar() {
-        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/annotations.jar");
+        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
     }
 
     public static void mkdirs(File file) throws IOException {
