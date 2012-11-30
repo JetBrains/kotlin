@@ -41,12 +41,12 @@ public class CollectionClassMapping extends JavaToKotlinClassMapBuilder {
     }
 
     @Override
-    void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
+    protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         // do nothing
     }
 
     @Override
-    void register(
+    protected void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull ClassDescriptor kotlinMutableDescriptor,

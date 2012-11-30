@@ -105,7 +105,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     }
 
     @Override
-    /*package*/ void register(
+    protected void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull Direction direction
@@ -116,7 +116,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     }
 
     @Override
-    /*package*/ void register(
+    protected void register(
             @NotNull Class<?> javaClass,
             @NotNull ClassDescriptor kotlinDescriptor,
             @NotNull ClassDescriptor kotlinMutableDescriptor,

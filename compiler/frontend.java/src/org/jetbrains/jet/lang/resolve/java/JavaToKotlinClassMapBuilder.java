@@ -34,7 +34,7 @@ public abstract class JavaToKotlinClassMapBuilder {
         BOTH
     }
 
-    /*package*/ void init() {
+    protected void init() {
         KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
 
         register(Object.class, KotlinBuiltIns.getInstance().getAny());
@@ -60,10 +60,10 @@ public abstract class JavaToKotlinClassMapBuilder {
     /*package*/ void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
         register(javaClass, kotlinDescriptor, Direction.BOTH);
     }
-    /*package*/ abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction);
+    protected abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction);
 
     /*package*/ void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor) {
          register(javaClass, kotlinDescriptor, kotlinMutableDescriptor, Direction.BOTH);
     }
-    /*package*/ abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor, @NotNull Direction direction);
+    protected abstract void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassDescriptor kotlinMutableDescriptor, @NotNull Direction direction);
 }
