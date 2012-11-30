@@ -142,15 +142,21 @@ public final class JavaFunctionResolver {
 
         final List<String> signatureErrors = Lists.newArrayList();
 
-        SignaturesPropagationData signaturesPropagationData =
-                new SignaturesPropagationData(returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
-        List<FunctionDescriptor> superFunctions = signaturesPropagationData.getSuperFunctions();
+        List<FunctionDescriptor> superFunctions;
+        if (ownerDescriptor instanceof ClassDescriptor) {
+            SignaturesPropagationData signaturesPropagationData =
+                    new SignaturesPropagationData(returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
+            superFunctions = signaturesPropagationData.getSuperFunctions();
 
-        returnType = signaturesPropagationData.getModifiedReturnType();
-        valueParameterDescriptors = signaturesPropagationData.getModifiedValueParameters();
-        methodTypeParameters = signaturesPropagationData.getModifiedTypeParameters();
+            returnType = signaturesPropagationData.getModifiedReturnType();
+            valueParameterDescriptors = signaturesPropagationData.getModifiedValueParameters();
+            methodTypeParameters = signaturesPropagationData.getModifiedTypeParameters();
 
-        signatureErrors.addAll(signaturesPropagationData.getSignatureErrors());
+            signatureErrors.addAll(signaturesPropagationData.getSignatureErrors());
+        }
+        else {
+            superFunctions = Collections.emptyList();
+        }
 
         // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =
