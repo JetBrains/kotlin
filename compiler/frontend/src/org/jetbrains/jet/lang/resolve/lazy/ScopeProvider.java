@@ -40,50 +40,95 @@ public class ScopeProvider {
         this.resolveSession = resolveSession;
     }
 
-    private final Map<JetFile, JetScope> fileScopeCache = new WeakHashMap<JetFile, JetScope>();
+    private final Map<JetFile, JetScope> fileScopeWithImportedClassesCache = new WeakHashMap<JetFile, JetScope>();
+    private final Map<JetFile, JetScope> fileScopeWithAllImportedCache = new WeakHashMap<JetFile, JetScope>();
 
-    // This scope does not contain imported functions
     @NotNull
-    public JetScope getFileScopeForDeclarationResolution(JetFile file) {
-        if (!fileScopeCache.containsKey(file)) {
-            // package
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header == null) {
-                throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
-            }
+    public JetScope getFileScopeWithImportedClasses(JetFile file) {
+        JetScope scope = fileScopeWithImportedClassesCache.get(file);
+        if (scope == null) {
+            scope = createFileScopeWithImportedClasses(file);
+            fileScopeWithImportedClassesCache.put(file, scope);
+        }
+        return scope;
+    }
 
-            FqName fqName = new FqName(header.getQualifiedName());
-            NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
+    @NotNull
+    public JetScope getFileScopeWithAllImported(JetFile file) {
+        JetScope scope = fileScopeWithAllImportedCache.get(file);
+        if (scope == null) {
+            scope = createFileScopeWithAllImported(file);
+            fileScopeWithAllImportedCache.put(file, scope);
+        }
+        return scope;
+    }
 
-            if (packageDescriptor == null) {
-                throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());
-            }
+    private JetScope createFileScopeWithImportedClasses(JetFile file) {
+        NamespaceDescriptor packageDescriptor = getFilePackageDescriptor(file);
 
-            WritableScope fileScope = new WritableScopeImpl(
-                    JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution");
+        WritableScope fileScope = new WritableScopeImpl(
+                JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for declaration resolution with only classes imported");
 
-            fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-            NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
-            if (rootPackageDescriptor == null) {
-                throw new IllegalStateException("Root package not found");
-            }
-
-            // Don't import twice
-            if (!packageDescriptor.getQualifiedName().equals(FqName.ROOT)) {
-                fileScope.importScope(rootPackageDescriptor.getMemberScope());
-            }
-
-            ImportsResolver.processImportsInFile(true, fileScope, Lists.newArrayList(file.getImportDirectives()),
-                                                 rootPackageDescriptor.getMemberScope(),
-                                                 resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
-                                                 resolveSession.getInjector().getQualifiedExpressionResolver());
-
-            fileScope.changeLockLevel(WritableScope.LockLevel.READING);
-            fileScopeCache.put(file, new ChainedScope(packageDescriptor, packageDescriptor.getMemberScope(), fileScope));
+        NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+        if (rootPackageDescriptor == null) {
+            throw new IllegalStateException("Root package not found");
         }
 
-        return fileScopeCache.get(file);
+        // Don't import twice
+        if (!packageDescriptor.getQualifiedName().equals(FqName.ROOT)) {
+            fileScope.importScope(rootPackageDescriptor.getMemberScope());
+        }
+
+        ImportsResolver.processImportsInFile(true, fileScope, Lists.newArrayList(file.getImportDirectives()),
+                                             rootPackageDescriptor.getMemberScope(),
+                                             resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
+                                             resolveSession.getInjector().getQualifiedExpressionResolver());
+
+        fileScope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        return new ChainedScope(packageDescriptor, packageDescriptor.getMemberScope(), fileScope);
+    }
+
+    private NamespaceDescriptor getFilePackageDescriptor(JetFile file) {
+        // package
+        JetNamespaceHeader header = file.getNamespaceHeader();
+        if (header == null) {
+            throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
+        }
+
+        FqName fqName = new FqName(header.getQualifiedName());
+        NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
+
+        if (packageDescriptor == null) {
+            throw new IllegalStateException("Package not found: " + fqName + " maybe the file is not in scope of this resolve session: " + file.getName());
+        }
+        return packageDescriptor;
+    }
+
+    private JetScope createFileScopeWithAllImported(JetFile file) {
+        JetScope scopeWithImportedClasses = getFileScopeWithImportedClasses(file);
+        NamespaceDescriptor packageDescriptor = getFilePackageDescriptor(file);
+
+        NamespaceDescriptor rootPackageDescriptor = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+        if (rootPackageDescriptor == null) {
+            throw new IllegalStateException("Root package not found");
+        }
+
+        WritableScope fileMemberScope = new WritableScopeImpl(
+                JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING, "File scope for members declaration resolution with non-class imports");
+
+        fileMemberScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+
+        ImportsResolver.processImportsInFile(false, fileMemberScope, Lists.newArrayList(file.getImportDirectives()),
+                                             rootPackageDescriptor.getMemberScope(),
+                                             resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
+                                             resolveSession.getInjector().getQualifiedExpressionResolver());
+
+        fileMemberScope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        return new ChainedScope(packageDescriptor, scopeWithImportedClasses, fileMemberScope);
     }
 
     @NotNull
@@ -95,7 +140,7 @@ public class ScopeProvider {
 
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(jetDeclaration, JetDeclaration.class);
         if (parentDeclaration == null) {
-            return getFileScopeForDeclarationResolution((JetFile) elementOfDeclaration.getContainingFile());
+            return getFileScopeWithAllImported((JetFile) elementOfDeclaration.getContainingFile());
         }
 
         assert jetDeclaration != null : "Can't happen because of getParentOfType(null, ?) == null";
