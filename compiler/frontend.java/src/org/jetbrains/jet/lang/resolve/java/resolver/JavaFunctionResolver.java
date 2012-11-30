@@ -144,8 +144,8 @@ public final class JavaFunctionResolver {
 
         List<FunctionDescriptor> superFunctions;
         if (ownerDescriptor instanceof ClassDescriptor) {
-            SignaturesPropagationData signaturesPropagationData =
-                    new SignaturesPropagationData(returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
+            SignaturesPropagationData signaturesPropagationData = new SignaturesPropagationData(
+                    (ClassDescriptor) ownerDescriptor, returnType, valueParameterDescriptors, methodTypeParameters, method, trace);
             superFunctions = signaturesPropagationData.getSuperFunctions();
 
             returnType = signaturesPropagationData.getModifiedReturnType();
@@ -213,6 +213,9 @@ public final class JavaFunctionResolver {
             TypeSubstitutor substitutor = SubstitutionUtils.buildDeepSubstitutor(
                     ((ClassDescriptor) functionDescriptor.getContainingDeclaration()).getDefaultType());
             FunctionDescriptor superFunctionSubstituted = superFunction.substitute(substitutor);
+
+            assert superFunctionSubstituted != null :
+                    "Couldn't substitute super function: " + superFunction + ", substitutor = " + substitutor;
 
             OverrideCompatibilityInfo.Result overridableResult =
                     isOverridableBy(superFunctionSubstituted, functionDescriptor).getResult();

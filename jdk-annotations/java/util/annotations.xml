@@ -1,4 +1,10 @@
 <root>
+  <item name='java.util.Dictionary V put(K, V)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun put(key : K, value : V) : V?&quot;"/>
+    </annotation>
+  </item>
+
   <item name='java.util.AbstractList boolean add(E)'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
       <val name="value" val="&quot;fun add(e : E) : Boolean&quot;"/>
@@ -679,12 +685,12 @@
   </item>
   <item name='java.util.AbstractMap java.util.Set<java.util.Map.Entry<K,V>> entrySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun entrySet() : Set&lt;Map.Entry&lt;K, V&gt;&gt;&quot;"/>
+      <val name="value" val="&quot;fun entrySet() : MutableSet&lt;MutableMap.MutableEntry&lt;K, V&gt;&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractMap java.util.Set<K> keySet()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun keySet() : Set&lt;K&gt;&quot;"/>
+      <val name="value" val="&quot;fun keySet() : MutableSet&lt;K&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractMap V put(K, V)'>
@@ -699,7 +705,7 @@
   </item>
   <item name='java.util.AbstractMap java.util.Collection<V> values()'>
     <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun values() : Collection&lt;V&gt;&quot;"/>
+      <val name="value" val="&quot;fun values() : MutableCollection&lt;V&gt;&quot;"/>
     </annotation>
   </item>
   <item name='java.util.AbstractSequentialList void add(int, E)'>

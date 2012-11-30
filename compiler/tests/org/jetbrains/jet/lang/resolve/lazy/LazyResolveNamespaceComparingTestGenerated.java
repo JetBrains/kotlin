@@ -1539,6 +1539,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/SameProjectionKind.kt");
                     }
                     
+                    @TestMetadata("SubclassOfCollection.kt")
+                    public void testSubclassOfCollection() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfCollection.kt");
+                    }
+                    
+                    @TestMetadata("SubclassOfMapEntry.kt")
+                    public void testSubclassOfMapEntry() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfMapEntry.kt");
+                    }
+                    
                     @TestMetadata("TwoSuperclassesConflictingProjectionKinds.kt")
                     public void testTwoSuperclassesConflictingProjectionKinds() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.kt");

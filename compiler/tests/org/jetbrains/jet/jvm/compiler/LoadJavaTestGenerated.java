@@ -649,6 +649,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SameProjectionKind.java");
                 }
                 
+                @TestMetadata("SubclassOfCollection.java")
+                public void testSubclassOfCollection() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfCollection.java");
+                }
+                
+                @TestMetadata("SubclassOfMapEntry.java")
+                public void testSubclassOfMapEntry() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfMapEntry.java");
+                }
+                
                 @TestMetadata("TwoSuperclassesConflictingProjectionKinds.java")
                 public void testTwoSuperclassesConflictingProjectionKinds() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.java");

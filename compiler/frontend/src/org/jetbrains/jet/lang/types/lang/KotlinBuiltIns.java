@@ -334,10 +334,15 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsScope().getClassifier(Name.identifier(simpleName));
+    public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
+        ClassifierDescriptor classifier = getBuiltInsScope().getClassifier(simpleName);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
+    }
+
+    @NotNull
+    private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
+        return getBuiltInClassByName(Name.identifier(simpleName));
     }
 
     // Special

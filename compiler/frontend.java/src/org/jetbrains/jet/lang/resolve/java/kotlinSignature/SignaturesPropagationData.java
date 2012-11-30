@@ -28,7 +28,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.CollectionClassMapping;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinMethodMap;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -50,13 +53,14 @@ public class SignaturesPropagationData {
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> autoTypeParameterToModified;
 
     public SignaturesPropagationData(
+            @NotNull ClassDescriptor containingClass,
             @NotNull JetType autoReturnType, // type built by JavaTypeTransformer from Java signature and @NotNull annotations
             @NotNull JavaDescriptorResolver.ValueParameterDescriptors autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
             @NotNull PsiMethodWrapper method,
             @NotNull BindingTrace trace
     ) {
-        superFunctions = getSuperFunctionsForMethod(method, trace);
+        superFunctions = getSuperFunctionsForMethod(method, trace, containingClass);
 
         autoTypeParameterToModified = SignaturesUtil.recreateTypeParametersAndReturnMapping(autoTypeParameters);
 
@@ -187,7 +191,8 @@ public class SignaturesPropagationData {
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
             @NotNull PsiMethodWrapper method,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull ClassDescriptor containingClass
     ) {
         List<FunctionDescriptor> superFunctions = Lists.newArrayList();
         for (HierarchicalMethodSignature superSignature : method.getPsiMethod().getHierarchicalMethodSignature().getSuperSignatures()) {
@@ -196,15 +201,22 @@ public class SignaturesPropagationData {
                 superFunctions.add(((FunctionDescriptor) superFun));
             }
             else {
-                // TODO assert is temporarily disabled
-                // It fails because of bug in IDEA on Mac: it adds invalid roots to JDK classpath and it leads to the problem that
-                // getHierarchicalMethodSignature() returns elements from invalid virtual files
+                String fqName = superSignature.getMethod().getContainingClass().getQualifiedName();
+                assert fqName != null;
+                Collection<ClassDescriptor> platformClasses = JavaToKotlinClassMap.getInstance().mapPlatformClass(new FqName(fqName));
+                if (platformClasses.isEmpty()) {
+                    // TODO assert is temporarily disabled
+                    // It fails because of bug in IDEA on Mac: it adds invalid roots to JDK classpath and it leads to the problem that
+                    // getHierarchicalMethodSignature() returns elements from invalid virtual files
 
-                // Function descriptor can't be find iff superclass is java.lang.Collection or similar (translated to jet.* collections)
-                //assert !JavaToKotlinClassMap.getInstance().mapPlatformClass(
-                //        new FqName(superSignature.getMethod().getContainingClass().getQualifiedName())).isEmpty():
-                //        "Can't find super function for " + method.getPsiMethod() + " defined in "
-                //        +  method.getPsiMethod().getContainingClass();
+                    //assert false : "Can't find super function for " + method.getPsiMethod() +
+                    //               " defined in " +  method.getPsiMethod().getContainingClass()
+                }
+                else {
+                    List<FunctionDescriptor> funsFromMap =
+                            JavaToKotlinMethodMap.INSTANCE.getFunctions(superSignature.getMethod(), containingClass);
+                    superFunctions.addAll(funsFromMap);
+                }
             }
         }
 

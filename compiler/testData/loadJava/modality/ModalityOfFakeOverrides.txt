@@ -18,7 +18,7 @@ public open class test.ModalityOfFakeOverrides : java.util.AbstractList<jet.Stri
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ p0: jet.Int): jet.MutableListIterator<jet.String>
     protected final override /*1*/ /*fake_override*/ var modCount: jet.Int
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ p0: jet.Any?): jet.Boolean
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ p0: jet.Int): jet.String?
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ p0: jet.Int): jet.String
     public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ p0: jet.Collection<jet.Any?>): jet.Boolean
     protected open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ p0: jet.Int, /*1*/ p1: jet.Int): jet.Tuple0
     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ p0: jet.Collection<jet.Any?>): jet.Boolean
