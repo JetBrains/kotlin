@@ -1,0 +1,4 @@
+namespace test
+
+internal final val fromImported: jet.Int
+internal final val normal: jet.Int
