@@ -64,4 +64,9 @@ public abstract class PsiMemberWrapper {
         }
         return signatureAnnotation;
     }
+
+    @Override
+    public String toString() {
+        return psiMember.getText();
+    }
 }
