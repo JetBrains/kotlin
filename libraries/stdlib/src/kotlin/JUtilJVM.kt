@@ -2,22 +2,31 @@ package kotlin
 
 import java.util.*
 
+/** Returns a new read-only list of given elements */
+public fun list<T>(vararg values: T): List<T> = arrayListOf(*values)
+
+/** Returns a new read-only set of given elements */
+public fun set<T>(vararg values: T): Set<T> = values.toCollection(LinkedHashSet<T>())
+
+/** Returns a new read-only map of given pairs, where the first value is the key, and the second is value */
+public fun map<K, V>(vararg values: Pair<K, V>): Map<K, V> = hashMapOf(*values)
+
 /** Returns a new ArrayList with a variable number of initial elements */
 public fun arrayListOf<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
 
-deprecated("Use arrayListOf() instead")
+deprecated("Use list(...) or arrayListOf(...) instead")
 public fun arrayList<T>(vararg values: T) : ArrayList<T> = arrayListOf(*values)
 
 /** Returns a new LinkedList with a variable number of initial elements */
 public fun linkedListOf<T>(vararg values: T) : LinkedList<T>  = values.toCollection(LinkedList<T>())
 
-deprecated("Use linkedListOf() instead")
+deprecated("Use list(...) or linkedListOf(...) instead")
 public fun linkedList<T>(vararg values: T) : LinkedList<T>  = linkedListOf(*values)
 
 /** Returns a new HashSet with a variable number of initial elements */
 public fun hashSetOf<T>(vararg values: T) : HashSet<T> = values.toCollection(HashSet<T>(values.size))
 
-deprecated("Use hashSetOf() instead")
+deprecated("Use set(...) or hashSetOf(...) instead")
 public fun hashSet<T>(vararg values: T) : HashSet<T> = hashSetOf(*values)
 
 /**
@@ -25,7 +34,7 @@ public fun hashSet<T>(vararg values: T) : HashSet<T> = hashSetOf(*values)
  */
 public fun sortedSetOf<T>(vararg values: T) : TreeSet<T> = values.toCollection(TreeSet<T>())
 
-deprecated("Use sortedSetOf() instead")
+deprecated("Use sortedSetOf(...) instead")
 public fun sortedSet<T>(vararg values: T) : TreeSet<T> = sortedSetOf(*values)
 
 /**
@@ -33,7 +42,7 @@ public fun sortedSet<T>(vararg values: T) : TreeSet<T> = sortedSetOf(*values)
  */
 public fun sortedSetOf<T>(comparator: Comparator<T>, vararg values: T) : TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
 
-deprecated("Use sortedSetOf() instead")
+deprecated("Use sortedSetOf(...) instead")
 public fun sortedSet<T>(comparator: Comparator<T>, vararg values: T) : TreeSet<T> = sortedSetOf(comparator, *values)
 
 /**
@@ -54,7 +63,7 @@ public fun <K,V> hashMapOf(vararg values: Pair<K,V>): HashMap<K,V> {
     return answer
 }
 
-deprecated("Use hashMapOf() instead")
+deprecated("Use map(...) or hashMapOf(...) instead")
 public fun <K,V> hashMap(vararg values: Pair<K,V>): HashMap<K,V> = hashMapOf(*values)
 
 /**
@@ -75,7 +84,7 @@ public fun <K,V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K,V> {
     return answer
 }
 
-deprecated("Use sortedMapOf() instead")
+deprecated("Use sortedMapOf(...) instead")
 public fun <K,V> sortedMap(vararg values: Pair<K, V>): SortedMap<K,V> = sortedMapOf(*values)
 
 /**
@@ -97,7 +106,7 @@ public fun <K,V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K,V> {
     return answer
 }
 
-deprecated("Use linkedMapOf() instead")
+deprecated("Use linkedMapOf(...) instead")
 public fun <K,V> linkedMap(vararg values: Pair<K, V>): LinkedHashMap<K,V> = linkedMapOf(*values)
 
 /** Returns the Set if its not null otherwise returns the empty set */
