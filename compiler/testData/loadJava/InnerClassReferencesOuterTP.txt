@@ -3,7 +3,7 @@ package test
 public open class InnerClassReferencesOuterTP</*0*/ P> : java.lang.Object {
     public constructor InnerClassReferencesOuterTP</*0*/ P>()
     
-    public open class Inner</*0*/ Q : P> : java.lang.Object {
+    public open inner class Inner</*0*/ Q : P> : java.lang.Object {
         public constructor Inner</*0*/ Q : P>()
     }
 }

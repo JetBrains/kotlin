@@ -3,8 +3,13 @@ package test
 public open class InnerClass : java.lang.Object {
     public constructor InnerClass()
     
-    public open class Inner : java.lang.Object {
+    public open inner class Inner : java.lang.Object {
         public constructor Inner()
         public open fun foo() : Unit
+    }
+    
+    public open class Nested : java.lang.Object {
+        public constructor Nested()
+        public open fun bar() : Unit
     }
 }

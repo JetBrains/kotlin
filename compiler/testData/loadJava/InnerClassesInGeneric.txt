@@ -3,11 +3,11 @@ package test
 public open class InnerClassesInGeneric</*0*/ P, /*1*/ Q> : java.lang.Object {
     public constructor InnerClassesInGeneric</*0*/ P, /*1*/ Q>()
     
-    public open class Inner : java.lang.Object {
+    public open inner class Inner : java.lang.Object {
         public constructor Inner()
     }
     
-    public open class Inner2 : test.InnerClassesInGeneric.Inner {
+    public open inner class Inner2 : test.InnerClassesInGeneric.Inner {
         public constructor Inner2()
         public open fun iterator() : jet.MutableIterator<P>?
     }

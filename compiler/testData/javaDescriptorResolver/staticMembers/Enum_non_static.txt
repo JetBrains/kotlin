@@ -19,7 +19,7 @@ public final enum class Enum : jet.Enum<test.Enum> {
         }
     }
     
-    public open class Inner : java.lang.Object {
+    public open inner class Inner : java.lang.Object {
         public constructor Inner()
         public/*package*/ open fun bar() : Unit
     }

@@ -1,6 +1,6 @@
 package test
 
 class Outer {
-    class Inner {
+    inner class Inner {
     }
 }

@@ -1,5 +1,5 @@
 package test
 
 class Outer() {
-    class Inner()
+    class Nested()
 }

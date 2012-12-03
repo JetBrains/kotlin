@@ -1,7 +1,7 @@
 package test
 
 class Outer() {
-    open class Inner1()
+    open inner class Inner1()
     
-    class Inner2() : Inner1()
+    inner class Inner2() : Inner1()
 }

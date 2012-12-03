@@ -130,11 +130,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTest("compiler/testData/loadKotlin/class/InheritTraitWithParam.kt");
         }
         
-        @TestMetadata("InnerClass.kt")
-        public void testInnerClass() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/InnerClass.kt");
-        }
-        
         @TestMetadata("InnerClassExtendInnerClass.kt")
         public void testInnerClassExtendInnerClass() throws Exception {
             doTest("compiler/testData/loadKotlin/class/InnerClassExtendInnerClass.kt");
@@ -158,6 +153,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("NamedObjectWithAnotherTopLevelProperty.kt")
         public void testNamedObjectWithAnotherTopLevelProperty() throws Exception {
             doTest("compiler/testData/loadKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
+        }
+        
+        @TestMetadata("NestedClass.kt")
+        public void testNestedClass() throws Exception {
+            doTest("compiler/testData/loadKotlin/class/NestedClass.kt");
         }
         
         @TestMetadata("Trait.kt")

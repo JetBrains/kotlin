@@ -325,6 +325,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderKeyword(keyword)).append(" ");
     }
 
+    private void renderInner(boolean isInner, @NotNull StringBuilder builder) {
+        if (!modifiers) return;
+        if (isInner) {
+            builder.append(renderKeyword("inner")).append(" ");
+        }
+    }
+
     private void renderModalityForCallable(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
         if (!(callable.getContainingDeclaration() instanceof NamespaceDescriptor) || callable.getModality() != Modality.FINAL) {
             renderModality(callable.getModality(), builder);
@@ -572,6 +579,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 || klass.getKind().isObject() && klass.getModality() == Modality.FINAL)) {
                 renderModality(klass.getModality(), builder);
             }
+            renderInner(klass.isInner(), builder);
             builder.append(renderKeyword(getClassKindPrefix(klass)));
         }
 

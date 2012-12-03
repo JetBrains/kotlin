@@ -1,6 +1,2 @@
 package InnerClass
 
-public open class Nested : java.lang.Object {
-    public constructor Nested()
-    public open fun bar() : Unit
-}

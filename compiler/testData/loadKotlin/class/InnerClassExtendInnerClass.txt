@@ -3,11 +3,11 @@ package test
 internal final class Outer {
     /*primary*/ public constructor Outer()
     
-    internal open class Inner1 {
+    internal open inner class Inner1 {
         /*primary*/ public constructor Inner1()
     }
     
-    internal final class Inner2 : test.Outer.Inner1 {
+    internal final inner class Inner2 : test.Outer.Inner1 {
         /*primary*/ public constructor Inner2()
     }
 }

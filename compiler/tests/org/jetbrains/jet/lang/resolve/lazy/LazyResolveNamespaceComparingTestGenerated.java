@@ -132,11 +132,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/InheritTraitWithParam.kt");
             }
             
-            @TestMetadata("InnerClass.kt")
-            public void testInnerClass() throws Exception {
-                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/InnerClass.kt");
-            }
-            
             @TestMetadata("InnerClassExtendInnerClass.kt")
             public void testInnerClassExtendInnerClass() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/InnerClassExtendInnerClass.kt");
@@ -160,6 +155,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("NamedObjectWithAnotherTopLevelProperty.kt")
             public void testNamedObjectWithAnotherTopLevelProperty() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
+            }
+            
+            @TestMetadata("NestedClass.kt")
+            public void testNestedClass() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/NestedClass.kt");
             }
             
             @TestMetadata("Trait.kt")
