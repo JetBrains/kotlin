@@ -39,7 +39,7 @@ public class OperatorConventionsTestGenerated extends AbstractCodegenTest {
         public void testAllFilesPresentInCompareTo() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/operatorConventions/compareTo"), "kt", true);
         }
-
+        
         @TestMetadata("comparable.kt")
         public void testComparable() throws Exception {
             doTest("compiler/testData/codegen/operatorConventions/compareTo/comparable.kt");
