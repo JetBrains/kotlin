@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 
 import java.util.Collection;
@@ -150,6 +151,13 @@ public class LabelResolver {
             assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
             context.trace.record(LABEL_TARGET, targetLabel, element);
             context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
+
+            if (declarationDescriptor instanceof ClassDescriptor) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                if (!DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, targetLabel, classDescriptor)) {
+                    return LabeledReceiverResolutionResult.labelResolutionFailed();
+                }
+            }
 
             return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
         }

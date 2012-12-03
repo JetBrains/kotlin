@@ -1,6 +1,6 @@
     class A(val a:Int) {
 
-      class B() {
+      inner class B() {
         val x = this@B : B
         val y = this@A : A
         val z = this : B

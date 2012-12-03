@@ -14,7 +14,7 @@
         `C`super<C>@A.bar()
     }
 
-    class B : T {
+    inner class B : T {
         fun test() {
             `T`super<T>.foo();
             `C`super<C>@A.bar()

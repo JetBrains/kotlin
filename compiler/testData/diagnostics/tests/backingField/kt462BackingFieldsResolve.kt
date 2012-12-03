@@ -109,7 +109,7 @@ class TestBackingFieldsVisibility() {
 
     val x = <!INACCESSIBLE_BACKING_FIELD!>$namespaceLevelVar<!>
 
-    class Inner() {
+    inner class Inner() {
         val z = this@TestBackingFieldsVisibility.$x
     }
 

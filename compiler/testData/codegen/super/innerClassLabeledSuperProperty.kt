@@ -11,7 +11,7 @@ class A : K() {
     override val foo = "A.foo"
     override fun bar() = "A.bar"
     
-    class B : K() {
+    inner class B : K() {
         override val foo = "B.foo"
         override fun bar() = "B.bar"
         

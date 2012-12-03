@@ -27,7 +27,7 @@ class A<E>() : C(), T {
         <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><C><!UNRESOLVED_REFERENCE!>@B<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
     }
 
-    class B : T {
+    inner class B : T {
         fun test() {
             super<T>.foo();
             super<<!NOT_A_SUPERTYPE!>C<!>>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()

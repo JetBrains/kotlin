@@ -1,5 +1,5 @@
 class Outer() {
-  class Inner() {
+  inner class Inner() {
     val outer: Outer get() = this@Outer
   }
 

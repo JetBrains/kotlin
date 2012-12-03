@@ -2419,6 +2419,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inner/extensionFun.kt");
             }
             
+            @TestMetadata("innerThisSuper.kt")
+            public void testInnerThisSuper() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/innerThisSuper.kt");
+            }
+            
             @TestMetadata("localClass.kt")
             public void testLocalClass() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inner/localClass.kt");
@@ -2427,6 +2432,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("localClassInsideNested.kt")
             public void testLocalClassInsideNested() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inner/localClassInsideNested.kt");
+            }
+            
+            @TestMetadata("localThisSuper.kt")
+            public void testLocalThisSuper() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/localThisSuper.kt");
             }
             
             @TestMetadata("modality.kt")
@@ -4063,9 +4073,9 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInFunctionLiterals.kt");
             }
             
-            @TestMetadata("thisInNestedClasses.kt")
-            public void testThisInNestedClasses() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInNestedClasses.kt");
+            @TestMetadata("thisInInnerClasses.kt")
+            public void testThisInInnerClasses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/thisAndSuper/thisInInnerClasses.kt");
             }
             
             @TestMetadata("thisInPropertyInitializer.kt")

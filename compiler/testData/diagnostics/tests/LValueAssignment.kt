@@ -29,7 +29,7 @@ class C() : B() {
 fun getInt() = 0
 
 class D() {
-    class B() {
+    inner class B() {
         fun foo() {
             <!VARIABLE_EXPECTED!>this@D<!> = D()
         }

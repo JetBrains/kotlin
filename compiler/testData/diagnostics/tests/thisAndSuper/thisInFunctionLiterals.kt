@@ -1,5 +1,5 @@
 class A(val a:Int) {
-  class B() {
+  inner class B() {
     fun Char.xx() : Any {
       this : Char
       val <!UNUSED_VARIABLE!>a<!> = {

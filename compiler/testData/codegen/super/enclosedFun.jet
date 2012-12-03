@@ -14,7 +14,7 @@ open class N() : M(), K {
 
     override fun x() : Int = 20
 
-    open class C() : K {
+    open inner class C() : K {
         fun test1() = x()
         fun test2() = super<M>@N.x()
         fun test3() = super<K>@N.x()

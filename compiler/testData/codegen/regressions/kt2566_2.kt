@@ -3,13 +3,13 @@ open class A {
 }
 
 open class B : A() {
-    class E {
+    inner class E {
         val foo: String = super<A>@B.foo
     }
 }
 
 class C : B() {
-    class D {
+    inner class D {
         val foo: String = super<B>@C.foo
     }
 }
