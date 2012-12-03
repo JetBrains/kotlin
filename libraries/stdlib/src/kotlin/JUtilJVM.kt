@@ -2,6 +2,12 @@ package kotlin
 
 import java.util.*
 
+/** Returns a new ArrayList with a variable number of initial elements */
+public inline fun arrayListOf<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
+
+deprecated("Use arrayListOf() instead")
+public inline fun arrayList<T>(vararg values: T) : ArrayList<T> = arrayListOf(*values)
+
 /** Returns a new LinkedList with a variable number of initial elements */
 public inline fun linkedListOf<T>(vararg values: T) : LinkedList<T>  = values.toCollection(LinkedList<T>())
 
@@ -97,9 +103,3 @@ public inline fun <K,V> linkedMap(vararg values: Pair<K, V>): LinkedHashMap<K,V>
 /** Returns the Set if its not null otherwise returns the empty set */
 public inline fun <T> Set<T>?.orEmpty() : Set<T>
     = if (this != null) this else Collections.EMPTY_SET as Set<T>
-
-deprecated("Use arrayListOf() instead")
-public inline fun arrayList<T>(vararg values: T) : ArrayList<T> = arrayListOf(*values)
-
-/** Returns a new ArrayList with a variable number of initial elements */
-public inline fun arrayListOf<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
