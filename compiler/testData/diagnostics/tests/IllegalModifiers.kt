@@ -19,3 +19,6 @@ class FinalClass() {
     var j: Int = 1
         <!ILLEGAL_MODIFIER!>open<!> set(v: Int) {}
 }
+
+<!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class C
+<!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> object D

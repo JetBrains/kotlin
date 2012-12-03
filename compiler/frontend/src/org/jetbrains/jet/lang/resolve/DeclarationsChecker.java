@@ -64,7 +64,7 @@ public class DeclarationsChecker {
 
             if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
             checkObject(objectDeclaration);
-            modifiersChecker.checkIllegalModalityModifiers(objectDeclaration);
+            modifiersChecker.checkModifiersForDeclaration(objectDeclaration, objectDescriptor);
         }
 
         Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
