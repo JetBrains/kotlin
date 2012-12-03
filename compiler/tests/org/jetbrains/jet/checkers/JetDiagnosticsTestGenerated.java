@@ -2459,6 +2459,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inner/nestedClassExtendsOuterGeneric.kt");
             }
             
+            @TestMetadata("nestedClassNotAllowed.kt")
+            public void testNestedClassNotAllowed() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/nestedClassNotAllowed.kt");
+            }
+            
             @TestMetadata("nestedVsInnerAccessOuterMember.kt")
             public void testNestedVsInnerAccessOuterMember() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inner/nestedVsInnerAccessOuterMember.kt");

@@ -1,8 +1,8 @@
 class Bar(val name: String)
 
 class Baz {
-  class Foo() {
-      data class NestedFoo(val bar: Bar)
+  inner class Foo() {
+      inner data class NestedFoo(val bar: Bar)
 
       fun foo(): String {
           return NestedFoo(Bar("FAIL")).copy(bar = Bar("OK")).bar.name

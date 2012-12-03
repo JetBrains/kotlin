@@ -21,10 +21,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -103,6 +105,14 @@ public class ModifiersChecker {
                 checkIllegalInThisContextModifiers(modifierList, Collections.singletonList(INNER_KEYWORD));
             }
         }
+        else {
+            if (modifierListOwner instanceof JetClass && isIllegalNestedClass(descriptor)) {
+                PsiElement name = ((JetClass) modifierListOwner).getNameIdentifier();
+                if (name != null) {
+                    trace.report(Errors.NESTED_CLASS_NOT_ALLOWED.on(name));
+                }
+            }
+        }
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
@@ -112,6 +122,14 @@ public class ModifiersChecker {
         DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) return true;
         return ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT;
+    }
+
+    private static boolean isIllegalNestedClass(@NotNull DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof ClassDescriptor)) return false;
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (!(containingDeclaration instanceof ClassDescriptor)) return false;
+        ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
+        return containingClass.isInner() || containingClass.getContainingDeclaration() instanceof FunctionDescriptor;
     }
 
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetKeywordToken> availableModifiers, Collection<JetToken>... availableCombinations) {

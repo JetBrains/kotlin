@@ -1,7 +1,7 @@
 fun box() : String {
     val o = object {
 
-        class C {
+        inner class C {
             fun foo() = "OK"
         }
     }
