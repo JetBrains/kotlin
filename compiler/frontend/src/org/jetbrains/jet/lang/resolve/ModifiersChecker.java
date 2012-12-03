@@ -31,6 +31,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -57,6 +58,7 @@ public class ModifiersChecker {
         JetModifierList modifierList = modifierListOwner.getModifierList();
         checkModalityModifiers(modifierList);
         checkVisibilityModifiers(modifierList, descriptor);
+        checkInnerModifier(modifierListOwner, descriptor);
     }
 
     public void checkModifiersForLocalDeclaration(@NotNull JetModifierListOwner modifierListOwner) {
@@ -91,6 +93,25 @@ public class ModifiersChecker {
         }
 
         checkCompatibility(modifierList, VISIBILITY_MODIFIERS);
+    }
+
+    private void checkInnerModifier(@NotNull JetModifierListOwner modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
+        JetModifierList modifierList = modifierListOwner.getModifierList();
+
+        if (modifierList != null && modifierList.hasModifier(INNER_KEYWORD)) {
+            if (isIllegalInner(descriptor)) {
+                checkIllegalInThisContextModifiers(modifierList, Collections.singletonList(INNER_KEYWORD));
+            }
+        }
+    }
+
+    private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof ClassDescriptor)) return true;
+        ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+        if (classDescriptor.getKind() != ClassKind.CLASS) return true;
+        DeclarationDescriptor containingDeclaration = classDescriptor.getContainingDeclaration();
+        if (!(containingDeclaration instanceof ClassDescriptor)) return true;
+        return ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.TRAIT;
     }
 
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetKeywordToken> availableModifiers, Collection<JetToken>... availableCombinations) {
