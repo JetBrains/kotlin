@@ -1554,6 +1554,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.kt");
                     }
                     
+                    @TestMetadata("TwoSuperclassesInvariantAndCovariantInferMutability.kt")
+                    public void testTwoSuperclassesInvariantAndCovariantInferMutability() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferMutability.kt");
+                    }
+                    
+                    @TestMetadata("TwoSuperclassesInvariantAndCovariantInferNullability.kt")
+                    public void testTwoSuperclassesInvariantAndCovariantInferNullability() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferNullability.kt");
+                    }
+                    
                     @TestMetadata("TwoSuperclassesMutableAndNot.kt")
                     public void testTwoSuperclassesMutableAndNot() throws Exception {
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.kt");

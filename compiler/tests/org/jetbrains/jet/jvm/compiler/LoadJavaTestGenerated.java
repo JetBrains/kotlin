@@ -664,6 +664,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.java");
                 }
                 
+                @TestMetadata("TwoSuperclassesInvariantAndCovariantInferMutability.java")
+                public void testTwoSuperclassesInvariantAndCovariantInferMutability() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferMutability.java");
+                }
+                
+                @TestMetadata("TwoSuperclassesInvariantAndCovariantInferNullability.java")
+                public void testTwoSuperclassesInvariantAndCovariantInferNullability() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferNullability.java");
+                }
+                
                 @TestMetadata("TwoSuperclassesMutableAndNot.java")
                 public void testTwoSuperclassesMutableAndNot() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.java");
