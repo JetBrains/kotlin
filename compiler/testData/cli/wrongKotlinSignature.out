@@ -1,4 +1,4 @@
-ERROR: The following Java entities have annotations wrong Kotlin signatures:
+ERROR: The following Java entities have annotations with wrong Kotlin signatures:
 ClassWithWrongKotlinSignatures java.lang.String foo():
     Function names mismatch, original: foo, alternative: bar
 ClassWithWrongKotlinSignatures java.lang.String bar():

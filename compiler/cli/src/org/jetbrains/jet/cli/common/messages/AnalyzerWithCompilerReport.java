@@ -121,7 +121,7 @@ public final class AnalyzerWithCompilerReport {
         BindingContext bc = analyzeExhaust.getBindingContext();
         Collection<DeclarationDescriptor> descriptorsWithErrors = bc.getKeys(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         if (!descriptorsWithErrors.isEmpty()) {
-            StringBuilder message = new StringBuilder("The following Java entities have annotations wrong Kotlin signatures:\n");
+            StringBuilder message = new StringBuilder("The following Java entities have annotations with wrong Kotlin signatures:\n");
             for (DeclarationDescriptor descriptor : descriptorsWithErrors) {
                 PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, descriptor);
                 assert declaration instanceof PsiModifierListOwner;
