@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
@@ -62,11 +60,6 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
         else {
             this.statements = null;
         }
-    }
-
-    @Override
-    public JetTypeInfo getSelectorReturnTypeInfo(@NotNull ReceiverValue receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
-        return basic.getSelectorReturnTypeInfo(receiver, callOperationNode, selectorExpression, context);
     }
 
     @NotNull
