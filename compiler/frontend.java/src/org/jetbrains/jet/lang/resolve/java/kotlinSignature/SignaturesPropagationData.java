@@ -19,7 +19,10 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.HierarchicalMethodSignature;
+import com.intellij.psi.PsiClass;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +46,8 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getVarargParameterType;
 
 public class SignaturesPropagationData {
+    private static final Logger LOG = Logger.getInstance(SignaturesPropagationData.class);
+
     private final List<TypeParameterDescriptor> modifiedTypeParameters;
     private final JavaDescriptorResolver.ValueParameterDescriptors modifiedValueParameters;
     private final JetType modifiedReturnType;
@@ -200,16 +205,21 @@ public class SignaturesPropagationData {
                 superFunctions.add(((FunctionDescriptor) superFun));
             }
             else {
-                String fqName = superSignature.getMethod().getContainingClass().getQualifiedName();
+                PsiClass psiClass = superSignature.getMethod().getContainingClass();
+                assert psiClass != null;
+                String fqName = psiClass.getQualifiedName();
                 assert fqName != null;
+
                 Collection<ClassDescriptor> platformClasses = JavaToKotlinClassMap.getInstance().mapPlatformClass(new FqName(fqName));
                 if (platformClasses.isEmpty()) {
-                    // TODO assert is temporarily disabled
-                    // It fails because of bug in IDEA on Mac: it adds invalid roots to JDK classpath and it leads to the problem that
-                    // getHierarchicalMethodSignature() returns elements from invalid virtual files
-
-                    //assert false : "Can't find super function for " + method.getPsiMethod() +
-                    //               " defined in " +  method.getPsiMethod().getContainingClass()
+                    String errorMessage = "Can't find super function for " + method.getPsiMethod() +
+                                          " defined in " + method.getPsiMethod().getContainingClass();
+                    if (ApplicationManager.getApplication().isUnitTestMode()) {
+                        throw new IllegalStateException(errorMessage);
+                    }
+                    else {
+                        LOG.error(errorMessage);
+                    }
                 }
                 else {
                     List<FunctionDescriptor> funsFromMap =
