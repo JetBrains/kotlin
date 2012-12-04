@@ -599,6 +599,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "java", true);
                 }
                 
+                @TestMetadata("CantMakeImmutableInSubclass.java")
+                public void testCantMakeImmutableInSubclass() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.java");
+                }
+                
                 @TestMetadata("HalfSubstitutedTypeParameters.java")
                 public void testHalfSubstitutedTypeParameters() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.java");
