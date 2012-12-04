@@ -353,13 +353,6 @@ public final class JavaClassResolver {
             throw new IllegalStateException(
                     "PsiClass not found by name " + containerFqName + ", required to be container declaration of " + getFqName(psiClass));
         }
-        if (DescriptorResolverUtils.isInnerEnum(psiClass, parentClass) && DescriptorResolverUtils.isKotlinClass(psiClass)) {
-            ClassDescriptor classObjectDescriptor = parentClass.getClassObjectDescriptor();
-            if (classObjectDescriptor == null) {
-                throw new IllegalStateException("Class object for a class with inner enum should've been created earlier: " + parentClass);
-            }
-            return classObjectDescriptor;
-        }
         return parentClass;
     }
 

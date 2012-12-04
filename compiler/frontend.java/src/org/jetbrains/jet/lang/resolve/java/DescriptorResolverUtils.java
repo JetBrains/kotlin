@@ -50,14 +50,6 @@ public final class DescriptorResolverUtils {
         return wrapper.getJetClass().isDefined() ||  wrapper.getJetPackageClass().isDefined();
     }
 
-    public static boolean isInnerEnum(@NotNull PsiClass innerClass, @Nullable DeclarationDescriptor owner) {
-        if (!innerClass.isEnum()) return false;
-        if (!(owner instanceof ClassDescriptor)) return false;
-
-        ClassKind kind = ((ClassDescriptor) owner).getKind();
-        return kind == ClassKind.CLASS || kind == ClassKind.TRAIT || kind == ClassKind.ENUM_CLASS;
-    }
-
     @NotNull
     public static Collection<JetType> getSupertypes(@NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor) {
         if (classOrNamespaceDescriptor instanceof ClassDescriptor) {

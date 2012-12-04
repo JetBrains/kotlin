@@ -186,26 +186,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void writeInnerClasses() {
-        // Inner enums are moved by frontend to a class object of outer class, but we want them to be inner for the outer class itself
-        // (to avoid publicly visible names like A$ClassObject$$B), so they are handled specially in this method
-
         for (ClassDescriptor innerClass : getInnerClassesAndObjects(descriptor)) {
-            // If it's an inner enum inside a class object, don't write it
-            // (instead write it to inner classes of this class object's containing class)
-            if (!isEnumMovedToClassObject(innerClass)) {
-                writeInnerClass(innerClass, false);
-            }
+            writeInnerClass(innerClass, false /* TODO */);
         }
 
         ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
         if (classObjectDescriptor != null) {
-            // Process all enums here which were moved to our class object
-            for (ClassDescriptor innerClass : getInnerClassesAndObjects(classObjectDescriptor)) {
-                if (isEnumMovedToClassObject(innerClass)) {
-                    writeInnerClass(innerClass, true);
-                }
-            }
-
             int innerClassAccess = getVisibilityAccessFlag(classObjectDescriptor) | ACC_FINAL | ACC_STATIC;
             v.visitInnerClass(classAsmType.getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX, classAsmType.getInternalName(),
                               JvmAbi.CLASS_OBJECT_CLASS_NAME,
@@ -238,12 +224,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         String outerClassInternalName = classAsmType.getInternalName();
         String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
         v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerClass.getName().getName(), innerClassAccess);
-    }
-
-    private boolean isEnumMovedToClassObject(ClassDescriptor innerClass) {
-        // Checks if this is enum, moved to class object by frontend
-
-        return Boolean.TRUE.equals(bindingContext.get(BindingContext.IS_ENUM_MOVED_TO_CLASS_OBJECT, innerClass));
     }
 
     private void writeClassSignatureIfNeeded(JvmClassSignature signature) {

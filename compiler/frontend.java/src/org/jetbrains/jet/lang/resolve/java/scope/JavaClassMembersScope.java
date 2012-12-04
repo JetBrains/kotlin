@@ -71,7 +71,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     @Override
     protected Collection<ClassDescriptor> computeInnerClasses() {
-        return getResolver().resolveInnerClasses(descriptor, declarationProvider);
+        return getResolver().resolveInnerClasses(declarationProvider);
     }
 
     @Override

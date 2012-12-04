@@ -3,7 +3,7 @@ class A {
         enum class E { ENTRY }  // OK
     }
     
-    class B {
-        <!ENUM_NOT_ALLOWED!>enum<!> class E { ENTRY }
+    inner class B {
+        enum class <!NESTED_CLASS_NOT_ALLOWED!>E<!> { ENTRY }
     }
 }

@@ -1,6 +1,6 @@
 class A {
-    class B {
-        <!ENUM_NOT_ALLOWED!>enum<!> class E {
+    inner class B {
+        enum class <!NESTED_CLASS_NOT_ALLOWED!>E<!> {
             ENTRY
         }
     }

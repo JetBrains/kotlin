@@ -46,7 +46,6 @@ import java.util.Collections;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.isInnerEnum;
 
 public final class JavaClassObjectResolver {
 
@@ -84,10 +83,6 @@ public final class JavaClassObjectResolver {
             return null;
         }
 
-        if (hasInnerEnums(containing, psiClass)) {
-            return createSyntheticClassObject(containing, psiClass);
-        }
-
         PsiClass classObjectPsiClass = getClassObjectPsiClass(psiClass);
         if (classObjectPsiClass == null) {
             return null;
@@ -113,15 +108,6 @@ public final class JavaClassObjectResolver {
                                                                              Collections.<TypeParameterDescriptor>emptyList()));
         setUpClassObjectDescriptor(classObjectDescriptor, containing, fqName, classObjectData, getClassObjectName(containing.getName()));
         return classObjectDescriptor;
-    }
-
-    private static boolean hasInnerEnums(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
-        for (PsiClass innerClass : psiClass.getInnerClasses()) {
-            if (isInnerEnum(innerClass, containing)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @NotNull

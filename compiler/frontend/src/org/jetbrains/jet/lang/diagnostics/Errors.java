@@ -160,8 +160,6 @@ public interface Errors {
 
     // Enum-specific
 
-    SimpleDiagnosticFactory<PsiElement> ENUM_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
-
     SimpleDiagnosticFactory<JetModifierListOwner> ILLEGAL_ENUM_ANNOTATION = SimpleDiagnosticFactory
             .create(ERROR, modifierSetPosition(JetTokens.ENUM_KEYWORD));
 

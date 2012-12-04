@@ -168,10 +168,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    public List<ClassDescriptor> resolveInnerClasses(
-            @NotNull DeclarationDescriptor owner,
-            @NotNull ClassPsiDeclarationProvider declarationProvider)
-    {
-        return innerClassResolver.resolveInnerClasses(owner, declarationProvider);
+    public List<ClassDescriptor> resolveInnerClasses(@NotNull ClassPsiDeclarationProvider declarationProvider) {
+        return innerClassResolver.resolveInnerClasses(declarationProvider);
     }
 }
