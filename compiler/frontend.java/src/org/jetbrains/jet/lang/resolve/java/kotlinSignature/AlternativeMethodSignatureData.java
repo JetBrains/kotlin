@@ -116,10 +116,10 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         for (TypeParameterDescriptor parameter : methodTypeParameters) {
             int index = parameter.getIndex();
 
-            JetType substituted = substitutor.substitute(altTypeParameters.get(index).getUpperBoundsAsType(), Variance.INVARIANT);
+            JetType substituted = substitutor.substitute(parameter.getUpperBoundsAsType(), Variance.INVARIANT);
             assert substituted != null;
 
-            if (!TypeUtils.equalTypes(substituted, parameter.getUpperBoundsAsType())) {
+            if (!TypeUtils.equalTypes(substituted, altTypeParameters.get(index).getUpperBoundsAsType())) {
                 throw new AlternativeSignatureMismatchException(
                         "Type parameter's upper bound changed for method which overrides another: "
                         + altTypeParameters.get(index).getUpperBoundsAsType() + ", was: " + parameter.getUpperBoundsAsType());

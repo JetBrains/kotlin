@@ -762,6 +762,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.java");
                 }
                 
+                @TestMetadata("UseParameterInUpperBoundWithKotlinSignature.java")
+                public void testUseParameterInUpperBoundWithKotlinSignature() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBoundWithKotlinSignature.java");
+                }
+                
             }
             
             public static Test innerSuite() {

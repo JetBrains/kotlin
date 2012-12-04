@@ -1652,6 +1652,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.kt");
                     }
                     
+                    @TestMetadata("UseParameterInUpperBoundWithKotlinSignature.kt")
+                    public void testUseParameterInUpperBoundWithKotlinSignature() throws Exception {
+                        doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBoundWithKotlinSignature.kt");
+                    }
+                    
                 }
                 
                 public static Test innerSuite() {
