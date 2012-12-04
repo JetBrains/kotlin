@@ -1,0 +1,12 @@
+namespace test
+
+public open class test.RawSuperType : java.lang.Object {
+    public final /*constructor*/ fun <init>(): test.RawSuperType
+    public open class test.RawSuperType.Derived : test.RawSuperType.Super<jet.Any?> {
+        public final /*constructor*/ fun <init>(): test.RawSuperType.Derived
+        public open override /*1*/ fun foo(/*0*/ p0: jet.Any?): jet.Tuple0
+    }
+    public abstract trait test.RawSuperType.Super</*0*/ T : jet.Any?> : java.lang.Object {
+        public abstract fun foo(/*0*/ p0: T?): jet.Tuple0
+    }
+}

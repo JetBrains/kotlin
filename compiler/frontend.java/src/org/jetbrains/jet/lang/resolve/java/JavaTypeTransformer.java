@@ -161,7 +161,14 @@ public class JavaTypeTransformer {
                     if (classType.isRaw()) {
                         List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
                         for (TypeParameterDescriptor parameter : parameters) {
-                            arguments.add(SubstitutionUtils.makeStarProjection(parameter));
+                            TypeProjection starProjection = SubstitutionUtils.makeStarProjection(parameter);
+                            if (howThisTypeIsUsed == SUPERTYPE) {
+                                // projections are not allowed in immediate arguments of supertypes
+                                arguments.add(new TypeProjection(starProjection.getType()));
+                            }
+                            else {
+                                arguments.add(starProjection);
+                            }
                         }
                     }
                     else {

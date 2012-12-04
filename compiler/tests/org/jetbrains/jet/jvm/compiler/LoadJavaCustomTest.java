@@ -111,4 +111,10 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         doTest(dir + "/expected.txt",
                javaDir + "/MyEnum.java");
     }
+
+    public void testRawSuperType() throws Exception {
+        String dir = PATH + "/rawSuperType/";
+        doTest(dir + "RawSuperType.txt",
+               dir + "RawSuperType.java");
+    }
 }
