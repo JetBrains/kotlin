@@ -175,6 +175,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public boolean isInner() {
+        return original.isInner();
+    }
+
+    @Override
     public boolean isClassObjectAValue() {
         return original.isClassObjectAValue();
     }

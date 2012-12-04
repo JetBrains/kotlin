@@ -70,6 +70,11 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     @NotNull
     Visibility getVisibility();
 
+    /**
+     * @return <code>true</code> if this class contains a reference to its outer class (as opposed to static nested class)
+     */
+    boolean isInner();
+
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();
 

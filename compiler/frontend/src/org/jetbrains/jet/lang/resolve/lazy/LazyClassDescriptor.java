@@ -26,10 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnnotationResolver;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -65,6 +62,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final Modality modality;
     private final Visibility visibility;
     private final ClassKind kind;
+    private final boolean isInner;
 
     private ReceiverParameterDescriptor thisAsReceiverParameter;
     private List<AnnotationDescriptor> annotations;
@@ -102,17 +100,17 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
+        JetModifierList modifierList = classLikeInfo.getModifierList();
         this.kind = classLikeInfo.getClassKind();
         if (kind.isObject()) {
             this.modality = Modality.FINAL;
         }
         else {
             Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
-            JetModifierList modifierList = classLikeInfo.getModifierList();
             this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
-        JetModifierList modifierList = classLikeInfo.getModifierList();
         this.visibility = resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
+        this.isInner = isInnerClass(modifierList);
     }
 
     @Override
@@ -264,6 +262,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     @Override
     public Visibility getVisibility() {
         return visibility;
+    }
+
+    @Override
+    public boolean isInner() {
+        return isInner;
     }
 
     @NotNull

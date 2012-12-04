@@ -77,7 +77,8 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
                 Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()),
                 classScope,
                 new HashSet<ConstructorDescriptor>(),
-                null);
+                null,
+                false);
     }
 
     public void initialize(@NotNull JetType returnType, JetScript declaration, BindingContext bindingContext) {

@@ -92,7 +92,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private MutableClassDescriptor createClassDescriptor(ClassKind kind, JetClass aClass) {
-            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(root, scope, kind, Name.identifier(aClass.getName()));
+            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(root, scope, kind, false, Name.identifier(aClass.getName()));
             descriptorResolver.resolveMutableClassDescriptor(aClass, classDescriptor, JetTestUtils.DUMMY_TRACE);
             return classDescriptor;
         }

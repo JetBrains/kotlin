@@ -124,7 +124,8 @@ public class CodegenBinding {
                 Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()),
                 JetScope.EMPTY,
                 Collections.<ConstructorDescriptor>emptySet(),
-                null);
+                null,
+                false);
 
         recordClosure(bindingTrace, null, classDescriptor, null, className, false);
 

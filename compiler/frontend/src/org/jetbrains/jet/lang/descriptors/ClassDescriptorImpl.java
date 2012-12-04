@@ -40,6 +40,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     private final Modality modality;
     private ClassDescriptor classObjectDescriptor;
     private final  ClassKind kind;
+    private boolean isInner;
 
     public ClassDescriptorImpl(
         @NotNull DeclarationDescriptor containingDeclaration,
@@ -68,13 +69,14 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
             @NotNull Collection<JetType> supertypes,
             @NotNull JetScope memberDeclarations,
             @NotNull Set<ConstructorDescriptor> constructors,
-            @Nullable ConstructorDescriptor primaryConstructor
+            @Nullable ConstructorDescriptor primaryConstructor,
+            boolean isInner
     ) {
         this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), sealed, getName().getName(), typeParameters, supertypes);
         this.memberDeclarations = memberDeclarations;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
-        this.classObjectDescriptor = classObjectDescriptor;
+        this.isInner = isInner;
         return this;
     }
 
@@ -163,6 +165,11 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     @Override
     public Visibility getVisibility() {
         return Visibilities.PUBLIC;
+    }
+
+    @Override
+    public boolean isInner() {
+        return isInner;
     }
 
     @NotNull

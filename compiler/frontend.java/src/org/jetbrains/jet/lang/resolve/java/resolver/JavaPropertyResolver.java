@@ -201,7 +201,8 @@ public final class JavaPropertyResolver {
                     true,
                     Collections.<TypeParameterDescriptor>emptyList(),
                     Collections.<JetType>emptyList(), JetScope.EMPTY,
-                    Collections.<ConstructorDescriptor>emptySet(), null);
+                    Collections.<ConstructorDescriptor>emptySet(), null,
+                    false);
             trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, dummyClassDescriptorForEnumEntryObject);
         }
 

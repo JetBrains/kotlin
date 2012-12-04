@@ -585,7 +585,7 @@ public class TypeHierarchyResolver {
                 @NotNull Visibility visibility
         ) {
             MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
-                    classDescriptor, outerScope, ClassKind.CLASS_OBJECT, getClassObjectName(classDescriptor.getName()));
+                    classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false, getClassObjectName(classDescriptor.getName()));
             classObjectDescriptor.setModality(Modality.FINAL);
             classObjectDescriptor.setVisibility(visibility);
             classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
@@ -600,8 +600,12 @@ public class TypeHierarchyResolver {
                 @NotNull JetClass klass,
                 @NotNull DeclarationDescriptor containingDeclaration
         ) {
+            ClassKind kind = getClassKind(klass);
+            // Kind check is needed in order to not consider enums as inner in any case
+            // (otherwise it would be impossible to create a class object in the enum)
+            boolean isInner = kind == ClassKind.CLASS && klass.isInner();
             MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                    containingDeclaration, outerScope, getClassKind(klass), JetPsiUtil.safeName(klass.getName()));
+                    containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()));
             context.getClasses().put(klass, mutableClassDescriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
 
@@ -620,7 +624,7 @@ public class TypeHierarchyResolver {
                 @NotNull JetScope scope, @NotNull Name name, @NotNull ClassKind kind
         ) {
             MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                    owner.getOwnerForChildren(), scope, kind, name);
+                    owner.getOwnerForChildren(), scope, kind, false, name);
             context.getObjects().put(declaration, mutableClassDescriptor);
 
             JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
@@ -638,7 +642,7 @@ public class TypeHierarchyResolver {
         ) {
             MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
                     owner.getOwnerForChildren(), getStaticScope(declaration, owner), ClassKind.ENUM_ENTRY,
-                    JetPsiUtil.safeName(declaration.getName()));
+                    false, JetPsiUtil.safeName(declaration.getName()));
             context.getClasses().put(declaration, mutableClassDescriptor);
 
             prepareForDeferredCall(mutableClassDescriptor.getScopeForMemberResolution(), mutableClassDescriptor, declaration);

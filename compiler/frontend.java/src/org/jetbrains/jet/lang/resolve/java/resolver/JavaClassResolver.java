@@ -219,7 +219,8 @@ public final class JavaClassResolver {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
-        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind);
+        ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind,
+                                                                                            isInnerClass(psiClass));
 
         cache(javaClassToKotlinFqName(fqName), classDescriptor);
         classDescriptor.setName(Name.identifier(psiClass.getName()));
@@ -336,6 +337,10 @@ public final class JavaClassResolver {
 
     private static boolean isContainedInClass(@NotNull PsiClass psiClass) {
         return psiClass.getContainingClass() != null;
+    }
+
+    private static boolean isInnerClass(@NotNull PsiClass psiClass) {
+        return isContainedInClass(psiClass) && !psiClass.hasModifierProperty(PsiModifier.STATIC);
     }
 
     @NotNull

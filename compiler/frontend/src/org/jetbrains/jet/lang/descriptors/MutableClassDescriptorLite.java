@@ -45,6 +45,8 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     private Modality modality;
     private Visibility visibility;
 
+    private final boolean isInner;
+
     private MutableClassDescriptorLite classObjectDescriptor;
     private JetType classObjectType;
     private final ClassKind kind;
@@ -58,9 +60,12 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     private final DeclarationDescriptor containingDeclaration;
 
     public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration,
-                                      @NotNull ClassKind kind) {
+                                      @NotNull ClassKind kind,
+                                      boolean isInner
+    ) {
         this.containingDeclaration = containingDeclaration;
         this.kind = kind;
+        this.isInner = isInner;
     }
 
     @NotNull
@@ -174,6 +179,11 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     @Override
     public Visibility getVisibility() {
         return visibility;
+    }
+
+    @Override
+    public boolean isInner() {
+        return isInner;
     }
 
     public Collection<JetType> getSupertypes() {

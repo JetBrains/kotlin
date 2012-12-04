@@ -36,9 +36,10 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
 
     public ClassDescriptorFromJvmBytecode(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull ClassKind kind
+            @NotNull ClassKind kind,
+            boolean isInner
     ) {
-        super(containingDeclaration, kind);
+        super(containingDeclaration, kind, isInner);
     }
 
 

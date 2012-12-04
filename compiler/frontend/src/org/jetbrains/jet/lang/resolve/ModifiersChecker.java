@@ -192,6 +192,10 @@ public class ModifiersChecker {
         return defaultVisibility;
     }
 
+    public static boolean isInnerClass(@Nullable JetModifierList modifierList) {
+        return modifierList != null && modifierList.hasModifier(INNER_KEYWORD);
+    }
+
     @NotNull
     public static Visibility getDefaultClassVisibility(@NotNull ClassDescriptor descriptor) {
         ClassKind kind = descriptor.getKind();

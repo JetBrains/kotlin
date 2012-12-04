@@ -66,7 +66,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
                 Collections.singleton((funDescriptor.getReceiverParameter() != null
                                        ? KotlinBuiltIns.getInstance().getExtensionFunction(arity)
                                        : KotlinBuiltIns.getInstance().getFunction(arity)).getDefaultType()), JetScope.EMPTY,
-                Collections.<ConstructorDescriptor>emptySet(), null);
+                Collections.<ConstructorDescriptor>emptySet(),
+                null,
+                false);
 
         assert PsiCodegenPredictor.checkPredictedClassNameForFun(bindingContext, funDescriptor, classDescriptor);
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);

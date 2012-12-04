@@ -48,8 +48,8 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private WritableScope scopeForInitializers = null; //contains members + primary constructor value parameters + map for backing fields
 
     public MutableClassDescriptor(@NotNull DeclarationDescriptor containingDeclaration,
-                                  @NotNull JetScope outerScope, ClassKind kind, Name name) {
-        super(containingDeclaration, kind);
+                                  @NotNull JetScope outerScope, ClassKind kind, boolean isInner, Name name) {
+        super(containingDeclaration, kind, isInner);
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
