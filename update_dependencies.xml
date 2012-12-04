@@ -109,51 +109,48 @@
     <macrodef name="get-asm4-and-rename-packages">
         <sequential>
             <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources -->
-            <get src="http://download.forge.objectweb.org/asm/asm-4.0-bin.zip"
-                 dest="dependencies/download/asm-4.0-bin.zip" usetimestamp="true"/>
+            <get src="http://search.maven.org/remotecontent?filepath=org/ow2/asm/asm-analysis/4.0/asm-analysis-4.0.jar"
+                 dest="dependencies/download/asm-analysis-4.0.jar" usetimestamp="true"/>
 
-            <delete dir="dependencies/download/asm" failonerror="false"/>
-            <unzip src="dependencies/download/asm-4.0-bin.zip" dest="dependencies/download/asm">
-                <patternset>
-                    <include name="asm-4.0/lib/asm-util-4.0.jar"/>
-                    <include name="asm-4.0/lib/asm-analysis-4.0.jar"/>
-                    <include name="asm-4.0/src.zip"/>
-                </patternset>
-                <mapper type="flatten"/>
-            </unzip>
+            <get src="http://search.maven.org/remotecontent?filepath=org/ow2/asm/asm-util/4.0/asm-util-4.0.jar"
+                 dest="dependencies/download/asm-util-4.0.jar" usetimestamp="true"/>
+
+            <get src="http://search.maven.org/remotecontent?filepath=org/ow2/asm/asm-all/4.0/asm-all-4.0-sources.jar"
+                 dest="dependencies/download/asm-all-4.0-sources.jar" usetimestamp="true"/>
 
             <!-- Rename packages in the jars -->
             <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
 
             <jarjar jarfile="dependencies/jetbrains-asm-util-4.0.jar">
-                <zipfileset src="dependencies/download/asm/asm-util-4.0.jar"/>
+                <zipfileset src="dependencies/download/asm-util-4.0.jar"/>
 
                 <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
             </jarjar>
 
             <jarjar jarfile="dependencies/jetbrains-asm-analysis-4.0.jar">
-                <zipfileset src="dependencies/download/asm/asm-analysis-4.0.jar"/>
+                <zipfileset src="dependencies/download/asm-analysis-4.0.jar"/>
 
                 <rule pattern="org.objectweb.asm.**" result="org.jetbrains.asm4.@1"/>
             </jarjar>
 
             <!-- Rename packages in the sources -->
-            <unzip src="dependencies/download/asm/src.zip" dest="dependencies/download/asm/src">
+            <delete dir="dependencies/download/asm-src" failonerror="false"/>
+            <unzip src="dependencies/download/asm-all-4.0-sources.jar" dest="dependencies/download/asm-src">
                 <patternset>
                     <include name="**/*"/>
                 </patternset>
             </unzip>
 
             <replaceregexp match="org.objectweb.asm" replace="org.jetbrains.asm4">
-                <fileset dir="dependencies/download/asm/src/">
+                <fileset dir="dependencies/download/asm-src/">
                     <include name="**/*.java"/>
                 </fileset>
             </replaceregexp>
 
-            <move file="dependencies/download/asm/src/org/objectweb/asm"
-                    tofile="dependencies/download/asm/src/org/jetbrains/asm4"/>
+            <move file="dependencies/download/asm-src/org/objectweb/asm"
+                    tofile="dependencies/download/asm-src/org/jetbrains/asm4"/>
 
-            <zip destfile="dependencies/jetbrains-asm-all-4.0-src.zip" basedir="dependencies/download/asm/src"/>
+            <zip destfile="dependencies/jetbrains-asm-all-4.0-src.zip" basedir="dependencies/download/asm-src"/>
         </sequential>
     </macrodef>
 
