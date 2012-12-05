@@ -294,15 +294,10 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void jumpToError(JetThrowExpression expression) {
+        public void jumpToError() {
             add(new UnconditionalJumpInstruction(error));
         }
         
-        @Override
-        public void jumpToError(JetExpression nothingExpression) {
-            add(new UnconditionalJumpInstruction(error));
-        }
-
         @Override
         public void enterTryFinally(@NotNull GenerationTrigger generationTrigger) {
             allBlocks.push(new TryFinallyBlockInfo(generationTrigger));

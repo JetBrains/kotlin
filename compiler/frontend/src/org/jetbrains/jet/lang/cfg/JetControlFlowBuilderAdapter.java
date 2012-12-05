@@ -97,15 +97,9 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void jumpToError(JetThrowExpression expression) {
+    public void jumpToError() {
         assert builder != null;
-        builder.jumpToError(expression);
-    }
-
-    @Override
-    public void jumpToError(JetExpression nothingExpression) {
-        assert builder != null;
-        builder.jumpToError(nothingExpression);
+        builder.jumpToError();
     }
 
     @Override

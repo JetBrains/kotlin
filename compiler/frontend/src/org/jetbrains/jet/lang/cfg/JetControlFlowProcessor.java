@@ -170,7 +170,7 @@ public class JetControlFlowProcessor {
             if (trace.get(BindingContext.PROCESSED, expression)) {
                 JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
                 if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                    builder.jumpToError(expression);
+                    builder.jumpToError();
                 }
             }
         }
@@ -627,7 +627,7 @@ public class JetControlFlowProcessor {
             if (trace.get(BindingContext.PROCESSED, expression)) {
                 JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
                 if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                    builder.jumpToError(expression);
+                    builder.jumpToError();
                 }
             }
         }
@@ -669,7 +669,7 @@ public class JetControlFlowProcessor {
             if (trace.get(BindingContext.PROCESSED, expression)) {
                 JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
                 if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                    builder.jumpToError(expression);
+                    builder.jumpToError();
                 }
             }
         }
@@ -739,7 +739,7 @@ public class JetControlFlowProcessor {
             if (thrownExpression != null) {
                 value(thrownExpression, false);
             }
-            builder.jumpToError(expression);
+            builder.jumpToError();
         }
 
         @Override

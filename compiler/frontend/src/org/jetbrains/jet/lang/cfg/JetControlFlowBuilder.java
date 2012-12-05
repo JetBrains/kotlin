@@ -44,8 +44,7 @@ public interface JetControlFlowBuilder {
     void jumpOnTrue(@NotNull Label label);
     void nondeterministicJump(Label label); // Maybe, jump to label
     void nondeterministicJump(List<Label> label);
-    void jumpToError(JetThrowExpression expression);
-    void jumpToError(JetExpression nothingExpression);
+    void jumpToError();
 
     // Entry/exit points
     Label getEntryPoint(@NotNull JetElement labelElement);
