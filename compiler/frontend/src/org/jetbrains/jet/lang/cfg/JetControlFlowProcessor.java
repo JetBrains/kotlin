@@ -371,6 +371,11 @@ public class JetControlFlowProcessor {
                 onException = builder.createUnboundLabel();
                 builder.nondeterministicJump(onException);
             }
+            Label onExceptionToFinallyBlock = null;
+            if (finallyBlock != null) {
+                onExceptionToFinallyBlock = builder.createUnboundLabel();
+                builder.nondeterministicJump(onExceptionToFinallyBlock);
+            }
             value(expression.getTryBlock(), inCondition);
 
             if (hasCatches) {
@@ -414,6 +419,14 @@ public class JetControlFlowProcessor {
 
             if (finallyBlock != null) {
                 builder.exitTryFinally();
+
+                Label skipFinallyToErrorBlock = builder.createUnboundLabel();
+                builder.jump(skipFinallyToErrorBlock);
+                builder.bindLabel(onExceptionToFinallyBlock);
+                value(finallyBlock.getFinalExpression(), inCondition);
+                builder.jumpToError();
+                builder.bindLabel(skipFinallyToErrorBlock);
+
                 value(finallyBlock.getFinalExpression(), inCondition);
             }
             builder.stopAllowDead();
