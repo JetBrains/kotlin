@@ -131,7 +131,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         int access = 0;
-        access |= ACC_PUBLIC;
+
+        access |= getVisibilityAccessFlagForClass(descriptor);
         if (isAbstract) {
             access |= ACC_ABSTRACT;
         }
@@ -210,7 +211,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
 
-            int innerClassAccess = ACC_PUBLIC | ACC_FINAL | ACC_STATIC;
+            int innerClassAccess = getVisibilityAccessFlag(classObjectDescriptor) | ACC_FINAL | ACC_STATIC;
             v.visitInnerClass(classAsmType.getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX, classAsmType.getInternalName(),
                               JvmAbi.CLASS_OBJECT_CLASS_NAME,
                               innerClassAccess);
@@ -219,7 +220,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void writeInnerClass(ClassDescriptor innerClass, boolean isStatic) {
         // TODO: proper access
-        int innerClassAccess = ACC_PUBLIC;
+        int innerClassAccess = getVisibilityAccessFlag(innerClass);
         if (innerClass.getModality() == Modality.FINAL) {
             innerClassAccess |= ACC_FINAL;
         }

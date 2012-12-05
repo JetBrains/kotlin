@@ -143,6 +143,20 @@ public class AsmUtil {
         return defaultMapping;
     }
 
+    /*
+        Use this method to get visibility flag for class to define it in byte code (v.defineClass method).
+        For other cases use getVisibilityAccessFlag(MemberDescriptor descriptor)
+        Classes in byte code should be public or package private
+     */
+    public static int getVisibilityAccessFlagForClass(ClassDescriptor descriptor) {
+        if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor ||
+            descriptor.getVisibility() == Visibilities.PUBLIC ||
+            descriptor.getVisibility() == Visibilities.INTERNAL) {
+            return ACC_PUBLIC;
+        }
+        return NO_FLAG_PACKAGE_PRIVATE;
+    }
+
     public static int getModalityAccessFlag(@NotNull MemberDescriptor descriptor) {
         switch (descriptor.getModality()) {
             case ABSTRACT: return ACC_ABSTRACT;
@@ -224,7 +238,7 @@ public class AsmUtil {
 
     public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {
         final ClassifierDescriptor captureThis = closure.getCaptureThis();
-        final int access = ACC_PUBLIC | ACC_SYNTHETIC | ACC_FINAL;
+        final int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         if (captureThis != null) {
             v.newField(null, access, CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis).getDescriptor(), null,
                        null);

@@ -96,7 +96,7 @@ public class FunctionGenTest extends CodegenTestCase {
         final Method f = foo.getMethod("f");
         final Object closure = f.invoke(obj);
         final Class<? extends Object> aClass = closure.getClass();
-        final Field[] fields = aClass.getFields();
+        final Field[] fields = aClass.getDeclaredFields();
         assertEquals(1, fields.length);
         assertEquals("$s", fields[0].getName());
     }

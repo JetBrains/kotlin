@@ -78,7 +78,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
                 classVisitor = getClassVisitor(testedObject.kind, testedObject.name);
                 cr.accept(classVisitor, ClassReader.SKIP_CODE);
                 int expectedAccess = getExpectedFlags(fileText);
-                assertEquals("Wrong access flag", expectedAccess, classVisitor.getAccess());
+                assertEquals("Wrong access flag \n" + factory.asText(filename), expectedAccess, classVisitor.getAccess());
             }
         }
 
@@ -125,6 +125,9 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         }
         else if (visitorKind.equals("property")) {
             return new PropertyFlagsVisitor(testedObjectName);
+        }
+        else if (visitorKind.equals("innerClass")) {
+            return new InnerClassFlagsVisitor(testedObjectName);
         }
         throw new IllegalArgumentException("Value of TESTED_OBJECT_KIND is incorrect: " + visitorKind);
     }
@@ -206,6 +209,27 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
                 this.access = access;
             }
             return null;
+        }
+
+        @Override
+        public int getAccess() {
+            return access;
+        }
+    }
+
+    private static class InnerClassFlagsVisitor extends TestClassVisitor {
+        private int access = 0;
+        private final String innerClassName;
+
+        public InnerClassFlagsVisitor(String name) {
+            innerClassName = name;
+        }
+
+        @Override
+        public void visitInnerClass(String innerClassInternalName, String outerClassInternalName, String name, int access) {
+            if (name.equals(innerClassName)) {
+                this.access = access;
+            }
         }
 
         @Override
