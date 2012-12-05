@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.maven;
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -129,21 +128,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      */
     public String testModule;
 
-    /**
-     * The maven project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     */
-    public MavenProject project;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (project.getPackaging().equals("pom")) {
-            getLog().info( "Skipping Kotlin execution for POM projects" );
-        }
-
         // Check sources
         List<String> sources = getSources();
         if (sources != null && sources.size() > 0) {
