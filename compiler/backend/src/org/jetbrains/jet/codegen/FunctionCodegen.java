@@ -687,7 +687,7 @@ public class FunctionCodegen extends GenerationStateAware {
                 iv.invokeinterface(internalName, jvmSignatureName, jvmSignatureDescriptor);
             }
             else {
-                if (!constructor) {
+                if (!constructor && functionDescriptor.getVisibility() != Visibilities.PRIVATE) {
                     iv.invokevirtual(internalName, jvmSignatureName, jvmSignatureDescriptor);
                 }
                 else {

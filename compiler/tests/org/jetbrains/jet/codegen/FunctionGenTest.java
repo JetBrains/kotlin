@@ -195,4 +195,11 @@ public class FunctionGenTest extends CodegenTestCase {
     public void testKt2929() {
         blackBoxFile("regressions/kt2929.kt");
     }
+
+    public void testPrivateDefaultArgs() throws Exception {
+        loadFile("functions/privateDefaultArgs.kt");
+        String text = generateToText();
+        assertFalse(text.contains("INVOKEVIRTUAL"));
+        assertTrue(text.contains("INVOKESPECIAL"));
+    }
 }
