@@ -19,19 +19,19 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetTypeElement;
-import org.jetbrains.jet.lang.psi.JetUserType;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 
-public class AddStarProjectionsFix extends JetIntentionAction<JetUserType> {
+public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserType> {
 
     private final int argumentCount;
 
@@ -68,7 +68,7 @@ public class AddStarProjectionsFix extends JetIntentionAction<JetUserType> {
         return true;
     }
 
-    public static JetIntentionActionFactory createFactory() {
+    public static JetIntentionActionFactory createFactoryForIsExpression() {
         return new JetIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -79,7 +79,50 @@ public class AddStarProjectionsFix extends JetIntentionAction<JetUserType> {
                 JetUserType userType = QuickFixUtil.getParentElementOfType(diagnostic, JetUserType.class);
                 if (userType == null) return null;
                 Integer size = diagnosticWithParameters.getA();
-                return new AddStarProjectionsFix(userType, size);
+                return new AddStarProjectionsFix(userType, size) {};
+            }
+        };
+    }
+
+    public static JetIntentionActionFactory createFactoryForJavaClass() {
+        return new JetIntentionActionFactory() {
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                assert diagnostic.getFactory() == Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
+                @SuppressWarnings("unchecked")
+                DiagnosticWithParameters1<JetElement, Integer> diagnosticWithParameters = (DiagnosticWithParameters1) diagnostic;
+
+                Integer size = diagnosticWithParameters.getA();
+
+                JetUserType userType = QuickFixUtil.getParentElementOfType(diagnostic, JetUserType.class);
+                if (userType == null) return null;
+
+                return new AddStarProjectionsFix(userType, size) {
+                    @Override
+                    public boolean isAvailable(
+                            @NotNull Project project, Editor editor, PsiFile file
+                    ) {
+                        // We are looking for the occurrence of Type in javaClass<Type>()
+                        return super.isAvailable(project, editor, file) && isZeroTypeArguments() && isInsideJavaClassCall();
+                    }
+
+                    private boolean isZeroTypeArguments() {
+                        return element.getTypeArguments().isEmpty();
+                    }
+
+                    private boolean isInsideJavaClassCall() {
+                        PsiElement parent = element.getParent().getParent().getParent().getParent();
+                        if (parent instanceof JetCallExpression) {
+                            JetExpression calleeExpression = ((JetCallExpression) parent).getCalleeExpression();
+                            if (calleeExpression instanceof JetSimpleNameExpression) {
+                                JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) calleeExpression;
+                                // Resolve is expensive so we use a heuristic here: the case is rare enough not to be annoying
+                                return "javaClass".equals(simpleNameExpression.getReferencedName());
+                            }
+                        }
+                        return false;
+                    }
+                };
             }
         };
     }
