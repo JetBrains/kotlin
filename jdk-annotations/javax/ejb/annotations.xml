@@ -1,0 +1,5 @@
+<root>
+    <item name='javax.ejb.EJBContext java.security.Principal getCallerPrincipal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
