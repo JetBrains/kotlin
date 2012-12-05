@@ -52,13 +52,22 @@ public abstract class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor =
+                getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        if (classDescriptor == null || classDescriptor.getKind().isObject()) {
+            return null;
+        }
+        return classDescriptor;
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        //TODO: check that class is an object
-        return getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor =
+                getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        if (classDescriptor != null && classDescriptor.getKind().isObject()) {
+            return classDescriptor;
+        }
+        return null;
     }
 
     @Override

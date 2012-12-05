@@ -43,6 +43,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/DefaultConstructor.A.kt");
     }
     
+    @TestMetadata("ImportObject.A.kt")
+    public void testImportObject_A() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/ImportObject.A.kt");
+    }
+    
     @TestMetadata("Simple.A.kt")
     public void testSimple_A() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");

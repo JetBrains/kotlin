@@ -32,7 +32,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @NotNull
     protected final ClassPsiDeclarationProvider declarationProvider;
 
-    private Map<Name, ClassifierDescriptor> classifiersMap = null;
+    private Map<Name, ClassDescriptor> innerClassesMap = null;
 
     protected JavaClassMembersScope(
             @NotNull ClassOrNamespaceDescriptor descriptor,
@@ -56,26 +56,39 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
         return getResolver().resolveFunctionGroup(name, declarationProvider, descriptor);
     }
 
-    @Override
-    public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return getClassifiersMap().get(name);
-    }
-
     @NotNull
-    private Map<Name, ClassifierDescriptor> getClassifiersMap() {
-        if (classifiersMap == null) {
+    private Map<Name, ClassDescriptor> getInnerClassesMap() {
+        if (innerClassesMap == null) {
             Collection<ClassDescriptor> innerClasses = getInnerClasses();
-            classifiersMap = new HashMap<Name, ClassifierDescriptor>();
+            innerClassesMap = new HashMap<Name, ClassDescriptor>();
             for (ClassDescriptor innerClass : innerClasses) {
-                classifiersMap.put(innerClass.getName(), innerClass);
+                innerClassesMap.put(innerClass.getName(), innerClass);
             }
         }
-        return classifiersMap;
+        return innerClassesMap;
     }
 
     @NotNull
     @Override
     protected Collection<ClassDescriptor> computeInnerClasses() {
         return getResolver().resolveInnerClasses(descriptor, declarationProvider);
+    }
+
+    @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
+        ClassDescriptor innerClass = getInnerClassesMap().get(name);
+        if (innerClass != null && innerClass.getKind().isObject()) {
+            return innerClass;
+        }
+        return null;
+    }
+
+    @Override
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
+        ClassDescriptor innerClass = getInnerClassesMap().get(name);
+        if (innerClass == null || innerClass.getKind().isObject()) {
+            return null;
+        }
+        return innerClass;
     }
 }

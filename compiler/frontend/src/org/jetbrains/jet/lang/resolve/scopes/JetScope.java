@@ -39,6 +39,9 @@ public interface JetScope {
         }
     };
 
+    /**
+     * Should not return object (class object or enum entry) class descriptors.
+     */
     @Nullable
     ClassifierDescriptor getClassifier(@NotNull Name name);
     

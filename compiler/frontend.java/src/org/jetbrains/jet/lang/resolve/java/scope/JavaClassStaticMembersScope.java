@@ -40,12 +40,6 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        //TODO: check that class is an object
-        return getResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-    }
-
-    @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return getResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
