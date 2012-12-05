@@ -88,4 +88,9 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
         sb.append(")");
         return sb.toString();
     }
+
+    @Override
+    public Instruction copy() {
+        return new NondeterministicJumpInstruction(getTargetLabels());
+    }
 }

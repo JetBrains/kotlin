@@ -37,4 +37,9 @@ public class ReadValueInstruction extends InstructionWithNext {
     public String toString() {
         return "r(" + element.getText() + ")";
     }
+
+    @Override
+    public Instruction copy() {
+        return new ReadValueInstruction(element);
+    }
 }

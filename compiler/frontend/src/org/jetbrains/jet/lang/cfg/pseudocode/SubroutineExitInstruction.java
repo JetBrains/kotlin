@@ -59,4 +59,9 @@ public class SubroutineExitInstruction extends InstructionImpl {
     public String toString() {
         return debugLabel;
     }
+
+    @Override
+    public Instruction copy() {
+        return new SubroutineExitInstruction(subroutine, debugLabel);
+    }
 }

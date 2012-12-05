@@ -47,4 +47,9 @@ public class ReturnNoValueInstruction extends AbstractJumpInstruction implements
     public String toString() {
         return "ret " + getTargetLabel();
     }
+
+    @Override
+    AbstractJumpInstruction copy(@NotNull Label newLabel) {
+        return new ReturnNoValueInstruction(element, newLabel);
+    }
 }

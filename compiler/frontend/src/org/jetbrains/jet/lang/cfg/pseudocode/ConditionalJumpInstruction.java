@@ -71,4 +71,9 @@ public class ConditionalJumpInstruction extends AbstractJumpInstruction {
         String instr = onTrue ? "jt" : "jf";
         return instr + "(" + getTargetLabel().getName() + ")";
     }
+
+    @Override
+    AbstractJumpInstruction copy(@NotNull Label newLabel) {
+        return new ConditionalJumpInstruction(onTrue, newLabel);
+    }
 }

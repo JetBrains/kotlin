@@ -43,4 +43,9 @@ public class SubroutineEnterInstruction extends InstructionWithNext {
     public String toString() {
         return "<START>";
     }
+
+    @Override
+    public Instruction copy() {
+        return new SubroutineEnterInstruction(subroutine);
+    }
 }

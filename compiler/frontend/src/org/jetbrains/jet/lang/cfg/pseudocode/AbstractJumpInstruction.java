@@ -50,4 +50,11 @@ public abstract class AbstractJumpInstruction extends InstructionImpl {
     public void setResolvedTarget(Instruction resolvedTarget) {
         this.resolvedTarget = outgoingEdgeTo(resolvedTarget);
     }
+
+    abstract AbstractJumpInstruction copy(@NotNull Label newLabel);
+
+    @Override
+    public Instruction copy() {
+        return copy(targetLabel);
+    }
 }

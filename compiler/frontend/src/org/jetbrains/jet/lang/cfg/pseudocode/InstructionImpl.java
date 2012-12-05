@@ -66,4 +66,6 @@ public abstract class InstructionImpl implements Instruction {
     public boolean isDead() {
         return isDead;
     }
+
+    public abstract Instruction copy();
 }

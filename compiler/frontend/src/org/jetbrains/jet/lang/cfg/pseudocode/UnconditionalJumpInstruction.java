@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 
 /**
@@ -38,4 +39,8 @@ public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
         return "jmp(" + getTargetLabel().getName() + ")";
     }
 
+    @Override
+    AbstractJumpInstruction copy(@NotNull Label newLabel) {
+        return new UnconditionalJumpInstruction(newLabel);
+    }
 }

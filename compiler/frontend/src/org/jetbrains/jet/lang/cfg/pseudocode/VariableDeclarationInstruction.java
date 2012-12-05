@@ -47,4 +47,12 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
     public String toString() {
         return "v(" + element.getText() + ")";
     }
+
+    @Override
+    public Instruction copy() {
+        if (element instanceof JetParameter) {
+            return new VariableDeclarationInstruction((JetParameter) element);
+        }
+        return new VariableDeclarationInstruction((JetVariableDeclaration) element);
+    }
 }

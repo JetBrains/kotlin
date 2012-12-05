@@ -71,4 +71,9 @@ public class LocalDeclarationInstruction extends InstructionWithNext {
     public String toString() {
         return "d" + "(" + element.getText() + ")";
     }
+
+    @Override
+    public Instruction copy() {
+        return new LocalDeclarationInstruction((JetDeclaration) element, body);
+    }
 }
