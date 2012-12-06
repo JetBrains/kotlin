@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
 import org.jetbrains.jet.codegen.AbstractMultiDeclTestCase;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractCodegenTest;
+import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest;
 import org.jetbrains.jet.jvm.compiler.AbstractLoadCompiledKotlinTest;
 import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
@@ -141,6 +142,13 @@ public class GenerateTests {
                 "LoadJavaTestGenerated",
                 AbstractLoadJavaTest.class,
                 testModel("compiler/testData/loadJava", true, "java", "doTest")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "CompileJavaAgainstKotlinTestGenerated",
+                AbstractCompileJavaAgainstKotlinTest.class,
+                testModel("compiler/testData/compileJavaAgainstKotlin", "doTest")
         );
 
         generateTest(

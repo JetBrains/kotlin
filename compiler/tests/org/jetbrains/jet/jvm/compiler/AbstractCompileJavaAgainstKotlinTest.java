@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
-import junit.framework.Test;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
@@ -37,26 +34,11 @@ import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToD
  * @see WriteSignatureTest
  */
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
-public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
-
-    @NotNull
-    private final File ktFile;
-    @NotNull
-    private final File javaFile;
-
-    public CompileJavaAgainstKotlinTest(@NotNull File ktFile) {
-        this.ktFile = ktFile;
-        Assert.assertTrue(ktFile.getName().endsWith(".kt"));
-        this.javaFile = new File(ktFile.getPath().replaceFirst("\\.kt", ".java"));
-    }
-
-    @Override
-    public String getName() {
-        return ktFile.getName();
-    }
-
-    @Override
-    protected void runTest() throws Throwable {
+public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
+    protected void doTest(String ktFilePath) throws Exception {
+        Assert.assertTrue(ktFilePath.endsWith(".kt"));
+        File ktFile = new File(ktFilePath);
+        File javaFile = new File(ktFilePath.replaceFirst("\\.kt", ".java"));
         compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         List<String> options = Arrays.asList(
@@ -65,16 +47,4 @@ public class CompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
         );
         JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
     }
-
-    public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/compileJavaAgainstKotlin", true, new JetTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new CompileJavaAgainstKotlinTest(file);
-            }
-        });
-
-    }
-
 }

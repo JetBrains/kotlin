@@ -20,25 +20,21 @@ import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
-import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
-import org.jetbrains.asm4.commons.Method;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,7 +49,7 @@ import java.util.regex.Pattern;
  *
  * @author Stepan Koltsov
  *
- * @see CompileJavaAgainstKotlinTest
+ * @see CompileJavaAgainstKotlinTestGenerated
  */
 public class WriteSignatureTest extends TestCaseWithTmpdir {
 
