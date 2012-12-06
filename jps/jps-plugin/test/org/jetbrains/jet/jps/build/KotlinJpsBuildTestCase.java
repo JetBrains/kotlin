@@ -20,7 +20,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jps.model.java.*;
 
 import java.io.File;
-import java.io.IOException;
 
 public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "kotlinProject";
@@ -49,6 +48,12 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         makeAll().assertSuccessful();
     }
 
+    public void doTestWithRuntime() {
+        initProject();
+        addKotlinRuntimeDependency();
+        makeAll().assertSuccessful();
+    }
+
     public void testKotlinProject() {
         doTest();
     }
@@ -67,6 +72,14 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
 
     public void testKJCircularProject() {
         doTest();
+    }
+
+    public void testJKJInheritanceProject() {
+        doTestWithRuntime();
+    }
+
+    public void testKJKInheritanceProject() {
+        doTestWithRuntime();
     }
 
     public void testTestDependencyLibrary() throws Throwable {
