@@ -25,6 +25,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -34,7 +35,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
-import org.jetbrains.jet.InTextDirectivesUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -131,8 +131,6 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
 
         if (diagnostics.size() != 0) {
             List<String> expectedErrorStrings = InTextDirectivesUtils.findLinesWithPrefixRemoved("// ERROR:", getFile().getText());
-
-            System.out.println(getFile().getText());
 
             Collection<String> expectedErrors = new HashSet<String>(expectedErrorStrings);
 

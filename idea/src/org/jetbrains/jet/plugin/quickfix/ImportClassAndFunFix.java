@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -96,8 +97,11 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) element.getContainingFile());
 
         List<FqName> result = Lists.newArrayList();
-        result.addAll(getClassNames(referenceName, (JetFile) file, resolveSession));
-        result.addAll(getJetTopLevelFunctions(referenceName, element, resolveSession, file.getProject()));
+        if (!isSuppressedTopLevelImportInPosition(element)) {
+            result.addAll(getClassNames(referenceName, (JetFile) file, resolveSession));
+            result.addAll(getJetTopLevelFunctions(referenceName, element, resolveSession, file.getProject()));
+        }
+
         result.addAll(getJetExtensionFunctions(referenceName, element, resolveSession, file.getProject()));
 
         return Collections2.filter(result, new Predicate<FqName>() {
@@ -107,6 +111,10 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                 return ImportInsertHelper.doNeedImport(new ImportPath(fqName, false), null, (JetFile) file);
             }
         });
+    }
+
+    private static boolean isSuppressedTopLevelImportInPosition(@NotNull JetSimpleNameExpression element) {
+        return element.isImportDirectiveExpression() || !JetPsiUtil.isFirstPartInQualified(element);
     }
 
     private static Collection<FqName> getJetTopLevelFunctions(

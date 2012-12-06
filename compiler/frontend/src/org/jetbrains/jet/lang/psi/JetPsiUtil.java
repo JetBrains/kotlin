@@ -347,6 +347,20 @@ public class JetPsiUtil {
         return null;
     }
 
+    public static boolean isFirstPartInQualified(@NotNull JetSimpleNameExpression nameExpression) {
+        @SuppressWarnings("unchecked") JetUserType userType = PsiTreeUtil.getParentOfType(nameExpression, JetUserType.class, true, JetDeclaration.class);
+        if (userType != null) {
+            return PsiTreeUtil.isAncestor(userType.getFirstChild(), nameExpression, false);
+        }
+
+        @SuppressWarnings("unchecked") JetQualifiedExpression qualifiedExpression = PsiTreeUtil.getParentOfType(nameExpression, JetQualifiedExpression.class, true, JetDeclaration.class);
+        if (qualifiedExpression != null) {
+            return PsiTreeUtil.isAncestor(qualifiedExpression.getFirstChild(), nameExpression, false);
+        }
+
+        return true;
+    }
+
     public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
         if (typeReference == null) {
             return false;

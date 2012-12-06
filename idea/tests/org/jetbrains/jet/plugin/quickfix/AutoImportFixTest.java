@@ -38,7 +38,35 @@ public class AutoImportFixTest extends JetQuickFixMultiFileTest {
         doTest();
     }
 
+    public void testImportInFirstPartInQualifiedExpression() throws Exception {
+        doTest();
+    }
+
+    public void testImportInFirstPartInUserType() throws Exception {
+        doTest();
+    }
+
+    public void testNoImportForFunInQualifiedNotFirst() throws Exception {
+        doTest();
+    }
+
     public void testNoImportForPrivateClass() throws Exception {
+        doTest();
+    }
+
+    public void testNoImportInImports() throws Exception {
+        doTest();
+    }
+
+    public void testNoImportInQualifiedExpressionNotFirst() throws Exception {
+        doTest();
+    }
+
+    public void testNoImportInQualifiedUserTypeNotFirst() throws Exception {
+        doTest();
+    }
+
+    public void testNoImportInSafeQualifiedExpressionNotFirst() throws Exception {
         doTest();
     }
 

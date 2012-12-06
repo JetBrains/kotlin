@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
@@ -26,11 +27,13 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Nikolay Krasko
@@ -39,6 +42,14 @@ public abstract class JetQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
 
     protected static boolean shouldBeAvailableAfterExecution() {
         return false;
+    }
+
+    private static List<String> getActionsTexts(List<IntentionAction> availableActions) {
+        List<String> texts = new ArrayList<String>();
+        for (IntentionAction intentionAction : availableActions) {
+            texts.add(intentionAction.getText());
+        }
+        return texts;
     }
 
     public void doTest() throws Exception {
@@ -69,19 +80,26 @@ public abstract class JetQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
     @SuppressWarnings({"HardCodedStringLiteral"})
     public void doAction(final String text, final boolean actionShouldBeAvailable, final String testFullPath)
             throws Exception {
-        IntentionAction action = LightQuickFixTestCase.findActionWithText(getAvailableActions(), text);
+        List<IntentionAction> availableActions = getAvailableActions();
+        IntentionAction action = LightQuickFixTestCase.findActionWithText(availableActions, text);
+
         if (action == null) {
             if (actionShouldBeAvailable) {
-                List<IntentionAction> actions = getAvailableActions();
-                List<String> texts = new ArrayList<String>();
-                for (IntentionAction intentionAction : actions) {
-                    texts.add(intentionAction.getText());
-                }
+                List<String> texts = getActionsTexts(availableActions);
                 Collection<HighlightInfo> infos = doHighlighting();
                 fail("Action with text '" + text + "' is not available in test " + testFullPath + "\n" +
                      "Available actions (" + texts.size() + "): " + texts + "\n" +
-                     actions + "\n" +
+                     availableActions + "\n" +
                      "Infos:" + infos);
+            }
+            else {
+                Set<String> validActions = Sets.newHashSet(InTextDirectivesUtils.findLinesWithPrefixRemoved("// ACTION:", getFile().getText()));
+                for (IntentionAction availableAction : availableActions) {
+                    if (!validActions.contains(availableAction.getText())) {
+                        fail(String.format("Unexpected action available at current position: %s. Use // ACTION: directive",
+                                           availableAction.getText()));
+                    }
+                }
             }
         }
         else {
