@@ -177,15 +177,28 @@ public class PseudocodeImpl implements Pseudocode {
         return reversedInstructions;
     }
 
-    private static void traverseInstructionsInReverseOrder(@NotNull Instruction instruction,
+    private static void traverseInstructionsInReverseOrder(@NotNull Instruction rootInstruction,
             @NotNull LinkedHashSet<Instruction> instructions) {
-        if (instructions.contains(instruction)) return;
-        instructions.add(instruction);
-        for (Instruction previousInstruction : instruction.getPreviousInstructions()) {
-            traverseInstructionsInReverseOrder(previousInstruction, instructions);
+        Deque<Instruction> stack = Queues.newArrayDeque();
+        stack.push(rootInstruction);
+
+        List<Instruction> previousInstructions = Lists.newArrayList();
+        while ( !stack.isEmpty() ) {
+            final Instruction instruction = stack.pop();
+
+            if ( instructions.contains(instruction) )
+                continue;
+
+            instructions.add(instruction);
+
+            // Reverse iteration order to match the original recursive order.
+            previousInstructions.addAll(instruction.getPreviousInstructions());
+            for (Instruction previousInstruction : Lists.reverse(previousInstructions)) {
+                stack.push(previousInstruction);
+            }
+            previousInstructions.clear();
         }
     }
-
 
     //for tests only
     @NotNull
@@ -363,12 +376,28 @@ public class PseudocodeImpl implements Pseudocode {
         return visited;
     }
     
-    private void traverseNextInstructions(@NotNull Instruction instruction, @NotNull Set<Instruction> visited) {
-        if (visited.contains(instruction)) return;
-        visited.add(instruction);
-        for (Instruction nextInstruction : instruction.getNextInstructions()) {
-            if (nextInstruction == null) continue; //todo it might be null on incomplete code
-            traverseNextInstructions(nextInstruction, visited);
+    private static void traverseNextInstructions(@NotNull Instruction rootInstruction, @NotNull Set<Instruction> visited) {
+        Deque<Instruction> stack = Queues.newArrayDeque();
+        stack.push(rootInstruction);
+
+        List<Instruction> nextInstructions = Lists.newArrayList();
+        while (!stack.isEmpty()) {
+            final Instruction instruction = stack.pop();
+
+            if (visited.contains(instruction))
+                continue;
+
+            visited.add(instruction);
+
+            // Reverse iteration order to match the original recursive order.
+            nextInstructions.addAll(instruction.getNextInstructions());
+            for (Instruction nextInstruction : Lists.reverse(nextInstructions)) {
+                if ( nextInstruction == null )
+                    continue;
+
+                stack.push(nextInstruction);
+            }
+            nextInstructions.clear();
         }
     }
 
