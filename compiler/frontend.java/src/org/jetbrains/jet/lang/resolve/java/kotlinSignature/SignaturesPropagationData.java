@@ -23,16 +23,15 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.CollectionClassMapping;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinMethodMap;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -200,12 +199,14 @@ public class SignaturesPropagationData {
     ) {
         List<FunctionDescriptor> superFunctions = Lists.newArrayList();
         for (HierarchicalMethodSignature superSignature : method.getPsiMethod().getHierarchicalMethodSignature().getSuperSignatures()) {
-            DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superSignature.getMethod());
+            PsiMethod superMethod = superSignature.getMethod();
+            PsiElement superDeclaration = superMethod instanceof JetClsMethod ? ((JetClsMethod) superMethod).getOrigin() : superMethod;
+            DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superDeclaration);
             if (superFun instanceof FunctionDescriptor) {
                 superFunctions.add(((FunctionDescriptor) superFun));
             }
             else {
-                PsiClass psiClass = superSignature.getMethod().getContainingClass();
+                PsiClass psiClass = superMethod.getContainingClass();
                 assert psiClass != null;
                 String fqName = psiClass.getQualifiedName();
                 assert fqName != null;
@@ -222,8 +223,7 @@ public class SignaturesPropagationData {
                     }
                 }
                 else {
-                    List<FunctionDescriptor> funsFromMap =
-                            JavaToKotlinMethodMap.INSTANCE.getFunctions(superSignature.getMethod(), containingClass);
+                    List<FunctionDescriptor> funsFromMap = JavaToKotlinMethodMap.INSTANCE.getFunctions(superMethod, containingClass);
                     superFunctions.addAll(funsFromMap);
                 }
             }
