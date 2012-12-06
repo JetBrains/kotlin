@@ -187,7 +187,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void writeInnerClasses() {
         for (ClassDescriptor innerClass : getInnerClassesAndObjects(descriptor)) {
-            writeInnerClass(innerClass, false /* TODO */);
+            writeInnerClass(innerClass);
         }
 
         ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
@@ -199,7 +199,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void writeInnerClass(ClassDescriptor innerClass, boolean isStatic) {
+    private void writeInnerClass(ClassDescriptor innerClass) {
         // TODO: proper access
         int innerClassAccess = getVisibilityAccessFlag(innerClass);
         if (innerClass.getModality() == Modality.FINAL) {
@@ -216,7 +216,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             innerClassAccess |= ACC_ENUM;
         }
 
-        if (isStatic) {
+        if (!innerClass.isInner()) {
             innerClassAccess |= ACC_STATIC;
         }
 

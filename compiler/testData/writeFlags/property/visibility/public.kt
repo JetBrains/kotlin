@@ -1,5 +1,5 @@
 class Foo {
-  public class MyClass() {
+  public inner class MyClass() {
   }
 }
 

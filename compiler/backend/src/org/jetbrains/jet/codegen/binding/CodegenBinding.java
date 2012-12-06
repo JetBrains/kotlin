@@ -134,17 +134,25 @@ public class CodegenBinding {
     }
 
     public static boolean canHaveOuter(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        final ClassKind kind = classDescriptor.getKind();
         if (isSingleton(bindingContext, classDescriptor)) {
             return false;
         }
 
-        if (kind == ClassKind.ENUM_CLASS) {
+        ClassDescriptor enclosing = enclosingClassDescriptor(bindingContext, classDescriptor);
+        if (enclosing == null) {
             return false;
         }
 
-        final ClassDescriptor enclosing = enclosingClassDescriptor(bindingContext, classDescriptor);
-        return enclosing != null && !isSingleton(bindingContext, enclosing);
+        ClassKind kind = classDescriptor.getKind();
+        if (kind == ClassKind.CLASS) {
+            return classDescriptor.isInner() || !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor);
+        }
+        else if (kind == ClassKind.OBJECT) {
+            return !isSingleton(bindingContext, enclosing);
+        }
+        else {
+            return false;
+        }
     }
 
     public static boolean isSingleton(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {

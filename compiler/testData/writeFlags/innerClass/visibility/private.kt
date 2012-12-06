@@ -1,5 +1,5 @@
 class Foo {
-  private class MyClass() {
+  private inner class MyClass() {
   }
 }
 
