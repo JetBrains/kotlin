@@ -30,40 +30,58 @@ public class Printer {
         this.out = out;
     }
 
-    public void println(Object... objects) {
+    @NotNull
+    public Printer println(Object... objects) {
         print(objects);
         printLineSeparator();
+
+        return this;
     }
 
     private void printLineSeparator() {
         out.append(System.getProperty("line.separator"));
     }
 
-    public void print(Object... objects) {
+    @NotNull
+    public Printer print(Object... objects) {
         out.append(indent);
         printWithNoIndent(objects);
+
+        return this;
     }
 
-    public void printWithNoIndent(Object... objects) {
+    @NotNull
+    public Printer printWithNoIndent(Object... objects) {
         for (Object object : objects) {
             out.append(object);
         }
+
+        return this;
     }
 
-    public void printlnWithNoIndent(Object... objects) {
+    @NotNull
+    public Printer printlnWithNoIndent(Object... objects) {
         printWithNoIndent(objects);
         printLineSeparator();
+
+        return this;
     }
 
-    public void pushIndent() {
+    @NotNull
+    public Printer pushIndent() {
         indent += INDENTATION_UNIT;
+
+        return this;
     }
 
-    public void popIndent() {
+    @NotNull
+    public Printer popIndent() {
         if (indent.length() < INDENTATION_UNIT.length()) {
             throw new IllegalStateException("No indentation to pop");
         }
 
         indent = indent.substring(INDENTATION_UNIT.length());
+
+        return this;
     }
 }
