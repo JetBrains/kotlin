@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,7 @@ import java.util.LinkedHashSet;
 public abstract class InstructionImpl implements Instruction {
     private Pseudocode owner;
     private final Collection<Instruction> previousInstructions = new LinkedHashSet<Instruction>();
+    private final Collection<Instruction> copies = Sets.newHashSet();
     protected boolean isDead = false;
 
     protected InstructionImpl() {
@@ -67,5 +69,29 @@ public abstract class InstructionImpl implements Instruction {
         return isDead;
     }
 
-    public abstract Instruction copy();
+    public final Instruction copy() {
+        return updateCopyInfo(createCopy());
+    }
+
+    protected abstract Instruction createCopy();
+
+    @NotNull
+    @Override
+    public Collection<Instruction> getCopies() {
+        return copies;
+    }
+
+    private void addCopy(@NotNull Instruction instruction) {
+        copies.add(instruction);
+    }
+
+    protected Instruction updateCopyInfo(@NotNull Instruction instruction) {
+        for (Instruction copy : copies) {
+            ((InstructionImpl)copy).addCopy(instruction);
+            ((InstructionImpl)instruction).addCopy(copy);
+        }
+        addCopy(instruction);
+        ((InstructionImpl)instruction).addCopy(this);
+        return instruction;
+    }
 }

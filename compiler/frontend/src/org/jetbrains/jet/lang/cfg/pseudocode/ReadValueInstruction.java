@@ -39,7 +39,7 @@ public class ReadValueInstruction extends InstructionWithNext {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         return new ReadValueInstruction(element);
     }
 }

@@ -49,7 +49,7 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         if (element instanceof JetParameter) {
             return new VariableDeclarationInstruction((JetParameter) element);
         }

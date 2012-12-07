@@ -39,7 +39,7 @@ public class UnsupportedElementInstruction extends InstructionWithNext {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         return new UnsupportedElementInstruction(element);
     }
 }

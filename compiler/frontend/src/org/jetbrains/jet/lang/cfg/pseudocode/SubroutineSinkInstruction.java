@@ -55,7 +55,7 @@ public class SubroutineSinkInstruction extends InstructionImpl {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         return new SubroutineSinkInstruction(subroutine, debugLabel);
     }
 }

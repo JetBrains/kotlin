@@ -45,7 +45,7 @@ public class SubroutineEnterInstruction extends InstructionWithNext {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         return new SubroutineEnterInstruction(subroutine);
     }
 }

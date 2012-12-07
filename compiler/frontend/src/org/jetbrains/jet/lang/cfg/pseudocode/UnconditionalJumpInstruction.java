@@ -40,7 +40,7 @@ public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
     }
 
     @Override
-    AbstractJumpInstruction copy(@NotNull Label newLabel) {
+    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel) {
         return new UnconditionalJumpInstruction(newLabel);
     }
 }

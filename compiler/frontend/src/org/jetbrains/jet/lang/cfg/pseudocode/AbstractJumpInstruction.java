@@ -51,10 +51,14 @@ public abstract class AbstractJumpInstruction extends InstructionImpl {
         this.resolvedTarget = outgoingEdgeTo(resolvedTarget);
     }
 
-    abstract AbstractJumpInstruction copy(@NotNull Label newLabel);
+    protected abstract AbstractJumpInstruction createCopy(@NotNull Label newLabel);
+
+    final public Instruction copy(@NotNull Label newLabel) {
+        return updateCopyInfo(createCopy(newLabel));
+    }
 
     @Override
-    public Instruction copy() {
-        return copy(targetLabel);
+    protected Instruction createCopy() {
+        return createCopy(targetLabel);
     }
 }

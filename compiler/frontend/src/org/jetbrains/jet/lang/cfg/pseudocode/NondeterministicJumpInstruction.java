@@ -69,7 +69,7 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
     @NotNull
     @Override
     public Collection<Instruction> getNextInstructions() {
-        ArrayList<Instruction> targetInstructions = Lists.newArrayList(getResolvedTargets().values());
+        List<Instruction> targetInstructions = Lists.newArrayList(getResolvedTargets().values());
         targetInstructions.add(getNext());
         return targetInstructions;
     }
@@ -90,7 +90,16 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
     }
 
     @Override
-    public Instruction copy() {
-        return new NondeterministicJumpInstruction(getTargetLabels());
+    protected Instruction createCopy() {
+        return createCopy(getTargetLabels());
+    }
+
+    @NotNull
+    public final Instruction copy(@NotNull List<Label> newTargetLabels) {
+        return updateCopyInfo(createCopy(newTargetLabels));
+    }
+
+    private Instruction createCopy(@NotNull List<Label> newTargetLabels) {
+        return new NondeterministicJumpInstruction(newTargetLabels);
     }
 }

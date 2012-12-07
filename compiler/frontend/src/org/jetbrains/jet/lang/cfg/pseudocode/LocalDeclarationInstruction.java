@@ -73,7 +73,7 @@ public class LocalDeclarationInstruction extends InstructionWithNext {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         return new LocalDeclarationInstruction((JetDeclaration) element, body);
     }
 }

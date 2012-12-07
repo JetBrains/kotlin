@@ -52,7 +52,7 @@ public class WriteValueInstruction extends InstructionWithNext {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         return new WriteValueInstruction(element, lValue);
     }
 }

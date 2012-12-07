@@ -61,7 +61,7 @@ public class SubroutineExitInstruction extends InstructionImpl {
     }
 
     @Override
-    public Instruction copy() {
+    protected Instruction createCopy() {
         return new SubroutineExitInstruction(subroutine, debugLabel);
     }
 }

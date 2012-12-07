@@ -49,7 +49,7 @@ public class ReturnNoValueInstruction extends AbstractJumpInstruction implements
     }
 
     @Override
-    AbstractJumpInstruction copy(@NotNull Label newLabel) {
+    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel) {
         return new ReturnNoValueInstruction(element, newLabel);
     }
 }
