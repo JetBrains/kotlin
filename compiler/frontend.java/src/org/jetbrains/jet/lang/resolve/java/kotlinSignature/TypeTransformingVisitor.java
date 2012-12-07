@@ -25,10 +25,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -36,18 +33,18 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.*;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
 
 class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     private final JetType originalType;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
-    private final JavaTypeTransformer.TypeUsage typeUsage;
+    private final TypeUsage typeUsage;
 
     private TypeTransformingVisitor(
             JetType originalType,
             Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
-            JavaTypeTransformer.TypeUsage typeUsage
+            TypeUsage typeUsage
     ) {
         this.originalType = originalType;
         this.typeUsage = typeUsage;
@@ -59,7 +56,7 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             @NotNull JetTypeElement alternativeTypeElement,
             @NotNull JetType originalType,
             @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
-            @NotNull JavaTypeTransformer.TypeUsage typeUsage
+            @NotNull TypeUsage typeUsage
     ) {
         JetType computedType = alternativeTypeElement.accept(new TypeTransformingVisitor(originalType, originalToAltTypeParameters, typeUsage), null);
         assert (computedType != null);

@@ -32,7 +32,7 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.MEMBER_SIGNATURE_COVARIANT;
 
 public abstract class ElementAlternativeSignatureData {
     private String error;

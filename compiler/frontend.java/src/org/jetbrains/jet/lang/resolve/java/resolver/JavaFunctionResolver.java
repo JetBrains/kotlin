@@ -314,7 +314,7 @@ public final class JavaFunctionResolver {
         }
         else {
             transformedType = typeTransformer.transformToType(
-                    returnType, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
+                    returnType, TypeUsage.MEMBER_SIGNATURE_COVARIANT, typeVariableResolver);
         }
 
         if (JavaAnnotationResolver.findAnnotationWithExternal(method.getPsiMethod(), JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) !=

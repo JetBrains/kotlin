@@ -109,7 +109,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     private ClassDescriptor resolveClassDescriptorByFqName(FqName ourName, boolean forceReal) {
         if (!forceReal) {
             ClassDescriptor mappedDescriptor = JavaToKotlinClassMap.getInstance().
-                    mapKotlinClass(ourName, JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_INVARIANT);
+                    mapKotlinClass(ourName, TypeUsage.MEMBER_SIGNATURE_INVARIANT);
             if (mappedDescriptor != null) {
                 return mappedDescriptor;
             }

@@ -80,9 +80,9 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
     }
 
     @Nullable
-    public ClassDescriptor mapKotlinClass(@NotNull FqName fqName, @NotNull JavaTypeTransformer.TypeUsage typeUsage) {
-        if (typeUsage == JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT
-                || typeUsage == JavaTypeTransformer.TypeUsage.SUPERTYPE) {
+    public ClassDescriptor mapKotlinClass(@NotNull FqName fqName, @NotNull TypeUsage typeUsage) {
+        if (typeUsage == TypeUsage.MEMBER_SIGNATURE_COVARIANT
+                || typeUsage == TypeUsage.SUPERTYPE) {
             ClassDescriptor descriptor = classDescriptorMapForCovariantPositions.get(fqName);
             if (descriptor != null) {
                 return descriptor;

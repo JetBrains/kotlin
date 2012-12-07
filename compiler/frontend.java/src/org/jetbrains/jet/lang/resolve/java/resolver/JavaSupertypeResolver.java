@@ -187,7 +187,7 @@ public final class JavaSupertypeResolver {
             }
 
             JetType transform = typeTransformer
-                    .transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
+                    .transformToType(type, TypeUsage.SUPERTYPE, typeVariableResolver);
             if (ErrorUtils.isErrorType(transform)) {
                 continue;
             }

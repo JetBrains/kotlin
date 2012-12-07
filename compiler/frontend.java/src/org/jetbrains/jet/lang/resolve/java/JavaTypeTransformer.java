@@ -35,7 +35,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.*;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
 
 /**
  * @author abreslav
@@ -254,20 +254,5 @@ public class JavaTypeTransformer {
             }
         });
         return result;
-    }
-
-    /**
-     * We convert Java types differently, depending on where they occur in the Java code
-     * This enum encodes the kinds of occurrences
-     */
-    public enum TypeUsage {
-        // Type T occurs somewhere as a generic argument, e.g.: List<T> or List<? extends T>
-        TYPE_ARGUMENT,
-        UPPER_BOUND,
-        MEMBER_SIGNATURE_COVARIANT,
-        MEMBER_SIGNATURE_CONTRAVARIANT,
-        MEMBER_SIGNATURE_INVARIANT,
-        SUPERTYPE,
-        SUPERTYPE_ARGUMENT
     }
 }

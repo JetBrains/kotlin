@@ -40,8 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
-import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.UPPER_BOUND;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.UPPER_BOUND;
 
 /**
  * @author Evgeny Gerashchenko

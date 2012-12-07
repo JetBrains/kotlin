@@ -292,11 +292,11 @@ public final class JavaSignatureResolver {
                 typeParameterDescriptor.addUpperBound(KotlinBuiltIns.getInstance().getNullableAnyType());
             }
             else if (referencedTypes.length == 1) {
-                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0], JavaTypeTransformer.TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
+                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0], TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
             }
             else {
                 for (PsiClassType referencedType : referencedTypes) {
-                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType, JavaTypeTransformer.TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
+                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
                 }
             }
         }
