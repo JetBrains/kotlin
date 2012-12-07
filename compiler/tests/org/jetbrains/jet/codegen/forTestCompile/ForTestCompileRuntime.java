@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.junit.Assert;
@@ -113,6 +114,11 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File runtimeJarForTests() {
         return ForTestCompileSomething.ACTUALLY_COMPILE ? Runtime.runtime.getJarFile() : new File("dist/kotlinc/lib/kotlin-runtime.jar");
+    }
+
+    // This method is very convenient when you have trouble compiling runtime in tests
+    public static void main(String[] args) throws IOException {
+        compileStdlib(JetTestUtils.tmpDir("runtime"));
     }
 
 }
