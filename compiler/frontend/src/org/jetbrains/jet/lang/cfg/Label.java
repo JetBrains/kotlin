@@ -21,4 +21,5 @@ package org.jetbrains.jet.lang.cfg;
  */
 public interface Label {
     String getName();
+    boolean allowDead();
 }

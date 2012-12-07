@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -61,16 +62,24 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         builder.bindLabel(label);
     }
 
+    @NotNull
     @Override
-    public void allowDead() {
+    public Label createAllowDeadLabel(@NotNull Collection<Label> allowDeadLabels) {
         assert builder != null;
-        builder.allowDead();
+        return builder.createAllowDeadLabel(allowDeadLabels);
+    }
+
+    @NotNull
+    @Override
+    public Label createAllowDeadLabel(@NotNull String name, @NotNull Collection<Label> allowDeadLabels) {
+        assert builder != null;
+        return builder.createAllowDeadLabel(name, allowDeadLabels);
     }
 
     @Override
-    public void stopAllowDead() {
+    public void stopAllowDead(@NotNull Collection<Label> allowDeadLabels) {
         assert builder != null;
-        builder.stopAllowDead();
+        builder.stopAllowDead(allowDeadLabels);
     }
 
     @Override

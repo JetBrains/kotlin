@@ -36,16 +36,23 @@ public class PseudocodeImpl implements Pseudocode {
 
     public class PseudocodeLabel implements Label {
         private final String name;
+        private final boolean allowDead;
         private Integer targetInstructionIndex;
 
 
-        private PseudocodeLabel(String name) {
+        private PseudocodeLabel(String name, boolean allowDead) {
             this.name = name;
+            this.allowDead = allowDead;
         }
 
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public boolean allowDead() {
+            return allowDead;
         }
 
         @Override
@@ -85,8 +92,7 @@ public class PseudocodeImpl implements Pseudocode {
     private final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
     
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
-    private final List<PseudocodeLabel> allowedDeadLabels = new ArrayList<PseudocodeLabel>();
-    private final List<PseudocodeLabel> stopAllowDeadLabels = new ArrayList<PseudocodeLabel>();
+    private final Map<PseudocodeLabel, Collection<Label>> stopAllowDeadLabels = Maps.newHashMap();
 
     private final JetElement correspondingElement;
     private SubroutineExitInstruction exitInstruction;
@@ -126,17 +132,21 @@ public class PseudocodeImpl implements Pseudocode {
     }
 
     /*package*/ PseudocodeLabel createLabel(String name) {
-        PseudocodeLabel label = new PseudocodeLabel(name);
+        return createLabel(name, false);
+    }
+
+    private PseudocodeLabel createLabel(String name, boolean allowDead) {
+        PseudocodeLabel label = new PseudocodeLabel(name, allowDead);
         labels.add(label);
         return label;
     }
     
-    /*package*/ void allowDead(Label label) {
-        allowedDeadLabels.add((PseudocodeLabel) label);
+    /*package*/ Label createAllowDeadLabel(String name) {
+        return createLabel(name, true);
     }
     
-    /*package*/ void stopAllowDead(Label label) {
-        stopAllowDeadLabels.add((PseudocodeLabel) label);
+    /*package*/ void stopAllowDead(Label label, Collection<Label> allowDeadLabels) {
+        stopAllowDeadLabels.put((PseudocodeLabel) label, allowDeadLabels);
     }
 
     @Override
@@ -373,24 +383,26 @@ public class PseudocodeImpl implements Pseudocode {
     }
 
     @NotNull
-    private Set<Instruction> prepareAllowedDeadInstructions() {
-        Set<Instruction> allowedDeadStartInstructions = Sets.newHashSet();
-        for (PseudocodeLabel allowedDeadLabel : allowedDeadLabels) {
-            Instruction allowedDeadInstruction = getJumpTarget(allowedDeadLabel);
-            if (((InstructionImpl)allowedDeadInstruction).isDead()) {
-                allowedDeadStartInstructions.add(allowedDeadInstruction);
+    private Map<Instruction, Label> prepareAllowDeadStarters() {
+        Map<Instruction, Label> allowedDeadBeginners = Maps.newHashMap();
+        for (PseudocodeLabel label : labels) {
+            if (!label.allowDead()) continue;
+            Instruction allowDeadPossibleBeginner = getJumpTarget(label);
+            if (((InstructionImpl)allowDeadPossibleBeginner).isDead()) {
+                allowedDeadBeginners.put(allowDeadPossibleBeginner, label);
             }
         }
-        return allowedDeadStartInstructions;
+        return allowedDeadBeginners;
     }
     
     @NotNull
-    private Set<Instruction> prepareStopAllowedDeadInstructions() {
-        Set<Instruction> stopAllowedDeadInstructions = Sets.newHashSet();
-        for (PseudocodeLabel stopAllowedDeadLabel : stopAllowDeadLabels) {
+    private Map<Instruction, Collection<Label>> prepareAllowDeadStoppers() {
+        Map<Instruction, Collection<Label>> stopAllowedDeadInstructions = Maps.newHashMap();
+        for (Map.Entry<PseudocodeLabel, Collection<Label>> entry : stopAllowDeadLabels.entrySet()) {
+            PseudocodeLabel stopAllowedDeadLabel = entry.getKey();
             Instruction stopAllowDeadInsruction = getJumpTarget(stopAllowedDeadLabel);
             if (((InstructionImpl)stopAllowDeadInsruction).isDead()) {
-                stopAllowedDeadInstructions.add(stopAllowDeadInsruction);
+                stopAllowedDeadInstructions.put(stopAllowDeadInsruction, entry.getValue());
             }
         }
         return stopAllowedDeadInstructions;
@@ -398,22 +410,39 @@ public class PseudocodeImpl implements Pseudocode {
 
     @NotNull
     private Collection<Instruction> collectAllowedDeadInstructions() {
-        Set<Instruction> allowedDeadStartInstructions = prepareAllowedDeadInstructions();
-        Set<Instruction> stopAllowDeadInstructions = prepareStopAllowedDeadInstructions();
+        // Allow dead instruction block can have several starters and
+        // one stopper that knows all corresponding starters by labels
+        Map<Instruction, Label> allowDeadStarters = prepareAllowDeadStarters();
+        Map<Instruction, Collection<Label>> allowDeadStoppers = prepareAllowDeadStoppers();
         Set<Instruction> allowedDeadInstructions = Sets.newHashSet();
 
-        for (Instruction allowedDeadStartInstruction : allowedDeadStartInstructions) {
-            collectAllowedDeadInstructions(allowedDeadStartInstruction, allowedDeadInstructions, stopAllowDeadInstructions);
+        for (Map.Entry<Instruction, Label> entry : allowDeadStarters.entrySet()) {
+            Instruction starter = entry.getKey();
+
+            Set<Instruction> allowedDeadFromThisInstruction = Sets.newHashSet();
+            Label starterLabel = entry.getValue();
+            collectAllowedDeadInstructions(starter, starterLabel, allowedDeadFromThisInstruction, allowDeadStoppers);
+            allowedDeadInstructions.addAll(allowedDeadFromThisInstruction);
         }
         return allowedDeadInstructions;
     }
     
-    private void collectAllowedDeadInstructions(Instruction allowedDeadInstruction, Set<Instruction> instructionSet, Set<Instruction> stopAllowDeadInstructions) {
-        if (instructionSet.contains(allowedDeadInstruction) || stopAllowDeadInstructions.contains(allowedDeadInstruction)) return;
-        if (((InstructionImpl)allowedDeadInstruction).isDead()) {
-            instructionSet.add(allowedDeadInstruction);
-            for (Instruction instruction : allowedDeadInstruction.getNextInstructions()) {
-                collectAllowedDeadInstructions(instruction, instructionSet, stopAllowDeadInstructions);
+    private static void collectAllowedDeadInstructions(
+            @NotNull Instruction current,
+            @NotNull Label starterLabel,
+            @NotNull Set<Instruction> collectedDeadInstructions,
+            @NotNull Map<Instruction, Collection<Label>> allowDeadStoppers
+    ) {
+
+        if (collectedDeadInstructions.contains(current)) return;
+        Collection<Label> allowDeadLabels = allowDeadStoppers.get(current);
+        boolean isStopper = allowDeadLabels != null && allowDeadLabels.contains(starterLabel);
+        if (isStopper) return;
+
+        if (((InstructionImpl)current).isDead()) {
+            collectedDeadInstructions.add(current);
+            for (Instruction instruction : current.getNextInstructions()) {
+                collectAllowedDeadInstructions(instruction, starterLabel, collectedDeadInstructions, allowDeadStoppers);
             }
         }
     }

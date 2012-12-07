@@ -30,6 +30,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private final Stack<BreakableBlockInfo> loopInfo = new Stack<BreakableBlockInfo>();
     private final Map<JetElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<JetElement, BreakableBlockInfo>();
     private int labelCount = 0;
+    private int allowDeadLabelCount = 0;
 
     private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
 
@@ -272,18 +273,26 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pseudocode.bindLabel(label);
         }
 
+        @NotNull
         @Override
-        public void allowDead() {
-            Label allowedDeadLabel = createUnboundLabel();
-            bindLabel(allowedDeadLabel);
-            pseudocode.allowDead(allowedDeadLabel);
+        public Label createAllowDeadLabel(@NotNull Collection<Label> allowDeadLabels) {
+            return createAllowDeadLabel("d" + allowDeadLabelCount++, allowDeadLabels);
+        }
+
+        @NotNull
+        @Override
+        public Label createAllowDeadLabel(@NotNull String name, @NotNull Collection<Label> allowDeadLabels) {
+            Label label = pseudocode.createAllowDeadLabel(name);
+            bindLabel(label);
+            allowDeadLabels.add(label);
+            return label;
         }
 
         @Override
-        public void stopAllowDead() {
-            Label allowedDeadLabel = createUnboundLabel();
+        public void stopAllowDead(@NotNull Collection<Label> allowDeadLabels) {
+            Label allowedDeadLabel = createUnboundLabel("stop " + allowDeadLabels);
             bindLabel(allowedDeadLabel);
-            pseudocode.stopAllowDead(allowedDeadLabel);
+            pseudocode.stopAllowDead(allowedDeadLabel, allowDeadLabels);
         }
 
         @Override

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,8 +38,12 @@ public interface JetControlFlowBuilder {
     Label createUnboundLabel(@NotNull String name);
 
     void bindLabel(@NotNull Label label);
-    void allowDead();
-    void stopAllowDead();
+
+    @NotNull
+    Label createAllowDeadLabel(@NotNull Collection<Label> allowDeadLabels);
+    @NotNull
+    Label createAllowDeadLabel(@NotNull String name, @NotNull Collection<Label> allowDeadLabels);
+    void stopAllowDead(@NotNull Collection<Label> allowDeadLabels);
 
     // Jumps
     void jump(@NotNull Label label);

@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -378,8 +379,9 @@ public class JetControlFlowProcessor {
             }
             value(expression.getTryBlock(), inCondition);
 
+            Collection<Label> allowDeadLabels = Lists.newArrayList();
             if (hasCatches) {
-                builder.allowDead();
+                builder.createAllowDeadLabel(allowDeadLabels);
                 Label afterCatches = builder.createUnboundLabel("afterCatches");
                 builder.jump(afterCatches);
 
@@ -407,14 +409,14 @@ public class JetControlFlowProcessor {
                     if (catchBody != null) {
                         value(catchBody, false);
                     }
-                    builder.allowDead();
+                    builder.createAllowDeadLabel(allowDeadLabels);
                     builder.jump(afterCatches);
                 }
 
                 builder.bindLabel(afterCatches);
             }
             else {
-                builder.allowDead();
+                builder.createAllowDeadLabel(allowDeadLabels);
             }
 
             if (finallyBlock != null) {
@@ -429,7 +431,7 @@ public class JetControlFlowProcessor {
 
                 value(finallyBlock.getFinalExpression(), inCondition);
             }
-            builder.stopAllowDead();
+            builder.stopAllowDead(allowDeadLabels);
         }
 
         @Override
@@ -784,6 +786,7 @@ public class JetControlFlowProcessor {
             Label doneLabel = builder.createUnboundLabel();
 
             Label nextLabel = null;
+            Collection<Label> allowDeadLabels = Lists.newArrayList();
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
                 JetWhenEntry whenEntry = iterator.next();
 
@@ -818,7 +821,7 @@ public class JetControlFlowProcessor {
 
                 builder.bindLabel(bodyLabel);
                 value(whenEntry.getExpression(), inCondition);
-                builder.allowDead();
+                builder.createAllowDeadLabel(allowDeadLabels);
                 builder.jump(doneLabel);
 
                 if (!isIrrefutable) {
@@ -830,7 +833,7 @@ public class JetControlFlowProcessor {
             if (!hasElseOrIrrefutableBranch && !isWhenExhaust) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
-            builder.stopAllowDead();
+            builder.stopAllowDead(allowDeadLabels);
         }
 
         @Override
