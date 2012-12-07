@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getVarargParameterType;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
@@ -270,18 +269,33 @@ public class SignaturesPropagationData {
             return new VarargCheckResult(originalType, originalVarargElementType != null);
         }
 
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (someSupersVararg && originalVarargElementType == null) {
+            // convert to vararg
+
             assert isArrayType(originalType);
 
-            // convert to vararg; replace Array<out Foo>? with Array<Foo>
-            JetType varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(originalType);
-            return new VarargCheckResult(getVarargParameterType(varargElementType), true);
+            if (builtIns.isPrimitiveArray(originalType)) {
+                // replace IntArray? with IntArray
+                return new VarargCheckResult(TypeUtils.makeNotNullable(originalType), true);
+            }
+
+            // replace Array<out Foo>? with Array<Foo>
+            JetType varargElementType = builtIns.getArrayElementType(originalType);
+            return new VarargCheckResult(builtIns.getArrayType(INVARIANT, varargElementType), true);
         }
         else if (someSupersNotVararg && originalVarargElementType != null) {
+            // convert to non-vararg
+
             assert isArrayType(originalType);
 
-            // convert to non-vararg; replace Array<Foo> with Array<out Foo>?
-            return new VarargCheckResult(TypeUtils.makeNullable(getVarargParameterType(originalVarargElementType, Variance.OUT_VARIANCE)),
+            if (builtIns.isPrimitiveArray(originalType)) {
+                // replace IntArray with IntArray?
+                return new VarargCheckResult(TypeUtils.makeNullable(originalType), false);
+            }
+
+            // replace Array<Foo> with Array<out Foo>?
+            return new VarargCheckResult(TypeUtils.makeNullable(builtIns.getArrayType(Variance.OUT_VARIANCE, originalVarargElementType)),
                                          false);
         }
 
