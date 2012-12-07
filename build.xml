@@ -82,20 +82,28 @@
         <chmod dir="${kotlin-home}/bin" includes="*" perm="755"/>
     </target>
 
-    <target name="injectorsGenerator">
-        <cleandir dir="${output}/classes/injectorsGenerator"/>
-        <javac destdir="${output}/classes/injectorsGenerator" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+    <target name="compileGenerators">
+        <cleandir dir="${output}/classes/generators"/>
+        <javac destdir="${output}/classes/generators" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src path="injector-generator/src"/>
             <src path="generators/org/jetbrains/jet/generators/injectors"/>
+            <src path="generators/org/jetbrains/jet/generators/jvm"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
         </javac>
+        <copy todir="${output}/classes/generators">
+          <fileset dir="compiler/frontend/src" includes="**/*.jet"/>
+        </copy>
     </target>
 
-    <target name="generateInjectors" depends="injectorsGenerator">
+    <target name="invokeGenerators" depends="compileGenerators">
         <java classname="org.jetbrains.jet.generators.injectors.GenerateInjectors" failonerror="true">
             <classpath refid="classpath"/>
-            <classpath path="${output}/classes/injectorsGenerator"/>
+            <classpath path="${output}/classes/generators"/>
+        </java>
+        <java classname="org.jetbrains.jet.generators.jvm.GenerateJavaToKotlinMethodMap" failonerror="true">
+            <classpath refid="classpath"/>
+            <classpath path="${output}/classes/generators"/>
         </java>
     </target>
 
@@ -486,7 +494,7 @@
     </target>
 
     <target name="dist"
-            depends="init,prepareDist,injectorsGenerator,generateInjectors,compiler,compilerSources,antTools,jdkAnnotations,runtime,lang,jslib"/>
+            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,runtime,lang,jslib"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">

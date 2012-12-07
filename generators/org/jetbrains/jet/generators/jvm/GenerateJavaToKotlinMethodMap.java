@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators;
+package org.jetbrains.jet.generators.jvm;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.components.ServiceManager;
@@ -27,11 +27,9 @@ import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -39,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMapBuilder;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
@@ -48,6 +47,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 import static org.jetbrains.jet.lang.resolve.java.JavaToKotlinMethodMap.serializeFunction;
 import static org.jetbrains.jet.lang.resolve.java.JavaToKotlinMethodMap.serializePsiMethod;
 
@@ -56,9 +56,10 @@ public class GenerateJavaToKotlinMethodMap {
     public static final String BUILTINS_FQNAME_PREFIX = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.getFqName() + ".";
 
     public static void main(String[] args) throws IOException {
-        JetCoreEnvironment coreEnvironment = new JetCoreEnvironment(
-                CompileEnvironmentUtil.createMockDisposable(),
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK));
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
+
+        JetCoreEnvironment coreEnvironment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), configuration);
 
         StringBuilder buf = new StringBuilder();
         Printer printer = new Printer(buf);
