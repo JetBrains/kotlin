@@ -50,6 +50,14 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Pair<NamespaceDescriptor, BindingContext> nsbAndBindingContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
                 Arrays.asList(javaFile, ExpectedLoadErrorsUtil.ANNOTATION_SOURCE_FILE),
                 tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        checkLoadedNamespaces(txtFile, nsa, nsbAndBindingContext);
+    }
+
+    public static void checkLoadedNamespaces(
+            File txtFile,
+            NamespaceDescriptor nsa,
+            Pair<NamespaceDescriptor, BindingContext> nsbAndBindingContext
+    ) {
         NamespaceDescriptor nsb = nsbAndBindingContext.first;
 
         boolean fail = false;

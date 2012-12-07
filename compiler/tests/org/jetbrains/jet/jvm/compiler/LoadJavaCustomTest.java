@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
-import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
@@ -80,10 +79,10 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
                 = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
                                                                              ConfigurationKind.JDK_ONLY);
+
         NamespaceDescriptor javaNamespace = javaNamespaceAndBindingContext.first;
         //NOTE: comparing namespace to file (hack)
-        NamespaceComparator.compareNamespaces(javaNamespace, javaNamespace, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, expected);
-        ExpectedLoadErrorsUtil.checkForLoadErrors(javaNamespace, javaNamespaceAndBindingContext.second);
+        AbstractLoadJavaTest.checkLoadedNamespaces(expected, javaNamespace, javaNamespaceAndBindingContext);
     }
 
     public void testPackageLocalVisibility() throws Exception {

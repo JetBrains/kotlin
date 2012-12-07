@@ -14,6 +14,7 @@ public interface TwoSuperclassesVarargAndNot {
     }
 
     public interface Super2 {
+        @KotlinSignature("fun foo(s : Array<out String?>?)")
         void foo(String[] s);
     }
 
