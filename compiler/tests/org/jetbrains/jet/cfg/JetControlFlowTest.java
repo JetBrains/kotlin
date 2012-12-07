@@ -179,7 +179,8 @@ public class JetControlFlowTest extends JetLiteFixture {
     private static String formatInstruction(Instruction instruction, int maxLength, Set<Instruction> remainedAfterPostProcessInstructions) {
         String[] parts = instruction.toString().split("\n");
         boolean isRemovedThroughPostProcess = !remainedAfterPostProcessInstructions.contains(instruction);
-        String prefix = isRemovedThroughPostProcess ? "-   " : ((InstructionImpl)instruction).isDead() ? "*   " : "    ";
+        assert isRemovedThroughPostProcess == ((InstructionImpl)instruction).isDead();
+        String prefix = isRemovedThroughPostProcess ? "-   " : "    ";
         if (parts.length == 1) {
             return prefix + String.format("%1$-" + maxLength + "s", instruction);
         }
