@@ -158,7 +158,6 @@ public final class JavaFunctionResolver {
             superFunctions = Collections.emptyList();
         }
 
-        // TODO consider better place for this check
         AlternativeMethodSignatureData alternativeMethodSignatureData =
                 new AlternativeMethodSignatureData(method, valueParameterDescriptors, returnType, methodTypeParameters,
                                                    !superFunctions.isEmpty());
