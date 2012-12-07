@@ -139,6 +139,7 @@ public class PathUtil {
         }
     }
 
+    @NotNull
     public static File findRtJar() {
         String javaHome = System.getProperty("java.home");
         if ("jre".equals(new File(javaHome).getName())) {

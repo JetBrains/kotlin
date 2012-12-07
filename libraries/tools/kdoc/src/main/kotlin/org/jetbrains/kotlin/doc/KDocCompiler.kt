@@ -10,7 +10,7 @@ import org.jetbrains.jet.config.CompilerConfiguration
 /**
 * Main for running the KDocCompiler
 */
-fun main(args: Array<String?>): Unit {
+fun main(args: Array<String>): Unit {
     CLICompiler.doMain(KDocCompiler(), args);
 }
 

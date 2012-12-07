@@ -25,7 +25,7 @@ class KDocTest {
 
         val args = KDocArguments()
         //args.setModule(moduleName)
-        val sourceDirs = ArrayList<String?>()
+        val sourceDirs = ArrayList<String>()
         sourceDirs.add("../../stdlib/src")
         sourceDirs.add("../../kunit/src/main/kotlin")
         sourceDirs.add("../../kotlin-jdbc/src/main/kotlin")
@@ -35,7 +35,7 @@ class KDocTest {
         args.setClasspath("../runtime/target/kotlin-runtime-0.1-SNAPSHOT.jar${File.pathSeparator}../../lib/junit-4.9.jar")
 
         val config = args.docConfig
-        config.docOutputDir = outDir.toString()!!
+        config.docOutputDir = outDir.toString()
         config.title = "Kotlin API"
 
         val ignorePackages = config.ignorePackages
