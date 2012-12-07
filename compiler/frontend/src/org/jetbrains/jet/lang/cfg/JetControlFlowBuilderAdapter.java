@@ -48,6 +48,13 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         return builder.createUnboundLabel();
     }
 
+    @NotNull
+    @Override
+    public Label createUnboundLabel(@NotNull String name) {
+        assert builder != null;
+        return builder.createUnboundLabel(name);
+    }
+
     @Override
     public void bindLabel(@NotNull Label label) {
         assert builder != null;

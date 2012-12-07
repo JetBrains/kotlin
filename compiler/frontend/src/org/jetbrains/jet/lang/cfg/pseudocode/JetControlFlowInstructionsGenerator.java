@@ -104,6 +104,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             return pseudocode.createLabel("l" + labelCount++);
         }
 
+        @NotNull
+        @Override
+        public Label createUnboundLabel(@NotNull String name) {
+            return pseudocode.createLabel("l" + labelCount++ + " [" + name + "]");
+        }
+
         @Override
         public final LoopInfo enterLoop(@NotNull JetExpression expression, Label loopExitPoint, Label conditionEntryPoint) {
             Label label = createUnboundLabel();

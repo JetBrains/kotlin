@@ -368,26 +368,26 @@ public class JetControlFlowProcessor {
             final boolean hasCatches = !catchClauses.isEmpty();
             Label onException = null;
             if (hasCatches) {
-                onException = builder.createUnboundLabel();
+                onException = builder.createUnboundLabel("onException");
                 builder.nondeterministicJump(onException);
             }
             Label onExceptionToFinallyBlock = null;
             if (finallyBlock != null) {
-                onExceptionToFinallyBlock = builder.createUnboundLabel();
+                onExceptionToFinallyBlock = builder.createUnboundLabel("onExceptionToFinallyBlock");
                 builder.nondeterministicJump(onExceptionToFinallyBlock);
             }
             value(expression.getTryBlock(), inCondition);
 
             if (hasCatches) {
                 builder.allowDead();
-                Label afterCatches = builder.createUnboundLabel();
+                Label afterCatches = builder.createUnboundLabel("afterCatches");
                 builder.jump(afterCatches);
 
                 builder.bindLabel(onException);
                 LinkedList<Label> catchLabels = Lists.newLinkedList();
                 int catchClausesSize = catchClauses.size();
                 for (int i = 0; i < catchClausesSize - 1; i++) {
-                    catchLabels.add(builder.createUnboundLabel());
+                    catchLabels.add(builder.createUnboundLabel("catch " + i));
                 }
                 builder.nondeterministicJump(catchLabels);
                 boolean isFirst = true;
@@ -420,7 +420,7 @@ public class JetControlFlowProcessor {
             if (finallyBlock != null) {
                 builder.exitTryFinally();
 
-                Label skipFinallyToErrorBlock = builder.createUnboundLabel();
+                Label skipFinallyToErrorBlock = builder.createUnboundLabel("skipFinallyToErrorBlock");
                 builder.jump(skipFinallyToErrorBlock);
                 builder.bindLabel(onExceptionToFinallyBlock);
                 value(finallyBlock.getFinalExpression(), inCondition);

@@ -33,6 +33,8 @@ public interface JetControlFlowBuilder {
     // General label management
     @NotNull
     Label createUnboundLabel();
+    @NotNull
+    Label createUnboundLabel(@NotNull String name);
 
     void bindLabel(@NotNull Label label);
     void allowDead();
