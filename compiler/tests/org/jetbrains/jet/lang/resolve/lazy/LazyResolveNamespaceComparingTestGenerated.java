@@ -1355,6 +1355,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), "kt", true);
                 }
                 
+                @TestMetadata("PropagateTypeArgumentNullable.kt")
+                public void testPropagateTypeArgumentNullable() throws Exception {
+                    doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/propagation/PropagateTypeArgumentNullable.kt");
+                }
+                
                 @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/parameter")
                 public static class Parameter extends AbstractLazyResolveNamespaceComparingTest {
                     public void testAllFilesPresentInParameter() throws Exception {

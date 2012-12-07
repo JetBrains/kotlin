@@ -44,6 +44,8 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getVarargParameterType;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
+import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 public class SignaturesPropagationData {
     private static final Logger LOG = Logger.getInstance(SignaturesPropagationData.class);
@@ -108,7 +110,7 @@ public class SignaturesPropagationData {
                     }
                 });
 
-        return modifyTypeAccordingToSuperMethods(autoType, typesFromSuperMethods);
+        return modifyTypeAccordingToSuperMethods(autoType, typesFromSuperMethods, MEMBER_SIGNATURE_COVARIANT);
     }
 
     private List<TypeParameterDescriptor> modifyTypeParametersAccordingToSuperMethods(List<TypeParameterDescriptor> autoTypeParameters) {
@@ -128,10 +130,10 @@ public class SignaturesPropagationData {
 
                 for (Iterator<JetType> iterator : upperBoundFromSuperFunctionsIterators) {
                     assert iterator.hasNext();
-                    upperBoundsFromSuperFunctions.add(new TypeAndVariance(iterator.next(), Variance.INVARIANT));
+                    upperBoundsFromSuperFunctions.add(new TypeAndVariance(iterator.next(), INVARIANT));
                 }
 
-                JetType modifiedUpperBound = modifyTypeAccordingToSuperMethods(autoUpperBound, upperBoundsFromSuperFunctions);
+                JetType modifiedUpperBound = modifyTypeAccordingToSuperMethods(autoUpperBound, upperBoundsFromSuperFunctions, UPPER_BOUND);
                 modifiedTypeParameter.addUpperBound(modifiedUpperBound);
             }
 
@@ -160,14 +162,14 @@ public class SignaturesPropagationData {
                     new Function<FunctionDescriptor, TypeAndVariance>() {
                         @Override
                         public TypeAndVariance fun(FunctionDescriptor superFunction) {
-                            return new TypeAndVariance(superFunction.getValueParameters().get(index).getType(), Variance.INVARIANT);
+                            return new TypeAndVariance(superFunction.getValueParameters().get(index).getType(), INVARIANT);
                         }
                     });
 
             VarargCheckResult varargCheckResult =
                     checkVarargInSuperFunctions(originalParam);
 
-            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods);
+            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, MEMBER_SIGNATURE_CONTRAVARIANT);
 
             resultParameters.add(new ValueParameterDescriptorImpl(
                     originalParam.getContainingDeclaration(),
@@ -184,7 +186,7 @@ public class SignaturesPropagationData {
         JetType originalReceiverType = parameters.getReceiverType();
         if (originalReceiverType != null) {
             JetType substituted = SignaturesUtil.createSubstitutorForFunctionTypeParameters(autoTypeParameterToModified)
-                    .substitute(originalReceiverType, Variance.INVARIANT);
+                    .substitute(originalReceiverType, INVARIANT);
             assert substituted != null;
             return new JavaDescriptorResolver.ValueParameterDescriptors(substituted, resultParameters);
         }
@@ -289,13 +291,14 @@ public class SignaturesPropagationData {
     @NotNull
     private JetType modifyTypeAccordingToSuperMethods(
             @NotNull JetType autoType,
-            @NotNull List<TypeAndVariance> typesFromSuper
+            @NotNull List<TypeAndVariance> typesFromSuper,
+            @NotNull TypeUsage howThisTypeIsUsed
     ) {
         if (ErrorUtils.isErrorType(autoType)) {
             return autoType;
         }
 
-        boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper);
+        boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, howThisTypeIsUsed);
         ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper);
         List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper);
         JetScope resultScope;
@@ -338,7 +341,7 @@ public class SignaturesPropagationData {
             List<TypeProjectionAndVariance> projectionsFromSuper = typeArgumentsFromSuper.get(parameter.getIndex());
             List<TypeAndVariance> argTypesFromSuper = getTypes(projectionsFromSuper);
 
-            JetType type = modifyTypeAccordingToSuperMethods(argumentType, argTypesFromSuper);
+            JetType type = modifyTypeAccordingToSuperMethods(argumentType, argTypesFromSuper, TYPE_ARGUMENT);
             Variance projectionKind = calculateArgumentProjectionKindFromSuper(argument, projectionsFromSuper);
 
             resultArguments.add(new TypeProjection(projectionKind, type));
@@ -361,7 +364,7 @@ public class SignaturesPropagationData {
         }
         else if (projectionKindsInSuper.size() == 1) {
             Variance projectionKindInSuper = projectionKindsInSuper.iterator().next();
-            if (defaultProjectionKind == Variance.INVARIANT || defaultProjectionKind == projectionKindInSuper) {
+            if (defaultProjectionKind == INVARIANT || defaultProjectionKind == projectionKindInSuper) {
                 return projectionKindInSuper;
             }
             else {
@@ -380,9 +383,22 @@ public class SignaturesPropagationData {
     private static List<TypeAndVariance> getTypes(@NotNull List<TypeProjectionAndVariance> projections) {
         List<TypeAndVariance> types = Lists.newArrayList();
         for (TypeProjectionAndVariance projection : projections) {
-            types.add(new TypeAndVariance(projection.typeProjection.getType(), projection.varianceOfParameter));
+            types.add(new TypeAndVariance(projection.typeProjection.getType(),
+                                          merge(projection.varianceOfPosition, projection.typeProjection.getProjectionKind())));
         }
         return types;
+    }
+
+    private static Variance merge(Variance positionOfOuter, Variance projectionKind) {
+        // Inv<Inv<out X>>, X is in invariant position
+        if (positionOfOuter == INVARIANT) return INVARIANT;
+        // Out<X>, X is in out-position
+        if (projectionKind == INVARIANT) return positionOfOuter;
+        // Out<Out<X>>, X is in out-position
+        // In<In<X>>, X is in out-position
+        // Out<In<X>>, X is in in-position
+        // In<Out<X>>, X is in in-position
+        return positionOfOuter.superpose(projectionKind);
     }
 
     // Returns list with type arguments info from supertypes
@@ -432,7 +448,8 @@ public class SignaturesPropagationData {
                     // this condition is true for 1 and 4, false for 2 and 3
                     if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == klass) {
                         int parameterIndex = ((TypeParameterDescriptor) classifier).getIndex();
-                        parameterToArgumentsFromSuper.get(parameterIndex).add(new TypeProjectionAndVariance(argument, parameter.getVariance()));
+                        Variance effectiveVariance = parameter.getVariance().superpose(typeFromSuper.varianceOfPosition);
+                        parameterToArgumentsFromSuper.get(parameterIndex).add(new TypeProjectionAndVariance(argument, effectiveVariance));
                     }
                 }
             }
@@ -442,36 +459,44 @@ public class SignaturesPropagationData {
 
     private boolean typeMustBeNullable(
             @NotNull JetType autoType,
-            @NotNull List<TypeAndVariance> typesFromSuper
+            @NotNull List<TypeAndVariance> typesFromSuper,
+            @NotNull TypeUsage howThisTypeIsUsed
     ) {
         boolean someSupersNotCovariantNullable = false;
+        boolean someSupersCovariantNullable = false;
         boolean someSupersNotNull = false;
         for (TypeAndVariance typeFromSuper : typesFromSuper) {
-            if (typeFromSuper.type.isNullable() && typeFromSuper.varianceOfParameter != Variance.OUT_VARIANCE) {
-                someSupersNotCovariantNullable = true;
-            }
-            else if (!typeFromSuper.type.isNullable()) {
+            if (!typeFromSuper.type.isNullable()) {
                 someSupersNotNull = true;
+            }
+            else {
+                if (typeFromSuper.varianceOfPosition == Variance.OUT_VARIANCE) {
+                    someSupersCovariantNullable = true;
+                }
+                else {
+                    someSupersNotCovariantNullable = true;
+                }
             }
         }
 
-        if (someSupersNotCovariantNullable == someSupersNotNull) {
-            if (someSupersNotCovariantNullable) {
-                reportError("Incompatible types in superclasses: " + typesFromSuper);
-            }
+        if (someSupersNotNull && someSupersNotCovariantNullable) {
+            reportError("Incompatible types in superclasses: " + typesFromSuper);
             return autoType.isNullable();
         }
-        else {
-            if (someSupersNotCovariantNullable) {
-                if (!autoType.isNullable()) {
-                    reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + autoType);
-                }
+        else if (someSupersNotNull) {
+            return false;
+        }
+        else if (someSupersNotCovariantNullable || someSupersCovariantNullable) {
+            boolean annotatedAsNotNull = howThisTypeIsUsed != TYPE_ARGUMENT && !autoType.isNullable();
+
+            if (annotatedAsNotNull && someSupersNotCovariantNullable) {
+                reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + autoType);
                 return true;
             }
-            else { // someSupersNotNull is true here
-                return false;
-            }
+
+            return !annotatedAsNotNull;
         }
+        return autoType.isNullable();
     }
 
     @NotNull
@@ -504,7 +529,7 @@ public class SignaturesPropagationData {
                     someSupersMutable = true;
                 }
                 else if (collectionMapping.isReadOnlyCollection(classFromSuper)) {
-                    if (typeFromSuper.varianceOfParameter == Variance.OUT_VARIANCE) {
+                    if (typeFromSuper.varianceOfPosition == Variance.OUT_VARIANCE) {
                         someSupersCovariantReadOnly = true;
                     }
                     else {
@@ -549,11 +574,11 @@ public class SignaturesPropagationData {
 
     private static class TypeProjectionAndVariance {
         public final TypeProjection typeProjection;
-        public final Variance varianceOfParameter;
+        public final Variance varianceOfPosition;
 
-        public TypeProjectionAndVariance(TypeProjection typeProjection, Variance varianceOfParameter) {
+        public TypeProjectionAndVariance(TypeProjection typeProjection, Variance varianceOfPosition) {
             this.typeProjection = typeProjection;
-            this.varianceOfParameter = varianceOfParameter;
+            this.varianceOfPosition = varianceOfPosition;
         }
 
         public String toString() {
@@ -563,11 +588,11 @@ public class SignaturesPropagationData {
 
     private static class TypeAndVariance {
         public final JetType type;
-        public final Variance varianceOfParameter;
+        public final Variance varianceOfPosition;
 
-        public TypeAndVariance(JetType type, Variance varianceOfParameter) {
+        public TypeAndVariance(JetType type, Variance varianceOfPosition) {
             this.type = type;
-            this.varianceOfParameter = varianceOfParameter;
+            this.varianceOfPosition = varianceOfPosition;
         }
 
         public String toString() {
