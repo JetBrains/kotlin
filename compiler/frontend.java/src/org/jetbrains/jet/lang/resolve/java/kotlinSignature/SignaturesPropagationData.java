@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -219,7 +220,12 @@ public class SignaturesPropagationData {
                         throw new IllegalStateException(errorMessage);
                     }
                     else {
-                        LOG.error(errorMessage);
+                        if (SystemInfo.isMac) {
+                            LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
+                        }
+                        else {
+                            LOG.error(errorMessage);
+                        }
                     }
                 }
                 else {
