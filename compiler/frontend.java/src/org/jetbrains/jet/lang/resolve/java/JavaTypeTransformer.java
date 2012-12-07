@@ -148,7 +148,7 @@ public class JavaTypeTransformer {
                 }
                 else {
                     // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
-                    boolean nullable = !EnumSet.of(SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
+                    boolean nullable = !EnumSet.of(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
 
                     ClassDescriptor classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(new FqName(psiClass.getQualifiedName()),
                                                                                                     howThisTypeIsUsed);
@@ -228,16 +228,24 @@ public class JavaTypeTransformer {
                         return TypeUtils.makeNullable(jetType);
                 }
 
+                boolean vararg = arrayType instanceof PsiEllipsisType;
+
+                Variance projectionKind = arrayElementTypeProjectionKind(vararg);
+                TypeUsage howArgumentTypeIsUsed = vararg ? MEMBER_SIGNATURE_CONTRAVARIANT : TYPE_ARGUMENT;
+
+                JetType type = transformToType(componentType, howArgumentTypeIsUsed, typeVariableResolver);
+                return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, type));
+            }
+
+            private Variance arrayElementTypeProjectionKind(boolean vararg) {
                 Variance variance;
-                if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !(arrayType instanceof PsiEllipsisType)) {
+                if (howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !vararg) {
                     variance = Variance.OUT_VARIANCE;
                 }
                 else {
                     variance = Variance.INVARIANT;
                 }
-
-                JetType type = transformToType(componentType, typeVariableResolver);
-                return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(variance, type));
+                return variance;
             }
 
             @Override

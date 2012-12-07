@@ -32,6 +32,8 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_COVARIANT;
+
 public abstract class ElementAlternativeSignatureData {
     private String error;
     private boolean isAnnotated;
@@ -102,6 +104,6 @@ public abstract class ElementAlternativeSignatureData {
         JetTypeElement typeElement = altReturnTypeReference.getTypeElement();
         assert (typeElement != null);
 
-        return TypeTransformingVisitor.computeType(typeElement, originalType, originalToAltTypeParameters);
+        return TypeTransformingVisitor.computeType(typeElement, originalType, originalToAltTypeParameters, MEMBER_SIGNATURE_COVARIANT);
     }
 }

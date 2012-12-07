@@ -2,10 +2,10 @@ namespace test
 
 public abstract trait test.HalfSubstitutedTypeParameters : java.lang.Object {
     public abstract trait test.HalfSubstitutedTypeParameters.Sub : test.HalfSubstitutedTypeParameters.Super {
-        public abstract override /*1*/ fun foo(): test.HalfSubstitutedTypeParameters.TrickyList<jet.Int?, jet.String>
+        public abstract override /*1*/ fun foo(): test.HalfSubstitutedTypeParameters.TrickyList<jet.Int, jet.String?>
     }
     public abstract trait test.HalfSubstitutedTypeParameters.Super : java.lang.Object {
-        public abstract fun foo(): jet.MutableList<jet.String>
+        public abstract fun foo(): jet.MutableList<jet.String?>
     }
     public abstract trait test.HalfSubstitutedTypeParameters.TrickyList</*0*/ X : jet.Any?, /*1*/ E : jet.Any?> : jet.MutableList<E> {
         public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: E): jet.Boolean

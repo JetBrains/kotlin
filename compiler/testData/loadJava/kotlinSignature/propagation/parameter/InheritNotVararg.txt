@@ -2,9 +2,9 @@ namespace test
 
 public abstract trait test.InheritNotVararg : java.lang.Object {
     public abstract trait test.InheritNotVararg.Sub : test.InheritNotVararg.Super {
-        public abstract override /*1*/ fun foo(/*0*/ p0: jet.Array<out jet.String?>?): jet.Tuple0
+        public abstract override /*1*/ fun foo(/*0*/ p0: jet.Array<out jet.String>?): jet.Tuple0
     }
     public abstract trait test.InheritNotVararg.Super : java.lang.Object {
-        public abstract fun foo(/*0*/ p0: jet.Array<out jet.String?>?): jet.Tuple0
+        public abstract fun foo(/*0*/ p0: jet.Array<out jet.String>?): jet.Tuple0
     }
 }

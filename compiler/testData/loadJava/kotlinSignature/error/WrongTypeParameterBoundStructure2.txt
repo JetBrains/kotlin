@@ -2,5 +2,5 @@ namespace test
 
 public open class test.WrongTypeParameterBoundStructure2 : java.lang.Object {
     public final /*constructor*/ fun <init>(): test.WrongTypeParameterBoundStructure2
-    public open fun </*0*/ A : jet.Any?, /*1*/ B : java.lang.Runnable? & jet.List<java.lang.Cloneable?>?>foo(/*0*/ p0: A?, /*1*/ p1: jet.List<B>?): jet.Tuple0
+    public open fun </*0*/ A : jet.Any?, /*1*/ B : java.lang.Runnable? & jet.List<java.lang.Cloneable>?>foo(/*0*/ p0: A?, /*1*/ p1: jet.List<B>?): jet.Tuple0
 }

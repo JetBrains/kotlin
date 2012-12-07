@@ -9,7 +9,7 @@ public interface HalfSubstitutedTypeParameters {
     public interface TrickyList<X, E> extends List<E> {}
 
     public interface Super {
-        @KotlinSignature("fun foo(): MutableList<String>")
+        @KotlinSignature("fun foo(): MutableList<String?>")
         List<String> foo();
     }
 

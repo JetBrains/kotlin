@@ -29,13 +29,19 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
+import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.UPPER_BOUND;
 
 /**
  * @author Evgeny Gerashchenko
@@ -181,7 +187,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                     throw new AlternativeSignatureMismatchException("Parameter in method signature is not vararg, but in alternative signature it is vararg");
                 }
 
-                alternativeType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParameterDescriptor.getType(), originalToAltTypeParameters);
+                alternativeType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParameterDescriptor.getType(), originalToAltTypeParameters, MEMBER_SIGNATURE_CONTRAVARIANT);
                 alternativeVarargElementType = null;
             }
             else {
@@ -190,7 +196,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                 }
 
                 alternativeVarargElementType = TypeTransformingVisitor.computeType(alternativeTypeElement, originalParamVarargElementType,
-                                                                                   originalToAltTypeParameters);
+                                                                                   originalToAltTypeParameters, MEMBER_SIGNATURE_CONTRAVARIANT);
                 alternativeType = KotlinBuiltIns.getInstance().getArrayType(alternativeVarargElementType);
             }
 
@@ -255,7 +261,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                 assert (altTypeElement != null);
 
                 altParamDescriptor.addUpperBound(TypeTransformingVisitor.computeType(altTypeElement, upperBound,
-                                                                                     originalToAltTypeParameters));
+                                                                                     originalToAltTypeParameters, UPPER_BOUND));
                 upperBoundIndex++;
             }
 

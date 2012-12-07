@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -35,15 +36,21 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.*;
+
 class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     private final JetType originalType;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
+    private final JavaTypeTransformer.TypeUsage typeUsage;
+
     private TypeTransformingVisitor(
             JetType originalType,
-            Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters
+            Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
+            JavaTypeTransformer.TypeUsage typeUsage
     ) {
         this.originalType = originalType;
+        this.typeUsage = typeUsage;
         this.originalToAltTypeParameters = Collections.unmodifiableMap(originalToAltTypeParameters);
     }
 
@@ -51,20 +58,21 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     public static JetType computeType(
             @NotNull JetTypeElement alternativeTypeElement,
             @NotNull JetType originalType,
-            @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters
+            @NotNull Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters,
+            @NotNull JavaTypeTransformer.TypeUsage typeUsage
     ) {
-        JetType computedType = alternativeTypeElement.accept(new TypeTransformingVisitor(originalType, originalToAltTypeParameters), null);
+        JetType computedType = alternativeTypeElement.accept(new TypeTransformingVisitor(originalType, originalToAltTypeParameters, typeUsage), null);
         assert (computedType != null);
         return computedType;
     }
 
     @Override
     public JetType visitNullableType(JetNullableType nullableType, Void aVoid) {
-        if (!originalType.isNullable()) {
+        if (!originalType.isNullable() && typeUsage != TYPE_ARGUMENT) {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
                  DescriptorRenderer.TEXT.renderType(originalType), nullableType.getText());
         }
-        return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), originalType, originalToAltTypeParameters));
+        return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), originalType, originalToAltTypeParameters, typeUsage));
     }
 
     @Override
@@ -134,7 +142,7 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             assert argumentAlternativeTypeElement != null;
 
             TypeProjection argument = arguments.get(i);
-            JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters);
+            JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
             Variance projectionKind = argument.getProjectionKind();
             Variance altProjectionKind;
             if (type instanceof JetUserType) {

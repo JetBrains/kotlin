@@ -16,14 +16,23 @@
 
 package jet.modules;
 
+import jet.runtime.typeinfo.KotlinSignature;
+
 import java.util.List;
 
 /**
  * @author yole
  */
 public interface Module {
+    @KotlinSignature("fun getModuleName(): String")
     String getModuleName();
+
+    @KotlinSignature("fun getSourceFiles(): List<String>")
     List<String> getSourceFiles();
+
+    @KotlinSignature("fun getClasspathRoots(): List<String>")
     List<String> getClasspathRoots();
+
+    @KotlinSignature("fun getAnnotationsRoots(): List<String>")
     List<String> getAnnotationsRoots();
 }
