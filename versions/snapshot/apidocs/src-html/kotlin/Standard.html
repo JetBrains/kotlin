@@ -63,47 +63,19 @@
 <a href='#62' name='62'>62</a>
 <a href='#63' name='63'>63</a>
 <a href='#64' name='64'>64</a>
-<a href='#65' name='65'>65</a>
-<a href='#66' name='66'>66</a>
-<a href='#67' name='67'>67</a>
-<a href='#68' name='68'>68</a>
-<a href='#69' name='69'>69</a>
-<a href='#70' name='70'>70</a>
-<a href='#71' name='71'>71</a>
-<a href='#72' name='72'>72</a>
-<a href='#73' name='73'>73</a>
-<a href='#74' name='74'>74</a>
-<a href='#75' name='75'>75</a>
-<a href='#76' name='76'>76</a>
-<a href='#77' name='77'>77</a>
-<a href='#78' name='78'>78</a>
-<a href='#79' name='79'>79</a>
-<a href='#80' name='80'>80</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ArrayList</span><span>
-</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Collection</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>HashSet</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>LinkedList</span><span>
-
-</span><span class='hl-comment'>/**
-Helper to make jet.Iterator usable in for
-*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span>
-
-</span><span class='hl-comment'>/**
-Helper to make java.util.Iterator usable in for
-*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span>
 
 </span><span class='hl-comment'>/**
 Helper to make java.util.Enumeration usable in for
 */</span><span>
 </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Enumeration</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>object</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='override'>override</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>hasNext</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span>
-    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>hasMoreElements</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>hasNext</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>hasMoreElements</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
-    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>nextElement</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>sure</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>nextElement</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
 </span><span class='BLOCK_COMMENT'>/*
@@ -113,21 +85,18 @@ Helper to make java.util.Enumeration usable in for
 </span><span class='hl-comment'>/**
 Add iterated elements to given container
 */</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span class='IDENTIFIER'>U</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Collection</span><span class='LT'>&lt;</span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>container</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>U</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>U</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>while</span><span class='LPAR'>(</span><span class='IDENTIFIER'>hasNext</span><span class='RPAR'>)</span><span>
-        </span><span class='IDENTIFIER'>container</span><span class='DOT'>.</span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>next</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
-    </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>container</span><span>
-</span><span class='RBRACE'>}</span><span>
+</span><span class='BLOCK_COMMENT'>/*
+public fun &lt;T,U: Collection&lt;in T&gt;&gt; Iterator&lt;T&gt;.toCollection(container: U) : U {
+    while(hasNext())
+        container.add(next())
+    return container
+}
+*/</span><span>
 
 </span><span class='hl-comment'>/**
 Add iterated elements to java.util.ArrayList
 */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toArrayList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>ArrayList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
-
-</span><span class='hl-comment'>/**
-Add iterated elements to java.util.LinkedList
-*/</span><span>
-</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Iterator</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='DOT'>.</span><span class='IDENTIFIER'>toLinkedList</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>LinkedList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>toCollection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>LinkedList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 
 </span><span class='hl-comment'>/**
 Add iterated elements to java.util.HashSet
@@ -136,12 +105,12 @@ Add iterated elements to java.util.HashSet
 
 
 </span><span class='hl-comment'>/**
- * Creates a tuple of type [[#(A,B)]] from this and *that* which can be useful for creating [[Map]] literals
+ * Creates a tuple of type [[Pair&lt;A,B&gt;]] from this and *that* which can be useful for creating [[Map]] literals
  * with less noise, for example
 
  * @includeFunctionBody ../../test/MapTest.kt createUsingTo
  */</span><span>
-</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>A</span><span class='COMMA'>,</span><span class='IDENTIFIER'>B</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>A</span><span class='DOT'>.</span><span class='IDENTIFIER'>to</span><span class='LPAR'>(</span><span class='IDENTIFIER'>that</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>B</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='HASH'>#</span><span class='LPAR'>(</span><span class='IDENTIFIER'>A</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>B</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='HASH'>#</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>that</span><span class='RPAR'>)</span><span>
+</span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>A</span><span class='COMMA'>,</span><span class='IDENTIFIER'>B</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>A</span><span class='DOT'>.</span><span class='IDENTIFIER'>to</span><span class='LPAR'>(</span><span class='IDENTIFIER'>that</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>B</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Pair</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>A</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>B</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>Pair</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>that</span><span class='RPAR'>)</span><span>
 
 </span><span class='hl-comment'>/**
 Run function f
@@ -157,6 +126,4 @@ Run function f
             </span><span class='IDENTIFIER'>action</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
         </span><span class='RBRACE'>}</span><span>
     </span><span class='RBRACE'>}</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span></td></tr></table></body></html>
+</span><span class='RBRACE'>}</span></td></tr></table></body></html>

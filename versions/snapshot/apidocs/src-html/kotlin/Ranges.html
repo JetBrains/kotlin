@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html><head><title>Ranges.kt xref</title><link rel='stylesheet' type='text/css' href='highlight.css'></link></head><body><table style='white-space: pre; font-size: 10pt; font-family: Monaco, monospace'><tr><td style='margin-right: 1.5em; text-align: right'><a href='#1' name='1'>1</a>
+<a href='#2' name='2'>2</a>
+<a href='#3' name='3'>3</a>
+<a href='#4' name='4'>4</a>
+<a href='#5' name='5'>5</a>
+<a href='#6' name='6'>6</a>
+<a href='#7' name='7'>7</a>
+<a href='#8' name='8'>8</a>
+<a href='#9' name='9'>9</a>
+<a href='#10' name='10'>10</a>
+<a href='#11' name='11'>11</a>
+<a href='#12' name='12'>12</a>
+<a href='#13' name='13'>13</a>
+<a href='#14' name='14'>14</a>
+<a href='#15' name='15'>15</a>
+<a href='#16' name='16'>16</a>
+<a href='#17' name='17'>17</a>
+<a href='#18' name='18'>18</a>
+<a href='#19' name='19'>19</a>
+<a href='#20' name='20'>20</a>
+<a href='#21' name='21'>21</a>
+<a href='#22' name='22'>22</a>
+<a href='#23' name='23'>23</a>
+</td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>CharRange</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>CharRange</span><span>
+    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>CharRange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>end</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>start</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>end</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span class='IDENTIFIER'>size</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>ByteRange</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ByteRange</span><span>
+    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ByteRange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>end</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>start</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>end</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span class='IDENTIFIER'>size</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>ShortRange</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>ShortRange</span><span>
+    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ShortRange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>end</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>start</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>end</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span class='IDENTIFIER'>size</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>IntRange</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>IntRange</span><span>
+    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>IntRange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>end</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>start</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>end</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span class='IDENTIFIER'>size</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>FloatRange</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>FloatRange</span><span>
+    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FloatRange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>end</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>start</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>end</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span class='IDENTIFIER'>size</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>LongRange</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>LongRange</span><span>
+    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>LongRange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>end</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>start</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>end</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span class='IDENTIFIER'>size</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>DoubleRange</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>DoubleRange</span><span>
+    </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>DoubleRange</span><span class='LPAR'>(</span><span class='IDENTIFIER'>end</span><span class='COMMA'>,</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>start</span><span> </span><span class='LT'>&lt;</span><span> </span><span class='IDENTIFIER'>end</span><span class='RPAR'>)</span><span> </span><span class='MINUS'>-</span><span class='IDENTIFIER'>size</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='IDENTIFIER'>size</span><span class='RPAR'>)</span><span>
+
+</span></td></tr></table></body></html>

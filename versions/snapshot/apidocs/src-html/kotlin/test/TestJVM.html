@@ -69,7 +69,6 @@
 <a href='#68' name='68'>68</a>
 <a href='#69' name='69'>69</a>
 <a href='#70' name='70'>70</a>
-<a href='#71' name='71'>71</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>test</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ServiceLoader</span><span>
@@ -89,7 +88,7 @@
         </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>_asserter</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
             </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>klass</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>javaClass</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>Asserter</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
             </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>loader</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>ServiceLoader</span><span class='DOT'>.</span><span class='IDENTIFIER'>load</span><span class='LPAR'>(</span><span class='IDENTIFIER'>klass</span><span class='RPAR'>)</span><span>
-            </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>loader</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>for</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span> </span><span class='hl-keyword'>in</span><span> </span><span class='IDENTIFIER'>loader</span><span class='DOT'>.</span><span class='IDENTIFIER'>iterator</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
                 </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>a</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
                     </span><span class='IDENTIFIER'>_asserter</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>a</span><span>
                     </span><span class='hl-keyword'>break</span><span>
@@ -100,7 +99,7 @@
             </span><span class='RBRACE'>}</span><span>
             </span><span class='EOL_COMMENT'>//debug(&quot;using asserter $_asserter&quot;)</span><span>
         </span><span class='RBRACE'>}</span><span>
-        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>_asserter</span><span class='DOT'>.</span><span class='IDENTIFIER'>sure</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>_asserter</span><span class='EXCLEXCL'>!!</span><span>
     </span><span class='RBRACE'>}</span><span>
 
     </span><span class='set'>set</span><span class='LPAR'>(</span><span class='IDENTIFIER'>value</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
@@ -137,7 +136,6 @@
         </span><span class='RBRACE'>}</span><span>
     </span><span class='RBRACE'>}</span><span>
     </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>fail</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='EOL_COMMENT'>// TODO work around compiler bug as it should never try call the private constructor</span><span>
-        </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>AssertionError</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span> </span><span class='hl-keyword'>as</span><span> </span><span class='IDENTIFIER'>Any</span><span class='RPAR'>)</span><span>
+        </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>AssertionError</span><span class='LPAR'>(</span><span class='IDENTIFIER'>message</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span></td></tr></table></body></html>

@@ -23,10 +23,6 @@
 <a href='#22' name='22'>22</a>
 <a href='#23' name='23'>23</a>
 <a href='#24' name='24'>24</a>
-<a href='#25' name='25'>25</a>
-<a href='#26' name='26'>26</a>
-<a href='#27' name='27'>27</a>
-<a href='#28' name='28'>28</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>jdbc</span><span>
 
 </span><span class='hl-comment'>/**
@@ -46,11 +42,7 @@
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>PreparedStatement</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>resultSet</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>executeQuery</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>resultSet</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalStateException</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>No ResultSet returned from </span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='hl-keyword'>this</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='IDENTIFIER'>resultSet</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='IDENTIFIER'>resultSet</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span> </span><span class='finally'>finally</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='IDENTIFIER'>close</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>

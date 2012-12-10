@@ -72,6 +72,9 @@
 <a href='#71' name='71'>71</a>
 <a href='#72' name='72'>72</a>
 <a href='#73' name='73'>73</a>
+<a href='#74' name='74'>74</a>
+<a href='#75' name='75'>75</a>
+<a href='#76' name='76'>76</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>swing</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>javax</span><span class='DOT'>.</span><span class='IDENTIFIER'>swing</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
@@ -130,9 +133,12 @@
     </span><span class='IDENTIFIER'>addActionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>actionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
 </span><span class='RBRACE'>}</span><span>
 
-</span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>JComboBox</span><span class='DOT'>.</span><span class='IDENTIFIER'>addActionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ActionEvent</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='IDENTIFIER'>addActionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>actionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
-</span><span class='RBRACE'>}</span><span>
+</span><span class='BLOCK_COMMENT'>/*
+TODO depending on the JDK this may or may not compile with or without the type argument
+inline fun JComboBox&lt;*&gt;.addActionListener(fn: (ActionEvent) -&gt; Unit): Unit {
+    addActionListener(actionListener(fn))
+}
+*/</span><span>
 
 </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>JFileChooser</span><span class='DOT'>.</span><span class='IDENTIFIER'>addActionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ActionEvent</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Unit</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='IDENTIFIER'>addActionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>actionListener</span><span class='LPAR'>(</span><span class='IDENTIFIER'>fn</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>

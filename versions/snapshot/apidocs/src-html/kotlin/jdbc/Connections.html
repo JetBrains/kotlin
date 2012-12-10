@@ -200,14 +200,64 @@
 <a href='#199' name='199'>199</a>
 <a href='#200' name='200'>200</a>
 <a href='#201' name='201'>201</a>
+<a href='#202' name='202'>202</a>
+<a href='#203' name='203'>203</a>
+<a href='#204' name='204'>204</a>
+<a href='#205' name='205'>205</a>
+<a href='#206' name='206'>206</a>
+<a href='#207' name='207'>207</a>
+<a href='#208' name='208'>208</a>
+<a href='#209' name='209'>209</a>
+<a href='#210' name='210'>210</a>
+<a href='#211' name='211'>211</a>
+<a href='#212' name='212'>212</a>
+<a href='#213' name='213'>213</a>
+<a href='#214' name='214'>214</a>
+<a href='#215' name='215'>215</a>
+<a href='#216' name='216'>216</a>
+<a href='#217' name='217'>217</a>
+<a href='#218' name='218'>218</a>
+<a href='#219' name='219'>219</a>
+<a href='#220' name='220'>220</a>
+<a href='#221' name='221'>221</a>
+<a href='#222' name='222'>222</a>
+<a href='#223' name='223'>223</a>
+<a href='#224' name='224'>224</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>jdbc</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>sql</span><span class='DOT'>.</span><span class='MUL'>*</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>template</span><span class='DOT'>.</span><span class='IDENTIFIER'>StringTemplate</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>math</span><span class='DOT'>.</span><span class='IDENTIFIER'>BigDecimal</span><span>
+</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>Properties</span><span>
 
 </span><span class='hl-comment'>/**
- * Helper method to process a statement on this collection
+ * create connection for the specified jdbc url with no credentials
+ */</span><span>
+</span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Connection</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>DriverManager</span><span class='DOT'>.</span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span class='RPAR'>)</span><span>
+
+</span><span class='hl-comment'>/**
+ * create connection for the specified jdbc url and properties
+ */</span><span>
+</span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>info</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Map</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>String</span><span class='GT'>&gt;</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Connection</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>DriverManager</span><span class='DOT'>.</span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>info</span><span class='DOT'>.</span><span class='IDENTIFIER'>toProperties</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
+
+</span><span class='hl-comment'>/**
+ * create connection for the specified jdbc url and credentials
+ */</span><span>
+</span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>user</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>password</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Connection</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>DriverManager</span><span class='DOT'>.</span><span class='IDENTIFIER'>getConnection</span><span class='LPAR'>(</span><span class='IDENTIFIER'>url</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>user</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>password</span><span class='RPAR'>)</span><span>
+
+</span><span class='hl-comment'>/**
+ * Executes specified block with connection and close connection after this
+ */</span><span>
+</span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>use</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Connection</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span> </span><span class='finally'>finally</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>this</span><span class='DOT'>.</span><span class='IDENTIFIER'>close</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='hl-comment'>/**
+ * Helper method to process a statement on this connection
  */</span><span>
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>statement</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>Statement</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>statement</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>createStatement</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -240,11 +290,7 @@
 </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Connection</span><span class='DOT'>.</span><span class='IDENTIFIER'>query</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>ResultSet</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>statement</span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rs</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>it</span><span class='DOT'>.</span><span class='IDENTIFIER'>executeQuery</span><span class='LPAR'>(</span><span class='IDENTIFIER'>sql</span><span class='RPAR'>)</span><span>
-        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>rs</span><span> </span><span class='EXCLEQ'>!=</span><span> </span><span class='hl-keyword'>null</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='IDENTIFIER'>rs</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
-            </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalStateException</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>No ResultSet returned executeQuery(</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>sql</span><span class='REGULAR_STRING_PART'>) on </span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='hl-keyword'>this</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
-        </span><span class='RBRACE'>}</span><span>
+        </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='IDENTIFIER'>rs</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
@@ -397,7 +443,7 @@
             </span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>append</span><span class='LPAR'>(</span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>constantText</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>it</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>?</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
             </span><span class='IDENTIFIER'>constantText</span><span> </span><span class='EQ'>=</span><span> </span><span class='EXCL'>!</span><span class='IDENTIFIER'>constantText</span><span>
         </span><span class='RBRACE'>}</span><span>
-        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ELVIS'>?:</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='CLOSING_QUOTE'>&quot;</span><span>
+        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>out</span><span class='DOT'>.</span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 

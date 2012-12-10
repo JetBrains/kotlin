@@ -57,12 +57,25 @@
 <a href='#56' name='56'>56</a>
 <a href='#57' name='57'>57</a>
 <a href='#58' name='58'>58</a>
+<a href='#59' name='59'>59</a>
+<a href='#60' name='60'>60</a>
+<a href='#61' name='61'>61</a>
+<a href='#62' name='62'>62</a>
+<a href='#63' name='63'>63</a>
+<a href='#64' name='64'>64</a>
+<a href='#65' name='65'>65</a>
+<a href='#66' name='66'>66</a>
+<a href='#67' name='67'>67</a>
+<a href='#68' name='68'>68</a>
+<a href='#69' name='69'>69</a>
+<a href='#70' name='70'>70</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>locks</span><span class='DOT'>.</span><span class='IDENTIFIER'>Lock</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>locks</span><span class='DOT'>.</span><span class='IDENTIFIER'>ReadWriteLock</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>locks</span><span class='DOT'>.</span><span class='IDENTIFIER'>ReentrantReadWriteLock</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>locks</span><span class='DOT'>.</span><span class='IDENTIFIER'>ReentrantReadWriteLock</span><span class='DOT'>.</span><span class='IDENTIFIER'>ReadLock</span><span>
+</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>CountDownLatch</span><span>
 
 </span><span class='hl-comment'>/**
 Executes given calculation under lock
@@ -83,7 +96,7 @@ Executes given calculation under read lock
 Returns result of the calculation
 */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>ReentrantReadWriteLock</span><span class='DOT'>.</span><span class='IDENTIFIER'>read</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>sure</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>rl</span><span class='DOT'>.</span><span class='IDENTIFIER'>lock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>action</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -100,12 +113,12 @@ If such write has been initiated by checking some condition, the condition must 
 Returns result of the calculation
 */</span><span>
 </span><span class='public'>public</span><span> </span><span class='inline'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>ReentrantReadWriteLock</span><span class='DOT'>.</span><span class='IDENTIFIER'>write</span><span class='LPAR'>(</span><span class='IDENTIFIER'>action</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>sure</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>rl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>readLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
 
     </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>readCount</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>getWriteHoldCount</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='IDENTIFIER'>getReadHoldCount</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='hl-keyword'>else</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
     </span><span class='IDENTIFIER'>readCount</span><span> </span><span class='IDENTIFIER'>times</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>rl</span><span class='DOT'>.</span><span class='IDENTIFIER'>unlock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
 
-    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>wl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>writeLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>sure</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>wl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>writeLock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='IDENTIFIER'>wl</span><span class='DOT'>.</span><span class='IDENTIFIER'>lock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>action</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
@@ -114,5 +127,16 @@ Returns result of the calculation
         </span><span class='IDENTIFIER'>readCount</span><span> </span><span class='IDENTIFIER'>times</span><span> </span><span class='LBRACE'>{</span><span> </span><span class='IDENTIFIER'>rl</span><span class='DOT'>.</span><span class='IDENTIFIER'>lock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='RBRACE'>}</span><span>
         </span><span class='IDENTIFIER'>wl</span><span class='DOT'>.</span><span class='IDENTIFIER'>unlock</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
     </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+
+</span><span class='hl-comment'>/**
+Execute given calculation and await for CountDownLatch
+Returns result of the calculation
+*/</span><span>
+</span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>Int</span><span class='DOT'>.</span><span class='IDENTIFIER'>latch</span><span class='LPAR'>(</span><span class='IDENTIFIER'>op</span><span class='COLON'>:</span><span>  </span><span class='IDENTIFIER'>CountDownLatch</span><span class='DOT'>.</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>cdl</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>CountDownLatch</span><span class='LPAR'>(</span><span class='hl-keyword'>this</span><span class='RPAR'>)</span><span>
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>res</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>cdl</span><span class='DOT'>.</span><span class='IDENTIFIER'>op</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='IDENTIFIER'>cdl</span><span class='DOT'>.</span><span class='IDENTIFIER'>await</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+    </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>res</span><span>
 </span><span class='RBRACE'>}</span><span>
 </span></td></tr></table></body></html>

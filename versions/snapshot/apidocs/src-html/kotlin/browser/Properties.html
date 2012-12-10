@@ -19,10 +19,8 @@
 <a href='#18' name='18'>18</a>
 <a href='#19' name='19'>19</a>
 <a href='#20' name='20'>20</a>
-<a href='#21' name='21'>21</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>browser</span><span>
 
-</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>js</span><span class='DOT'>.</span><span class='IDENTIFIER'>native</span><span>
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>org</span><span class='DOT'>.</span><span class='IDENTIFIER'>w3c</span><span class='DOT'>.</span><span class='IDENTIFIER'>dom</span><span class='DOT'>.</span><span class='IDENTIFIER'>Document</span><span>
 
 </span><span class='private'>private</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>_document</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span class='QUEST'>?</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>null</span><span>
@@ -30,7 +28,7 @@
 </span><span class='hl-comment'>/**
  * Provides access to the current active browsers DOM for the currently visible page.
  */</span><span>
-</span><span class='IDENTIFIER'>native</span><span> </span><span class='public'>public</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>document</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>document</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Document</span><span>
     </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='EOL_COMMENT'>// Note this code is only executed on the JVM</span><span>
         </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>answer</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>_document</span><span>
