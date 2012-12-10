@@ -51,7 +51,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JdkAnnotationsSanityTest extends UsefulTestCase {
+public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
     private static final int CLASSES_IN_CHUNK = 500;
 

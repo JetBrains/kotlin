@@ -75,7 +75,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
 
         final Set<PsiModifierListOwner> declarationsWithMissingAnnotations = Sets.newLinkedHashSet();
 
-        for (FqName classFqName : JdkAnnotationsSanityTest.getAffectedClasses("jar://ideaSDK/lib/jdkAnnotations.jar!/")) {
+        for (FqName classFqName : JdkAnnotationsValidityTest.getAffectedClasses("jar://ideaSDK/lib/jdkAnnotations.jar!/")) {
             if (new FqName("org.jdom").equals(classFqName.parent())) continue; // filter unrelated jdom annotations
             if (new FqName("java.util.concurrent.TransferQueue").equals(classFqName)) continue; // filter JDK7-specific class
 
