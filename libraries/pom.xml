@@ -54,6 +54,7 @@
 
     <modules>
         <module>tools/kotlin-compiler</module>
+        <module>tools/kotlin-jdk-annotations</module>
         <module>tools/runtime</module>
         <module>tools/kotlin-maven-plugin</module>
         <module>tools/kotlin-js-library</module>
