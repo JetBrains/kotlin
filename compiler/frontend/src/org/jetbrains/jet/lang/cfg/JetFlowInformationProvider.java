@@ -192,7 +192,7 @@ public class JetFlowInformationProvider {
         final boolean processClassOrObject = subroutine instanceof JetClassOrObject;
 
         Map<Instruction, Edges<Map<VariableDescriptor,VariableInitState>>> initializers = pseudocodeVariablesData.getVariableInitializers();
-        final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode);
+        final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
 
         final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
 
@@ -412,7 +412,7 @@ public class JetFlowInformationProvider {
     private void recordInitializedVariables(@NotNull Pseudocode pseudocode, @NotNull Map<Instruction, Edges<Map<VariableDescriptor,PseudocodeVariablesData.VariableInitState>>> initializersMap) {
         Edges<Map<VariableDescriptor, VariableInitState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
         Set<VariableDescriptor> usedVariables = pseudocodeVariablesData.getUsedVariables(pseudocode);
-        Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode);
+        Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, false);
         for (VariableDescriptor variable : usedVariables) {
             if (variable instanceof PropertyDescriptor && declaredVariables.contains(variable)) {
                 PseudocodeVariablesData.VariableInitState variableInitState = initializers.in.get(variable);
@@ -437,7 +437,7 @@ public class JetFlowInformationProvider {
 
                 assert in != null && out != null;
                 VariableContext ctxt = new VariableUseContext(instruction, reportedDiagnosticMap, in, out);
-                Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(instruction.getOwner());
+                Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(instruction.getOwner(), false);
                 VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false,
                                                                       trace.getBindingContext());
                 if (variableDescriptor == null || !declaredVariables.contains(variableDescriptor) ||

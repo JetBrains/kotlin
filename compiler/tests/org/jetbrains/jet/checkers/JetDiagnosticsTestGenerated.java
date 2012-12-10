@@ -934,6 +934,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt897.kt");
             }
             
+            @TestMetadata("uninitializedInLocalDeclarations.kt")
+            public void testUninitializedInLocalDeclarations() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedInLocalDeclarations.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlStructures")

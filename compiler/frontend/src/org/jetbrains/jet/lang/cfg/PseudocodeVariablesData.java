@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -41,8 +40,8 @@ public class PseudocodeVariablesData {
     private final Pseudocode pseudocode;
     private final BindingContext bindingContext;
 
-    private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesInEachDeclaration = Maps.newHashMap();
-    private final Map<Pseudocode, Set<VariableDescriptor>> usedVariablesInEachDeclaration = Maps.newHashMap();
+    private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
+    private final Map<Pseudocode, Set<VariableDescriptor>> usedVariablesForDeclaration = Maps.newHashMap();
 
     private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializersMap;
     private Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusMap;
@@ -59,7 +58,7 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Set<VariableDescriptor> getUsedVariables(@NotNull Pseudocode pseudocode) {
-        Set<VariableDescriptor> usedVariables = usedVariablesInEachDeclaration.get(pseudocode);
+        Set<VariableDescriptor> usedVariables = usedVariablesForDeclaration.get(pseudocode);
         if (usedVariables == null) {
             final Set<VariableDescriptor> result = Sets.newHashSet();
             PseudocodeTraverser.traverseForward(pseudocode, new InstructionAnalyzeStrategy() {
@@ -73,33 +72,53 @@ public class PseudocodeVariablesData {
                 }
             });
             usedVariables = Collections.unmodifiableSet(result);
-            usedVariablesInEachDeclaration.put(pseudocode, usedVariables);
+            usedVariablesForDeclaration.put(pseudocode, usedVariables);
         }
         return usedVariables;
     }
 
     @NotNull
-    public Set<VariableDescriptor> getDeclaredVariables(@NotNull Pseudocode pseudocode) {
-        Set<VariableDescriptor> declaredVariables = declaredVariablesInEachDeclaration.get(pseudocode);
-        if (declaredVariables == null) {
-            declaredVariables = Sets.newHashSet();
-            for (Instruction instruction : pseudocode.getInstructions()) {
-                if (instruction instanceof VariableDeclarationInstruction) {
-                    JetDeclaration variableDeclarationElement = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
-                    DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement);
-                    if (descriptor != null) {
-                        assert descriptor instanceof VariableDescriptor;
-                        declaredVariables.add((VariableDescriptor) descriptor);
-                    }
-                }
-            }
-            declaredVariables = Collections.unmodifiableSet(declaredVariables);
-            declaredVariablesInEachDeclaration.put(pseudocode, declaredVariables);
+    public Set<VariableDescriptor> getDeclaredVariables(@NotNull Pseudocode pseudocode, boolean includeInsideLocalDeclarations) {
+        if (!includeInsideLocalDeclarations) {
+            return getUpperLevelDeclaredVariables(pseudocode);
+        }
+        Set<VariableDescriptor> declaredVariables = Sets.newHashSet();
+        declaredVariables.addAll(getUpperLevelDeclaredVariables(pseudocode));
+
+        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            Pseudocode localPseudocode = localDeclarationInstruction.getBody();
+            declaredVariables.addAll(getUpperLevelDeclaredVariables(localPseudocode));
         }
         return declaredVariables;
     }
 
-// variable initializers
+    @NotNull
+    private Set<VariableDescriptor> getUpperLevelDeclaredVariables(@NotNull Pseudocode pseudocode) {
+        Set<VariableDescriptor> declaredVariables = declaredVariablesForDeclaration.get(pseudocode);
+        if (declaredVariables == null) {
+            declaredVariables = computeDeclaredVariablesForPseudocode(pseudocode);
+            declaredVariablesForDeclaration.put(pseudocode, declaredVariables);
+        }
+        return declaredVariables;
+    }
+
+    @NotNull
+    private Set<VariableDescriptor> computeDeclaredVariablesForPseudocode(Pseudocode pseudocode) {
+        Set<VariableDescriptor> declaredVariables = Sets.newHashSet();
+        for (Instruction instruction : pseudocode.getInstructions()) {
+            if (instruction instanceof VariableDeclarationInstruction) {
+                JetDeclaration variableDeclarationElement = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
+                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement);
+                if (descriptor != null) {
+                    assert descriptor instanceof VariableDescriptor;
+                    declaredVariables.add((VariableDescriptor) descriptor);
+                }
+            }
+        }
+        return Collections.unmodifiableSet(declaredVariables);
+    }
+
+    // variable initializers
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers() {
@@ -113,7 +132,7 @@ public class PseudocodeVariablesData {
     private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers(@NotNull Pseudocode pseudocode) {
 
         Set<VariableDescriptor> usedVariables = getUsedVariables(pseudocode);
-        Set<VariableDescriptor> declaredVariables = getDeclaredVariables(pseudocode);
+        Set<VariableDescriptor> declaredVariables = getDeclaredVariables(pseudocode, false);
         Map<VariableDescriptor, VariableInitState> initialMap = Collections.emptyMap();
         final Map<VariableDescriptor, VariableInitState> initialMapForStartInstruction = prepareInitializersMapForStartInstruction(
                 usedVariables, declaredVariables);
@@ -226,7 +245,7 @@ public class PseudocodeVariablesData {
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
         if (variableStatusMap == null) {
             Map<VariableDescriptor, VariableUseState> sinkInstructionData = Maps.newHashMap();
-            for (VariableDescriptor usedVariable : usedVariablesInEachDeclaration.get(pseudocode)) {
+            for (VariableDescriptor usedVariable : usedVariablesForDeclaration.get(pseudocode)) {
                 sinkInstructionData.put(usedVariable, VariableUseState.UNUSED);
             }
             InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>> collectVariableUseStatusStrategy = new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
