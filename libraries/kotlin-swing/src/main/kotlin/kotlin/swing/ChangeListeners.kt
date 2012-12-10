@@ -16,7 +16,7 @@ import javax.swing.text.*
 inline fun changeListener(fn: (ChangeEvent) -> Unit): ChangeListener = FunctionChangeListener(fn)
 
 private class FunctionChangeListener(val fn: (ChangeEvent) -> Unit) : ChangeListener {
-    public override fun stateChanged(e: ChangeEvent?) {
+    public override fun stateChanged(e: ChangeEvent) {
         if (e != null) {
             (fn)(e)
         }

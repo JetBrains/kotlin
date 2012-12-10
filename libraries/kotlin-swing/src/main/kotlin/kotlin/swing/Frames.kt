@@ -21,7 +21,7 @@ var JFrame.defaultCloseOperation: Int
 var JFrame.contentPane: Container?
     get() = getContentPane()
     set(value) {
-        setContentPane(value)
+        setContentPane(value!!)
     }
 
 var JFrame.title: String

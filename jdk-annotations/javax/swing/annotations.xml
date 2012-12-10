@@ -263,7 +263,13 @@
     <item name='javax.swing.JMenuBar java.lang.String getUIClassID()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='javax.swing.JMenuBar javax.swing.JMenu add(javax.swing.JMenu) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='javax.swing.JPopupMenu javax.swing.JMenuItem add(javax.swing.Action)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.JPopupMenu javax.swing.JMenuItem add(javax.swing.JMenuItem) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='javax.swing.JEditorPane JEditorPane(java.net.URL) 0'>
@@ -624,6 +630,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='javax.swing.JMenu java.awt.Component add(java.awt.Component) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.JMenu javax.swing.JMenuItem add(javax.swing.JMenuItem) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='javax.swing.JRootPane javax.swing.JLayeredPane createLayeredPane()'>

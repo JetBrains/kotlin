@@ -13,7 +13,7 @@ import java.awt.*
 inline fun actionListener(fn: (ActionEvent) -> Unit): ActionListener = FunctionActionListener(fn)
 
 private class FunctionActionListener(val fn: (ActionEvent) -> Unit) : ActionListener {
-    public override fun actionPerformed(e: ActionEvent?) {
+    public override fun actionPerformed(e: ActionEvent) {
         if (e != null) {
             (fn)(e)
         }
