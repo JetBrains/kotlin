@@ -95,7 +95,7 @@ public class RawTypesCheck {
         }
 
         for (HierarchicalMethodSignature superSignature : method.getHierarchicalMethodSignature().getSuperSignatures()) {
-            if (hasRawTypesInSignature(superSignature.getMethod())) {
+            if (superSignature.isRaw() || hasRawTypesInSignature(superSignature.getMethod())) {
                 return true;
             }
         }

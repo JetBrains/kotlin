@@ -91,7 +91,9 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
         for (FqName javaClass : affectedClasses) {
             ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
             NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass);
-            assertNotNull("Class has annotation, but it is not found: " + javaClass, topLevelClass);
+            if (topLevelClass == null) {
+                continue;
+            }
 
             topLevelClass.acceptVoid(visitor);
 
@@ -256,7 +258,10 @@ public class JdkAnnotationsSanityTest extends KotlinTestWithEnvironment {
 
         private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull JetScope memberScope) {
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                member.acceptVoid(this);
+                if (member instanceof DeclarationDescriptorWithVisibility
+                    && ((DeclarationDescriptorWithVisibility) member).getVisibility().isPublicAPI()) {
+                    member.acceptVoid(this);
+                }
             }
 
             return visitDeclaration(descriptor);

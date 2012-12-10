@@ -1,4 +1,15 @@
 <root>
+  <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;, int)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun drainTo(c : MutableCollection<in E>, maxElements: Int) : Int&quot;"/>
+    </annotation>
+  </item>
+  <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun drainTo(c : MutableCollection<in E>) : Int&quot;"/>
+    </annotation>
+  </item>
+
     <item name='java.util.concurrent.ConcurrentNavigableMap java.util.concurrent.ConcurrentNavigableMap&lt;K,V&gt; headMap(K, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
