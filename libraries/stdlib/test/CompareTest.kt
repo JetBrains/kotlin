@@ -49,7 +49,7 @@ class CompareTest {
 
     Test fun sortUsingCustomComparator() {
         val c = object : Comparator<Item>{
-            override fun compare(o1: Item?, o2: Item?): Int {
+            override fun compare(o1: Item, o2: Item): Int {
                 return compareBy(o1, o2, { name }, { rating })
             }
             override fun equals(obj: Any?): Boolean {
