@@ -11,7 +11,7 @@ import java.beans.*
 inline fun propertyChangeListener(fn: (PropertyChangeEvent) -> Unit): PropertyChangeListener = FunctionPropertyChangeListener(fn)
 
 private class FunctionPropertyChangeListener(val fn: (PropertyChangeEvent) -> Unit) : PropertyChangeListener {
-    public override fun propertyChange(e: PropertyChangeEvent?) {
+    public override fun propertyChange(e: PropertyChangeEvent) {
         if (e != null) {
             (fn)(e)
         }

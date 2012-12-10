@@ -410,7 +410,7 @@ Adds a newly created text node to an element which either already has an owner D
 */
 fun Element.addText(text: String?, doc: Document? = null): Element {
     if (text != null) {
-        val child = this.ownerDocument(doc).createTextNode(text)
+        val child = this.ownerDocument(doc).createTextNode(text)!!
         this.appendChild(child)
     }
     return this

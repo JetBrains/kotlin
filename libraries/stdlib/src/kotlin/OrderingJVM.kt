@@ -58,7 +58,7 @@ private class FunctionComparator<T>(vararg val functions: T.() -> Any?):  Compar
         return "FunctionComparator${functions.toList()}"
     }
 
-    public override fun compare(o1: T?, o2: T?): Int {
+    public override fun compare(o1: T, o2: T): Int {
         return compareBy<T>(o1, o2, *functions)
     }
 
@@ -79,7 +79,7 @@ private class Function2Comparator<T>(val compareFn: (T,T) -> Int):  Comparator<T
         return "Function2Comparator${compareFn}"
     }
 
-    public override fun compare(a: T?, b: T?): Int {
+    public override fun compare(a: T, b: T): Int {
         if (a === b) return 0
         if (a == null) return - 1
         if (b == null) return 1

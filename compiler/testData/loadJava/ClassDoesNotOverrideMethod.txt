@@ -2,8 +2,8 @@ namespace test
 
 public abstract class test.ClassDoesNotOverrideMethod : java.util.Date {
     public final /*constructor*/ fun <init>(): test.ClassDoesNotOverrideMethod
-    public open override /*1*/ /*fake_override*/ fun after(/*0*/ p0: java.util.Date?): jet.Boolean
-    public open override /*1*/ /*fake_override*/ fun before(/*0*/ p0: java.util.Date?): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun after(/*0*/ p0: java.util.Date): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun before(/*0*/ p0: java.util.Date): jet.Boolean
     public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ p0: java.util.Date): jet.Int
     public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun getDate(): jet.Int
     public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun getDay(): jet.Int
@@ -21,6 +21,6 @@ public abstract class test.ClassDoesNotOverrideMethod : java.util.Date {
     public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun setSeconds(/*0*/ p0: jet.Int): jet.Tuple0
     public open override /*1*/ /*fake_override*/ fun setTime(/*0*/ p0: jet.Long): jet.Tuple0
     public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun setYear(/*0*/ p0: jet.Int): jet.Tuple0
-    public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun toGMTString(): jet.String?
-    public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun toLocaleString(): jet.String?
+    public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun toGMTString(): jet.String
+    public open jet.deprecated(value = "Deprecated in Java") override /*1*/ /*fake_override*/ fun toLocaleString(): jet.String
 }
