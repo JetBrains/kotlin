@@ -135,6 +135,12 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
                dir + "RawSuperType.java");
     }
 
+    public void testSubclassWithRawType() throws Exception {
+        String dir = PATH + "/subclassWithRawType/";
+        doTest(dir + "SubclassWithRawType.txt",
+               dir + "SubclassWithRawType.java");
+    }
+
     public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironment {
         @Override
         protected JetCoreEnvironment createEnvironment() {

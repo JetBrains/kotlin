@@ -18,9 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -193,11 +191,13 @@ public final class JavaFunctionResolver {
             throw new IllegalStateException("non-static method in subclass");
         }
 
-        if (signatureErrors.isEmpty()) {
-            checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
-        }
-        else {
-            trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
+        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod)) {
+            if (signatureErrors.isEmpty()) {
+                checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
+            }
+            else {
+                trace.record(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, functionDescriptorImpl, signatureErrors);
+            }
         }
 
         return functionDescriptorImpl;
