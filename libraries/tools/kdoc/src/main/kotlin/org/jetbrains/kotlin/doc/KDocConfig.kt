@@ -52,7 +52,7 @@ class KDocConfig() {
 
     /**
      * A map of package name to html or markdown files used to describe the package. If none is
-     * speciied we will look for a package.html or package.md file in the source tree
+     * specified we will look for a package.html or package.md file in the source tree
      */
     public var packageDescriptionFiles: MutableMap<String,String> = HashMap<String,String>()
 
@@ -113,7 +113,7 @@ class KDocConfig() {
 }
 
 private class LongestFirstStringComparator() : Comparator<String> {
-    public override fun compare(s1: String?, s2: String?): Int {
+    public override fun compare(s1: String, s2: String): Int {
         return compareBy(s1, s2, { length() }, { this })
     }
 
