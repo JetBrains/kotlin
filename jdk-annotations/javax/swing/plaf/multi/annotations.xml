@@ -1,0 +1,1214 @@
+<root>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI java.awt.Rectangle getCellBounds(javax.swing.JList, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLookAndFeel javax.swing.plaf.ComponentUI createUIs(javax.swing.plaf.ComponentUI, java.util.Vector, javax.swing.JComponent) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLookAndFeel java.lang.String getDescription()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI java.lang.String getDialogTitle(javax.swing.JFileChooser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI java.awt.Point indexToLocation(javax.swing.JList, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI boolean isPopupTrigger(java.awt.event.MouseEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI javax.swing.Popup getPopup(javax.swing.JPopupMenu, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI java.lang.String getApproveButtonText(javax.swing.JFileChooser) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI int getNextVisualPositionFrom(javax.swing.text.JTextComponent, int, javax.swing.text.Position.Bias, int, javax.swing.text.Position.Bias[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLookAndFeel javax.swing.UIDefaults getDefaults()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI void startEditingAtPath(javax.swing.JTree, javax.swing.tree.TreePath) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopPaneUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTabbedPaneUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLookAndFeel java.lang.String getID()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLookAndFeel java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI java.awt.Dimension getPreferredSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiViewportUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPopupMenuUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiPanelUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiListUI int locationToIndex(javax.swing.JList, java.awt.Point) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiProgressBarUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuItemUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiButtonUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiComboBoxUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSplitPaneUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollBarUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiInternalFrameUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSeparatorUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSpinnerUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI javax.accessibility.Accessible getAccessibleChild(javax.swing.JComponent, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTreeUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiFileChooserUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiOptionPaneUI void paint(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiColorChooserUI java.awt.Dimension getMaximumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiRootPaneUI void installUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiScrollPaneUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiMenuBarUI void update(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI void uninstallUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTableHeaderUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiSliderUI boolean contains(javax.swing.JComponent, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI void paint(java.awt.Graphics, javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiDesktopIconUI int getAccessibleChildrenCount(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiTextUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiLabelUI void update(java.awt.Graphics, javax.swing.JComponent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolBarUI java.awt.Dimension getMinimumSize(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.swing.plaf.multi.MultiToolTipUI javax.swing.plaf.ComponentUI createUI(javax.swing.JComponent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

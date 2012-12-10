@@ -1,0 +1,14 @@
+<root>
+    <item name='javax.xml.bind.util.JAXBSource JAXBSource(javax.xml.bind.Marshaller, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.xml.bind.util.JAXBResult JAXBResult(javax.xml.bind.Unmarshaller) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.xml.bind.util.JAXBSource JAXBSource(javax.xml.bind.Marshaller, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.xml.bind.util.ValidationEventCollector boolean handleEvent(javax.xml.bind.ValidationEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

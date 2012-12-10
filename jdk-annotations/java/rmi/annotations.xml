@@ -1,0 +1,11 @@
+<root>
+    <item name='java.rmi.Naming void rebind(java.lang.String, java.rmi.Remote) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.rmi.Naming void bind(java.lang.String, java.rmi.Remote) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.rmi.Naming java.lang.String[] list(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

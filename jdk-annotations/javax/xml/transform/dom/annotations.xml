@@ -1,0 +1,17 @@
+<root>
+    <item name='javax.xml.transform.dom.DOMResult DOMResult(org.w3c.dom.Node, org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.xml.transform.dom.DOMResult void setNode(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.xml.transform.dom.DOMResult DOMResult(org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.xml.transform.dom.DOMResult DOMResult(org.w3c.dom.Node, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.xml.transform.dom.DOMResult DOMResult(org.w3c.dom.Node, org.w3c.dom.Node) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

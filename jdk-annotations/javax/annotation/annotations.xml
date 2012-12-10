@@ -1,0 +1,5 @@
+<root>
+    <item name='javax.annotation.Resource.AuthenticationType javax.annotation.Resource.AuthenticationType valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
