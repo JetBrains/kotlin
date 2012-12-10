@@ -1,9 +1,9 @@
 class Box<T>() {
-    open class Inner () {
+    open inner class Inner () {
         fun isT(s : Any) = if(s is T) "OK" else "fail"
     }
 
-    class Inner2() : Inner() {
+    inner class Inner2() : Inner() {
     }
 
     fun inner() = Inner2()

@@ -124,6 +124,11 @@ public class TypeResolver {
                         }
 
                         resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments(), trace, checkBounds);
+
+                        DeclarationDescriptor containing = typeParameterDescriptor.getContainingDeclaration();
+                        if (containing instanceof ClassDescriptor) {
+                            DescriptorResolver.checkHasOuterClassInstance(scope, trace, referenceExpression, (ClassDescriptor) containing);
+                        }
                     }
                     else if (classifierDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;

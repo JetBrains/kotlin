@@ -19,10 +19,6 @@ class MyIterator<T>(val array : ReadOnlyArray<T>) : javaUtilIterator<T> {
 trait ReadOnlyArray<out T> : ISized, Iterable<T> {
   fun get(index : Int) : T
 
-  class Default {
-    fun check(v: Any) =  v is T
-  }
-
   override fun iterator() : Iterator<T> = MyIterator<T>(this)
 }
 

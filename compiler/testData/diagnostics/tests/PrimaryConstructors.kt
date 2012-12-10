@@ -19,7 +19,7 @@ class MyIterable<T> : Iterable<T>
 {
     override fun iterator(): Iterator<T>  = MyIterator()
 
-    class MyIterator : Iterator<T>
+    inner class MyIterator : Iterator<T>
     {
         override fun hasNext(): Boolean = false
         override fun next(): T {
