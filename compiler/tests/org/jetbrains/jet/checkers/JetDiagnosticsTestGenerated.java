@@ -3390,6 +3390,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/regressions/OverrideResolution.kt");
             }
             
+            @TestMetadata("resolveSubclassOfList.kt")
+            public void testResolveSubclassOfList() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/regressions/resolveSubclassOfList.kt");
+            }
+            
             @TestMetadata("SpecififcityByReceiver.kt")
             public void testSpecififcityByReceiver() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/regressions/SpecififcityByReceiver.kt");

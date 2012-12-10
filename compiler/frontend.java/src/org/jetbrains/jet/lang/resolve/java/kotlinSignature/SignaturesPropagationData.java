@@ -201,36 +201,36 @@ public class SignaturesPropagationData {
         List<FunctionDescriptor> superFunctions = Lists.newArrayList();
         for (HierarchicalMethodSignature superSignature : method.getPsiMethod().getHierarchicalMethodSignature().getSuperSignatures()) {
             PsiMethod superMethod = superSignature.getMethod();
+
+            PsiClass psiClass = superMethod.getContainingClass();
+            assert psiClass != null;
+            String classFqName = psiClass.getQualifiedName();
+            assert classFqName != null;
+
+            if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(new FqName(classFqName)).isEmpty()) {
+                List<FunctionDescriptor> funsFromMap = JavaToKotlinMethodMap.INSTANCE.getFunctions(superMethod, containingClass);
+                superFunctions.addAll(funsFromMap);
+                continue;
+            }
+
             PsiElement superDeclaration = superMethod instanceof JetClsMethod ? ((JetClsMethod) superMethod).getOrigin() : superMethod;
             DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superDeclaration);
             if (superFun instanceof FunctionDescriptor) {
                 superFunctions.add(((FunctionDescriptor) superFun));
             }
             else {
-                PsiClass psiClass = superMethod.getContainingClass();
-                assert psiClass != null;
-                String fqName = psiClass.getQualifiedName();
-                assert fqName != null;
-
-                Collection<ClassDescriptor> platformClasses = JavaToKotlinClassMap.getInstance().mapPlatformClass(new FqName(fqName));
-                if (platformClasses.isEmpty()) {
-                    String errorMessage = "Can't find super function for " + method.getPsiMethod() +
-                                          " defined in " + method.getPsiMethod().getContainingClass();
-                    if (ApplicationManager.getApplication().isUnitTestMode()) {
-                        throw new IllegalStateException(errorMessage);
-                    }
-                    else {
-                        if (SystemInfo.isMac) {
-                            LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
-                        }
-                        else {
-                            LOG.error(errorMessage);
-                        }
-                    }
+                String errorMessage = "Can't find super function for " + method.getPsiMethod() +
+                                      " defined in " + method.getPsiMethod().getContainingClass();
+                if (ApplicationManager.getApplication().isUnitTestMode()) {
+                    throw new IllegalStateException(errorMessage);
                 }
                 else {
-                    List<FunctionDescriptor> funsFromMap = JavaToKotlinMethodMap.INSTANCE.getFunctions(superMethod, containingClass);
-                    superFunctions.addAll(funsFromMap);
+                    if (SystemInfo.isMac) {
+                        LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
+                    }
+                    else {
+                        LOG.error(errorMessage);
+                    }
                 }
             }
         }
