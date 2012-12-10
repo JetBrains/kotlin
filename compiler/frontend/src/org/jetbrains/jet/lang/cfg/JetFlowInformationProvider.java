@@ -196,7 +196,7 @@ public class JetFlowInformationProvider {
 
         final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
 
-        PseudocodeTraverser.traverse(pseudocode, true, true, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
+        PseudocodeTraverser.traverseForward(pseudocode, true, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableInitState> in,
@@ -204,7 +204,6 @@ public class JetFlowInformationProvider {
                 assert in != null && out != null;
                 VariableInitContext ctxt = new VariableInitContext(instruction, reportedDiagnosticMap, in, out);
                 if (ctxt.variableDescriptor == null) return;
-                if (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction)) return;
                 if (instruction instanceof ReadValueInstruction) {
                     JetElement element = ((ReadValueInstruction) instruction).getElement();
                     boolean error = checkBackingField(ctxt, element);
@@ -213,6 +212,7 @@ public class JetFlowInformationProvider {
                     }
                     return;
                 }
+                if (!(instruction instanceof WriteValueInstruction)) return;
                 JetElement element = ((WriteValueInstruction) instruction).getlValue();
                 boolean error = checkBackingField(ctxt, element);
                 if (!(element instanceof JetExpression)) return;
@@ -502,7 +502,7 @@ public class JetFlowInformationProvider {
                 }
             }
         };
-        PseudocodeTraverser.traverse(pseudocode, false, true, variableStatusData, variableStatusAnalyzeStrategy);
+        PseudocodeTraverser.traverseBackward(pseudocode, true, variableStatusData, variableStatusAnalyzeStrategy);
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -511,8 +511,8 @@ public class JetFlowInformationProvider {
     public void markUnusedLiteralsInBlock() {
         assert pseudocode != null;
         final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
-        PseudocodeTraverser.traverse(
-                pseudocode, true, new InstructionAnalyzeStrategy() {
+        PseudocodeTraverser.traverseForward(
+                pseudocode, new InstructionAnalyzeStrategy() {
             @Override
             public void execute(@NotNull Instruction instruction) {
                 if (!(instruction instanceof ReadValueInstruction)) return;

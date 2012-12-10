@@ -127,7 +127,19 @@ public class PseudocodeTraverser {
         }
     }
 
-    public static void traverse(
+    public static void traverseForward(
+            @NotNull Pseudocode pseudocode,
+            @NotNull InstructionAnalyzeStrategy instructionAnalyzeStrategy) {
+        traverse(pseudocode, true, instructionAnalyzeStrategy);
+    }
+
+    public static void traverseBackward(
+            @NotNull Pseudocode pseudocode,
+            @NotNull InstructionAnalyzeStrategy instructionAnalyzeStrategy) {
+        traverse(pseudocode, false, instructionAnalyzeStrategy);
+    }
+
+    private static void traverse(
             @NotNull Pseudocode pseudocode, boolean directOrder,
             InstructionAnalyzeStrategy instructionAnalyzeStrategy) {
 
@@ -140,7 +152,21 @@ public class PseudocodeTraverser {
         }
     }
 
-    public static <D> void traverse(
+    public static <D> void traverseForward(
+            @NotNull Pseudocode pseudocode, boolean lookInside,
+            @NotNull Map<Instruction, Edges<D>> edgesMap,
+            @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
+        traverse(pseudocode, true, lookInside, edgesMap, instructionDataAnalyzeStrategy);
+    }
+
+    public static <D> void traverseBackward(
+            @NotNull Pseudocode pseudocode, boolean lookInside,
+            @NotNull Map<Instruction, Edges<D>> edgesMap,
+            @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
+        traverse(pseudocode, false, lookInside, edgesMap, instructionDataAnalyzeStrategy);
+    }
+
+    private static <D> void traverse(
             @NotNull Pseudocode pseudocode, boolean directOrder, boolean lookInside,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {

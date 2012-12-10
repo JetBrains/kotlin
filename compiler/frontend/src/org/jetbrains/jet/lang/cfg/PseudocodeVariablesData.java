@@ -62,7 +62,7 @@ public class PseudocodeVariablesData {
         Set<VariableDescriptor> usedVariables = usedVariablesInEachDeclaration.get(pseudocode);
         if (usedVariables == null) {
             final Set<VariableDescriptor> result = Sets.newHashSet();
-            PseudocodeTraverser.traverse(pseudocode, true, new InstructionAnalyzeStrategy() {
+            PseudocodeTraverser.traverseForward(pseudocode, new InstructionAnalyzeStrategy() {
                 @Override
                 public void execute(@NotNull Instruction instruction) {
                     VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false,
