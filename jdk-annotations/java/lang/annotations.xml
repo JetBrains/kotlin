@@ -563,7 +563,7 @@
     </item>
     <item name='java.lang.Class java.net.URL getResource(java.lang.String)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun getResource(name : String) : URL&quot;"/>
+            <val name="value" val="&quot;fun getResource(name : String) : URL?&quot;"/>
         </annotation>
     </item>
     <item name='java.lang.ProcessBuilder.Redirect java.lang.ProcessBuilder.Redirect.Type type()'>
