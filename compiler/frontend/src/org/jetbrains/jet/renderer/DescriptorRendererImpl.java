@@ -156,9 +156,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         else if (KotlinBuiltIns.getInstance().isUnit(type)) {
             return escape(KotlinBuiltIns.UNIT_ALIAS + (type.isNullable() ? "?" : ""));
         }
-        else if (KotlinBuiltIns.getInstance().isTupleType(type)) {
-            return escape(renderTupleType(type, shortNamesOnly));
-        }
         else if (KotlinBuiltIns.getInstance().isFunctionType(type)) {
             return escape(renderFunctionType(type, shortNamesOnly));
         }
@@ -212,15 +209,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    private void appendTypes(StringBuilder result, List<JetType> types, boolean shortNamesOnly) {
-        for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext(); ) {
-            result.append(renderType(iterator.next(), shortNamesOnly));
-            if (iterator.hasNext()) {
-                result.append(", ");
-            }
-        }
-    }
-
     private void appendTypeProjections(StringBuilder result, List<TypeProjection> typeProjections, boolean shortNamesOnly) {
         for (Iterator<TypeProjection> iterator = typeProjections.iterator(); iterator.hasNext(); ) {
             TypeProjection typeProjection = iterator.next();
@@ -232,18 +220,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
                 result.append(", ");
             }
         }
-    }
-
-    protected String renderTupleType(JetType type, boolean shortNamesOnly) {
-        StringBuilder sb = new StringBuilder("#(");
-        appendTypes(sb, KotlinBuiltIns.getInstance().getTupleElementTypes(type), shortNamesOnly);
-        sb.append(")");
-
-        if (type.isNullable()) {
-            sb.append("?");
-        }
-
-        return sb.toString();
     }
 
     private String renderFunctionType(JetType type, boolean shortNamesOnly) {
