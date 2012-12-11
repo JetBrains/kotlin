@@ -328,6 +328,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         public void unsupported(JetElement element) {
             add(new UnsupportedElementInstruction(element));
         }
+
+        @Override
+        public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
+            pseudocode.repeatPart(startLabel, finishLabel);
+        }
     }
 
     public static class TryFinallyBlockInfo extends BlockInfo {

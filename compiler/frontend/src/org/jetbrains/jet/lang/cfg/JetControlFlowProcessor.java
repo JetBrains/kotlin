@@ -345,11 +345,38 @@ public class JetControlFlowProcessor {
             }
             builder.bindLabel(resultLabel);
         }
+        
+        private class FinallyBlockGenerator {
+            private final JetFinallySection finallyBlock;
+            private Label startFinally = null;
+            private Label finishFinally = null;
+
+            private FinallyBlockGenerator(JetFinallySection block) {
+                finallyBlock = block;
+            }
+
+            public void generate() {
+                JetBlockExpression finalExpression = finallyBlock.getFinalExpression();
+                if (finalExpression == null) return;
+                if (startFinally != null) {
+                    assert finishFinally != null;
+                    builder.repeatPseudocode(startFinally, finishFinally);
+                    return;
+                }
+                startFinally = builder.createUnboundLabel("start finally");
+                builder.bindLabel(startFinally);
+                value(finalExpression, inCondition);
+                finishFinally = builder.createUnboundLabel("finish finally");
+                builder.bindLabel(finishFinally);
+            }
+        }
+       
 
         @Override
         public void visitTryExpression(JetTryExpression expression) {
             builder.read(expression);
             final JetFinallySection finallyBlock = expression.getFinallyBlock();
+            final FinallyBlockGenerator finallyBlockGenerator = new FinallyBlockGenerator(finallyBlock);
             if (finallyBlock != null) {
                 builder.enterTryFinally(new GenerationTrigger() {
                     private boolean working = false;
@@ -359,7 +386,7 @@ public class JetControlFlowProcessor {
                         // This checks are needed for the case of having e.g. return inside finally: 'try {return} finally{return}'
                         if (working) return;
                         working = true;
-                        value(finallyBlock.getFinalExpression(), inCondition);
+                        finallyBlockGenerator.generate();
                         working = false;
                     }
                 });
@@ -425,11 +452,11 @@ public class JetControlFlowProcessor {
                 Label skipFinallyToErrorBlock = builder.createUnboundLabel("skipFinallyToErrorBlock");
                 builder.jump(skipFinallyToErrorBlock);
                 builder.bindLabel(onExceptionToFinallyBlock);
-                value(finallyBlock.getFinalExpression(), inCondition);
+                finallyBlockGenerator.generate();
                 builder.jumpToError();
                 builder.bindLabel(skipFinallyToErrorBlock);
 
-                value(finallyBlock.getFinalExpression(), inCondition);
+                finallyBlockGenerator.generate();
             }
             builder.stopAllowDead(allowDeadLabels);
         }

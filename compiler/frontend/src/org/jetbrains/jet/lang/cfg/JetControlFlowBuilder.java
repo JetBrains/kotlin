@@ -88,4 +88,6 @@ public interface JetControlFlowBuilder {
 
     // Other
     void unsupported(JetElement element);
+
+    void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel);
 }

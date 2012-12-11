@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
@@ -79,6 +78,9 @@ public class PseudocodeImpl implements Pseudocode {
             return mutableInstructionList.get(targetInstructionIndex);
         }
 
+        public Label copy() {
+            return new PseudocodeLabel("copy " + name, allowDead);
+        }
     }
 
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
@@ -92,7 +94,7 @@ public class PseudocodeImpl implements Pseudocode {
     private final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
     
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
-    private final Map<PseudocodeLabel, Collection<Label>> stopAllowDeadLabels = Maps.newHashMap();
+    private final Map<Label, Collection<Label>> stopAllowDeadLabels = Maps.newHashMap();
 
     private final JetElement correspondingElement;
     private SubroutineExitInstruction exitInstruction;
@@ -398,8 +400,8 @@ public class PseudocodeImpl implements Pseudocode {
     @NotNull
     private Map<Instruction, Collection<Label>> prepareAllowDeadStoppers() {
         Map<Instruction, Collection<Label>> stopAllowedDeadInstructions = Maps.newHashMap();
-        for (Map.Entry<PseudocodeLabel, Collection<Label>> entry : stopAllowDeadLabels.entrySet()) {
-            PseudocodeLabel stopAllowedDeadLabel = entry.getKey();
+        for (Map.Entry<Label, Collection<Label>> entry : stopAllowDeadLabels.entrySet()) {
+            Label stopAllowedDeadLabel = entry.getKey();
             Instruction stopAllowDeadInsruction = getJumpTarget(stopAllowedDeadLabel);
             if (((InstructionImpl)stopAllowDeadInsruction).isDead()) {
                 stopAllowedDeadInstructions.put(stopAllowDeadInsruction, entry.getValue());
@@ -457,5 +459,69 @@ public class PseudocodeImpl implements Pseudocode {
         int targetPosition = currentPosition + 1;
         assert targetPosition < mutableInstructionList.size() : currentPosition;
         return mutableInstructionList.get(targetPosition);
+    }
+
+    public void repeatPart(@NotNull Label startLabel, @NotNull Label finishLabel) {
+        Integer startIndex = ((PseudocodeLabel) startLabel).getTargetInstructionIndex();
+        assert startIndex != null;
+        Integer finishIndex = ((PseudocodeLabel) finishLabel).getTargetInstructionIndex();
+        assert finishIndex != null;
+
+        Map<Label, Label> originalToCopy = Maps.newHashMap();
+        Multimap<Instruction, Label> originalLabelsForInstruction = HashMultimap.create();
+        for (PseudocodeLabel label : labels) {
+            Integer index = label.getTargetInstructionIndex();
+            if (index == null) continue; //label is not bounded yet
+            if (label == startLabel || label == finishLabel) continue;
+
+            if (startIndex <= index && index <= finishIndex) {
+                originalToCopy.put(label, label.copy());
+                originalLabelsForInstruction.put(getJumpTarget(label), label);
+            }
+        }
+        for (int index = startIndex; index < finishIndex; index++) {
+            Instruction oldInstruction = mutableInstructionList.get(index);
+            Instruction newInstruction = copyInstruction(oldInstruction, originalToCopy);
+            if (originalLabelsForInstruction.containsKey(oldInstruction)) {
+                Collection<Label> oldLabels = originalLabelsForInstruction.get(oldInstruction);
+                for (Label oldLabel : oldLabels) {
+                    bindLabel(originalToCopy.get(oldLabel));
+                }
+            }
+            addInstruction(newInstruction);
+        }
+        for (Map.Entry<Label, Label> entry : originalToCopy.entrySet()) {
+            Label oldLabel = entry.getKey();
+            Label newLabel = entry.getValue();
+            Collection<Label> stopAllowDead = stopAllowDeadLabels.get(oldLabel);
+            if (stopAllowDead != null) {
+                stopAllowDeadLabels.put(newLabel, copyLabels(stopAllowDead, originalToCopy));
+            }
+        }
+    }
+
+    private Instruction copyInstruction(@NotNull Instruction instruction, @NotNull Map<Label, Label> originalToCopy) {
+        if (instruction instanceof AbstractJumpInstruction) {
+            Label originalTarget = ((AbstractJumpInstruction) instruction).getTargetLabel();
+            if (originalToCopy.containsKey(originalTarget)) {
+                return ((AbstractJumpInstruction)instruction).copy(originalToCopy.get(originalTarget));
+            }
+        }
+        if (instruction instanceof NondeterministicJumpInstruction) {
+            List<Label> originalTargets = ((NondeterministicJumpInstruction) instruction).getTargetLabels();
+            List<Label> copyTargets = copyLabels(originalTargets, originalToCopy);
+            return ((NondeterministicJumpInstruction) instruction).copy(copyTargets);
+        }
+        return ((InstructionImpl)instruction).copy();
+    }
+
+    @NotNull
+    private List<Label> copyLabels(Collection<Label> labels, Map<Label, Label> originalToCopy) {
+        List<Label> newLabels = Lists.newArrayList();
+        for (Label label : labels) {
+            Label newLabel = originalToCopy.get(label);
+            newLabels.add(newLabel != null ? newLabel : label);
+        }
+        return newLabels;
     }
 }

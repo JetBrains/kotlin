@@ -222,4 +222,10 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         assert builder != null;
         builder.declare(property);
     }
+
+    @Override
+    public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
+        assert builder != null;
+        builder.repeatPseudocode(startLabel, finishLabel);
+    }
 }
