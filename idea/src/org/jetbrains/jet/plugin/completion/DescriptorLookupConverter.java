@@ -41,7 +41,7 @@ import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.libraries.DecompiledDataFactory;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.List;
 
@@ -88,19 +88,19 @@ public final class DescriptorLookupConverter {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             JetType returnType = functionDescriptor.getReturnType();
-            typeText = DescriptorRenderer.TEXT.renderType(returnType);
-            presentableText += DescriptorRenderer.TEXT.renderFunctionParameters(functionDescriptor);
+            typeText = DescriptorRendererImpl.TEXT.renderType(returnType);
+            presentableText += DescriptorRendererImpl.TEXT.renderFunctionParameters(functionDescriptor);
 
             boolean extensionFunction = functionDescriptor.getReceiverParameter() != null;
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (containingDeclaration != null && extensionFunction) {
-                tailText += " for " + DescriptorRenderer.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());
+                tailText += " for " + DescriptorRendererImpl.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());
                 tailText += " in " + DescriptorUtils.getFQName(containingDeclaration);
             }
         }
         else if (descriptor instanceof VariableDescriptor) {
             JetType outType = ((VariableDescriptor) descriptor).getType();
-            typeText = DescriptorRenderer.TEXT.renderType(outType);
+            typeText = DescriptorRendererImpl.TEXT.renderType(outType);
         }
         else if (descriptor instanceof ClassDescriptor) {
             DeclarationDescriptor declaredIn = descriptor.getContainingDeclaration();
@@ -109,7 +109,7 @@ public final class DescriptorLookupConverter {
             tailTextGrayed = true;
         }
         else {
-            typeText = DescriptorRenderer.TEXT.render(descriptor);
+            typeText = DescriptorRendererImpl.TEXT.render(descriptor);
         }
 
         element = element.withInsertHandler(getInsertHandler(descriptor));

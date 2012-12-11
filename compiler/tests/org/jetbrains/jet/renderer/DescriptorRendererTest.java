@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve;
+package org.jetbrains.jet.renderer;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.DocumentImpl;
@@ -113,7 +113,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
             if (renderedDescriptors.length() != 0) {
                 renderedDescriptors.append("\n");
             }
-            renderedDescriptors.append(DescriptorRenderer.TEXT.render(descriptor));
+            renderedDescriptors.append(DescriptorRendererImpl.TEXT.render(descriptor));
         }
 
         Document document = new DocumentImpl(psiFile.getText());

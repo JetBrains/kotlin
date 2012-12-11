@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -79,7 +79,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
         FunctionDescriptor function = ContainerUtil.getFirstItem(functions);
 
         FunctionDescriptor substituted = DescriptorUtils.substituteBounds(function);
-        String actual = DescriptorRenderer.COMPACT.render(substituted);
+        String actual = DescriptorRendererImpl.COMPACT.render(substituted);
         assertEquals(expected, actual);
     }
 }

@@ -50,7 +50,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -185,7 +185,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         else {
             JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list),
                                                               new JetFunctionPsiElementCellRenderer(bindingContext),
-                                                              DescriptorRenderer.TEXT.render(descriptor));
+                                                              DescriptorRendererImpl.TEXT.render(descriptor));
             if (event != null) {
                 popup.show(new RelativePoint(event));
             }
@@ -218,11 +218,11 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
 
         StringBuilder builder = new StringBuilder();
-        builder.append(DescriptorRenderer.HTML.render(descriptor));
+        builder.append(DescriptorRendererImpl.HTML.render(descriptor));
         int overrideCount = overriddenMembers.size();
         if (overrideCount >= 1) {
             builder.append("\n").append(implementsOrOverrides).append("\n");
-            builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
+            builder.append(DescriptorRendererImpl.HTML.render(overriddenMembers.iterator().next()));
         }
         if (overrideCount > 1) {
             int count = overrideCount - 1;

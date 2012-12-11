@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,7 +106,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
         JetType result = substitutor.substitute(initialType, Variance.INVARIANT);
 
-        assertEquals(expectedTypeStr, DescriptorRenderer.TEXT.renderTypeWithShortNames(result));
+        assertEquals(expectedTypeStr, DescriptorRendererImpl.TEXT.renderTypeWithShortNames(result));
     }
 
     private Map<TypeConstructor, TypeProjection> stringsToSubstitutionMap(Pair<String, String>[] substitutionStrs) {

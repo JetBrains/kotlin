@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.Collection;
 import java.util.List;
@@ -94,7 +94,7 @@ public class JavaToKotlinMethodMap {
 
     @NotNull
     public static String serializeFunction(@NotNull FunctionDescriptor fun) {
-        return DescriptorRenderer.TEXT.render(fun);
+        return DescriptorRendererImpl.TEXT.render(fun);
     }
 
     // used in generated code

@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -97,7 +97,7 @@ public abstract class ElementAlternativeSignatureData {
             else {
                 throw new AlternativeSignatureMismatchException(
                         "Return type in alternative signature is missing, while in real signature it is '%s'",
-                        DescriptorRenderer.TEXT.renderType(originalType));
+                        DescriptorRendererImpl.TEXT.renderType(originalType));
             }
         }
 

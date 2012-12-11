@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.io.IOException;
 import java.util.List;
@@ -182,7 +182,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
             List<String> errors = bindingContext.get(BindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
             if (errors != null) {
-                this.errors.put(DescriptorRenderer.TEXT.render(descriptor), errors);
+                this.errors.put(DescriptorRendererImpl.TEXT.render(descriptor), errors);
             }
             return null;
         }

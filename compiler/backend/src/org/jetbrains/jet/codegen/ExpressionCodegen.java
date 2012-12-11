@@ -59,7 +59,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.*;
 
@@ -3290,9 +3290,9 @@ The "returned" value of try expression with no finally is either the last expres
                             v.dup();
                             Label nonnull = new Label();
                             v.ifnonnull(nonnull);
-                            throwNewException(CLASS_TYPE_CAST_EXCEPTION, DescriptorRenderer.TEXT.renderType(leftType) +
+                            throwNewException(CLASS_TYPE_CAST_EXCEPTION, DescriptorRendererImpl.TEXT.renderType(leftType) +
                                                                          " cannot be cast to " +
-                                                                         DescriptorRenderer.TEXT.renderType(rightType));
+                                                                         DescriptorRendererImpl.TEXT.renderType(rightType));
                             v.mark(nonnull);
                         }
                     }

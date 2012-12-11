@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.rendering.*;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
@@ -86,20 +86,20 @@ public class IdeErrorMessages {
                     @NotNull
                     @Override
                     public String render(@NotNull CallableMemberDescriptor object) {
-                        return DescriptorRenderer.HTML.renderType(object.getReturnType());
+                        return DescriptorRendererImpl.HTML.renderType(object.getReturnType());
                     }
-                }, DescriptorRenderer.HTML);
+                }, DescriptorRendererImpl.HTML);
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
-                                       "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+                                       "{1}</html>", DescriptorRendererImpl.HTML, DescriptorRendererImpl.HTML);
 
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "<html>{0} must be declared abstract or implement abstract member<br/>" +
                                                  "{1}</html>", RENDER_CLASS_OR_OBJECT,
-                DescriptorRenderer.HTML);
+                DescriptorRendererImpl.HTML);
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
-                RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
-        MAP.put(CONFLICTING_OVERLOADS, "<html>{1}<br />is already defined in ''{0}''</html>", DescriptorRenderer.HTML, TO_STRING);
+                RENDER_CLASS_OR_OBJECT, DescriptorRendererImpl.HTML);
+        MAP.put(CONFLICTING_OVERLOADS, "<html>{1}<br />is already defined in ''{0}''</html>", DescriptorRendererImpl.HTML, TO_STRING);
 
         MAP.put(RESULT_TYPE_MISMATCH, "<html>Function return type mismatch." +
                                       "<table><tr><td>Expected:</td><td>{1}</td></tr>" +

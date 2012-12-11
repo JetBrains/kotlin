@@ -26,12 +26,11 @@ import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.HTML_RENDER_TYPE;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.error;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 
@@ -150,7 +149,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         super();
     }
 
-    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = new DescriptorRenderer.HtmlDescriptorRenderer() {
+    public static final DescriptorRendererImpl DESCRIPTOR_IN_TABLE = new DescriptorRendererImpl.HtmlDescriptorRendererImpl() {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;

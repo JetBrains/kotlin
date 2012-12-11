@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import javax.swing.*;
 
@@ -53,7 +53,7 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
  * @since 16 Aug 2012
  */
 public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements Iconable {
-    private static final DescriptorRenderer RENDERER = new DescriptorRenderer() {
+    private static final DescriptorRendererImpl RENDERER = new DescriptorRendererImpl() {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;

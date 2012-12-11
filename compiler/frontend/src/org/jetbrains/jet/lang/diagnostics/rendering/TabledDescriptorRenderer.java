@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.Tab
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.Iterator;
 import java.util.List;
@@ -168,7 +168,7 @@ public class TabledDescriptorRenderer {
                 renderText((TextRenderer) row, result);
             }
             if (row instanceof DescriptorRow) {
-                result.append(DescriptorRenderer.COMPACT.render(((DescriptorRow) row).descriptor));
+                result.append(DescriptorRendererImpl.COMPACT.render(((DescriptorRow) row).descriptor));
             }
             if (row instanceof FunctionArgumentsRow) {
                 FunctionArgumentsRow functionArgumentsRow = (FunctionArgumentsRow) row;

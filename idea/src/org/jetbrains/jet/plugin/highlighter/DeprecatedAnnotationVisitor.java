@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisitor {
 
@@ -267,8 +267,8 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             return "val " + descriptor.getName();
         }
         else if (descriptor instanceof FunctionDescriptor) {
-            return "fun " + descriptor.getName() + DescriptorRenderer.TEXT.renderFunctionParameters((FunctionDescriptor) descriptor);
+            return "fun " + descriptor.getName() + DescriptorRendererImpl.TEXT.renderFunctionParameters((FunctionDescriptor) descriptor);
         }
-        return DescriptorRenderer.TEXT.render(descriptor);
+        return DescriptorRendererImpl.TEXT.render(descriptor);
     }
 }

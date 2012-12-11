@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve;
+package org.jetbrains.jet.renderer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -37,7 +37,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
+public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     private static final Set<String> KEYWORDS = Sets.newHashSet();
     static {
         for (IElementType elementType : JetTokens.KEYWORDS.getTypes()) {
@@ -47,13 +47,13 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public static final DescriptorRenderer COMPACT_WITH_MODIFIERS = new DescriptorRenderer() {
+    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl() {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;
         }
     };
-    public static final DescriptorRenderer COMPACT = new DescriptorRenderer() {
+    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl() {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;
@@ -64,7 +64,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return false;
         }
     };
-    public static final DescriptorRenderer STARTS_FROM_NAME = new DescriptorRenderer() {
+    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl() {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;
@@ -80,15 +80,15 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return true;
         }
     };
-    public static final DescriptorRenderer TEXT = new DescriptorRenderer();
-    public static final DescriptorRenderer DEBUG_TEXT = new DescriptorRenderer() {
+    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl();
+    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl() {
         @Override
         protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
             // hasDefaultValue() has effects
             return descriptor.declaresDefaultValue();
         }
     };
-    public static final DescriptorRenderer HTML = new HtmlDescriptorRenderer();
+    public static final DescriptorRendererImpl HTML = new HtmlDescriptorRendererImpl();
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
@@ -366,7 +366,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public static class HtmlDescriptorRenderer extends DescriptorRenderer {
+    public static class HtmlDescriptorRendererImpl extends DescriptorRendererImpl {
 
         @Override
         protected String escape(String s) {
@@ -669,7 +669,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            stringBuilder.append(escape(DescriptorRenderer.this.renderName(descriptor.getName())));
+            stringBuilder.append(escape(DescriptorRendererImpl.this.renderName(descriptor.getName())));
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {

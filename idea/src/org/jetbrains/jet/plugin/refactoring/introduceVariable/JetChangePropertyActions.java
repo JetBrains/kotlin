@@ -2,17 +2,8 @@ package org.jetbrains.jet.plugin.refactoring.introduceVariable;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
-
-import java.util.Collections;
 
 /**
  * User: Alefas

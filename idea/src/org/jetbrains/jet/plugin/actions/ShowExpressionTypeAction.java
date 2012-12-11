@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 /**
  * @author yole
@@ -65,7 +65,7 @@ public class ShowExpressionTypeAction extends AnAction {
         if (expression != null) {
             JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
             if (type != null) {
-                HintManager.getInstance().showInformationHint(editor, "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>");
+                HintManager.getInstance().showInformationHint(editor, "<html>" + DescriptorRendererImpl.HTML.renderType(type) + "</html>");
             }
         }
     }

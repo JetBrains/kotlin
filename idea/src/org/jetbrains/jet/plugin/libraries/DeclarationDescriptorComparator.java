@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.Comparator;
 
@@ -67,8 +67,8 @@ class DeclarationDescriptorComparator implements Comparator<DeclarationDescripto
         ReceiverParameterDescriptor c1ReceiverParameter = c1.getReceiverParameter();
         ReceiverParameterDescriptor c2ReceiverParameter = c2.getReceiverParameter();
         if (c1ReceiverParameter != null && c2ReceiverParameter != null) {
-            String r1 = DescriptorRenderer.TEXT.renderType(c1ReceiverParameter.getType());
-            String r2 = DescriptorRenderer.TEXT.renderType(c2ReceiverParameter.getType());
+            String r1 = DescriptorRendererImpl.TEXT.renderType(c1ReceiverParameter.getType());
+            String r2 = DescriptorRendererImpl.TEXT.renderType(c2ReceiverParameter.getType());
             int receiversCompareTo = r1.compareTo(r2);
             if (receiversCompareTo != 0) {
                 return receiversCompareTo;
@@ -76,8 +76,8 @@ class DeclarationDescriptorComparator implements Comparator<DeclarationDescripto
         }
 
         for (int i = 0; i < Math.min(c1.getValueParameters().size(), c2.getValueParameters().size()); i++) {
-            String p1 = DescriptorRenderer.TEXT.renderType(c1.getValueParameters().get(i).getType());
-            String p2 = DescriptorRenderer.TEXT.renderType(c2.getValueParameters().get(i).getType());
+            String p1 = DescriptorRendererImpl.TEXT.renderType(c1.getValueParameters().get(i).getType());
+            String p2 = DescriptorRendererImpl.TEXT.renderType(c2.getValueParameters().get(i).getType());
             int parametersCompareTo = p1.compareTo(p2);
             if (parametersCompareTo != 0) {
                 return parametersCompareTo;

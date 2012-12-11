@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -374,6 +375,6 @@ public abstract class ExpectedResolveData {
 
     @NotNull
     private static String renderNullableDescriptor(@Nullable DeclarationDescriptor d) {
-        return d == null ? "<null>" : DescriptorRenderer.TEXT.render(d);
+        return d == null ? "<null>" : DescriptorRendererImpl.TEXT.render(d);
     }
 }

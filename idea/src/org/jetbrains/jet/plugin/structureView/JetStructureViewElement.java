@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -196,7 +196,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             ReceiverParameterDescriptor receiver = functionDescriptor.getReceiverParameter();
             if (receiver != null) {
-                textBuilder.append(DescriptorRenderer.TEXT.renderType(receiver.getType())).append(".");
+                textBuilder.append(DescriptorRendererImpl.TEXT.renderType(receiver.getType())).append(".");
             }
 
             textBuilder.append(functionDescriptor.getName());
@@ -207,7 +207,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                         @Override
                         public String fun(ValueParameterDescriptor valueParameterDescriptor) {
                             return valueParameterDescriptor.getName() + ":" +
-                                   DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getType());
+                                   DescriptorRendererImpl.TEXT.renderType(valueParameterDescriptor.getType());
                         }
                     },
                     ",");
@@ -215,13 +215,13 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             textBuilder.append("(").append(parametersString).append(")");
 
             JetType returnType = functionDescriptor.getReturnType();
-            textBuilder.append(":").append(DescriptorRenderer.TEXT.renderType(returnType));
+            textBuilder.append(":").append(DescriptorRendererImpl.TEXT.renderType(returnType));
         }
         else if (descriptor instanceof VariableDescriptor) {
             JetType outType = ((VariableDescriptor) descriptor).getType();
 
             textBuilder = new StringBuilder(descriptor.getName().getName());
-            textBuilder.append(":").append(DescriptorRenderer.TEXT.renderType(outType));
+            textBuilder.append(":").append(DescriptorRendererImpl.TEXT.renderType(outType));
         }
         else if (descriptor instanceof ClassDescriptor) {
             textBuilder = new StringBuilder(descriptor.getName().getName());
@@ -231,7 +231,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                     .append(")");
         }
         else {
-            return DescriptorRenderer.TEXT.render(descriptor);
+            return DescriptorRendererImpl.TEXT.render(descriptor);
         }
 
         return textBuilder.toString();

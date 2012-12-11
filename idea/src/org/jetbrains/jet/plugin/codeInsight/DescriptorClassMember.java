@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
-import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import javax.swing.*;
 
@@ -93,7 +93,7 @@ public class DescriptorClassMember implements ClassMemberWithElement {
 
     @Override
     public String getText() {
-        return DescriptorRenderer.STARTS_FROM_NAME.render(myDescriptor);
+        return DescriptorRendererImpl.STARTS_FROM_NAME.render(myDescriptor);
     }
 
     public DeclarationDescriptor getDescriptor() {
