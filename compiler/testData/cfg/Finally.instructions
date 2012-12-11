@@ -19,12 +19,14 @@ l0:
 d0:
     jmp(l3 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[r(1)]
 l2 [onExceptionToFinallyBlock]:
+l4 [start finally]:
     r(2)                                    NEXT:[jmp(error)]                              PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l5 [finish finally]:
     jmp(error)                              NEXT:[<ERROR>]                                 PREV:[r(2)]
 l3 [skipFinallyToErrorBlock]:
     r(2)                                    NEXT:[<END>]                                   PREV:[jmp(l3 [skipFinallyToErrorBlock])]
 l1:
-l4 [stop [d0]]:
+l6 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                  PREV:[r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                  PREV:[jmp(error)]
@@ -60,21 +62,23 @@ l0:
     r(>)                                    NEXT:[r(2 > 3)]                                PREV:[r(3)]
     r(2 > 3)                                NEXT:[jf(l3)]                                  PREV:[r(>)]
     jf(l3)                                  NEXT:[read (Unit), r(2)]                       PREV:[r(2 > 3)]
+l4 [start finally]:
     r(2)                                    NEXT:[ret l1]                                  PREV:[jf(l3)]
+l5 [finish finally]:
     ret l1                                  NEXT:[<END>]                                   PREV:[r(2)]
--   jmp(l4)                                 NEXT:[jmp(l5 [skipFinallyToErrorBlock])]       PREV:[]
+-   jmp(l6)                                 NEXT:[jmp(l7 [skipFinallyToErrorBlock])]       PREV:[]
 l3:
-    read (Unit)                             NEXT:[jmp(l5 [skipFinallyToErrorBlock])]       PREV:[jf(l3)]
-l4:
+    read (Unit)                             NEXT:[jmp(l7 [skipFinallyToErrorBlock])]       PREV:[jf(l3)]
+l6:
 d0:
-    jmp(l5 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[read (Unit)]
+    jmp(l7 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[read (Unit)]
 l2 [onExceptionToFinallyBlock]:
     r(2)                                    NEXT:[jmp(error)]                              PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
     jmp(error)                              NEXT:[<ERROR>]                                 PREV:[r(2)]
-l5 [skipFinallyToErrorBlock]:
-    r(2)                                    NEXT:[<END>]                                   PREV:[jmp(l5 [skipFinallyToErrorBlock])]
+l7 [skipFinallyToErrorBlock]:
+    r(2)                                    NEXT:[<END>]                                   PREV:[jmp(l7 [skipFinallyToErrorBlock])]
 l1:
-l6 [stop [d0]]:
+l8 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                  PREV:[ret l1, r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                  PREV:[jmp(error)]
@@ -124,12 +128,14 @@ l3:
 d0:
     jmp(l8 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                                                PREV:[r({ () => if (2 > 3) { retur..)]
 l2 [onExceptionToFinallyBlock]:
+l9 [start finally]:
     r(2)                                    NEXT:[jmp(error)]                                                          PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l10 [finish finally]:
     jmp(error)                              NEXT:[<ERROR>]                                                             PREV:[r(2)]
 l8 [skipFinallyToErrorBlock]:
     r(2)                                    NEXT:[<END>]                                                               PREV:[jmp(l8 [skipFinallyToErrorBlock])]
 l1:
-l9 [stop [d0]]:
+l11 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                                              PREV:[r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                                              PREV:[jmp(error)]
@@ -244,21 +250,23 @@ l3:
     r(>)                                    NEXT:[r(2 > 3)]                                PREV:[r(3)]
     r(2 > 3)                                NEXT:[jf(l6)]                                  PREV:[r(>)]
     jf(l6)                                  NEXT:[read (Unit), r(2)]                       PREV:[r(2 > 3)]
+l7 [start finally]:
     r(2)                                    NEXT:[ret l4]                                  PREV:[jf(l6)]
+l8 [finish finally]:
     ret l4                                  NEXT:[<END>]                                   PREV:[r(2)]
--   jmp(l7)                                 NEXT:[jmp(l8 [skipFinallyToErrorBlock])]       PREV:[]
+-   jmp(l9)                                 NEXT:[jmp(l10 [skipFinallyToErrorBlock])]      PREV:[]
 l6:
-    read (Unit)                             NEXT:[jmp(l8 [skipFinallyToErrorBlock])]       PREV:[jf(l6)]
-l7:
+    read (Unit)                             NEXT:[jmp(l10 [skipFinallyToErrorBlock])]      PREV:[jf(l6)]
+l9:
 d0:
-    jmp(l8 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[read (Unit)]
+    jmp(l10 [skipFinallyToErrorBlock])      NEXT:[r(2)]                                    PREV:[read (Unit)]
 l5 [onExceptionToFinallyBlock]:
     r(2)                                    NEXT:[jmp(error)]                              PREV:[jmp?(l5 [onExceptionToFinallyBlock])]
     jmp(error)                              NEXT:[<ERROR>]                                 PREV:[r(2)]
-l8 [skipFinallyToErrorBlock]:
-    r(2)                                    NEXT:[<END>]                                   PREV:[jmp(l8 [skipFinallyToErrorBlock])]
+l10 [skipFinallyToErrorBlock]:
+    r(2)                                    NEXT:[<END>]                                   PREV:[jmp(l10 [skipFinallyToErrorBlock])]
 l4:
-l9 [stop [d0]]:
+l11 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                  PREV:[ret l4, r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                  PREV:[jmp(error)]
@@ -295,21 +303,23 @@ l3:
     r(>)                                    NEXT:[r(2 > 3)]                                PREV:[r(3)]
     r(2 > 3)                                NEXT:[jf(l6)]                                  PREV:[r(>)]
     jf(l6)                                  NEXT:[read (Unit), r(2)]                       PREV:[r(2 > 3)]
+l7 [start finally]:
     r(2)                                    NEXT:[ret l4]                                  PREV:[jf(l6)]
+l8 [finish finally]:
     ret l4                                  NEXT:[<END>]                                   PREV:[r(2)]
--   jmp(l7)                                 NEXT:[jmp(l8 [skipFinallyToErrorBlock])]       PREV:[]
+-   jmp(l9)                                 NEXT:[jmp(l10 [skipFinallyToErrorBlock])]      PREV:[]
 l6:
-    read (Unit)                             NEXT:[jmp(l8 [skipFinallyToErrorBlock])]       PREV:[jf(l6)]
-l7:
+    read (Unit)                             NEXT:[jmp(l10 [skipFinallyToErrorBlock])]      PREV:[jf(l6)]
+l9:
 d0:
-    jmp(l8 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[read (Unit)]
+    jmp(l10 [skipFinallyToErrorBlock])      NEXT:[r(2)]                                    PREV:[read (Unit)]
 l5 [onExceptionToFinallyBlock]:
     r(2)                                    NEXT:[jmp(error)]                              PREV:[jmp?(l5 [onExceptionToFinallyBlock])]
     jmp(error)                              NEXT:[<ERROR>]                                 PREV:[r(2)]
-l8 [skipFinallyToErrorBlock]:
-    r(2)                                    NEXT:[<END>]                                   PREV:[jmp(l8 [skipFinallyToErrorBlock])]
+l10 [skipFinallyToErrorBlock]:
+    r(2)                                    NEXT:[<END>]                                   PREV:[jmp(l10 [skipFinallyToErrorBlock])]
 l4:
-l9 [stop [d0]]:
+l11 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                  PREV:[ret l4, r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                  PREV:[jmp(error)]
@@ -361,20 +371,22 @@ l4:
     r(>)                                    NEXT:[r(2 > 3)]                                PREV:[r(3)]
     r(2 > 3)                                NEXT:[jf(l7)]                                  PREV:[r(>)]
     jf(l7)                                  NEXT:[read (Unit), r(2)]                       PREV:[r(2 > 3)]
+l8 [start finally]:
     r(2)                                    NEXT:[jmp(l3)]                                 PREV:[jf(l7)]
+l9 [finish finally]:
     jmp(l3)                                 NEXT:[read (Unit)]                             PREV:[r(2)]
--   jmp(l8)                                 NEXT:[jmp(l9 [skipFinallyToErrorBlock])]       PREV:[]
+-   jmp(l10)                                NEXT:[jmp(l11 [skipFinallyToErrorBlock])]      PREV:[]
 l7:
-    read (Unit)                             NEXT:[jmp(l9 [skipFinallyToErrorBlock])]       PREV:[jf(l7)]
-l8:
+    read (Unit)                             NEXT:[jmp(l11 [skipFinallyToErrorBlock])]      PREV:[jf(l7)]
+l10:
 d0:
-    jmp(l9 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[read (Unit)]
+    jmp(l11 [skipFinallyToErrorBlock])      NEXT:[r(2)]                                    PREV:[read (Unit)]
 l6 [onExceptionToFinallyBlock]:
     r(2)                                    NEXT:[jmp(error)]                              PREV:[jmp?(l6 [onExceptionToFinallyBlock])]
     jmp(error)                              NEXT:[<ERROR>]                                 PREV:[r(2)]
-l9 [skipFinallyToErrorBlock]:
-    r(2)                                    NEXT:[jmp(l2)]                                 PREV:[jmp(l9 [skipFinallyToErrorBlock])]
-l10 [stop [d0]]:
+l11 [skipFinallyToErrorBlock]:
+    r(2)                                    NEXT:[jmp(l2)]                                 PREV:[jmp(l11 [skipFinallyToErrorBlock])]
+l12 [stop [d0]]:
     jmp(l2)                                 NEXT:[r(true)]                                 PREV:[r(2)]
 l3:
     read (Unit)                             NEXT:[<END>]                                   PREV:[jmp(l3)]
@@ -442,12 +454,14 @@ l4:
 d0:
     jmp(l9 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                     PREV:[r(5)]
 l2 [onExceptionToFinallyBlock]:
+l10 [start finally]:
     r(2)                                    NEXT:[jmp(error)]                               PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l11 [finish finally]:
     jmp(error)                              NEXT:[<ERROR>]                                  PREV:[r(2)]
 l9 [skipFinallyToErrorBlock]:
     r(2)                                    NEXT:[<END>]                                    PREV:[jmp(l9 [skipFinallyToErrorBlock])]
 l1:
-l10 [stop [d0]]:
+l12 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                   PREV:[r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                   PREV:[jmp(error)]
@@ -508,12 +522,14 @@ l4:
 d0:
     jmp(l9 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                     PREV:[read (Unit)]
 l2 [onExceptionToFinallyBlock]:
+l10 [start finally]:
     r(2)                                    NEXT:[jmp(error)]                               PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l11 [finish finally]:
     jmp(error)                              NEXT:[<ERROR>]                                  PREV:[r(2)]
 l9 [skipFinallyToErrorBlock]:
     r(2)                                    NEXT:[<END>]                                    PREV:[jmp(l9 [skipFinallyToErrorBlock])]
 l1:
-l10 [stop [d0]]:
+l12 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                   PREV:[r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                   PREV:[jmp(error)]
@@ -573,20 +589,22 @@ l5:
     r(>)                                    NEXT:[r(2 > 3)]                                        PREV:[r(3)]
     r(2 > 3)                                NEXT:[jf(l7)]                                          PREV:[r(>)]
     jf(l7)                                  NEXT:[read (Unit), r(2)]                               PREV:[r(2 > 3)]
+l8 [start finally]:
     r(2)                                    NEXT:[jmp(l4)]                                         PREV:[jf(l7)]
+l9 [finish finally]:
     jmp(l4)                                 NEXT:[r(try { 1 if (2 > 3) { conti..)]                 PREV:[r(2)]
--   jmp(l8)                                 NEXT:[jmp(l9 [skipFinallyToErrorBlock])]               PREV:[]
+-   jmp(l10)                                NEXT:[jmp(l11 [skipFinallyToErrorBlock])]              PREV:[]
 l7:
-    read (Unit)                             NEXT:[jmp(l9 [skipFinallyToErrorBlock])]               PREV:[jf(l7)]
-l8:
+    read (Unit)                             NEXT:[jmp(l11 [skipFinallyToErrorBlock])]              PREV:[jf(l7)]
+l10:
 d0:
-    jmp(l9 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                            PREV:[read (Unit)]
+    jmp(l11 [skipFinallyToErrorBlock])      NEXT:[r(2)]                                            PREV:[read (Unit)]
 l6 [onExceptionToFinallyBlock]:
     r(2)                                    NEXT:[jmp(error)]                                      PREV:[jmp?(l6 [onExceptionToFinallyBlock])]
     jmp(error)                              NEXT:[<ERROR>]                                         PREV:[r(2)]
-l9 [skipFinallyToErrorBlock]:
-    r(2)                                    NEXT:[jmp?(l4)]                                        PREV:[jmp(l9 [skipFinallyToErrorBlock])]
-l10 [stop [d0]]:
+l11 [skipFinallyToErrorBlock]:
+    r(2)                                    NEXT:[jmp?(l4)]                                        PREV:[jmp(l11 [skipFinallyToErrorBlock])]
+l12 [stop [d0]]:
     jmp?(l4)                                NEXT:[r(try { 1 if (2 > 3) { conti..), read (Unit)]    PREV:[r(2)]
 l2:
     read (Unit)                             NEXT:[<END>]                                           PREV:[jmp?(l2), jmp?(l4)]
@@ -662,12 +680,14 @@ l3:
 d0:
     jmp(l9 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                     PREV:[r(5)]
 l2 [onExceptionToFinallyBlock]:
+l10 [start finally]:
     r(2)                                    NEXT:[jmp(error)]                               PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l11 [finish finally]:
     jmp(error)                              NEXT:[<ERROR>]                                  PREV:[r(2)]
 l9 [skipFinallyToErrorBlock]:
     r(2)                                    NEXT:[<END>]                                    PREV:[jmp(l9 [skipFinallyToErrorBlock])]
 l1:
-l10 [stop [d0]]:
+l12 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                   PREV:[r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                   PREV:[jmp(error)]
@@ -736,12 +756,14 @@ l3:
 d0:
     jmp(l9 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                     PREV:[read (Unit)]
 l2 [onExceptionToFinallyBlock]:
+l10 [start finally]:
     r(2)                                    NEXT:[jmp(error)]                               PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l11 [finish finally]:
     jmp(error)                              NEXT:[<ERROR>]                                  PREV:[r(2)]
 l9 [skipFinallyToErrorBlock]:
     r(2)                                    NEXT:[<END>]                                    PREV:[jmp(l9 [skipFinallyToErrorBlock])]
 l1:
-l10 [stop [d0]]:
+l12 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                   PREV:[r(2)]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                   PREV:[jmp(error)]
@@ -768,20 +790,22 @@ l0:
       })                                    NEXT:[jmp?(l2 [onExceptionToFinallyBlock])]    PREV:[<START>]
     jmp?(l2 [onExceptionToFinallyBlock])    NEXT:[r(2), r(1)]                              PREV:[r(try { return 1 } finally {..)]
     r(1)                                    NEXT:[r(2)]                                    PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l3 [start finally]:
     r(2)                                    NEXT:[ret(*) l1]                               PREV:[r(1)]
     ret(*) l1                               NEXT:[<END>]                                   PREV:[r(2)]
+l4 [finish finally]:
 -   ret(*) l1                               NEXT:[<END>]                                   PREV:[]
 d0:
--   jmp(l3 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[]
+-   jmp(l5 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                    PREV:[]
 l2 [onExceptionToFinallyBlock]:
     r(2)                                    NEXT:[ret(*) l1]                               PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
     ret(*) l1                               NEXT:[<END>]                                   PREV:[r(2)]
 -   jmp(error)                              NEXT:[<ERROR>]                                 PREV:[]
-l3 [skipFinallyToErrorBlock]:
+l5 [skipFinallyToErrorBlock]:
 -   r(2)                                    NEXT:[ret(*) l1]                               PREV:[]
 -   ret(*) l1                               NEXT:[<END>]                                   PREV:[]
 l1:
-l4 [stop [d0]]:
+l6 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                  PREV:[ret(*) l1, ret(*) l1]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                  PREV:[]
@@ -808,23 +832,25 @@ l0:
         })                                  NEXT:[jmp?(l2 [onExceptionToFinallyBlock])]    PREV:[<START>]
     jmp?(l2 [onExceptionToFinallyBlock])    NEXT:[r(3), r(1)]                              PREV:[r(try { return 1 } finally {..)]
     r(1)                                    NEXT:[r(3)]                                    PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
+l3 [start finally]:
     r(3)                                    NEXT:[r(doSmth)]                               PREV:[r(1)]
     r(doSmth)                               NEXT:[r(doSmth(3))]                            PREV:[r(3)]
     r(doSmth(3))                            NEXT:[ret(*) l1]                               PREV:[r(doSmth)]
+l4 [finish finally]:
     ret(*) l1                               NEXT:[<END>]                                   PREV:[r(doSmth(3))]
 d0:
--   jmp(l3 [skipFinallyToErrorBlock])       NEXT:[r(3)]                                    PREV:[]
+-   jmp(l5 [skipFinallyToErrorBlock])       NEXT:[r(3)]                                    PREV:[]
 l2 [onExceptionToFinallyBlock]:
     r(3)                                    NEXT:[r(doSmth)]                               PREV:[jmp?(l2 [onExceptionToFinallyBlock])]
     r(doSmth)                               NEXT:[r(doSmth(3))]                            PREV:[r(3)]
     r(doSmth(3))                            NEXT:[jmp(error)]                              PREV:[r(doSmth)]
     jmp(error)                              NEXT:[<ERROR>]                                 PREV:[r(doSmth(3))]
-l3 [skipFinallyToErrorBlock]:
+l5 [skipFinallyToErrorBlock]:
 -   r(3)                                    NEXT:[r(doSmth)]                               PREV:[]
 -   r(doSmth)                               NEXT:[r(doSmth(3))]                            PREV:[]
 -   r(doSmth(3))                            NEXT:[<END>]                                   PREV:[]
 l1:
-l4 [stop [d0]]:
+l6 [stop [d0]]:
     <END>                                   NEXT:[<SINK>]                                  PREV:[ret(*) l1]
 error:
     <ERROR>                                 NEXT:[<SINK>]                                  PREV:[jmp(error)]
@@ -858,34 +884,36 @@ l0:
     jmp?(l2 [onException])                            NEXT:[jmp?(), jmp?(l3 [onExceptionToFinallyBlock])]    PREV:[r(try { return 1 } catch (e:..)]
     jmp?(l3 [onExceptionToFinallyBlock])              NEXT:[r(3), r(1)]                                      PREV:[jmp?(l2 [onException])]
     r(1)                                              NEXT:[r(3)]                                            PREV:[jmp?(l3 [onExceptionToFinallyBlock])]
+l4 [start finally]:
     r(3)                                              NEXT:[r(doSmth)]                                       PREV:[r(1)]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[ret(*) l1]                                       PREV:[r(doSmth)]
+l5 [finish finally]:
     ret(*) l1                                         NEXT:[<END>]                                           PREV:[r(doSmth(3))]
 d0:
--   jmp(l4 [afterCatches])                            NEXT:[jmp(l5 [skipFinallyToErrorBlock])]               PREV:[]
+-   jmp(l6 [afterCatches])                            NEXT:[jmp(l7 [skipFinallyToErrorBlock])]               PREV:[]
 l2 [onException]:
     jmp?()                                            NEXT:[v(e: UnsupportedOperationException)]             PREV:[jmp?(l2 [onException])]
     v(e: UnsupportedOperationException)               NEXT:[w(e)]                                            PREV:[jmp?()]
     w(e)                                              NEXT:[r(2)]                                            PREV:[v(e: UnsupportedOperationException)]
     r(2)                                              NEXT:[r(doSmth)]                                       PREV:[w(e)]
     r(doSmth)                                         NEXT:[r(doSmth(2))]                                    PREV:[r(2)]
-    r(doSmth(2))                                      NEXT:[jmp(l4 [afterCatches])]                          PREV:[r(doSmth)]
+    r(doSmth(2))                                      NEXT:[jmp(l6 [afterCatches])]                          PREV:[r(doSmth)]
 d1:
-    jmp(l4 [afterCatches])                            NEXT:[jmp(l5 [skipFinallyToErrorBlock])]               PREV:[r(doSmth(2))]
-l4 [afterCatches]:
-    jmp(l5 [skipFinallyToErrorBlock])                 NEXT:[r(3)]                                            PREV:[jmp(l4 [afterCatches])]
+    jmp(l6 [afterCatches])                            NEXT:[jmp(l7 [skipFinallyToErrorBlock])]               PREV:[r(doSmth(2))]
+l6 [afterCatches]:
+    jmp(l7 [skipFinallyToErrorBlock])                 NEXT:[r(3)]                                            PREV:[jmp(l6 [afterCatches])]
 l3 [onExceptionToFinallyBlock]:
     r(3)                                              NEXT:[r(doSmth)]                                       PREV:[jmp?(l3 [onExceptionToFinallyBlock])]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[jmp(error)]                                      PREV:[r(doSmth)]
     jmp(error)                                        NEXT:[<ERROR>]                                         PREV:[r(doSmth(3))]
-l5 [skipFinallyToErrorBlock]:
-    r(3)                                              NEXT:[r(doSmth)]                                       PREV:[jmp(l5 [skipFinallyToErrorBlock])]
+l7 [skipFinallyToErrorBlock]:
+    r(3)                                              NEXT:[r(doSmth)]                                       PREV:[jmp(l7 [skipFinallyToErrorBlock])]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[<END>]                                           PREV:[r(doSmth)]
 l1:
-l6 [stop [d0, d1]]:
+l8 [stop [d0, d1]]:
     <END>                                             NEXT:[<SINK>]                                          PREV:[ret(*) l1, r(doSmth(3))]
 error:
     <ERROR>                                           NEXT:[<SINK>]                                          PREV:[jmp(error)]
@@ -960,12 +988,14 @@ l0:
     jmp?(l2 [onException])                            NEXT:[jmp?(), jmp?(l3 [onExceptionToFinallyBlock])]    PREV:[r(try { return 1 } catch (e:..)]
     jmp?(l3 [onExceptionToFinallyBlock])              NEXT:[r(3), r(1)]                                      PREV:[jmp?(l2 [onException])]
     r(1)                                              NEXT:[r(3)]                                            PREV:[jmp?(l3 [onExceptionToFinallyBlock])]
+l4 [start finally]:
     r(3)                                              NEXT:[r(doSmth)]                                       PREV:[r(1)]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[ret(*) l1]                                       PREV:[r(doSmth)]
+l5 [finish finally]:
     ret(*) l1                                         NEXT:[<END>]                                           PREV:[r(doSmth(3))]
 d0:
--   jmp(l4 [afterCatches])                            NEXT:[jmp(l5 [skipFinallyToErrorBlock])]               PREV:[]
+-   jmp(l6 [afterCatches])                            NEXT:[jmp(l7 [skipFinallyToErrorBlock])]               PREV:[]
 l2 [onException]:
     jmp?()                                            NEXT:[v(e: UnsupportedOperationException)]             PREV:[jmp?(l2 [onException])]
     v(e: UnsupportedOperationException)               NEXT:[w(e)]                                            PREV:[jmp?()]
@@ -976,20 +1006,20 @@ l2 [onException]:
     r(doSmth(3))                                      NEXT:[ret(*) l1]                                       PREV:[r(doSmth)]
     ret(*) l1                                         NEXT:[<END>]                                           PREV:[r(doSmth(3))]
 d1:
--   jmp(l4 [afterCatches])                            NEXT:[jmp(l5 [skipFinallyToErrorBlock])]               PREV:[]
-l4 [afterCatches]:
--   jmp(l5 [skipFinallyToErrorBlock])                 NEXT:[r(3)]                                            PREV:[]
+-   jmp(l6 [afterCatches])                            NEXT:[jmp(l7 [skipFinallyToErrorBlock])]               PREV:[]
+l6 [afterCatches]:
+-   jmp(l7 [skipFinallyToErrorBlock])                 NEXT:[r(3)]                                            PREV:[]
 l3 [onExceptionToFinallyBlock]:
     r(3)                                              NEXT:[r(doSmth)]                                       PREV:[jmp?(l3 [onExceptionToFinallyBlock])]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[jmp(error)]                                      PREV:[r(doSmth)]
     jmp(error)                                        NEXT:[<ERROR>]                                         PREV:[r(doSmth(3))]
-l5 [skipFinallyToErrorBlock]:
+l7 [skipFinallyToErrorBlock]:
 -   r(3)                                              NEXT:[r(doSmth)]                                       PREV:[]
 -   r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[]
 -   r(doSmth(3))                                      NEXT:[<END>]                                           PREV:[]
 l1:
-l6 [stop [d0, d1]]:
+l8 [stop [d0, d1]]:
     <END>                                             NEXT:[<SINK>]                                          PREV:[ret(*) l1, ret(*) l1]
 error:
     <ERROR>                                           NEXT:[<SINK>]                                          PREV:[jmp(error)]
@@ -1026,31 +1056,33 @@ l0:
     r(doSmth)                                         NEXT:[r(doSmth(1))]                                    PREV:[r(1)]
     r(doSmth(1))                                      NEXT:[jmp(l4 [afterCatches])]                          PREV:[r(doSmth)]
 d0:
-    jmp(l4 [afterCatches])                            NEXT:[jmp(l5 [skipFinallyToErrorBlock])]               PREV:[r(doSmth(1))]
+    jmp(l4 [afterCatches])                            NEXT:[jmp(l7 [skipFinallyToErrorBlock])]               PREV:[r(doSmth(1))]
 l2 [onException]:
     jmp?()                                            NEXT:[v(e: UnsupportedOperationException)]             PREV:[jmp?(l2 [onException])]
     v(e: UnsupportedOperationException)               NEXT:[w(e)]                                            PREV:[jmp?()]
     w(e)                                              NEXT:[r(2)]                                            PREV:[v(e: UnsupportedOperationException)]
     r(2)                                              NEXT:[r(3)]                                            PREV:[w(e)]
+l5 [start finally]:
     r(3)                                              NEXT:[r(doSmth)]                                       PREV:[r(2)]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[ret(*) l1]                                       PREV:[r(doSmth)]
+l6 [finish finally]:
     ret(*) l1                                         NEXT:[<END>]                                           PREV:[r(doSmth(3))]
 d1:
--   jmp(l4 [afterCatches])                            NEXT:[jmp(l5 [skipFinallyToErrorBlock])]               PREV:[]
+-   jmp(l4 [afterCatches])                            NEXT:[jmp(l7 [skipFinallyToErrorBlock])]               PREV:[]
 l4 [afterCatches]:
-    jmp(l5 [skipFinallyToErrorBlock])                 NEXT:[r(3)]                                            PREV:[jmp(l4 [afterCatches])]
+    jmp(l7 [skipFinallyToErrorBlock])                 NEXT:[r(3)]                                            PREV:[jmp(l4 [afterCatches])]
 l3 [onExceptionToFinallyBlock]:
     r(3)                                              NEXT:[r(doSmth)]                                       PREV:[jmp?(l3 [onExceptionToFinallyBlock])]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[jmp(error)]                                      PREV:[r(doSmth)]
     jmp(error)                                        NEXT:[<ERROR>]                                         PREV:[r(doSmth(3))]
-l5 [skipFinallyToErrorBlock]:
-    r(3)                                              NEXT:[r(doSmth)]                                       PREV:[jmp(l5 [skipFinallyToErrorBlock])]
+l7 [skipFinallyToErrorBlock]:
+    r(3)                                              NEXT:[r(doSmth)]                                       PREV:[jmp(l7 [skipFinallyToErrorBlock])]
     r(doSmth)                                         NEXT:[r(doSmth(3))]                                    PREV:[r(3)]
     r(doSmth(3))                                      NEXT:[<END>]                                           PREV:[r(doSmth)]
 l1:
-l6 [stop [d0, d1]]:
+l8 [stop [d0, d1]]:
     <END>                                             NEXT:[<SINK>]                                          PREV:[ret(*) l1, r(doSmth(3))]
 error:
     <ERROR>                                           NEXT:[<SINK>]                                          PREV:[jmp(error)]
