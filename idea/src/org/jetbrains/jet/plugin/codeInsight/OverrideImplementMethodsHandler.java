@@ -141,8 +141,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         addReceiverParameter(descriptor, bodyBuilder);
 
-        bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRendererImpl.COMPACT_WITH_MODIFIERS.renderTypeWithShortNames(
-                descriptor.getType()));
+        bodyBuilder.append(descriptor.getName()).append(" : ").append(
+                DescriptorRendererImpl.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()));
         String initializer = defaultInitializer(descriptor.getType(), KotlinBuiltIns.getInstance());
         if (initializer != null) {
             bodyBuilder.append(" = ").append(initializer);

@@ -106,7 +106,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
         JetType result = substitutor.substitute(initialType, Variance.INVARIANT);
 
-        assertEquals(expectedTypeStr, DescriptorRendererImpl.TEXT.renderTypeWithShortNames(result));
+        assertEquals(expectedTypeStr, DescriptorRendererImpl.SHORT_NAMES_IN_TYPES.renderType(result));
     }
 
     private Map<TypeConstructor, TypeProjection> stringsToSubstitutionMap(Pair<String, String>[] substitutionStrs) {

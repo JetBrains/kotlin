@@ -81,6 +81,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     };
     public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl();
+    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true);
     public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl() {
         @Override
         protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
@@ -107,6 +108,16 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     };
     private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
+
+    private final boolean shortNames;
+
+    public DescriptorRendererImpl() {
+        this(false);
+    }
+
+    public DescriptorRendererImpl(boolean shortNames) {
+        this.shortNames = shortNames;
+    }
 
     protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
         return descriptor.hasDefaultValue();
@@ -139,14 +150,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     }
 
     public String renderType(JetType type) {
-        return renderType(type, false);
-    }
-
-    public String renderTypeWithShortNames(JetType type) {
-        return renderType(type, true);
-    }
-
-    private String renderType(JetType type, boolean shortNamesOnly) {
         if (type == null) {
             return escape("[NULL]");
         }
@@ -157,20 +160,20 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             return escape(KotlinBuiltIns.UNIT_ALIAS + (type.isNullable() ? "?" : ""));
         }
         else if (KotlinBuiltIns.getInstance().isFunctionType(type)) {
-            return escape(renderFunctionType(type, shortNamesOnly));
+            return escape(renderFunctionType(type));
         }
         else {
-            return escape(renderDefaultType(type, shortNamesOnly));
+            return escape(renderDefaultType(type));
         }
     }
 
-    private String renderDefaultType(JetType type, boolean shortNamesOnly) {
+    private String renderDefaultType(JetType type) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(renderTypeName(type.getConstructor(), shortNamesOnly));
+        sb.append(renderTypeName(type.getConstructor()));
         if (!type.getArguments().isEmpty()) {
             sb.append("<");
-            appendTypeProjections(sb, type.getArguments(), shortNamesOnly);
+            appendTypeProjections(sb, type.getArguments());
             sb.append(">");
         }
         if (type.isNullable()) {
@@ -179,7 +182,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         return sb.toString();
     }
 
-    private String renderTypeName(@NotNull TypeConstructor typeConstructor, boolean shortNamesOnly) {
+    private String renderTypeName(@NotNull TypeConstructor typeConstructor) {
         ClassifierDescriptor cd = typeConstructor.getDeclarationDescriptor();
         if (cd == null) {
             return typeConstructor.toString();
@@ -188,7 +191,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             return renderName(cd.getName());
         }
         else {
-            if (shortNamesOnly) {
+            if (shortNames) {
                 List<Name> qualifiedNameElements = Lists.newArrayList();
 
                 // for nested classes qualified name should be used
@@ -209,32 +212,32 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    private void appendTypeProjections(StringBuilder result, List<TypeProjection> typeProjections, boolean shortNamesOnly) {
+    private void appendTypeProjections(StringBuilder result, List<TypeProjection> typeProjections) {
         for (Iterator<TypeProjection> iterator = typeProjections.iterator(); iterator.hasNext(); ) {
             TypeProjection typeProjection = iterator.next();
             if (typeProjection.getProjectionKind() != Variance.INVARIANT) {
                 result.append(typeProjection.getProjectionKind()).append(" ");
             }
-            result.append(renderType(typeProjection.getType(), shortNamesOnly));
+            result.append(renderType(typeProjection.getType()));
             if (iterator.hasNext()) {
                 result.append(", ");
             }
         }
     }
 
-    private String renderFunctionType(JetType type, boolean shortNamesOnly) {
+    private String renderFunctionType(JetType type) {
         StringBuilder sb = new StringBuilder();
 
         JetType receiverType = KotlinBuiltIns.getInstance().getReceiverType(type);
         if (receiverType != null) {
-            sb.append(renderType(receiverType, shortNamesOnly));
+            sb.append(renderType(receiverType));
             sb.append(".");
         }
 
         sb.append("(");
-        appendTypeProjections(sb, KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type), shortNamesOnly);
+        appendTypeProjections(sb, KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type));
         sb.append(") -> ");
-        sb.append(renderType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type), shortNamesOnly));
+        sb.append(renderType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type)));
 
         if (type.isNullable()) {
             return "(" + sb + ")?";

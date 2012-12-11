@@ -53,15 +53,10 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
  * @since 16 Aug 2012
  */
 public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements Iconable {
-    private static final DescriptorRendererImpl RENDERER = new DescriptorRendererImpl() {
+    private static final DescriptorRendererImpl RENDERER = new DescriptorRendererImpl(true) {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;
-        }
-
-        @Override
-        public String renderType(JetType type) {
-            return renderTypeWithShortNames(type);
         }
 
         @Override
