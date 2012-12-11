@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -425,5 +426,26 @@ public class DescriptorUtils {
             parameterTypes.add(parameter.getType());
         }
         return parameterTypes;
+    }
+
+    public static boolean isConstructorOfStaticNestedClass(@Nullable CallableDescriptor descriptor) {
+        return descriptor instanceof ConstructorDescriptor && isStaticNestedClass(descriptor.getContainingDeclaration());
+    }
+
+    /**
+     * @return true if descriptor is a class inside another class and does not have access to the outer class
+     */
+    public static boolean isStaticNestedClass(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+        return descriptor instanceof ClassDescriptor &&
+               containing instanceof ClassDescriptor &&
+               !((ClassDescriptor) descriptor).isInner() &&
+               !((ClassDescriptor) containing).getKind().isObject();
+    }
+
+    @Nullable
+    public static ClassDescriptor getContainingClass(@NotNull JetScope scope) {
+        DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
+        return getParentOfType(containingDeclaration, ClassDescriptor.class, false);
     }
 }

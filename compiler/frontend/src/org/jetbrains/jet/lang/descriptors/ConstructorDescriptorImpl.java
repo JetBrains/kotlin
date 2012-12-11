@@ -48,7 +48,6 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return initialize(typeParameters, unsubstitutedValueParameters, visibility, false);
     }
 
-    //isStatic - for java only
     public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Visibility visibility, boolean isStatic) {
         super.initialize(null, isStatic ? NO_RECEIVER_PARAMETER : getExpectedThisObject(getContainingDeclaration()), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
         return this;

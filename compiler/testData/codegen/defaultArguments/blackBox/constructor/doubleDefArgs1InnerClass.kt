@@ -1,5 +1,5 @@
 class A {
-    class B(val a: Double = 1.0, val b: Int = 55, val c: String = "c")
+    inner class B(val a: Double = 1.0, val b: Int = 55, val c: String = "c")
 }
 
 fun box(): String {

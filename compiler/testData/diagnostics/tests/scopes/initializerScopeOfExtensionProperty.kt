@@ -19,7 +19,7 @@ val A.foo1 : Int get() = ii
 
 
 class C {
-    class D {}
+    inner class D {}
 }
 
 val C.foo : C.D = <!UNRESOLVED_REFERENCE!>D<!>()

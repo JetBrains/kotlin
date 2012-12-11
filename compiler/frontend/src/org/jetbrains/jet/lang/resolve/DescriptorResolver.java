@@ -48,8 +48,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getDefaultConstructorVisibility;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getExpectedThisObjectIfNeeded;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 
@@ -1157,7 +1156,8 @@ public class DescriptorResolver {
                         constructorDescriptor,
                         parameterScope,
                         valueParameters, trace),
-                resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)));
+                resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
+                DescriptorUtils.isConstructorOfStaticNestedClass(constructorDescriptor));
     }
 
     @Nullable
@@ -1350,5 +1350,36 @@ public class DescriptorResolver {
                 return "class " + classDescriptor.getName() + "::this";
             }
         };
+    }
+
+    public static boolean checkHasOuterClassInstance(
+            @NotNull JetScope scope,
+            @NotNull BindingTrace trace,
+            @NotNull PsiElement reportErrorsOn,
+            @NotNull ClassDescriptor target
+    ) {
+        ClassDescriptor thisClass = getContainingClass(scope);
+        if (thisClass == null) return true;
+        if (!isAncestor(target, thisClass, true)) return true;
+
+        if (!hasOuterClassInstance(thisClass, target)) {
+            trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, thisClass));
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean hasOuterClassInstance(@NotNull ClassDescriptor thisClass, @NotNull ClassDescriptor outerClass) {
+        DeclarationDescriptor descriptor = thisClass;
+        while (true) {
+            assert descriptor != null : "outerClass must be an ancestor of thisClass: " + thisClass + " " + outerClass;
+            if (descriptor instanceof ClassDescriptor && isSubclass((ClassDescriptor) descriptor, outerClass)) {
+                return true;
+            }
+            if (isStaticNestedClass(descriptor)) {
+                return false;
+            }
+            descriptor = descriptor.getContainingDeclaration();
+        }
     }
 }

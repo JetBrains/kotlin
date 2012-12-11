@@ -80,6 +80,11 @@ public class CandidateResolver {
             return;
         }
 
+        if (!checkOuterClassMemberIsAccessible(context)) {
+            candidateCall.addStatus(OTHER_ERROR);
+            return;
+        }
+
         if (!Visibilities.isVisible(candidate, context.scope.getContainingDeclaration())) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, candidate);
@@ -160,6 +165,24 @@ public class CandidateResolver {
 
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getReceiverArgument(), candidateCall.getTrace());
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
+    }
+
+    private static boolean checkOuterClassMemberIsAccessible(@NotNull CallResolutionContext<?, ?> context) {
+        // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
+        if (context.call.getExplicitReceiver().exists()) return true;
+
+        ClassDescriptor candidateThis = getDeclaringClass(context.candidateCall.getCandidateDescriptor());
+        if (candidateThis == null || candidateThis.getKind().isObject()) return true;
+
+        return DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, context.call.getCallElement(), candidateThis);
+    }
+
+    @Nullable
+    private static ClassDescriptor getDeclaringClass(@NotNull CallableDescriptor candidate) {
+        ReceiverParameterDescriptor expectedThis = candidate.getExpectedThisObject();
+        if (expectedThis == null) return null;
+        DeclarationDescriptor descriptor = expectedThis.getContainingDeclaration();
+        return descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
     }
 
     public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(

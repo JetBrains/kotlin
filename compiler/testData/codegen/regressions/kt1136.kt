@@ -16,7 +16,7 @@ public object SomeObject {
 }
 
 public class SomeClass() {
-    class Inner {
+    inner class Inner {
         val copy = list
     }
 

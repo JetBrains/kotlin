@@ -175,6 +175,10 @@ public abstract class TaskPrioritizer {
         for (ReceiverValue thisObject : thisObjects) {
             for (ReceiverValue receiverParameter : receiverParameters) {
                 for (D extension : descriptors) {
+                    if (DescriptorUtils.isConstructorOfStaticNestedClass(extension)) {
+                        // We don't want static nested classes' constructors to be resolved with expectedThisObject
+                        continue;
+                    }
                     ResolutionCandidate<D> candidate = ResolutionCandidate.create(extension);
                     candidate.setThisObject(thisObject);
                     candidate.setReceiverArgument(receiverParameter);

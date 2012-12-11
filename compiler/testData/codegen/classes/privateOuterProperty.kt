@@ -17,7 +17,7 @@ class C{
         return v
     }
 
-    private class Inner() {
+    private inner class Inner() {
         fun innerFun() {
             v = v + 1
         }

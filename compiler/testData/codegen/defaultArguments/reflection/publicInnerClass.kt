@@ -1,5 +1,5 @@
 class A {
-    public class Foo(val a: Int = 1) {}
+    public inner class Foo(val a: Int = 1) {}
 
     fun foo() {
         Foo()

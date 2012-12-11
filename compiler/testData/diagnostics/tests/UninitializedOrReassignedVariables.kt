@@ -229,7 +229,7 @@ class Outer() {
         $b = 1
     }
 
-    class Inner() {
+    inner class Inner() {
         {
             <!VAL_REASSIGNMENT!>a<!>++
             b++

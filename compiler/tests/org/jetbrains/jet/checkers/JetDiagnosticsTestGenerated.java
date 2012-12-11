@@ -30,7 +30,7 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class})
 public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEagerResolve {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.ThisAndSuper.class, Tests.Tuples.class, Tests.Varargs.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.ThisAndSuper.class, Tests.Tuples.class, Tests.Varargs.class})
     public static class Tests extends AbstractDiagnosticsTestWithEagerResolve {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -2398,6 +2398,64 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/inner")
+        public static class Inner extends AbstractDiagnosticsTestWithEagerResolve {
+            public void testAllFilesPresentInInner() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inner"), "kt", true);
+            }
+            
+            @TestMetadata("constructorAccess.kt")
+            public void testConstructorAccess() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/constructorAccess.kt");
+            }
+            
+            @TestMetadata("enumEntries.kt")
+            public void testEnumEntries() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/enumEntries.kt");
+            }
+            
+            @TestMetadata("extensionFun.kt")
+            public void testExtensionFun() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/extensionFun.kt");
+            }
+            
+            @TestMetadata("localClass.kt")
+            public void testLocalClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/localClass.kt");
+            }
+            
+            @TestMetadata("localClassInsideNested.kt")
+            public void testLocalClassInsideNested() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/localClassInsideNested.kt");
+            }
+            
+            @TestMetadata("modality.kt")
+            public void testModality() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/modality.kt");
+            }
+            
+            @TestMetadata("nestedClassExtendsOuter.kt")
+            public void testNestedClassExtendsOuter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/nestedClassExtendsOuter.kt");
+            }
+            
+            @TestMetadata("nestedClassExtendsOuterGeneric.kt")
+            public void testNestedClassExtendsOuterGeneric() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/nestedClassExtendsOuterGeneric.kt");
+            }
+            
+            @TestMetadata("nestedVsInnerAccessOuterMember.kt")
+            public void testNestedVsInnerAccessOuterMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/nestedVsInnerAccessOuterMember.kt");
+            }
+            
+            @TestMetadata("visibility.kt")
+            public void testVisibility() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/visibility.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/j+k")
         public static class J_k extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInJ_k() throws Exception {
@@ -4109,6 +4167,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTest(IncompleteCode.innerSuite());
             suite.addTest(Inference.innerSuite());
             suite.addTestSuite(Infos.class);
+            suite.addTestSuite(Inner.class);
             suite.addTestSuite(J_k.class);
             suite.addTest(Jdk_annotations.innerSuite());
             suite.addTestSuite(Library.class);

@@ -6,7 +6,7 @@ open class N() : M() {
 
     override var y = 200
 
-    open class C() {
+    open inner class C() {
         fun test5() = y
         fun test6() : Int {
             super<M>@N.y += 200

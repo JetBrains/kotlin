@@ -20,7 +20,7 @@ class C {
         return "OK"
     }
 
-    private class Inner() {
+    private inner class Inner() {
         fun innerFun() {
             "".ext()
             f()

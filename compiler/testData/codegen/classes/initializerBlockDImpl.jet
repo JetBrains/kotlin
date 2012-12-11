@@ -4,7 +4,7 @@ import java.io.*
 class World() {
   public val items: ArrayList<Item> = ArrayList<Item>()
 
-  class Item() {
+  inner class Item() {
     {
       items.add(this)
     }

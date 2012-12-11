@@ -9,7 +9,7 @@ abstract class Foo {
 class Bar : Foo() {
     protected val i: Int = 1
 
-    class Baz {
+    inner class Baz {
         val copy = color // INVISIBLE_MEMBER: Cannot access 'color' in 'Bar'
         val j = i
     }
