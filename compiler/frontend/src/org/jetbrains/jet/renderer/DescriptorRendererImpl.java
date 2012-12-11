@@ -108,15 +108,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     };
     private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
 
-    private static List<String> getOuterClassesNames(ClassDescriptor cd) {
-        ArrayList<String> result = new ArrayList<String>();
-        while (cd.getContainingDeclaration() instanceof ClassifierDescriptor) {
-            result.add(cd.getName().getName());
-            cd = (ClassDescriptor) cd.getContainingDeclaration();
-        }
-        return result;
-    }
-
     protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
         return descriptor.hasDefaultValue();
     }
@@ -325,15 +316,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
             stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : renderFqName(fqName));
         }
-    }
-
-    public String renderAsObject(@NotNull ClassDescriptor classDescriptor) {
-        StringBuilder stringBuilder = new StringBuilder();
-        rootVisitor.renderClassDescriptor(classDescriptor, stringBuilder, "object");
-        if (shouldRenderDefinedIn()) {
-            appendDefinedIn(classDescriptor, stringBuilder);
-        }
-        return stringBuilder.toString();
     }
 
     public String renderMessage(String s) {
