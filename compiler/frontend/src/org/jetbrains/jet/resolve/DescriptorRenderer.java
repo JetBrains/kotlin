@@ -23,10 +23,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -146,29 +143,8 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     private String renderDefaultType(JetType type, boolean shortNamesOnly) {
         StringBuilder sb = new StringBuilder();
-        ClassifierDescriptor cd = type.getConstructor().getDeclarationDescriptor();
 
-        Object typeNameObject;
-
-        if (cd == null || cd instanceof TypeParameterDescriptor) {
-            typeNameObject = type.getConstructor();
-        }
-        else {
-            if (shortNamesOnly) {
-                // for nested classes qualified name should be used
-                typeNameObject = cd.getName();
-                DeclarationDescriptor parent = cd.getContainingDeclaration();
-                while (parent instanceof ClassDescriptor) {
-                    typeNameObject = parent.getName() + "." + typeNameObject;
-                    parent = parent.getContainingDeclaration();
-                }
-            }
-            else {
-                typeNameObject = DescriptorUtils.getFQName(cd);
-            }
-        }
-
-        sb.append(typeNameObject);
+        sb.append(renderTypeName(type.getConstructor(), shortNamesOnly));
         if (!type.getArguments().isEmpty()) {
             sb.append("<");
             appendTypeProjections(sb, type.getArguments(), shortNamesOnly);
@@ -178,6 +154,29 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             sb.append("?");
         }
         return sb.toString();
+    }
+
+    private static String renderTypeName(@NotNull TypeConstructor typeConstructor, boolean shortNamesOnly) {
+        ClassifierDescriptor cd = typeConstructor.getDeclarationDescriptor();
+        if (cd == null || cd instanceof TypeParameterDescriptor) {
+            return typeConstructor.toString();
+        }
+        else {
+            if (shortNamesOnly) {
+                Object typeNameObject;
+                // for nested classes qualified name should be used
+                typeNameObject = cd.getName();
+                DeclarationDescriptor parent = cd.getContainingDeclaration();
+                while (parent instanceof ClassDescriptor) {
+                    typeNameObject = parent.getName() + "." + typeNameObject;
+                    parent = parent.getContainingDeclaration();
+                }
+                return typeNameObject.toString();
+            }
+            else {
+                return DescriptorUtils.getFQName(cd).getFqName();
+            }
+        }
     }
 
     private void appendTypes(StringBuilder result, List<JetType> types, boolean shortNamesOnly) {
