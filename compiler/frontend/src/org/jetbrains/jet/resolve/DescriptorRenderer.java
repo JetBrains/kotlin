@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.resolve;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -23,8 +26,10 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
@@ -33,6 +38,14 @@ import java.util.*;
  * @author abreslav
  */
 public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
+    private static final Set<String> KEYWORDS = Sets.newHashSet();
+    static {
+        for (IElementType elementType : JetTokens.KEYWORDS.getTypes()) {
+            assert elementType instanceof JetKeywordToken;
+            assert !((JetKeywordToken) elementType).isSoft();
+            KEYWORDS.add(((JetKeywordToken) elementType).getValue());
+        }
+    }
 
     public static final DescriptorRenderer COMPACT_WITH_MODIFIERS = new DescriptorRenderer() {
         @Override
@@ -112,6 +125,28 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return keyword;
     }
 
+    private String renderName(Name identifier) {
+        String asString = identifier.toString();
+        return escape(KEYWORDS.contains(asString) ? '`' + asString + '`' : asString);
+    }
+
+    @NotNull
+    private String renderFqName(@NotNull FqNameUnsafe fqName) {
+        return renderFqName(fqName.pathSegments());
+    }
+
+    @NotNull
+    private String renderFqName(@NotNull List<Name> pathSegments) {
+        StringBuilder buf = new StringBuilder();
+        for (Name element : pathSegments) {
+            if (buf.length() != 0) {
+                buf.append(".");
+            }
+            buf.append(renderName(element));
+        }
+        return buf.toString();
+    }
+
     public String renderType(JetType type) {
         return renderType(type, false);
     }
@@ -156,25 +191,32 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return sb.toString();
     }
 
-    private static String renderTypeName(@NotNull TypeConstructor typeConstructor, boolean shortNamesOnly) {
+    private String renderTypeName(@NotNull TypeConstructor typeConstructor, boolean shortNamesOnly) {
         ClassifierDescriptor cd = typeConstructor.getDeclarationDescriptor();
-        if (cd == null || cd instanceof TypeParameterDescriptor) {
+        if (cd == null) {
             return typeConstructor.toString();
+        }
+        else if (cd instanceof TypeParameterDescriptor) {
+            return renderName(cd.getName());
         }
         else {
             if (shortNamesOnly) {
-                Object typeNameObject;
+                List<Name> qualifiedNameElements = Lists.newArrayList();
+
                 // for nested classes qualified name should be used
-                typeNameObject = cd.getName();
-                DeclarationDescriptor parent = cd.getContainingDeclaration();
-                while (parent instanceof ClassDescriptor) {
-                    typeNameObject = parent.getName() + "." + typeNameObject;
-                    parent = parent.getContainingDeclaration();
+                DeclarationDescriptor current = cd;
+                do {
+                    qualifiedNameElements.add(current.getName());
+                    current = current.getContainingDeclaration();
                 }
-                return typeNameObject.toString();
+                while (current instanceof ClassDescriptor);
+
+                Collections.reverse(qualifiedNameElements);
+
+                return renderFqName(qualifiedNameElements);
             }
             else {
-                return DescriptorUtils.getFQName(cd).getFqName();
+                return renderFqName(DescriptorUtils.getFQName(cd));
             }
         }
     }
@@ -281,7 +323,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         final DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
         if (containingDeclaration != null) {
             FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
-            stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : escape(fqName.getFqName()));
+            stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : renderFqName(fqName));
         }
     }
 
@@ -627,7 +669,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            stringBuilder.append(escape(descriptor.getName().getName()));
+            stringBuilder.append(escape(DescriptorRenderer.this.renderName(descriptor.getName())));
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
