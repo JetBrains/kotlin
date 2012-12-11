@@ -294,7 +294,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public String renderMessage(String s) {
+    protected String renderMessage(String s) {
         return s;
     }
 

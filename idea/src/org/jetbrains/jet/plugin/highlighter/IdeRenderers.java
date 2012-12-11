@@ -168,7 +168,7 @@ public class IdeRenderers {
                     first = false;
                 }
                 stringBuilder.append(parametersToHighlight.contains(null) ? String.format(RED_TEMPLATE, ")") : ")");
-                stringBuilder.append(" ").append(htmlRenderer.renderMessage("defined in")).append(" ");
+                stringBuilder.append(" <i>defined in</i> ");
                 DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
                 if (containingDeclaration != null) {
                     FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
