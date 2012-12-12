@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.findUsages;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiStatement;
@@ -23,11 +26,15 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.usages.Usage;
+import com.intellij.usages.UsageInfo2UsageAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule;
 
 import java.util.Collection;
 
@@ -75,5 +82,33 @@ public class JetFindUsagesTest extends LightCodeInsightFixtureTestCase {
         UsageInfo first = usages.iterator().next();
         final PsiStatement stmt = PsiTreeUtil.getParentOfType(first.getElement(), PsiStatement.class);
         assertEquals("server.processRequest();", stmt.getText());
+    }
+
+    public void testFindWithFilteringImports() {
+        myFixture.configureByFiles("findWithFilteringImports/Test.kt", "findWithFilteringImports/Usages.kt");
+        JetClass clazz = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), JetClass.class, false);
+        final Collection<UsageInfo> usageInfos = myFixture.findUsages(clazz);
+
+        assertEquals(2, usageInfos.size());
+
+        Collection<Usage> usages = Collections2.transform(usageInfos, new Function<UsageInfo, Usage>() {
+            @Override
+            public Usage apply(@Nullable UsageInfo usageInfo) {
+                assert (usageInfo != null);
+                return new UsageInfo2UsageAdapter(usageInfo);
+            }
+        });
+
+        final JetImportFilteringRule importFilteringRule = new JetImportFilteringRule();
+        Collection<Usage> filteredUsages = Collections2.filter(usages, new Predicate<Usage>() {
+            @Override
+            public boolean apply(@Nullable Usage usage) {
+                assert (usage != null);
+                return importFilteringRule.isVisible(usage);
+            }
+        });
+
+        assertEquals(1, filteredUsages.size());
+        assertEquals("Invalid usage:", "(5: 9) |val| |a| |=| |Test|(|)", filteredUsages.iterator().next().toString());
     }
 }
