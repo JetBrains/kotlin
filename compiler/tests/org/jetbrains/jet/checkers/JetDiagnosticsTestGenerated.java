@@ -894,9 +894,34 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2330.kt");
             }
             
+            @TestMetadata("kt2369.kt")
+            public void testKt2369() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2369.kt");
+            }
+            
+            @TestMetadata("kt2585_1.kt")
+            public void testKt2585_1() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2585_1.kt");
+            }
+            
+            @TestMetadata("kt2585_2.kt")
+            public void testKt2585_2() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2585_2.kt");
+            }
+            
+            @TestMetadata("kt2585_3.kt")
+            public void testKt2585_3() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2585_3.kt");
+            }
+            
             @TestMetadata("kt2845.kt")
             public void testKt2845() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2845.kt");
+            }
+            
+            @TestMetadata("kt2972.kt")
+            public void testKt2972() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2972.kt");
             }
             
             @TestMetadata("kt510.kt")
