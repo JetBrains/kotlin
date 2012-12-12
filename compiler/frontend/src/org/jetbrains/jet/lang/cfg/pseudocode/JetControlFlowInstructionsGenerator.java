@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.*;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -184,7 +185,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 BlockInfo blockInfo = allBlocks.get(i);
                 if (blockInfo instanceof BreakableBlockInfo) {
                     BreakableBlockInfo breakableBlockInfo = (BreakableBlockInfo) blockInfo;
-                    if (jumpTarget == breakableBlockInfo.getExitPoint() || jumpTarget == breakableBlockInfo.getEntryPoint()) {
+                    if (jumpTarget == breakableBlockInfo.getExitPoint() || jumpTarget == breakableBlockInfo.getEntryPoint()
+                        || jumpTarget == error) {
                         for (int j = finallyBlocks.size() - 1; j >= 0; j--) {
                             finallyBlocks.get(j).generateFinallyBlock();
                         }
@@ -310,15 +312,21 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void jumpToError() {
+            handleJumpInsideTryFinally(error);
             add(new UnconditionalJumpInstruction(error));
         }
-        
+
         @Override
         public void enterTryFinally(@NotNull GenerationTrigger generationTrigger) {
             allBlocks.push(new TryFinallyBlockInfo(generationTrigger));
         }
 
         @Override
+        public void throwException(@NotNull JetThrowExpression expression) {
+            handleJumpInsideTryFinally(error);
+            add(new ThrowExceptionInstruction(expression, error));
+        }
+        
         public void exitTryFinally() {
             BlockInfo pop = allBlocks.pop();
             assert pop instanceof TryFinallyBlockInfo;

@@ -77,9 +77,12 @@ public interface JetControlFlowBuilder {
     JetElement getCurrentSubroutine();
     @Nullable
     JetElement getReturnSubroutine();
+    
     void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine);
 
     void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine);
+    
+    void throwException(@NotNull JetThrowExpression throwExpression);
 
     void write(@NotNull JetElement assignment, @NotNull JetElement lValue);
     

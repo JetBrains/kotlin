@@ -119,6 +119,11 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
+    public void throwException(@NotNull JetThrowExpression throwExpression) {
+        assert builder != null;
+        builder.throwException(throwExpression);
+    }
+    
     public Label getEntryPoint(@NotNull JetElement labelElement) {
         assert builder != null;
         return builder.getEntryPoint(labelElement);
@@ -131,7 +136,7 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public LoopInfo enterLoop(@NotNull JetExpression expression, Label loopExitPoint, Label conditionEntryPoint) {
+    public LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, Label conditionEntryPoint) {
         assert builder != null;
         return builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
     }

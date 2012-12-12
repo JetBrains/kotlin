@@ -48,6 +48,10 @@ public class InstructionVisitor {
         visitJump(instruction);
     }
 
+    public void visitThrowExceptionInstruction(ThrowExceptionInstruction instruction) {
+        visitJump(instruction);
+    }
+
     public void visitNondeterministicJump(NondeterministicJumpInstruction instruction) {
         visitInstruction(instruction);
     }

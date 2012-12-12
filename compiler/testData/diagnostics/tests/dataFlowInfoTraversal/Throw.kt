@@ -5,5 +5,5 @@ fun foo() {
 
     if (x == null) throw bar(<!TYPE_MISMATCH!>x<!>)
     throw bar(x)
-    throw <!UNREACHABLE_CODE!>bar(x)<!>
+    <!UNREACHABLE_CODE!>throw bar(x)<!>
 }

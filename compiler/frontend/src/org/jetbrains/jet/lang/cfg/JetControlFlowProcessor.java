@@ -418,7 +418,9 @@ public class JetControlFlowProcessor {
                 for (int i = 0; i < catchClausesSize - 1; i++) {
                     catchLabels.add(builder.createUnboundLabel("catch " + i));
                 }
-                builder.nondeterministicJump(catchLabels);
+                if (!catchLabels.isEmpty()) {
+                    builder.nondeterministicJump(catchLabels);
+                }
                 boolean isFirst = true;
                 for (JetCatchClause catchClause : catchClauses) {
                     if (!isFirst) {
@@ -781,7 +783,7 @@ public class JetControlFlowProcessor {
             if (thrownExpression != null) {
                 value(thrownExpression, false);
             }
-            builder.jumpToError();
+            builder.throwException(expression);
         }
 
         @Override
