@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
@@ -27,13 +26,12 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Nikolay Krasko
@@ -64,9 +62,11 @@ public abstract class JetQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
 
                     final boolean actionShouldBeAvailable = pair.getSecond();
 
+                    QuickFixActionsUtils.checkForUnexpectedErrors((JetFile) getFile());
+
                     doAction(text, actionShouldBeAvailable, getTestDataPath());
                 }
-                catch (ComparisonFailure e){
+                catch (ComparisonFailure e) {
                     throw e;
                 }
                 catch (Throwable e) {
@@ -93,13 +93,7 @@ public abstract class JetQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
                      "Infos:" + infos);
             }
             else {
-                Set<String> validActions = Sets.newHashSet(InTextDirectivesUtils.findLinesWithPrefixRemoved("// ACTION:", getFile().getText()));
-                for (IntentionAction availableAction : availableActions) {
-                    if (!validActions.contains(availableAction.getText())) {
-                        fail(String.format("Unexpected action available at current position: %s. Use // ACTION: directive",
-                                           availableAction.getText()));
-                    }
-                }
+                QuickFixActionsUtils.checkAvailableActionsAreExpected((JetFile) getFile(), availableActions);
             }
         }
         else {

@@ -18,27 +18,25 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
-import junit.framework.Assert;
+import com.intellij.openapi.util.Pair;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author svtk
@@ -117,38 +115,27 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
 
         try {
             doSingleTest(name.substring("before".length()) + ".kt");
+            checkAvailableActionsAreExpected();
             checkForUnexpectedErrors();
-        } finally {
+        }
+        finally {
             if (isWithRuntime) {
                 ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
             }
         }
     }
 
-    private static void checkForUnexpectedErrors() {
-        AnalyzeExhaust exhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getFile());
-        Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics();
-
-        if (diagnostics.size() != 0) {
-            List<String> expectedErrorStrings = InTextDirectivesUtils.findLinesWithPrefixRemoved("// ERROR:", getFile().getText());
-
-            Collection<String> expectedErrors = new HashSet<String>(expectedErrorStrings);
-
-            StringBuilder builder = new StringBuilder();
-            boolean hasErrors = false;
-
-            for (Diagnostic diagnostic : diagnostics) {
-                if (diagnostic.getSeverity() == Severity.ERROR) {
-                    String errorText = IdeErrorMessages.RENDERER.render(diagnostic);
-                    if (!expectedErrors.contains(errorText)) {
-                        hasErrors = true;
-                        builder.append("// ERROR: ").append(errorText).append("\n");
-                    }
-                }
-            }
-
-            Assert.assertFalse("There should be no unexpected errors after applying fix (Use \"// ERROR:\" directive): \n" + builder.toString(), hasErrors);
+    public void checkAvailableActionsAreExpected() {
+        List<IntentionAction> actions = getAvailableActions();
+        final Pair<String, Boolean> pair = parseActionHintImpl(getFile(), getEditor().getDocument().getText());
+        if (!pair.getSecond()) {
+            // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
+            QuickFixActionsUtils.checkAvailableActionsAreExpected((JetFile) getFile(), actions);
         }
+    }
+
+    public static void checkForUnexpectedErrors() {
+        QuickFixActionsUtils.checkForUnexpectedErrors((JetFile) getFile());
     }
 
     @Override
@@ -156,6 +143,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         return "/quickfix/" + dataPath;
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase();
