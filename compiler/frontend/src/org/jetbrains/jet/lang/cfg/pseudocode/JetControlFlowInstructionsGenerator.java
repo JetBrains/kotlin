@@ -113,15 +113,15 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public final LoopInfo enterLoop(@NotNull JetExpression expression, Label loopExitPoint, Label conditionEntryPoint) {
-            Label label = createUnboundLabel();
-            bindLabel(label);
+        public final LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, Label conditionEntryPoint) {
+            Label loopEntryLabel = createUnboundLabel("loop entry point");
+            bindLabel(loopEntryLabel);
             LoopInfo blockInfo = new LoopInfo(
                     expression,
-                    label,
-                    loopExitPoint != null ? loopExitPoint : createUnboundLabel(),
-                    createUnboundLabel(),
-                    conditionEntryPoint != null ? conditionEntryPoint : createUnboundLabel());
+                    loopEntryLabel,
+                    loopExitPoint != null ? loopExitPoint : createUnboundLabel("loop exit point"),
+                    createUnboundLabel("body entry point"),
+                    conditionEntryPoint != null ? conditionEntryPoint : createUnboundLabel("condition entry point"));
             loopInfo.push(blockInfo);
             elementToBlockInfo.put(expression, blockInfo);
             allBlocks.push(blockInfo);
