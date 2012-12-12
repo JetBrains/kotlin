@@ -51,6 +51,7 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -492,7 +493,7 @@ public class JetTestUtils {
     }
 
     public static KotlinPaths getPathsForTests() {
-        return new KotlinPaths(new File("dist/kotlinc"));
+        return new KotlinPathsFromHomeDir(new File("dist/kotlinc"));
     }
 
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {

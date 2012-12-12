@@ -20,46 +20,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public class KotlinPaths {
-    // kotlinc directory
-    private final File homePath;
-
-    public KotlinPaths(@NotNull File homePath) {
-        this.homePath = homePath;
-    }
+public interface KotlinPaths {
+    @NotNull
+    File getHomePath();
 
     @NotNull
-    public File getHomePath() {
-        return homePath;
-    }
+    File getLibPath();
 
     @NotNull
-    public File getLibPath() {
-        return new File(homePath, "lib");
-    }
+    File getRuntimePath();
 
     @NotNull
-    public File getRuntimePath() {
-        return getLibraryFile("kotlin-runtime.jar");
-    }
+    File getJdkAnnotationsPath();
 
     @NotNull
-    public File getJdkAnnotationsPath() {
-        return getLibraryFile(PathUtil.JDK_ANNOTATIONS_JAR);
-    }
+    File getJsLibJsPath();
 
     @NotNull
-    public File getJsLibJsPath() {
-        return getLibraryFile(PathUtil.JS_LIB_JS_NAME);
-    }
-
-    @NotNull
-    public File getJsLibJarPath() {
-        return getLibraryFile(PathUtil.JS_LIB_JAR_NAME);
-    }
-
-    @NotNull
-    private File getLibraryFile(@NotNull String fileName) {
-        return new File(getLibPath(), fileName);
-    }
+    File getJsLibJarPath();
 }

@@ -26,6 +26,7 @@ import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -199,7 +200,7 @@ public class BytecodeCompiler {
     }
 
     private static KotlinPaths getKotlinPathsForAntTask() {
-        return new KotlinPaths(PathUtil.getJarPathForClass(BytecodeCompiler.class).getParentFile().getParentFile());
+        return new KotlinPathsFromHomeDir(PathUtil.getJarPathForClass(BytecodeCompiler.class).getParentFile().getParentFile());
     }
 
 }
