@@ -17,17 +17,19 @@
 package org.jetbrains.jet.findUsages;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiStatement;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.usages.Usage;
 import com.intellij.usages.UsageInfo2UsageAdapter;
+import com.intellij.usages.rules.UsageFilteringRule;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -36,7 +38,9 @@ import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.findUsages.JetImportFilteringRule;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author yole
@@ -55,60 +59,81 @@ public class JetFindUsagesTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testFindClassUsages() {
-        myFixture.configureByFiles("findClassUsages/Server.kt", "findClassUsages/Client.java");
-        JetClass cls = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), JetClass.class, false);
-        final Collection<UsageInfo> usages = myFixture.findUsages(cls);
-        assertEquals(1, usages.size());
-        UsageInfo first = usages.iterator().next();
-        final PsiField field = PsiTreeUtil.getParentOfType(first.getElement(), PsiField.class);
-        assertEquals("private Server myServer;", field.getText());
+        doTestWithoutFiltering(
+                Lists.newArrayList("findClassUsages/Server.kt", "findClassUsages/Client.java"),
+                JetClass.class,
+                Lists.newArrayList("(4: 13) private Server myServer;"));
     }
 
     public void testFindUsagesUnresolvedAnnotation() {
-        myFixture.configureByFiles("unresolvedAnnotation/Server.kt", "unresolvedAnnotation/Client.java");
-        JetClass cls = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), JetClass.class, false);
-        final Collection<UsageInfo> usages = myFixture.findUsages(cls);
-        assertEquals(1, usages.size());
-        UsageInfo first = usages.iterator().next();
-        final PsiClass psiCLass = PsiTreeUtil.getParentOfType(first.getElement(), PsiClass.class);
-        assertEquals("public class Client extends Foo {}", psiCLass.getText());
+        doTestWithoutFiltering(
+                Lists.newArrayList("unresolvedAnnotation/Server.kt", "unresolvedAnnotation/Client.java"),
+                JetClass.class,
+                Lists.newArrayList("(1: 29) public class Client extends Foo {}"));
     }
 
     public void testFindMethodUsages() {
-        myFixture.configureByFiles("findMethodUsages/Server.kt", "findMethodUsages/Client.java");
-        JetFunction function = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), JetFunction.class, false);
-        final Collection<UsageInfo> usages = myFixture.findUsages(function);
-        assertEquals(1, usages.size());
-        UsageInfo first = usages.iterator().next();
-        final PsiStatement stmt = PsiTreeUtil.getParentOfType(first.getElement(), PsiStatement.class);
-        assertEquals("server.processRequest();", stmt.getText());
+        doTestWithoutFiltering(
+                Lists.newArrayList("findMethodUsages/Server.kt", "findMethodUsages/Client.java"),
+                JetFunction.class,
+                Lists.newArrayList("(6: 16) server.processRequest();"));
     }
 
     public void testFindWithFilteringImports() {
-        myFixture.configureByFiles("findWithFilteringImports/Test.kt", "findWithFilteringImports/Usages.kt");
-        JetClass clazz = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), JetClass.class, false);
-        final Collection<UsageInfo> usageInfos = myFixture.findUsages(clazz);
+        doTest(Lists.newArrayList("findWithFilteringImports/Test.kt", "findWithFilteringImports/Usages.kt"),
+               JetClass.class,
+               2,
+               Lists.newArrayList(new JetImportFilteringRule()),
+               Lists.newArrayList("(5: 9) val a = Test()"));
+    }
 
-        assertEquals(2, usageInfos.size());
+    private <T extends PsiElement> void doTestWithoutFiltering(Collection<String> files, Class<T> caretElementClass, Collection<String> expectedUsages) {
+        doTest(files, caretElementClass, expectedUsages.size(), Collections.<UsageFilteringRule>emptyList(), expectedUsages);
+    }
 
-        Collection<Usage> usages = Collections2.transform(usageInfos, new Function<UsageInfo, Usage>() {
+    private  <T extends PsiElement> void doTest(
+            Collection<String> files,
+            Class<T> caretElementClass,
+            int numberOfNotFilteredUsages,
+            final Collection<? extends UsageFilteringRule> filters,
+            Collection<String> expectedUsages
+    ) {
+        myFixture.configureByFiles(ArrayUtil.toObjectArray(files, String.class));
+        T caretElement = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), caretElementClass, false);
+        assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
+
+        Collection<UsageInfo> usageInfos = myFixture.findUsages(caretElement);
+
+        assertEquals(numberOfNotFilteredUsages, usageInfos.size());
+
+        Collection<UsageInfo2UsageAdapter> filteredUsages =
+                Collections2.filter(
+                        Collections2.transform(usageInfos, new Function<UsageInfo, UsageInfo2UsageAdapter>() {
+                            @Override
+                            public UsageInfo2UsageAdapter apply(@Nullable UsageInfo usageInfo) {
+                                assert (usageInfo != null);
+
+                                UsageInfo2UsageAdapter usageAdapter = new UsageInfo2UsageAdapter(usageInfo);
+                                for (UsageFilteringRule filter : filters) {
+                                    if (!filter.isVisible(usageAdapter)) {
+                                        return null;
+                                    }
+                                }
+
+                                return usageAdapter;
+                            }
+                        }),
+                        Predicates.notNull());
+
+        Function<UsageInfo2UsageAdapter, String> convertToString = new Function<UsageInfo2UsageAdapter, String>() {
             @Override
-            public Usage apply(@Nullable UsageInfo usageInfo) {
-                assert (usageInfo != null);
-                return new UsageInfo2UsageAdapter(usageInfo);
+            public String apply(@Nullable UsageInfo2UsageAdapter usageAdapter) {
+                assert usageAdapter != null;
+                return Joiner.on("").join(Arrays.asList(usageAdapter.getPresentation().getText()));
             }
-        });
+        };
 
-        final JetImportFilteringRule importFilteringRule = new JetImportFilteringRule();
-        Collection<Usage> filteredUsages = Collections2.filter(usages, new Predicate<Usage>() {
-            @Override
-            public boolean apply(@Nullable Usage usage) {
-                assert (usage != null);
-                return importFilteringRule.isVisible(usage);
-            }
-        });
-
-        assertEquals(1, filteredUsages.size());
-        assertEquals("Invalid usage:", "(5: 9) |val| |a| |=| |Test|(|)", filteredUsages.iterator().next().toString());
+        Collection<String> finalUsages = Ordering.natural().sortedCopy(Collections2.transform(filteredUsages, convertToString));
+        assertOrderedEquals(finalUsages, Ordering.natural().sortedCopy(expectedUsages));
     }
 }
