@@ -1,10 +1,10 @@
 == empty ==
 fun empty() {}
 ---------------------
-l0:
+L0:
     <START>        NEXT:[read (Unit)]    PREV:[]
     read (Unit)    NEXT:[<END>]          PREV:[<START>]
-l1:
+L1:
     <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[<SINK>]         PREV:[]

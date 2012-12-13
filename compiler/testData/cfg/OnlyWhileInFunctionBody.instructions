@@ -5,24 +5,24 @@ fun main() {
     }
 }
 ---------------------
-l0:
+L0:
     <START>                       NEXT:[r(while(1 > 0) { 2 }) ]        PREV:[]
     r(while(1 > 0) {          
           2                   
         })                        NEXT:[r(1)]                          PREV:[<START>]
-l2 [loop entry point]:
-l5 [condition entry point]:
-    r(1)                          NEXT:[r(0)]                          PREV:[r(while(1 > 0) { 2 }) , jmp(l2 [loop entry point])]
+L2 [loop entry point]:
+L5 [condition entry point]:
+    r(1)                          NEXT:[r(0)]                          PREV:[r(while(1 > 0) { 2 }) , jmp(L2 [loop entry point])]
     r(0)                          NEXT:[r(>)]                          PREV:[r(1)]
     r(>)                          NEXT:[r(1 > 0)]                      PREV:[r(0)]
-    r(1 > 0)                      NEXT:[jf(l3 [loop exit point])]      PREV:[r(>)]
-    jf(l3 [loop exit point])      NEXT:[read (Unit), r(2)]             PREV:[r(1 > 0)]
-l4 [body entry point]:
-    r(2)                          NEXT:[jmp(l2 [loop entry point])]    PREV:[jf(l3 [loop exit point])]
-    jmp(l2 [loop entry point])    NEXT:[r(1)]                          PREV:[r(2)]
-l3 [loop exit point]:
-    read (Unit)                   NEXT:[<END>]                         PREV:[jf(l3 [loop exit point])]
-l1:
+    r(1 > 0)                      NEXT:[jf(L3 [loop exit point])]      PREV:[r(>)]
+    jf(L3 [loop exit point])      NEXT:[read (Unit), r(2)]             PREV:[r(1 > 0)]
+L4 [body entry point]:
+    r(2)                          NEXT:[jmp(L2 [loop entry point])]    PREV:[jf(L3 [loop exit point])]
+    jmp(L2 [loop entry point])    NEXT:[r(1)]                          PREV:[r(2)]
+L3 [loop exit point]:
+    read (Unit)                   NEXT:[<END>]                         PREV:[jf(L3 [loop exit point])]
+L1:
     <END>                         NEXT:[<SINK>]                        PREV:[read (Unit)]
 error:
     <ERROR>                       NEXT:[<SINK>]                        PREV:[]
@@ -35,23 +35,23 @@ fun dowhile() {
     while(1 > 0)
 }
 ---------------------
-l0:
+L0:
     <START>                      NEXT:[r(do {return} while(1 > 0)) ]    PREV:[]
     r(do {return}            
-        while(1 > 0))            NEXT:[ret l1]                          PREV:[<START>]
-l2 [loop entry point]:
-l4 [body entry point]:
-    ret l1                       NEXT:[<END>]                           PREV:[r(do {return} while(1 > 0)) ]
-l5 [condition entry point]:
+        while(1 > 0))            NEXT:[ret L1]                          PREV:[<START>]
+L2 [loop entry point]:
+L4 [body entry point]:
+    ret L1                       NEXT:[<END>]                           PREV:[r(do {return} while(1 > 0)) ]
+L5 [condition entry point]:
 -   r(1)                         NEXT:[r(0)]                            PREV:[]
 -   r(0)                         NEXT:[r(>)]                            PREV:[]
 -   r(>)                         NEXT:[r(1 > 0)]                        PREV:[]
--   r(1 > 0)                     NEXT:[jt(l2 [loop entry point])]       PREV:[]
--   jt(l2 [loop entry point])    NEXT:[read (Unit), ret l1]             PREV:[]
-l3 [loop exit point]:
+-   r(1 > 0)                     NEXT:[jt(L2 [loop entry point])]       PREV:[]
+-   jt(L2 [loop entry point])    NEXT:[read (Unit), ret L1]             PREV:[]
+L3 [loop exit point]:
 -   read (Unit)                  NEXT:[<END>]                           PREV:[]
-l1:
-    <END>                        NEXT:[<SINK>]                          PREV:[ret l1]
+L1:
+    <END>                        NEXT:[<SINK>]                          PREV:[ret L1]
 error:
     <ERROR>                      NEXT:[<SINK>]                          PREV:[]
 sink:

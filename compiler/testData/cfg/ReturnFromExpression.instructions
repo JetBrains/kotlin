@@ -3,17 +3,17 @@ fun blockAndAndMismatch() : Boolean {
   false || (return false)
 }
 ---------------------
-l0:
+L0:
     <START>                       NEXT:[r(false)]                                         PREV:[]
-    r(false)                      NEXT:[jt(l2)]                                           PREV:[<START>]
-    jt(l2)                        NEXT:[r((return false)), r(false || (return false))]    PREV:[r(false)]
-    r((return false))             NEXT:[r(false)]                                         PREV:[jt(l2)]
-    r(false)                      NEXT:[ret(*) l1]                                        PREV:[r((return false))]
-    ret(*) l1                     NEXT:[<END>]                                            PREV:[r(false)]
-l2:
-    r(false || (return false))    NEXT:[<END>]                                            PREV:[jt(l2)]
-l1:
-    <END>                         NEXT:[<SINK>]                                           PREV:[ret(*) l1, r(false || (return false))]
+    r(false)                      NEXT:[jt(L2)]                                           PREV:[<START>]
+    jt(L2)                        NEXT:[r((return false)), r(false || (return false))]    PREV:[r(false)]
+    r((return false))             NEXT:[r(false)]                                         PREV:[jt(L2)]
+    r(false)                      NEXT:[ret(*) L1]                                        PREV:[r((return false))]
+    ret(*) L1                     NEXT:[<END>]                                            PREV:[r(false)]
+L2:
+    r(false || (return false))    NEXT:[<END>]                                            PREV:[jt(L2)]
+L1:
+    <END>                         NEXT:[<SINK>]                                           PREV:[ret(*) L1, r(false || (return false))]
 error:
     <ERROR>                       NEXT:[<SINK>]                                           PREV:[]
 sink:

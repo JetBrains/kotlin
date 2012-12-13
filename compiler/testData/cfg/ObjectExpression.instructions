@@ -3,9 +3,9 @@ trait A {
     fun foo() : Int
 }
 ---------------------
-l0:
+L0:
     <START>    NEXT:[<END>]     PREV:[]
-l1:
+L1:
     <END>      NEXT:[<SINK>]    PREV:[<START>]
 error:
     <ERROR>    NEXT:[<SINK>]    PREV:[]
@@ -17,10 +17,10 @@ class B : A {
     override fun foo() = 10
 }
 ---------------------
-l0:
+L0:
     <START>                                   NEXT:[unsupported(DELEGATOR_SUPER_CLASS : A)]    PREV:[]
     unsupported(DELEGATOR_SUPER_CLASS : A)    NEXT:[<END>]                                     PREV:[<START>]
-l1:
+L1:
     <END>                                     NEXT:[<SINK>]                                    PREV:[unsupported(DELEGATOR_SUPER_CLASS : A)]
 error:
     <ERROR>                                   NEXT:[<SINK>]                                    PREV:[]
@@ -33,7 +33,7 @@ fun foo(b: B) : Int {
     return o.foo()
 }
 ---------------------
-l0:
+L0:
     <START>                          NEXT:[v(b: B)]                          PREV:[]
     v(b: B)                          NEXT:[w(b)]                             PREV:[<START>]
     w(b)                             NEXT:[v(val o = object : A by b {})]    PREV:[v(b: B)]
@@ -44,10 +44,10 @@ l0:
     r(o)                             NEXT:[r(foo)]                           PREV:[w(o)]
     r(foo)                           NEXT:[r(foo())]                         PREV:[r(o)]
     r(foo())                         NEXT:[r(o.foo())]                       PREV:[r(foo)]
-    r(o.foo())                       NEXT:[ret(*) l1]                        PREV:[r(foo())]
-    ret(*) l1                        NEXT:[<END>]                            PREV:[r(o.foo())]
-l1:
-    <END>                            NEXT:[<SINK>]                           PREV:[ret(*) l1]
+    r(o.foo())                       NEXT:[ret(*) L1]                        PREV:[r(foo())]
+    ret(*) L1                        NEXT:[<END>]                            PREV:[r(o.foo())]
+L1:
+    <END>                            NEXT:[<SINK>]                           PREV:[ret(*) L1]
 error:
     <ERROR>                          NEXT:[<SINK>]                           PREV:[]
 sink:

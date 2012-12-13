@@ -5,7 +5,7 @@ fun t1() {
     }
 }
 ---------------------
-l0:
+L0:
     <START>                        NEXT:[r(for (i in 1..2) { doSmth(i..)]    PREV:[]
     r(for (i in 1..2) {        
             doSmth(i)          
@@ -15,18 +15,18 @@ l0:
     r(..)                          NEXT:[r(1..2)]                            PREV:[r(2)]
     r(1..2)                        NEXT:[v(i)]                               PREV:[r(..)]
     v(i)                           NEXT:[w(i)]                               PREV:[r(1..2)]
-    w(i)                           NEXT:[jmp?(l2)]                           PREV:[v(i)]
-l3:
-    jmp?(l2)                       NEXT:[read (Unit), r(i)]                  PREV:[w(i)]
-l4 [loop entry point]:
-l5 [body entry point]:
-    r(i)                           NEXT:[r(doSmth)]                          PREV:[jmp?(l2), jmp?(l4 [loop entry point])]
+    w(i)                           NEXT:[jmp?(L2)]                           PREV:[v(i)]
+L3:
+    jmp?(L2)                       NEXT:[read (Unit), r(i)]                  PREV:[w(i)]
+L4 [loop entry point]:
+L5 [body entry point]:
+    r(i)                           NEXT:[r(doSmth)]                          PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
     r(doSmth)                      NEXT:[r(doSmth(i))]                       PREV:[r(i)]
-    r(doSmth(i))                   NEXT:[jmp?(l4 [loop entry point])]        PREV:[r(doSmth)]
-    jmp?(l4 [loop entry point])    NEXT:[r(i), read (Unit)]                  PREV:[r(doSmth(i))]
-l2:
-    read (Unit)                    NEXT:[<END>]                              PREV:[jmp?(l2), jmp?(l4 [loop entry point])]
-l1:
+    r(doSmth(i))                   NEXT:[jmp?(L4 [loop entry point])]        PREV:[r(doSmth)]
+    jmp?(L4 [loop entry point])    NEXT:[r(i), read (Unit)]                  PREV:[r(doSmth(i))]
+L2:
+    read (Unit)                    NEXT:[<END>]                              PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+L1:
     <END>                          NEXT:[<SINK>]                             PREV:[read (Unit)]
 error:
     <ERROR>                        NEXT:[<SINK>]                             PREV:[]
@@ -36,12 +36,12 @@ sink:
 == doSmth ==
 fun doSmth(i: Int) {}
 ---------------------
-l0:
+L0:
     <START>        NEXT:[v(i: Int)]      PREV:[]
     v(i: Int)      NEXT:[w(i)]           PREV:[<START>]
     w(i)           NEXT:[read (Unit)]    PREV:[v(i: Int)]
     read (Unit)    NEXT:[<END>]          PREV:[w(i)]
-l1:
+L1:
     <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
 error:
     <ERROR>        NEXT:[<SINK>]         PREV:[]

@@ -4,9 +4,9 @@ class C {
     fun component2() = 2
 }
 ---------------------
-l0:
+L0:
     <START>    NEXT:[<END>]     PREV:[]
-l1:
+L1:
     <END>      NEXT:[<SINK>]    PREV:[<START>]
 error:
     <ERROR>    NEXT:[<SINK>]    PREV:[]
@@ -19,7 +19,7 @@ fun test(c: C) {
     val d = 1
 }
 ---------------------
-l0:
+L0:
     <START>         NEXT:[v(c: C)]         PREV:[]
     v(c: C)         NEXT:[w(c)]            PREV:[<START>]
     w(c)            NEXT:[r(c)]            PREV:[v(c: C)]
@@ -31,7 +31,7 @@ l0:
     v(val d = 1)    NEXT:[r(1)]            PREV:[w(b)]
     r(1)            NEXT:[w(d)]            PREV:[v(val d = 1)]
     w(d)            NEXT:[<END>]           PREV:[r(1)]
-l1:
+L1:
     <END>           NEXT:[<SINK>]          PREV:[w(d)]
 error:
     <ERROR>         NEXT:[<SINK>]          PREV:[]

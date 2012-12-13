@@ -3,7 +3,7 @@ fun fail() : Nothing {
   throw java.lang.RuntimeException()
 }
 ---------------------
-l0:
+L0:
     <START>                                       NEXT:[r(java)]                                       PREV:[]
     r(java)                                       NEXT:[r(lang)]                                       PREV:[<START>]
     r(lang)                                       NEXT:[r(java.lang)]                                  PREV:[r(java)]
@@ -12,7 +12,7 @@ l0:
     r(RuntimeException())                         NEXT:[r(java.lang.RuntimeException())]               PREV:[r(RuntimeException)]
     r(java.lang.RuntimeException())               NEXT:[throw (throw java.lang.RuntimeException())]    PREV:[r(RuntimeException())]
     throw (throw java.lang.RuntimeException())    NEXT:[<ERROR>]                                       PREV:[r(java.lang.RuntimeException())]
-l1:
+L1:
     <END>                                         NEXT:[<SINK>]                                        PREV:[]
 error:
     <ERROR>                                       NEXT:[<SINK>]                                        PREV:[throw (throw java.lang.RuntimeException())]

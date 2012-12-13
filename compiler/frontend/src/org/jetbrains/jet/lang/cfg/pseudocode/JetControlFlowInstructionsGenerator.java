@@ -103,13 +103,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public final Label createUnboundLabel() {
-            return pseudocode.createLabel("l" + labelCount++);
+            return pseudocode.createLabel("L" + labelCount++);
         }
 
         @NotNull
         @Override
         public Label createUnboundLabel(@NotNull String name) {
-            return pseudocode.createLabel("l" + labelCount++ + " [" + name + "]");
+            return pseudocode.createLabel("L" + labelCount++ + " [" + name + "]");
         }
 
         @Override

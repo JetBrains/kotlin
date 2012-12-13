@@ -17,59 +17,59 @@ fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
     14
 }
 ---------------------
-l0:
+L0:
     <START>           NEXT:[v(a : Boolean)]        PREV:[]
     v(a : Boolean)    NEXT:[w(a)]                  PREV:[<START>]
     w(a)              NEXT:[v(b : Boolean)]        PREV:[v(a : Boolean)]
     v(b : Boolean)    NEXT:[w(b)]                  PREV:[w(a)]
     w(b)              NEXT:[r(a)]                  PREV:[v(b : Boolean)]
-    r(a)              NEXT:[jf(l2)]                PREV:[w(b)]
-    jf(l2)            NEXT:[r(2), r(1)]            PREV:[r(a)]
-    r(1)              NEXT:[jmp(l3)]               PREV:[jf(l2)]
-    jmp(l3)           NEXT:[r(3)]                  PREV:[r(1)]
-l2:
-    r(2)              NEXT:[r(3)]                  PREV:[jf(l2)]
-l3:
-    r(3)              NEXT:[r(a)]                  PREV:[jmp(l3), r(2)]
-    r(a)              NEXT:[jf(l4)]                PREV:[r(3)]
-    jf(l4)            NEXT:[jf(l5), r(b)]          PREV:[r(a)]
-    r(b)              NEXT:[jf(l5)]                PREV:[jf(l4)]
-l4:
-    jf(l5)            NEXT:[r(6), r(5)]            PREV:[jf(l4), r(b)]
-    r(5)              NEXT:[jmp(l6)]               PREV:[jf(l5)]
-    jmp(l6)           NEXT:[r(7)]                  PREV:[r(5)]
-l5:
-    r(6)              NEXT:[r(7)]                  PREV:[jf(l5)]
-l6:
-    r(7)              NEXT:[r(a)]                  PREV:[jmp(l6), r(6)]
-    r(a)              NEXT:[jt(l7)]                PREV:[r(7)]
-    jt(l7)            NEXT:[r(b), jf(l8)]          PREV:[r(a)]
-    r(b)              NEXT:[jf(l8)]                PREV:[jt(l7)]
-l7:
-    jf(l8)            NEXT:[r(9), r(8)]            PREV:[jt(l7), r(b)]
-    r(8)              NEXT:[jmp(l9)]               PREV:[jf(l8)]
-    jmp(l9)           NEXT:[r(10)]                 PREV:[r(8)]
-l8:
-    r(9)              NEXT:[r(10)]                 PREV:[jf(l8)]
-l9:
-    r(10)             NEXT:[r(a)]                  PREV:[jmp(l9), r(9)]
-    r(a)              NEXT:[jf(l10)]               PREV:[r(10)]
-    jf(l10)           NEXT:[read (Unit), r(11)]    PREV:[r(a)]
-    r(11)             NEXT:[jmp(l11)]              PREV:[jf(l10)]
-    jmp(l11)          NEXT:[r(12)]                 PREV:[r(11)]
-l10:
-    read (Unit)       NEXT:[r(12)]                 PREV:[jf(l10)]
-l11:
-    r(12)             NEXT:[r(a)]                  PREV:[jmp(l11), read (Unit)]
-    r(a)              NEXT:[jf(l12)]               PREV:[r(12)]
-    jf(l12)           NEXT:[r(13), read (Unit)]    PREV:[r(a)]
-    read (Unit)       NEXT:[jmp(l13)]              PREV:[jf(l12)]
-    jmp(l13)          NEXT:[r(14)]                 PREV:[read (Unit)]
-l12:
-    r(13)             NEXT:[r(14)]                 PREV:[jf(l12)]
-l13:
-    r(14)             NEXT:[<END>]                 PREV:[jmp(l13), r(13)]
-l1:
+    r(a)              NEXT:[jf(L2)]                PREV:[w(b)]
+    jf(L2)            NEXT:[r(2), r(1)]            PREV:[r(a)]
+    r(1)              NEXT:[jmp(L3)]               PREV:[jf(L2)]
+    jmp(L3)           NEXT:[r(3)]                  PREV:[r(1)]
+L2:
+    r(2)              NEXT:[r(3)]                  PREV:[jf(L2)]
+L3:
+    r(3)              NEXT:[r(a)]                  PREV:[jmp(L3), r(2)]
+    r(a)              NEXT:[jf(L4)]                PREV:[r(3)]
+    jf(L4)            NEXT:[jf(L5), r(b)]          PREV:[r(a)]
+    r(b)              NEXT:[jf(L5)]                PREV:[jf(L4)]
+L4:
+    jf(L5)            NEXT:[r(6), r(5)]            PREV:[jf(L4), r(b)]
+    r(5)              NEXT:[jmp(L6)]               PREV:[jf(L5)]
+    jmp(L6)           NEXT:[r(7)]                  PREV:[r(5)]
+L5:
+    r(6)              NEXT:[r(7)]                  PREV:[jf(L5)]
+L6:
+    r(7)              NEXT:[r(a)]                  PREV:[jmp(L6), r(6)]
+    r(a)              NEXT:[jt(L7)]                PREV:[r(7)]
+    jt(L7)            NEXT:[r(b), jf(L8)]          PREV:[r(a)]
+    r(b)              NEXT:[jf(L8)]                PREV:[jt(L7)]
+L7:
+    jf(L8)            NEXT:[r(9), r(8)]            PREV:[jt(L7), r(b)]
+    r(8)              NEXT:[jmp(L9)]               PREV:[jf(L8)]
+    jmp(L9)           NEXT:[r(10)]                 PREV:[r(8)]
+L8:
+    r(9)              NEXT:[r(10)]                 PREV:[jf(L8)]
+L9:
+    r(10)             NEXT:[r(a)]                  PREV:[jmp(L9), r(9)]
+    r(a)              NEXT:[jf(L10)]               PREV:[r(10)]
+    jf(L10)           NEXT:[read (Unit), r(11)]    PREV:[r(a)]
+    r(11)             NEXT:[jmp(L11)]              PREV:[jf(L10)]
+    jmp(L11)          NEXT:[r(12)]                 PREV:[r(11)]
+L10:
+    read (Unit)       NEXT:[r(12)]                 PREV:[jf(L10)]
+L11:
+    r(12)             NEXT:[r(a)]                  PREV:[jmp(L11), read (Unit)]
+    r(a)              NEXT:[jf(L12)]               PREV:[r(12)]
+    jf(L12)           NEXT:[r(13), read (Unit)]    PREV:[r(a)]
+    read (Unit)       NEXT:[jmp(L13)]              PREV:[jf(L12)]
+    jmp(L13)          NEXT:[r(14)]                 PREV:[read (Unit)]
+L12:
+    r(13)             NEXT:[r(14)]                 PREV:[jf(L12)]
+L13:
+    r(14)             NEXT:[<END>]                 PREV:[jmp(L13), r(13)]
+L1:
     <END>             NEXT:[<SINK>]                PREV:[r(14)]
 error:
     <ERROR>           NEXT:[<SINK>]                PREV:[]

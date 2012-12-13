@@ -9,7 +9,7 @@ fun foo() {
   a[10] += 1
 }
 ---------------------
-l0:
+L0:
     <START>                  NEXT:[v(val a = Array<Int>)]    PREV:[]
     v(val a = Array<Int>)    NEXT:[r(Array)]                 PREV:[<START>]
     r(Array)                 NEXT:[r(Array<Int>)]            PREV:[v(val a = Array<Int>)]
@@ -32,7 +32,7 @@ l0:
     r(1)                     NEXT:[r(+=)]                    PREV:[r(a[10])]
     r(+=)                    NEXT:[w(a[10])]                 PREV:[r(1)]
     w(a[10])                 NEXT:[<END>]                    PREV:[r(+=)]
-l1:
+L1:
     <END>                    NEXT:[<SINK>]                   PREV:[w(a[10])]
 error:
     <ERROR>                  NEXT:[<SINK>]                   PREV:[]
