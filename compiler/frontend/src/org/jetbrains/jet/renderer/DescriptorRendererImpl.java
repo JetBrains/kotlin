@@ -46,23 +46,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
-        @Override
-        public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
-            renderTypeParameter(descriptor, builder, false);
-            return null;
-        }
-
-        @Override
-        public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
-            super.visitVariableDescriptor(descriptor, builder, true);
-            if (hasDefaultValue(descriptor)) {
-                builder.append(" = ...");
-            }
-            return null;
-        }
-    };
     private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
 
     private final boolean shortNames;
@@ -294,7 +277,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             handler.appendBeforeValueParameters(function, builder);
             for (ValueParameterDescriptor parameter : function.getValueParameters()) {
                 handler.appendBeforeValueParameter(parameter, builder);
-                parameter.accept(subVisitor, builder);
+                renderValueParameterOfFunction(parameter, builder);
                 handler.appendAfterValueParameter(parameter, builder);
             }
             handler.appendAfterValueParameters(function, builder);
@@ -302,12 +285,19 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         else {
             builder.append("(");
             for (ValueParameterDescriptor parameter : function.getValueParameters()) {
-                parameter.accept(subVisitor, builder);
+                renderValueParameterOfFunction(parameter, builder);
                 if (parameter.getIndex() != function.getValueParameters().size() - 1) {
                     builder.append(", ");
                 }
             }
             builder.append(")");
+        }
+    }
+
+    private void renderValueParameterOfFunction(ValueParameterDescriptor descriptor, StringBuilder builder) {
+        rootVisitor.visitVariableDescriptor(descriptor, builder, true);
+        if (hasDefaultValue(descriptor)) {
+            builder.append(" = ...");
         }
     }
 
@@ -495,7 +485,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 builder.append(lt());
                 for (Iterator<TypeParameterDescriptor> iterator = typeParameters.iterator(); iterator.hasNext(); ) {
                     TypeParameterDescriptor typeParameterDescriptor = iterator.next();
-                    typeParameterDescriptor.accept(subVisitor, builder);
+                    renderTypeParameter(typeParameterDescriptor, builder, false);
                     if (iterator.hasNext()) {
                         builder.append(", ");
                     }
@@ -635,5 +625,5 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 // rendered with "where"
             }
         }
-    }
+   }
 }
