@@ -189,16 +189,21 @@ public class PseudocodeImpl implements Pseudocode {
             return deadInstructions;
         }
         deadInstructions = Lists.newArrayList();
-        Collection<Instruction> allowedDeadInstructions = collectAllowedDeadInstructions();
 
         for (Instruction instruction : mutableInstructionList) {
-            if (((InstructionImpl)instruction).isDead()) {
-                if (!allowedDeadInstructions.contains(instruction)) {
-                    deadInstructions.add(instruction);
-                }
+            if (isDead(instruction)) {
+                deadInstructions.add(instruction);
             }
         }
         return deadInstructions;
+    }
+
+    private static boolean isDead(@NotNull Instruction instruction) {
+        if (!((InstructionImpl)instruction).isDead()) return false;
+        for (Instruction copy : instruction.getCopies()) {
+            if (!((InstructionImpl)copy).isDead()) return false;
+        }
+        return true;
     }
 
     //for tests only
