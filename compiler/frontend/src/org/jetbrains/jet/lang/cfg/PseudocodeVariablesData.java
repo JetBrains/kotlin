@@ -33,6 +33,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
+import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
+
 /**
  * @author svtk
  */
@@ -61,7 +64,7 @@ public class PseudocodeVariablesData {
         Set<VariableDescriptor> usedVariables = usedVariablesForDeclaration.get(pseudocode);
         if (usedVariables == null) {
             final Set<VariableDescriptor> result = Sets.newHashSet();
-            PseudocodeTraverser.traverseForward(pseudocode, new InstructionAnalyzeStrategy() {
+            PseudocodeTraverser.traverse(pseudocode, FORWARD, new InstructionAnalyzeStrategy() {
                 @Override
                 public void execute(@NotNull Instruction instruction) {
                     VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false,
@@ -138,7 +141,7 @@ public class PseudocodeVariablesData {
                 usedVariables, declaredVariables);
 
         Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializersMap = PseudocodeTraverser.collectData(
-                pseudocode, /* directOrder = */ true, /* lookInside = */ false,
+                pseudocode, FORWARD, /* lookInside = */ false,
                 initialMap, initialMapForStartInstruction, new PseudocodeTraverser.InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
             @Override
             public Edges<Map<VariableDescriptor, VariableInitState>> execute(
@@ -289,7 +292,7 @@ public class PseudocodeVariablesData {
                     return Edges.create(enterResult, exitResult);
                 }
             };
-            variableStatusMap = PseudocodeTraverser.collectData(pseudocode, false, true,
+            variableStatusMap = PseudocodeTraverser.collectData(pseudocode, BACKWARD, true,
                                                                 Collections.<VariableDescriptor, VariableUseState>emptyMap(),
                                                                 sinkInstructionData, collectVariableUseStatusStrategy);
         }

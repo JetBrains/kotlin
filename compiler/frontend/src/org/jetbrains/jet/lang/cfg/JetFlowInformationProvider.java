@@ -44,6 +44,8 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
+import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
@@ -196,7 +198,7 @@ public class JetFlowInformationProvider {
 
         final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
 
-        PseudocodeTraverser.traverseForward(pseudocode, true, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
+        PseudocodeTraverser.traverse(pseudocode, FORWARD, true, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableInitState> in,
@@ -251,7 +253,8 @@ public class JetFlowInformationProvider {
         if (!isInitialized && !varWithUninitializedErrorGenerated.contains(ctxt.variableDescriptor)) {
             varWithUninitializedErrorGenerated.add(ctxt.variableDescriptor);
             if (ctxt.variableDescriptor instanceof ValueParameterDescriptor) {
-                report(Errors.UNINITIALIZED_PARAMETER.on((JetSimpleNameExpression) element, (ValueParameterDescriptor) ctxt.variableDescriptor), ctxt);
+                report(Errors.UNINITIALIZED_PARAMETER.on((JetSimpleNameExpression) element,
+                                                         (ValueParameterDescriptor) ctxt.variableDescriptor), ctxt);
             }
             else {
                 report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, ctxt.variableDescriptor), ctxt);
@@ -502,7 +505,7 @@ public class JetFlowInformationProvider {
                 }
             }
         };
-        PseudocodeTraverser.traverseBackward(pseudocode, true, variableStatusData, variableStatusAnalyzeStrategy);
+        PseudocodeTraverser.traverse(pseudocode, BACKWARD, true, variableStatusData, variableStatusAnalyzeStrategy);
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -511,8 +514,8 @@ public class JetFlowInformationProvider {
     public void markUnusedLiteralsInBlock() {
         assert pseudocode != null;
         final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
-        PseudocodeTraverser.traverseForward(
-                pseudocode, new InstructionAnalyzeStrategy() {
+        PseudocodeTraverser.traverse(
+                pseudocode, FORWARD, new InstructionAnalyzeStrategy() {
             @Override
             public void execute(@NotNull Instruction instruction) {
                 if (!(instruction instanceof ReadValueInstruction)) return;

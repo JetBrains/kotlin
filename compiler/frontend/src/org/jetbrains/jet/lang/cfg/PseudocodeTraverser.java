@@ -28,29 +28,57 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
+
 /**
  * @author svtk
  */
 public class PseudocodeTraverser {
+    
+    public static enum TraversalOrder {
+        FORWARD,
+        BACKWARD;
+    }
+    
     @NotNull
-    private static Instruction getStartInstruction(@NotNull Pseudocode pseudocode, boolean directOrder) {
-        return directOrder ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction();
+    private static Instruction getStartInstruction(@NotNull Pseudocode pseudocode, @NotNull TraversalOrder traversalOrder) {
+        return traversalOrder == FORWARD ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction();
+    }
+
+    @NotNull
+    private static Instruction getLastInstruction(@NotNull Pseudocode pseudocode, @NotNull TraversalOrder traversalOrder) {
+        return traversalOrder == FORWARD ? pseudocode.getSinkInstruction() : pseudocode.getEnterInstruction();
+    }
+
+    @NotNull
+    private static List<Instruction> getInstructions(@NotNull Pseudocode pseudocode, @NotNull TraversalOrder traversalOrder) {
+        return traversalOrder == FORWARD ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
+    }
+
+    @NotNull
+    private static Collection<Instruction> getPreviousInstruction(@NotNull Instruction instruction, @NotNull TraversalOrder traversalOrder) {
+        return traversalOrder == FORWARD ? instruction.getPreviousInstructions() : instruction.getNextInstructions();
+    }
+
+    private static boolean isStartInstruction(@NotNull Instruction instruction, @NotNull TraversalOrder traversalOrder) {
+        return traversalOrder == FORWARD ? instruction instanceof SubroutineEnterInstruction
+                                         : instruction instanceof SubroutineSinkInstruction;
     }
 
     public static <D> Map<Instruction, Edges<D>> collectData(
-            @NotNull Pseudocode pseudocode, boolean directOrder, boolean lookInside,
+            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, boolean lookInside,
             @NotNull D initialDataValue, @NotNull D initialDataValueForEnterInstruction,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy) {
 
         Map<Instruction, Edges<D>> edgesMap = Maps.newLinkedHashMap();
         initializeEdgesMap(pseudocode, lookInside, edgesMap, initialDataValue);
-        edgesMap.put(getStartInstruction(pseudocode, directOrder), Edges.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
+        edgesMap.put(getStartInstruction(pseudocode, traversalOrder), Edges.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
 
         boolean[] changed = new boolean[1];
         changed[0] = true;
         while (changed[0]) {
             changed[0] = false;
-            collectDataFromSubgraph(pseudocode, directOrder, lookInside, edgesMap, instructionDataMergeStrategy,
+            collectDataFromSubgraph(pseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
                                     Collections.<Instruction>emptyList(), changed, false);
         }
         return edgesMap;
@@ -71,21 +99,21 @@ public class PseudocodeTraverser {
     }
 
     private static <D> void collectDataFromSubgraph(
-            @NotNull Pseudocode pseudocode, boolean directOrder, boolean lookInside,
+            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, boolean lookInside,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
             @NotNull Collection<Instruction> previousSubGraphInstructions,
             boolean[] changed, boolean isLocal) {
 
-        List<Instruction> instructions = directOrder ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
-        Instruction startInstruction = getStartInstruction(pseudocode, directOrder);
+        List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
+        Instruction startInstruction = getStartInstruction(pseudocode, traversalOrder);
 
         for (Instruction instruction : instructions) {
-            boolean isStart = directOrder ? instruction instanceof SubroutineEnterInstruction : instruction instanceof SubroutineSinkInstruction;
+            boolean isStart = isStartInstruction(instruction, traversalOrder);
             if (!isLocal && isStart) continue;
 
             Collection<Instruction> allPreviousInstructions;
-            Collection<Instruction> previousInstructions = directOrder ? instruction.getPreviousInstructions() : instruction.getNextInstructions();
+            Collection<Instruction> previousInstructions = getPreviousInstruction(instruction, traversalOrder);
 
             if (instruction == startInstruction && !previousSubGraphInstructions.isEmpty()) {
                 allPreviousInstructions = Lists.newArrayList(previousInstructions);
@@ -97,10 +125,10 @@ public class PseudocodeTraverser {
 
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
-                collectDataFromSubgraph(subroutinePseudocode, directOrder, lookInside, edgesMap, instructionDataMergeStrategy,
+                collectDataFromSubgraph(subroutinePseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
                                         previousInstructions,
                                         changed, true);
-                Instruction lastInstruction = directOrder ? subroutinePseudocode.getSinkInstruction() : subroutinePseudocode.getEnterInstruction();
+                Instruction lastInstruction = getLastInstruction(subroutinePseudocode, traversalOrder);
                 Edges<D> previousValue = edgesMap.get(instruction);
                 Edges<D> newValue = edgesMap.get(lastInstruction);
                 if (!previousValue.equals(newValue)) {
@@ -127,54 +155,28 @@ public class PseudocodeTraverser {
         }
     }
 
-    public static void traverseForward(
-            @NotNull Pseudocode pseudocode,
-            @NotNull InstructionAnalyzeStrategy instructionAnalyzeStrategy) {
-        traverse(pseudocode, true, instructionAnalyzeStrategy);
-    }
-
-    public static void traverseBackward(
-            @NotNull Pseudocode pseudocode,
-            @NotNull InstructionAnalyzeStrategy instructionAnalyzeStrategy) {
-        traverse(pseudocode, false, instructionAnalyzeStrategy);
-    }
-
-    private static void traverse(
-            @NotNull Pseudocode pseudocode, boolean directOrder,
+    public static void traverse(
+            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder,
             InstructionAnalyzeStrategy instructionAnalyzeStrategy) {
 
-        List<Instruction> instructions = directOrder ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
+        List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
             if (instruction instanceof LocalDeclarationInstruction) {
-                traverse(((LocalDeclarationInstruction) instruction).getBody(), directOrder, instructionAnalyzeStrategy);
+                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, instructionAnalyzeStrategy);
             }
             instructionAnalyzeStrategy.execute(instruction);
         }
     }
 
-    public static <D> void traverseForward(
-            @NotNull Pseudocode pseudocode, boolean lookInside,
-            @NotNull Map<Instruction, Edges<D>> edgesMap,
-            @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
-        traverse(pseudocode, true, lookInside, edgesMap, instructionDataAnalyzeStrategy);
-    }
-
-    public static <D> void traverseBackward(
-            @NotNull Pseudocode pseudocode, boolean lookInside,
-            @NotNull Map<Instruction, Edges<D>> edgesMap,
-            @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
-        traverse(pseudocode, false, lookInside, edgesMap, instructionDataAnalyzeStrategy);
-    }
-
-    private static <D> void traverse(
-            @NotNull Pseudocode pseudocode, boolean directOrder, boolean lookInside,
+    public static <D> void traverse(
+            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, boolean lookInside,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
 
-        List<Instruction> instructions = directOrder ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
+        List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
             if (lookInside && instruction instanceof LocalDeclarationInstruction) {
-                traverse(((LocalDeclarationInstruction) instruction).getBody(), directOrder, lookInside, edgesMap,
+                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, lookInside, edgesMap,
                          instructionDataAnalyzeStrategy);
             }
             Edges<D> edges = edgesMap.get(instruction);
