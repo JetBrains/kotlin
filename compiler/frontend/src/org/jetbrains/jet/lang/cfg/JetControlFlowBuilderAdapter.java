@@ -62,26 +62,6 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         builder.bindLabel(label);
     }
 
-    @NotNull
-    @Override
-    public Label createAllowDeadLabel(@NotNull Collection<Label> allowDeadLabels) {
-        assert builder != null;
-        return builder.createAllowDeadLabel(allowDeadLabels);
-    }
-
-    @NotNull
-    @Override
-    public Label createAllowDeadLabel(@NotNull String name, @NotNull Collection<Label> allowDeadLabels) {
-        assert builder != null;
-        return builder.createAllowDeadLabel(name, allowDeadLabels);
-    }
-
-    @Override
-    public void stopAllowDead(@NotNull Collection<Label> allowDeadLabels) {
-        assert builder != null;
-        builder.stopAllowDead(allowDeadLabels);
-    }
-
     @Override
     public void jump(@NotNull Label label) {
         assert builder != null;

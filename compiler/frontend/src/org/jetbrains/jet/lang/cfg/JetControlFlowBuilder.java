@@ -39,12 +39,6 @@ public interface JetControlFlowBuilder {
 
     void bindLabel(@NotNull Label label);
 
-    @NotNull
-    Label createAllowDeadLabel(@NotNull Collection<Label> allowDeadLabels);
-    @NotNull
-    Label createAllowDeadLabel(@NotNull String name, @NotNull Collection<Label> allowDeadLabels);
-    void stopAllowDead(@NotNull Collection<Label> allowDeadLabels);
-
     // Jumps
     void jump(@NotNull Label label);
     void jumpOnFalse(@NotNull Label label);

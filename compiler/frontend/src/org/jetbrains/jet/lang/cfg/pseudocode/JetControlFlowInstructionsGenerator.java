@@ -275,28 +275,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pseudocode.bindLabel(label);
         }
 
-        @NotNull
-        @Override
-        public Label createAllowDeadLabel(@NotNull Collection<Label> allowDeadLabels) {
-            return createAllowDeadLabel("d" + allowDeadLabelCount++, allowDeadLabels);
-        }
-
-        @NotNull
-        @Override
-        public Label createAllowDeadLabel(@NotNull String name, @NotNull Collection<Label> allowDeadLabels) {
-            Label label = pseudocode.createAllowDeadLabel(name);
-            bindLabel(label);
-            allowDeadLabels.add(label);
-            return label;
-        }
-
-        @Override
-        public void stopAllowDead(@NotNull Collection<Label> allowDeadLabels) {
-            Label allowedDeadLabel = createUnboundLabel("stop " + allowDeadLabels);
-            bindLabel(allowedDeadLabel);
-            pseudocode.stopAllowDead(allowedDeadLabel, allowDeadLabels);
-        }
-
         @Override
         public void nondeterministicJump(Label label) {
             handleJumpInsideTryFinally(label);

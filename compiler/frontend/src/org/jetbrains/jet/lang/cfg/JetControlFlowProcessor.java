@@ -408,7 +408,6 @@ public class JetControlFlowProcessor {
 
             Collection<Label> allowDeadLabels = Lists.newArrayList();
             if (hasCatches) {
-                builder.createAllowDeadLabel(allowDeadLabels);
                 Label afterCatches = builder.createUnboundLabel("afterCatches");
                 builder.jump(afterCatches);
 
@@ -438,14 +437,10 @@ public class JetControlFlowProcessor {
                     if (catchBody != null) {
                         value(catchBody, false);
                     }
-                    builder.createAllowDeadLabel(allowDeadLabels);
                     builder.jump(afterCatches);
                 }
 
                 builder.bindLabel(afterCatches);
-            }
-            else {
-                builder.createAllowDeadLabel(allowDeadLabels);
             }
 
             if (finallyBlock != null) {
@@ -460,7 +455,6 @@ public class JetControlFlowProcessor {
 
                 finallyBlockGenerator.generate();
             }
-            builder.stopAllowDead(allowDeadLabels);
         }
 
         @Override
@@ -850,7 +844,6 @@ public class JetControlFlowProcessor {
 
                 builder.bindLabel(bodyLabel);
                 value(whenEntry.getExpression(), inCondition);
-                builder.createAllowDeadLabel(allowDeadLabels);
                 builder.jump(doneLabel);
 
                 if (!isIrrefutable) {
@@ -862,7 +855,6 @@ public class JetControlFlowProcessor {
             if (!hasElseOrIrrefutableBranch && !isWhenExhaust) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
-            builder.stopAllowDead(allowDeadLabels);
         }
 
         @Override

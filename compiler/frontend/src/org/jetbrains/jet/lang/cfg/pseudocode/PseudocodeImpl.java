@@ -34,23 +34,16 @@ public class PseudocodeImpl implements Pseudocode {
 
     public class PseudocodeLabel implements Label {
         private final String name;
-        private final boolean allowDead;
         private Integer targetInstructionIndex;
 
 
-        private PseudocodeLabel(String name, boolean allowDead) {
+        private PseudocodeLabel(String name) {
             this.name = name;
-            this.allowDead = allowDead;
         }
 
         @Override
         public String getName() {
             return name;
-        }
-
-        @Override
-        public boolean allowDead() {
-            return allowDead;
         }
 
         @Override
@@ -78,7 +71,7 @@ public class PseudocodeImpl implements Pseudocode {
         }
 
         public Label copy() {
-            return new PseudocodeLabel("copy " + name, allowDead);
+            return new PseudocodeLabel("copy " + name);
         }
     }
 
@@ -93,7 +86,6 @@ public class PseudocodeImpl implements Pseudocode {
     private final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
     
     private final List<PseudocodeLabel> labels = new ArrayList<PseudocodeLabel>();
-    private final Map<Label, Collection<Label>> stopAllowDeadLabels = Maps.newHashMap();
 
     private final JetElement correspondingElement;
     private SubroutineExitInstruction exitInstruction;
@@ -133,23 +125,11 @@ public class PseudocodeImpl implements Pseudocode {
     }
 
     /*package*/ PseudocodeLabel createLabel(String name) {
-        return createLabel(name, false);
-    }
-
-    private PseudocodeLabel createLabel(String name, boolean allowDead) {
-        PseudocodeLabel label = new PseudocodeLabel(name, allowDead);
+        PseudocodeLabel label = new PseudocodeLabel(name);
         labels.add(label);
         return label;
     }
     
-    /*package*/ Label createAllowDeadLabel(String name) {
-        return createLabel(name, true);
-    }
-    
-    /*package*/ void stopAllowDead(Label label, Collection<Label> allowDeadLabels) {
-        stopAllowDeadLabels.put((PseudocodeLabel) label, allowDeadLabels);
-    }
-
     @Override
     @NotNull
     public List<Instruction> getInstructions() {
@@ -393,71 +373,6 @@ public class PseudocodeImpl implements Pseudocode {
     }
 
     @NotNull
-    private Map<Instruction, Label> prepareAllowDeadStarters() {
-        Map<Instruction, Label> allowedDeadBeginners = Maps.newHashMap();
-        for (PseudocodeLabel label : labels) {
-            if (!label.allowDead()) continue;
-            Instruction allowDeadPossibleBeginner = getJumpTarget(label);
-            if (((InstructionImpl)allowDeadPossibleBeginner).isDead()) {
-                allowedDeadBeginners.put(allowDeadPossibleBeginner, label);
-            }
-        }
-        return allowedDeadBeginners;
-    }
-    
-    @NotNull
-    private Map<Instruction, Collection<Label>> prepareAllowDeadStoppers() {
-        Map<Instruction, Collection<Label>> stopAllowedDeadInstructions = Maps.newHashMap();
-        for (Map.Entry<Label, Collection<Label>> entry : stopAllowDeadLabels.entrySet()) {
-            Label stopAllowedDeadLabel = entry.getKey();
-            Instruction stopAllowDeadInsruction = getJumpTarget(stopAllowedDeadLabel);
-            if (((InstructionImpl)stopAllowDeadInsruction).isDead()) {
-                stopAllowedDeadInstructions.put(stopAllowDeadInsruction, entry.getValue());
-            }
-        }
-        return stopAllowedDeadInstructions;
-    }
-
-    @NotNull
-    private Collection<Instruction> collectAllowedDeadInstructions() {
-        // Allow dead instruction block can have several starters and
-        // one stopper that knows all corresponding starters by labels
-        Map<Instruction, Label> allowDeadStarters = prepareAllowDeadStarters();
-        Map<Instruction, Collection<Label>> allowDeadStoppers = prepareAllowDeadStoppers();
-        Set<Instruction> allowedDeadInstructions = Sets.newHashSet();
-
-        for (Map.Entry<Instruction, Label> entry : allowDeadStarters.entrySet()) {
-            Instruction starter = entry.getKey();
-
-            Set<Instruction> allowedDeadFromThisInstruction = Sets.newHashSet();
-            Label starterLabel = entry.getValue();
-            collectAllowedDeadInstructions(starter, starterLabel, allowedDeadFromThisInstruction, allowDeadStoppers);
-            allowedDeadInstructions.addAll(allowedDeadFromThisInstruction);
-        }
-        return allowedDeadInstructions;
-    }
-    
-    private static void collectAllowedDeadInstructions(
-            @NotNull Instruction current,
-            @NotNull Label starterLabel,
-            @NotNull Set<Instruction> collectedDeadInstructions,
-            @NotNull Map<Instruction, Collection<Label>> allowDeadStoppers
-    ) {
-
-        if (collectedDeadInstructions.contains(current)) return;
-        Collection<Label> allowDeadLabels = allowDeadStoppers.get(current);
-        boolean isStopper = allowDeadLabels != null && allowDeadLabels.contains(starterLabel);
-        if (isStopper) return;
-
-        if (((InstructionImpl)current).isDead()) {
-            collectedDeadInstructions.add(current);
-            for (Instruction instruction : current.getNextInstructions()) {
-                collectAllowedDeadInstructions(instruction, starterLabel, collectedDeadInstructions, allowDeadStoppers);
-            }
-        }
-    }
-
-    @NotNull
     private Instruction getJumpTarget(@NotNull Label targetLabel) {
         return ((PseudocodeLabel)targetLabel).resolveToInstruction();
     }
@@ -493,15 +408,6 @@ public class PseudocodeImpl implements Pseudocode {
             addInstruction(copyInstruction(originalInstruction, originalToCopy));
         }
         repeatLabelsBindingForInstruction(mutableInstructionList.get(finishIndex), originalToCopy, originalLabelsForInstruction);
-
-        for (Map.Entry<Label, Label> entry : originalToCopy.entrySet()) {
-            Label oldLabel = entry.getKey();
-            Label newLabel = entry.getValue();
-            Collection<Label> stopAllowDead = stopAllowDeadLabels.get(oldLabel);
-            if (stopAllowDead != null) {
-                stopAllowDeadLabels.put(newLabel, copyLabels(stopAllowDead, originalToCopy));
-            }
-        }
     }
 
     private void repeatLabelsBindingForInstruction(
