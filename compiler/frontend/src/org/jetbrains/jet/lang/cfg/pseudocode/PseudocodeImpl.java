@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.*;
-import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
@@ -162,42 +161,19 @@ public class PseudocodeImpl implements Pseudocode {
     public List<Instruction> getReversedInstructions() {
         if (reversedInstructions == null) {
             LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
-            traverseInstructionsInReverseOrder(sinkInstruction, traversedInstructions);
+            traverseFollowingInstructions(sinkInstruction, traversedInstructions, false);
             if (traversedInstructions.size() < instructions.size()) {
                 List<Instruction> simplyReversedInstructions = Lists.newArrayList(instructions);
                 Collections.reverse(simplyReversedInstructions);
                 for (Instruction instruction : simplyReversedInstructions) {
                     if (!traversedInstructions.contains(instruction)) {
-                        traverseInstructionsInReverseOrder(instruction, traversedInstructions);
+                        traverseFollowingInstructions(instruction, traversedInstructions, false);
                     }
                 }
             }
             reversedInstructions = Lists.newArrayList(traversedInstructions);
         }
         return reversedInstructions;
-    }
-
-    private static void traverseInstructionsInReverseOrder(@NotNull Instruction rootInstruction,
-            @NotNull LinkedHashSet<Instruction> instructions) {
-        Deque<Instruction> stack = Queues.newArrayDeque();
-        stack.push(rootInstruction);
-
-        List<Instruction> previousInstructions = Lists.newArrayList();
-        while ( !stack.isEmpty() ) {
-            final Instruction instruction = stack.pop();
-
-            if ( instructions.contains(instruction) )
-                continue;
-
-            instructions.add(instruction);
-
-            // Reverse iteration order to match the original recursive order.
-            previousInstructions.addAll(instruction.getPreviousInstructions());
-            for (Instruction previousInstruction : Lists.reverse(previousInstructions)) {
-                stack.push(previousInstruction);
-            }
-            previousInstructions.clear();
-        }
     }
 
     //for tests only
@@ -363,7 +339,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     private Set<Instruction> collectReachableInstructions() {
         Set<Instruction> visited = Sets.newHashSet();
-        traverseNextInstructions(getEnterInstruction(), visited);
+        traverseFollowingInstructions(getEnterInstruction(), visited, true);
         if (!visited.contains(getExitInstruction())) {
             visited.add(getExitInstruction());
         }
@@ -376,28 +352,26 @@ public class PseudocodeImpl implements Pseudocode {
         return visited;
     }
     
-    private static void traverseNextInstructions(@NotNull Instruction rootInstruction, @NotNull Set<Instruction> visited) {
+    private static void traverseFollowingInstructions(
+            @NotNull Instruction rootInstruction,
+            @NotNull Set<Instruction> visited,
+            boolean directOrder
+    ) {
         Deque<Instruction> stack = Queues.newArrayDeque();
         stack.push(rootInstruction);
 
-        List<Instruction> nextInstructions = Lists.newArrayList();
         while (!stack.isEmpty()) {
-            final Instruction instruction = stack.pop();
-
-            if (visited.contains(instruction))
-                continue;
-
+            Instruction instruction = stack.pop();
             visited.add(instruction);
 
-            // Reverse iteration order to match the original recursive order.
-            nextInstructions.addAll(instruction.getNextInstructions());
-            for (Instruction nextInstruction : Lists.reverse(nextInstructions)) {
-                if ( nextInstruction == null )
-                    continue;
+            Collection<Instruction> followingInstructions =
+                    directOrder ? instruction.getNextInstructions() : instruction.getPreviousInstructions();
 
-                stack.push(nextInstruction);
+            for (Instruction followingInstruction : followingInstructions) {
+                if (followingInstruction != null && !visited.contains(followingInstruction)) {
+                    stack.push(followingInstruction);
+                }
             }
-            nextInstructions.clear();
         }
     }
 
