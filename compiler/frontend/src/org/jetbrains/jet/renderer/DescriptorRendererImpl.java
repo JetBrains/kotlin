@@ -76,16 +76,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.textFormat = textFormat;
     }
 
-    private boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
-        if (debugMode) {
-            // hasDefaultValue() has effects
-            return descriptor.declaresDefaultValue();
-        }
-        else {
-            return descriptor.hasDefaultValue();
-        }
-    }
-
     private String renderKeyword(String keyword) {
         switch (textFormat) {
             case PLAIN:
@@ -296,7 +286,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderValueParameterOfFunction(ValueParameterDescriptor descriptor, StringBuilder builder) {
         rootVisitor.visitVariableDescriptor(descriptor, builder, true);
-        if (hasDefaultValue(descriptor)) {
+        boolean withDefaultValue = debugMode ? descriptor.declaresDefaultValue() : descriptor.hasDefaultValue();
+        if (withDefaultValue) {
             builder.append(" = ...");
         }
     }
