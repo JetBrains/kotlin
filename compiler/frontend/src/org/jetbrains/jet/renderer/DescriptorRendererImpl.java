@@ -297,6 +297,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     /* TYPE PARAMETERS */
     private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
+        if (topLevel) {
+            builder.append(lt());
+        }
+
         if (!descriptor.isReified()) {
             String variance = descriptor.getVariance().toString();
             if (!variance.isEmpty()) {
@@ -332,6 +336,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         else {
             // rendered with "where"
         }
+
+        if (topLevel) {
+            builder.append(">");
+        }
     }
 
     private boolean renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {
@@ -349,13 +357,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
         return false;
     }
-
-    private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
-        builder.append(lt());
-        renderTypeParameter(descriptor, builder, true);
-        builder.append(">");
-    }
-
 
     /* FUNCTIONS */
     private void renderFunction(FunctionDescriptor descriptor, StringBuilder builder) {
@@ -426,7 +427,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             handler.appendBeforeValueParameters(function, builder);
             for (ValueParameterDescriptor parameter : function.getValueParameters()) {
                 handler.appendBeforeValueParameter(parameter, builder);
-                renderValueParameterOfFunction(parameter, builder);
+                renderValueParameter(parameter, builder, false);
                 handler.appendAfterValueParameter(parameter, builder);
             }
             handler.appendAfterValueParameters(function, builder);
@@ -434,7 +435,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         else {
             builder.append("(");
             for (ValueParameterDescriptor parameter : function.getValueParameters()) {
-                renderValueParameterOfFunction(parameter, builder);
+                renderValueParameter(parameter, builder, false);
                 if (parameter.getIndex() != function.getValueParameters().size() - 1) {
                     builder.append(", ");
                 }
@@ -443,26 +444,23 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
-    private void renderValueParameterOfFunction(ValueParameterDescriptor descriptor, StringBuilder builder) {
-        renderVariable(descriptor, builder, true);
+    /* VARIABLES */
+    private void renderValueParameter(ValueParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
+        if (topLevel) {
+            builder.append(renderKeyword("value-parameter")).append(" ");
+        }
+        renderVariable(descriptor, builder, topLevel);
         boolean withDefaultValue = debugMode ? descriptor.declaresDefaultValue() : descriptor.hasDefaultValue();
         if (withDefaultValue) {
             builder.append(" = ...");
         }
     }
 
-
-    /* VARIABLES */
-    private void renderValueParameter(ValueParameterDescriptor descriptor, StringBuilder builder) {
-        builder.append(renderKeyword("value-parameter")).append(" ");
-        renderVariable(descriptor, builder);
+    private void renderValVarPrefix(VariableDescriptor descriptor, StringBuilder builder) {
+        builder.append(renderKeyword(descriptor.isVar() ? "var" : "val")).append(" ");
     }
 
-    private void renderVariable(VariableDescriptor descriptor, StringBuilder builder) {
-        renderVariable(descriptor, builder, false);
-    }
-
-    private void renderVariable(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
+    private void renderVariable(VariableDescriptor descriptor, StringBuilder builder, boolean topLevel) {
         JetType type = descriptor.getType();
         if (descriptor instanceof ValueParameterDescriptor) {
             JetType varargElementType = ((ValueParameterDescriptor) descriptor).getVarargElementType();
@@ -471,82 +469,35 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 type = varargElementType;
             }
         }
-        String typeString = renderPropertyPrefixAndComputeTypeString(
-                builder,
-                skipValVar ? null : descriptor.isVar(),
-                Collections.<TypeParameterDescriptor>emptyList(),
-                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
-                type);
+
+        if (topLevel && !startFromName) {
+            renderValVarPrefix(descriptor, builder);
+        }
+
         renderName(descriptor, builder);
-        builder.append(" : ").append(escape(typeString));
-    }
-
-    private String renderPropertyPrefixAndComputeTypeString(
-            @NotNull StringBuilder builder,
-            @Nullable Boolean isVar,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            @Nullable JetType outType
-    ) {
-        String typeString = lt() + "no type>";
-        if (outType != null) {
-            if (isVar != null && !startFromName) {
-                builder.append(renderKeyword(isVar ? "var" : "val")).append(" ");
-            }
-            typeString = renderType(outType);
-        }
-
-        renderTypeParameters(typeParameters, builder);
-
-        if (receiver != null) {
-            builder.append(escape(renderType(receiver.getType()))).append(".");
-        }
-
-        return typeString;
+        builder.append(" : ").append(escape(renderType(type)));
     }
 
     private void renderProperty(PropertyDescriptor descriptor, StringBuilder builder) {
         if (!startFromName) {
             renderVisibility(descriptor.getVisibility(), builder);
             renderModality(descriptor.getModality(), builder);
+            renderValVarPrefix(descriptor, builder);
         }
-        String typeString = renderPropertyPrefixAndComputeTypeString(
-                builder,
-                descriptor.isVar(),
-                descriptor.getTypeParameters(),
-                descriptor.getReceiverParameter(),
-                descriptor.getType());
+
+        renderTypeParameters(descriptor.getTypeParameters(), builder);
+
+        ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
+        if (receiver != null) {
+            builder.append(escape(renderType(receiver.getType()))).append(".");
+        }
         renderName(descriptor, builder);
-        builder.append(" : ").append(escape(typeString));
+        builder.append(" : ").append(escape(renderType(descriptor.getType())));
     }
 
 
     /* CLASSES */
     private void renderClass(ClassDescriptor descriptor, StringBuilder builder) {
-        String keyword;
-        switch (descriptor.getKind()) {
-            case TRAIT:
-                keyword = "trait";
-                break;
-            case ENUM_CLASS:
-                keyword = "enum class";
-                break;
-            case OBJECT:
-                keyword = "object";
-                break;
-            case ANNOTATION_CLASS:
-                keyword = "annotation class";
-                break;
-            case CLASS_OBJECT:
-                keyword = "class object";
-                break;
-            default:
-                keyword = "class";
-        }
-        renderClass(descriptor, builder, keyword);
-    }
-
-    private void renderClass(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
         boolean isNotClassObject = descriptor.getKind() != ClassKind.CLASS_OBJECT;
         if (!startFromName) {
             if (isNotClassObject) {
@@ -555,7 +506,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                     renderModality(descriptor.getModality(), builder);
                 }
             }
-            builder.append(renderKeyword(keyword));
+            builder.append(renderKeyword(getClassKindPrefix(descriptor)));
             if (isNotClassObject) {
                 builder.append(" ");
             }
@@ -581,6 +532,30 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
+    private static String getClassKindPrefix(ClassDescriptor descriptor) {
+        String keyword;
+        switch (descriptor.getKind()) {
+            case TRAIT:
+                keyword = "trait";
+                break;
+            case ENUM_CLASS:
+                keyword = "enum class";
+                break;
+            case OBJECT:
+                keyword = "object";
+                break;
+            case ANNOTATION_CLASS:
+                keyword = "annotation class";
+                break;
+            case CLASS_OBJECT:
+                keyword = "class object";
+                break;
+            default:
+                keyword = "class";
+        }
+        return keyword;
+    }
+
 
     /* OTHER */
     private void renderModuleOrScript(DeclarationDescriptor descriptor, StringBuilder builder) {
@@ -597,13 +572,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, StringBuilder> {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
-            renderValueParameter(descriptor, builder);
+            renderValueParameter(descriptor, builder, true);
             return null;
         }
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
-            renderVariable(descriptor, builder);
+            renderVariable(descriptor, builder, true);
             return null;
         }
 
@@ -632,7 +607,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
-            renderTypeParameter(descriptor, builder);
+            renderTypeParameter(descriptor, builder, true);
             return null;
         }
 

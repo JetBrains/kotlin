@@ -24,7 +24,7 @@ fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 //value-parameter vararg val ints : jet.Int defined in rendererTest.int2
 //private final fun prv(a : jet.String, b : jet.Int = ...) : jet.Int defined in rendererTest
 //value-parameter val a : jet.String defined in rendererTest.prv
-//value-parameter val b : jet.Int defined in rendererTest.prv
+//value-parameter val b : jet.Int = ... defined in rendererTest.prv
 //public final fun jet.Int.ext() : jet.Int defined in rendererTest
 //public final fun <out T> withTypeParam(a : jet.Array<T>) : jet.Int defined in rendererTest
 //<out T> defined in rendererTest.withTypeParam
