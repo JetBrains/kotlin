@@ -338,6 +338,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), "kt", true);
             }
             
+            @TestMetadata("PropagateSubclassOfComparable.kt")
+            public void testPropagateSubclassOfComparable() throws Exception {
+                doTestSinglePackage("compiler/testData/loadKotlin/fun/PropagateSubclassOfComparable.kt");
+            }
+            
             @TestMetadata("compiler/testData/loadKotlin/fun/genericWithTypeVariables")
             public static class GenericWithTypeVariables extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {

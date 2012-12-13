@@ -743,7 +743,7 @@ public class FunctionCodegen extends GenerationStateAware {
             FunctionDescriptor functionDescriptor,
             Method overridden
     ) {
-        int flags = ACC_PUBLIC | ACC_BRIDGE; // TODO.
+        int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
         final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
         if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
