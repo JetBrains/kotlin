@@ -76,6 +76,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.textFormat = textFormat;
     }
 
+
+    /* FORMATTING */
     private String renderKeyword(String keyword) {
         switch (textFormat) {
             case PLAIN:
@@ -86,15 +88,46 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         throw new IllegalStateException("Unexpected textFormat: " + textFormat);
     }
 
+    private String escape(String s) {
+        switch (textFormat) {
+            case PLAIN:
+                return s;
+            case HTML:
+                return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        }
+        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
+    }
+
+    private String lt() {
+        return escape("<");
+    }
+
+    private String renderMessage(String message) {
+        switch (textFormat) {
+            case PLAIN:
+                return message;
+            case HTML:
+                return "<i>" + message + "</i>";
+        }
+        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
+    }
+
+
+    /* NAMES RENDERING */
     private String renderName(Name identifier) {
         String asString = identifier.toString();
         return escape(KEYWORDS.contains(asString) ? '`' + asString + '`' : asString);
+    }
+
+    private void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
+        stringBuilder.append(renderName(descriptor.getName()));
     }
 
     @NotNull
     private String renderFqName(@NotNull FqNameUnsafe fqName) {
         return renderFqName(fqName.pathSegments());
     }
+
 
     @NotNull
     private String renderFqName(@NotNull List<Name> pathSegments) {
@@ -108,6 +141,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return buf.toString();
     }
 
+    /* TYPES RENDERING */
     @Override
     public String renderType(JetType type) {
         if (type == null) {
@@ -185,6 +219,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
+
     private String renderFunctionType(JetType type) {
         StringBuilder sb = new StringBuilder();
 
@@ -205,39 +240,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return sb.toString();
     }
 
-    private String escape(String s) {
-        switch (textFormat) {
-            case PLAIN:
-                return s;
-            case HTML:
-                return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-        }
-        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
-    }
-
-    private String lt() {
-        return escape("<");
-    }
-
-    @NotNull
-    @Override
-    public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
-        StringBuilder stringBuilder = new StringBuilder();
-        declarationDescriptor.accept(rootVisitor, stringBuilder);
-
-        if (withDefinedIn) {
-            appendDefinedIn(declarationDescriptor, stringBuilder);
-        }
-        return stringBuilder.toString();
-    }
-
-    @Override
-    public String renderFunctionParameters(@NotNull FunctionDescriptor functionDescriptor) {
-        StringBuilder stringBuilder = new StringBuilder();
-        renderValueParameters(functionDescriptor, stringBuilder);
-        return stringBuilder.toString();
-    }
-
+    /* COMMON DESCRIPTORS RENDERING */
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
         if (declarationDescriptor instanceof ModuleDescriptor) {
             stringBuilder.append(" is a module");
@@ -252,14 +255,51 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
-    private String renderMessage(String message) {
-        switch (textFormat) {
-            case PLAIN:
-                return message;
-            case HTML:
-                return "<i>" + message + "</i>";
+    private void renderVisibility(Visibility visibility, StringBuilder builder) {
+        if (!modifiers) return;
+        if ("package".equals(visibility.toString())) {
+            builder.append("public/*package*/ ");
         }
-        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
+        else {
+            builder.append(renderKeyword(visibility.toString())).append(" ");
+        }
+    }
+
+    private void renderModality(Modality modality, StringBuilder builder) {
+        if (!modifiers) return;
+        String keyword = "";
+        switch (modality) {
+            case FINAL:
+                keyword = "final";
+                break;
+            case OPEN:
+                keyword = "open";
+                break;
+            case ABSTRACT:
+                keyword = "abstract";
+                break;
+        }
+        builder.append(renderKeyword(keyword)).append(" ");
+    }
+
+    @NotNull
+    @Override
+    public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
+        StringBuilder stringBuilder = new StringBuilder();
+        declarationDescriptor.accept(rootVisitor, stringBuilder);
+
+        if (withDefinedIn) {
+            appendDefinedIn(declarationDescriptor, stringBuilder);
+        }
+        return stringBuilder.toString();
+    }
+
+    /* FUNCTION DESCRIPTORS */
+    @Override
+    public String renderFunctionParameters(@NotNull FunctionDescriptor functionDescriptor) {
+        StringBuilder stringBuilder = new StringBuilder();
+        renderValueParameters(functionDescriptor, stringBuilder);
+        return stringBuilder.toString();
     }
 
     private void renderValueParameters(FunctionDescriptor function, StringBuilder builder) {
@@ -283,7 +323,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append(")");
         }
     }
-
     private void renderValueParameterOfFunction(ValueParameterDescriptor descriptor, StringBuilder builder) {
         rootVisitor.visitVariableDescriptor(descriptor, builder, true);
         boolean withDefaultValue = debugMode ? descriptor.declaresDefaultValue() : descriptor.hasDefaultValue();
@@ -363,33 +402,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return null;
-        }
-
-        private void renderVisibility(Visibility visibility, StringBuilder builder) {
-            if (!modifiers) return;
-            if ("package".equals(visibility.toString())) {
-                builder.append("public/*package*/ ");
-            }
-            else {
-                builder.append(renderKeyword(visibility.toString())).append(" ");
-            }
-        }
-
-        private void renderModality(Modality modality, StringBuilder builder) {
-            if (!modifiers) return;
-            String keyword = "";
-            switch (modality) {
-                case FINAL:
-                    keyword = "final";
-                    break;
-                case OPEN:
-                    keyword = "open";
-                    break;
-                case ABSTRACT:
-                    keyword = "abstract";
-                    break;
-            }
-            builder.append(renderKeyword(keyword)).append(" ");
         }
 
         @Override
@@ -558,10 +570,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                     }
                 }
             }
-        }
-
-        private void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            stringBuilder.append(escape(DescriptorRendererImpl.this.renderName(descriptor.getName())));
         }
 
         private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
