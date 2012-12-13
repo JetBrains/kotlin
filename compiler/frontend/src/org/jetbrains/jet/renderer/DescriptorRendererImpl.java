@@ -47,13 +47,13 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl() {
+    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl(false, null) {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;
         }
     };
-    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl() {
+    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl(false, null) {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;
@@ -64,7 +64,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             return false;
         }
     };
-    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl() {
+    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl(false, null) {
         @Override
         protected boolean shouldRenderDefinedIn() {
             return false;
@@ -80,16 +80,16 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             return true;
         }
     };
-    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl();
-    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true);
-    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl() {
+    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl(false, null);
+    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true, null);
+    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl(false, null) {
         @Override
         protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
             // hasDefaultValue() has effects
             return descriptor.declaresDefaultValue();
         }
     };
-    public static final DescriptorRendererImpl HTML = new HtmlDescriptorRendererImpl();
+    public static final DescriptorRendererImpl HTML = new HtmlDescriptorRendererImpl(false, null);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
@@ -112,14 +112,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     private final boolean shortNames;
     @Nullable
     private final ValueParametersHandler handler;
-
-    public DescriptorRendererImpl() {
-        this(false, null);
-    }
-
-    public DescriptorRendererImpl(boolean shortNames) {
-        this(shortNames, null);
-    }
 
     public DescriptorRendererImpl(boolean shortNames, @Nullable ValueParametersHandler handler) {
         this.shortNames = shortNames;
@@ -331,10 +323,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     }
 
     public static class HtmlDescriptorRendererImpl extends DescriptorRendererImpl {
-        public HtmlDescriptorRendererImpl() {
-            super();
-        }
-
         public HtmlDescriptorRendererImpl(boolean shortNames, @Nullable ValueParametersHandler handler) {
             super(shortNames, handler);
         }
