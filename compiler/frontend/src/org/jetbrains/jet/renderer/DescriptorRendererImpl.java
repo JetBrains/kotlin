@@ -47,15 +47,20 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl(false, false, true, false, false, null);
-    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl(false, false, false, false, false, null);
-    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl(false, false, false, true, false, null);
-    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl(false, true, true, false, false, null);
-    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true, true, true, false, false, null);
-    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl(false, true, true, false, true, null);
-    public static final DescriptorRendererImpl HTML = new HtmlDescriptorRendererImpl(false, true, true, false, null);
+    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl(false, false, true, false, false, null,
+                                                                                                   TextFormat.PLAIN);
+    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl(false, false, false, false, false, null,
+                                                                                    TextFormat.PLAIN);
+    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl(false, false, false, true, false, null,
+                                                                                             TextFormat.PLAIN);
+    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl(false, true, true, false, false, null, TextFormat.PLAIN);
+    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true, true, true, false, false, null,
+                                                                                                 TextFormat.PLAIN);
+    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl(false, true, true, false, true, null,
+                                                                                       TextFormat.PLAIN);
+    public static final DescriptorRendererImpl HTML = new DescriptorRendererImpl(false, true, true, false, false, null, TextFormat.HTML);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    protected final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
+    private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
             renderTypeParameter(descriptor, builder, false);
@@ -80,6 +85,8 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     private final boolean debugMode;
     @Nullable
     private final ValueParametersHandler handler;
+    @NotNull
+    private final TextFormat textFormat;
 
     public DescriptorRendererImpl(
             boolean shortNames,
@@ -87,7 +94,8 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             boolean modifiers,
             boolean startFromName,
             boolean debugMode,
-            @Nullable ValueParametersHandler handler
+            @Nullable ValueParametersHandler handler,
+            @NotNull TextFormat textFormat
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -95,6 +103,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         this.startFromName = startFromName;
         this.handler = handler;
         this.debugMode = debugMode;
+        this.textFormat = textFormat;
     }
 
     private boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
@@ -107,8 +116,14 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    protected String renderKeyword(String keyword) {
-        return keyword;
+    private String renderKeyword(String keyword) {
+        switch (textFormat) {
+            case PLAIN:
+                return keyword;
+            case HTML:
+                return "<b>" + keyword + "</b>";
+        }
+        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
     }
 
     private String renderName(Name identifier) {
@@ -229,8 +244,14 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         return sb.toString();
     }
 
-    protected String escape(String s) {
-        return s;
+    private String escape(String s) {
+        switch (textFormat) {
+            case PLAIN:
+                return s;
+            case HTML:
+                return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        }
+        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
     }
 
     private String lt() {
@@ -269,8 +290,14 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    protected String renderMessage(String s) {
-        return s;
+    private String renderMessage(String message) {
+        switch (textFormat) {
+            case PLAIN:
+                return message;
+            case HTML:
+                return "<i>" + message + "</i>";
+        }
+        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
     }
 
     private void renderValueParameters(FunctionDescriptor function, StringBuilder builder) {
@@ -295,33 +322,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public static class HtmlDescriptorRendererImpl extends DescriptorRendererImpl {
-        public HtmlDescriptorRendererImpl(
-                boolean shortNames,
-                boolean withDefinedIn,
-                boolean modifiers,
-                boolean startFromName,
-                @Nullable ValueParametersHandler handler
-        ) {
-            super(shortNames, withDefinedIn, modifiers, startFromName, false, handler);
-        }
-
-        @Override
-        protected String escape(String s) {
-            return s.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-        }
-
-        @Override
-        public String renderKeyword(String keyword) {
-            return "<b>" + keyword + "</b>";
-        }
-
-        @Override
-        public String renderMessage(String s) {
-            return "<i>" + s + "</i>";
-        }
-    }
-
     private class RenderDeclarationDescriptorVisitor implements DeclarationDescriptorVisitor<Void, StringBuilder> {
 
         @Override
@@ -340,7 +340,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             return visitVariableDescriptor(descriptor, builder);
         }
 
-        protected Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
+        private Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
             JetType type = descriptor.getType();
             if (descriptor instanceof ValueParameterDescriptor) {
                 JetType varargElementType = ((ValueParameterDescriptor) descriptor).getVarargElementType();
@@ -647,6 +647,10 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
                 // rendered with "where"
             }
         }
+    }
+
+    public enum TextFormat {
+        PLAIN, HTML
     }
 
     public interface ValueParametersHandler {

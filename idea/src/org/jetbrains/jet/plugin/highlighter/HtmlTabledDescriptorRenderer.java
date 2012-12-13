@@ -187,7 +187,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     };
 
     public static final DescriptorRendererImpl DESCRIPTOR_IN_TABLE =
-            new DescriptorRendererImpl.HtmlDescriptorRendererImpl(false, false, false, false, RENDERER_HANDLER);
+            new DescriptorRendererImpl(false, false, false, false, false, RENDERER_HANDLER, DescriptorRendererImpl.TextFormat.HTML);
 
     private static void td(StringBuilder builder, String text) {
         builder.append("<td><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");
