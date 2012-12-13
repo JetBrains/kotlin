@@ -35,7 +35,7 @@ public interface ValueParameterDescriptor extends VariableDescriptor, Annotated 
     int getIndex();
 
     /**
-     * The font-end relies on this property when resolving function calls
+     * The front-end relies on this property when resolving function calls
      *
      * @return {@code true} iff the parameter has a default value, i.e. declares it or inherits
      *         by overriding a parameter in an overridden function.
