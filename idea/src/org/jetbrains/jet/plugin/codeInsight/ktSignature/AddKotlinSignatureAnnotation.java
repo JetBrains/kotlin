@@ -52,17 +52,7 @@ import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUt
  * @since 16 Aug 2012
  */
 public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements Iconable {
-    private static final DescriptorRendererImpl RENDERER = new DescriptorRendererImpl(true, null) {
-        @Override
-        protected boolean shouldRenderDefinedIn() {
-            return false;
-        }
-
-        @Override
-        protected boolean shouldRenderModifiers() {
-            return false;
-        }
-    };
+    private static final DescriptorRendererImpl RENDERER = new DescriptorRendererImpl(true, false, false, false, false, null);
 
     public AddKotlinSignatureAnnotation() {
         setText(JetBundle.message("add.kotlin.signature.action.text"));

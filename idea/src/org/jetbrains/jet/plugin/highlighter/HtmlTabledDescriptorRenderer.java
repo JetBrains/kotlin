@@ -187,17 +187,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     };
 
     public static final DescriptorRendererImpl DESCRIPTOR_IN_TABLE =
-            new DescriptorRendererImpl.HtmlDescriptorRendererImpl(false, RENDERER_HANDLER) {
-                @Override
-                protected boolean shouldRenderDefinedIn() {
-                    return false;
-                }
-
-                @Override
-                protected boolean shouldRenderModifiers() {
-                    return false;
-                }
-            };
+            new DescriptorRendererImpl.HtmlDescriptorRendererImpl(false, false, false, false, RENDERER_HANDLER);
 
     private static void td(StringBuilder builder, String text) {
         builder.append("<td><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");

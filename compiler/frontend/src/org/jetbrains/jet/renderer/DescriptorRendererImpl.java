@@ -47,49 +47,13 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl(false, null) {
-        @Override
-        protected boolean shouldRenderDefinedIn() {
-            return false;
-        }
-    };
-    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl(false, null) {
-        @Override
-        protected boolean shouldRenderDefinedIn() {
-            return false;
-        }
-
-        @Override
-        protected boolean shouldRenderModifiers() {
-            return false;
-        }
-    };
-    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl(false, null) {
-        @Override
-        protected boolean shouldRenderDefinedIn() {
-            return false;
-        }
-
-        @Override
-        protected boolean shouldRenderModifiers() {
-            return false;
-        }
-
-        @Override
-        protected boolean shouldStartsFromName() {
-            return true;
-        }
-    };
-    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl(false, null);
-    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true, null);
-    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl(false, null) {
-        @Override
-        protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
-            // hasDefaultValue() has effects
-            return descriptor.declaresDefaultValue();
-        }
-    };
-    public static final DescriptorRendererImpl HTML = new HtmlDescriptorRendererImpl(false, null);
+    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl(false, false, true, false, false, null);
+    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl(false, false, false, false, false, null);
+    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl(false, false, false, true, false, null);
+    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl(false, true, true, false, false, null);
+    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true, true, true, false, false, null);
+    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl(false, true, true, false, true, null);
+    public static final DescriptorRendererImpl HTML = new HtmlDescriptorRendererImpl(false, true, true, false, null);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
@@ -110,16 +74,37 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
 
     private final boolean shortNames;
+    private final boolean withDefinedIn;
+    private final boolean modifiers;
+    private final boolean startFromName;
+    private final boolean debugMode;
     @Nullable
     private final ValueParametersHandler handler;
 
-    public DescriptorRendererImpl(boolean shortNames, @Nullable ValueParametersHandler handler) {
+    public DescriptorRendererImpl(
+            boolean shortNames,
+            boolean withDefinedIn,
+            boolean modifiers,
+            boolean startFromName,
+            boolean debugMode,
+            @Nullable ValueParametersHandler handler
+    ) {
         this.shortNames = shortNames;
+        this.withDefinedIn = withDefinedIn;
+        this.modifiers = modifiers;
+        this.startFromName = startFromName;
         this.handler = handler;
+        this.debugMode = debugMode;
     }
 
-    protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
-        return descriptor.hasDefaultValue();
+    private boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
+        if (debugMode) {
+            // hasDefaultValue() has effects
+            return descriptor.declaresDefaultValue();
+        }
+        else {
+            return descriptor.hasDefaultValue();
+        }
     }
 
     protected String renderKeyword(String keyword) {
@@ -258,7 +243,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
 
-        if (shouldRenderDefinedIn()) {
+        if (withDefinedIn) {
             appendDefinedIn(declarationDescriptor, stringBuilder);
         }
         return stringBuilder.toString();
@@ -268,18 +253,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         StringBuilder stringBuilder = new StringBuilder();
         renderValueParameters(functionDescriptor, stringBuilder);
         return stringBuilder.toString();
-    }
-
-    protected boolean shouldRenderDefinedIn() {
-        return true;
-    }
-
-    protected boolean shouldRenderModifiers() {
-        return true;
-    }
-
-    protected boolean shouldStartsFromName() {
-        return false;
     }
 
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
@@ -323,8 +296,14 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     }
 
     public static class HtmlDescriptorRendererImpl extends DescriptorRendererImpl {
-        public HtmlDescriptorRendererImpl(boolean shortNames, @Nullable ValueParametersHandler handler) {
-            super(shortNames, handler);
+        public HtmlDescriptorRendererImpl(
+                boolean shortNames,
+                boolean withDefinedIn,
+                boolean modifiers,
+                boolean startFromName,
+                @Nullable ValueParametersHandler handler
+        ) {
+            super(shortNames, withDefinedIn, modifiers, startFromName, false, handler);
         }
 
         @Override
@@ -390,7 +369,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         ) {
             String typeString = lt() + "no type>";
             if (outType != null) {
-                if (isVar != null && !shouldStartsFromName()) {
+                if (isVar != null && !startFromName) {
                     builder.append(renderKeyword(isVar ? "var" : "val")).append(" ");
                 }
                 typeString = renderType(outType);
@@ -407,7 +386,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
-            if (!shouldStartsFromName()) {
+            if (!startFromName) {
                 renderVisibility(descriptor.getVisibility(), builder);
                 renderModality(descriptor.getModality(), builder);
             }
@@ -423,7 +402,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderVisibility(Visibility visibility, StringBuilder builder) {
-            if (!shouldRenderModifiers()) return;
+            if (!modifiers) return;
             if ("package".equals(visibility.toString())) {
                 builder.append("public/*package*/ ");
             }
@@ -433,7 +412,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderModality(Modality modality, StringBuilder builder) {
-            if (!shouldRenderModifiers()) return;
+            if (!modifiers) return;
             String keyword = "";
             switch (modality) {
                 case FINAL:
@@ -451,7 +430,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
-            if (!shouldStartsFromName()) {
+            if (!startFromName) {
                 renderVisibility(descriptor.getVisibility(), builder);
                 renderModality(descriptor.getModality(), builder);
                 builder.append(renderKeyword("fun")).append(" ");
@@ -594,7 +573,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
 
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
             boolean isNotClassObject = descriptor.getKind() != ClassKind.CLASS_OBJECT;
-            if (!shouldStartsFromName()) {
+            if (!startFromName) {
                 if (isNotClassObject) {
                     renderVisibility(descriptor.getVisibility(), builder);
                     if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT) {
@@ -627,7 +606,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
             }
         }
 
-        protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
+        private void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
             stringBuilder.append(escape(DescriptorRendererImpl.this.renderName(descriptor.getName())));
         }
 
