@@ -24,13 +24,24 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.types.JetType;
 
 public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
-    DescriptorRenderer COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl(false, false, true, false, false, null, TextFormat.PLAIN);
-    DescriptorRenderer COMPACT = new DescriptorRendererImpl(false, false, false, false, false, null, TextFormat.PLAIN);
-    DescriptorRenderer STARTS_FROM_NAME = new DescriptorRendererImpl(false, false, false, true, false, null, TextFormat.PLAIN);
-    DescriptorRenderer TEXT = new DescriptorRendererImpl(false, true, true, false, false, null, TextFormat.PLAIN);
-    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true, true, true, false, false, null, TextFormat.PLAIN);
-    DescriptorRenderer DEBUG_TEXT = new DescriptorRendererImpl(false, true, true, false, true, null, TextFormat.PLAIN);
-    DescriptorRenderer HTML = new DescriptorRendererImpl(false, true, true, false, false, null, TextFormat.HTML);
+    DescriptorRenderer COMPACT_WITH_MODIFIERS = new DescriptorRendererBuilder().setWithDefinedIn(false).build();
+
+    DescriptorRenderer COMPACT = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setModifiers(false).build();
+
+    DescriptorRenderer STARTS_FROM_NAME = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setModifiers(false)
+            .setStartFromName(true).build();
+
+    DescriptorRenderer TEXT = new DescriptorRendererBuilder().build();
+
+    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setShortNames(true).build();
+
+    DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder().setDebugMode(true).build();
+
+    DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();
 
     String renderType(JetType type);
 

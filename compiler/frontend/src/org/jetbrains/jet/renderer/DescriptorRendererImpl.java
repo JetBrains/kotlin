@@ -75,7 +75,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     private final TextFormat textFormat;
 
-    public DescriptorRendererImpl(
+    /* package */ DescriptorRendererImpl(
             boolean shortNames,
             boolean withDefinedIn,
             boolean modifiers,

@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.Tab
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.util.Iterator;
 import java.util.List;
@@ -152,7 +152,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         super();
     }
 
-    public static final DescriptorRenderer.ValueParametersHandler RENDERER_HANDLER = new DescriptorRenderer.ValueParametersHandler() {
+    private static final DescriptorRenderer.ValueParametersHandler VALUE_PARAMETERS_HANDLER = new DescriptorRenderer.ValueParametersHandler() {
         @Override
         public void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
             stringBuilder.append("<td align=\"right\"><div style=\"white-space:nowrap;font-weight:bold;\">");
@@ -187,8 +187,11 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         }
     };
 
-    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE =
-            new DescriptorRendererImpl(false, false, false, false, false, RENDERER_HANDLER, DescriptorRenderer.TextFormat.HTML);
+    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setModifiers(false)
+            .setValueParametersHandler(VALUE_PARAMETERS_HANDLER)
+            .setTextFormat(DescriptorRenderer.TextFormat.HTML).build();
 
     private static void td(StringBuilder builder, String text) {
         builder.append("<td><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");
