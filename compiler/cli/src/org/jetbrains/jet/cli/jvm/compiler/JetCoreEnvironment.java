@@ -34,6 +34,10 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
+import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -151,10 +155,12 @@ public class JetCoreEnvironment {
 
         VirtualFile vFile = applicationEnvironment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
-            throw new CompileEnvironmentException("File/directory not found: " + path);
+            reportError("Source file or directory not found: " + path);
+            return;
         }
         if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
-            throw new CompileEnvironmentException("Not a Kotlin file: " + path);
+            reportError("Source entry is not a Kotlin file: " + path);
+            return;
         }
 
         addSources(new File(path));
@@ -165,12 +171,18 @@ public class JetCoreEnvironment {
             throw new IllegalStateException("Cannot add class path when JetCoreEnvironment is already initialized");
         }
         if (path.isFile()) {
+            VirtualFile jarFile = applicationEnvironment.getJarFileSystem().findFileByPath(path + "!/");
+            if (jarFile == null) {
+                reportError("Classpath entry points to a file that is not a JAR archive: " + path);
+                return;
+            }
             projectEnvironment.addJarToClassPath(path);
         }
         else {
             final VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
             if (root == null) {
-                throw new IllegalArgumentException("trying to add non-existing file to classpath: " + path);
+                reportError("Classpath entry points to a non-existent location: " + path);
+                return;
             }
             projectEnvironment.addSourcesToClasspath(root);
         }
@@ -178,5 +190,15 @@ public class JetCoreEnvironment {
 
     public List<JetFile> getSourceFiles() {
         return sourceFiles;
+    }
+
+    private void reportError(@NotNull String message) {
+        MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        if (messageCollector != null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
+        }
+        else {
+            throw new CompileEnvironmentException(message);
+        }
     }
 }
