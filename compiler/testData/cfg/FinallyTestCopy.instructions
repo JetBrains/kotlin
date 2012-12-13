@@ -163,7 +163,7 @@ L10 [skipFinallyToErrorBlock]:
     r(cond())                                    NEXT:[jf(copy L12)]                                                PREV:[r(cond)]
     jf(copy L12)                                 NEXT:[jmp(L2 [loop entry point]), ret L1]                          PREV:[r(cond())]
     ret L1                                       NEXT:[<END>]                                                       PREV:[jf(copy L12)]
--   jmp(L13)                                     NEXT:[jmp(error)]                                                  PREV:[]
+-   jmp(copy L13)                                NEXT:[jmp(L2 [loop entry point])]                                  PREV:[]
     jmp(L2 [loop entry point])                   NEXT:[r(cond)]                                                     PREV:[jf(copy L12)]
 L15 [stop [d0, d1, d2]]:
 -   jmp(L2 [loop entry point])                   NEXT:[r(cond)]                                                     PREV:[]
@@ -257,4 +257,60 @@ error:
     <ERROR>                                  NEXT:[<SINK>]                                                      PREV:[jmp(error)]
 sink:
     <SINK>                                   NEXT:[]                                                            PREV:[<ERROR>, <END>]
+=====================
+== doTestCopy4 ==
+fun doTestCopy4() : Int {
+    try {
+        doSmth()
+    }
+    finally {
+        if(list != null) {
+        }
+    }
+}
+---------------------
+L0:
+    <START>                                 NEXT:[r(try { doSmth() } finally {..)]         PREV:[]
+    r(try {                             
+            doSmth()                    
+        }                               
+        finally {                       
+            if(list != null) {          
+            }                           
+        })                                  NEXT:[jmp?(L2 [onExceptionToFinallyBlock])]    PREV:[<START>]
+    jmp?(L2 [onExceptionToFinallyBlock])    NEXT:[r(list), r(doSmth)]                      PREV:[r(try { doSmth() } finally {..)]
+    r(doSmth)                               NEXT:[r(doSmth())]                             PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    r(doSmth())                             NEXT:[jmp(L3 [skipFinallyToErrorBlock])]       PREV:[r(doSmth)]
+d0:
+    jmp(L3 [skipFinallyToErrorBlock])       NEXT:[r(list)]                                 PREV:[r(doSmth())]
+L2 [onExceptionToFinallyBlock]:
+L4 [start finally]:
+    r(list)                                 NEXT:[r(null)]                                 PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    r(null)                                 NEXT:[r(!=)]                                   PREV:[r(list)]
+    r(!=)                                   NEXT:[r(list != null)]                         PREV:[r(null)]
+    r(list != null)                         NEXT:[jf(L5)]                                  PREV:[r(!=)]
+    jf(L5)                                  NEXT:[read (Unit), read (Unit)]                PREV:[r(list != null)]
+    read (Unit)                             NEXT:[jmp(L6)]                                 PREV:[jf(L5)]
+    jmp(L6)                                 NEXT:[jmp(error)]                              PREV:[read (Unit)]
+L5:
+    read (Unit)                             NEXT:[jmp(error)]                              PREV:[jf(L5)]
+L6:
+L7 [finish finally]:
+    jmp(error)                              NEXT:[<ERROR>]                                 PREV:[jmp(L6), read (Unit)]
+L3 [skipFinallyToErrorBlock]:
+    r(list)                                 NEXT:[r(null)]                                 PREV:[jmp(L3 [skipFinallyToErrorBlock])]
+    r(null)                                 NEXT:[r(!=)]                                   PREV:[r(list)]
+    r(!=)                                   NEXT:[r(list != null)]                         PREV:[r(null)]
+    r(list != null)                         NEXT:[jf(copy L5)]                             PREV:[r(!=)]
+    jf(copy L5)                             NEXT:[read (Unit), read (Unit)]                PREV:[r(list != null)]
+    read (Unit)                             NEXT:[jmp(copy L6)]                            PREV:[jf(copy L5)]
+    jmp(copy L6)                            NEXT:[<END>]                                   PREV:[read (Unit)]
+    read (Unit)                             NEXT:[<END>]                                   PREV:[jf(copy L5)]
+L1:
+L8 [stop [d0]]:
+    <END>                                   NEXT:[<SINK>]                                  PREV:[jmp(copy L6), read (Unit)]
+error:
+    <ERROR>                                 NEXT:[<SINK>]                                  PREV:[jmp(error)]
+sink:
+    <SINK>                                  NEXT:[]                                        PREV:[<ERROR>, <END>]
 =====================

@@ -483,16 +483,12 @@ public class PseudocodeImpl implements Pseudocode {
             }
         }
         for (int index = startIndex; index < finishIndex; index++) {
-            Instruction oldInstruction = mutableInstructionList.get(index);
-            Instruction newInstruction = copyInstruction(oldInstruction, originalToCopy);
-            if (originalLabelsForInstruction.containsKey(oldInstruction)) {
-                Collection<Label> oldLabels = originalLabelsForInstruction.get(oldInstruction);
-                for (Label oldLabel : oldLabels) {
-                    bindLabel(originalToCopy.get(oldLabel));
-                }
-            }
-            addInstruction(newInstruction);
+            Instruction originalInstruction = mutableInstructionList.get(index);
+            repeatLabelsBindingForInstruction(originalInstruction, originalToCopy, originalLabelsForInstruction);
+            addInstruction(copyInstruction(originalInstruction, originalToCopy));
         }
+        repeatLabelsBindingForInstruction(mutableInstructionList.get(finishIndex), originalToCopy, originalLabelsForInstruction);
+
         for (Map.Entry<Label, Label> entry : originalToCopy.entrySet()) {
             Label oldLabel = entry.getKey();
             Label newLabel = entry.getValue();
@@ -500,6 +496,16 @@ public class PseudocodeImpl implements Pseudocode {
             if (stopAllowDead != null) {
                 stopAllowDeadLabels.put(newLabel, copyLabels(stopAllowDead, originalToCopy));
             }
+        }
+    }
+
+    private void repeatLabelsBindingForInstruction(
+            @NotNull Instruction originalInstruction,
+            @NotNull Map<Label, Label> originalToCopy,
+            @NotNull Multimap<Instruction, Label> originalLabelsForInstruction
+    ) {
+        for (Label originalLabel : originalLabelsForInstruction.get(originalInstruction)) {
+            bindLabel(originalToCopy.get(originalLabel));
         }
     }
 

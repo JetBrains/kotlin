@@ -45,3 +45,13 @@ fun testCopy3() {
         while (cond());
     }
 }
+
+fun doTestCopy4() : Int {
+    try {
+        doSmth()
+    }
+    finally {
+        if(list != null) {
+        }
+    }
+}
