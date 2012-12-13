@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
@@ -54,6 +55,23 @@ public class PsiClassFinderImpl implements PsiClassFinder {
             @Override
             public boolean contains(VirtualFile file) {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
+            }
+
+            @Override
+            public int compare(VirtualFile file1, VirtualFile file2) {
+                // TODO: this is a hackish workaround for the following problem:
+                // since we are working with the allScope(), if the same class FqName
+                // to be on the class path twice, because it is included into different libraries
+                // (e.g. junit-4.0.jar is used as a separate library and as a part of idea_full)
+                // the two libraries are attached to different modules, the parent compare()
+                // can't tell which one comes first, so they can come in random order
+                // To fix this, we sort additionally by the full path, to make the ordering deterministic
+                // TODO: Delete this hack when proper scopes are used
+                int compare = super.compare(file1, file2);
+                if (compare == 0) {
+                    return Comparing.compare(file1.getPath(), file2.getPath());
+                }
+                return compare;
             }
         };
         javaFacade = new JavaPsiFacadeKotlinHacks(project);
