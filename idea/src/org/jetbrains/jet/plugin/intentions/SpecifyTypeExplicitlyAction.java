@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collections;
 
@@ -186,7 +186,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             exprType = enumClass.getDefaultType();
         }
 
-        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRendererImpl.TEXT.renderType(exprType));
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
         ASTNode colon = JetPsiFactory.createColonNode(project);
         ASTNode anchorNode = anchor == null ? null : anchor.getNode().getTreeNext();
         if (anchor == null) {
@@ -203,7 +203,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     public static void addTypeAnnotation(Project project, JetFunction function, @NotNull JetType exprType) {
-        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRendererImpl.TEXT.renderType(exprType));
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
         Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
         JetParameterList valueParameterList = function.getValueParameterList();
         assert valueParameterList != null;
@@ -213,7 +213,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     public static void addTypeAnnotation(Project project, JetParameter parameter, @NotNull JetType exprType) {
-        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRendererImpl.TEXT.renderType(exprType));
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
         Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
         parameter.addAfter(typeReference, parameter.getNameIdentifier());
         parameter.addRangeAfter(colon.getFirst(), colon.getSecond(), parameter.getNameIdentifier());

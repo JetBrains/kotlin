@@ -52,7 +52,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.plugin.refactoring.*;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -239,7 +239,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             public void run() {
                 String variableText = "val " + suggestedNames[0];
                 if (noTypeInference) {
-                    variableText += ": " + DescriptorRendererImpl.TEXT.renderType(expressionType);
+                    variableText += ": " + DescriptorRenderer.TEXT.renderType(expressionType);
                 }
                 variableText += " = ";
                 if (expression instanceof JetParenthesizedExpression) {

@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -67,7 +67,7 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     public JetType visitNullableType(JetNullableType nullableType, Void aVoid) {
         if (!originalType.isNullable() && typeUsage != TYPE_ARGUMENT) {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
-                 DescriptorRendererImpl.TEXT.renderType(originalType), nullableType.getText());
+                 DescriptorRenderer.TEXT.renderType(originalType), nullableType.getText());
         }
         return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), originalType, originalToAltTypeParameters, typeUsage));
     }
@@ -117,7 +117,7 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
         if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
             throw new AlternativeSignatureMismatchException("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
-                 DescriptorRendererImpl.TEXT.renderType(originalType), arguments.size(), type.getText(),
+                 DescriptorRenderer.TEXT.renderType(originalType), arguments.size(), type.getText(),
                  type.getTypeArgumentsAsTypes().size());
         }
 

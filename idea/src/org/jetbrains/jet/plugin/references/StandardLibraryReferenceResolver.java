@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetStandardLibraryInitializer;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.net.URL;
 import java.util.Collection;
@@ -163,7 +163,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         JetScope memberScope = getMemberScope(containingDeclaration);
         if (memberScope == null) return null;
 
-        String renderedOriginal = DescriptorRendererImpl.TEXT.render(originalDescriptor);
+        String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
         Collection<? extends DeclarationDescriptor> descriptors;
         if (originalDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptor) {
             descriptors = ((ClassDescriptor) containingDeclaration).getConstructors();
@@ -172,7 +172,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             descriptors = memberScope.getAllDescriptors();
         }
         for (DeclarationDescriptor member : descriptors) {
-            if (renderedOriginal.equals(DescriptorRendererImpl.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
+            if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
                                                                                        KotlinBuiltIns.UNIT_ALIAS.getName()))) {
                 return member;
             }

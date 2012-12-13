@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -240,7 +240,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     @Override
     public String toString() {
         try {
-            return DescriptorRendererImpl.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+            return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
         } catch (Throwable e) {
             return super.toString();
         }

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
     @Override
     public String toString() {
         try {
-            return DescriptorRendererImpl.DEBUG_TEXT.render(this) + "[" + getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "]";
+            return DescriptorRenderer.DEBUG_TEXT.render(this) + "[" + getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "]";
         } catch (Throwable e) {
             // DescriptionRenderer may throw if this is not yet completely initialized
             // It is very inconvenient while debugging

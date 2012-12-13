@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMapBuilder;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.Printer;
 
@@ -182,7 +182,7 @@ public class GenerateJavaToKotlinMethodMap {
                 // "special case": remove(Int) and remove(Any?) in MutableList
                 if (method.getName().equals("remove") && method.getContainingClass().getName().equals("List")) {
                     String psiType = method.getParameterList().getParameters()[0].getType().getPresentableText();
-                    String jetType = DescriptorRendererImpl.SHORT_NAMES_IN_TYPES.renderType(fun.getValueParameters().get(0).getType());
+                    String jetType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(fun.getValueParameters().get(0).getType());
                     String string = psiType + "|" + jetType;
 
                     return "int|Int".equals(string) || "Object|Any?".equals(string);

@@ -22,7 +22,6 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -37,7 +36,7 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
+public class DescriptorRendererImpl implements DescriptorRenderer {
     private static final Set<String> KEYWORDS = Sets.newHashSet();
     static {
         for (IElementType elementType : JetTokens.KEYWORDS.getTypes()) {
@@ -47,18 +46,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         }
     }
 
-    public static final DescriptorRendererImpl COMPACT_WITH_MODIFIERS = new DescriptorRendererImpl(false, false, true, false, false, null,
-                                                                                                   TextFormat.PLAIN);
-    public static final DescriptorRendererImpl COMPACT = new DescriptorRendererImpl(false, false, false, false, false, null,
-                                                                                    TextFormat.PLAIN);
-    public static final DescriptorRendererImpl STARTS_FROM_NAME = new DescriptorRendererImpl(false, false, false, true, false, null,
-                                                                                             TextFormat.PLAIN);
-    public static final DescriptorRendererImpl TEXT = new DescriptorRendererImpl(false, true, true, false, false, null, TextFormat.PLAIN);
-    public static final DescriptorRendererImpl SHORT_NAMES_IN_TYPES = new DescriptorRendererImpl(true, true, true, false, false, null,
-                                                                                                 TextFormat.PLAIN);
-    public static final DescriptorRendererImpl DEBUG_TEXT = new DescriptorRendererImpl(false, true, true, false, true, null,
-                                                                                       TextFormat.PLAIN);
-    public static final DescriptorRendererImpl HTML = new DescriptorRendererImpl(false, true, true, false, false, null, TextFormat.HTML);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
@@ -148,6 +135,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         return buf.toString();
     }
 
+    @Override
     public String renderType(JetType type) {
         if (type == null) {
             return escape("[NULL]");
@@ -270,6 +258,7 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         return stringBuilder.toString();
     }
 
+    @Override
     public String renderFunctionParameters(@NotNull FunctionDescriptor functionDescriptor) {
         StringBuilder stringBuilder = new StringBuilder();
         renderValueParameters(functionDescriptor, stringBuilder);
@@ -323,7 +312,6 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     }
 
     private class RenderDeclarationDescriptorVisitor implements DeclarationDescriptorVisitor<Void, StringBuilder> {
-
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("value-parameter")).append(" ");
@@ -647,23 +635,5 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
                 // rendered with "where"
             }
         }
-    }
-
-    public enum TextFormat {
-        PLAIN, HTML
-    }
-
-    public interface ValueParametersHandler {
-        // by default, renders "("
-        void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder);
-
-        // by default, renders ")"
-        void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder);
-
-        // by default, renders nothing
-        void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder);
-
-        // by default, renders ", " if its not last parameter
-        void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder);
     }
 }

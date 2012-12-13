@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetTypeConstraint;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -160,7 +160,7 @@ public class DefaultErrorMessages {
         MAP.put(DATA_CLASS_OVERRIDE_CONFLICT, "Function ''{0}'' generated for the data class conflicts with member of supertype ''{1}''", NAME, NAME);
 
         MAP.put(CANNOT_OVERRIDE_INVISIBLE_MEMBER, "''{0}'' cannot has no access to ''{1}'' in class {2}, so it cannot override it",
-                DescriptorRendererImpl.TEXT, DescriptorRendererImpl.TEXT, DescriptorRendererImpl.TEXT);
+                DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
         MAP.put(CANNOT_INFER_VISIBILITY, "Cannot infer visibility. Please specify it explicitly");
 
         MAP.put(ENUM_ENTRY_SHOULD_BE_INITIALIZED, "Missing delegation specifier ''{0}''", NAME);
@@ -273,7 +273,7 @@ public class DefaultErrorMessages {
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
         MAP.put(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS, "Class object upper bounds of {0} have empty intersection", NAME);
 
-        MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", DescriptorRendererImpl.TEXT);
+        MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", DescriptorRenderer.TEXT);
         MAP.put(ERROR_COMPILE_TIME_VALUE, "{0}", TO_STRING);
 
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
@@ -366,18 +366,18 @@ public class DefaultErrorMessages {
         MAP.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''", TO_STRING, NAME, NAME);
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "Return type of ''{0}'' is not a subtype of the return type of overridden member {1}",
-                NAME, DescriptorRendererImpl.TEXT);
+                NAME, DescriptorRenderer.TEXT);
 
-        MAP.put(VAR_OVERRIDDEN_BY_VAL, "Var-property {0} cannot be overridden by val-property {1}", DescriptorRendererImpl.TEXT,
-                DescriptorRendererImpl.TEXT);
+        MAP.put(VAR_OVERRIDDEN_BY_VAL, "Var-property {0} cannot be overridden by val-property {1}", DescriptorRenderer.TEXT,
+                DescriptorRenderer.TEXT);
 
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "{0} must be declared abstract or implement abstract member {1}", RENDER_CLASS_OR_OBJECT,
-                DescriptorRendererImpl.TEXT);
+                DescriptorRenderer.TEXT);
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits many implementations of it",
-                RENDER_CLASS_OR_OBJECT, DescriptorRendererImpl.TEXT);
+                RENDER_CLASS_OR_OBJECT, DescriptorRenderer.TEXT);
 
-        MAP.put(CONFLICTING_OVERLOADS, "{1} is already defined in ''{0}''", DescriptorRendererImpl.TEXT, TO_STRING);
+        MAP.put(CONFLICTING_OVERLOADS, "{1} is already defined in ''{0}''", DescriptorRenderer.TEXT, TO_STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function", ELEMENT_TEXT, new Renderer<JetType>() {
             @NotNull

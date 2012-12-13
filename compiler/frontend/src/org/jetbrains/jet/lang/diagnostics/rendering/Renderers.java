@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -96,7 +96,7 @@ public class Renderers {
         @NotNull
         @Override
         public String render(@NotNull JetType type) {
-            return DescriptorRendererImpl.TEXT.renderType(type);
+            return DescriptorRenderer.TEXT.renderType(type);
         }
     };
 
@@ -107,7 +107,7 @@ public class Renderers {
                 public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
                     StringBuilder stringBuilder = new StringBuilder("\n");
                     for (ResolvedCall<? extends CallableDescriptor> call : argument) {
-                        stringBuilder.append(DescriptorRendererImpl.TEXT.render(call.getResultingDescriptor())).append("\n");
+                        stringBuilder.append(DescriptorRenderer.TEXT.render(call.getResultingDescriptor())).append("\n");
                     }
                     return stringBuilder.toString();
                 }

@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -75,7 +75,7 @@ public class IdeRenderers {
                     StringBuilder stringBuilder = new StringBuilder("");
                     for (ResolvedCall<? extends CallableDescriptor> call : calls) {
                         stringBuilder.append("<li>");
-                        stringBuilder.append(DescriptorRendererImpl.HTML.render(call.getResultingDescriptor())).append("\n");
+                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor())).append("\n");
                         stringBuilder.append("</li>");
                     }
                     return stringBuilder.toString();
@@ -86,7 +86,7 @@ public class IdeRenderers {
         @NotNull
         @Override
         public String render(@NotNull JetType type) {
-            return DescriptorRendererImpl.HTML.renderType(type);
+            return DescriptorRenderer.HTML.renderType(type);
         }
     };
 
@@ -140,7 +140,7 @@ public class IdeRenderers {
                 CallableDescriptor funDescriptor = call.getResultingDescriptor();
                 Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
 
-                DescriptorRendererImpl htmlRenderer = DescriptorRendererImpl.HTML;
+                DescriptorRenderer htmlRenderer = DescriptorRenderer.HTML;
                 ReceiverParameterDescriptor receiverParameter = funDescriptor.getReceiverParameter();
                 if (receiverParameter != null) {
                     stringBuilder.append(htmlRenderer.renderType(receiverParameter.getType())).append(".");

@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -128,7 +128,7 @@ public class DecompiledDataFactory {
 
     private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
         int startOffset = builder.length();
-        String renderedDescriptor = DescriptorRendererImpl.COMPACT_WITH_MODIFIERS.render(descriptor);
+        String renderedDescriptor = DescriptorRenderer.COMPACT_WITH_MODIFIERS.render(descriptor);
         renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);
         builder.append(renderedDescriptor);
         int endOffset = builder.length();

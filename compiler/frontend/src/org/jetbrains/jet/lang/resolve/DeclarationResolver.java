@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -311,7 +311,7 @@ public class DeclarationResolver {
                     for (DeclarationDescriptor declarationDescriptor : descriptors) {
                         for (PsiElement declaration : getDeclarationsByDescriptor(declarationDescriptor)) {
                             assert declaration != null : "Null declaration for descriptor: " + declarationDescriptor + " " +
-                                                         (declarationDescriptor != null ? DescriptorRendererImpl.TEXT.render(declarationDescriptor) : "");
+                                                         (declarationDescriptor != null ? DescriptorRenderer.TEXT.render(declarationDescriptor) : "");
                             trace.report(REDECLARATION.on(declaration, declarationDescriptor.getName().getName()));
                         }
                     }

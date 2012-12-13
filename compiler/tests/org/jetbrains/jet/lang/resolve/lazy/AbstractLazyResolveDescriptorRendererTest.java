@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,7 +136,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
             if (renderedDescriptors.length() != 0) {
                 renderedDescriptors.append("\n");
             }
-            renderedDescriptors.append(DescriptorRendererImpl.TEXT.render(descriptor));
+            renderedDescriptors.append(DescriptorRenderer.TEXT.render(descriptor));
         }
 
         Document document = new DocumentImpl(psiFile.getText());

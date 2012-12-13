@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.awt.*;
 import java.util.*;
@@ -151,7 +151,7 @@ public class JetFunctionParameterInfoHandler implements
             builder.append("vararg ");
         }
         builder.append(descriptor.getName()).append(": ").
-                append(DescriptorRendererImpl.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(descriptor)));
+                append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(descriptor)));
         if (descriptor.hasDefaultValue()) {
             PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
             String defaultExpression = "?";

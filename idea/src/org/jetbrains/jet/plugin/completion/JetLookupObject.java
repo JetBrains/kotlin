@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
@@ -89,9 +89,9 @@ public final class JetLookupObject {
             else {
                 LOG.warn("Descriptors from different resolve sessions");
 
-                String descriptorText = DescriptorRendererImpl.TEXT.render(descriptor);
+                String descriptorText = DescriptorRenderer.TEXT.render(descriptor);
                 @SuppressWarnings("ConstantConditions")
-                String otherDescriptorText = DescriptorRendererImpl.TEXT.render(other.descriptor);
+                String otherDescriptorText = DescriptorRenderer.TEXT.render(other.descriptor);
                 if (descriptorText.equals(otherDescriptorText)) {
                     return true;
                 }

@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 /**
  * @author abreslav
@@ -85,7 +85,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
 
     private static String render(@NotNull DeclarationDescriptor declarationDescriptor, @NotNull BindingContext bindingContext,
             PsiElement element, PsiElement originalElement, boolean mergeKotlinAndJava) {
-        String renderedDecl = DescriptorRendererImpl.HTML.render(declarationDescriptor);
+        String renderedDecl = DescriptorRenderer.HTML.render(declarationDescriptor);
         if (isKotlinDeclaration(declarationDescriptor, bindingContext)) {
             return renderedDecl;
         } else {

@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 /**
 * @author Evgeny Gerashchenko
@@ -41,7 +41,7 @@ public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRend
             SimpleFunctionDescriptor fd =
                     bindingContext.get(BindingContext.FUNCTION, function);
             assert fd != null;
-            return DescriptorRendererImpl.TEXT.render(fd);
+            return DescriptorRenderer.TEXT.render(fd);
         }
         return super.getElementText(element);
     }

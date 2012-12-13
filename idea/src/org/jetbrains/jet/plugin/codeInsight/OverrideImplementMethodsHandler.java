@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -142,7 +142,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         addReceiverParameter(descriptor, bodyBuilder);
 
         bodyBuilder.append(descriptor.getName()).append(" : ").append(
-                DescriptorRendererImpl.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()));
+                DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()));
         String initializer = defaultInitializer(descriptor.getType(), KotlinBuiltIns.getInstance());
         if (initializer != null) {
             bodyBuilder.append(" = ").append(initializer);
@@ -154,7 +154,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     private static String renderType(JetType type) {
-        return DescriptorRendererImpl.TEXT.renderType(type);
+        return DescriptorRenderer.TEXT.renderType(type);
     }
 
     private static JetElement overrideFunction(Project project, SimpleFunctionDescriptor descriptor) {

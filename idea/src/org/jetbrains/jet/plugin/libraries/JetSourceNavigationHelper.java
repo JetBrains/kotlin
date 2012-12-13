@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
 import java.util.ArrayList;
@@ -177,7 +177,7 @@ public class JetSourceNavigationHelper {
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
                     ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
                     if (receiverParameter != null) {
-                        String thisReceiverType = DescriptorRendererImpl.TEXT.renderType(receiverParameter.getType());
+                        String thisReceiverType = DescriptorRenderer.TEXT.renderType(receiverParameter.getType());
                         if (expectedTypeString.equals(thisReceiverType)) {
                             if (matcher.areSame(decompiledDeclaration, candidate)) {
                                 return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
@@ -263,7 +263,7 @@ public class JetSourceNavigationHelper {
                         return false;
                     }
                     String declarationTypeText = typeReference.getText();
-                    String descriptorParameterText = DescriptorRendererImpl.TEXT.renderType(vararg
+                    String descriptorParameterText = DescriptorRenderer.TEXT.renderType(vararg
                                                                                         ? descriptorParameter.getVarargElementType()
                                                                                         : descriptorParameter.getType());
                     if (!declarationTypeText.equals(descriptorParameterText)) {

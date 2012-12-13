@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
@@ -66,7 +66,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     public void visitExpression(@NotNull JetExpression expression) {
         JetType autoCast = bindingContext.get(AUTOCAST, expression);
         if (autoCast != null) {
-            holder.createInfoAnnotation(expression, "Automatically cast to " + DescriptorRendererImpl.TEXT.renderType(autoCast)).setTextAttributes(
+            holder.createInfoAnnotation(expression, "Automatically cast to " + DescriptorRenderer.TEXT.renderType(autoCast)).setTextAttributes(
                 JetHighlightingColors.AUTO_CASTED_VALUE);
         }
         super.visitExpression(expression);

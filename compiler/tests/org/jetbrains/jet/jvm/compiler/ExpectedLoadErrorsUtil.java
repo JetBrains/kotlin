@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.io.File;
 import java.util.*;
@@ -47,7 +47,7 @@ public class ExpectedLoadErrorsUtil {
         for (DeclarationDescriptor descriptor : ContainerUtil.union(expectedErrors.keySet(), actualErrors.keySet())) {
             List<String> actual = actualErrors.get(descriptor);
             List<String> expected = expectedErrors.get(descriptor);
-            String rendered = DescriptorRendererImpl.TEXT.render(descriptor);
+            String rendered = DescriptorRenderer.TEXT.render(descriptor);
 
             assertNotNull("Unexpected load error(s):\n" + actual + "\ncontainer:" + rendered, expected);
             assertNotNull("Missing load error(s):\n" + expected + "\ncontainer:" + rendered, actual);

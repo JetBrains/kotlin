@@ -113,7 +113,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
             if (renderedDescriptors.length() != 0) {
                 renderedDescriptors.append("\n");
             }
-            renderedDescriptors.append(DescriptorRendererImpl.TEXT.render(descriptor));
+            renderedDescriptors.append(DescriptorRenderer.TEXT.render(descriptor));
         }
 
         Document document = new DocumentImpl(psiFile.getText());

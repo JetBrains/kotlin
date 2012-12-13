@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -172,7 +172,7 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
 
             JLayeredPane layeredPane = editor.getComponent().getRootPane().getLayeredPane();
             Point point = SwingUtilities.convertPoint(editor.getContentComponent(), mousePosition, layeredPane);
-            lastHint = new LightweightHint(HintUtil.createInformationLabel(DescriptorRendererImpl.HTML.render(descriptor)));
+            lastHint = new LightweightHint(HintUtil.createInformationLabel(DescriptorRenderer.HTML.render(descriptor)));
             ((HintManagerImpl) HintManager.getInstance()).showEditorHint(
                     lastHint, editor, point,
                     HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE
