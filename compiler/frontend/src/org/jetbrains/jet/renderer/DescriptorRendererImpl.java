@@ -139,6 +139,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return buf.toString();
     }
 
+
     /* TYPES RENDERING */
     @Override
     public String renderType(JetType type) {
@@ -238,7 +239,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return sb.toString();
     }
 
-    /* COMMON DESCRIPTORS RENDERING */
+
+    /* METHODS FOR ALL KINDS OF DESCRIPTORS */
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
         if (declarationDescriptor instanceof ModuleDescriptor) {
             stringBuilder.append(" is a module");
@@ -292,7 +294,126 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return stringBuilder.toString();
     }
 
-    /* FUNCTION DESCRIPTORS */
+
+    /* TYPE PARAMETERS */
+    private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
+        if (!descriptor.isReified()) {
+            String variance = descriptor.getVariance().toString();
+            if (!variance.isEmpty()) {
+                builder.append(renderKeyword(variance)).append(" ");
+            }
+        }
+        else {
+            builder.append(renderKeyword("reified")).append(" ");
+        }
+        renderName(descriptor, builder);
+        if (descriptor.getUpperBounds().size() == 1) {
+            JetType upperBound = descriptor.getUpperBounds().iterator().next();
+            if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
+                builder.append(" : ").append(renderType(upperBound));
+            }
+        }
+        else if (topLevel) {
+            boolean first = true;
+            for (JetType upperBound : descriptor.getUpperBounds()) {
+                if (upperBound.equals(KotlinBuiltIns.getInstance().getDefaultBound())) {
+                    continue;
+                }
+                if (first) {
+                    builder.append(" : ");
+                }
+                else {
+                    builder.append(" & ");
+                }
+                builder.append(renderType(upperBound));
+                first = false;
+            }
+        }
+        else {
+            // rendered with "where"
+        }
+    }
+
+    private boolean renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {
+        if (!typeParameters.isEmpty()) {
+            builder.append(lt());
+            for (Iterator<TypeParameterDescriptor> iterator = typeParameters.iterator(); iterator.hasNext(); ) {
+                TypeParameterDescriptor typeParameterDescriptor = iterator.next();
+                renderTypeParameter(typeParameterDescriptor, builder, false);
+                if (iterator.hasNext()) {
+                    builder.append(", ");
+                }
+            }
+            builder.append(">");
+            return true;
+        }
+        return false;
+    }
+
+    private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
+        builder.append(lt());
+        renderTypeParameter(descriptor, builder, true);
+        builder.append(">");
+    }
+
+
+    /* FUNCTIONS */
+    private void renderFunction(FunctionDescriptor descriptor, StringBuilder builder) {
+        if (!startFromName) {
+            renderVisibility(descriptor.getVisibility(), builder);
+            renderModality(descriptor.getModality(), builder);
+            builder.append(renderKeyword("fun")).append(" ");
+            if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
+                builder.append(" ");
+            }
+
+            ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
+            if (receiver != null) {
+                builder.append(escape(renderType(receiver.getType()))).append(".");
+            }
+        }
+
+        renderName(descriptor, builder);
+        renderValueParameters(descriptor, builder);
+        builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
+        renderWhereSuffix(descriptor, builder);
+    }
+
+    private void renderConstructor(ConstructorDescriptor constructorDescriptor, StringBuilder builder) {
+        renderVisibility(constructorDescriptor.getVisibility(), builder);
+
+        builder.append(renderKeyword("ctor")).append(" ");
+
+        ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
+        builder.append(classDescriptor.getName());
+
+        renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder);
+        renderValueParameters(constructorDescriptor, builder);
+    }
+
+
+    private void renderWhereSuffix(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
+        boolean first = true;
+        for (TypeParameterDescriptor typeParameter : callable.getTypeParameters()) {
+            if (typeParameter.getUpperBounds().size() > 1) {
+                for (JetType upperBound : typeParameter.getUpperBounds()) {
+                    if (first) {
+                        builder.append(" ");
+                        builder.append(renderKeyword("where"));
+                        builder.append(" ");
+                    }
+                    else {
+                        builder.append(", ");
+                    }
+                    builder.append(typeParameter.getName());
+                    builder.append(" : ");
+                    builder.append(escape(renderType(upperBound)));
+                    first = false;
+                }
+            }
+        }
+    }
+
     @Override
     public String renderFunctionParameters(@NotNull FunctionDescriptor functionDescriptor) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -321,6 +442,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append(")");
         }
     }
+
     private void renderValueParameterOfFunction(ValueParameterDescriptor descriptor, StringBuilder builder) {
         renderVariable(descriptor, builder, true);
         boolean withDefaultValue = debugMode ? descriptor.declaresDefaultValue() : descriptor.hasDefaultValue();
@@ -329,6 +451,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
+
+    /* VARIABLES */
     private void renderValueParameter(ValueParameterDescriptor descriptor, StringBuilder builder) {
         builder.append(renderKeyword("value-parameter")).append(" ");
         renderVariable(descriptor, builder);
@@ -396,83 +520,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(" : ").append(escape(typeString));
     }
 
-    private void renderFunction(FunctionDescriptor descriptor, StringBuilder builder) {
-        if (!startFromName) {
-            renderVisibility(descriptor.getVisibility(), builder);
-            renderModality(descriptor.getModality(), builder);
-            builder.append(renderKeyword("fun")).append(" ");
-            if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
-                builder.append(" ");
-            }
 
-            ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
-            if (receiver != null) {
-                builder.append(escape(renderType(receiver.getType()))).append(".");
-            }
-        }
-
-        renderName(descriptor, builder);
-        renderValueParameters(descriptor, builder);
-        builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
-        renderWhereSuffix(descriptor, builder);
-    }
-
-    private void renderWhereSuffix(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
-        boolean first = true;
-        for (TypeParameterDescriptor typeParameter : callable.getTypeParameters()) {
-            if (typeParameter.getUpperBounds().size() > 1) {
-                for (JetType upperBound : typeParameter.getUpperBounds()) {
-                    if (first) {
-                        builder.append(" ");
-                        builder.append(renderKeyword("where"));
-                        builder.append(" ");
-                    }
-                    else {
-                        builder.append(", ");
-                    }
-                    builder.append(typeParameter.getName());
-                    builder.append(" : ");
-                    builder.append(escape(renderType(upperBound)));
-                    first = false;
-                }
-            }
-        }
-    }
-
-    private void renderConstructor(ConstructorDescriptor constructorDescriptor, StringBuilder builder) {
-        renderVisibility(constructorDescriptor.getVisibility(), builder);
-
-        builder.append(renderKeyword("ctor")).append(" ");
-
-        ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
-        builder.append(classDescriptor.getName());
-
-        renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder);
-        renderValueParameters(constructorDescriptor, builder);
-    }
-
-    private boolean renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {
-        if (!typeParameters.isEmpty()) {
-            builder.append(lt());
-            for (Iterator<TypeParameterDescriptor> iterator = typeParameters.iterator(); iterator.hasNext(); ) {
-                TypeParameterDescriptor typeParameterDescriptor = iterator.next();
-                renderTypeParameter(typeParameterDescriptor, builder, false);
-                if (iterator.hasNext()) {
-                    builder.append(", ");
-                }
-            }
-            builder.append(">");
-            return true;
-        }
-        return false;
-    }
-
-    private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
-        builder.append(lt());
-        renderTypeParameter(descriptor, builder, true);
-        builder.append(">");
-    }
-
+    /* CLASSES */
     private void renderClass(ClassDescriptor descriptor, StringBuilder builder) {
         String keyword;
         switch (descriptor.getKind()) {
@@ -494,10 +543,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             default:
                 keyword = "class";
         }
-        renderClassDescriptor(descriptor, builder, keyword);
+        renderClass(descriptor, builder, keyword);
     }
 
-    private void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
+    private void renderClass(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
         boolean isNotClassObject = descriptor.getKind() != ClassKind.CLASS_OBJECT;
         if (!startFromName) {
             if (isNotClassObject) {
@@ -532,44 +581,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
-    private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
-        if (!descriptor.isReified()) {
-            String variance = descriptor.getVariance().toString();
-            if (!variance.isEmpty()) {
-                builder.append(renderKeyword(variance)).append(" ");
-            }
-        }
-        else {
-            builder.append(renderKeyword("reified")).append(" ");
-        }
-        renderName(descriptor, builder);
-        if (descriptor.getUpperBounds().size() == 1) {
-            JetType upperBound = descriptor.getUpperBounds().iterator().next();
-            if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
-                builder.append(" : ").append(renderType(upperBound));
-            }
-        }
-        else if (topLevel) {
-            boolean first = true;
-            for (JetType upperBound : descriptor.getUpperBounds()) {
-                if (upperBound.equals(KotlinBuiltIns.getInstance().getDefaultBound())) {
-                    continue;
-                }
-                if (first) {
-                    builder.append(" : ");
-                }
-                else {
-                    builder.append(" & ");
-                }
-                builder.append(renderType(upperBound));
-                first = false;
-            }
-        }
-        else {
-            // rendered with "where"
-        }
-    }
 
+    /* OTHER */
     private void renderModuleOrScript(DeclarationDescriptor descriptor, StringBuilder builder) {
         renderName(descriptor, builder);
     }
@@ -579,6 +592,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(namespaceDescriptor, builder);
     }
 
+
+    /* STUPID DISPATCH-ONLY VISITOR */
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, StringBuilder> {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
