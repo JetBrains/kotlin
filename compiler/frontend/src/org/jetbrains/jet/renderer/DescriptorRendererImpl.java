@@ -110,13 +110,20 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
     private final RenderDeclarationDescriptorVisitor rootVisitor = new RenderDeclarationDescriptorVisitor();
 
     private final boolean shortNames;
+    @Nullable
+    private final ValueParametersHandler handler;
 
     public DescriptorRendererImpl() {
-        this(false);
+        this(false, null);
     }
 
     public DescriptorRendererImpl(boolean shortNames) {
+        this(shortNames, null);
+    }
+
+    public DescriptorRendererImpl(boolean shortNames, @Nullable ValueParametersHandler handler) {
         this.shortNames = shortNames;
+        this.handler = handler;
     }
 
     protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
@@ -301,33 +308,36 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
         return s;
     }
 
-    protected void renderValueParameters(FunctionDescriptor descriptor, StringBuilder builder) {
-        if (descriptor.getValueParameters().isEmpty()) {
-            renderEmptyValueParameters(builder);
-        }
-        for (Iterator<ValueParameterDescriptor> iterator = descriptor.getValueParameters().iterator(); iterator.hasNext(); ) {
-            renderValueParameter(iterator.next(), !iterator.hasNext(), builder);
-        }
-    }
-
-    protected void renderEmptyValueParameters(StringBuilder builder) {
-        builder.append("()");
-    }
-
-    protected void renderValueParameter(ValueParameterDescriptor parameterDescriptor, boolean isLast, StringBuilder builder) {
-        if (parameterDescriptor.getIndex() == 0) {
-            builder.append("(");
-        }
-        parameterDescriptor.accept(subVisitor, builder);
-        if (!isLast) {
-            builder.append(", ");
+    private void renderValueParameters(FunctionDescriptor function, StringBuilder builder) {
+        if (handler != null) {
+            handler.appendBeforeValueParameters(function, builder);
+            for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+                handler.appendBeforeValueParameter(parameter, builder);
+                parameter.accept(subVisitor, builder);
+                handler.appendAfterValueParameter(parameter, builder);
+            }
+            handler.appendAfterValueParameters(function, builder);
         }
         else {
+            builder.append("(");
+            for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+                parameter.accept(subVisitor, builder);
+                if (parameter.getIndex() != function.getValueParameters().size() - 1) {
+                    builder.append(", ");
+                }
+            }
             builder.append(")");
         }
     }
 
     public static class HtmlDescriptorRendererImpl extends DescriptorRendererImpl {
+        public HtmlDescriptorRendererImpl() {
+            super();
+        }
+
+        public HtmlDescriptorRendererImpl(boolean shortNames, @Nullable ValueParametersHandler handler) {
+            super(shortNames, handler);
+        }
 
         @Override
         protected String escape(String s) {
@@ -670,5 +680,19 @@ public class DescriptorRendererImpl implements Renderer<DeclarationDescriptor> {
                 // rendered with "where"
             }
         }
+    }
+
+    public interface ValueParametersHandler {
+        // by default, renders "("
+        void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder);
+
+        // by default, renders ")"
+        void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder);
+
+        // by default, renders nothing
+        void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder);
+
+        // by default, renders ", " if its not last parameter
+        void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder);
     }
 }

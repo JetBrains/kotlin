@@ -19,11 +19,12 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
-import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
+import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.renderer.DescriptorRendererImpl;
@@ -94,7 +95,8 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
                 tdColspan(result, rowText.toString(), rowsNumber);
             }
             if (row instanceof DescriptorRow) {
-                result.append(DESCRIPTOR_IN_TABLE.render(((DescriptorRow) row).descriptor));
+                tdSpace(result);
+                tdRightBoldColspan(result, 2, DESCRIPTOR_IN_TABLE.render(((DescriptorRow) row).descriptor));
             }
             if (row instanceof FunctionArgumentsRow) {
                 FunctionArgumentsRow functionArgumentsRow = (FunctionArgumentsRow) row;
@@ -149,53 +151,53 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         super();
     }
 
-    public static final DescriptorRendererImpl DESCRIPTOR_IN_TABLE = new DescriptorRendererImpl.HtmlDescriptorRendererImpl() {
+    public static final DescriptorRendererImpl.ValueParametersHandler RENDERER_HANDLER = new DescriptorRendererImpl.ValueParametersHandler() {
         @Override
-        protected boolean shouldRenderDefinedIn() {
-            return false;
+        public void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
+            stringBuilder.append("<td align=\"right\"><div style=\"white-space:nowrap;font-weight:bold;\">");
         }
 
         @Override
-        protected boolean shouldRenderModifiers() {
-            return false;
-        }
-
-        @NotNull
-        @Override
-        public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
-            StringBuilder builder = new StringBuilder();
-            tdSpace(builder);
-            tdRightBoldColspan(builder, 2, super.render(declarationDescriptor));
-            return builder.toString();
-        }
-
-        @Override
-        protected void renderValueParameters(FunctionDescriptor descriptor, StringBuilder builder) {
-            //todo comment
-            builder.append("</div></td>");
-            super.renderValueParameters(descriptor, builder);
-            builder.append("<td><div style=\"white-space:nowrap;font-weight:bold;\">");
-        }
-
-        @Override
-        protected void renderEmptyValueParameters(StringBuilder builder) {
-            tdBold(builder, "( )");
-        }
-
-        @Override
-        protected void renderValueParameter(ValueParameterDescriptor parameterDescriptor, boolean isLast, StringBuilder builder) {
-            if (parameterDescriptor.getIndex() == 0) {
-                tdBold(builder, "(");
+        public void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
+            boolean last = ((FunctionDescriptor) parameter.getContainingDeclaration()).getValueParameters().size() - 1 == parameter.getIndex();
+            if (!last) {
+                stringBuilder.append(",");
             }
-            StringBuilder parameterBuilder = new StringBuilder();
-            parameterDescriptor.accept(super.subVisitor, parameterBuilder);
+            stringBuilder.append("</div></td>");
+        }
 
-            tdRightBold(builder, parameterBuilder.toString() + (isLast ? "" : ","));
-            if (isLast) {
-                tdBold(builder, ")");
+        @Override
+        public void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder) {
+            stringBuilder.append("</div></td>");
+            if (function.getValueParameters().isEmpty()) {
+                tdBold(stringBuilder, "( )");
             }
+            else {
+                tdBold(stringBuilder, "(");
+            }
+        }
+
+        @Override
+        public void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder) {
+            if (!function.getValueParameters().isEmpty()) {
+                tdBold(stringBuilder, ")");
+            }
+            stringBuilder.append("<td><div style=\"white-space:nowrap;font-weight:bold;\">");
         }
     };
+
+    public static final DescriptorRendererImpl DESCRIPTOR_IN_TABLE =
+            new DescriptorRendererImpl.HtmlDescriptorRendererImpl(false, RENDERER_HANDLER) {
+                @Override
+                protected boolean shouldRenderDefinedIn() {
+                    return false;
+                }
+
+                @Override
+                protected boolean shouldRenderModifiers() {
+                    return false;
+                }
+            };
 
     private static void td(StringBuilder builder, String text) {
         builder.append("<td><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");
