@@ -301,7 +301,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
-    private class RenderDeclarationDescriptorVisitor implements DeclarationDescriptorVisitor<Void, StringBuilder> {
+    private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, StringBuilder> {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("value-parameter")).append(" ");
@@ -311,11 +311,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
             return visitVariableDescriptor(descriptor, builder, false);
-        }
-
-        @Override
-        public Void visitLocalVariableDescriptor(LocalVariableDescriptor descriptor, StringBuilder builder) {
-            return visitVariableDescriptor(descriptor, builder);
         }
 
         private Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
@@ -430,16 +425,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         @Override
-        public Void visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, StringBuilder data) {
-            return visitFunctionDescriptor(descriptor, data);
-        }
-
-        @Override
-        public Void visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, StringBuilder data) {
-            return visitFunctionDescriptor(descriptor, data);
-        }
-
-        @Override
         public Void visitReceiverParameterDescriptor(ReceiverParameterDescriptor descriptor, StringBuilder data) {
             throw new UnsupportedOperationException("Don't render receiver parameters");
         }
@@ -549,7 +534,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return null;
         }
 
-        public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
+        private void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
             boolean isNotClassObject = descriptor.getKind() != ClassKind.CLASS_OBJECT;
             if (!startFromName) {
                 if (isNotClassObject) {
@@ -588,7 +573,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             stringBuilder.append(escape(DescriptorRendererImpl.this.renderName(descriptor.getName())));
         }
 
-        protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
+        private void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
             if (!descriptor.isReified()) {
                 String variance = descriptor.getVariance().toString();
                 if (!variance.isEmpty()) {
