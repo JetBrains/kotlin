@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
-import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.libraries.DecompiledDataFactory;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
@@ -76,8 +75,7 @@ public class JetTypesCompletionHelper {
                                 return;
                             }
 
-                            // Redefine standard java insert handler which is going to insert fqn
-                            jetCompletionResult.addElement(javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.INSTANCE));
+                            jetCompletionResult.addElement(DescriptorLookupConverter.setCustomInsertHandler(javaPsiReferenceElement));
                         }
                     }
                 });

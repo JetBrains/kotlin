@@ -26,6 +26,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import junit.framework.Assert;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
@@ -62,6 +63,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void testInsertJavaClassImport() {
+        doTest();
+    }
+
+    public void testInsertVoidJavaMethod() {
         doTest();
     }
 
@@ -193,6 +198,7 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         return getTestName(false) + ".kt.after";
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/").getPath() + File.separator;

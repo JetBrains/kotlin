@@ -17,10 +17,13 @@
 package org.jetbrains.jet.plugin.completion;
 
 import com.google.common.collect.Lists;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.completion.JavaMethodCallElement;
 import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.MutableLookupElement;
 import com.intellij.codeInsight.lookup.VariableLookupItem;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.*;
@@ -62,9 +65,15 @@ public final class DescriptorLookupConverter {
     public static LookupElement createLookupElement(@NotNull ResolveSession resolveSession,
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
         if (declaration != null) {
-            LookupElement javaLookupElement = createJavaLookupElementIfPossible(declaration);
+            MutableLookupElement javaLookupElement = createJavaLookupElementIfPossible(declaration);
             if (javaLookupElement != null) {
-                return javaLookupElement;
+                InsertHandler<LookupElement> customHandler = getInsertHandler(descriptor);
+                if (customHandler != null) {
+                    return javaLookupElement.setInsertHandler(getInsertHandler(descriptor));
+                }
+                else {
+                    return javaLookupElement;
+                }
             }
         }
 
@@ -88,20 +97,6 @@ public final class DescriptorLookupConverter {
                 tailText += " for " + DescriptorRenderer.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());
                 tailText += " in " + DescriptorUtils.getFQName(containingDeclaration);
             }
-
-            // TODO: A special case when it's impossible to resolve type parameters from arguments. Need '<' caret '>'
-            // TODO: Support omitting brackets for one argument functions
-            if (functionDescriptor.getValueParameters().isEmpty()) {
-                element = element.withInsertHandler(EMPTY_FUNCTION_HANDLER);
-            }
-            else {
-                if (functionDescriptor.getValueParameters().size() == 1
-                        && KotlinBuiltIns.getInstance().isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
-                    element = element.withInsertHandler(PARAMS_BRACES_FUNCTION_HANDLER);
-                } else {
-                    element = element.withInsertHandler(PARAMS_PARENTHESIS_FUNCTION_HANDLER);
-                }
-            }
         }
         else if (descriptor instanceof VariableDescriptor) {
             JetType outType = ((VariableDescriptor) descriptor).getType();
@@ -112,12 +107,12 @@ public final class DescriptorLookupConverter {
             assert declaredIn != null;
             tailText = " (" + DescriptorUtils.getFQName(declaredIn) + ")";
             tailTextGrayed = true;
-            element = element.withInsertHandler(JetClassInsertHandler.INSTANCE);
         }
         else {
             typeText = DescriptorRenderer.TEXT.render(descriptor);
         }
 
+        element = element.withInsertHandler(getInsertHandler(descriptor));
         element = element.withTailText(tailText, tailTextGrayed).withTypeText(typeText).withPresentableText(presentableText);
         element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
         element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor));
@@ -125,11 +120,35 @@ public final class DescriptorLookupConverter {
     }
 
     @Nullable
-    private static LookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration) {
+    private static InsertHandler<LookupElement> getInsertHandler(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+
+            if (functionDescriptor.getValueParameters().isEmpty()) {
+                return EMPTY_FUNCTION_HANDLER;
+            }
+
+            if (functionDescriptor.getValueParameters().size() == 1
+                    && KotlinBuiltIns.getInstance().isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
+                return PARAMS_BRACES_FUNCTION_HANDLER;
+            }
+
+            return PARAMS_PARENTHESIS_FUNCTION_HANDLER;
+        }
+
+        if (descriptor instanceof ClassDescriptor) {
+            return JetClassInsertHandler.INSTANCE;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static MutableLookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration) {
         if (declaration instanceof PsiClass) {
             PsiClass psiClass = (PsiClass) declaration;
             if (!DecompiledDataFactory.isCompiledFromKotlin(psiClass)) {
-                return new JavaPsiClassReferenceElement(psiClass).setInsertHandler(JetJavaClassInsertHandler.INSTANCE);
+                return new JavaPsiClassReferenceElement(psiClass);
             }
         }
 
@@ -137,16 +156,20 @@ public final class DescriptorLookupConverter {
             PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
             if (containingClass != null && !DecompiledDataFactory.isCompiledFromKotlin(containingClass)) {
                 if (declaration instanceof PsiMethod) {
-                    return new JavaMethodCallElement((PsiMethod) declaration);
+                    return new JavaMethodCallElementWithCustomHandler(declaration);
                 }
 
                 if (declaration instanceof PsiField) {
-                    return new VariableLookupItem((PsiField) declaration);
+                    return new JavaVariableLookupItemWithCustomHandler(declaration);
                 }
             }
         }
 
         return null;
+    }
+
+    public static LookupElement setCustomInsertHandler(JavaPsiClassReferenceElement javaPsiReferenceElement) {
+        return javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.INSTANCE);
     }
 
     @NotNull
@@ -176,5 +199,41 @@ public final class DescriptorLookupConverter {
         }
 
         return result.toArray(new LookupElement[result.size()]);
+    }
+
+    private static class JavaMethodCallElementWithCustomHandler extends JavaMethodCallElement {
+        public JavaMethodCallElementWithCustomHandler(PsiElement declaration) {
+            super((PsiMethod) declaration);
+        }
+
+        @Override
+        public void handleInsert(InsertionContext context) {
+            final InsertHandler<? extends LookupElement> handler = getInsertHandler();
+            if (handler != null) {
+                //noinspection unchecked
+                ((InsertHandler)handler).handleInsert(context, this);
+                return;
+            }
+
+            super.handleInsert(context);
+        }
+    }
+
+    private static class JavaVariableLookupItemWithCustomHandler extends VariableLookupItem {
+        public JavaVariableLookupItemWithCustomHandler(PsiElement declaration) {
+            super((PsiField) declaration);
+        }
+
+        @Override
+        public void handleInsert(InsertionContext context) {
+            final InsertHandler<? extends LookupElement> handler = getInsertHandler();
+            if (handler != null) {
+                //noinspection unchecked
+                ((InsertHandler)handler).handleInsert(context, this);
+                return;
+            }
+
+            super.handleInsert(context);
+        }
     }
 }
