@@ -385,7 +385,8 @@ public class JetTestUtils {
                     null,
                     javaFileObjectsFromFiles);
 
-            Assert.assertTrue(errorsToString(diagnosticCollector), task.call());
+            Boolean success = task.call(); // do NOT inline this variable, call() should complete before errorsToString()
+            Assert.assertTrue(errorsToString(diagnosticCollector), success);
         } finally {
             fileManager.close();
         }
