@@ -30,6 +30,7 @@ public abstract class InstructionImpl implements Instruction {
     private Pseudocode owner;
     private final Collection<Instruction> previousInstructions = new LinkedHashSet<Instruction>();
     private final Collection<Instruction> copies = Sets.newHashSet();
+    private Instruction original;
     protected boolean isDead = false;
 
     protected InstructionImpl() {
@@ -78,6 +79,12 @@ public abstract class InstructionImpl implements Instruction {
     @NotNull
     @Override
     public Collection<Instruction> getCopies() {
+        if (original != null) {
+            Collection<Instruction> originalCopies = Sets.newHashSet(original.getCopies());
+            originalCopies.remove(this);
+            originalCopies.add(original);
+            return originalCopies;
+        }
         return copies;
     }
 
@@ -85,13 +92,15 @@ public abstract class InstructionImpl implements Instruction {
         copies.add(instruction);
     }
 
+    private void setOriginal(@NotNull Instruction original) {
+        assert this.original == null :
+                "Instruction can't have two originals: this.original = " + this.original + "; new original = " + original;
+        this.original = original;
+    }
+
     protected Instruction updateCopyInfo(@NotNull Instruction instruction) {
-        for (Instruction copy : copies) {
-            ((InstructionImpl)copy).addCopy(instruction);
-            ((InstructionImpl)instruction).addCopy(copy);
-        }
         addCopy(instruction);
-        ((InstructionImpl)instruction).addCopy(this);
+        ((InstructionImpl)instruction).setOriginal(this);
         return instruction;
     }
 }
