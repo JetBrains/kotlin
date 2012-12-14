@@ -198,7 +198,7 @@ public class JetFlowInformationProvider {
 
         final Map<Instruction, AbstractDiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
 
-        PseudocodeTraverser.traverse(pseudocode, FORWARD, true, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
+        PseudocodeTraverser.traverse(pseudocode, FORWARD, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableInitState> in,
@@ -505,7 +505,7 @@ public class JetFlowInformationProvider {
                 }
             }
         };
-        PseudocodeTraverser.traverse(pseudocode, BACKWARD, true, variableStatusData, variableStatusAnalyzeStrategy);
+        PseudocodeTraverser.traverse(pseudocode, BACKWARD, variableStatusData, variableStatusAnalyzeStrategy);
     }
 
 ////////////////////////////////////////////////////////////////////////////////

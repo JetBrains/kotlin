@@ -169,14 +169,14 @@ public class PseudocodeTraverser {
     }
 
     public static <D> void traverse(
-            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, boolean lookInside,
+            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
 
         List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
-            if (lookInside && instruction instanceof LocalDeclarationInstruction) {
-                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, lookInside, edgesMap,
+            if (instruction instanceof LocalDeclarationInstruction) {
+                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, edgesMap,
                          instructionDataAnalyzeStrategy);
             }
             Edges<D> edges = edgesMap.get(instruction);
