@@ -69,9 +69,9 @@ public class JetControlFlowProcessor {
 
     private Pseudocode generate(@NotNull JetDeclaration subroutine) {
         builder.enterSubroutine(subroutine);
+        CFPVisitor cfpVisitor = new CFPVisitor(false);
         if (subroutine instanceof JetDeclarationWithBody) {
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;
-            CFPVisitor cfpVisitor = new CFPVisitor(false);
             List<JetParameter> valueParameters = declarationWithBody.getValueParameters();
             for (JetParameter valueParameter : valueParameters) {
                 valueParameter.accept(cfpVisitor);
@@ -81,8 +81,13 @@ public class JetControlFlowProcessor {
                 bodyExpression.accept(cfpVisitor);
             }
         }
-        else {
-            subroutine.accept(new CFPVisitor(false));
+        else if (subroutine instanceof JetProperty) {
+            JetExpression initializer = ((JetProperty) subroutine).getInitializer();
+            if (initializer != null) {
+                initializer.accept(cfpVisitor);
+            }
+        } else {
+            subroutine.accept(cfpVisitor);
         }
         return builder.exitSubroutine(subroutine);
     }

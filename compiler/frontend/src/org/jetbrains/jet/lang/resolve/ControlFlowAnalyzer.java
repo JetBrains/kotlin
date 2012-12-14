@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -74,7 +75,7 @@ public class ControlFlowAnalyzer {
 
     private void checkClassOrObject(JetClassOrObject klass) {
         // A pseudocode of class initialization corresponds to a class
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, trace);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(klass, trace);
         flowInformationProvider.markUninitializedVariables(topDownAnalysisParameters.isDeclaredLocally());
     }
 
@@ -85,6 +86,13 @@ public class ControlFlowAnalyzer {
                                                             : propertyDescriptor.getSetter();
             assert accessorDescriptor != null;
             checkFunction(accessor, accessorDescriptor.getReturnType());
+        }
+        if (property.getInitializer() != null && propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+            // check initializer's pseudocode for uninitialized values
+            // initializers of properties inside classes/objects are checked in 'checkClassOrObject',
+            // because class/object may have anonymous initialization blocks that affect analysis
+            JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(property, trace);
+            flowInformationProvider.markUninitializedVariables(false);
         }
     }
 
