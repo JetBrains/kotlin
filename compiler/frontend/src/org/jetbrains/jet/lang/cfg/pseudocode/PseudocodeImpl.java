@@ -77,8 +77,6 @@ public class PseudocodeImpl implements Pseudocode {
 
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
-    private List<Instruction> reversedInstructions = null;
-    private List<Instruction> deadInstructions;
 
     private Set<LocalDeclarationInstruction> localDeclarations = null;
     //todo getters
@@ -139,21 +137,18 @@ public class PseudocodeImpl implements Pseudocode {
     @NotNull
     @Override
     public List<Instruction> getReversedInstructions() {
-        if (reversedInstructions == null) {
-            LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
-            traverseFollowingInstructions(sinkInstruction, traversedInstructions, false);
-            if (traversedInstructions.size() < instructions.size()) {
-                List<Instruction> simplyReversedInstructions = Lists.newArrayList(instructions);
-                Collections.reverse(simplyReversedInstructions);
-                for (Instruction instruction : simplyReversedInstructions) {
-                    if (!traversedInstructions.contains(instruction)) {
-                        traverseFollowingInstructions(instruction, traversedInstructions, false);
-                    }
+        LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
+        traverseFollowingInstructions(sinkInstruction, traversedInstructions, false);
+        if (traversedInstructions.size() < instructions.size()) {
+            List<Instruction> simplyReversedInstructions = Lists.newArrayList(instructions);
+            Collections.reverse(simplyReversedInstructions);
+            for (Instruction instruction : simplyReversedInstructions) {
+                if (!traversedInstructions.contains(instruction)) {
+                    traverseFollowingInstructions(instruction, traversedInstructions, false);
                 }
             }
-            reversedInstructions = Lists.newArrayList(traversedInstructions);
         }
-        return reversedInstructions;
+        return Lists.newArrayList(traversedInstructions);
     }
 
     //for tests only
@@ -165,11 +160,7 @@ public class PseudocodeImpl implements Pseudocode {
     @Override
     @NotNull
     public List<Instruction> getDeadInstructions() {
-        if (deadInstructions != null) {
-            return deadInstructions;
-        }
-        deadInstructions = Lists.newArrayList();
-
+        List<Instruction> deadInstructions = Lists.newArrayList();
         for (Instruction instruction : mutableInstructionList) {
             if (isDead(instruction)) {
                 deadInstructions.add(instruction);
