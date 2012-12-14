@@ -51,6 +51,19 @@ public class AnalyzeExhaust {
         }
     };
 
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleConfiguration configuration) {
+        return new AnalyzeExhaust(bindingContext, configuration, null, null);
+    }
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
+            @Nullable BodiesResolveContext bodiesResolveContext,
+            @NotNull ModuleConfiguration configuration
+    ) {
+        return new AnalyzeExhaust(bindingContext, configuration, bodiesResolveContext, null);
+    }
+
+    public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
+        return new AnalyzeExhaust(bindingContext, ERROR_CONFIGURATION, null, error);
+    }
 
     private final BindingContext bindingContext;
     private final Throwable error;
@@ -67,21 +80,6 @@ public class AnalyzeExhaust {
         this.error = error;
         this.bodiesResolveContext = bodiesResolveContext;
         this.configuration = configuration;
-    }
-
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleConfiguration configuration) {
-        return new AnalyzeExhaust(bindingContext, configuration, null, null);
-    }
-
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
-            @Nullable BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleConfiguration configuration
-    ) {
-        return new AnalyzeExhaust(bindingContext, configuration, bodiesResolveContext, null);
-    }
-
-    public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
-        return new AnalyzeExhaust(bindingContext, ERROR_CONFIGURATION, null, error);
     }
 
     @Nullable
