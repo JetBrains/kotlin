@@ -1,22 +1,20 @@
 package org.jetbrains.kotlin.site
 
-import kotlin.test.*
-import junit.framework.TestCase
 import java.io.File
 
-class GenerateSiteTest : TestCase() {
+class SiteGeneratorMain {
     val srcDir = findTemplateDir()
     val siteOutputDir = File(srcDir, "../../../target/site")
 
     val version = System.getProperty("project.version") ?: "SNAPSHOT"
     val versionDir = if (version.contains("SNAPSHOT")) "snapshot" else version
 
-    fun testGenerateSite(): Unit {
+    fun generateSite(): Unit {
         val generator = SiteGenerator(srcDir, siteOutputDir)
         generator.run()
     }
 
-    fun testCopyApiDocs(): Unit {
+    fun copyApiDocs(): Unit {
         val apidocDir = File(siteOutputDir, "../../../apidoc/target/site/apidocs")
         assertTrue(apidocDir.exists(), "Directory does not exist ${apidocDir.getCanonicalPath()}")
 
@@ -31,7 +29,7 @@ class GenerateSiteTest : TestCase() {
                 "kotlin/package-frame.html", "kotlin/dom/package-frame.html", "kotlin/test/package-frame.html")
     }
 
-    fun testCopyJSApiDocs(): Unit {
+    fun copyJSApiDocs(): Unit {
         val apidocDir = File(siteOutputDir, "../../../jsdoc/target/site/apidocs")
         //assertTrue(apidocDir.exists(), "Directory does not exist ${apidocDir.getCanonicalPath()}")
         if (!apidocDir.exists()) {
@@ -51,7 +49,6 @@ class GenerateSiteTest : TestCase() {
         val sourceDir = File(srcDir, "../apidocs")
         copyRecursive(sourceDir, outDir)
     }
-
 
     // TODO this would make a handy extension function on File :)
     fun copyRecursive(sourceDir: File, outDir: File): Unit {
@@ -83,4 +80,17 @@ class GenerateSiteTest : TestCase() {
         }
         throw IllegalArgumentException("Could not find template directory: $path")
     }
+
+    fun assertTrue(condition: Boolean, message: String): Unit {
+        if (!condition) {
+            throw RuntimeException(message);
+        }
+    }
+}
+
+fun main(args : Array<String>) {
+    val main = SiteGeneratorMain()
+    main.generateSite()
+    main.copyApiDocs()
+    main.copyJSApiDocs()
 }

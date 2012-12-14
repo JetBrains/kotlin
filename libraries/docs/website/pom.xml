@@ -34,7 +34,6 @@
 
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
 
         <plugins>
             <plugin>
@@ -50,15 +49,25 @@
                             <goal>compile</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
 
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
                     <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
+                        <id>prepare-package</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>test-compile</goal>
+                            <goal>java</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <mainClass>org.jetbrains.kotlin.site.namespace</mainClass>
+                </configuration>
             </plugin>
         </plugins>
 
