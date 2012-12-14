@@ -68,6 +68,9 @@
                 </executions>
                 <configuration>
                     <mainClass>org.jetbrains.kotlin.site.namespace</mainClass>
+                    <arguments>
+                        <argument>${basedir}</argument>
+                    </arguments>
                 </configuration>
             </plugin>
 

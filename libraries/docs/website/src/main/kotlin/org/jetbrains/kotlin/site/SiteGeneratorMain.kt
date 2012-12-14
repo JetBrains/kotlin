@@ -2,9 +2,11 @@ package org.jetbrains.kotlin.site
 
 import java.io.File
 
-class SiteGeneratorMain {
-    val srcDir = findTemplateDir()
-    val siteOutputDir = File(srcDir, "../../../target/site")
+class SiteGeneratorMain(projectRoot: File) {
+    val srcDir = File(projectRoot, "src/main/templates")
+    val apiDocsDir = File(projectRoot, "../apidoc/target/site/apidocs")
+    val jsApiDocsDir = File(projectRoot, "../jsdoc/target/site/apidocs")
+    val siteOutputDir = File(projectRoot, "target/site")
 
     val version = System.getProperty("project.version") ?: "SNAPSHOT"
     val versionDir = if (version.contains("SNAPSHOT")) "snapshot" else version
@@ -15,14 +17,13 @@ class SiteGeneratorMain {
     }
 
     fun copyApiDocs(): Unit {
-        val apidocDir = File(siteOutputDir, "../../../apidoc/target/site/apidocs")
-        assertTrue(apidocDir.exists(), "Directory does not exist ${apidocDir.getCanonicalPath()}")
+        assertTrue(apiDocsDir.exists(), "Directory does not exist ${apiDocsDir.getCanonicalPath()}")
 
         val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
         println("Copying API docs to $outDir")
 
         copyDocResources(outDir)
-        copyRecursive(apidocDir, outDir)
+        copyRecursive(apiDocsDir, outDir)
 
         // now lets assert that the API docs generated everything
         assertFilesExist(outDir, "Expected generate API docs are missing - API doc generation failure",
@@ -30,9 +31,9 @@ class SiteGeneratorMain {
     }
 
     fun copyJSApiDocs(): Unit {
-        val apidocDir = File(siteOutputDir, "../../../jsdoc/target/site/apidocs")
-        //assertTrue(apidocDir.exists(), "Directory does not exist ${apidocDir.getCanonicalPath()}")
-        if (!apidocDir.exists()) {
+        //assertTrue(jsApiDocsDir.exists(), "Directory does not exist ${jsApiDocsDir.getCanonicalPath()}")
+
+        if (!jsApiDocsDir.exists()) {
             println("WARNING - no JS API docs available. Though they don't work right now so are optional :)")
             return
         }
@@ -42,7 +43,7 @@ class SiteGeneratorMain {
 
         copyDocResources(outDir)
 
-        copyRecursive(apidocDir, outDir)
+        copyRecursive(jsApiDocsDir, outDir)
     }
 
     fun copyDocResources(outDir: File): Unit {
@@ -70,17 +71,6 @@ class SiteGeneratorMain {
         }
     }
 
-    fun findTemplateDir(): File {
-        val path = "src/main/templates"
-        for (p in listOf(".", "website", "docs/website", "libraries/docs/website")) {
-            val sourceDir = File(p, path)
-            if (sourceDir.exists()) {
-                return sourceDir
-            }
-        }
-        throw IllegalArgumentException("Could not find template directory: $path")
-    }
-
     fun assertTrue(condition: Boolean, message: String): Unit {
         if (!condition) {
             throw RuntimeException(message);
@@ -89,9 +79,10 @@ class SiteGeneratorMain {
 }
 
 fun main(args : Array<String>) {
-    println("Current working directory: " + System.getProperty("user.dir"))
+    val basedir = File(args.get(0))
+    println("Basedir: $basedir")
 
-    val main = SiteGeneratorMain()
+    val main = SiteGeneratorMain(basedir)
     main.generateSite()
     main.copyApiDocs()
     main.copyJSApiDocs()
