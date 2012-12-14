@@ -72,8 +72,8 @@ class SiteGeneratorMain {
 
     fun findTemplateDir(): File {
         val path = "src/main/templates"
-        for (p in arrayList(".", "website", "library/website")) {
-            val sourceDir = File(".", path)
+        for (p in listOf(".", "website", "docs/website", "libraries/docs/website")) {
+            val sourceDir = File(p, path)
             if (sourceDir.exists()) {
                 return sourceDir
             }
@@ -89,6 +89,8 @@ class SiteGeneratorMain {
 }
 
 fun main(args : Array<String>) {
+    println("Current working directory: " + System.getProperty("user.dir"))
+
     val main = SiteGeneratorMain()
     main.generateSite()
     main.copyApiDocs()
