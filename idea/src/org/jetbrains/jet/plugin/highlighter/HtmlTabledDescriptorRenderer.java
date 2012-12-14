@@ -160,7 +160,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     private static final DescriptorRenderer.ValueParametersHandler VALUE_PARAMETERS_HANDLER = new DescriptorRenderer.ValueParametersHandler() {
         @Override
         public void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
-            stringBuilder.append("<td align=\"right\"><div style=\"white-space:nowrap;font-weight:bold;\">");
+            stringBuilder.append("<td align=\"right\" style=\"white-space:nowrap;font-weight:bold;\">");
         }
 
         @Override
@@ -169,12 +169,12 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (!last) {
                 stringBuilder.append(",");
             }
-            stringBuilder.append("</div></td>");
+            stringBuilder.append("</td>");
         }
 
         @Override
         public void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder) {
-            stringBuilder.append("</div></td>");
+            stringBuilder.append("</td>");
             if (function.getValueParameters().isEmpty()) {
                 tdBold(stringBuilder, "( )");
             }
@@ -188,7 +188,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (!function.getValueParameters().isEmpty()) {
                 tdBold(stringBuilder, ")");
             }
-            stringBuilder.append("<td><div style=\"white-space:nowrap;font-weight:bold;\">");
+            stringBuilder.append("<td style=\"white-space:nowrap;font-weight:bold;\">");
         }
     };
 
@@ -199,7 +199,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             .setTextFormat(DescriptorRenderer.TextFormat.HTML).build();
 
     private static void td(StringBuilder builder, String text) {
-        builder.append("<td><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");
+        builder.append("<td style=\"white-space:nowrap;\">").append(text).append("</td>");
     }
 
     private static void tdSpace(StringBuilder builder) {
@@ -207,19 +207,19 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     }
 
     private static void tdColspan(StringBuilder builder, String text, int colspan) {
-        builder.append("<td colspan=\"").append(colspan).append("\"><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");
+        builder.append("<td colspan=\"").append(colspan).append("\" style=\"white-space:nowrap;\">").append(text).append("</td>");
     }
 
     private static void tdBold(StringBuilder builder, String text) {
-        builder.append("<td><div style=\"white-space:nowrap;font-weight:bold;\">").append(text).append("</div></td>");
+        builder.append("<td style=\"white-space:nowrap;font-weight:bold;\">").append(text).append("</td>");
     }
 
     private static void tdRight(StringBuilder builder, String text) {
-        builder.append("<td align=\"right\"><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");
+        builder.append("<td align=\"right\" style=\"white-space:nowrap;\">").append(text).append("</td>");
     }
 
     private static void tdRightBoldColspan(StringBuilder builder, int colspan, String text) {
-        builder.append("<td align=\"right\" colspan=\"").append(colspan).append("\"><div style=\"white-space:nowrap;font-weight:bold;\">").append(text).append("</div></td>");
+        builder.append("<td align=\"right\" colspan=\"").append(colspan).append("\" style=\"white-space:nowrap;font-weight:bold;\">").append(text).append("</td>");
     }
 
     public static String tableForTypes(String message, String firstDescription, TextElementType firstType, String secondDescription, TextElementType secondType) {
