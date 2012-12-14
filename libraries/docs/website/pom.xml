@@ -13,6 +13,7 @@
     </parent>
 
     <artifactId>website</artifactId>
+    <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
@@ -68,6 +69,25 @@
                 <configuration>
                     <mainClass>org.jetbrains.kotlin.site.namespace</mainClass>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/zip.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
