@@ -60,7 +60,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         }
     }
 
-    private int countColumnNumber(TableRenderer table) {
+    private static int countColumnNumber(TableRenderer table) {
         int argumentsNumber = 0;
         for (TableRow row : table.rows) {
             if (row instanceof DescriptorRow) {
@@ -110,7 +110,12 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         result.append("</table>");
     }
 
-    private void renderFunctionArguments(@Nullable JetType receiverType, @NotNull List<JetType> argumentTypes, Predicate<ConstraintPosition> isErrorPosition, StringBuilder result) {
+    private static void renderFunctionArguments(
+            @Nullable JetType receiverType,
+            @NotNull List<JetType> argumentTypes,
+            Predicate<ConstraintPosition> isErrorPosition,
+            StringBuilder result
+    ) {
         boolean hasReceiver = receiverType != null;
         tdSpace(result);
         String receiver = "";
@@ -211,10 +216,6 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     private static void tdRight(StringBuilder builder, String text) {
         builder.append("<td align=\"right\"><div style=\"white-space:nowrap;\">").append(text).append("</div></td>");
-    }
-
-    private static void tdRightBold(StringBuilder builder, String text) {
-        builder.append("<td align=\"right\"><div style=\"white-space:nowrap;font-weight:bold;\">").append(text).append("</div></td>");
     }
 
     private static void tdRightBoldColspan(StringBuilder builder, int colspan, String text) {
