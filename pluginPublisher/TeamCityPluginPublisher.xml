@@ -5,6 +5,22 @@
   <property name="updatePlugins.xml" value="updatePlugins.xml"/>
   <property name="jdk16.home" value="${java.home}"/>
 
+  <macrodef name="verifyPlugin">
+    <attribute name="verify.plugin.path" />
+    <attribute name="verify.against.idea.dir" />
+    <attribute name="verifier.jar" />
+
+    <sequential>
+      <!-- Run plugin verifier -->
+      <java fork="true" failonerror="true" jar="@{verifier.jar}">
+        <arg value="-r"/>
+        <arg value="${jdk16.home}"/>
+        <arg value="@{verify.plugin.path}"/>
+        <arg value="@{verify.against.idea.dir}"/>
+      </java>
+    </sequential>
+  </macrodef>
+
   <target name="verifyAndPublish">
     <!-- IDEA Download URL -> ${download.url} -->
     <!-- Fetch from EAP page -->
@@ -37,15 +53,20 @@
 
     <echo message="IDEA version is ${idea.version} located ${idea.dir}"/>
 
+    <!-- Get plugin verifier -->
+    <delete file="plugin-verifier.jar" failonerror="false"/>
+    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar"
+         dest="plugin-verifier.jar"/>
+
     <!-- Get kotlin plugin -->
-    <pathconvert property="plugin.path">
+    <pathconvert property="kotlin.plugin.path">
       <fileset dir="${basedir}">
         <include name="kotlin-plugin-*"/>
       </fileset>
     </pathconvert>
-    <basename property="plugin.filename" file="${plugin.path}"/>
-    <loadresource property="plugin.version">
-      <string value="${plugin.filename}"/>
+    <basename property="kotlin.plugin.filename" file="${kotlin.plugin.path}"/>
+    <loadresource property="kotlin.plugin.version">
+      <string value="${kotlin.plugin.filename}"/>
       <filterchain>
         <tokenfilter>
           <filetokenizer/>
@@ -54,23 +75,34 @@
       </filterchain>
     </loadresource>
 
-    <echo message="Kotlin Plugin version is ${plugin.version} located ${plugin.path}"/>
+    <echo message="Kotlin Plugin version is ${kotlin.plugin.version} located ${kotlin.plugin.path}"/>
 
-    <!-- Get plugin verifier -->
-    <delete file="plugin-verifier.jar" failonerror="false"/>
-    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar"
-         dest="plugin-verifier.jar"/>
+    <!-- Get kannotator plugin -->
+    <pathconvert property="kannotator.plugin.path">
+      <fileset dir="${basedir}">
+        <include name="kannotator-plugin-*"/>
+      </fileset>
+    </pathconvert>
+    <basename property="kannotator.plugin.filename" file="${kannotator.plugin.path}"/>
+    <loadresource property="kannotator.plugin.version">
+      <string value="${kannotator.plugin.filename}"/>
+      <filterchain>
+        <tokenfilter>
+          <filetokenizer/>
+          <replaceregex pattern="^kannotator-plugin-(\d+\.\d+\.\d+).zip$" replace="\1" flags="s"/>
+        </tokenfilter>
+      </filterchain>
+    </loadresource>
 
-    <!-- Run plugin verifier -->
-    <java fork="true" failonerror="true" jar="plugin-verifier.jar">
-      <arg value="-r"/>
-      <arg value="${jdk16.home}"/>
-      <arg value="${plugin.path}"/>
-      <arg value="${idea.dir}"/>
-    </java>
+    <echo message="Kannotator Plugin version is ${kannotator.plugin.version} located ${kannotator.plugin.path}"/>
+
+    <!-- Verify both plugins -->
+    <verifyPlugin verifier.jar="plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kotlin.plugin.path}" />
+    <!-- <verifyPlugin verifier.jar="plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kannotator.plugin.path}" /> -->
 
     <!-- Everything is ok, publish plugin and xml descriptor -->
-    <echo message="##teamcity[buildStatus text='${plugin.filename} has been verified against ${idea.version}']"/>
-    <echo message="##teamcity[publishArtifacts '${plugin.path}']"/>
+    <echo message="##teamcity[buildStatus text='${kotlin.plugin.filename} has been verified against ${idea.version}']"/>
+    <echo message="##teamcity[publishArtifacts '${kotlin.plugin.path}']"/>
+    <echo message="##teamcity[publishArtifacts '${kannotator.plugin.path}']"/>
   </target>
 </project>
