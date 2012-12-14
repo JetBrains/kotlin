@@ -33,6 +33,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS;
+import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.LookInsideStrategy.SKIP_LOCAL_DECLARATIONS;
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 
@@ -141,7 +143,7 @@ public class PseudocodeVariablesData {
                 usedVariables, declaredVariables);
 
         Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializersMap = PseudocodeTraverser.collectData(
-                pseudocode, FORWARD, /* lookInside = */ false,
+                pseudocode, FORWARD, SKIP_LOCAL_DECLARATIONS,
                 initialMap, initialMapForStartInstruction, new PseudocodeTraverser.InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
             @Override
             public Edges<Map<VariableDescriptor, VariableInitState>> execute(
@@ -292,7 +294,7 @@ public class PseudocodeVariablesData {
                     return Edges.create(enterResult, exitResult);
                 }
             };
-            variableStatusMap = PseudocodeTraverser.collectData(pseudocode, BACKWARD, true,
+            variableStatusMap = PseudocodeTraverser.collectData(pseudocode, BACKWARD, ANALYSE_LOCAL_DECLARATIONS,
                                                                 Collections.<VariableDescriptor, VariableUseState>emptyMap(),
                                                                 sinkInstructionData, collectVariableUseStatusStrategy);
         }

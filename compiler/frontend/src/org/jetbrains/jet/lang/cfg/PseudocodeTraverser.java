@@ -37,7 +37,7 @@ public class PseudocodeTraverser {
     
     public static enum TraversalOrder {
         FORWARD,
-        BACKWARD;
+        BACKWARD
     }
     
     @NotNull
@@ -65,8 +65,17 @@ public class PseudocodeTraverser {
                                          : instruction instanceof SubroutineSinkInstruction;
     }
 
+    public static enum LookInsideStrategy {
+        ANALYSE_LOCAL_DECLARATIONS,
+        SKIP_LOCAL_DECLARATIONS
+    }
+
+    private static boolean shouldLookInside(Instruction instruction, LookInsideStrategy lookInside) {
+        return lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && instruction instanceof LocalDeclarationInstruction;
+    }
+
     public static <D> Map<Instruction, Edges<D>> collectData(
-            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, boolean lookInside,
+            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, LookInsideStrategy lookInside,
             @NotNull D initialDataValue, @NotNull D initialDataValueForEnterInstruction,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy) {
 
@@ -85,21 +94,22 @@ public class PseudocodeTraverser {
     }
 
     private static <D> void initializeEdgesMap(
-            @NotNull Pseudocode pseudocode, boolean lookInside,
+            @NotNull Pseudocode pseudocode, LookInsideStrategy lookInside,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull D initialDataValue) {
         List<Instruction> instructions = pseudocode.getInstructions();
         Edges<D> initialEdge = Edges.create(initialDataValue, initialDataValue);
         for (Instruction instruction : instructions) {
             edgesMap.put(instruction, initialEdge);
-            if (lookInside && instruction instanceof LocalDeclarationInstruction) {
+            if (shouldLookInside(instruction, lookInside)) {
                 initializeEdgesMap(((LocalDeclarationInstruction) instruction).getBody(), lookInside, edgesMap, initialDataValue);
             }
         }
     }
 
     private static <D> void collectDataFromSubgraph(
-            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, boolean lookInside,
+            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder,
+            LookInsideStrategy lookInside,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
             @NotNull Collection<Instruction> previousSubGraphInstructions,
@@ -123,7 +133,7 @@ public class PseudocodeTraverser {
                 allPreviousInstructions = previousInstructions;
             }
 
-            if (lookInside && instruction instanceof LocalDeclarationInstruction) {
+            if (shouldLookInside(instruction, lookInside)) {
                 Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
                 collectDataFromSubgraph(subroutinePseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
                                         previousInstructions,
