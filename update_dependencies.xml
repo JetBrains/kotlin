@@ -98,7 +98,7 @@
         -->
 
         <!-- Guava 12 sources-->
-        <get src="http://search.maven.org/remotecontent?filepath=com/google/guava/guava/12.0/guava-12.0-sources.jar"
+        <get src="http://repository.jetbrains.com/remote-repos/com/google/guava/guava/12.0/guava-12.0-sources.jar"
              dest="dependencies/download/guava-12.0-sources.jar" usetimestamp="true"/>
         <copy file="dependencies/download/guava-12.0-sources.jar" tofile="dependencies/guava-12.0-sources.jar" overwrite="true"/>
 
@@ -109,13 +109,13 @@
     <macrodef name="get-asm4-and-rename-packages">
         <sequential>
             <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources -->
-            <get src="http://search.maven.org/remotecontent?filepath=org/ow2/asm/asm-analysis/4.0/asm-analysis-4.0.jar"
+            <get src="http://repository.jetbrains.com/remote-repos/org/ow2/asm/asm-analysis/4.0/asm-analysis-4.0.jar"
                  dest="dependencies/download/asm-analysis-4.0.jar" usetimestamp="true"/>
 
-            <get src="http://search.maven.org/remotecontent?filepath=org/ow2/asm/asm-util/4.0/asm-util-4.0.jar"
+            <get src="http://repository.jetbrains.com/remote-repos/org/ow2/asm/asm-util/4.0/asm-util-4.0.jar"
                  dest="dependencies/download/asm-util-4.0.jar" usetimestamp="true"/>
 
-            <get src="http://search.maven.org/remotecontent?filepath=org/ow2/asm/asm-all/4.0/asm-all-4.0-sources.jar"
+            <get src="http://repository.jetbrains.com/remote-repos/org/ow2/asm/asm-all/4.0/asm-all-4.0-sources.jar"
                  dest="dependencies/download/asm-all-4.0-sources.jar" usetimestamp="true"/>
 
             <!-- Rename packages in the jars -->
