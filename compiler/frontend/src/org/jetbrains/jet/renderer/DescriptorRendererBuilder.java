@@ -17,7 +17,6 @@
 package org.jetbrains.jet.renderer;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DescriptorRendererBuilder {
     private boolean shortNames = false;
@@ -25,8 +24,8 @@ public class DescriptorRendererBuilder {
     private boolean modifiers = true;
     private boolean startFromName = false;
     private boolean debugMode = false;
-    @Nullable
-    private DescriptorRenderer.ValueParametersHandler valueParametersHandler = null;
+    @NotNull
+    private DescriptorRenderer.ValueParametersHandler valueParametersHandler = new DescriptorRenderer.DefaultValueParameterHandler();
     @NotNull
     private DescriptorRenderer.TextFormat textFormat = DescriptorRenderer.TextFormat.PLAIN;
 
@@ -58,7 +57,7 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
-    public DescriptorRendererBuilder setValueParametersHandler(@Nullable DescriptorRenderer.ValueParametersHandler valueParametersHandler) {
+    public DescriptorRendererBuilder setValueParametersHandler(@NotNull DescriptorRenderer.ValueParametersHandler valueParametersHandler) {
         this.valueParametersHandler = valueParametersHandler;
         return this;
     }

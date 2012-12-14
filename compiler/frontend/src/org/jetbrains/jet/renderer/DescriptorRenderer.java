@@ -55,17 +55,36 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
         PLAIN, HTML
     }
 
+    /** @see DefaultValueParameterHandler */
     interface ValueParametersHandler {
-        // by default, renders "("
         void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder);
-
-        // by default, renders ")"
         void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder);
 
-        // by default, renders nothing
         void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder);
-
-        // by default, renders ", " if its not last parameter
         void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder);
+    }
+
+    class DefaultValueParameterHandler implements ValueParametersHandler {
+        @Override
+        public void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder) {
+            stringBuilder.append("(");
+        }
+
+        @Override
+        public void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder) {
+            stringBuilder.append(")");
+        }
+
+        @Override
+        public void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
+        }
+
+        @Override
+        public void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
+            FunctionDescriptor function = (FunctionDescriptor) parameter.getContainingDeclaration();
+            if (parameter.getIndex() != function.getValueParameters().size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
     }
 }

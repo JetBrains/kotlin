@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -51,7 +50,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean modifiers;
     private final boolean startFromName;
     private final boolean debugMode;
-    @Nullable
+    @NotNull
     private final ValueParametersHandler handler;
     @NotNull
     private final TextFormat textFormat;
@@ -62,7 +61,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean modifiers,
             boolean startFromName,
             boolean debugMode,
-            @Nullable ValueParametersHandler handler,
+            @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat
     ) {
         this.shortNames = shortNames;
@@ -423,25 +422,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderValueParameters(FunctionDescriptor function, StringBuilder builder) {
-        if (handler != null) {
-            handler.appendBeforeValueParameters(function, builder);
-            for (ValueParameterDescriptor parameter : function.getValueParameters()) {
-                handler.appendBeforeValueParameter(parameter, builder);
-                renderValueParameter(parameter, builder, false);
-                handler.appendAfterValueParameter(parameter, builder);
-            }
-            handler.appendAfterValueParameters(function, builder);
+        handler.appendBeforeValueParameters(function, builder);
+        for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+            handler.appendBeforeValueParameter(parameter, builder);
+            renderValueParameter(parameter, builder, false);
+            handler.appendAfterValueParameter(parameter, builder);
         }
-        else {
-            builder.append("(");
-            for (ValueParameterDescriptor parameter : function.getValueParameters()) {
-                renderValueParameter(parameter, builder, false);
-                if (parameter.getIndex() != function.getValueParameters().size() - 1) {
-                    builder.append(", ");
-                }
-            }
-            builder.append(")");
-        }
+        handler.appendAfterValueParameters(function, builder);
     }
 
     /* VARIABLES */
@@ -634,6 +621,5 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderClass(descriptor, builder);
             return null;
         }
-
    }
 }
