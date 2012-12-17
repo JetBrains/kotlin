@@ -57,7 +57,7 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
         NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
-        compareNamespaces(namespaceFromSource, namespaceFromSource, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
+        compareNamespaces(namespaceFromSource, namespaceFromSource, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.checkPrimaryConstructors(true),
                           expectedFile);
     }
 

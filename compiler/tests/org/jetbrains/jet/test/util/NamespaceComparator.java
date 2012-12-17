@@ -88,28 +88,39 @@ public class NamespaceComparator {
         return serialized;
     }
 
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
-    public static final Configuration RECURSIVE = new Configuration(true, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
-    public static final Configuration NON_RECURSIVE = new Configuration(true, Predicates.<FqNameUnsafe>alwaysFalse(), Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration NON_RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysFalse(), Predicates.<NamespaceDescriptor>alwaysTrue());
 
     public static class Configuration {
 
+        private final boolean checkPrimaryConstructors;
         private final boolean includeObject;
         private final Predicate<FqNameUnsafe> recurseIntoPackage;
         private final Predicate<NamespaceDescriptor> includeIntoOutput;
 
-        public Configuration(boolean includeObject, Predicate<FqNameUnsafe> recurseIntoPackage, Predicate<NamespaceDescriptor> includeIntoOutput) {
+        public Configuration(
+                boolean checkPrimaryConstructors,
+                boolean includeObject,
+                Predicate<FqNameUnsafe> recurseIntoPackage,
+                Predicate<NamespaceDescriptor> includeIntoOutput
+        ) {
+            this.checkPrimaryConstructors = checkPrimaryConstructors;
             this.includeObject = includeObject;
             this.recurseIntoPackage = recurseIntoPackage;
             this.includeIntoOutput = includeIntoOutput;
         }
 
         public Configuration filterOutput(@NotNull Predicate<NamespaceDescriptor> includeIntoOutput) {
-            return new Configuration(includeObject, recurseIntoPackage, includeIntoOutput);
+            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage, includeIntoOutput);
         }
 
         public Configuration filterRecusion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
-            return new Configuration(includeObject, recurseIntoPackage, includeIntoOutput);
+            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage, includeIntoOutput);
+        }
+
+        public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
+            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage, includeIntoOutput);
         }
     }
 
@@ -218,11 +229,11 @@ public class NamespaceComparator {
         sb.append(at);
     }
 
-    private static String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
+    private String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
         List<String> strings = new ArrayList<String>();
         for (DeclarationDescriptor d : ds) {
             StringBuilder sb = new StringBuilder();
-            new Serializer(sb).serialize(d);
+            new Serializer(conf.checkPrimaryConstructors, sb).serialize(d);
             strings.add(sb.toString());
         }
 
@@ -262,8 +273,8 @@ public class NamespaceComparator {
         StringBuilder sba = new StringBuilder();
         StringBuilder sbb = new StringBuilder();
 
-        new FullContentSerialier(sba).serialize((ClassDescriptor) a);
-        new FullContentSerialier(sbb).serialize((ClassDescriptor) b);
+        new FullContentSerialier(conf.checkPrimaryConstructors, sba).serialize((ClassDescriptor) a);
+        new FullContentSerialier(conf.checkPrimaryConstructors, sbb).serialize((ClassDescriptor) b);
 
         String as = sba.toString();
         String bs = sbb.toString();
@@ -332,10 +343,12 @@ public class NamespaceComparator {
 
         private static final MethodCache SERIALIZER_METHOD_CACHE = new MethodCache(Serializer.class);
 
+        protected final boolean checkPrimaryConstructors;
         protected final StringBuilder sb;
 
 
-        public Serializer(StringBuilder sb) {
+        public Serializer(boolean checkPrimaryConstructors, StringBuilder sb) {
+            this.checkPrimaryConstructors = checkPrimaryConstructors;
             this.sb = sb;
         }
 
@@ -406,7 +419,7 @@ public class NamespaceComparator {
 
             List<AnnotationDescriptor> annotations = filterAnnotations(fun.getAnnotations());
             if (!annotations.isEmpty()) {
-                new Serializer(sb).serializeSeparated(annotations, " ");
+                new Serializer(checkPrimaryConstructors, sb).serializeSeparated(annotations, " ");
                 sb.append(" ");
             }
 
@@ -416,17 +429,22 @@ public class NamespaceComparator {
 
             if (fun.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
                 sb.append("/*");
-                new Serializer(sb).serialize(fun.getKind());
+                new Serializer(checkPrimaryConstructors, sb).serialize(fun.getKind());
                 sb.append("*/ ");
             }
 
             if (fun instanceof ConstructorDescriptor) {
-                sb.append("/*constructor*/ ");
+                if (((ConstructorDescriptor) fun).isPrimary() && checkPrimaryConstructors) {
+                    sb.append("/*primary constructor*/ ");
+                }
+                else {
+                    sb.append("/*constructor*/ ");
+                }
             }
             sb.append("fun ");
             if (!fun.getTypeParameters().isEmpty()) {
                 sb.append("<");
-                new Serializer(sb).serializeCommaSeparated(fun.getTypeParameters());
+                new Serializer(checkPrimaryConstructors, sb).serializeCommaSeparated(fun.getTypeParameters());
                 sb.append(">");
             }
 
@@ -483,7 +501,7 @@ public class NamespaceComparator {
 
             List<AnnotationDescriptor> annotations = filterAnnotations(prop.getAnnotations());
             if (!annotations.isEmpty()) {
-                new Serializer(sb).serializeSeparated(annotations, " ");
+                new Serializer(checkPrimaryConstructors, sb).serializeSeparated(annotations, " ");
                 sb.append(" ");
             }
 
@@ -493,7 +511,7 @@ public class NamespaceComparator {
 
             if (prop.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
                 sb.append("/*");
-                new Serializer(sb).serialize(prop.getKind());
+                new Serializer(checkPrimaryConstructors, sb).serialize(prop.getKind());
                 sb.append("*/ ");
             }
 
@@ -505,7 +523,7 @@ public class NamespaceComparator {
             }
             if (!prop.getTypeParameters().isEmpty()) {
                 sb.append(" <");
-                new Serializer(sb).serializeCommaSeparated(prop.getTypeParameters());
+                new Serializer(checkPrimaryConstructors, sb).serializeCommaSeparated(prop.getTypeParameters());
                 sb.append("> ");
             }
             sb.append("!");
@@ -642,7 +660,7 @@ public class NamespaceComparator {
         private static final MethodCache TYPE_SERIALIZER_METHOD_CACHE = new MethodCache(TypeSerializer.class);
 
         public TypeSerializer(StringBuilder sb) {
-            super(sb);
+            super(false, sb);
         }
 
         @Override
@@ -689,8 +707,8 @@ public class NamespaceComparator {
 
         private static final MethodCache NAMESPACE_PREFIX_SERIALIZER_METHOD_CACHE = new MethodCache(NamespacePrefixSerializer.class);
 
-        public NamespacePrefixSerializer(StringBuilder sb) {
-            super(sb);
+        private NamespacePrefixSerializer(boolean checkPrimaryConstructors, StringBuilder sb) {
+            super(checkPrimaryConstructors, sb);
         }
 
         @Override
@@ -717,8 +735,8 @@ public class NamespaceComparator {
     private static final MethodCache FULL_CONTENT_SERIALIZER_METHOD_CACHE = new MethodCache(FullContentSerialier.class);
     private class FullContentSerialier extends Serializer {
 
-        private FullContentSerialier(StringBuilder sb) {
-            super(sb);
+        private FullContentSerialier(boolean checkPrimaryConstructors, StringBuilder sb) {
+            super(checkPrimaryConstructors, sb);
         }
 
         @Override
@@ -729,7 +747,7 @@ public class NamespaceComparator {
         public void serialize(ClassDescriptor klass) {
 
             if (!klass.getAnnotations().isEmpty()) {
-                new Serializer(sb).serializeSeparated(klass.getAnnotations(), " ");
+                new Serializer(checkPrimaryConstructors, sb).serializeSeparated(klass.getAnnotations(), " ");
                 sb.append(" ");
             }
             serialize(klass.getVisibility());
@@ -741,7 +759,7 @@ public class NamespaceComparator {
             sb.append(" ");
 
             sb.append("!");
-            new Serializer(sb).serialize(klass);
+            new Serializer(checkPrimaryConstructors, sb).serialize(klass);
 
             if (!klass.getTypeConstructor().getParameters().isEmpty()) {
                 sb.append("<");
@@ -765,7 +783,7 @@ public class NamespaceComparator {
 
             for (ConstructorDescriptor constructor : klass.getConstructors()) {
                 StringBuilder constructorSb = new StringBuilder();
-                new Serializer(constructorSb).serialize(constructor);
+                new Serializer(checkPrimaryConstructors, constructorSb).serialize(constructor);
                 memberStrings.add(constructorSb.toString());
             }
 
@@ -777,13 +795,13 @@ public class NamespaceComparator {
                     }
                 }
                 StringBuilder memberSb = new StringBuilder();
-                new FullContentSerialier(memberSb).serialize(member);
+                new FullContentSerialier(checkPrimaryConstructors, memberSb).serialize(member);
                 memberStrings.add(memberSb.toString());
             }
 
             for (DeclarationDescriptor object : memberScope.getObjectDescriptors()) {
                 StringBuilder objectSb = new StringBuilder();
-                new FullContentSerialier(objectSb).serialize(object);
+                new FullContentSerialier(checkPrimaryConstructors, objectSb).serialize(object);
                 memberStrings.add(objectSb.toString());
             }
 
@@ -807,7 +825,7 @@ public class NamespaceComparator {
     private class ClassObjectSerializer extends FullContentSerialier {
 
         private ClassObjectSerializer(StringBuilder sb) {
-            super(sb);
+            super(false, sb);
         }
 
         @Override

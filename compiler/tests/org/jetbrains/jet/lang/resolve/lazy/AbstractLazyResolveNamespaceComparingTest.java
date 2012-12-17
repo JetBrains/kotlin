@@ -42,9 +42,15 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
-    private void doTest(
-            String testFileName
-    ) throws IOException {
+    protected void doTestCheckingConstructors(String testFileName) throws IOException {
+        doTest(testFileName, true);
+    }
+
+    protected void doTestNotCheckingConstructors(String testFileName) throws IOException {
+        doTest(testFileName, false);
+    }
+
+    private void doTest(String testFileName, boolean checkPrimaryConstructors) throws IOException {
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
                                  new JetTestUtils.TestFileFactory<JetFile>() {
@@ -69,10 +75,6 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
                                                   public boolean apply(NamespaceDescriptor namespaceDescriptor) {
                                                       return !namespaceDescriptor.getName().equals(Name.identifier("jet"));
                                                   }
-                                              }), serializeResultsTo);
-    }
-
-    protected void doTestSinglePackage(String testFileName) throws Exception {
-        doTest(testFileName);
+                                              }).checkPrimaryConstructors(checkPrimaryConstructors), serializeResultsTo);
     }
 }

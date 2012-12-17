@@ -50,6 +50,7 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
         Assert.assertEquals("test", namespaceFromSource.getName().getName());
         NamespaceDescriptor namespaceFromClass = LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromBinaries(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
-        compareNamespaces(namespaceFromSource, namespaceFromClass, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+        compareNamespaces(namespaceFromSource, namespaceFromClass,
+                          NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.checkPrimaryConstructors(true), txtFile);
     }
 }
