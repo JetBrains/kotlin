@@ -85,27 +85,15 @@ public final class AnalyzerFacadeWithCache {
                                 try {
                                     if (DumbService.isDumb(file.getProject())) {
                                         return new Result<AnalyzeExhaust>(
-                                                AnalyzeExhaust.success(BindingContext.EMPTY, ModuleConfiguration.EMPTY),
+                                                emptyExhaust(),
                                                 PsiModificationTracker.MODIFICATION_COUNT);
                                     }
 
                                     ApplicationUtils.warnTimeConsuming(LOG);
 
-                                    // Collect context for headers first
                                     AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, declarationProvider);
 
-                                    BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
-                                    ModuleConfiguration moduleConfiguration = analyzeExhaustHeaders.getModuleConfiguration();
-                                    assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
-
-                                    // Need to resolve bodies in given file and all in the same package
-                                    AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
-                                            file.getProject(),
-                                            Collections.<AnalyzerScriptParameter>emptyList(),
-                                            new JetFilesProvider.SameJetFilePredicate(file),
-                                            new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(), "trace to resolve bodies in file", file.getName()),
-                                            context,
-                                            moduleConfiguration);
+                                    AnalyzeExhaust exhaust = analyzeBodies(analyzeExhaustHeaders, file);
 
                                     return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
                                 }
@@ -114,24 +102,8 @@ public final class AnalyzerFacadeWithCache {
                                 }
                                 catch (Throwable e) {
                                     handleError(e);
-                                    return emptyExhaustWithDiagnosticOnFile(e);
+                                    return emptyExhaustWithDiagnosticOnFile(file, e);
                                 }
-                            }
-
-                            @NotNull
-                            private Result<AnalyzeExhaust> emptyExhaustWithDiagnosticOnFile(Throwable e) {
-                                BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                                bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
-                                AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
-
-                                CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_HEADERS);
-                                if (bindingContextCachedValue != null && bindingContextCachedValue.hasUpToDateValue()) {
-                                    // Force invalidating of headers cache - temp decision for monitoring rewrite slice bug
-                                    PsiModificationTracker tracker = PsiManager.getInstance(file.getProject()).getModificationTracker();
-                                    ((PsiModificationTrackerImpl) tracker).incOutOfCodeBlockModificationCounter();
-                                }
-
-                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
                             }
                         }, false);
 
@@ -140,6 +112,10 @@ public final class AnalyzerFacadeWithCache {
 
             return bindingContextCachedValue.getValue();
         }
+    }
+
+    private static AnalyzeExhaust emptyExhaust() {
+        return AnalyzeExhaust.success(BindingContext.EMPTY, ModuleConfiguration.EMPTY);
     }
 
     private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(
@@ -154,9 +130,9 @@ public final class AnalyzerFacadeWithCache {
                         public Result<AnalyzeExhaust> compute() {
                             AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(fileToCache)
                                     .analyzeFiles(fileToCache.getProject(),
-                                            declarationProvider.fun(fileToCache),
-                                            Collections.<AnalyzerScriptParameter>emptyList(),
-                                            Predicates.<PsiFile>alwaysFalse());
+                                                  declarationProvider.fun(fileToCache),
+                                                  Collections.<AnalyzerScriptParameter>emptyList(),
+                                                  Predicates.<PsiFile>alwaysFalse());
 
                             return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                         }
@@ -165,6 +141,38 @@ public final class AnalyzerFacadeWithCache {
         }
 
         return bindingContextCachedValue.getValue();
+    }
+
+    private static AnalyzeExhaust analyzeBodies(AnalyzeExhaust analyzeExhaustHeaders, JetFile file) {
+        BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
+        ModuleConfiguration moduleConfiguration = analyzeExhaustHeaders.getModuleConfiguration();
+        assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
+
+        // Need to resolve bodies in given file and all in the same package
+        return AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
+                                            file.getProject(),
+                                            Collections.<AnalyzerScriptParameter>emptyList(),
+                                            new JetFilesProvider.SameJetFilePredicate(file),
+                                            new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(),
+                                                                       "trace to resolve bodies in file", file.getName()),
+                                            context,
+                                            moduleConfiguration);
+    }
+
+    @NotNull
+    private static CachedValueProvider.Result<AnalyzeExhaust> emptyExhaustWithDiagnosticOnFile(JetFile file, Throwable e) {
+        BindingTraceContext bindingTraceContext = new BindingTraceContext();
+        bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
+        AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
+
+        CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_HEADERS);
+        if (bindingContextCachedValue != null && bindingContextCachedValue.hasUpToDateValue()) {
+            // Force invalidating of headers cache - temp decision for monitoring rewrite slice bug
+            PsiModificationTracker tracker = PsiManager.getInstance(file.getProject()).getModificationTracker();
+            ((PsiModificationTrackerImpl) tracker).incOutOfCodeBlockModificationCounter();
+        }
+
+        return new CachedValueProvider.Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
     }
 
     private static void handleError(@NotNull Throwable e) {
