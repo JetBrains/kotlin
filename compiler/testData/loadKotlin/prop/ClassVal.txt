@@ -1,6 +1,6 @@
 namespace test
 
 internal final class test.ClassVal : jet.Any {
-    public final /*constructor*/ fun <init>(): test.ClassVal
+    public final /*primary constructor*/ fun <init>(): test.ClassVal
     internal final val aa: jet.Int
 }

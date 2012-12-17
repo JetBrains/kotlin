@@ -1,5 +1,5 @@
 namespace test
 
 internal final class test.Juice</*0*/ in T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ in T : jet.Any?><init>(): test.Juice<T>
+    public final /*primary constructor*/ fun </*0*/ in T : jet.Any?><init>(): test.Juice<T>
 }

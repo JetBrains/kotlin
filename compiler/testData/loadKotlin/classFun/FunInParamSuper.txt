@@ -1,10 +1,10 @@
 namespace test
 
 internal open class test.Base</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): test.Base<T>
+    public final /*primary constructor*/ fun </*0*/ T : jet.Any?><init>(): test.Base<T>
     internal final fun foo(): T
 }
 internal final class test.Inh : test.Base<jet.String> {
-    public final /*constructor*/ fun <init>(): test.Inh
+    public final /*primary constructor*/ fun <init>(): test.Inh
     internal final override /*1*/ /*fake_override*/ fun foo(): jet.String
 }

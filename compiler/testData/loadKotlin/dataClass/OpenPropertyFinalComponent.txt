@@ -1,7 +1,7 @@
 namespace test
 
 jet.data() internal open class test.DataClass : jet.Any {
-    public final /*constructor*/ fun <init>(/*0*/ x: jet.String): test.DataClass
+    public final /*primary constructor*/ fun <init>(/*0*/ x: jet.String): test.DataClass
     internal final /*synthesized*/ fun component1(): jet.String
     internal final /*synthesized*/ fun copy(/*0*/ x: jet.String = ?): test.DataClass
     internal open val x: jet.String

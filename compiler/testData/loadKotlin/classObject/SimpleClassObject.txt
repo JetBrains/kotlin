@@ -1,7 +1,7 @@
 namespace test
 
 internal final class test.SimpleClassObject : jet.Any {
-    public final /*constructor*/ fun <init>(): test.SimpleClassObject
+    public final /*primary constructor*/ fun <init>(): test.SimpleClassObject
     internal final class object test.SimpleClassObject.<class-object-for-SimpleClassObject> : jet.Any {
         private final /*constructor*/ fun <init>(): test.SimpleClassObject.<class-object-for-SimpleClassObject>
     }

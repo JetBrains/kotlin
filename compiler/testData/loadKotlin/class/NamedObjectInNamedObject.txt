@@ -1,10 +1,10 @@
 namespace test
 
 public final object test.Outer : jet.Any {
-    private final /*constructor*/ fun <init>(): test.Outer
+    private final /*primary constructor*/ fun <init>(): test.Outer
     public final val Obj: test.Outer.Obj
     public final object test.Outer.Obj : jet.Any {
-        private final /*constructor*/ fun <init>(): test.Outer.Obj
+        private final /*primary constructor*/ fun <init>(): test.Outer.Obj
         public final fun f(): jet.String
         public final val v: jet.String
     }

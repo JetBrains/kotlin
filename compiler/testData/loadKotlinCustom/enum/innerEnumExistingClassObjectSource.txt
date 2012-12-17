@@ -1,7 +1,7 @@
 namespace test
 
 internal final class test.A : jet.Any {
-    public final /*constructor*/ fun <init>(): test.A
+    public final /*primary constructor*/ fun <init>(): test.A
     internal final class object test.A.<class-object-for-A> : jet.Any {
         private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>
         internal final enum class test.A.<class-object-for-A>.E : jet.Enum<test.A.<class-object-for-A>.E> {

@@ -1,10 +1,10 @@
 namespace test
 
 internal open class test.A : jet.Any {
-    public final /*constructor*/ fun <init>(): test.A
+    public final /*primary constructor*/ fun <init>(): test.A
     internal open fun foo(/*0*/ a: [ERROR : E]): jet.Tuple0
 }
 internal final class test.B : test.A {
-    public final /*constructor*/ fun <init>(): test.B
+    public final /*primary constructor*/ fun <init>(): test.B
     internal open override /*1*/ fun foo(/*0*/ a: [ERROR : E]): jet.Tuple0
 }

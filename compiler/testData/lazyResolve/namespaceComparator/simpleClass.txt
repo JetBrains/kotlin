@@ -4,16 +4,16 @@ namespace test
 namespace p
 
 internal final class test.p.C : jet.Any {
-    public final /*constructor*/ fun <init>(): test.p.C
+    public final /*primary constructor*/ fun <init>(): test.p.C
     internal final fun f(): jet.Tuple0
 }
 internal open class test.p.G</*0*/ T : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(): test.p.G<T>
+    public final /*primary constructor*/ fun </*0*/ T : jet.Any?><init>(): test.p.G<T>
     internal final fun a(): jet.Tuple0
     internal open fun f(): T
 }
 internal final class test.p.G2</*0*/ E : jet.Any?> : test.p.G<E> {
-    public final /*constructor*/ fun </*0*/ E : jet.Any?><init>(): test.p.G2<E>
+    public final /*primary constructor*/ fun </*0*/ E : jet.Any?><init>(): test.p.G2<E>
     internal final override /*1*/ /*fake_override*/ fun a(): jet.Tuple0
     internal open override /*1*/ fun f(): E
     internal final fun g(): E
@@ -22,5 +22,5 @@ internal final fun foo(): jet.Tuple0
 internal final fun foo(/*0*/ a: test.p.C): jet.Tuple0
 // </namespace name="p">
 internal final class test.A : jet.Any {
-    public final /*constructor*/ fun <init>(): test.A
+    public final /*primary constructor*/ fun <init>(): test.A
 }

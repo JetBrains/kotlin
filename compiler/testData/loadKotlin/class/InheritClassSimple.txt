@@ -1,8 +1,8 @@
 namespace test
 
 internal abstract class test.Aaa : jet.Any {
-    public final /*constructor*/ fun <init>(): test.Aaa
+    public final /*primary constructor*/ fun <init>(): test.Aaa
 }
 internal final class test.Bbb : test.Aaa {
-    public final /*constructor*/ fun <init>(): test.Bbb
+    public final /*primary constructor*/ fun <init>(): test.Bbb
 }

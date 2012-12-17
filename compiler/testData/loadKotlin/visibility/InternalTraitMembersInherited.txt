@@ -6,7 +6,7 @@ internal abstract trait test.A : jet.Any {
     internal open val v: jet.Int
 }
 internal final class test.B : test.A {
-    public final /*constructor*/ fun <init>(): test.B
+    public final /*primary constructor*/ fun <init>(): test.B
     internal open override /*1*/ /*fake_override*/ fun f(): jet.Int
     public open override /*1*/ /*fake_override*/ var p: jet.Int internal set
     internal open override /*1*/ /*fake_override*/ val v: jet.Int

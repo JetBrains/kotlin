@@ -1,7 +1,7 @@
 namespace test
 
 internal final class test.Some : jet.Any {
-    public final /*constructor*/ fun <init>(): test.Some
+    public final /*primary constructor*/ fun <init>(): test.Some
     [ERROR : Unresolved annotation type]() internal final class object test.Some.<class-object-for-Some> : jet.Any {
         private final /*constructor*/ fun <init>(): test.Some.<class-object-for-Some>
         internal final annotation class test.Some.<class-object-for-Some>.TestAnnotation : jet.Annotation {

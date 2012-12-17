@@ -1,7 +1,7 @@
 namespace test
 
 internal final class test.ClassObjectDeclaresProperty : jet.Any {
-    public final /*constructor*/ fun <init>(): test.ClassObjectDeclaresProperty
+    public final /*primary constructor*/ fun <init>(): test.ClassObjectDeclaresProperty
     internal final class object test.ClassObjectDeclaresProperty.<class-object-for-ClassObjectDeclaresProperty> : jet.Any {
         private final /*constructor*/ fun <init>(): test.ClassObjectDeclaresProperty.<class-object-for-ClassObjectDeclaresProperty>
         internal final var s: jet.String

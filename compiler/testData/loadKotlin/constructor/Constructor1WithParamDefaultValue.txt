@@ -1,5 +1,5 @@
 namespace test
 
 internal final class test.ClassWithConstructorWithValueParamWithDefaultValue : jet.Any {
-    public final /*constructor*/ fun <init>(/*0*/ p: jet.Int = ?): test.ClassWithConstructorWithValueParamWithDefaultValue
+    public final /*primary constructor*/ fun <init>(/*0*/ p: jet.Int = ?): test.ClassWithConstructorWithValueParamWithDefaultValue
 }

@@ -1,12 +1,12 @@
 namespace test
 
 internal final class test.TestSome</*0*/ P : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.TestSome<P>
+    public final /*primary constructor*/ fun </*0*/ P : jet.Any?><init>(): test.TestSome<P>
     internal final class object test.TestSome.<class-object-for-TestSome> : test.ToResolve<[ERROR : P]> {
         private final /*constructor*/ fun <init>(): test.TestSome.<class-object-for-TestSome>
     }
 }
 internal open class test.ToResolve</*0*/ SomeClass : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ SomeClass : jet.Any?><init>(/*0*/ f: jet.Function1<jet.Int, jet.Int>): test.ToResolve<SomeClass>
+    public final /*primary constructor*/ fun </*0*/ SomeClass : jet.Any?><init>(/*0*/ f: jet.Function1<jet.Int, jet.Int>): test.ToResolve<SomeClass>
 }
 internal final fun testFun(/*0*/ a: jet.Int): jet.Int

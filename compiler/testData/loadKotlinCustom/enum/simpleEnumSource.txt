@@ -1,7 +1,7 @@
 namespace test
 
 internal final enum class test.MyEnum : jet.Enum<test.MyEnum> {
-    private final /*constructor*/ fun <init>(): test.MyEnum
+    private final /*primary constructor*/ fun <init>(): test.MyEnum
     public final override /*1*/ /*fake_override*/ fun name(): jet.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     internal final class object test.MyEnum.<class-object-for-MyEnum> {

@@ -1,7 +1,7 @@
 namespace test
 
 internal final class test.ClassParamReferencesSelf</*0*/ A : test.TraitWithP<A>> : jet.Any {
-    public final /*constructor*/ fun </*0*/ A : test.TraitWithP<A>><init>(): test.ClassParamReferencesSelf<A>
+    public final /*primary constructor*/ fun </*0*/ A : test.TraitWithP<A>><init>(): test.ClassParamReferencesSelf<A>
 }
 internal abstract trait test.TraitWithP</*0*/ P : jet.Any?> : jet.Any {
 }

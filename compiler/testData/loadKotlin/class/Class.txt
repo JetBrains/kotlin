@@ -1,5 +1,5 @@
 namespace test
 
 internal final class test.Ramification : jet.Any {
-    public final /*constructor*/ fun <init>(): test.Ramification
+    public final /*primary constructor*/ fun <init>(): test.Ramification
 }

@@ -1,7 +1,7 @@
 namespace test
 
 public final class test.Outer : jet.Any {
-    public final /*constructor*/ fun <init>(): test.Outer
+    public final /*primary constructor*/ fun <init>(): test.Outer
     public final class object test.Outer.<class-object-for-Outer> : jet.Any {
         private final /*constructor*/ fun <init>(): test.Outer.<class-object-for-Outer>
         public final val Obj: test.Outer.<class-object-for-Outer>.Obj

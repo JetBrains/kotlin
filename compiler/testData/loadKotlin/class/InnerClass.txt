@@ -1,8 +1,8 @@
 namespace test
 
 internal final class test.Outer : jet.Any {
-    public final /*constructor*/ fun <init>(): test.Outer
+    public final /*primary constructor*/ fun <init>(): test.Outer
     internal final class test.Outer.Inner : jet.Any {
-        public final /*constructor*/ fun <init>(): test.Outer.Inner
+        public final /*primary constructor*/ fun <init>(): test.Outer.Inner
     }
 }

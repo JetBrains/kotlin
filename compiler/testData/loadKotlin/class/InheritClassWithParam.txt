@@ -1,8 +1,8 @@
 namespace test
 
 internal abstract class test.Aaa</*0*/ P : jet.Any?> : jet.Any {
-    public final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.Aaa<P>
+    public final /*primary constructor*/ fun </*0*/ P : jet.Any?><init>(): test.Aaa<P>
 }
 internal final class test.Bbb : test.Aaa<java.util.Random> {
-    public final /*constructor*/ fun <init>(): test.Bbb
+    public final /*primary constructor*/ fun <init>(): test.Bbb
 }

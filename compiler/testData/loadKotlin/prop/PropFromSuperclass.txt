@@ -1,10 +1,10 @@
 namespace test
 
 internal open class test.BaseClass : jet.Any {
-    public final /*constructor*/ fun <init>(): test.BaseClass
+    public final /*primary constructor*/ fun <init>(): test.BaseClass
     internal final val exactly: jet.Int
 }
 internal final class test.Subclass : test.BaseClass {
-    public final /*constructor*/ fun <init>(): test.Subclass
+    public final /*primary constructor*/ fun <init>(): test.Subclass
     internal final override /*1*/ /*fake_override*/ val exactly: jet.Int
 }
