@@ -208,15 +208,15 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         // The context must reflect _all files in the module_. not only the current file
         // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
         // must be loaded from .class files
-        AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
-            JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file));
+        AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
+                JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file));
 
-        if (context.isError()) {
-            throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());
+        if (exhaust.isError()) {
+            throw new IllegalStateException("failed to analyze: " + exhaust.getError(), exhaust.getError());
         }
 
         try {
-            GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file));
+            GenerationState state = new GenerationState(project, builderFactory, exhaust, Collections.singletonList(file));
             GenerationStrategy strategy = new LightClassGenerationStrategy(this, stubStack, answer);
 
             strategy.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
