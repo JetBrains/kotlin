@@ -92,7 +92,7 @@ public final class JavaConstructorResolver {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                             containingClass,
                             Collections.<AnnotationDescriptor>emptyList(),
-                            false);
+                            true);
                     constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), containingClass
                             .getVisibility(), isStatic);
                     constructors.add(constructorDescriptor);
@@ -103,7 +103,7 @@ public final class JavaConstructorResolver {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                             containingClass,
                             Collections.<AnnotationDescriptor>emptyList(),
-                            false);
+                            true);
 
                     List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
                     PsiMethod[] methods = psiClass.getMethods();
@@ -176,10 +176,12 @@ public final class JavaConstructorResolver {
             return trace.get(BindingContext.CONSTRUCTOR, psiConstructor);
         }
 
+        boolean primary = constructor.getJetConstructorAnnotation().isDefined();
+
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                false);
+                primary);
 
         String context = "constructor of class " + psiClass.getQualifiedName();
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
