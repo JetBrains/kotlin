@@ -76,9 +76,9 @@ public final class AnalyzerFacadeWithCache {
             @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
-            CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST_FULL);
-            if (bindingContextCachedValue == null) {
-                bindingContextCachedValue =
+            CachedValue<AnalyzeExhaust> result = file.getUserData(ANALYZE_EXHAUST_FULL);
+            if (result == null) {
+                result =
                         CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
                             @Override
                             public Result<AnalyzeExhaust> compute() {
@@ -107,10 +107,10 @@ public final class AnalyzerFacadeWithCache {
                             }
                         }, false);
 
-                file.putUserData(ANALYZE_EXHAUST_FULL, bindingContextCachedValue);
+                file.putUserData(ANALYZE_EXHAUST_FULL, result);
             }
 
-            return bindingContextCachedValue.getValue();
+            return result.getValue();
         }
     }
 
@@ -150,13 +150,13 @@ public final class AnalyzerFacadeWithCache {
 
         // Need to resolve bodies in given file and all in the same package
         return AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
-                                            file.getProject(),
-                                            Collections.<AnalyzerScriptParameter>emptyList(),
-                                            new JetFilesProvider.SameJetFilePredicate(file),
-                                            new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(),
-                                                                       "trace to resolve bodies in file", file.getName()),
-                                            context,
-                                            moduleConfiguration);
+                file.getProject(),
+                Collections.<AnalyzerScriptParameter>emptyList(),
+                new JetFilesProvider.SameJetFilePredicate(file),
+                new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(),
+                                           "trace to resolve bodies in file", file.getName()),
+                context,
+                moduleConfiguration);
     }
 
     @NotNull
