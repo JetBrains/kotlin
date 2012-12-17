@@ -190,23 +190,29 @@ public class CodegenTestsOnAndroidRunner {
 
         antRunner.packLibraries();
 
-        emulator.createEmulator();
-        emulator.startEmulator();
         try {
-            emulator.waitEmulatorStart();
-            antRunner.cleanOutput();
-            antRunner.compileSources();
-            antRunner.installApplicationOnEmulator();
-            return antRunner.runTestsOnEmulator();
+            emulator.createEmulator();
+            emulator.startEmulator();
+
+            try {
+                emulator.waitEmulatorStart();
+                antRunner.cleanOutput();
+                antRunner.compileSources();
+                antRunner.installApplicationOnEmulator();
+                return antRunner.runTestsOnEmulator();
+            }
+            finally {
+                try {
+                    emulator.stopEmulator();
+                }
+                catch (Throwable t) {
+                    System.err.println("Exception during stopping emulator:");
+                    t.printStackTrace();
+                }
+            }
         }
         finally {
-            try {
-                emulator.stopEmulator();
-            }
-            catch (Throwable t) {
-                System.err.println("Exception during stopping emulator:");
-                t.printStackTrace();
-            }
+            emulator.finishEmulatorProcesses();
         }
     }
 

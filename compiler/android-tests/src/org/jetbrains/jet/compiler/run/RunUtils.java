@@ -70,7 +70,7 @@ public class RunUtils {
 
         if (waitForEnd) {
             try {
-                t.wait(300000);
+                t.wait(600000);
                 return resultRef.get();
             }
             catch (InterruptedException e) {

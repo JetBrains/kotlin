@@ -110,7 +110,6 @@ public class Emulator {
 
     public void startEmulator() {
         System.out.println("Starting emulator...");
-        stopRedundantEmulators(pathManager);
         OutputUtils.checkResult(RunUtils.executeOnSeparateThread(getStartCommand(), false));
     }
 
@@ -123,12 +122,8 @@ public class Emulator {
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
         OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
-        System.out.println("Stopping adb...");
-        OutputUtils.checkResult(RunUtils.execute(getStopCommandForAdb()));
         if (SystemInfo.isUnix) {
             finishProcess("emulator-arm");
-            finishProcess("adb");
-            stopDdmsProcess();
         }
     }
 
@@ -146,6 +141,15 @@ public class Emulator {
             killCommand.setExePath("kill");
             killCommand.addParameter(pidFromPsCommand);
             OutputUtils.checkResult(RunUtils.execute(killCommand));
+        }
+    }
+
+    public void finishEmulatorProcesses() {
+        System.out.println("Stopping adb...");
+        OutputUtils.checkResult(RunUtils.execute(getStopCommandForAdb()));
+        if (SystemInfo.isUnix) {
+            finishProcess("adb");
+            stopDdmsProcess();
         }
     }
 
