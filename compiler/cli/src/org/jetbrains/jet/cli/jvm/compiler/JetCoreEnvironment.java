@@ -36,6 +36,7 @@ import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
+import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
@@ -86,6 +87,11 @@ public class JetCoreEnvironment {
         project.registerService(JetScriptDefinitionProvider.class, new JetScriptDefinitionProvider());
         project.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
         project.registerService(CoreJavaFileManager.class, (CoreJavaFileManager) ServiceManager.getService(project, JavaFileManager.class));
+
+        CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
+        project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
+
         Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(project));

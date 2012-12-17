@@ -79,6 +79,12 @@
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.JetFilesProvider"
                       serviceImplementation="org.jetbrains.jet.plugin.project.PluginJetFilesProvider"/>
 
+      <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"
+                      serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"/>
+
+      <projectService serviceInterface="org.jetbrains.jet.asJava.LightClassGenerationSupport"
+                      serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport"/>
+
       <projectService serviceInterface="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"
                       serviceImplementation="org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider"/>
 

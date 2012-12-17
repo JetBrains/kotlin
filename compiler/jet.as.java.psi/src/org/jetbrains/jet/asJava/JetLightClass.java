@@ -36,7 +36,6 @@ import com.intellij.psi.util.*;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
@@ -45,8 +44,6 @@ import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -208,15 +205,15 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         // The context must reflect _all files in the module_. not only the current file
         // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
         // must be loaded from .class files
-        AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
-                JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file));
+        LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(file);
 
-        if (exhaust.isError()) {
-            throw new IllegalStateException("failed to analyze: " + exhaust.getError(), exhaust.getError());
+        Throwable error = context.getError();
+        if (error != null) {
+            throw new IllegalStateException("failed to analyze: " + error, error);
         }
 
         try {
-            GenerationState state = new GenerationState(project, builderFactory, exhaust.getBindingContext(), Collections.singletonList(file));
+            GenerationState state = new GenerationState(project, builderFactory, context.getBindingContext(), Collections.singletonList(file));
             GenerationStrategy strategy = new LightClassGenerationStrategy(this, stubStack, answer);
 
             strategy.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
