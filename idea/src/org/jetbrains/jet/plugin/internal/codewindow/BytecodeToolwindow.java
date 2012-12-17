@@ -87,11 +87,11 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
 
             GenerationState state;
             try {
-                AnalyzeExhaust binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
-                if (binding.isError()) {
-                    return printStackTraceToString(binding.getError());
+                AnalyzeExhaust exhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+                if (exhaust.isError()) {
+                    return printStackTraceToString(exhaust.getError());
                 }
-                state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEXT, binding, Collections.singletonList(jetFile));
+                state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEXT, exhaust.getBindingContext(), Collections.singletonList(jetFile));
                 GenerationStrategy.STANDARD.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
             catch (ProcessCanceledException e) {

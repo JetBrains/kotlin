@@ -224,8 +224,9 @@ public class ReplInterpreter {
             earierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassName()));
         }
 
+        BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), injector.getModuleConfiguration()).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false),
-                AnalyzeExhaust.success(trace.getBindingContext(), injector.getModuleConfiguration()), Collections.singletonList(psiFile));
+                                                              bindingContext, Collections.singletonList(psiFile));
         generationState.getScriptCodegen().compileScript(psiFile.getScript(), scriptClassName, earierScripts,
                                                          CompilationErrorHandler.THROW_EXCEPTION);
 

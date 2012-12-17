@@ -346,7 +346,7 @@ public class KotlinToJVMBytecodeCompiler {
             }
         };
         GenerationState generationState = new GenerationState(
-                project, ClassBuilderFactories.binaries(stubs), backendProgress, exhaust, environment.getSourceFiles(),
+                project, ClassBuilderFactories.binaries(stubs), backendProgress, exhaust.getBindingContext(), environment.getSourceFiles(),
                 configuration.get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false)

@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen.state;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
@@ -67,15 +66,15 @@ public class GenerationState {
 
     private final boolean generateNotNullParamAssertions;
 
-    public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, BuiltinToJavaTypesMapping.ENABLED, true, false);
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, BindingContext bindingContext, List<JetFile> files) {
+        this(project, builderFactory, Progress.DEAF, bindingContext, files, BuiltinToJavaTypesMapping.ENABLED, true, false);
     }
 
     public GenerationState(
             @NotNull Project project,
             ClassBuilderFactory builderFactory,
             @NotNull Progress progress,
-            @NotNull AnalyzeExhaust exhaust,
+            @NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files,
             @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
             boolean generateNotNullAssertions,
@@ -86,8 +85,8 @@ public class GenerationState {
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
 
-        bindingTrace = new DelegatingBindingTrace(exhaust.getBindingContext(), "trace in GenerationState");
-        bindingContext = bindingTrace.getBindingContext();
+        bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
+        this.bindingContext = bindingTrace.getBindingContext();
 
         this.typeMapper = new JetTypeMapper(bindingTrace, builtinToJavaTypesMapping == BuiltinToJavaTypesMapping.ENABLED, classBuilderMode);
 

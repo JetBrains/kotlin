@@ -216,7 +216,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         }
 
         try {
-            GenerationState state = new GenerationState(project, builderFactory, exhaust, Collections.singletonList(file));
+            GenerationState state = new GenerationState(project, builderFactory, exhaust.getBindingContext(), Collections.singletonList(file));
             GenerationStrategy strategy = new LightClassGenerationStrategy(this, stubStack, answer);
 
             strategy.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
