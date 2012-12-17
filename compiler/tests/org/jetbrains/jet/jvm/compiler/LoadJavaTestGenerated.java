@@ -250,6 +250,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature"), "java", true);
         }
         
+        @TestMetadata("ArrayType.java")
+        public void testArrayType() throws Exception {
+            doTest("compiler/testData/loadJava/kotlinSignature/ArrayType.java");
+        }
+        
         @TestMetadata("ConstructorWithNewTypeParams.java")
         public void testConstructorWithNewTypeParams() throws Exception {
             doTest("compiler/testData/loadJava/kotlinSignature/ConstructorWithNewTypeParams.java");

@@ -1145,6 +1145,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature"), "kt", true);
             }
             
+            @TestMetadata("ArrayType.kt")
+            public void testArrayType() throws Exception {
+                doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/ArrayType.kt");
+            }
+            
             @TestMetadata("ConstructorWithNewTypeParams.kt")
             public void testConstructorWithNewTypeParams() throws Exception {
                 doTestSinglePackage("compiler/testData/loadJava/kotlinSignature/ConstructorWithNewTypeParams.kt");
