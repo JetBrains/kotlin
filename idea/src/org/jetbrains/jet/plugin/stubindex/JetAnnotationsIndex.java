@@ -34,6 +34,8 @@ public class JetAnnotationsIndex extends StringStubIndexExtension<JetAnnotationE
         return ourInstance;
     }
 
+    private JetAnnotationsIndex() {}
+
     @NotNull
     @Override
     public StubIndexKey<String, JetAnnotationEntry> getKey() {

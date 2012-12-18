@@ -28,11 +28,13 @@ import java.util.Collection;
 public class JetAllShortFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
     private static final StubIndexKey<String, JetNamedFunction> KEY = KotlinIndexUtil.createIndexKey(JetAllShortFunctionNameIndex.class);
 
-    private static final JetShortClassNameIndex ourInstance = new JetShortClassNameIndex();
+    private static final JetAllShortFunctionNameIndex ourInstance = new JetAllShortFunctionNameIndex();
 
-    public static JetShortClassNameIndex getInstance() {
+    public static JetAllShortFunctionNameIndex getInstance() {
         return ourInstance;
     }
+
+    private JetAllShortFunctionNameIndex() {}
 
     @NotNull
     @Override

@@ -34,6 +34,8 @@ public class JetTopLevelPropertiesFqnNameIndex extends StringStubIndexExtension<
         return INSTANCE;
     }
 
+    private JetTopLevelPropertiesFqnNameIndex() {}
+
     @NotNull
     @Override
     public StubIndexKey<String, JetProperty> getKey() {

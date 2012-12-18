@@ -34,6 +34,8 @@ public class JetPackageDeclarationIndex extends StringStubIndexExtension<JetFile
         return ourInstance;
     }
 
+    private JetPackageDeclarationIndex() {}
+
     @NotNull
     @Override
     public StubIndexKey<String, JetFile> getKey() {

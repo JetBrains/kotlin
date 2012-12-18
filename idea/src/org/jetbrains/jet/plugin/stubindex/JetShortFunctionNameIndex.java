@@ -34,6 +34,8 @@ public class JetShortFunctionNameIndex extends StringStubIndexExtension<JetNamed
         return ourInstance;
     }
 
+    private JetShortFunctionNameIndex() {}
+
     @NotNull
     @Override
     public StubIndexKey<String, JetNamedFunction> getKey() {
