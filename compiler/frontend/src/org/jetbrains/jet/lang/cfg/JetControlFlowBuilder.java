@@ -63,9 +63,9 @@ public interface JetControlFlowBuilder {
     void exitTryFinally();
 
     // Subroutines
-    void enterSubroutine(@NotNull JetDeclaration subroutine);
+    void enterSubroutine(@NotNull JetElement subroutine);
 
-    Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine);
+    Pseudocode exitSubroutine(@NotNull JetElement subroutine);
 
     @NotNull
     JetElement getCurrentSubroutine();

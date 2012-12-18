@@ -147,13 +147,13 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void enterSubroutine(@NotNull JetDeclaration subroutine) {
+    public void enterSubroutine(@NotNull JetElement subroutine) {
         assert builder != null;
         builder.enterSubroutine(subroutine);
     }
 
     @Override
-    public Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine) {
+    public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
         assert builder != null;
         return builder.exitSubroutine(subroutine);
     }

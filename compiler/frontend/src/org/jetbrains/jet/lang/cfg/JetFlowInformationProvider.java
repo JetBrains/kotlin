@@ -56,13 +56,13 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  */
 public class JetFlowInformationProvider {
 
-    private final JetDeclaration subroutine;
+    private final JetElement subroutine;
     private final Pseudocode pseudocode;
     private final PseudocodeVariablesData pseudocodeVariablesData;
     private BindingTrace trace;
 
     public JetFlowInformationProvider(
-            @NotNull JetDeclaration declaration,
+            @NotNull JetElement declaration,
             @NotNull BindingTrace trace) {
 
         subroutine = declaration;

@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator
 import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -58,16 +59,16 @@ public class JetControlFlowProcessor {
         this.trace = trace;
     }
 
-    public Pseudocode generatePseudocode(@NotNull JetDeclaration subroutine) {
+    public Pseudocode generatePseudocode(@NotNull JetElement subroutine) {
         Pseudocode pseudocode = generate(subroutine);
-        ((PseudocodeImpl)pseudocode).postProcess();
+        ((PseudocodeImpl) pseudocode).postProcess();
         for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
             ((PseudocodeImpl)localDeclarationInstruction.getBody()).postProcess();
         }
         return pseudocode;
     }
 
-    private Pseudocode generate(@NotNull JetDeclaration subroutine) {
+    private Pseudocode generate(@NotNull JetElement subroutine) {
         builder.enterSubroutine(subroutine);
         CFPVisitor cfpVisitor = new CFPVisitor(false);
         if (subroutine instanceof JetDeclarationWithBody) {
@@ -79,12 +80,6 @@ public class JetControlFlowProcessor {
             JetExpression bodyExpression = declarationWithBody.getBodyExpression();
             if (bodyExpression != null) {
                 bodyExpression.accept(cfpVisitor);
-            }
-        }
-        else if (subroutine instanceof JetProperty) {
-            JetExpression initializer = ((JetProperty) subroutine).getInitializer();
-            if (initializer != null) {
-                initializer.accept(cfpVisitor);
             }
         } else {
             subroutine.accept(cfpVisitor);
@@ -911,13 +906,8 @@ public class JetControlFlowProcessor {
                 generateInstructions(specifier, inCondition);
             }
             List<JetDeclaration> declarations = classOrObject.getDeclarations();
-            List<JetProperty> properties = Lists.newArrayList();
             for (JetDeclaration declaration : declarations) {
-                if (declaration instanceof JetProperty) {
-                    generateInstructions(declaration, inCondition);
-                    properties.add((JetProperty) declaration);
-                }
-                else if (declaration instanceof JetClassInitializer) {
+                if (declaration instanceof JetProperty || declaration instanceof JetClassInitializer) {
                     generateInstructions(declaration, inCondition);
                 }
             }
@@ -943,6 +933,15 @@ public class JetControlFlowProcessor {
         @Override
         public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
             generateInstructions(specifier.getDelegateExpression(), inCondition);
+        }
+
+        @Override
+        public void visitJetFile(JetFile file) {
+            for (JetDeclaration declaration : file.getDeclarations()) {
+                if (declaration instanceof JetProperty) {
+                    generateInstructions(declaration, inCondition);
+                }
+            }
         }
 
         @Override

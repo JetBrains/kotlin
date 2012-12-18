@@ -55,7 +55,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     }
 
     @Override
-    public void enterSubroutine(@NotNull JetDeclaration subroutine) {
+    public void enterSubroutine(@NotNull JetElement subroutine) {
         if (builder != null && subroutine instanceof JetFunctionLiteral) {
             pushBuilder(subroutine, builder.getReturnSubroutine());
         }
@@ -67,7 +67,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     }
 
     @Override
-    public Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine) {
+    public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
         super.exitSubroutine(subroutine);
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (!builders.empty()) {
@@ -143,7 +143,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void enterSubroutine(@NotNull JetDeclaration subroutine) {
+        public void enterSubroutine(@NotNull JetElement subroutine) {
             Label entryPoint = createUnboundLabel();
             BreakableBlockInfo blockInfo = new BreakableBlockInfo(subroutine, entryPoint, createUnboundLabel());
 //            subroutineInfo.push(blockInfo);
@@ -201,7 +201,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public Pseudocode exitSubroutine(@NotNull JetDeclaration subroutine) {
+        public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
             bindLabel(getExitPoint(subroutine));
             pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
             bindLabel(error);
