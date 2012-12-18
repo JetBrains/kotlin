@@ -433,10 +433,9 @@ public class JetFlowInformationProvider {
 
     private void recordInitializedVariables(@NotNull Pseudocode pseudocode, @NotNull Map<Instruction, Edges<Map<VariableDescriptor,PseudocodeVariablesData.VariableInitState>>> initializersMap) {
         Edges<Map<VariableDescriptor, VariableInitState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
-        Set<VariableDescriptor> usedVariables = pseudocodeVariablesData.getUsedVariables(pseudocode);
         Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, false);
-        for (VariableDescriptor variable : usedVariables) {
-            if (variable instanceof PropertyDescriptor && declaredVariables.contains(variable)) {
+        for (VariableDescriptor variable : declaredVariables) {
+            if (variable instanceof PropertyDescriptor) {
                 PseudocodeVariablesData.VariableInitState variableInitState = initializers.in.get(variable);
                 if (variableInitState == null) return;
                 trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, variableInitState.isInitialized);
