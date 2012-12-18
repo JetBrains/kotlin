@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -48,6 +49,12 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
     public Collection<ConstructorDescriptor> getConstructors() {
         assert scopeForConstructorResolve != null;
         return scopeForConstructorResolve.getConstructors();
+    }
+
+    @Nullable
+    @Override
+    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+        return scopeForConstructorResolve.getPrimaryConstructor();
     }
 
     public void setScopeForConstructorResolve(@NotNull JavaClassNonStaticMembersScope scopeForConstructorResolve) {

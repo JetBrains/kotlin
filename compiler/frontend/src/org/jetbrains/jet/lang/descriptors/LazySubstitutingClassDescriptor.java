@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -195,5 +196,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public JetScope getUnsubstitutedInnerClassesScope() {
         return original.getUnsubstitutedInnerClassesScope();
+    }
+
+    @Nullable
+    @Override
+    public ConstructorDescriptor getUnsubstitutedPrimaryConstructor() {
+        return original.getUnsubstitutedPrimaryConstructor();
     }
 }

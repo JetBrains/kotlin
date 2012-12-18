@@ -282,8 +282,7 @@ public final class BindingUtils {
 
     public static ConstructorDescriptor getConstructor(@NotNull BindingContext bindingContext,
             @NotNull JetClassOrObject declaration) {
-        ConstructorDescriptor primaryConstructor =
-                ((ClassDescriptorFromSource) getClassDescriptor(bindingContext, declaration)).getUnsubstitutedPrimaryConstructor();
+        ConstructorDescriptor primaryConstructor = getClassDescriptor(bindingContext, declaration).getUnsubstitutedPrimaryConstructor();
         assert primaryConstructor != null : message(declaration, "Traits do not have initialize methods");
         return primaryConstructor;
     }

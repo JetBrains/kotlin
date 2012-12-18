@@ -323,7 +323,7 @@ public class DeclarationsChecker {
     private void checkEnumEntry(JetClass aClass, ClassDescriptor classDescriptor) {
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration().getContainingDeclaration();
         assert declaration instanceof ClassDescriptor;
-        ClassDescriptorFromSource enumClass = (ClassDescriptorFromSource) declaration;
+        ClassDescriptor enumClass = (ClassDescriptor) declaration;
         assert enumClass.getKind() == ClassKind.ENUM_CLASS;
 
         List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();

@@ -75,4 +75,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
 
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();
+
+    @Nullable
+    ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 }

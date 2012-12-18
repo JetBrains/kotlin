@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class MutableClassDescriptor extends MutableClassDescriptorLite implements ClassDescriptorFromSource {
+public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;
 
@@ -81,12 +81,13 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
             ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
         }
 
-        if (constructorDescriptor.isPrimary()) {
+        boolean primary = constructorDescriptor.isPrimary();
+        if (primary) {
             setUpScopeForInitializers(constructorDescriptor);
             for (ValueParameterDescriptor valueParameterDescriptor : constructorDescriptor.getValueParameters()) {
                 JetParameter parameter = (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), valueParameterDescriptor);
                 assert parameter != null;
-                if (parameter.getValOrVarNode() == null || !constructorDescriptor.isPrimary()) {
+                if (parameter.getValOrVarNode() == null) {
                     getWritableScopeForInitializers().addVariableDescriptor(valueParameterDescriptor);
                 }
             }

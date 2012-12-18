@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implements ClassDescriptorFromSource {
+public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implements ClassDescriptor {
     private TypeConstructor typeConstructor;
 
     private JetScope memberDeclarations;

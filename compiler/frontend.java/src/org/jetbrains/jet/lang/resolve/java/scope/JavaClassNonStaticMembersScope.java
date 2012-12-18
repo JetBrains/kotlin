@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -27,6 +28,7 @@ import java.util.Collection;
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
 
     private Collection<ConstructorDescriptor> constructors = null;
+    private ConstructorDescriptor primaryConstructor = null;
     @NotNull
     private final ClassDescriptor descriptor;
 
@@ -42,9 +44,29 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
 
     @NotNull
     public Collection<ConstructorDescriptor> getConstructors() {
-        if (constructors == null) {
-            this.constructors = getResolver().resolveConstructors(declarationProvider, descriptor);
-        }
+        initConstructorsIfNeeded();
         return constructors;
+    }
+
+    @Nullable
+    public ConstructorDescriptor getPrimaryConstructor() {
+        initConstructorsIfNeeded();
+        return primaryConstructor;
+    }
+
+    private void initConstructorsIfNeeded() {
+        if (constructors == null) {
+            constructors = getResolver().resolveConstructors(declarationProvider, descriptor);
+
+            for (ConstructorDescriptor constructor : constructors) {
+                if (constructor.isPrimary()) {
+                    if (primaryConstructor != null) {
+                        throw new IllegalStateException(
+                                "Class has more than one primary constructor: " + primaryConstructor + "\n" + constructor);
+                    }
+                    primaryConstructor = constructor;
+                }
+            }
+        }
     }
 }
