@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.*;
@@ -176,19 +177,20 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         return null;
     }
 
+    @NotNull
     @Override
     public Set<String> getClassNames(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        Set<String> answer = new HashSet<String>();
-
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
-        for (JetFile psiFile : collectProjectJetFiles(project, GlobalSearchScope.allScope(project))) {
-            if (packageFQN.equals(JetPsiUtil.getFQName(psiFile))) {
-                answer.add(JvmAbi.PACKAGE_CLASS);
-                for (JetDeclaration declaration : psiFile.getDeclarations()) {
-                    if (declaration instanceof JetClassOrObject) {
-                        answer.add(getLocalName(declaration));
-                    }
-                }
+
+        Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
+
+        Set<String> answer = Sets.newHashSet();
+        answer.add(JvmAbi.PACKAGE_CLASS);
+
+        for (JetClassOrObject declaration : declarations) {
+            String name = declaration.getName();
+            if (name != null) {
+                answer.add(name);
             }
         }
 
@@ -237,26 +239,18 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     @Override
     public PsiClass[] getClasses(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         List<PsiClass> answer = new SmartList<PsiClass>();
-        final Collection<JetFile> filesInScope = collectProjectJetFiles(project, scope);
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
-        for (JetFile file : filesInScope) {
-            if (packageFQN.equals(JetPsiUtil.getFQName(file))) {
-                JetLightClass lightClass = JetLightClass
-                        .create(psiManager, file, QualifiedNamesUtil.combine(packageFQN, Name.identifier(JvmAbi.PACKAGE_CLASS)));
-                if (lightClass != null) {
-                    answer.add(lightClass);
-                }
-                for (JetDeclaration declaration : file.getDeclarations()) {
-                    if (declaration instanceof JetClassOrObject) {
-                        String localName = getLocalName(declaration);
-                        if (localName != null) {
-                            JetLightClass aClass = JetLightClass.create(psiManager, file,
-                                                                   QualifiedNamesUtil.combine(packageFQN, Name.identifier(localName)));
-                            if (aClass != null) {
-                                answer.add(aClass);
-                            }
-                        }
-                    }
+
+        findPackageClass(packageFQN, scope, answer);
+
+        Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
+        for (JetClassOrObject declaration : declarations) {
+            String localName = getLocalName(declaration);
+            if (localName != null) {
+                JetLightClass aClass = JetLightClass.create(psiManager, (JetFile) declaration.getContainingFile(),
+                                                            QualifiedNamesUtil.combine(packageFQN, Name.identifier(localName)));
+                if (aClass != null) {
+                    answer.add(aClass);
                 }
             }
         }

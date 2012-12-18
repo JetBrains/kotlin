@@ -44,4 +44,11 @@ public abstract class LightClassGenerationSupport {
      */
     @NotNull
     public abstract Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
+
+    // Returns only immediately declared classes/objects, package classes are not included (they have no declarations)
+    @NotNull
+    public abstract Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
+            @NotNull FqName packageFqName,
+            @NotNull GlobalSearchScope searchScope
+    );
 }

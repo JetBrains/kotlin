@@ -24,12 +24,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchScopeUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -39,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * This class solves the problem of interdependency between analyzing Kotlin code and generating JetLightClasses
@@ -111,5 +114,22 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
             }
         }
         return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
+            @NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope
+    ) {
+        Collection<JetFile> files = findFilesForPackage(packageFqName, searchScope);
+        List<JetClassOrObject> result = new SmartList<JetClassOrObject>();
+        for (JetFile file : files) {
+            for (JetDeclaration declaration : file.getDeclarations()) {
+                if (declaration instanceof JetClassOrObject) {
+                    result.add((JetClassOrObject) declaration);
+                }
+            }
+        }
+        return result;
     }
 }
