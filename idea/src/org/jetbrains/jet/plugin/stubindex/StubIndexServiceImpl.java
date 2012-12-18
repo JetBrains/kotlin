@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.stubs.*;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -43,6 +44,15 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         for (String superName : stub.getSuperNames()) {
             sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
+        }
+
+        StubElement parentStub = stub.getParentStub();
+        if (parentStub instanceof PsiJetFileStub) {
+            PsiJetFileStub jetFileStub = (PsiJetFileStub) parentStub;
+            String packageName = jetFileStub.getPackageName();
+            if (packageName != null) {
+                sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageName);
+            }
         }
     }
 
