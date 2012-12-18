@@ -64,6 +64,11 @@ public class ResolveSessionUtils {
         }
 
         @Override
+        public Collection<JetFile> getFiles() {
+            return Collections.emptySet();
+        }
+
+        @Override
         public Map<JetClass, MutableClassDescriptor> getClasses() {
             return Collections.emptyMap();
         }

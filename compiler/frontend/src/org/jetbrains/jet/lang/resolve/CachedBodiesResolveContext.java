@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ import java.util.Map;
 * @author Nikolay Krasko
 */
 public class CachedBodiesResolveContext implements BodiesResolveContext {
+    private final Collection<JetFile> files;
     private final Map<JetClass, MutableClassDescriptor> classes;
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects;
     private final Map<JetProperty, PropertyDescriptor> properties;
@@ -46,6 +48,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     private @NotNull TopDownAnalysisParameters topDownAnalysisParameters;
 
     public CachedBodiesResolveContext(TopDownAnalysisContext context) {
+        files = Collections.unmodifiableCollection(context.getFiles());
         classes = Collections.unmodifiableMap(context.getClasses());
         objects = Collections.unmodifiableMap(context.getObjects());
         properties = Collections.unmodifiableMap(context.getProperties());
@@ -55,6 +58,11 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
         scriptScopes = Collections.unmodifiableMap(context.getScriptScopes());
 
         topDownAnalysisParameters = context.getTopDownAnalysisParameters();
+    }
+
+    @Override
+    public Collection<JetFile> getFiles() {
+        return files;
     }
 
     @Override

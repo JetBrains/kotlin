@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.inject.Inject;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -116,6 +117,11 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     public Map<JetFile, NamespaceDescriptorImpl> getNamespaceDescriptors() {
         return namespaceDescriptors;
+    }
+
+    @Override
+    public Collection<JetFile> getFiles() {
+        return namespaceDescriptors.keySet();
     }
 
     @Override

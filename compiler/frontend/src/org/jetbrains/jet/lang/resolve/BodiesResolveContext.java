@@ -24,12 +24,14 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
 * @author Nikolay Krasko
 */
 public interface BodiesResolveContext {
+    Collection<JetFile> getFiles();
     Map<JetClass, MutableClassDescriptor> getClasses();
     Map<JetObjectDeclaration, MutableClassDescriptor> getObjects();
     Map<JetProperty, PropertyDescriptor> getProperties();
