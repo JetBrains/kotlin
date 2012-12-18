@@ -123,9 +123,6 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         FqName qualifiedName = new FqName(qualifiedNameString);
 
-        // Backend searches for java.lang.String. Will fail with SOE if continue
-        if (qualifiedName.getFqName().startsWith("java.")) return PsiClass.EMPTY_ARRAY;
-
         List<PsiClass> answer = new SmartList<PsiClass>();
         final Collection<JetFile> filesInScope = collectProjectJetFiles(project, scope);
         for (JetFile file : filesInScope) {
