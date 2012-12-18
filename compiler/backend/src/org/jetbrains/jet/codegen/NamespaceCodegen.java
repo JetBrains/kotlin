@@ -88,7 +88,6 @@ public class NamespaceCodegen extends MemberCodegen {
         for (JetFile file : files) {
             VirtualFile vFile = file.getVirtualFile();
             try {
-                final String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
                 generate(file, multiFile);
             }
             catch (ProcessCanceledException e) {
