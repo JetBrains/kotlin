@@ -248,19 +248,22 @@ public class JetFlowInformationProvider {
         if (!(element instanceof JetSimpleNameExpression)) return;
 
         boolean isInitialized = ctxt.exitInitState.isInitialized;
-        if (ctxt.variableDescriptor instanceof PropertyDescriptor) {
-            if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) ctxt.variableDescriptor)) {
+        VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
+        if (variableDescriptor instanceof PropertyDescriptor) {
+            if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) {
                 isInitialized = true;
             }
         }
-        if (!isInitialized && !varWithUninitializedErrorGenerated.contains(ctxt.variableDescriptor)) {
-            varWithUninitializedErrorGenerated.add(ctxt.variableDescriptor);
-            if (ctxt.variableDescriptor instanceof ValueParameterDescriptor) {
+        if (!isInitialized && !varWithUninitializedErrorGenerated.contains(variableDescriptor)) {
+            if (!(variableDescriptor instanceof PropertyDescriptor)) {
+                varWithUninitializedErrorGenerated.add(variableDescriptor);
+            }
+            if (variableDescriptor instanceof ValueParameterDescriptor) {
                 report(Errors.UNINITIALIZED_PARAMETER.on((JetSimpleNameExpression) element,
-                                                         (ValueParameterDescriptor) ctxt.variableDescriptor), ctxt);
+                                                         (ValueParameterDescriptor) variableDescriptor), ctxt);
             }
             else {
-                report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, ctxt.variableDescriptor), ctxt);
+                report(Errors.UNINITIALIZED_VARIABLE.on((JetSimpleNameExpression) element, variableDescriptor), ctxt);
             }
         }
     }
