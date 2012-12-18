@@ -51,6 +51,16 @@ public class JetPsiUtil {
     private JetPsiUtil() {
     }
 
+    public static <D> void visitChildren(@NotNull JetElement element, @NotNull JetTreeVisitor<D> visitor, D data) {
+        PsiElement child = element.getFirstChild();
+        while (child != null) {
+            if (child instanceof JetElement) {
+                ((JetElement) child).accept(visitor, data);
+            }
+            child = child.getNextSibling();
+        }
+    }
+
     @Nullable
     public static JetExpression deparenthesizeWithNoTypeResolution(@NotNull JetExpression expression) {
         return deparenthesizeWithResolutionStrategy(expression, null);

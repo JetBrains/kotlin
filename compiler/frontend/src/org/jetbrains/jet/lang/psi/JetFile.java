@@ -34,7 +34,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.List;
 
-public class JetFile extends PsiFileBase implements JetDeclarationContainer {
+public class JetFile extends PsiFileBase implements JetDeclarationContainer, JetElement {
     public JetFile(FileViewProvider viewProvider) {
         super(viewProvider, JetLanguage.INSTANCE);
     }
@@ -111,10 +111,25 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer {
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof JetVisitorVoid) {
-            ((JetVisitorVoid) visitor).visitJetFile(this);
+            accept((JetVisitorVoid) visitor);
         }
         else {
             visitor.visitFile(this);
         }
+    }
+
+    @Override
+    public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
+        JetPsiUtil.visitChildren(this, visitor, data);
+    }
+
+    @Override
+    public void accept(@NotNull JetVisitorVoid visitor) {
+        visitor.visitJetFile(this);
+    }
+
+    @Override
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
+        return visitor.visitJetFile(this, data);
     }
 }

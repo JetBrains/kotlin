@@ -55,13 +55,7 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
 
     @Override
     public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
-        PsiElement child = getFirstChild();
-        while (child != null) {
-            if (child instanceof JetElement) {
-                ((JetElement) child).accept(visitor, data);
-            }
-            child = child.getNextSibling();
-        }
+        JetPsiUtil.visitChildren(this, visitor, data);
     }
 
     @Override
