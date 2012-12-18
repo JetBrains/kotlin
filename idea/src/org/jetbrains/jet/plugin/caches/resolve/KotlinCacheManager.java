@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.caches.resolve;
 
 import com.google.common.base.Predicates;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -53,6 +54,8 @@ public class KotlinCacheManager {
 
     @NotNull
     public KotlinDeclarationsCache getDeclarationsFromProject(@NotNull Project project) {
+        // To prevent dead locks, the lock below must be obtained only inside a read action
+        ApplicationManager.getApplication().assertReadAccessAllowed();
         synchronized (declarationAnalysisLock) {
             return CachedValuesManager.getManager(project).getCachedValue(
                     project,
