@@ -24,6 +24,12 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 public class StubIndexServiceImpl implements StubIndexService {
 
     @Override
+    public void indexFile(PsiJetFileStub stub, IndexSink sink) {
+        String packageName = stub.getPackageName();
+        sink.occurrence(JetIndexKeys.PACKAGE_DECLARATION_KEY, packageName == null ? "" : packageName);
+    }
+
+    @Override
     public void indexClass(PsiJetClassStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {

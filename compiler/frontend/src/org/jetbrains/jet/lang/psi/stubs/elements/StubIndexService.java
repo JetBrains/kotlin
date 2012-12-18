@@ -26,6 +26,10 @@ public interface StubIndexService {
      */
     StubIndexService NO_INDEX_SERVICE = new StubIndexService() {
         @Override
+        public void indexFile(PsiJetFileStub stub, IndexSink sink) {
+        }
+
+        @Override
         public void indexClass(PsiJetClassStub stub, IndexSink sink) {
         }
 
@@ -46,6 +50,7 @@ public interface StubIndexService {
         }
     };
 
+    void indexFile(PsiJetFileStub stub, IndexSink sink);
     void indexClass(PsiJetClassStub stub, IndexSink sink);
     void indexFunction(PsiJetFunctionStub stub, IndexSink sink);
     void indexObject(PsiJetObjectStub stub, IndexSink sink);

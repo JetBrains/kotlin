@@ -203,6 +203,7 @@
       <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
 
       <stubElementTypeHolder class="org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes"/>
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetPackageDeclarationIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex"/>
