@@ -59,6 +59,8 @@ public abstract class ClassWithAbstractAndOpenMembers {
     }
 }
 
+public class ClassWithConstructor(val a: String, b: Any)
+
 public fun main(args : Array<String>) {
 }
 

@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.util.*;
 
@@ -50,6 +51,8 @@ public class DecompiledDataFactory {
     private static final String JET_CLASS = JetClass.class.getName();
     private static final String JET_METHOD = JetMethod.class.getName();
     private static final String DECOMPILED_COMMENT = "/* compiled code */";
+    private static final DescriptorRenderer DESCRIPTOR_RENDERER =
+            new DescriptorRendererBuilder().setWithDefinedIn(false).setClassWithPrimaryConstructor(true).build();
 
     private final StringBuilder builder = new StringBuilder();
     private final ClsFileImpl clsFile;
@@ -128,7 +131,7 @@ public class DecompiledDataFactory {
 
     private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
         int startOffset = builder.length();
-        String renderedDescriptor = DescriptorRenderer.COMPACT_WITH_MODIFIERS.render(descriptor);
+        String renderedDescriptor = DESCRIPTOR_RENDERER.render(descriptor);
         renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);
         builder.append(renderedDescriptor);
         int endOffset = builder.length();

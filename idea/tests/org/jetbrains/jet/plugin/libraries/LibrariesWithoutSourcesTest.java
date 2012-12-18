@@ -71,6 +71,10 @@ public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
         doTest();
     }
 
+    public void testClassWithConstructor() {
+        doTest();
+    }
+
     private void doTest() {
         classFile = getClassFile();
 

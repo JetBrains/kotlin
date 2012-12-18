@@ -24,6 +24,7 @@ public class DescriptorRendererBuilder {
     private boolean modifiers = true;
     private boolean startFromName = false;
     private boolean debugMode = false;
+    private boolean classWithPrimaryConstructor = false;
     @NotNull
     private DescriptorRenderer.ValueParametersHandler valueParametersHandler = new DescriptorRenderer.DefaultValueParameterHandler();
     @NotNull
@@ -67,7 +68,13 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setClassWithPrimaryConstructor(boolean classWithPrimaryConstructor) {
+        this.classWithPrimaryConstructor = classWithPrimaryConstructor;
+        return this;
+    }
+
     public DescriptorRenderer build() {
-        return new DescriptorRendererImpl(shortNames, withDefinedIn, modifiers, startFromName, debugMode, valueParametersHandler, textFormat);
+        return new DescriptorRendererImpl(shortNames, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor,
+                                          valueParametersHandler, textFormat);
     }
 }
