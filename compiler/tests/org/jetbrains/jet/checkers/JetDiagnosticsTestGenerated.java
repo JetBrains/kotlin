@@ -824,6 +824,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), "kt", true);
             }
             
+            @TestMetadata("backingFieldInsideGetter.kt")
+            public void testBackingFieldInsideGetter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter.kt");
+            }
+            
             @TestMetadata("checkInnerLocalDeclarations.kt")
             public void testCheckInnerLocalDeclarations() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkInnerLocalDeclarations.kt");

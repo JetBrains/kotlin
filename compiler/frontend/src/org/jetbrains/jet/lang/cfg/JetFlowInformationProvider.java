@@ -270,12 +270,24 @@ public class JetFlowInformationProvider {
             @NotNull JetExpression expression,
             @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated
     ) {
+        VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
+        if (isBackingFieldReference(expression) && variableDescriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
+            JetPropertyAccessor accessor = PsiTreeUtil.getParentOfType(expression, JetPropertyAccessor.class);
+            if (accessor != null) {
+                DeclarationDescriptor accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor);
+                if (propertyDescriptor.getGetter() == accessorDescriptor) {
+                    //val can be reassigned through backing field inside its own getter
+                    return false;
+                }
+            }
+        }
+
         boolean isInitializedNotHere = ctxt.enterInitState.isInitialized;
         if (expression.getParent() instanceof JetProperty && ((JetProperty)expression).getInitializer() != null) {
             isInitializedNotHere = false;
         }
         boolean hasBackingField = true;
-        VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         if (variableDescriptor instanceof PropertyDescriptor) {
             hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor);
         }
@@ -366,8 +378,8 @@ public class JetFlowInformationProvider {
     private boolean checkBackingField(@NotNull VariableContext cxtx, @NotNull JetElement element) {
         VariableDescriptor variableDescriptor = cxtx.variableDescriptor;
         boolean[] error = new boolean[1];
-        if (isBackingFieldReference((JetElement) element.getParent(), cxtx, error, false)) return false; // this expression has been already checked
-        if (!isBackingFieldReference(element, cxtx, error, true)) return false;
+        if (isCorrectBackingFieldReference((JetElement) element.getParent(), cxtx, error, false)) return false; // this expression has been already checked
+        if (!isCorrectBackingFieldReference(element, cxtx, error, true)) return false;
         if (error[0]) return true;
         if (!(variableDescriptor instanceof PropertyDescriptor)) {
             report(Errors.NOT_PROPERTY_BACKING_FIELD.on(element), cxtx);
@@ -398,12 +410,13 @@ public class JetFlowInformationProvider {
         return true;
     }
 
-    private boolean isBackingFieldReference(@Nullable JetElement element, VariableContext ctxt, boolean[] error, boolean reportError) {
+    private boolean isCorrectBackingFieldReference(@Nullable JetElement element, VariableContext ctxt, boolean[] error, boolean reportError) {
         error[0] = false;
-        if (element instanceof JetSimpleNameExpression && ((JetSimpleNameExpression) element).getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+        if (isBackingFieldReference(element)) {
             return true;
         }
-        if (element instanceof JetDotQualifiedExpression && isBackingFieldReference(((JetDotQualifiedExpression) element).getSelectorExpression(), ctxt, error, false)) {
+        if (element instanceof JetDotQualifiedExpression && isCorrectBackingFieldReference(
+                ((JetDotQualifiedExpression) element).getSelectorExpression(), ctxt, error, false)) {
             if (((JetDotQualifiedExpression) element).getReceiverExpression() instanceof JetThisExpression) {
                 return true;
             }
@@ -413,6 +426,10 @@ public class JetFlowInformationProvider {
             }
         }
         return false;
+    }
+
+    public static boolean isBackingFieldReference(@Nullable JetElement element) {
+        return element instanceof JetSimpleNameExpression && ((JetSimpleNameExpression) element).getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
     }
 
     private void recordInitializedVariables(@NotNull Pseudocode pseudocode, @NotNull Map<Instruction, Edges<Map<VariableDescriptor,PseudocodeVariablesData.VariableInitState>>> initializersMap) {
