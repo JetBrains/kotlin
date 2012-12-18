@@ -57,11 +57,9 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     private static final PsiMethod[] NO_METHODS = new PsiMethod[0];
     private static final PsiField[] NO_FIELDS = new PsiField[0];
     private final Project project;
-    private final JavaElementFinder javaElementFinder;
 
     public JetShortNamesCache(Project project) {
         this.project = project;
-        this.javaElementFinder = new JavaElementFinder(project);
     }
 
     /**
@@ -91,7 +89,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             if (classOrObject instanceof JetNamedDeclaration) {
                 FqName fqName = JetPsiUtil.getFQName((JetNamedDeclaration) classOrObject);
                 if (fqName != null && fqName.shortName().getName().equals(name)) {
-                    PsiClass psiClass = javaElementFinder.findClass(fqName.getFqName(), scope);
+                    PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName.getFqName(), scope);
                     if (psiClass != null) {
                         result.add(psiClass);
                     }

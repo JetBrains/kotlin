@@ -94,7 +94,7 @@ public class JetCoreEnvironment {
 
         Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .registerExtension(new JavaElementFinder(project));
+                .registerExtension(new JavaElementFinder(project, cliLightClassGenerationSupport));
 
         // This extension point should be registered in JavaCoreApplicationEnvironment
         CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME,

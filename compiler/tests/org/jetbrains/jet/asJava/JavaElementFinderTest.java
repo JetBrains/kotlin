@@ -42,7 +42,8 @@ public class JavaElementFinderTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        finder = new JavaElementFinder(getProject());
+
+        finder = new JavaElementFinder(getProject(), null);
     }
 
     public void testFromEnumEntry() {

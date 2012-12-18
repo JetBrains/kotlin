@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiClass;
@@ -40,12 +41,28 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.getLocalNameForObject;
 
 public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacadeKotlinHacks.KotlinFinderMarker {
+
+    @NotNull
+    public static JavaElementFinder getInstance(@NotNull Project project) {
+        PsiElementFinder[] extensions = Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).getExtensions();
+        for (PsiElementFinder extension : extensions) {
+            if (extension instanceof JavaElementFinder) {
+                return (JavaElementFinder) extension;
+            }
+        }
+        throw new IllegalStateException(JavaElementFinder.class.getSimpleName() + " is not found for project " + project);
+    }
+
     private final Project project;
     private final PsiManager psiManager;
 
     private final WeakHashMap<GlobalSearchScope, Collection<JetFile>> jetFiles = new WeakHashMap<GlobalSearchScope, Collection<JetFile>>();
 
-    public JavaElementFinder(Project project) {
+    public JavaElementFinder(
+            @NotNull Project project,
+            @SuppressWarnings("UnusedParameters") // This parameter simply ensures that there is some LightClassGenerationSupport for the project
+            @NotNull LightClassGenerationSupport lightClassGenerationSupport
+    ) {
         this.project = project;
         psiManager = PsiManager.getInstance(project);
 
