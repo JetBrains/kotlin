@@ -17,4 +17,6 @@ fun foo() {
 //    return this
 //}
 //
+//public class Pair<A, B>(val first: A, val second: B)
+//
 //public val <T> Pair<T, T>.<2>exProp : String

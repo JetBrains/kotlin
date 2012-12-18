@@ -1,7 +1,5 @@
 package testData.libraries
 
-public class Pair<A, B>(val first: A, val second: B)
-
 public trait SimpleTrait {
 }
 
@@ -80,6 +78,8 @@ public val Int.exProp : Int
 get() {
     return this
 }
+
+public class Pair<A, B>(val first: A, val second: B)
 
 public val <T> Pair<T, T>.exProp : String
 get() {
