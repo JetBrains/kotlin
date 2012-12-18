@@ -24,7 +24,7 @@ public interface JetIndexKeys {
 
     StubIndexKey<String, JetClassOrObject> SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.class.shortName");
     StubIndexKey<String, JetClassOrObject> SUPERCLASS_NAME_KEY = StubIndexKey.createIndexKey("jet.class.superClassName");
-    StubIndexKey<String, JetClassOrObject> FQN_KEY = StubIndexKey.createIndexKey("jet.fqn");
+    StubIndexKey<String, JetClassOrObject> CLASS_OR_OBJECT_FQN_KEY = StubIndexKey.createIndexKey("jet.fqn");
 
     StubIndexKey<String, JetObjectDeclaration> TOP_LEVEL_OBJECT_SHORT_NAME_KEY =
             StubIndexKey.createIndexKey("jet.top.level.object.short.name");

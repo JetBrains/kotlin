@@ -38,7 +38,7 @@ public class StubIndexServiceImpl implements StubIndexService {
         
         String fqn = stub.getQualifiedName();
         if (fqn != null) {
-            sink.occurrence(JetIndexKeys.FQN_KEY, fqn);
+            sink.occurrence(JetIndexKeys.CLASS_OR_OBJECT_FQN_KEY, fqn);
         }
 
         for (String superName : stub.getSuperNames()) {
@@ -59,7 +59,7 @@ public class StubIndexServiceImpl implements StubIndexService {
 
         FqName fqName = stub.getFQName();
         if (fqName != null) {
-            sink.occurrence(JetIndexKeys.FQN_KEY, fqName.toString());
+            sink.occurrence(JetIndexKeys.CLASS_OR_OBJECT_FQN_KEY, fqName.toString());
         }
     }
 
