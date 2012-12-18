@@ -48,9 +48,6 @@ public class PseudocodeVariablesData {
     private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
     private final Map<Pseudocode, Set<VariableDescriptor>> usedVariablesForDeclaration = Maps.newHashMap();
 
-    private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializersMap;
-    private Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusMap;
-
     public PseudocodeVariablesData(@NotNull Pseudocode pseudocode, @NotNull BindingContext bindingContext) {
         this.pseudocode = pseudocode;
         this.bindingContext = bindingContext;
@@ -127,10 +124,7 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers() {
-        if (variableInitializersMap == null) {
-            variableInitializersMap = getVariableInitializers(pseudocode);
-        }
-        return variableInitializersMap;
+        return getVariableInitializers(pseudocode);
     }
 
     @NotNull
@@ -248,57 +242,57 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
-        if (variableStatusMap == null) {
-            Map<VariableDescriptor, VariableUseState> sinkInstructionData = Maps.newHashMap();
-            for (VariableDescriptor usedVariable : usedVariablesForDeclaration.get(pseudocode)) {
-                sinkInstructionData.put(usedVariable, VariableUseState.UNUSED);
-            }
-            InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>> collectVariableUseStatusStrategy = new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
-                @Override
-                public Edges<Map<VariableDescriptor, VariableUseState>> execute(@NotNull Instruction instruction,
-                        @NotNull Collection<Map<VariableDescriptor, VariableUseState>> incomingEdgesData) {
-
-                    Map<VariableDescriptor, VariableUseState> enterResult = Maps.newHashMap();
-                    for (Map<VariableDescriptor, VariableUseState> edgeData : incomingEdgesData) {
-                        for (Map.Entry<VariableDescriptor, VariableUseState> entry : edgeData.entrySet()) {
-                            VariableDescriptor variableDescriptor = entry.getKey();
-                            VariableUseState variableUseState = entry.getValue();
-                            enterResult.put(variableDescriptor, variableUseState.merge(enterResult.get(variableDescriptor)));
-                        }
-                    }
-                    VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true,
-                                                                                                          bindingContext);
-                    if (variableDescriptor == null ||
-                        (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction))) {
-                        return Edges.create(enterResult, enterResult);
-                    }
-                    Map<VariableDescriptor, VariableUseState> exitResult = Maps.newHashMap(enterResult);
-                    if (instruction instanceof ReadValueInstruction) {
-                        exitResult.put(variableDescriptor, VariableUseState.LAST_READ);
-                    }
-                    else { //instruction instanceof WriteValueInstruction
-                        VariableUseState variableUseState = enterResult.get(variableDescriptor);
-                        if (variableUseState == null) {
-                            variableUseState = VariableUseState.UNUSED;
-                        }
-                        switch (variableUseState) {
-                            case UNUSED:
-                            case ONLY_WRITTEN_NEVER_READ:
-                                exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ);
-                                break;
-                            case LAST_WRITTEN:
-                            case LAST_READ:
-                                exitResult.put(variableDescriptor, VariableUseState.LAST_WRITTEN);
-                        }
-                    }
-                    return Edges.create(enterResult, exitResult);
-                }
-            };
-            variableStatusMap = PseudocodeTraverser.collectData(pseudocode, BACKWARD, ANALYSE_LOCAL_DECLARATIONS,
-                                                                Collections.<VariableDescriptor, VariableUseState>emptyMap(),
-                                                                sinkInstructionData, collectVariableUseStatusStrategy);
+        Map<VariableDescriptor, VariableUseState> sinkInstructionData = Maps.newHashMap();
+        for (VariableDescriptor usedVariable : getUsedVariables(pseudocode)) {
+            sinkInstructionData.put(usedVariable, VariableUseState.UNUSED);
         }
-        return variableStatusMap;
+        InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>> collectVariableUseStatusStrategy =
+                new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
+                    @Override
+                    public Edges<Map<VariableDescriptor, VariableUseState>> execute(
+                            @NotNull Instruction instruction,
+                            @NotNull Collection<Map<VariableDescriptor, VariableUseState>> incomingEdgesData
+                    ) {
+
+                        Map<VariableDescriptor, VariableUseState> enterResult = Maps.newHashMap();
+                        for (Map<VariableDescriptor, VariableUseState> edgeData : incomingEdgesData) {
+                            for (Map.Entry<VariableDescriptor, VariableUseState> entry : edgeData.entrySet()) {
+                                VariableDescriptor variableDescriptor = entry.getKey();
+                                VariableUseState variableUseState = entry.getValue();
+                                enterResult.put(variableDescriptor, variableUseState.merge(enterResult.get(variableDescriptor)));
+                            }
+                        }
+                        VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true,
+                                                                                                              bindingContext);
+                        if (variableDescriptor == null ||
+                            (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction))) {
+                            return Edges.create(enterResult, enterResult);
+                        }
+                        Map<VariableDescriptor, VariableUseState> exitResult = Maps.newHashMap(enterResult);
+                        if (instruction instanceof ReadValueInstruction) {
+                            exitResult.put(variableDescriptor, VariableUseState.LAST_READ);
+                        }
+                        else { //instruction instanceof WriteValueInstruction
+                            VariableUseState variableUseState = enterResult.get(variableDescriptor);
+                            if (variableUseState == null) {
+                                variableUseState = VariableUseState.UNUSED;
+                            }
+                            switch (variableUseState) {
+                                case UNUSED:
+                                case ONLY_WRITTEN_NEVER_READ:
+                                    exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ);
+                                    break;
+                                case LAST_WRITTEN:
+                                case LAST_READ:
+                                    exitResult.put(variableDescriptor, VariableUseState.LAST_WRITTEN);
+                            }
+                        }
+                        return Edges.create(enterResult, exitResult);
+                    }
+                };
+        return PseudocodeTraverser.collectData(pseudocode, BACKWARD, ANALYSE_LOCAL_DECLARATIONS,
+                                               Collections.<VariableDescriptor, VariableUseState>emptyMap(),
+                                               sinkInstructionData, collectVariableUseStatusStrategy);
     }
 
     public static class VariableInitState {
