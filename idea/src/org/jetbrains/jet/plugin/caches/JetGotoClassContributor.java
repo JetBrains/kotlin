@@ -75,21 +75,19 @@ public class JetGotoClassContributor implements GotoClassContributor {
         Collection<JetClassOrObject> classesOrObjects = JetShortClassNameIndex.getInstance().get(name, project, scope);
 
         for (JetClassOrObject classOrObject : classesOrObjects) {
-            if (classOrObject instanceof JetNamedDeclaration) {
-                FqName fqName = JetPsiUtil.getFQName((JetNamedDeclaration) classOrObject);
-                if (fqName == null || javaQualifiedNames.contains(fqName.toString())) {
-                    continue;
-                }
+            FqName fqName = JetPsiUtil.getFQName(classOrObject);
+            if (fqName == null || javaQualifiedNames.contains(fqName.toString())) {
+                continue;
+            }
 
-                if (classOrObject instanceof JetObjectDeclaration) {
-                    // items.add((JetObjectDeclaration) classOrObject);
-                }
-                else if (classOrObject instanceof JetClass) {
-                    items.add(classOrObject);
-                }
-                else {
-                    assert false;
-                }
+            if (classOrObject instanceof JetObjectDeclaration) {
+                // items.add((JetObjectDeclaration) classOrObject);
+            }
+            else if (classOrObject instanceof JetClass) {
+                items.add(classOrObject);
+            }
+            else {
+                assert false;
             }
         }
 
