@@ -188,7 +188,7 @@ public class JetFlowInformationProvider {
 ////////////////////////////////////////////////////////////////////////////////
 //  Uninitialized variables analysis
 
-    public void markUninitializedVariables(final boolean processLocalDeclaration) {
+    public void markUninitializedVariables() {
         final Collection<VariableDescriptor> varWithUninitializedErrorGenerated = Sets.newHashSet();
         final Collection<VariableDescriptor> varWithValReassignErrorGenerated = Sets.newHashSet();
         final boolean processClassOrObject = subroutine instanceof JetClassOrObject;
@@ -218,7 +218,7 @@ public class JetFlowInformationProvider {
                 JetElement element = ((WriteValueInstruction) instruction).getlValue();
                 boolean error = checkBackingField(ctxt, element);
                 if (!(element instanceof JetExpression)) return;
-                if (!error && !processLocalDeclaration) { // error has been generated before, while processing outer function of this local declaration
+                if (!error) {
                     error = checkValReassignment(ctxt, (JetExpression) element, varWithValReassignErrorGenerated);
                 }
                 if (!error && processClassOrObject) {
@@ -229,8 +229,11 @@ public class JetFlowInformationProvider {
                 }
             }
         });
+    }
 
+    public void recordInitializedVariables() {
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
+        Map<Instruction, Edges<Map<VariableDescriptor,VariableInitState>>> initializers = pseudocodeVariablesData.getVariableInitializers();
         recordInitializedVariables(pseudocode, initializers);
         for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             recordInitializedVariables(instruction.getBody(), initializers);
