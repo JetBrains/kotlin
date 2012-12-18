@@ -271,7 +271,7 @@ public class JetFlowInformationProvider {
             @NotNull Collection<VariableDescriptor> varWithValReassignErrorGenerated
     ) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (isBackingFieldReference(expression) && variableDescriptor instanceof PropertyDescriptor) {
+        if (JetPsiUtil.isBackingFieldReference(expression) && variableDescriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
             JetPropertyAccessor accessor = PsiTreeUtil.getParentOfType(expression, JetPropertyAccessor.class);
             if (accessor != null) {
@@ -412,7 +412,7 @@ public class JetFlowInformationProvider {
 
     private boolean isCorrectBackingFieldReference(@Nullable JetElement element, VariableContext ctxt, boolean[] error, boolean reportError) {
         error[0] = false;
-        if (isBackingFieldReference(element)) {
+        if (JetPsiUtil.isBackingFieldReference(element)) {
             return true;
         }
         if (element instanceof JetDotQualifiedExpression && isCorrectBackingFieldReference(
@@ -426,10 +426,6 @@ public class JetFlowInformationProvider {
             }
         }
         return false;
-    }
-
-    public static boolean isBackingFieldReference(@Nullable JetElement element) {
-        return element instanceof JetSimpleNameExpression && ((JetSimpleNameExpression) element).getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
     }
 
     private void recordInitializedVariables(@NotNull Pseudocode pseudocode, @NotNull Map<Instruction, Edges<Map<VariableDescriptor,PseudocodeVariablesData.VariableInitState>>> initializersMap) {

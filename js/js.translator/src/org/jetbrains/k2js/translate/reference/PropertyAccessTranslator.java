@@ -32,7 +32,7 @@ import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isNativeObject
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForProperty;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
+import static org.jetbrains.jet.lang.psi.JetPsiUtil.isBackingFieldReference;
 
 /**
  * @author Pavel Talanov

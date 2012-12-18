@@ -462,4 +462,12 @@ public class JetPsiUtil {
     public static boolean isAbstract(@NotNull JetDeclarationWithBody declaration) {
         return declaration.getBodyExpression() == null;
     }
+
+    public static boolean isBackingFieldReference(@NotNull JetSimpleNameExpression expression) {
+        return expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER;
+    }
+
+    public static boolean isBackingFieldReference(@Nullable JetElement element) {
+        return element instanceof JetSimpleNameExpression && isBackingFieldReference((JetSimpleNameExpression)element);
+    }
 }

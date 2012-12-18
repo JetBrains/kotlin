@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
+import static org.jetbrains.jet.lang.psi.JetPsiUtil.isBackingFieldReference;
 
 /**
  * @author Pavel Talanov
