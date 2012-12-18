@@ -32,7 +32,7 @@ import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
  * @author Evgeny Gerashchenko
  * @since 3/27/12
  */
-public class LibraryNavigationRegressionTest extends LightCodeInsightFixtureTestCase {
+public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
     /**
      * Regression test against KT-1652
      */

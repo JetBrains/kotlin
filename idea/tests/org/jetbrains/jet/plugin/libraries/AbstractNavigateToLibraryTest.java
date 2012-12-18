@@ -38,7 +38,7 @@ import java.io.IOException;
  * @author Evgeny Gerashchenko
  * @since 3/23/12
  */
-public abstract class AbstractLibrariesTest extends PlatformTestCase {
+public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
     protected static final String PACKAGE = "testData.libraries";
     protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
     protected VirtualFile libraryDir;
