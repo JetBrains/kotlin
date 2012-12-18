@@ -57,6 +57,13 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
                 return sourceFunction;
             }
         }
+        else if (jetDeclaration instanceof JetClass) {
+            assert clsMethod.getReturnType() == null; // constructor
+            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClass((JetClass) jetDeclaration);
+            if (sourceClass != null) {
+                return sourceClass;
+            }
+        }
         return jetDeclaration;
     }
 
