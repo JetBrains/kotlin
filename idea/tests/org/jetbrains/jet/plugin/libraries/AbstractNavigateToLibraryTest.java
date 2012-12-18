@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,11 +29,15 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 /**
  * @author Evgeny Gerashchenko
@@ -41,10 +46,27 @@ import java.io.IOException;
 public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
     protected static final String PACKAGE = "testData.libraries";
     protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
+    protected static final String SOURCES_PATH = TEST_DATA_PATH + "/library";
+    private static File tempDirWithCompiled;
     protected VirtualFile libraryDir;
     protected VirtualFile librarySourceDir;
 
     protected abstract boolean isWithSources();
+
+    @NotNull
+    private static File getTempDirWithCompiled() throws Exception {
+        if (tempDirWithCompiled == null) {
+            tempDirWithCompiled = JetTestUtils.tmpDir("dummylib");
+
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+            ExitCode compilerExec = new K2JVMCompiler().exec(
+                    new PrintStream(outStream), "-src", SOURCES_PATH, "-output", tempDirWithCompiled.getAbsolutePath());
+            assertEquals(new String(outStream.toByteArray()), ExitCode.OK, compilerExec);
+        }
+
+        return tempDirWithCompiled;
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -73,14 +95,10 @@ public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
                 return true;
             }
         });
-        librarySourceDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library");
+        librarySourceDir = LocalFileSystem.getInstance().findFileByPath(SOURCES_PATH);
         assertNotNull(librarySourceDir);
 
-
-        ExitCode compilerExec =
-                new K2JVMCompiler().exec(System.out, "-src", librarySourceDir.getPath(), "-output", libraryDir.getPath());
-        assertEquals(ExitCode.OK, compilerExec);
-        assertNotNull(libraryDir);
+        FileUtil.copyDir(getTempDirWithCompiled(), new File(libraryDir.getPath()));
 
         ((NewVirtualFile)libraryDir).markDirtyRecursively();
         libraryDir.refresh(false, true);
