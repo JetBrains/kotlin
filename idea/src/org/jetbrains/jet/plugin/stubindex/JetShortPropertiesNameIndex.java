@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import java.util.Collection;
 
 public class JetShortPropertiesNameIndex extends StringStubIndexExtension<JetProperty> {
+    private static final StubIndexKey<String, JetProperty> KEY = KotlinIndexUtil.createIndexKey(JetShortPropertiesNameIndex.class);
+
     private static final JetShortPropertiesNameIndex ourInstance = new JetShortPropertiesNameIndex();
 
     public static JetShortPropertiesNameIndex getInstance() {
@@ -35,7 +37,7 @@ public class JetShortPropertiesNameIndex extends StringStubIndexExtension<JetPro
     @NotNull
     @Override
     public StubIndexKey<String, JetProperty> getKey() {
-        return JetIndexKeys.PROPERTIES_SHORT_NAME_KEY;
+        return KEY;
     }
 
     @Override

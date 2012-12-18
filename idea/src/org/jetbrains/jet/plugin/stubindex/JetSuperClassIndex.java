@@ -26,7 +26,10 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import java.util.Collection;
 
 public class JetSuperClassIndex extends StringStubIndexExtension<JetClassOrObject> {
+    private static final StubIndexKey<String, JetClassOrObject> KEY = KotlinIndexUtil.createIndexKey(JetSuperClassIndex.class);
+
     private static final JetSuperClassIndex ourInstance = new JetSuperClassIndex();
+
     public static JetSuperClassIndex getInstance() {
         return ourInstance;
     }
@@ -34,7 +37,7 @@ public class JetSuperClassIndex extends StringStubIndexExtension<JetClassOrObjec
     @NotNull
     @Override
     public StubIndexKey<String, JetClassOrObject> getKey() {
-        return JetIndexKeys.SUPERCLASS_NAME_KEY;
+        return KEY;
     }
 
     @Override

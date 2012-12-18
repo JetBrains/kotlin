@@ -26,23 +26,23 @@ public class StubIndexServiceImpl implements StubIndexService {
     @Override
     public void indexFile(PsiJetFileStub stub, IndexSink sink) {
         String packageName = stub.getPackageName();
-        sink.occurrence(JetIndexKeys.PACKAGE_DECLARATION_KEY, packageName == null ? "" : packageName);
+        sink.occurrence(JetPackageDeclarationIndex.getInstance().getKey(), packageName == null ? "" : packageName);
     }
 
     @Override
     public void indexClass(PsiJetClassStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
-            sink.occurrence(JetIndexKeys.SHORT_NAME_KEY, name);
+            sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
         }
         
         String fqn = stub.getQualifiedName();
         if (fqn != null) {
-            sink.occurrence(JetIndexKeys.CLASS_OR_OBJECT_FQN_KEY, fqn);
+            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn);
         }
 
         for (String superName : stub.getSuperNames()) {
-            sink.occurrence(JetIndexKeys.SUPERCLASS_NAME_KEY, superName);
+            sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
         }
     }
 
@@ -51,15 +51,15 @@ public class StubIndexServiceImpl implements StubIndexService {
         String name = stub.getName();
         assert name != null;
 
-        sink.occurrence(JetIndexKeys.SHORT_NAME_KEY, name);
+        sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
 
         if (stub.isTopLevel()) {
-            sink.occurrence(JetIndexKeys.TOP_LEVEL_OBJECT_SHORT_NAME_KEY, name);
+            sink.occurrence(JetTopLevelShortObjectNameIndex.getInstance().getKey(), name);
         }
 
         FqName fqName = stub.getFQName();
         if (fqName != null) {
-            sink.occurrence(JetIndexKeys.CLASS_OR_OBJECT_FQN_KEY, fqName.toString());
+            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.toString());
         }
     }
 
@@ -70,19 +70,19 @@ public class StubIndexServiceImpl implements StubIndexService {
             if (stub.isTopLevel()) {
                 // Collection only top level functions as only they are expected in completion without explicit import
                 if (!stub.isExtension()) {
-                    sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTION_SHORT_NAME_KEY, name);
+                    sink.occurrence(JetShortFunctionNameIndex.getInstance().getKey(), name);
                 }
                 else {
-                    sink.occurrence(JetIndexKeys.TOP_LEVEL_EXTENSION_FUNCTION_SHORT_NAME_KEY, name);
+                    sink.occurrence(JetExtensionFunctionNameIndex.getInstance().getKey(), name);
                 }
 
                 FqName topFQName = stub.getTopFQName();
                 if (topFQName != null) {
-                    sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTIONS_FQN_NAME_KEY, topFQName.toString());
+                    sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), topFQName.toString());
                 }
             }
 
-            sink.occurrence(JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, name);
+            sink.occurrence(JetAllShortFunctionNameIndex.getInstance().getKey(), name);
         }
     }
 
@@ -93,16 +93,16 @@ public class StubIndexServiceImpl implements StubIndexService {
             if (stub.isTopLevel()) {
                 FqName topFQName = stub.getTopFQName();
                 if (topFQName != null) {
-                    sink.occurrence(JetIndexKeys.TOP_LEVEL_PROPERTY_FQN_NAME_KEY, topFQName.toString());
+                    sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), topFQName.toString());
                 }
             }
 
-            sink.occurrence(JetIndexKeys.PROPERTIES_SHORT_NAME_KEY, propertyName);
+            sink.occurrence(JetShortPropertiesNameIndex.getInstance().getKey(), propertyName);
         }
     }
 
     @Override
     public void indexAnnotation(PsiJetAnnotationStub stub, IndexSink sink) {
-        sink.occurrence(JetIndexKeys.ANNOTATIONS_KEY, stub.getShortName());
+        sink.occurrence(JetAnnotationsIndex.getInstance().getKey(), stub.getShortName());
     }
 }

@@ -16,23 +16,17 @@
 
 package org.jetbrains.jet.plugin.stubindex;
 
-import com.intellij.psi.stubs.StringStubIndexExtension;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
-public class JetExtensionFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
-    private static final StubIndexKey<String, JetNamedFunction> KEY = KotlinIndexUtil.createIndexKey(JetExtensionFunctionNameIndex.class);
-
-    private static final JetExtensionFunctionNameIndex instance = new JetExtensionFunctionNameIndex();
-
-    public static JetExtensionFunctionNameIndex getInstance() {
-        return instance;
+public class KotlinIndexUtil {
+    @NonNls
+    public static <K, Psi extends PsiElement> StubIndexKey<K, Psi> createIndexKey(@NotNull Class<? extends StubIndexExtension<K, Psi>> indexClass) {
+        return StubIndexKey.createIndexKey(indexClass.getCanonicalName());
     }
 
-    @NotNull
-    @Override
-    public StubIndexKey<String, JetNamedFunction> getKey() {
-        return KEY;
-    }
+    private KotlinIndexUtil() {}
 }

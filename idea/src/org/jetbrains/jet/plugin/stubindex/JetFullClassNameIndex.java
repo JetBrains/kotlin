@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import java.util.Collection;
 
 public class JetFullClassNameIndex extends StringStubIndexExtension<JetClassOrObject> {
+    private static final StubIndexKey<String, JetClassOrObject> KEY = KotlinIndexUtil.createIndexKey(JetFullClassNameIndex.class);
+
     private static final JetFullClassNameIndex ourInstance = new JetFullClassNameIndex();
 
     public static JetFullClassNameIndex getInstance() {
@@ -35,7 +37,7 @@ public class JetFullClassNameIndex extends StringStubIndexExtension<JetClassOrOb
     @NotNull
     @Override
     public StubIndexKey<String, JetClassOrObject> getKey() {
-        return JetIndexKeys.CLASS_OR_OBJECT_FQN_KEY;
+        return KEY;
     }
 
     @Override

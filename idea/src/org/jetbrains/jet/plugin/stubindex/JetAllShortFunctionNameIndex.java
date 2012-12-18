@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import java.util.Collection;
 
 public class JetAllShortFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
+    private static final StubIndexKey<String, JetNamedFunction> KEY = KotlinIndexUtil.createIndexKey(JetAllShortFunctionNameIndex.class);
+
     private static final JetShortClassNameIndex ourInstance = new JetShortClassNameIndex();
 
     public static JetShortClassNameIndex getInstance() {
@@ -35,7 +37,7 @@ public class JetAllShortFunctionNameIndex extends StringStubIndexExtension<JetNa
     @NotNull
     @Override
     public StubIndexKey<String, JetNamedFunction> getKey() {
-        return JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY;
+        return KEY;
     }
 
     @Override

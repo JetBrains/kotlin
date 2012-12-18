@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import java.util.Collection;
 
 public class JetTopLevelShortObjectNameIndex extends StringStubIndexExtension<JetObjectDeclaration> {
+    private static final StubIndexKey<String, JetObjectDeclaration> KEY = KotlinIndexUtil.createIndexKey(JetTopLevelShortObjectNameIndex.class);
+
     private static final JetTopLevelShortObjectNameIndex ourInstance = new JetTopLevelShortObjectNameIndex();
 
     public static JetTopLevelShortObjectNameIndex getInstance() {
@@ -35,7 +37,7 @@ public class JetTopLevelShortObjectNameIndex extends StringStubIndexExtension<Je
     @NotNull
     @Override
     public StubIndexKey<String, JetObjectDeclaration> getKey() {
-        return JetIndexKeys.TOP_LEVEL_OBJECT_SHORT_NAME_KEY;
+        return KEY;
     }
 
     @Override

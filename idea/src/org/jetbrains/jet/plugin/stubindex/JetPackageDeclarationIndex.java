@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.util.Collection;
 
 public class JetPackageDeclarationIndex extends StringStubIndexExtension<JetFile> {
+    private static final StubIndexKey<String, JetFile> KEY = KotlinIndexUtil.createIndexKey(JetPackageDeclarationIndex.class);
+
     private static final JetPackageDeclarationIndex ourInstance = new JetPackageDeclarationIndex();
 
     public static JetPackageDeclarationIndex getInstance() {
@@ -35,7 +37,7 @@ public class JetPackageDeclarationIndex extends StringStubIndexExtension<JetFile
     @NotNull
     @Override
     public StubIndexKey<String, JetFile> getKey() {
-        return JetIndexKeys.PACKAGE_DECLARATION_KEY;
+        return KEY;
     }
 
     @Override
