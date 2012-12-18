@@ -3,7 +3,7 @@
 
 package testData.libraries
 
-[public abstract class ClassWithAbstractAndOpenMembers() {
+[[public abstract class ClassWithAbstractAndOpenMembers() {
     [public abstract val abstractVal : jet.String]
 
     [public abstract var abstractVar : jet.String]
@@ -19,4 +19,4 @@ package testData.libraries
     [public abstract fun abstractFun() : Unit]
 
     [public open fun openFun() : Unit { /* compiled code */ }]
-}]
+}]]

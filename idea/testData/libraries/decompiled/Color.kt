@@ -3,7 +3,7 @@
 
 package testData.libraries
 
-[public final enum class Color(rgb : jet.Int, p1 : jet.Int, p2 : jet.Int) : jet.Enum<testData.libraries.Color> {
+[[public final enum class Color(rgb : jet.Int, p1 : jet.Int, p2 : jet.Int) : jet.Enum<testData.libraries.Color> {
     class object {
         [public final val BLUE : testData.libraries.Color] /* compiled code */
 
@@ -17,4 +17,4 @@ package testData.libraries
     }
 
     [internal final val rgb : jet.Int] /* compiled code */
-}]
+}]]

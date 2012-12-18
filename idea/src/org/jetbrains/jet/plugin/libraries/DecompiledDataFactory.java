@@ -181,6 +181,17 @@ public class DecompiledDataFactory {
         }
 
         builder.append("\n");
+        saveClsMemberToRange(descriptor, startOffset, endOffset);
+
+        if (descriptor instanceof ClassDescriptor) {
+            ConstructorDescriptor primaryConstructor = ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
+            if (primaryConstructor != null) {
+                saveClsMemberToRange(primaryConstructor, startOffset, endOffset);
+            }
+        }
+    }
+
+    private void saveClsMemberToRange(DeclarationDescriptor descriptor, int startOffset, int endOffset) {
         PsiElement clsMember = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (clsMember != null) {
             clsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
