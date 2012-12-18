@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.codegen.state.Progress;
 
 import java.io.File;
 import java.util.Collection;
@@ -82,7 +81,7 @@ public class NamespaceCodegen extends MemberCodegen {
         });
     }
 
-    public void generate(CompilationErrorHandler errorHandler, final Progress progress) {
+    public void generate(CompilationErrorHandler errorHandler) {
         boolean multiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), name);
 
         for (JetFile file : files) {

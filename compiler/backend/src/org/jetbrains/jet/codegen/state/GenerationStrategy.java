@@ -47,7 +47,7 @@ public class GenerationStrategy {
             CompilationErrorHandler errorHandler
     ) {
         NamespaceCodegen codegen = state.getFactory().forNamespace(fqName, jetFiles);
-        codegen.generate(errorHandler, state.getProgress());
+        codegen.generate(errorHandler);
     }
 
     public final void compileCorrectFiles(GenerationState state, @NotNull CompilationErrorHandler errorHandler) {
