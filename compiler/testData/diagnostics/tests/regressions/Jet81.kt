@@ -1,7 +1,7 @@
 // JET-81 Assertion fails when processing self-referring anonymous objects
 
 val y = object {
-  val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>y<!>;
+  val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>y<!>;
 }
 
 val z = y.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>;
@@ -12,7 +12,7 @@ object A {
 
 val a = object {
   {
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> 1
+    <!UNINITIALIZED_VARIABLE, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> 1
   }
   val x = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!>
   val y = 1

@@ -15,13 +15,22 @@ val o = object {
         <!INVISIBLE_SETTER!>p.x<!> = 4
 
         val z : Int
-        doSmth(<!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>z<!>)
+        doSmth(<!UNINITIALIZED_VARIABLE!>z<!>)
     }
 }
 
 val g = { ->
     val x: Int
     doSmth(<!UNINITIALIZED_VARIABLE!>x<!>)
+}
+
+class A {
+    val a : Int = 1
+      get() {
+          val x : Int
+          doSmth(<!UNINITIALIZED_VARIABLE!>x<!>)
+          return $a
+      }
 }
 
 fun doSmth(i: Int) = i

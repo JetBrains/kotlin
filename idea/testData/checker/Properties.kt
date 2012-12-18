@@ -1,4 +1,4 @@
- var x : Int = 1 + x
+ var x : Int = 1 + <error>x</error>
    get() : Int = 1
    set(value : <error>Long</error>) {
       $x = value.toInt()

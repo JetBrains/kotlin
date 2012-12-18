@@ -18,7 +18,7 @@ class A() {
 val x = { <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x<!> }
 
 //KT-787 AssertionError on code 'val x = x'
-val z = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>z<!>
+val z = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>z<!>
 
 //KT-329 Assertion failure on local function
 fun block(f : () -> Unit) = f()

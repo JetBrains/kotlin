@@ -131,9 +131,9 @@ class T() {
     }
 
     val a =  object {
-        val x = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS, NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$z<!>
+        val x = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$z<!>
         {
-            <!NO_BACKING_FIELD_CUSTOM_ACCESSORS, NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$z<!> = 23
+            <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$z<!> = 23
         }
     }
 
