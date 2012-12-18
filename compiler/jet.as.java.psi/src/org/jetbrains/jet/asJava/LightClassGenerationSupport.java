@@ -18,8 +18,13 @@ package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+
+import java.util.Collection;
 
 public abstract class LightClassGenerationSupport {
 
@@ -30,4 +35,13 @@ public abstract class LightClassGenerationSupport {
 
     @NotNull
     public abstract LightClassConstructionContext analyzeRelevantCode(@NotNull JetFile file);
+
+    @NotNull
+    public abstract Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
+
+    /*
+     * Returns empty collection for absent package
+     */
+    @NotNull
+    public abstract Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
 }

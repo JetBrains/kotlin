@@ -16,15 +16,29 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiSearchScopeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class solves the problem of interdependency between analyzing Kotlin code and generating JetLightClasses
@@ -66,5 +80,36 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public LightClassConstructionContext analyzeRelevantCode(@NotNull JetFile file) {
         return new LightClassConstructionContext(getTrace().getBindingContext(), null);
+    }
+
+    @NotNull
+    @Override
+    public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
+        ClassDescriptor classDescriptor = trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName);
+        if (classDescriptor != null) {
+            PsiElement element = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+            if (element != null && PsiSearchScopeUtil.isInScope(searchScope, element)) {
+                return Collections.singletonList((JetClassOrObject) element);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
+        NamespaceDescriptor namespaceDescriptor = trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
+        if (namespaceDescriptor != null) {
+            Collection<JetFile> files = trace.get(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor);
+            if (files != null) {
+                return Collections2.filter(files, new Predicate<JetFile>() {
+                    @Override
+                    public boolean apply(JetFile input) {
+                        return PsiSearchScopeUtil.isInScope(searchScope, input);
+                    }
+                });
+            }
+        }
+        return Collections.emptyList();
     }
 }
