@@ -24,7 +24,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Stack;
+import com.intellij.util.containers.Stack;
+
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 

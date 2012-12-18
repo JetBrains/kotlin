@@ -34,7 +34,8 @@ import org.jetbrains.jet.rt.signature.JetSignatureWriter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
+import com.intellij.util.containers.Stack;
+
 
 public class BothSignatureWriter {
 

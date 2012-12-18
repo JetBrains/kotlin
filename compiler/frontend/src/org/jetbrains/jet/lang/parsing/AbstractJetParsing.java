@@ -25,7 +25,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
+import com.intellij.util.containers.Stack;
+
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 

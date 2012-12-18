@@ -27,7 +27,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Stack;
+import com.intellij.util.containers.Stack;
+
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 

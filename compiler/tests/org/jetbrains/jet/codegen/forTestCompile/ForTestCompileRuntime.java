@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -27,7 +28,10 @@ import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Compile stdlib.jar that can be used in tests

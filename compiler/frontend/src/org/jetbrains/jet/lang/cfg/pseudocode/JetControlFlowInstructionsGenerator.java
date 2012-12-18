@@ -16,12 +16,16 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.*;
 import org.jetbrains.jet.lang.psi.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
 
