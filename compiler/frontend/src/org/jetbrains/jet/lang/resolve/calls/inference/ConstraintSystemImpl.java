@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind;
@@ -34,6 +33,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.CANT_INFER;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
@@ -164,12 +164,13 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @NotNull ConstraintPosition constraintPosition) {
 
         if (constrainingType == TypeUtils.NO_EXPECTED_TYPE
-            || TypeUtils.identityEqualsOrContainsAsArgument(constrainingType, DONT_CARE)
-            || TypeUtils.identityEqualsOrContainsAsArgument(constrainingType, CANT_INFER)) {
+            || constrainingType == DONT_CARE
+            || constrainingType == CANT_INFER) {
             return;
         }
 
-        if (constrainingType == null || ErrorUtils.containsErrorType(constrainingType)) {
+        if (constrainingType == null || (ErrorUtils.containsErrorType(constrainingType)
+                && !TypeUtils.equalsOrContainsAsArgument(constrainingType, DONT_CARE, CANT_INFER, PLACEHOLDER_FUNCTION_TYPE))) {
             hasErrorInConstrainingTypes = true;
             return;
         }
@@ -177,6 +178,12 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         assert subjectType != TypeUtils.NO_EXPECTED_TYPE : "Subject type shouldn't be NO_EXPECTED_TYPE (in position " + constraintPosition + " )";
         if (ErrorUtils.isErrorType(subjectType)) return;
 
+        if (constrainingType == PLACEHOLDER_FUNCTION_TYPE) {
+            if (!KotlinBuiltIns.getInstance().isFunctionType(subjectType)) {
+                errorConstraintPositions.add(constraintPosition);
+            }
+            return;
+        }
 
         DeclarationDescriptor constrainingTypeDescriptor = constrainingType.getConstructor().getDeclarationDescriptor();
         DeclarationDescriptor subjectTypeDescriptor = subjectType.getConstructor().getDeclarationDescriptor();
