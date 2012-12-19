@@ -32,13 +32,13 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
 
     private final ProjectFileIndex myIndex;
 
-    private JetSourceFilterScope(@NotNull final GlobalSearchScope delegate) {
+    private JetSourceFilterScope(@NotNull GlobalSearchScope delegate) {
         super(delegate);
         myIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();
     }
 
     @Override
-    public boolean contains(final VirtualFile file) {
+    public boolean contains(VirtualFile file) {
         if (!super.contains(file)) {
             return false;
         }
