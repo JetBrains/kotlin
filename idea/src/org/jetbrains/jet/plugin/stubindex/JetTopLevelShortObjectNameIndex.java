@@ -44,6 +44,6 @@ public class JetTopLevelShortObjectNameIndex extends StringStubIndexExtension<Je
 
     @Override
     public Collection<JetObjectDeclaration> get(final String s, final Project project, @NotNull final GlobalSearchScope scope) {
-        return super.get(s, project, new JetSourceFilterScope(scope));
+        return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));
     }
 }

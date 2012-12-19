@@ -26,9 +26,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
+    public static JetSourceFilterScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate) {
+        return new JetSourceFilterScope(delegate);
+    }
+
     private final ProjectFileIndex myIndex;
 
-    public JetSourceFilterScope(@NotNull final GlobalSearchScope delegate) {
+    private JetSourceFilterScope(@NotNull final GlobalSearchScope delegate) {
         super(delegate);
         myIndex = ProjectRootManager.getInstance(getProject()).getFileIndex();
     }
