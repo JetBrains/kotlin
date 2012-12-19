@@ -111,6 +111,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
     private void generate(JetFile file, boolean multiFile) {
         NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
+        assert descriptor != null : "No namespace found for file " + file + " declared package: " + file.getPackageName();
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);

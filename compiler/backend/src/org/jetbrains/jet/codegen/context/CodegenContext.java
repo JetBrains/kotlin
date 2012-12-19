@@ -135,7 +135,7 @@ public abstract class CodegenContext {
         return contextKind;
     }
 
-    public CodegenContext intoNamespace(NamespaceDescriptor descriptor) {
+    public CodegenContext intoNamespace(@NotNull NamespaceDescriptor descriptor) {
         return new NamespaceContext(descriptor, this, OwnerKind.NAMESPACE);
     }
 
