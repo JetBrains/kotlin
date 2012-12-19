@@ -30,6 +30,7 @@ import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class JetGotoClassContributor implements GotoClassContributor {
     @Override
@@ -71,7 +72,7 @@ public class JetGotoClassContributor implements GotoClassContributor {
             }
         }
 
-        ArrayList<NavigationItem> items = new ArrayList<NavigationItem>();
+        List<NavigationItem> items = new ArrayList<NavigationItem>();
         Collection<JetClassOrObject> classesOrObjects = JetShortClassNameIndex.getInstance().get(name, project, scope);
 
         for (JetClassOrObject classOrObject : classesOrObjects) {
