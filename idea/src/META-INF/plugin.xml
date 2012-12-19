@@ -18,9 +18,6 @@
           <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
       </component>
       <component>
-          <implementation-class>org.jetbrains.jet.plugin.caches.JetCacheManager</implementation-class>
-      </component>
-      <component>
           <implementation-class>org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver</implementation-class>
       </component>
       <component>

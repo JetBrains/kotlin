@@ -55,7 +55,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
-import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -121,7 +120,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             @NotNull ResolveSession resolveSession,
             @NotNull Project project
     ) {
-        JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+        JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
 
         Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
                 referenceName, expression, resolveSession, GlobalSearchScope.allScope(project));
@@ -141,7 +140,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             @NotNull ResolveSession resolveSession,
             @NotNull Project project
     ) {
-        JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+        JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
         Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getJetCallableExtensions(
                 new Condition<String>() {
                     @Override
@@ -180,7 +179,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     }
 
     private static Collection<FqName> getClassesFromCache(@NotNull final String typeName, @NotNull JetFile file) {
-        PsiShortNamesCache cache = JetCacheManager.getInstance(file.getProject()).getShortNamesCache(file);
+        PsiShortNamesCache cache = getShortNamesCache(file);
 
         PsiClass[] classes = cache.getClassesByName(typeName, GlobalSearchScope.allScope(file.getProject()));
 
@@ -204,8 +203,16 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         });
     }
 
+    private static PsiShortNamesCache getShortNamesCache(@NotNull JetFile jetFile) {
+        if (JsModuleDetector.isJsModule(jetFile)) {
+            return JetShortNamesCache.getKotlinInstance(jetFile.getProject());
+        }
+
+        return PsiShortNamesCache.getInstance(jetFile.getProject());
+    }
+
     private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull Project project, @NotNull ResolveSession resolveSession) {
-        JetShortNamesCache cache = JetCacheManager.getInstance(project).getNamesCache();
+        JetShortNamesCache cache = JetShortNamesCache.getKotlinInstance(project);
         Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
             @Override
             public boolean value(String s) {

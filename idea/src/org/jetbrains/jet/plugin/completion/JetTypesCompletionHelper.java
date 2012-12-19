@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.libraries.DecompiledDataFactory;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
@@ -42,7 +41,7 @@ public class JetTypesCompletionHelper {
         jetCompletionResult.addAllElements(KotlinBuiltIns.getInstance().getNonPhysicalClasses());
 
         Project project = parameters.getOriginalFile().getProject();
-        JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+        JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
         jetCompletionResult.addAllElements(namesCache.getJetClassesDescriptors(
                 jetCompletionResult.getShortNameFilter(), jetCompletionResult.getResolveSession()));
 

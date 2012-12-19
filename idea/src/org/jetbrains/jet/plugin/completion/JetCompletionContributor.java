@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.weigher.JetCompletionSorting;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -200,13 +199,14 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         private void addJetExtensions() {
-            JetShortNamesCache namesCache = JetCacheManager.getInstance(getPosition().getProject()).getNamesCache();
+            Project project = getPosition().getProject();
+            JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
 
             Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getJetCallableExtensions(
                     jetResult.getShortNameFilter(),
                     jetReference.getExpression(),
                     getResolveSession(),
-                    GlobalSearchScope.allScope(getPosition().getProject()));
+                    GlobalSearchScope.allScope(project));
 
             jetResult.addAllElements(jetCallableExtensions);
         }
@@ -229,7 +229,7 @@ public class JetCompletionContributor extends CompletionContributor {
             String actualPrefix = jetResult.getResult().getPrefixMatcher().getPrefix();
             Project project = getPosition().getProject();
 
-            JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+            JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
             GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
@@ -243,8 +243,9 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         private void addJetTopLevelObjects() {
-            JetShortNamesCache namesCache = JetCacheManager.getInstance(getPosition().getProject()).getNamesCache();
-            GlobalSearchScope scope = GlobalSearchScope.allScope(getPosition().getProject());
+            Project project = getPosition().getProject();
+            JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
+            GlobalSearchScope scope = GlobalSearchScope.allScope(project);
             Collection<String> objectNames = namesCache.getAllTopLevelObjectNames();
 
             for (String name : objectNames) {

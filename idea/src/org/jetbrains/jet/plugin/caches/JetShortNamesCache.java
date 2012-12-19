@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.caches;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
@@ -55,6 +56,16 @@ import java.util.*;
  */
 public class JetShortNamesCache extends PsiShortNamesCache {
 
+    public static JetShortNamesCache getKotlinInstance(@NotNull Project project) {
+        PsiShortNamesCache[] extensions = Extensions.getArea(project).getExtensionPoint(PsiShortNamesCache.EP_NAME).getExtensions();
+        for (PsiShortNamesCache extension : extensions) {
+            if (extension instanceof JetShortNamesCache) {
+                return (JetShortNamesCache) extension;
+            }
+        }
+        throw new IllegalStateException(JetShortNamesCache.class.getSimpleName() + " is not found for project " + project);
+    }
+
     private static final PsiMethod[] NO_METHODS = new PsiMethod[0];
     private static final PsiField[] NO_FIELDS = new PsiField[0];
     private final Project project;
@@ -70,6 +81,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @Override
     public String[] getAllClassNames() {
         Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
+        // .namespace classes can not be indexed, since they have no explicit declarations
         classNames.add(JvmAbi.PACKAGE_CLASS);
         return ArrayUtil.toStringArray(classNames);
     }
@@ -83,6 +95,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         if (JvmAbi.PACKAGE_CLASS.equals(name)) {
+            // .namespace classes can not be indexed, since they have no explicit declarations
             Collection<String> allPackageFqNames = JetPackageDeclarationIndex.getInstance().getAllKeys(project);
             for (String fqName : allPackageFqNames) {
                 PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName + "." + JvmAbi.PACKAGE_CLASS, scope);

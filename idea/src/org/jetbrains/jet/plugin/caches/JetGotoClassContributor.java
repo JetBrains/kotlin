@@ -54,14 +54,14 @@ public class JetGotoClassContributor implements GotoClassContributor {
     @NotNull
     @Override
     public String[] getNames(Project project, boolean includeNonProjectItems) {
-        return JetCacheManager.getInstance(project).getNamesCache().getAllClassNames();
+        return JetShortNamesCache.getKotlinInstance(project).getAllClassNames();
     }
 
     @NotNull
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
         final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        PsiClass[] classes = JetCacheManager.getInstance(project).getNamesCache().getClassesByName(name, scope);
+        PsiClass[] classes = JetShortNamesCache.getKotlinInstance(project).getClassesByName(name, scope);
 
         Collection<String> javaQualifiedNames = new HashSet<String>();
 
