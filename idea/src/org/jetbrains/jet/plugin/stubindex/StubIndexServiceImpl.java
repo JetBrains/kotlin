@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.stubindex;
 
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.stubs.*;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -56,14 +57,7 @@ public class StubIndexServiceImpl implements StubIndexService {
             sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
         }
 
-        StubElement parentStub = stub.getParentStub();
-        if (parentStub instanceof PsiJetFileStub) {
-            PsiJetFileStub jetFileStub = (PsiJetFileStub) parentStub;
-            String packageName = jetFileStub.getPackageName();
-            if (packageName != null) {
-                sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageName);
-            }
-        }
+        recordClassOrObjectByPackage(stub, sink);
     }
 
     @Override
@@ -80,6 +74,19 @@ public class StubIndexServiceImpl implements StubIndexService {
         FqName fqName = stub.getFQName();
         if (fqName != null) {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.getFqName());
+        }
+
+        recordClassOrObjectByPackage(stub, sink);
+    }
+
+    private static void recordClassOrObjectByPackage(StubElement<? extends JetClassOrObject> stub, IndexSink sink) {
+        StubElement parentStub = stub.getParentStub();
+        if (parentStub instanceof PsiJetFileStub) {
+            PsiJetFileStub jetFileStub = (PsiJetFileStub) parentStub;
+            String packageName = jetFileStub.getPackageName();
+            if (packageName != null) {
+                sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageName);
+            }
         }
     }
 
