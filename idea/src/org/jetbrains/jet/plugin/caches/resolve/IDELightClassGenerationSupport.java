@@ -24,6 +24,7 @@ import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetPackageDeclarationIndex;
@@ -64,5 +65,12 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             @NotNull FqName packageFqName, @NotNull GlobalSearchScope searchScope
     ) {
         return JetClassByPackageIndex.getInstance().get(packageFqName.getFqName(), project, searchScope);
+    }
+
+    @Override
+    public boolean packageExists(
+            @NotNull FqName fqName, @NotNull GlobalSearchScope scope
+    ) {
+        return !JetAllPackagesIndex.getInstance().get(fqName.getFqName(), project, scope).isEmpty();
     }
 }

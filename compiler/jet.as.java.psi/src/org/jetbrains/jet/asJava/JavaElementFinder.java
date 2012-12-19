@@ -205,12 +205,10 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         FqName fqName = new FqName(qualifiedNameString);
 
-        final Collection<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
-
-        for (JetFile psiFile : psiFiles) {
-            if (QualifiedNamesUtil.isSubpackageOf(JetPsiUtil.getFQName(psiFile), fqName)) {
-                return new JetLightPackage(psiManager, fqName, psiFile.getNamespaceHeader());
-            }
+        // allScope() because the contract says that the whole project
+        GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
+        if (lightClassGenerationSupport.packageExists(fqName, allScope)) {
+            return new JetLightPackage(psiManager, fqName, allScope);
         }
 
         return null;
@@ -228,7 +226,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
             final FqName subPackageFQN = QualifiedNamesUtil.plusOneSegment(new FqName(psiPackage.getQualifiedName()), jetRootNamespace);
             if (subPackageFQN != null) {
-                answer.add(new JetLightPackage(psiManager, subPackageFQN, psiFile.getNamespaceHeader()));
+                answer.add(new JetLightPackage(psiManager, subPackageFQN, scope));
             }
         }
 

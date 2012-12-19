@@ -19,6 +19,7 @@ package org.jetbrains.jet.asJava;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiPackageImpl;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
@@ -26,22 +27,22 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
  */
 public class JetLightPackage extends PsiPackageImpl {
 
-    private final PsiElement namespaceElement;
     private final FqName fqName;
+    private final GlobalSearchScope scope;
 
-    public JetLightPackage(PsiManager manager, FqName qualifiedName, PsiElement namespaceElement) {
+    public JetLightPackage(PsiManager manager, FqName qualifiedName, GlobalSearchScope scope) {
         super(manager, qualifiedName.getFqName());
         this.fqName = qualifiedName;
-        this.namespaceElement = namespaceElement;
+        this.scope = scope;
     }
 
     @Override
     public PsiElement copy() {
-        return new JetLightPackage(getManager(), fqName, namespaceElement);
+        return new JetLightPackage(getManager(), fqName, scope);
     }
 
     @Override
     public boolean isValid() {
-        return namespaceElement.isValid();
+        return LightClassGenerationSupport.getInstance(getProject()).packageExists(fqName, scope);
     }
 }

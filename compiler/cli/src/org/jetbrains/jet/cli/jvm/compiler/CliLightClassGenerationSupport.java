@@ -132,4 +132,11 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         }
         return result;
     }
+
+    @Override
+    public boolean packageExists(
+            @NotNull FqName fqName, @NotNull GlobalSearchScope scope
+    ) {
+        return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName) != null;
+    }
 }

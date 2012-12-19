@@ -51,4 +51,6 @@ public abstract class LightClassGenerationSupport {
             @NotNull FqName packageFqName,
             @NotNull GlobalSearchScope searchScope
     );
+
+    public abstract boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope);
 }
