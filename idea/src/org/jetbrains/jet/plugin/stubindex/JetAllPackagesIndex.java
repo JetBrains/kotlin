@@ -26,21 +26,21 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.util.Collection;
 
 /**
- * Explicitly declared packages, i.e. if a file declares
+ * Contains all packages, i.e. if a file declares
  *   package a.b.c
  *
- * Only "a.b.c" will be registered, not "a" nor "a.b"
+ * Three packages "a", "a.b" and "a.b.c" will be registered in this index
  */
-public class JetPackageDeclarationIndex extends StringStubIndexExtension<JetFile> {
-    private static final StubIndexKey<String, JetFile> KEY = KotlinIndexUtil.createIndexKey(JetPackageDeclarationIndex.class);
+public class JetAllPackagesIndex extends StringStubIndexExtension<JetFile> {
+    private static final StubIndexKey<String, JetFile> KEY = KotlinIndexUtil.createIndexKey(JetAllPackagesIndex.class);
 
-    private static final JetPackageDeclarationIndex ourInstance = new JetPackageDeclarationIndex();
+    private static final JetAllPackagesIndex ourInstance = new JetAllPackagesIndex();
 
-    public static JetPackageDeclarationIndex getInstance() {
+    public static JetAllPackagesIndex getInstance() {
         return ourInstance;
     }
 
-    private JetPackageDeclarationIndex() {}
+    private JetAllPackagesIndex() {}
 
     @NotNull
     @Override

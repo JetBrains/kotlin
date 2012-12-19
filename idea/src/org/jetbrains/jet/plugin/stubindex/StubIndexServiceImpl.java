@@ -27,7 +27,17 @@ public class StubIndexServiceImpl implements StubIndexService {
     @Override
     public void indexFile(PsiJetFileStub stub, IndexSink sink) {
         String packageName = stub.getPackageName();
-        sink.occurrence(JetPackageDeclarationIndex.getInstance().getKey(), packageName == null ? "" : packageName);
+        FqName fqName = new FqName(packageName == null ? "" : packageName);
+
+        sink.occurrence(JetPackageDeclarationIndex.getInstance().getKey(), fqName.getFqName());
+
+        while (true) {
+            sink.occurrence(JetAllPackagesIndex.getInstance().getKey(), fqName.getFqName());
+            if (fqName.isRoot()) {
+                return;
+            }
+            fqName = fqName.parent();
+        }
     }
 
     @Override
