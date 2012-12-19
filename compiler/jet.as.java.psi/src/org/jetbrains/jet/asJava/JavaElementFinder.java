@@ -21,7 +21,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
@@ -33,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -42,7 +40,6 @@ import org.jetbrains.jet.util.QualifiedNamesUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.getLocalNameForObject;
 
@@ -63,56 +60,13 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     private final PsiManager psiManager;
     private final LightClassGenerationSupport lightClassGenerationSupport;
 
-    private final WeakHashMap<GlobalSearchScope, Collection<JetFile>> jetFiles = new WeakHashMap<GlobalSearchScope, Collection<JetFile>>();
-
     public JavaElementFinder(
             @NotNull Project project,
             @NotNull LightClassGenerationSupport lightClassGenerationSupport
     ) {
         this.project = project;
-        psiManager = PsiManager.getInstance(project);
+        this.psiManager = PsiManager.getInstance(project);
         this.lightClassGenerationSupport = lightClassGenerationSupport;
-
-        // Monitoring for files instead of collecting them each time
-        VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
-            @Override
-            public void fileCreated(VirtualFileEvent event) {
-                invalidateJetFilesCache();
-            }
-
-            @Override
-            public void fileDeleted(VirtualFileEvent event) {
-                invalidateJetFilesCache();
-            }
-
-            @Override
-            public void fileMoved(VirtualFileMoveEvent event) {
-                invalidateJetFilesCache();
-            }
-
-            @Override
-            public void fileCopied(VirtualFileCopyEvent event) {
-                invalidateJetFilesCache();
-            }
-
-            @Override
-            public void propertyChanged(VirtualFilePropertyEvent event) {}
-
-            @Override
-            public void contentsChanged(VirtualFileEvent event) {}
-
-            @Override
-            public void beforePropertyChange(VirtualFilePropertyEvent event) {}
-
-            @Override
-            public void beforeContentsChange(VirtualFileEvent event) {}
-
-            @Override
-            public void beforeFileDeletion(VirtualFileEvent event) {}
-
-            @Override
-            public void beforeFileMovement(VirtualFileMoveEvent event) {}
-        });
     }
 
     @Override
@@ -257,22 +211,6 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         }
 
         return answer.toArray(new PsiClass[answer.size()]);
-    }
-
-    private synchronized void invalidateJetFilesCache() {
-        jetFiles.clear();
-    }
-
-    @Deprecated
-    private synchronized Collection<JetFile> collectProjectJetFiles(final Project project, @NotNull final GlobalSearchScope scope) {
-        Collection<JetFile> cachedFiles = jetFiles.get(scope);
-
-        if (cachedFiles == null) {
-            cachedFiles = JetFilesProvider.getInstance(project).allInScope(scope);
-            jetFiles.put(scope, cachedFiles);
-        }
-
-        return cachedFiles;
     }
 }
 
