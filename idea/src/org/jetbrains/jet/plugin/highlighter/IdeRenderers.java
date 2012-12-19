@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -213,4 +210,13 @@ public class IdeRenderers {
                 }
             };
 
+    public static final Renderer<CallableMemberDescriptor> HTML_RENDER_RETURN_TYPE = new Renderer<CallableMemberDescriptor>() {
+        @NotNull
+        @Override
+        public String render(@NotNull CallableMemberDescriptor object) {
+            JetType returnType = object.getReturnType();
+            assert returnType != null;
+            return DescriptorRenderer.HTML.renderType(returnType);
+        }
+    };
 }
