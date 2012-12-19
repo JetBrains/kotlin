@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -69,6 +70,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @Override
     public String[] getAllClassNames() {
         Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
+        classNames.add(JvmAbi.PACKAGE_CLASS);
         return ArrayUtil.toStringArray(classNames);
     }
 
@@ -78,16 +80,30 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     @Override
     public PsiClass[] getClassesByName(@NotNull @NonNls String name, @NotNull GlobalSearchScope scope) {
+        List<PsiClass> result = new ArrayList<PsiClass>();
+
+        if (JvmAbi.PACKAGE_CLASS.equals(name)) {
+            Collection<String> allPackageFqNames = JetPackageDeclarationIndex.getInstance().getAllKeys(project);
+            for (String fqName : allPackageFqNames) {
+                PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName + "." + JvmAbi.PACKAGE_CLASS, scope);
+                if (psiClass != null) {
+                    result.add(psiClass);
+                }
+            }
+        }
+
         // Quick check for classes from getAllClassNames()
         Collection<JetClassOrObject> classOrObjects = JetShortClassNameIndex.getInstance().get(name, project, scope);
         if (classOrObjects.isEmpty()) {
-            return PsiClass.EMPTY_ARRAY;
+            return result.toArray(new PsiClass[result.size()]);
         }
 
-        List<PsiClass> result = new ArrayList<PsiClass>();
         for (JetClassOrObject classOrObject : classOrObjects) {
             FqName fqName = JetPsiUtil.getFQName(classOrObject);
-            if (fqName != null && fqName.shortName().getName().equals(name)) {
+            if (fqName != null) {
+                assert fqName.shortName().getName().equals(name) : "A declaration obtained from index has non-matching name:\n" +
+                                                                   "in index: " + name + "\n" +
+                                                                   "declared: " + fqName.shortName() + "(" + fqName + ")";
                 PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName.getFqName(), scope);
                 if (psiClass != null) {
                     result.add(psiClass);
