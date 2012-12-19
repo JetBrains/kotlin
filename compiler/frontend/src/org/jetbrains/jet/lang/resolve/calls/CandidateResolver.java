@@ -48,6 +48,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode.RESOLVE_FUNCTION_ARGUMENTS;
@@ -171,7 +172,7 @@ public class CandidateResolver {
         assert constraintSystem != null;
 
         TypeSubstitutor substituteDontCare = ConstraintSystemWithPriorities
-                .makeConstantSubstitutor(resolvedCall.getCandidateDescriptor().getTypeParameters(), ConstraintSystemImpl.DONT_CARE);
+                .makeConstantSubstitutor(resolvedCall.getCandidateDescriptor().getTypeParameters(), DONT_CARE);
 
         // constraints for function literals
         // Value parameters
@@ -247,7 +248,7 @@ public class CandidateResolver {
         }
 
         TypeSubstitutor substituteDontCare = ConstraintSystemWithPriorities
-            .makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), ConstraintSystemImpl.DONT_CARE);
+            .makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
 
         // Value parameters
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
@@ -480,7 +481,7 @@ public class CandidateResolver {
         if (argument.getSpreadElement() != null) {
             if (parameterDescriptor.getVarargElementType() == null) {
                 // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
-                return ConstraintSystemImpl.DONT_CARE;
+                return DONT_CARE;
             }
             else {
                 return parameterDescriptor.getType();

@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind;
@@ -31,6 +32,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.CANT_INFER;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
@@ -38,9 +41,6 @@ import static org.jetbrains.jet.lang.types.Variance.*;
  * @author svtk
  */
 public class ConstraintSystemImpl implements ConstraintSystem {
-
-    public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
-    private static final JetType CANT_INFER = ErrorUtils.createErrorType("CANT_INFER");
 
     private final Map<TypeParameterDescriptor, TypeConstraintsImpl> typeParameterConstraints = Maps.newLinkedHashMap();
     private final Set<ConstraintPosition> errorConstraintPositions = Sets.newHashSet();

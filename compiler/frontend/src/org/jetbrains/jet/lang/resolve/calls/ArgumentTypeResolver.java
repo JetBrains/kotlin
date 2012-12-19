@@ -187,12 +187,10 @@ public class ArgumentTypeResolver {
                 trace, "trace to resolve function literal parameter types");
         List<JetType> parameterTypes = Lists.newArrayList();
         for (JetParameter parameter : valueParameters) {
-            parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace,
-                                                         PLACEHOLDER_FUNCTION_PARAMETER_TYPE));
+            parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace, DONT_CARE));
         }
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-        JetType returnType = resolveTypeRefWithDefault(functionLiteral.getReturnTypeRef(), scope, temporaryTrace,
-                                                       PLACEHOLDER_FUNCTION_PARAMETER_TYPE);
+        JetType returnType = resolveTypeRefWithDefault(functionLiteral.getReturnTypeRef(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
         JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeRef(), scope, temporaryTrace, null);
         return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiverType, parameterTypes, returnType);

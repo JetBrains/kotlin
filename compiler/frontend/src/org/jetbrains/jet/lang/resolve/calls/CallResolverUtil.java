@@ -33,8 +33,9 @@ import java.util.Map;
 
 public class CallResolverUtil {
 
-    public static final JetType PLACEHOLDER_FUNCTION_TYPE = ErrorUtils.createErrorType("Function type");
-    public static final JetType PLACEHOLDER_FUNCTION_PARAMETER_TYPE = ErrorUtils.createErrorType("Function parameter type");
+    public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
+    public static final JetType CANT_INFER = ErrorUtils.createErrorTypeWithCustomDebugName("CANT_INFER");
+    public static final JetType PLACEHOLDER_FUNCTION_TYPE = ErrorUtils.createErrorTypeWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE");
 
     public enum ResolveMode {
         RESOLVE_FUNCTION_ARGUMENTS,
