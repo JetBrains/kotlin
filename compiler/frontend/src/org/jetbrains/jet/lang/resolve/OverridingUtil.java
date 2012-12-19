@@ -239,8 +239,15 @@ public class OverridingUtil {
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitutionContext);
         JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getReturnType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
-        if (!typeChecker.isSubtypeOf(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
-            return false;
+        if (superDescriptor instanceof PropertyDescriptor && ((PropertyDescriptor) superDescriptor).isVar()) {
+            if (!typeChecker.equalTypes(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
+                return false;
+            }
+        }
+        else {
+            if (!typeChecker.isSubtypeOf(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
+                return false;
+            }
         }
 
         return true;
