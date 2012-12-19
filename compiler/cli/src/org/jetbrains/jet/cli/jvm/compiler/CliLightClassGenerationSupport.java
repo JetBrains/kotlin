@@ -24,19 +24,19 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiSearchScopeUtil;
+import com.intellij.util.Function;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -138,5 +138,23 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
             @NotNull FqName fqName, @NotNull GlobalSearchScope scope
     ) {
         return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName) != null;
+    }
+
+    @NotNull
+    @Override
+    public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
+        NamespaceDescriptor namespaceDescriptor = trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqn);
+        if (namespaceDescriptor == null) return Collections.emptyList();
+
+        Collection<DeclarationDescriptor> allDescriptors = namespaceDescriptor.getMemberScope().getAllDescriptors();
+        return ContainerUtil.mapNotNull(allDescriptors, new Function<DeclarationDescriptor, FqName>() {
+            @Override
+            public FqName fun(DeclarationDescriptor input) {
+                if (input instanceof NamespaceDescriptor) {
+                    return DescriptorUtils.getFQName(input).toSafe();
+                }
+                return null;
+            }
+        });
     }
 }

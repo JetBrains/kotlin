@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.caches.resolve;
 
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -23,13 +24,16 @@ import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetPackageDeclarationIndex;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class IDELightClassGenerationSupport extends LightClassGenerationSupport {
 
@@ -72,5 +76,26 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             @NotNull FqName fqName, @NotNull GlobalSearchScope scope
     ) {
         return !JetAllPackagesIndex.getInstance().get(fqName.getFqName(), project, scope).isEmpty();
+    }
+
+    @NotNull
+    @Override
+    public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
+        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqn.getFqName(), project, scope);
+
+        Set<FqName> result = Sets.newHashSet();
+        for (JetFile file : files) {
+            FqName fqName = JetPsiUtil.getFQName(file);
+
+            assert QualifiedNamesUtil.isSubpackageOf(fqn, fqName) : "Registered package is not a subpackage of actually declared package:\n" +
+                                                                    "in index: " + fqn + "\n" +
+                                                                    "declared: " + fqName;
+            FqName subpackage = QualifiedNamesUtil.plusOneSegment(fqn, fqName);
+            if (subpackage != null) {
+                result.add(subpackage);
+            }
+        }
+
+        return result;
     }
 }

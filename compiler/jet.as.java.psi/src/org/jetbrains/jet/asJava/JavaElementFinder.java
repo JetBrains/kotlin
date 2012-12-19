@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
@@ -37,7 +39,10 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.getLocalNameForObject;
 
@@ -216,19 +221,17 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
     @NotNull
     @Override
-    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        final Collection<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
+    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull final GlobalSearchScope scope) {
+        FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
-        Set<PsiPackage> answer = new HashSet<PsiPackage>();
+        Collection<FqName> subpackages = lightClassGenerationSupport.getSubPackages(packageFQN, scope);
 
-        for (JetFile psiFile : psiFiles) {
-            FqName jetRootNamespace = JetPsiUtil.getFQName(psiFile);
-
-            final FqName subPackageFQN = QualifiedNamesUtil.plusOneSegment(new FqName(psiPackage.getQualifiedName()), jetRootNamespace);
-            if (subPackageFQN != null) {
-                answer.add(new JetLightPackage(psiManager, subPackageFQN, scope));
+        Collection<PsiPackage> answer = Collections2.transform(subpackages, new Function<FqName, PsiPackage>() {
+            @Override
+            public PsiPackage apply(@Nullable FqName input) {
+                return new JetLightPackage(psiManager, input, scope);
             }
-        }
+        });
 
         return answer.toArray(new PsiPackage[answer.size()]);
     }
@@ -263,7 +266,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     @Deprecated
     private synchronized Collection<JetFile> collectProjectJetFiles(final Project project, @NotNull final GlobalSearchScope scope) {
         Collection<JetFile> cachedFiles = jetFiles.get(scope);
-        
+
         if (cachedFiles == null) {
             cachedFiles = JetFilesProvider.getInstance(project).allInScope(scope);
             jetFiles.put(scope, cachedFiles);

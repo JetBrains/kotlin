@@ -40,7 +40,11 @@ public abstract class LightClassGenerationSupport {
     public abstract Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
 
     /*
-     * Returns empty collection for absent package
+     * Finds files whose package declaration is exactly {@code fqName}. For example, if a file declares
+     *     package a.b.c
+     * it will not be returned for fqName "a.b"
+     *
+     * If the resulting collection is empty, it means that this package has not other declarations than sub-packages
      */
     @NotNull
     public abstract Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
@@ -53,4 +57,7 @@ public abstract class LightClassGenerationSupport {
     );
 
     public abstract boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope);
+
+    @NotNull
+    public abstract Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope);
 }
