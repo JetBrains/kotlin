@@ -172,9 +172,9 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LazyResolveNamespaceComparingTestGenerated",
                 AbstractLazyResolveNamespaceComparingTest.class,
-                testModel("compiler/testData/loadKotlin", "doTestCheckingConstructors"),
-                testModel("compiler/testData/loadJava", "doTestNotCheckingConstructors"),
-                testModel("compiler/testData/lazyResolve/namespaceComparator", "doTestCheckingConstructors")
+                testModel("compiler/testData/loadKotlin", "doTestCheckingPrimaryConstructors"),
+                testModel("compiler/testData/loadJava", "doTestNotCheckingPrimaryConstructors"),
+                testModel("compiler/testData/lazyResolve/namespaceComparator", "doTestCheckingPrimaryConstructors")
         );
 
         generateTest(

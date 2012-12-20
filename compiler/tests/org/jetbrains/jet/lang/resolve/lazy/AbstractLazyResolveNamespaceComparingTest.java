@@ -42,11 +42,11 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_AND_ANNOTATIONS);
     }
 
-    protected void doTestCheckingConstructors(String testFileName) throws IOException {
+    protected void doTestCheckingPrimaryConstructors(String testFileName) throws IOException {
         doTest(testFileName, true);
     }
 
-    protected void doTestNotCheckingConstructors(String testFileName) throws IOException {
+    protected void doTestNotCheckingPrimaryConstructors(String testFileName) throws IOException {
         doTest(testFileName, false);
     }
 
