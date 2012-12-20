@@ -110,6 +110,16 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTest("compiler/testData/loadKotlin/class/ClassTwoParams2.kt");
         }
         
+        @TestMetadata("EnumWithGenericConstructorParameter.kt")
+        public void testEnumWithGenericConstructorParameter() throws Exception {
+            doTest("compiler/testData/loadKotlin/class/EnumWithGenericConstructorParameter.kt");
+        }
+        
+        @TestMetadata("EnumWithPrimitiveConstructorParameter.kt")
+        public void testEnumWithPrimitiveConstructorParameter() throws Exception {
+            doTest("compiler/testData/loadKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
+        }
+        
         @TestMetadata("InheritClassSimple.kt")
         public void testInheritClassSimple() throws Exception {
             doTest("compiler/testData/loadKotlin/class/InheritClassSimple.kt");

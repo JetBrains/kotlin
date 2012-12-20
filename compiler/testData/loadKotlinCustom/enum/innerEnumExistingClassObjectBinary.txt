@@ -5,7 +5,7 @@ internal final class test.A : jet.Any {
     internal final class object test.A.<class-object-for-A> {
         private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>
         internal final enum class test.A.<class-object-for-A>.E : jet.Enum<test.A.<class-object-for-A>.E> {
-            private final /*constructor*/ fun <init>(/*0*/ p0: jet.String?, /*1*/ p1: jet.Int): test.A.<class-object-for-A>.E
+            private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>.E
             public final override /*1*/ /*fake_override*/ fun name(): jet.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
             internal final class object test.A.<class-object-for-A>.E.<class-object-for-E> {

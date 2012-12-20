@@ -112,6 +112,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/ClassTwoParams2.kt");
             }
             
+            @TestMetadata("EnumWithGenericConstructorParameter.kt")
+            public void testEnumWithGenericConstructorParameter() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/EnumWithGenericConstructorParameter.kt");
+            }
+            
+            @TestMetadata("EnumWithPrimitiveConstructorParameter.kt")
+            public void testEnumWithPrimitiveConstructorParameter() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
+            }
+            
             @TestMetadata("InheritClassSimple.kt")
             public void testInheritClassSimple() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/InheritClassSimple.kt");

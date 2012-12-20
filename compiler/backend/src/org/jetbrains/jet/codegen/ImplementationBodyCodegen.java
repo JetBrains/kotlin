@@ -322,7 +322,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         signatureVisitor.writeSupersEnd();
 
-        return new JvmClassSignature(jvmName(), superClassAsmType.getInternalName(), superInterfaces, signatureVisitor.makeJavaString(),
+        return new JvmClassSignature(jvmName(), superClassAsmType.getInternalName(), superInterfaces, signatureVisitor.makeJavaGenericSignature(),
                                      signatureVisitor.makeKotlinClassSignature());
     }
 

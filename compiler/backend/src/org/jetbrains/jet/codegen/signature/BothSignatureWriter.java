@@ -346,7 +346,18 @@ public class BothSignatureWriter {
     public void writeParameterType(JvmMethodParameterKind parameterKind) {
         transitionState(State.PARAMETERS, State.PARAMETER);
 
-        push(signatureVisitor().visitParameterType());
+        // This magic mimics the behavior of javac that enum constructor have these synthetic parameters in erased signature, but doesn't
+        // have them in generic signature. IDEA relies on this behavior.
+        if (parameterKind == JvmMethodParameterKind.ENUM_NAME || parameterKind == JvmMethodParameterKind.ENUM_ORDINAL) {
+            generic = true;
+
+            // pushing dummy visitor, because we don't want these parameters to appear in generic JVM signature
+            push(new SignatureWriter());
+        }
+        else {
+            push(signatureVisitor().visitParameterType());
+        }
+
         jetSignatureWriter = new JetSignatureWriter();
         if (jvmCurrentType != null || jvmCurrentTypeArrayLevel != 0) {
             throw new IllegalStateException();
@@ -476,7 +487,7 @@ public class BothSignatureWriter {
     }
 
     @Nullable
-    public String makeJavaString() {
+    public String makeJavaGenericSignature() {
         if (state != State.METHOD_END && state != State.CLASS_END) {
             throw new IllegalStateException();
         }
@@ -519,7 +530,7 @@ public class BothSignatureWriter {
         if (needGenerics) {
             return new JvmMethodSignature(
                     makeAsmMethod(name),
-                    makeJavaString(),
+                    makeJavaGenericSignature(),
                     makeKotlinMethodTypeParameters(),
                     makeKotlinParameterTypes(),
                     makeKotlinReturnTypeSignature()
@@ -530,3 +541,4 @@ public class BothSignatureWriter {
         }
     }
 }
+
