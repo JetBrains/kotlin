@@ -17,6 +17,7 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ClassFileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
@@ -39,10 +40,10 @@ class LightClassGenerationStrategy extends GenerationStrategy {
 
     private final Stack<StubElement> stubStack;
     private final PsiJavaFileStubImpl answer;
-    private final JetLightClass theClass;
+    private final VirtualFile virtualFile;
 
-    public LightClassGenerationStrategy(JetLightClass aClass, Stack<StubElement> stubStack, PsiJavaFileStubImpl answer) {
-        this.theClass = aClass;
+    public LightClassGenerationStrategy(@NotNull VirtualFile virtualFile, Stack<StubElement> stubStack, PsiJavaFileStubImpl answer) {
+        this.virtualFile = virtualFile;
         this.stubStack = stubStack;
         this.answer = answer;
     }
@@ -59,7 +60,7 @@ class LightClassGenerationStrategy extends GenerationStrategy {
 
         answer.setPsiFactory(new ClsWrapperStubPsiFactory());
         final ClsFileImpl fakeFile =
-                new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, theClass.getFile().getVirtualFile())) {
+                new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, virtualFile)) {
                     @NotNull
                     @Override
                     public PsiClassHolderFileStub getStub() {

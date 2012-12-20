@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
@@ -210,7 +211,9 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
         try {
             GenerationState state = new GenerationState(project, builderFactory, context.getBindingContext(), Collections.singletonList(file));
-            GenerationStrategy strategy = new LightClassGenerationStrategy(this, stubStack, answer);
+            VirtualFile virtualFile = file.getVirtualFile();
+            assert virtualFile != null;
+            GenerationStrategy strategy = new LightClassGenerationStrategy(virtualFile, stubStack, answer);
 
             strategy.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             state.getFactory().files();
