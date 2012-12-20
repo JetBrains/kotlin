@@ -28,6 +28,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -66,13 +67,17 @@ public class JetIconProvider extends IconProvider {
         if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0 && psiElement instanceof JetModifierListOwner) {
             JetModifierList list = ((JetModifierListOwner) psiElement).getModifierList();
             if (list != null) {
-                RowIcon rowIcon = new RowIcon(2);
-                rowIcon.setIcon(result, 0);
-                rowIcon.setIcon(getVisibilityIcon(list), 1);
-                result = rowIcon;
+                result = createRowIcon(result, getVisibilityIcon(list));
             }
         }
         return result;
+    }
+
+    private static RowIcon createRowIcon(Icon baseIcon, Icon visibilityIcon) {
+        RowIcon rowIcon = new RowIcon(2);
+        rowIcon.setIcon(baseIcon, 0);
+        rowIcon.setIcon(visibilityIcon, 1);
+        return rowIcon;
     }
 
     public static Icon getVisibilityIcon(JetModifierList list) {
@@ -92,6 +97,11 @@ public class JetIconProvider extends IconProvider {
         if (psiElement instanceof JetNamespaceHeader) {
             return PlatformIcons.PACKAGE_ICON;
         }
+
+        if (psiElement instanceof KotlinLightClassForPackage) {
+            return JetIcons.FILE;
+        }
+
         if (psiElement instanceof JetNamedFunction) {
             if (((JetFunction) psiElement).getReceiverTypeRef() != null) {
                 return JetIcons.EXTENSION_FUNCTION;
