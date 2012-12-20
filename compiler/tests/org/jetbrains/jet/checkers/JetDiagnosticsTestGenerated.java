@@ -1791,6 +1791,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/functionLiterals"), "kt", true);
             }
             
+            @TestMetadata("ExpectedParameterTypeMismatchVariance.kt")
+            public void testExpectedParameterTypeMismatchVariance() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/ExpectedParameterTypeMismatchVariance.kt");
+            }
+            
+            @TestMetadata("ExpectedParametersTypesMismatch.kt")
+            public void testExpectedParametersTypesMismatch() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/ExpectedParametersTypesMismatch.kt");
+            }
+            
             @TestMetadata("kt2906.kt")
             public void testKt2906() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");

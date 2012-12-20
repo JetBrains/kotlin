@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -33,8 +34,9 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_INFER_PARAMETER_TYPE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
  * @author abreslav
@@ -94,7 +96,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (bodyExpression == null) return null;
 
         JetType expectedType = context.expectedType;
-        boolean functionTypeExpected = expectedType != TypeUtils.NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionType(expectedType);
+        boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionType(expectedType);
 
         SimpleFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
 
@@ -106,18 +108,24 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         JetType receiver = DescriptorUtils.getReceiverParameterType(receiverParameter);
 
-        JetType returnType = TypeUtils.NO_EXPECTED_TYPE;
+        JetType returnType = NO_EXPECTED_TYPE;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve function literal expression", expression);
+        JetType expectedReturnType = functionTypeExpected ? KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(expectedType) : null;
         if (returnTypeRef != null) {
             returnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
             context.expressionTypingServices.checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).
                     replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace);
+            if (functionTypeExpected) {
+                if (!JetTypeChecker.INSTANCE.isSubtypeOf(expectedReturnType, returnType)) {
+                    temporaryTrace.report(EXPECTED_RETURN_TYPE_MISMATCH.on(returnTypeRef, expectedReturnType));
+                }
+            }
         }
         else {
             if (functionTypeExpected) {
-                returnType = KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(expectedType);
+                returnType = expectedReturnType;
             }
             returnType = context.expressionTypingServices.getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
                     context.replaceExpectedType(returnType).replaceBindingTrace(temporaryTrace), temporaryTrace).getType();
@@ -130,17 +138,21 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }, true);
         JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
-        functionDescriptor.setReturnType(safeReturnType);
 
         if (!functionLiteral.hasDeclaredReturnType() && functionTypeExpected) {
-            JetType expectedReturnType = KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(expectedType);
             if (KotlinBuiltIns.getInstance().isUnit(expectedReturnType)) {
-                functionDescriptor.setReturnType(KotlinBuiltIns.getInstance().getUnitType());
-                return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, KotlinBuiltIns.getInstance().getUnitType()), expression, context, context.dataFlowInfo);
+                safeReturnType = KotlinBuiltIns.getInstance().getUnitType();
             }
-
         }
-        return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, safeReturnType), expression, context, context.dataFlowInfo);
+        functionDescriptor.setReturnType(safeReturnType);
+
+        JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
+                Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, safeReturnType);
+        if (expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionType(expectedType)) {
+            // all checks were done before
+            return JetTypeInfo.create(resultType, context.dataFlowInfo);
+        }
+        return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
     }
 
     private SimpleFunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
@@ -185,7 +197,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                                           ? KotlinBuiltIns.getInstance().getValueParameters(functionDescriptor, context.expectedType)
                                                           : null;
 
-        boolean hasDeclaredValueParameters = functionLiteral.getValueParameterList() != null;
+        JetParameterList valueParameterList = functionLiteral.getValueParameterList();
+        boolean hasDeclaredValueParameters = valueParameterList != null;
         if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters.size() == 1) {
             ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
             ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
@@ -195,17 +208,36 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             context.trace.record(AUTO_CREATED_IT, it);
         }
         else {
+            if (expectedValueParameters != null && declaredValueParameters.size() != expectedValueParameters.size()) {
+                List<JetType> expectedParameterTypes = Lists.newArrayList();
+                for (ValueParameterDescriptor parameter : expectedValueParameters) {
+                    expectedParameterTypes.add(parameter.getType());
+                }
+                context.trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(functionLiteral, expectedParameterTypes.size(), expectedParameterTypes));
+            }
             for (int i = 0; i < declaredValueParameters.size(); i++) {
                 JetParameter declaredParameter = declaredValueParameters.get(i);
                 JetTypeReference typeReference = declaredParameter.getTypeReference();
 
+                JetType expectedType;
+                if (expectedValueParameters != null && i < expectedValueParameters.size()) {
+                    expectedType = expectedValueParameters.get(i).getType();
+                }
+                else {
+                    expectedType = null;
+                }
                 JetType type;
                 if (typeReference != null) {
                     type = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
+                    if (expectedType != null) {
+                        if (!JetTypeChecker.INSTANCE.isSubtypeOf(type, expectedType)) {
+                            context.trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(declaredParameter, expectedType));
+                        }
+                    }
                 }
                 else {
-                    if (expectedValueParameters != null && i < expectedValueParameters.size()) {
-                        type = expectedValueParameters.get(i).getType();
+                    if (expectedType != null) {
+                        type = expectedType;
                     }
                     else {
                         context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));

@@ -354,6 +354,18 @@ public class PositioningStrategies {
         }
     };
 
+    public static final PositioningStrategy<JetFunctionLiteral> FUNCTION_LITERAL_PARAMETERS = new PositioningStrategy<JetFunctionLiteral>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetFunctionLiteral functionLiteral) {
+            JetParameterList valueParameterList = functionLiteral.getValueParameterList();
+            if (valueParameterList != null) {
+                return markElement(valueParameterList);
+            }
+            return markNode(functionLiteral.getOpenBraceNode());
+        }
+    };
+
     private PositioningStrategies() {
     }
 }

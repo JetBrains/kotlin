@@ -310,6 +310,23 @@ public class Renderers {
         }
     };
 
+    public static final Renderer<Collection<JetType>> RENDER_COLLECTION_OF_TYPES = new Renderer<Collection<JetType>>() {
+        @NotNull
+        @Override
+        public String render(@NotNull Collection<JetType> types) {
+            StringBuilder builder = new StringBuilder();
+            for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext(); ) {
+                JetType jetType = iterator.next();
+                builder.append(jetType);
+                if (iterator.hasNext()) {
+                    builder.append(", ");
+                }
+            }
+            return builder.toString();
+        }
+    };
+
+
     private Renderers() {
     }
 }
