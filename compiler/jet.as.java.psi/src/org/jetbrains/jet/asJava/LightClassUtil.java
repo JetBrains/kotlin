@@ -17,9 +17,12 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.KotlinVfsUtil;
 
@@ -27,7 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class LightClassUtil {
-    private static final Logger LOG = Logger.getInstance(JetLightClass.class);
+    private static final Logger LOG = Logger.getInstance(LightClassUtil.class);
     private static final String DEFINITION_OF_ANY = "Any.jet";
 
     /**
@@ -66,6 +69,15 @@ public class LightClassUtil {
             throw new IllegalStateException("Built-ins not found in the classpath: " + pathToAny);
         }
         return url;
+    }
+
+    /*package*/ static void logErrorWithOSInfo(@Nullable Throwable cause, @NotNull FqName fqName, @Nullable VirtualFile virtualFile) {
+        String path = virtualFile == null ? "<null>" : virtualFile.getPath();
+        LOG.error(
+                "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
+                "built-ins dir URL is " + getBuiltInsDirResourceUrl() + "\n" +
+                "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
+                cause);
     }
 
     private LightClassUtil() {}

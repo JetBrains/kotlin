@@ -23,7 +23,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
@@ -53,8 +52,6 @@ import javax.swing.*;
 import java.util.Collections;
 
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
-    private static final Logger LOG = Logger.getInstance(JetLightClass.class);
-
     static class JetBadWrapperException extends RuntimeException {
         private final String context;
 
@@ -171,7 +168,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
             // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
             // If it fails later, there will be an exception logged
-            logErrorWithOSInfo(null);
+            LightClassUtil.logErrorWithOSInfo(null, qualifiedName, file.getVirtualFile());
         }
 
         final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file).getFqName(), true);
@@ -223,19 +220,11 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             throw e;
         }
         catch (RuntimeException e) {
-            logErrorWithOSInfo(e);
+            LightClassUtil.logErrorWithOSInfo(e, qualifiedName, file.getVirtualFile());
             throw e;
         }
 
         return answer;
-    }
-
-    private void logErrorWithOSInfo(@Nullable Throwable cause) {
-        LOG.error(
-                "Could not generate JetLightClass for " + qualifiedName + " declared in " + file.getVirtualFile().getPath() + "\n" +
-                "built-ins dir URL is " + LightClassUtil.getBuiltInsDirResourceUrl() + "\n" +
-                "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
-                cause);
     }
 
     @Override
