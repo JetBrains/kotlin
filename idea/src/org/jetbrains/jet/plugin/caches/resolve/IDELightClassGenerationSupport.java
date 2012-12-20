@@ -44,8 +44,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
-    public LightClassConstructionContext analyzeRelevantCode(@NotNull JetFile file) {
-        Project project = file.getProject();
+    public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
         KotlinDeclarationsCache cache = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(project);
         return new LightClassConstructionContext(cache.getBindingContext(), null);
     }

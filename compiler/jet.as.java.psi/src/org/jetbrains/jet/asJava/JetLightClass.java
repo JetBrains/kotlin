@@ -18,7 +18,6 @@ package org.jetbrains.jet.asJava;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -202,7 +201,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         // The context must reflect _all files in the module_. not only the current file
         // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
         // must be loaded from .class files
-        LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(file);
+        LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(Collections.singletonList(file));
 
         Throwable error = context.getError();
         if (error != null) {
