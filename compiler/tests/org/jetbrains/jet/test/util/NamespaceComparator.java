@@ -90,7 +90,6 @@ public class NamespaceComparator {
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
     public static final Configuration RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
-    public static final Configuration NON_RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysFalse(), Predicates.<NamespaceDescriptor>alwaysTrue());
 
     public static class Configuration {
 
@@ -697,39 +696,6 @@ public class NamespaceComparator {
             }
         }
 
-    }
-
-    private static boolean isRootNs(DeclarationDescriptor ns) {
-        return ns instanceof NamespaceDescriptor && ns.getContainingDeclaration() instanceof ModuleDescriptor;
-    }
-
-    private static class NamespacePrefixSerializer extends Serializer {
-
-        private static final MethodCache NAMESPACE_PREFIX_SERIALIZER_METHOD_CACHE = new MethodCache(NamespacePrefixSerializer.class);
-
-        private NamespacePrefixSerializer(boolean checkPrimaryConstructors, StringBuilder sb) {
-            super(checkPrimaryConstructors, sb);
-        }
-
-        @Override
-        protected MethodCache doGetMethodCache() {
-            return NAMESPACE_PREFIX_SERIALIZER_METHOD_CACHE;
-        }
-
-        @Override
-        public void serialize(NamespaceDescriptor ns) {
-            super.serialize(ns);
-            if (isRootNs(ns)) {
-                return;
-            }
-            sb.append(".");
-        }
-
-        @Override
-        public void serialize(ClassDescriptor clazz) {
-            super.serialize(clazz);
-            sb.append(".");
-        }
     }
 
     private static final MethodCache FULL_CONTENT_SERIALIZER_METHOD_CACHE = new MethodCache(FullContentSerialier.class);
