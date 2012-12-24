@@ -17,6 +17,7 @@
 package org.jetbrains.jet.renderer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -43,12 +44,14 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();
 
-    String renderType(JetType type);
+    @NotNull
+    String renderType(@Nullable JetType type);
 
     @NotNull
     @Override
     String render(@NotNull DeclarationDescriptor declarationDescriptor);
 
+    @NotNull
     String renderFunctionParameters(@NotNull FunctionDescriptor functionDescriptor);
 
     enum TextFormat {
