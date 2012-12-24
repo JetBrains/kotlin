@@ -44,7 +44,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     private final FqName fqName;
     private final Collection<JetFile> files;
     private final int hashCode;
-    private CachedValue<PsiClass> delegate;
+    private final CachedValue<PsiClass> delegate;
 
     public KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName fqName, @NotNull Collection<JetFile> files) {
         super(manager);

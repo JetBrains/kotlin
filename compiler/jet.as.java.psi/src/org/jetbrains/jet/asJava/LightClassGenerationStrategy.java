@@ -43,7 +43,11 @@ class LightClassGenerationStrategy implements GenerationStrategy {
     private final PsiJavaFileStubImpl answer;
     private final VirtualFile virtualFile;
 
-    public LightClassGenerationStrategy(@NotNull VirtualFile virtualFile, Stack<StubElement> stubStack, PsiJavaFileStubImpl answer) {
+    public LightClassGenerationStrategy(
+            @NotNull VirtualFile virtualFile,
+            @NotNull Stack<StubElement> stubStack,
+            @NotNull PsiJavaFileStubImpl answer
+    ) {
         this.virtualFile = virtualFile;
         this.stubStack = stubStack;
         this.answer = answer;

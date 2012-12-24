@@ -53,18 +53,16 @@ public class KotlinLightClassForPackageProvider implements CachedValueProvider<P
         this.project = project;
     }
 
-
-
     @Nullable
     @Override
     public Result<PsiClass> compute() {
         checkForBuiltIns();
 
-        final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(fqName.getFqName(), true);
+        PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(fqName.getFqName(), true);
 
-        final Stack<StubElement> stubStack = new Stack<StubElement>();
+        Stack<StubElement> stubStack = new Stack<StubElement>();
 
-        final ClassBuilderFactory builderFactory = new KotlinLightClassBuilderFactory(stubStack);
+        ClassBuilderFactory builderFactory = new KotlinLightClassBuilderFactory(stubStack);
 
         // The context must reflect _all files in the module_. not only the current file
         // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
