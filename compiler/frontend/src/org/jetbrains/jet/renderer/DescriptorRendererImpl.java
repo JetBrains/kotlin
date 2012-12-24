@@ -143,6 +143,24 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return buf.toString();
     }
 
+    @NotNull
+    private String renderClassName(@NotNull ClassDescriptor klass) {
+        if (shortNames) {
+            List<Name> qualifiedNameElements = Lists.newArrayList();
+
+            // for nested classes qualified name should be used
+            DeclarationDescriptor current = klass;
+            do {
+                qualifiedNameElements.add(current.getName());
+                current = current.getContainingDeclaration();
+            }
+            while (current instanceof ClassDescriptor);
+
+            Collections.reverse(qualifiedNameElements);
+            return renderFqName(qualifiedNameElements);
+        }
+        return renderFqName(DescriptorUtils.getFQName(klass));
+    }
 
     /* TYPES RENDERING */
     @Override
@@ -189,31 +207,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private String renderTypeName(@NotNull TypeConstructor typeConstructor) {
         ClassifierDescriptor cd = typeConstructor.getDeclarationDescriptor();
-        if (cd == null) {
-            return typeConstructor.toString();
-        }
-        else if (cd instanceof TypeParameterDescriptor) {
+        if (cd instanceof TypeParameterDescriptor) {
             return renderName(cd.getName());
         }
+        else if (cd instanceof ClassDescriptor) {
+            return renderClassName((ClassDescriptor) cd);
+        }
         else {
-            if (shortNames) {
-                List<Name> qualifiedNameElements = Lists.newArrayList();
-
-                // for nested classes qualified name should be used
-                DeclarationDescriptor current = cd;
-                do {
-                    qualifiedNameElements.add(current.getName());
-                    current = current.getContainingDeclaration();
-                }
-                while (current instanceof ClassDescriptor);
-
-                Collections.reverse(qualifiedNameElements);
-
-                return renderFqName(qualifiedNameElements);
-            }
-            else {
-                return renderFqName(DescriptorUtils.getFQName(cd));
-            }
+            assert cd == null: "Unexpected classifier: " + cd.getClass();
+            return typeConstructor.toString();
         }
     }
 
