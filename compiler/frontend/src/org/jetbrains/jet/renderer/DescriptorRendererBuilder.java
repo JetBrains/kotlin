@@ -17,6 +17,11 @@
 package org.jetbrains.jet.renderer;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 public class DescriptorRendererBuilder {
     private boolean shortNames = false;
@@ -30,6 +35,8 @@ public class DescriptorRendererBuilder {
     private DescriptorRenderer.ValueParametersHandler valueParametersHandler = new DescriptorRenderer.DefaultValueParameterHandler();
     @NotNull
     private DescriptorRenderer.TextFormat textFormat = DescriptorRenderer.TextFormat.PLAIN;
+    @NotNull
+    private Collection<FqName> excludedAnnotationClasses = Collections.emptyList();
 
     public DescriptorRendererBuilder() {
     }
@@ -79,8 +86,13 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setExcludedAnnotationClasses(@NotNull Collection<FqName> excludedAnnotationClasses) {
+        this.excludedAnnotationClasses = excludedAnnotationClasses;
+        return this;
+    }
+
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(shortNames, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor,
-                                          verbose, valueParametersHandler, textFormat);
+                                          verbose, valueParametersHandler, textFormat, excludedAnnotationClasses);
     }
 }

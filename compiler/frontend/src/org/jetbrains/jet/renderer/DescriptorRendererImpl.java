@@ -60,6 +60,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final ValueParametersHandler handler;
     @NotNull
     private final TextFormat textFormat;
+    @NotNull
+    private final Set<FqName> excludedAnnotationClasses;
 
     /* package */ DescriptorRendererImpl(
             boolean shortNames,
@@ -70,7 +72,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean classWithPrimaryConstructor,
             boolean verbose,
             @NotNull ValueParametersHandler handler,
-            @NotNull TextFormat textFormat
+            @NotNull TextFormat textFormat,
+            @NotNull Collection<FqName> excludedAnnotationClasses
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -81,6 +84,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.verbose = verbose;
         this.debugMode = debugMode;
         this.textFormat = textFormat;
+        this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
     }
 
 
@@ -285,7 +289,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderAnnotations(@NotNull Annotated annotated, @NotNull StringBuilder builder) {
         if (!modifiers) return;
         for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
-            builder.append(renderType(annotation.getType())).append(" ");
+            ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
+            assert annotationClass != null;
+
+            if (!excludedAnnotationClasses.contains(DescriptorUtils.getFQName(annotationClass).toSafe())) {
+                builder.append(renderType(annotation.getType())).append(" ");
+            }
         }
     }
 
