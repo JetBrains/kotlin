@@ -58,15 +58,6 @@ public class KotlinLightClassForPackageProvider implements CachedValueProvider<P
     public Result<PsiClass> compute() {
         checkForBuiltIns();
 
-        PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(fqName.getFqName(), true);
-
-        Stack<StubElement> stubStack = new Stack<StubElement>();
-
-        ClassBuilderFactory builderFactory = new KotlinLightClassBuilderFactory(stubStack);
-
-        // The context must reflect _all files in the module_. not only the current file
-        // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
-        // must be loaded from .class files
         LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(files);
 
         Throwable error = context.getError();
@@ -74,7 +65,12 @@ public class KotlinLightClassForPackageProvider implements CachedValueProvider<P
             throw new IllegalStateException("failed to analyze: " + error, error);
         }
 
+        PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(fqName.getFqName(), true);
+
         try {
+            Stack<StubElement> stubStack = new Stack<StubElement>();
+            ClassBuilderFactory builderFactory = new KotlinLightClassBuilderFactory(stubStack);
+
             GenerationState state = new GenerationState(
                     project,
                     builderFactory,
