@@ -24,6 +24,7 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -93,8 +94,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
         String fileName = getTestName(false) + ".kt";
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
         AnalyzeExhaust analyzeExhaust =
-                AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
-                        (JetFile) psiFile, Collections.<AnalyzerScriptParameter>emptyList());
+                AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
         final BindingContext bindingContext = analyzeExhaust.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.acceptChildren(new JetVisitorVoid() {
@@ -103,6 +103,9 @@ public class DescriptorRendererTest extends JetLiteFixture {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                 if (descriptor != null) {
                     descriptors.add(descriptor);
+                    if (descriptor instanceof ClassDescriptor) {
+                        descriptors.addAll(((ClassDescriptor) descriptor).getConstructors());
+                    }
                 }
                 element.acceptChildren(this);
             }
