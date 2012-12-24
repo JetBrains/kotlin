@@ -400,7 +400,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderKeyword("ctor")).append(" ");
 
         ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
-        builder.append(classDescriptor.getName());
+        renderName(classDescriptor, builder);
 
         renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder);
         renderValueParameters(constructorDescriptor, builder);
