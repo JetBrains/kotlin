@@ -28,7 +28,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -39,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -144,38 +144,56 @@ public class JetFunctionParameterInfoHandler implements
         return true;
     }
     
-    private static String renderParameter(ValueParameterDescriptor descriptor, boolean named, BindingContext bindingContext) {
+    private static String renderParameter(ValueParameterDescriptor parameter, boolean named, BindingContext bindingContext) {
         StringBuilder builder = new StringBuilder();
         if (named) builder.append("[");
-        if (descriptor.getVarargElementType() != null) {
+        if (parameter.getVarargElementType() != null) {
             builder.append("vararg ");
         }
-        builder.append(descriptor.getName()).append(": ").
-                append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(descriptor)));
-        if (descriptor.hasDefaultValue()) {
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-            String defaultExpression = "?";
-            if (element instanceof JetParameter) {
-                JetParameter parameter = (JetParameter) element;
-                JetExpression defaultValue = parameter.getDefaultValue();
-                if (defaultValue != null) {
-                    if (defaultValue instanceof JetConstantExpression) {
-                        JetConstantExpression constantExpression = (JetConstantExpression) defaultValue;
-                        defaultExpression = constantExpression.getText();
-                        if (defaultExpression.length() > 10) {
-                            if (defaultExpression.startsWith("\"")) defaultExpression = "\"...\"";
-                            else if (defaultExpression.startsWith("\'")) defaultExpression = "\'...\'";
-                            else defaultExpression = defaultExpression.substring(0, 7) + "...";
-                        }
-                    }
-                }
-            }
-            builder.append(" = ").append(defaultExpression);
+        builder.append(parameter.getName()).append(": ").
+                append(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(getActualParameterType(parameter)));
+        if (parameter.hasDefaultValue()) {
+            PsiElement parameterDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, parameter);
+            builder.append(" = ").append(getDefaultExpressionString(parameterDeclaration));
         }
         if (named) builder.append("]");
         return builder.toString();
     }
-    
+
+    private static String getDefaultExpressionString(@Nullable PsiElement parameterDeclaration) {
+        if (parameterDeclaration instanceof JetParameter) {
+            JetExpression defaultValue = ((JetParameter) parameterDeclaration).getDefaultValue();
+            if (defaultValue != null && isConstantExpression(defaultValue)) {
+                String defaultExpression = defaultValue.getText();
+                if (defaultExpression.length() > 10) {
+                    if (defaultExpression.startsWith("\"")) {
+                        return "\"...\"";
+                    }
+                    else if (defaultExpression.startsWith("\'")) {
+                        return "\'...\'";
+                    }
+                    else {
+                        return defaultExpression.substring(0, 7) + "...";
+                    }
+                }
+                return defaultExpression;
+            }
+        }
+        return "?";
+    }
+
+    private static boolean isConstantExpression(@NotNull JetExpression expression) {
+        if (expression instanceof JetStringTemplateExpression) {
+            for (JetStringTemplateEntry templateEntry : ((JetStringTemplateExpression) expression).getEntries()) {
+                if (templateEntry instanceof JetStringTemplateEntryWithExpression) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return expression instanceof JetConstantExpression;
+    }
+
     private static JetType getActualParameterType(ValueParameterDescriptor descriptor) {
         JetType paramType = descriptor.getType();
         if (descriptor.getVarargElementType() != null) paramType = descriptor.getVarargElementType();
