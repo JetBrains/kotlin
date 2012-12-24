@@ -551,6 +551,9 @@ public class FunctionCodegen extends GenerationStateAware {
 
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         boolean hasReceiver = receiverParameter != null;
+        // TODO change this condition when nested classes will be implemented
+        // Has outer in local variables (constructor for inner class)
+        boolean hasOuter = functionDescriptor instanceof ConstructorDescriptor && functionDescriptor.getExpectedThisObject() != null;
         boolean isStatic = isStatic(kind);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
@@ -583,7 +586,7 @@ public class FunctionCodegen extends GenerationStateAware {
             genStubCode(mv);
         }
         else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generateDefaultImpl(owner, state, jvmSignature, functionDescriptor, kind, receiverParameter, hasReceiver, isStatic,
+            generateDefaultImpl(owner, state, jvmSignature, functionDescriptor, kind, receiverParameter, hasReceiver, hasOuter, isStatic,
                                 ownerInternalName,
                                 isConstructor, mv, iv, loadStrategy);
         }
@@ -596,7 +599,7 @@ public class FunctionCodegen extends GenerationStateAware {
             FunctionDescriptor functionDescriptor,
             OwnerKind kind,
             ReceiverParameterDescriptor receiverParameter,
-            boolean hasReceiver,
+            boolean hasReceiver, boolean hasOuter,
             boolean aStatic,
             JvmClassName ownerInternalName,
             boolean constructor,
@@ -612,10 +615,18 @@ public class FunctionCodegen extends GenerationStateAware {
             frameMap.leaveTemp(OBJECT_TYPE);
         }
 
+        if (hasOuter) {
+            frameMap.enterTemp(OBJECT_TYPE);
+        }
+
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), owner, state);
 
         int var = 0;
         if (!aStatic) {
+            var++;
+        }
+
+        if (hasOuter) {
             var++;
         }
 
@@ -631,7 +642,7 @@ public class FunctionCodegen extends GenerationStateAware {
         Type[] argTypes = jvmSignature.getArgumentTypes();
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
         for (int i = 0; i < paramDescrs.size(); i++) {
-            Type argType = argTypes[i + (hasReceiver ? 1 : 0)];
+            Type argType = argTypes[i + ((hasReceiver || hasOuter) ? 1 : 0)];
             int size = argType.getSize();
             frameMap.enter(paramDescrs.get(i), argType);
             var += size;
@@ -644,12 +655,17 @@ public class FunctionCodegen extends GenerationStateAware {
             mv.visitVarInsn(ALOAD, var++);
         }
 
+        if (hasOuter) {
+            iv.load(var, ownerInternalName.getAsmType());
+            var++;
+        }
+
         if (hasReceiver) {
             iv.load(var, receiverType);
             var += receiverType.getSize();
         }
 
-        int extra = hasReceiver ? 1 : 0;
+        int extra = (hasReceiver || hasOuter) ? 1 : 0;
 
         for (int index = 0; index < paramDescrs.size(); index++) {
             ValueParameterDescriptor parameterDescriptor = paramDescrs.get(index);

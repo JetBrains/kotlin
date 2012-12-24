@@ -103,6 +103,20 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
+                "DefaultArgumentsBlackBoxTestGenerated",
+                AbstractCodegenTest.class,
+                testModel("compiler/testData/codegen/defaultArguments/blackBox")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "DefaultArgumentsBlackBoxTestGenerated",
+                AbstractCodegenTest.class,
+                testModel("compiler/testData/codegen/defaultArguments/blackBox")
+        );
+
+        generateTest(
+                "compiler/tests/",
                 "LabelGenTestGenerated",
                 AbstractCodegenTest.class,
                 testModel("compiler/testData/codegen/label")
