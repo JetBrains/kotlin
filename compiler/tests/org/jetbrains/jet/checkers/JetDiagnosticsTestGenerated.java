@@ -1960,7 +1960,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/inference")
-        @InnerTestClasses({Inference.Regressions.class, Inference.Varargs.class})
+        @InnerTestClasses({Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.Varargs.class})
         public static class Inference extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInInference() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference"), "kt", true);
@@ -2259,6 +2259,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/reportingImprovements")
+            public static class ReportingImprovements extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInReportingImprovements() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/reportingImprovements"), "kt", true);
+                }
+                
+                @TestMetadata("NoAmbiguityForDifferentFunctionTypes.kt")
+                public void testNoAmbiguityForDifferentFunctionTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");
+                }
+                
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/inference/varargs")
             public static class Varargs extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInVarargs() throws Exception {
@@ -2276,6 +2289,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 TestSuite suite = new TestSuite("Inference");
                 suite.addTestSuite(Inference.class);
                 suite.addTestSuite(Regressions.class);
+                suite.addTestSuite(ReportingImprovements.class);
                 suite.addTestSuite(Varargs.class);
                 return suite;
             }

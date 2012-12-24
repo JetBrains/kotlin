@@ -257,7 +257,6 @@ public class CandidateResolver {
 
 
             for (ValueArgument valueArgument : resolvedValueArgument.getArguments()) {
-                if (JetPsiUtil.isFunctionLiteralWithoutDeclaredParameterTypes(valueArgument.getArgumentExpression())) continue;
                 // TODO : more attempts, with different expected types
 
                 // Here we type check expecting an error type (DONT_CARE, substitution with substituteDontCare)
