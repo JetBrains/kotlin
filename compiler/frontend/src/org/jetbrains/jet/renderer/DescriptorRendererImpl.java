@@ -55,6 +55,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean startFromName;
     private final boolean debugMode;
     private final boolean classWithPrimaryConstructor;
+    private final boolean verbose;
     @NotNull
     private final ValueParametersHandler handler;
     @NotNull
@@ -67,6 +68,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean startFromName,
             boolean debugMode,
             boolean classWithPrimaryConstructor,
+            boolean verbose,
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat
     ) {
@@ -76,6 +78,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.startFromName = startFromName;
         this.handler = handler;
         this.classWithPrimaryConstructor = classWithPrimaryConstructor;
+        this.verbose = verbose;
         this.debugMode = debugMode;
         this.textFormat = textFormat;
     }
