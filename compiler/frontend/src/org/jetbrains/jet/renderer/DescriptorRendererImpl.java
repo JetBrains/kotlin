@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -147,6 +148,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     public String renderType(JetType type) {
         if (type == null) {
             return escape("[NULL]");
+        }
+        else if (type == CallResolverUtil.DONT_CARE || type == CallResolverUtil.CANT_INFER) {
+            return escape("???");
+        }
+        else if (type == CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE) {
+            return escape("??? -> ???");
         }
         else if (ErrorUtils.isErrorType(type)) {
             return escape(type.toString());
