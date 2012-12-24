@@ -66,8 +66,10 @@ public class GenerationState {
 
     private final boolean generateNotNullParamAssertions;
 
+    private final boolean generateDeclaredClasses;
+
     public GenerationState(Project project, ClassBuilderFactory builderFactory, BindingContext bindingContext, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, bindingContext, files, BuiltinToJavaTypesMapping.ENABLED, true, false);
+        this(project, builderFactory, Progress.DEAF, bindingContext, files, BuiltinToJavaTypesMapping.ENABLED, true, false, true);
     }
 
     public GenerationState(
@@ -78,7 +80,8 @@ public class GenerationState {
             @NotNull List<JetFile> files,
             @NotNull BuiltinToJavaTypesMapping builtinToJavaTypesMapping,
             boolean generateNotNullAssertions,
-            boolean generateNotNullParamAssertions
+            boolean generateNotNullParamAssertions,
+            boolean generateDeclaredClasses
     ) {
         this.project = project;
         this.progress = progress;
@@ -100,6 +103,7 @@ public class GenerationState {
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;
+        this.generateDeclaredClasses = generateDeclaredClasses;
     }
 
     @NotNull
@@ -158,6 +162,10 @@ public class GenerationState {
 
     public boolean isGenerateNotNullParamAssertions() {
         return generateNotNullParamAssertions;
+    }
+
+    public boolean isGenerateDeclaredClasses() {
+        return generateDeclaredClasses;
     }
 
     public void beforeCompile() {

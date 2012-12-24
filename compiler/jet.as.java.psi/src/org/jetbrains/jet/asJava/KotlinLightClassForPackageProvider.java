@@ -5,7 +5,11 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apacheither express or implied.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -26,12 +30,10 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStrategy;
+import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -75,10 +77,19 @@ public class KotlinLightClassForPackageProvider implements CachedValueProvider<P
         }
 
         try {
-            GenerationState state = new GenerationState(project, builderFactory, context.getBindingContext(), Lists.newArrayList(files));
+            GenerationState state = new GenerationState(
+                    project,
+                    builderFactory,
+                    Progress.DEAF,
+                    context.getBindingContext(),
+                    Lists.newArrayList(files),
+                    BuiltinToJavaTypesMapping.ENABLED,
+                    /*not-null assertions*/false, false,
+                    /*generateDeclaredClasses=*/false);
+
             GenerationStrategy strategy = new LightClassGenerationStrategy(new LightVirtualFile(), stubStack, javaFileStub);
 
-            strategy.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+            KotlinCodegenFacade.compileCorrectFiles(state, strategy, CompilationErrorHandler.THROW_EXCEPTION);
             state.getFactory().files();
         }
         catch (ProcessCanceledException e) {

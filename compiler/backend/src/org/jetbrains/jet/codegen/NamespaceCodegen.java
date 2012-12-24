@@ -124,8 +124,10 @@ public class NamespaceCodegen extends MemberCodegen {
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
-                final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                genClassOrObject(context, (JetClassOrObject) declaration);
+                if (state.isGenerateDeclaredClasses()) {
+                    final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
+                    genClassOrObject(context, (JetClassOrObject) declaration);
+                }
             }
             else if (declaration instanceof JetScript) {
                 state.getScriptCodegen().generate((JetScript) declaration);

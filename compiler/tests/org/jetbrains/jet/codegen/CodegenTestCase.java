@@ -361,7 +361,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 environment.getProject(), classBuilderFactory, Progress.DEAF, analyzeExhaust.getBindingContext(), files.getPsiFiles(),
                 configuration.get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
-                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true)
+                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true),
+                /*generateDeclaredClasses = */true
         );
         KotlinCodegenFacade.compileCorrectFiles(state, StandardGenerationStrategy.INSTANCE, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
