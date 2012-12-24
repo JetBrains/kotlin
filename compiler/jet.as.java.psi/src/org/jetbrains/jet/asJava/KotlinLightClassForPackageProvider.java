@@ -122,33 +122,4 @@ public class KotlinLightClassForPackageProvider implements CachedValueProvider<P
             }
         }
     }
-
-    private static class KotlinLightClassBuilderFactory implements ClassBuilderFactory {
-        private final Stack<StubElement> stubStack;
-
-        public KotlinLightClassBuilderFactory(Stack<StubElement> stubStack) {
-            this.stubStack = stubStack;
-        }
-
-        @NotNull
-        @Override
-        public ClassBuilderMode getClassBuilderMode() {
-            return ClassBuilderMode.SIGNATURES;
-        }
-
-        @Override
-        public ClassBuilder newClassBuilder() {
-            return new StubClassBuilder(stubStack);
-        }
-
-        @Override
-        public String asText(ClassBuilder builder) {
-            throw new UnsupportedOperationException("asText is not implemented"); // TODO
-        }
-
-        @Override
-        public byte[] asBytes(ClassBuilder builder) {
-            throw new UnsupportedOperationException("asBytes is not implemented"); // TODO
-        }
-    }
 }
