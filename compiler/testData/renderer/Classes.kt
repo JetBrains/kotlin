@@ -24,6 +24,8 @@ trait TheTrait {
   }
 }
 
+public class WithReified<reified A, reified out B>
+
 //package rendererTest defined in root package
 //internal final annotation class TheAnnotation : jet.Annotation defined in rendererTest
 //public ctor TheAnnotation() defined in rendererTest.TheAnnotation
@@ -43,3 +45,7 @@ trait TheTrait {
 //class object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
 //private ctor <class-object-for-TheTrait>() defined in rendererTest.TheTrait.<class-object-for-TheTrait>
 //internal final fun classObjectFunction() : jet.Int defined in rendererTest.TheTrait.<class-object-for-TheTrait>
+//public final class WithReified<reified A, reified out B> defined in rendererTest
+//public ctor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
+//<reified A> defined in rendererTest.WithReified
+//<reified out B> defined in rendererTest.WithReified

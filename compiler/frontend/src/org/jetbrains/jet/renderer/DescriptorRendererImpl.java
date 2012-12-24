@@ -313,14 +313,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append(lt());
         }
 
-        if (!descriptor.isReified()) {
-            String variance = descriptor.getVariance().toString();
-            if (!variance.isEmpty()) {
-                builder.append(renderKeyword(variance)).append(" ");
-            }
-        }
-        else {
+        if (descriptor.isReified()) {
             builder.append(renderKeyword("reified")).append(" ");
+        }
+        String variance = descriptor.getVariance().toString();
+        if (!variance.isEmpty()) {
+            builder.append(renderKeyword(variance)).append(" ");
         }
         renderName(descriptor, builder);
         if (descriptor.getUpperBounds().size() == 1) {
