@@ -560,14 +560,16 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         List<TypeParameterDescriptor> typeParameters = klass.getTypeConstructor().getParameters();
-        if (!classObject) {
+
+        if (!classObject || verbose) {
             renderName(klass, builder);
-            renderTypeParameters(typeParameters, builder, false);
-            if (classWithPrimaryConstructor) {
-                ConstructorDescriptor primaryConstructor = klass.getUnsubstitutedPrimaryConstructor();
-                if (primaryConstructor != null) {
-                    renderValueParameters(primaryConstructor, builder);
-                }
+        }
+        renderTypeParameters(typeParameters, builder, false);
+
+        if (!classObject && classWithPrimaryConstructor) {
+            ConstructorDescriptor primaryConstructor = klass.getUnsubstitutedPrimaryConstructor();
+            if (primaryConstructor != null) {
+                renderValueParameters(primaryConstructor, builder);
             }
         }
 
