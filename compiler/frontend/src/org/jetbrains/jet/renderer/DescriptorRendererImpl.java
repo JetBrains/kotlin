@@ -281,18 +281,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderModality(Modality modality, StringBuilder builder) {
         if (!modifiers) return;
-        String keyword = "";
-        switch (modality) {
-            case FINAL:
-                keyword = "final";
-                break;
-            case OPEN:
-                keyword = "open";
-                break;
-            case ABSTRACT:
-                keyword = "abstract";
-                break;
-        }
+        String keyword = modality.name().toLowerCase();
         builder.append(renderKeyword(keyword)).append(" ");
     }
 
