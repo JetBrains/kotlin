@@ -335,6 +335,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             builder.append(lt());
         }
 
+        if (verbose) {
+            builder.append("/*").append(typeParameter.getIndex()).append("*/ ");
+        }
+
         if (typeParameter.isReified()) {
             builder.append(renderKeyword("reified")).append(" ");
         }
@@ -476,6 +480,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (topLevel) {
             builder.append(renderKeyword("value-parameter")).append(" ");
         }
+
+        if (verbose) {
+            builder.append("/*").append(valueParameter.getIndex()).append("*/ ");
+        }
+
         renderVariable(valueParameter, builder, topLevel);
         boolean withDefaultValue = debugMode ? valueParameter.declaresDefaultValue() : valueParameter.hasDefaultValue();
         if (withDefaultValue) {
