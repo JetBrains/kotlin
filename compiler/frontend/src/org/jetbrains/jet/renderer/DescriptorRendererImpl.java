@@ -539,27 +539,24 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private static String getClassKindPrefix(ClassDescriptor descriptor) {
-        String keyword;
         switch (descriptor.getKind()) {
+            case CLASS:
+                return "class";
             case TRAIT:
-                keyword = "trait";
-                break;
+                return "trait";
             case ENUM_CLASS:
-                keyword = "enum class";
-                break;
+                return "enum class";
             case OBJECT:
-                keyword = "object";
-                break;
+                return "object";
             case ANNOTATION_CLASS:
-                keyword = "annotation class";
-                break;
+                return "annotation class";
             case CLASS_OBJECT:
-                keyword = "class object";
-                break;
+                return "class object";
+            case ENUM_ENTRY:
+                return "enum entry";
             default:
-                keyword = "class";
+                throw new IllegalStateException("unknown class kind: " + descriptor.getKind());
         }
-        return keyword;
     }
 
 
