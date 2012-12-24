@@ -485,7 +485,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderValVarPrefix(descriptor, builder);
         }
 
-        renderTypeParameters(descriptor.getTypeParameters(), builder);
+        if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
+            builder.append(" ");
+        }
 
         ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
         if (receiver != null) {
@@ -493,6 +495,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
         renderName(descriptor, builder);
         builder.append(" : ").append(escape(renderType(descriptor.getType())));
+
+        renderWhereSuffix(descriptor.getTypeParameters(), builder);
     }
 
 
