@@ -532,6 +532,30 @@ public class AsmUtil {
         }
     }
 
+    public static void pushDefaultValueOnStack(@NotNull Type type, @NotNull InstructionAdapter v) {
+        if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
+            v.aconst(null);
+        }
+        else {
+            pushDefaultPrimitiveValueOnStack(type, v);
+        }
+    }
+
+    public static void pushDefaultPrimitiveValueOnStack(@NotNull Type type, @NotNull InstructionAdapter v) {
+        if (type.getSort() == Type.FLOAT) {
+            v.fconst(0);
+        }
+        else if (type.getSort() == Type.DOUBLE) {
+            v.dconst(0);
+        }
+        else if (type.getSort() == Type.LONG) {
+            v.lconst(0);
+        }
+        else {
+            v.iconst(0);
+        }
+    }
+
     public static Type comparisonOperandType(Type left, Type right) {
         if (left == Type.DOUBLE_TYPE || right == Type.DOUBLE_TYPE) return Type.DOUBLE_TYPE;
         if (left == Type.FLOAT_TYPE || right == Type.FLOAT_TYPE) return Type.FLOAT_TYPE;

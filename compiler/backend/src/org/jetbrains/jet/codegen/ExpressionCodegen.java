@@ -2131,21 +2131,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
             else if (resolvedValueArgument instanceof DefaultValueArgument) {
                 Type type = valueParameterTypes.get(index);
-                if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
-                    v.aconst(null);
-                }
-                else if (type.getSort() == Type.FLOAT) {
-                    v.aconst(0f);
-                }
-                else if (type.getSort() == Type.DOUBLE) {
-                    v.aconst(0d);
-                }
-                else if (type.getSort() == Type.LONG) {
-                    v.aconst(0l);
-                }
-                else {
-                    v.iconst(0);
-                }
+                pushDefaultValueOnStack(type, v);
                 mask |= (1 << index);
             }
             else if (resolvedValueArgument instanceof VarargValueArgument) {

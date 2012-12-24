@@ -242,17 +242,8 @@ public abstract class StackValue {
             if (toType.getSort() == Type.OBJECT) {
                 putTuple0Instance(v);
             }
-            else if (toType == Type.LONG_TYPE) {
-                v.lconst(0);
-            }
-            else if (toType == Type.FLOAT_TYPE) {
-                v.fconst(0);
-            }
-            else if (toType == Type.DOUBLE_TYPE) {
-                v.dconst(0);
-            }
             else {
-                v.iconst(0);
+                pushDefaultPrimitiveValueOnStack(toType, v);
             }
         }
         else if (toType.equals(JET_TUPLE0_TYPE)) {
