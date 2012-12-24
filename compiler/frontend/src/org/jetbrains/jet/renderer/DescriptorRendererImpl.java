@@ -497,21 +497,26 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderVariable(@NotNull VariableDescriptor variable, @NotNull StringBuilder builder, boolean topLevel) {
-        JetType type = variable.getType();
-        if (variable instanceof ValueParameterDescriptor) {
-            JetType varargElementType = ((ValueParameterDescriptor) variable).getVarargElementType();
-            if (varargElementType != null) {
-                builder.append(renderKeyword("vararg")).append(" ");
-                type = varargElementType;
-            }
-        }
+        JetType realType = variable.getType();
 
+        JetType varargElementType = variable instanceof ValueParameterDescriptor
+                                    ? ((ValueParameterDescriptor) variable).getVarargElementType()
+                                    : null;
+        JetType typeToRender = varargElementType != null ? varargElementType : realType;
+
+        if (varargElementType != null) {
+            builder.append(renderKeyword("vararg")).append(" ");
+        }
         if (topLevel && !startFromName) {
             renderValVarPrefix(variable, builder);
         }
 
         renderName(variable, builder);
-        builder.append(" : ").append(escape(renderType(type)));
+        builder.append(" : ").append(escape(renderType(typeToRender)));
+
+        if (verbose && varargElementType != null) {
+            builder.append(" /*").append(escape(renderType(realType))).append("*/");
+        }
     }
 
     private void renderProperty(@NotNull PropertyDescriptor property, @NotNull StringBuilder builder) {
