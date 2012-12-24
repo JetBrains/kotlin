@@ -25,11 +25,9 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiClassImplUtil;
-import com.intellij.psi.impl.java.stubs.PsiClassStub;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
 import com.intellij.psi.impl.light.AbstractLightClass;
-import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.*;
 import com.intellij.util.containers.Stack;
@@ -108,7 +106,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     @Override
     public PsiClass getDelegate() {
         if (delegate == null) {
-            delegate = findClass(qualifiedName, getStub());
+            delegate = LightClassUtil.findClass(qualifiedName, getStub());
             if (delegate == null) {
                 throw new IllegalStateException("Class not found for qualified name: " + qualifiedName);
             }
@@ -119,21 +117,6 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     @Override
     public PsiFile getContainingFile() {
         return file;
-    }
-
-    private static PsiClass findClass(FqName fqn, StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub)stub).getQualifiedName())) {
-            return (PsiClass)stub.getPsi();
-        }
-
-        if (stub instanceof PsiClassStub || stub instanceof PsiFileStub) {
-            for (StubElement child : stub.getChildrenStubs()) {
-                PsiClass answer = findClass(fqn, child);
-                if (answer != null) return answer;
-            }
-        }
-
-        return null;
     }
 
     @Override

@@ -17,8 +17,13 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.stubs.PsiFileStub;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -81,4 +86,20 @@ public class LightClassUtil {
     }
 
     private LightClassUtil() {}
+
+    @Nullable
+    /*package*/ static PsiClass findClass(@NotNull FqName fqn, @NotNull StubElement<?> stub) {
+        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub) stub).getQualifiedName())) {
+            return (PsiClass)stub.getPsi();
+        }
+
+        if (stub instanceof PsiClassStub || stub instanceof PsiFileStub) {
+            for (StubElement child : stub.getChildrenStubs()) {
+                PsiClass answer = findClass(fqn, child);
+                if (answer != null) return answer;
+            }
+        }
+
+        return null;
+    }
 }
