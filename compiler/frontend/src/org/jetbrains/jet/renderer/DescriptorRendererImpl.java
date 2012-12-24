@@ -22,6 +22,8 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -269,6 +271,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
+    private void renderAnnotations(Annotated annotated, StringBuilder builder) {
+        if (!modifiers) return;
+        for (AnnotationDescriptor annotation : annotated.getAnnotations()) {
+            builder.append(renderType(annotation.getType())).append(" ");
+        }
+    }
+
     private void renderVisibility(Visibility visibility, StringBuilder builder) {
         if (!modifiers) return;
         if ("package".equals(visibility.toString())) {
@@ -364,6 +373,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     /* FUNCTIONS */
     private void renderFunction(FunctionDescriptor descriptor, StringBuilder builder) {
         if (!startFromName) {
+            renderAnnotations(descriptor, builder);
             renderVisibility(descriptor.getVisibility(), builder);
             renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword("fun")).append(" ");
@@ -384,6 +394,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderConstructor(ConstructorDescriptor constructorDescriptor, StringBuilder builder) {
+        renderAnnotations(constructorDescriptor, builder);
         renderVisibility(constructorDescriptor.getVisibility(), builder);
 
         builder.append(renderKeyword("ctor")).append(" ");
@@ -471,6 +482,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderProperty(PropertyDescriptor descriptor, StringBuilder builder) {
         if (!startFromName) {
+            renderAnnotations(descriptor, builder);
             renderVisibility(descriptor.getVisibility(), builder);
             renderModality(descriptor.getModality(), builder);
             renderValVarPrefix(descriptor, builder);
@@ -492,6 +504,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         boolean isNotClassObject = descriptor.getKind() != ClassKind.CLASS_OBJECT;
         if (!startFromName) {
             if (isNotClassObject) {
+                renderAnnotations(descriptor, builder);
                 renderVisibility(descriptor.getVisibility(), builder);
                 if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT) {
                     renderModality(descriptor.getModality(), builder);

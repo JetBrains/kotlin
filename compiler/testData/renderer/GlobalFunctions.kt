@@ -17,6 +17,8 @@ trait Bar
 
 fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 
+deprecated("") fun deprecatedFun()
+
 //package rendererTest defined in root package
 //public final fun pub() : Unit defined in rendererTest
 //internal final fun int() : jet.String defined in rendererTest
@@ -33,3 +35,4 @@ fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 //internal trait Bar defined in rendererTest
 //internal final fun <P> funTypeParameterWithTwoUpperBounds() : jet.Int where P : rendererTest.Foo, P : rendererTest.Bar defined in rendererTest
 //<P : rendererTest.Foo & rendererTest.Bar> defined in rendererTest.funTypeParameterWithTwoUpperBounds
+//jet.deprecated internal final fun deprecatedFun() : Unit defined in rendererTest

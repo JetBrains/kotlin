@@ -26,7 +26,7 @@ trait TheTrait {
 
 //package rendererTest defined in root package
 //internal final annotation class TheAnnotation : jet.Annotation defined in rendererTest
-//public open class TheClass<out T : jet.Int, X> defined in rendererTest
+//rendererTest.TheAnnotation public open class TheClass<out T : jet.Int, X> defined in rendererTest
 //<out T : jet.Int> defined in rendererTest.TheClass
 //<X> defined in rendererTest.TheClass
 //private final val privateVal : jet.Int defined in rendererTest.TheClass
