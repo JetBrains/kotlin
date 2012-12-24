@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStrategy;
+import org.jetbrains.jet.codegen.state.StandardGenerationStrategy;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -59,7 +59,7 @@ public class GenerationUtils {
     public static GenerationState compileFilesGetGenerationState(@NotNull Project project, @NotNull AnalyzeExhaust analyzeExhaust, @NotNull List<JetFile> files) {
         analyzeExhaust.throwIfError();
         GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust.getBindingContext(), files);
-        GenerationStrategy.STANDARD.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        KotlinCodegenFacade.compileCorrectFiles(state, StandardGenerationStrategy.INSTANCE, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }
 }

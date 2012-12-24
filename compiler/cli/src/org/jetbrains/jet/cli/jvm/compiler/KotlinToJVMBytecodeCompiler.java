@@ -35,8 +35,8 @@ import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.codegen.state.Progress;
+import org.jetbrains.jet.codegen.state.StandardGenerationStrategy;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
@@ -355,7 +355,7 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false)
         );
-        GenerationStrategy.STANDARD.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
+        KotlinCodegenFacade.compileCorrectFiles(generationState, StandardGenerationStrategy.INSTANCE, CompilationErrorHandler.THROW_EXCEPTION);
 
         CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
         for (CompilerPlugin plugin : configuration.getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {

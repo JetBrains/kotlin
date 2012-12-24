@@ -18,16 +18,27 @@ package org.jetbrains.jet.codegen.state;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
-public interface GenerationStrategy {
-    void generateNamespace(
+public class StandardGenerationStrategy implements GenerationStrategy {
+    public static final GenerationStrategy INSTANCE = new StandardGenerationStrategy();
+
+    private StandardGenerationStrategy() {
+    }
+
+    @Override
+    public void generateNamespace(
             @NotNull GenerationState state,
             @NotNull FqName fqName,
             @NotNull Collection<JetFile> jetFiles,
             @NotNull CompilationErrorHandler errorHandler
-    );
+    ) {
+        NamespaceCodegen codegen = state.getFactory().forNamespace(fqName, jetFiles);
+        codegen.generate(errorHandler);
+    }
+
 }

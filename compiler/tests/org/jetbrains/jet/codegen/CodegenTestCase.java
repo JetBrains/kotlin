@@ -33,7 +33,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStrategy;
+import org.jetbrains.jet.codegen.state.StandardGenerationStrategy;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -363,7 +363,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true)
         );
-        GenerationStrategy.STANDARD.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+        KotlinCodegenFacade.compileCorrectFiles(state, StandardGenerationStrategy.INSTANCE, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }
 
