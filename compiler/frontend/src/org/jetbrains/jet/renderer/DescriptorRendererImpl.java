@@ -498,9 +498,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     /* CLASSES */
     private void renderClass(ClassDescriptor descriptor, StringBuilder builder) {
-        boolean isNotClassObject = descriptor.getKind() != ClassKind.CLASS_OBJECT;
+        boolean classObject = descriptor.getKind() == ClassKind.CLASS_OBJECT;
         if (!startFromName) {
-            if (isNotClassObject) {
+            if (!classObject) {
                 renderAnnotations(descriptor, builder);
                 renderVisibility(descriptor.getVisibility(), builder);
                 if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT) {
@@ -508,13 +508,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 }
             }
             builder.append(renderKeyword(getClassKindPrefix(descriptor)));
-            if (isNotClassObject) {
+            if (!classObject) {
                 builder.append(" ");
             }
         }
 
         List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
-        if (isNotClassObject) {
+        if (!classObject) {
             renderName(descriptor, builder);
             renderTypeParameters(typeParameters, builder);
             if (classWithPrimaryConstructor) {
