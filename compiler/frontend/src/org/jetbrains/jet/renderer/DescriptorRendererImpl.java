@@ -305,6 +305,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderKeyword(keyword)).append(" ");
     }
 
+    private void renderOverride(@NotNull CallableDescriptor callable, @NotNull StringBuilder builder) {
+        if (verbose && !callable.getOverriddenDescriptors().isEmpty()) {
+            builder.append("override /*").append(callable.getOverriddenDescriptors().size()).append("*/ ");
+        }
+    }
+
     @NotNull
     @Override
     public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
@@ -390,6 +396,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderAnnotations(function, builder);
             renderVisibility(function.getVisibility(), builder);
             renderModality(function.getModality(), builder);
+            renderOverride(function, builder);
+
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(function.getTypeParameters(), builder, true);
 
@@ -497,6 +505,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderAnnotations(property, builder);
             renderVisibility(property.getVisibility(), builder);
             renderModality(property.getModality(), builder);
+            renderOverride(property, builder);
+
             renderValVarPrefix(property, builder);
         }
 
