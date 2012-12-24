@@ -352,7 +352,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
     }
 
-    private boolean renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {
+    private void renderTypeParameters(List<TypeParameterDescriptor> typeParameters, boolean withSpace, StringBuilder builder) {
         if (!typeParameters.isEmpty()) {
             builder.append(lt());
             for (Iterator<TypeParameterDescriptor> iterator = typeParameters.iterator(); iterator.hasNext(); ) {
@@ -363,9 +363,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 }
             }
             builder.append(">");
-            return true;
+            if (withSpace) {
+                builder.append(" ");
+            }
         }
-        return false;
     }
 
     /* FUNCTIONS */
@@ -375,9 +376,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderVisibility(descriptor.getVisibility(), builder);
             renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword("fun")).append(" ");
-            if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
-                builder.append(" ");
-            }
+            renderTypeParameters(descriptor.getTypeParameters(), true, builder);
 
             ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
             if (receiver != null) {
@@ -400,7 +399,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
         renderName(classDescriptor, builder);
 
-        renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder);
+        renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), false, builder);
         renderValueParameters(constructorDescriptor, builder);
     }
 
@@ -485,9 +484,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderValVarPrefix(descriptor, builder);
         }
 
-        if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
-            builder.append(" ");
-        }
+        renderTypeParameters(descriptor.getTypeParameters(), true, builder);
 
         ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
         if (receiver != null) {
@@ -520,7 +517,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
         if (!classObject) {
             renderName(descriptor, builder);
-            renderTypeParameters(typeParameters, builder);
+            renderTypeParameters(typeParameters, false, builder);
             if (classWithPrimaryConstructor) {
                 ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
                 if (primaryConstructor != null) {
