@@ -305,9 +305,14 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderKeyword(keyword)).append(" ");
     }
 
-    private void renderOverride(@NotNull CallableDescriptor callable, @NotNull StringBuilder builder) {
-        if (verbose && !callable.getOverriddenDescriptors().isEmpty()) {
-            builder.append("override /*").append(callable.getOverriddenDescriptors().size()).append("*/ ");
+    private void renderOverrideAndMemberKind(@NotNull CallableMemberDescriptor callableMember, @NotNull StringBuilder builder) {
+        if (verbose) {
+            if (!callableMember.getOverriddenDescriptors().isEmpty()) {
+                builder.append("override /*").append(callableMember.getOverriddenDescriptors().size()).append("*/ ");
+            }
+            if (callableMember.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                builder.append("/*").append(callableMember.getKind().name().toLowerCase()).append("*/ ");
+            }
         }
     }
 
@@ -396,7 +401,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderAnnotations(function, builder);
             renderVisibility(function.getVisibility(), builder);
             renderModality(function.getModality(), builder);
-            renderOverride(function, builder);
+            renderOverrideAndMemberKind(function, builder);
 
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(function.getTypeParameters(), builder, true);
@@ -505,7 +510,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderAnnotations(property, builder);
             renderVisibility(property.getVisibility(), builder);
             renderModality(property.getModality(), builder);
-            renderOverride(property, builder);
+            renderOverrideAndMemberKind(property, builder);
 
             renderValVarPrefix(property, builder);
         }
