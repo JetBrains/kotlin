@@ -266,9 +266,19 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/Constructor1WithParamDefaultValue.kt");
             }
             
+            @TestMetadata("Constructor2WithOneParamDefaultValue.kt")
+            public void testConstructor2WithOneParamDefaultValue() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/Constructor2WithOneParamDefaultValue.kt");
+            }
+            
             @TestMetadata("ConstructorCollectionParameter.kt")
             public void testConstructorCollectionParameter() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/ConstructorCollectionParameter.kt");
+            }
+            
+            @TestMetadata("ConstructorWithTwoDefArgs.kt")
+            public void testConstructorWithTwoDefArgs() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/ConstructorWithTwoDefArgs.kt");
             }
             
             @TestMetadata("ConstructorWithTwoTypeParameters.kt")
@@ -294,6 +304,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("ConstructorWithTypeParametersEAndOnePValueParameter.kt")
             public void testConstructorWithTypeParametersEAndOnePValueParameter() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/ConstructorWithTypeParametersEAndOnePValueParameter.kt");
+            }
+            
+            @TestMetadata("InnerClassConstructorWithDefArgs.kt")
+            public void testInnerClassConstructorWithDefArgs() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/InnerClassConstructorWithDefArgs.kt");
+            }
+            
+            @TestMetadata("PrivateConstructor1WithParamDefaultValue.kt")
+            public void testPrivateConstructor1WithParamDefaultValue() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
             }
             
         }

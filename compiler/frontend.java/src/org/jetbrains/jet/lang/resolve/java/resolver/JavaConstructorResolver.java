@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeMethodSignatureData;
+import org.jetbrains.jet.lang.resolve.java.kt.JetConstructorAnnotation;
 import org.jetbrains.jet.lang.resolve.java.provider.ClassPsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -167,8 +168,14 @@ public final class JavaConstructorResolver {
     ) {
         PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
 
+        JetConstructorAnnotation constructorAnnotation = constructor.getJetConstructorAnnotation();
         //noinspection deprecation
-        if (constructor.getJetConstructorAnnotation().hidden()) {
+        if (constructorAnnotation.hidden()) {
+            return null;
+        }
+
+        // Do not resolve kotlin constructors without JetConstructorAnnotation
+        if (DescriptorResolverUtils.isKotlinClass(psiClass) && !constructorAnnotation.isDefined()) {
             return null;
         }
 
@@ -205,7 +212,7 @@ public final class JavaConstructorResolver {
 
         constructorDescriptor.initialize(classDescriptor.getTypeConstructor().getParameters(),
                                          valueParameterDescriptors.getDescriptors(),
-                                         DescriptorResolverUtils.resolveVisibility(psiConstructor, constructor.getJetConstructorAnnotation()),
+                                         DescriptorResolverUtils.resolveVisibility(psiConstructor, constructorAnnotation),
                                          aStatic);
         trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
         return constructorDescriptor;
