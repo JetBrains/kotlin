@@ -26,6 +26,8 @@ trait TheTrait {
 
 public class WithReified<reified A, reified out B>
 
+public trait TwoUpperBounds<T> where T: Number, T: Any
+
 //package rendererTest defined in root package
 //internal final annotation class TheAnnotation : jet.Annotation defined in rendererTest
 //public ctor TheAnnotation() defined in rendererTest.TheAnnotation
@@ -49,3 +51,5 @@ public class WithReified<reified A, reified out B>
 //public ctor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
 //<reified A> defined in rendererTest.WithReified
 //<reified out B> defined in rendererTest.WithReified
+//public trait TwoUpperBounds<T> where T : jet.Number, T : jet.Any defined in rendererTest
+//<T : jet.Number & jet.Any> defined in rendererTest.TwoUpperBounds

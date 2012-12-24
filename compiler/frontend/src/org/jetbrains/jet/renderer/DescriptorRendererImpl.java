@@ -388,7 +388,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(descriptor, builder);
         renderValueParameters(descriptor, builder);
         builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
-        renderWhereSuffix(descriptor, builder);
+        renderWhereSuffix(descriptor.getTypeParameters(), builder);
     }
 
     private void renderConstructor(ConstructorDescriptor constructorDescriptor, StringBuilder builder) {
@@ -404,10 +404,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderValueParameters(constructorDescriptor, builder);
     }
 
-
-    private void renderWhereSuffix(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
+    private void renderWhereSuffix(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull StringBuilder builder) {
         boolean first = true;
-        for (TypeParameterDescriptor typeParameter : callable.getTypeParameters()) {
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
             if (typeParameter.getUpperBounds().size() > 1) {
                 for (JetType upperBound : typeParameter.getUpperBounds()) {
                     if (first) {
@@ -513,9 +512,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 builder.append(" ");
             }
         }
+
+        List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
         if (isNotClassObject) {
             renderName(descriptor, builder);
-            renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
+            renderTypeParameters(typeParameters, builder);
             if (classWithPrimaryConstructor) {
                 ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
                 if (primaryConstructor != null) {
@@ -523,6 +524,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 }
             }
         }
+
         if (!descriptor.equals(KotlinBuiltIns.getInstance().getNothing())) {
             Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
             if (supertypes.isEmpty() || supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAny(supertypes.iterator().next())) {
@@ -538,6 +540,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 }
             }
         }
+
+        renderWhereSuffix(typeParameters, builder);
     }
 
     private static String getClassKindPrefix(ClassDescriptor descriptor) {
