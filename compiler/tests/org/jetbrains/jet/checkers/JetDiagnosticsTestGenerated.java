@@ -2270,6 +2270,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/cannotInferParameterTypeWithInference.kt");
                 }
                 
+                @TestMetadata("ErrorTypeAsGenericParameter.kt")
+                public void testErrorTypeAsGenericParameter() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/ErrorTypeAsGenericParameter.kt");
+                }
+                
                 @TestMetadata("NoAmbiguityForDifferentFunctionTypes.kt")
                 public void testNoAmbiguityForDifferentFunctionTypes() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");

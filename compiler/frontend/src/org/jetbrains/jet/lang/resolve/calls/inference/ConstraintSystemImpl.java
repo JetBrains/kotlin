@@ -169,8 +169,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return;
         }
 
-        if (constrainingType == null || (ErrorUtils.containsErrorType(constrainingType)
-                && !TypeUtils.equalsOrContainsAsArgument(constrainingType, DONT_CARE, CANT_INFER, PLACEHOLDER_FUNCTION_TYPE))) {
+        if (constrainingType == null || (ErrorUtils.isErrorType(constrainingType) && constrainingType != PLACEHOLDER_FUNCTION_TYPE)) {
             hasErrorInConstrainingTypes = true;
             return;
         }
