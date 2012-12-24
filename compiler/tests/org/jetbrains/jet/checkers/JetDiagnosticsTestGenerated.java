@@ -2265,6 +2265,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/reportingImprovements"), "kt", true);
                 }
                 
+                @TestMetadata("cannotInferParameterTypeWithInference.kt")
+                public void testCannotInferParameterTypeWithInference() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/cannotInferParameterTypeWithInference.kt");
+                }
+                
                 @TestMetadata("NoAmbiguityForDifferentFunctionTypes.kt")
                 public void testNoAmbiguityForDifferentFunctionTypes() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");

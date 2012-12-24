@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -236,11 +237,13 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                     }
                 }
                 else {
+                    if (expectedType == null || expectedType == CallResolverUtil.DONT_CARE || expectedType == CallResolverUtil.CANT_INFER) {
+                        context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
+                    }
                     if (expectedType != null) {
                         type = expectedType;
                     }
                     else {
-                        context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
                         type = ErrorUtils.createErrorType("Cannot be inferred");
                     }
                 }
