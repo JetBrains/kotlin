@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
@@ -145,31 +146,33 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     /* TYPES RENDERING */
     @Override
-    public String renderType(JetType type) {
-        if (type == null) {
-            return escape("[NULL]");
-        }
-        else if (type == CallResolverUtil.DONT_CARE || type == CallResolverUtil.CANT_INFER) {
-            return escape("???");
-        }
-        else if (type == CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE) {
-            return escape("??? -> ???");
-        }
-        else if (ErrorUtils.isErrorType(type)) {
-            return escape(type.toString());
-        }
-        else if (KotlinBuiltIns.getInstance().isUnit(type)) {
-            return escape(KotlinBuiltIns.UNIT_ALIAS + (type.isNullable() ? "?" : ""));
-        }
-        else if (KotlinBuiltIns.getInstance().isFunctionType(type)) {
-            return escape(renderFunctionType(type));
-        }
-        else {
-            return escape(renderDefaultType(type));
-        }
+    public String renderType(@Nullable JetType type) {
+        return escape(renderTypeWithoutEscape(type));
     }
 
-    private String renderDefaultType(JetType type) {
+    private String renderTypeWithoutEscape(@Nullable JetType type) {
+        if (type == null) {
+            return "[NULL]";
+        }
+        else if (type == CallResolverUtil.DONT_CARE || type == CallResolverUtil.CANT_INFER) {
+            return "???";
+        }
+        else if (type == CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE) {
+            return "??? -> ???";
+        }
+        else if (ErrorUtils.isErrorType(type)) {
+            return type.toString();
+        }
+        else if (KotlinBuiltIns.getInstance().isUnit(type)) {
+            return KotlinBuiltIns.UNIT_ALIAS + (type.isNullable() ? "?" : "");
+        }
+        else if (KotlinBuiltIns.getInstance().isFunctionType(type)) {
+            return renderFunctionType(type);
+        }
+        return renderDefaultType(type);
+    }
+
+    private String renderDefaultType(@NotNull JetType type) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(renderTypeName(type.getConstructor()));
