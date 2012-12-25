@@ -28,6 +28,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -100,6 +101,10 @@ public class JetIconProvider extends IconProvider {
 
         if (psiElement instanceof KotlinLightClassForPackage) {
             return JetIcons.FILE;
+        }
+
+        if (psiElement instanceof KotlinLightClass) {
+            psiElement = psiElement.getNavigationElement();
         }
 
         if (psiElement instanceof JetNamedFunction) {
