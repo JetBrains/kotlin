@@ -2275,6 +2275,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/ErrorTypeAsGenericParameter.kt");
                 }
                 
+                @TestMetadata("FunctionPlaceholder.kt")
+                public void testFunctionPlaceholder() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/FunctionPlaceholder.kt");
+                }
+                
                 @TestMetadata("NoAmbiguityForDifferentFunctionTypes.kt")
                 public void testNoAmbiguityForDifferentFunctionTypes() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");
