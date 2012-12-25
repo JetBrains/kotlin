@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -34,6 +37,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
+
+import javax.swing.*;
 
 public class KotlinLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
@@ -106,5 +111,43 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
 
             current = (JetClassOrObject) parent.getParent();
         }
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getNavigationElement() {
+        return outermostClassOrObject;
+    }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
+    }
+
+    @Override
+    public Icon getElementIcon(final int flags) {
+        throw new UnsupportedOperationException("This should be done byt JetIconProvider");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        KotlinLightClass aClass = (KotlinLightClass) o;
+
+        if (!classFqName.equals(aClass.classFqName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return classFqName.hashCode();
     }
 }
