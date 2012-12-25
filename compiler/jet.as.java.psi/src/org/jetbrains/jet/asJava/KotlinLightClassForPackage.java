@@ -26,13 +26,9 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -108,20 +104,6 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @Override
     public boolean isEquivalentTo(PsiElement another) {
         return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
-    }
-
-    @Override
-    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        for (JetFile file : files) {
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            assert header != null : "Cannot rename a package of a script";
-            String newHeaderText = "package " + packageFqName.parent().child(Name.identifier(name)).toString();
-            JetNamespaceHeader newHeader = JetPsiFactory.createFile(getProject(), newHeaderText).getNamespaceHeader();
-            assert newHeader != null;
-            header.replace(newHeader);
-        }
-        // TODO: some other files may now belong to the same package
-        return this;
     }
 
     @Override
