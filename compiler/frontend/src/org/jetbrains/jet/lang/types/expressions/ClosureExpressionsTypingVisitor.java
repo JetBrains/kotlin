@@ -101,11 +101,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
         SimpleFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
 
-        List<JetType> parameterTypes = Lists.newArrayList();
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
-        for (ValueParameterDescriptor valueParameter : valueParameters) {
-            parameterTypes.add(valueParameter.getType());
-        }
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         JetType receiver = DescriptorUtils.getReceiverParameterType(receiverParameter);
 
@@ -148,7 +144,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         functionDescriptor.setReturnType(safeReturnType);
 
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
-                Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, safeReturnType);
+                Collections.<AnnotationDescriptor>emptyList(), receiver, DescriptorUtils.getValueParametersTypes(valueParameters), safeReturnType);
         if (expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionType(expectedType)) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
@@ -156,7 +152,12 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
     }
 
-    private SimpleFunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
+    @NotNull
+    private SimpleFunctionDescriptorImpl createFunctionDescriptor(
+            @NotNull JetFunctionLiteralExpression expression,
+            @NotNull ExpressionTypingContext context,
+            boolean functionTypeExpected
+    ) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
         SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
@@ -190,7 +191,13 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         return functionDescriptor;
     }
 
-    private List<ValueParameterDescriptor> createValueParameterDescriptors(ExpressionTypingContext context, JetFunctionLiteral functionLiteral, FunctionDescriptorImpl functionDescriptor, boolean functionTypeExpected) {
+    @NotNull
+    private List<ValueParameterDescriptor> createValueParameterDescriptors(
+            @NotNull ExpressionTypingContext context,
+            @NotNull JetFunctionLiteral functionLiteral,
+            @NotNull FunctionDescriptorImpl functionDescriptor,
+            boolean functionTypeExpected
+    ) {
         List<ValueParameterDescriptor> valueParameterDescriptors = Lists.newArrayList();
         List<JetParameter> declaredValueParameters = functionLiteral.getValueParameters();
 
@@ -203,17 +210,15 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters.size() == 1) {
             ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
             ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
-                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("it"), false, valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
+                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("it"), false,
+                    valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
             );
             valueParameterDescriptors.add(it);
             context.trace.record(AUTO_CREATED_IT, it);
         }
         else {
             if (expectedValueParameters != null && declaredValueParameters.size() != expectedValueParameters.size()) {
-                List<JetType> expectedParameterTypes = Lists.newArrayList();
-                for (ValueParameterDescriptor parameter : expectedValueParameters) {
-                    expectedParameterTypes.add(parameter.getType());
-                }
+                List<JetType> expectedParameterTypes = DescriptorUtils.getValueParametersTypes(expectedValueParameters);
                 context.trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(functionLiteral, expectedParameterTypes.size(), expectedParameterTypes));
             }
             for (int i = 0; i < declaredValueParameters.size(); i++) {

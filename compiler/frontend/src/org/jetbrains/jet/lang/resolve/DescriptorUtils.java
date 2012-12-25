@@ -409,4 +409,13 @@ public class DescriptorUtils {
             return builtIns.getArrayType(projectionKind, elementType);
         }
     }
+
+    @NotNull
+    public static List<JetType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        List<JetType> parameterTypes = Lists.newArrayList();
+        for (ValueParameterDescriptor parameter : valueParameters) {
+            parameterTypes.add(parameter.getType());
+        }
+        return parameterTypes;
+    }
 }
