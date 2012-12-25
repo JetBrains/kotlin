@@ -104,13 +104,6 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
-                "DefaultArgumentsBlackBoxTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/defaultArguments/blackBox")
-        );
-
-        generateTest(
-                "compiler/tests/",
                 "DefaultArgumentsReflectionTestGenerated",
                 AbstractDefaultConstructorCodegenTest.class,
                 testModel("compiler/testData/codegen/defaultArguments/reflection")
@@ -216,7 +209,7 @@ public class GenerateTests {
                 testModel("idea/testData/highlighter/deprecated")
         );
     }
-    
+
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
         return testModel(rootPath, true, "kt", "doTest");
     }
