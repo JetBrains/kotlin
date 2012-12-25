@@ -40,6 +40,16 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin/class"), "kt", true);
         }
         
+        @TestMetadata("DefaultConstructor.kt")
+        public void testDefaultConstructor() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/class/DefaultConstructor.kt");
+        }
+        
+        @TestMetadata("DefaultConstructorWithTwoArgs.kt")
+        public void testDefaultConstructorWithTwoArgs() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/class/DefaultConstructorWithTwoArgs.kt");
+        }
+        
         @TestMetadata("ExtendsAbstractListT.kt")
         public void testExtendsAbstractListT() throws Exception {
             doTest("compiler/testData/compileJavaAgainstKotlin/class/ExtendsAbstractListT.kt");

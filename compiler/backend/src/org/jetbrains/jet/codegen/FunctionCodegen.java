@@ -25,6 +25,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
@@ -528,6 +529,46 @@ public class FunctionCodegen extends GenerationStateAware {
         }
     }
 
+    static void generateConstructorWithoutParametersIfNeeded(
+            @NotNull GenerationState state,
+            @NotNull CallableMethod method,
+            @NotNull ConstructorDescriptor constructorDescriptor,
+            @NotNull ClassBuilder classBuilder
+    ) {
+        if (!isDefaultConstructorNeeded(state.getBindingContext(), constructorDescriptor)) {
+             return;
+        }
+        int flags = getVisibilityAccessFlag(constructorDescriptor);
+        MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null, null);
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) {
+            return;
+        }
+        else if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
+            genStubCode(mv);
+        }
+        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            InstructionAdapter v = new InstructionAdapter(mv);
+            mv.visitCode();
+
+            JvmClassName ownerInternalName = method.getOwner();
+            Method jvmSignature = method.getSignature().getAsmMethod();
+            v.load(0, ownerInternalName.getAsmType()); // Load this on stack
+
+            int mask = 0;
+            for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
+                Type paramType = state.getTypeMapper().mapType(parameterDescriptor.getType());
+                pushDefaultValueOnStack(paramType, v);
+                mask |= (1 << parameterDescriptor.getIndex());
+            }
+            v.iconst(mask);
+            String desc = jvmSignature.getDescriptor().replace(")", "I)");
+            v.invokespecial(ownerInternalName.getInternalName(), "<init>", desc);
+            v.areturn(Type.VOID_TYPE);
+            endVisit(mv, "default constructor for " + ownerInternalName.getInternalName(), null);
+        }
+    }
+
     static void generateDefaultIfNeeded(
             MethodContext owner,
             GenerationState state,
@@ -551,9 +592,10 @@ public class FunctionCodegen extends GenerationStateAware {
 
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         boolean hasReceiver = receiverParameter != null;
-        // TODO change this condition when nested classes will be implemented
+
         // Has outer in local variables (constructor for inner class)
-        boolean hasOuter = functionDescriptor instanceof ConstructorDescriptor && functionDescriptor.getExpectedThisObject() != null;
+        boolean hasOuter = functionDescriptor instanceof ConstructorDescriptor &&
+                           CodegenBinding.canHaveOuter(state.getBindingContext(), ((ConstructorDescriptor) functionDescriptor).getContainingDeclaration());
         boolean isStatic = isStatic(kind);
 
         if (kind == OwnerKind.TRAIT_IMPL) {
@@ -732,6 +774,24 @@ public class FunctionCodegen extends GenerationStateAware {
             }
         }
         return needed;
+    }
+
+    private static boolean isDefaultConstructorNeeded(@NotNull BindingContext context, @NotNull ConstructorDescriptor constructorDescriptor) {
+        ClassDescriptor classDescriptor = constructorDescriptor.getContainingDeclaration();
+
+        if (CodegenBinding.canHaveOuter(context, classDescriptor)) return false;
+
+        if (classDescriptor.getVisibility() == Visibilities.PRIVATE ||
+            constructorDescriptor.getVisibility() == Visibilities.PRIVATE) return false;
+
+        if (constructorDescriptor.getValueParameters().isEmpty()) return false;
+
+        for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
+            if (!parameterDescriptor.declaresDefaultValue()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean differentMethods(Method method, Method overridden) {

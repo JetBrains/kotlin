@@ -939,27 +939,31 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         int flags = getVisibilityAccessFlag(constructorDescriptor);
         final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(),
                                              constructorMethod.getGenericsSignature(), null);
-        if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES) return;
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
 
-        AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
+            AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
 
-        int flagsValue = getFlagsForVisibility(constructorDescriptor.getVisibility());
-        if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
-            jetConstructorVisitor.visit(JvmStdlibNames.JET_FLAGS_FIELD, flagsValue);
+            int flagsValue = getFlagsForVisibility(constructorDescriptor.getVisibility());
+            if (JvmStdlibNames.FLAGS_DEFAULT_VALUE != flagsValue) {
+                jetConstructorVisitor.visit(JvmStdlibNames.JET_FLAGS_FIELD, flagsValue);
+            }
+
+            jetConstructorVisitor.visitEnd();
+
+            AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(constructorDescriptor);
+
+            writeParameterAnnotations(constructorDescriptor, constructorMethod, hasCapturedThis, mv);
+
+            if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
+                genStubCode(mv);
+                return;
+            }
+
+            generatePrimaryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, hasCapturedThis,
+                                           closure, mv);
         }
 
-        jetConstructorVisitor.visitEnd();
-
-        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(constructorDescriptor);
-
-        writeParameterAnnotations(constructorDescriptor, constructorMethod, hasCapturedThis, mv);
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
-            genStubCode(mv);
-            return;
-        }
-
-        generatePrimaryConstructorImpl(constructorDescriptor, constructorContext, constructorMethod, callableMethod, hasCapturedThis, closure, mv);
+        FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);
     }
 
     private void generatePrimaryConstructorImpl(

@@ -135,7 +135,7 @@ public class CodegenBinding {
         bindingTrace.record(CLASS_FOR_FUNCTION, scriptDescriptor, classDescriptor);
     }
 
-    private static boolean canHaveOuter(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
+    public static boolean canHaveOuter(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
         final ClassKind kind = classDescriptor.getKind();
         if (isSingleton(bindingContext, classDescriptor)) {
             return false;

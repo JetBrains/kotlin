@@ -24,6 +24,7 @@ import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
 import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
 import org.jetbrains.jet.codegen.AbstractMultiDeclTestCase;
+import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractCodegenTest;
 import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest;
@@ -106,6 +107,13 @@ public class GenerateTests {
                 "DefaultArgumentsBlackBoxTestGenerated",
                 AbstractCodegenTest.class,
                 testModel("compiler/testData/codegen/defaultArguments/blackBox")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "DefaultArgumentsReflectionTestGenerated",
+                AbstractDefaultConstructorCodegenTest.class,
+                testModel("compiler/testData/codegen/defaultArguments/reflection")
         );
 
         generateTest(
