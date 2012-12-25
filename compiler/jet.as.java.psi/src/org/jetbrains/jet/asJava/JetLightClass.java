@@ -46,6 +46,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import javax.swing.*;
 import java.util.Collections;
 
+@Deprecated
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
     static class JetBadWrapperException extends RuntimeException {
         private final String context;

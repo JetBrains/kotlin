@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -37,11 +38,19 @@ import org.jetbrains.jet.plugin.JetLanguage;
 public class KotlinLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
+    @Nullable
+    public static KotlinLightClass create(@NotNull PsiManager manager, @NotNull FqName qualifiedName, @NotNull JetClassOrObject classOrObject) {
+        if (LightClassUtil.belongsToKotlinBuiltIns((JetFile) classOrObject.getContainingFile())) {
+            return null;
+        }
+        return new KotlinLightClass(manager, qualifiedName, classOrObject);
+    }
+
     private final FqName classFqName; // FqName of (possibly inner) class
     private final JetClassOrObject outermostClassOrObject; // outermost parent of this class (may be equal to this class itself)
     private PsiClass delegate;
 
-    protected KotlinLightClass(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
+    private KotlinLightClass(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
         super(manager, JetLanguage.INSTANCE);
         this.classFqName = name;
         this.outermostClassOrObject = getOutermostClassOrObject(classOrObject);

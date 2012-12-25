@@ -38,13 +38,20 @@ import javax.swing.*;
 import java.util.Collection;
 
 public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase implements JetJavaMirrorMarker {
+    @Nullable
+    public static KotlinLightClassForPackage create(@NotNull PsiManager manager, @NotNull FqName qualifiedName, @NotNull Collection<JetFile> files) {
+        for (JetFile file : files) {
+            if (LightClassUtil.belongsToKotlinBuiltIns(file)) return null;
+        }
+        return new KotlinLightClassForPackage(manager, qualifiedName, files);
+    }
 
     private final FqName packageFqName;
     private final Collection<JetFile> files;
     private final int hashCode;
     private final CachedValue<PsiJavaFileStub> javaFileStub;
 
-    public KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
+    private KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
         super(manager);
         this.packageFqName = packageFqName;
         assert !files.isEmpty() : "No files for package " + packageFqName;
