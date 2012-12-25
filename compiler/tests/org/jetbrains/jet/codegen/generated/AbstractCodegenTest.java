@@ -23,8 +23,6 @@ import java.io.IOException;
 
 public abstract class AbstractCodegenTest extends CodegenTestCase {
 
-    private static final String REDUNDANT_PATH_PREFIX = "compiler/testData/codegen";
-
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -32,7 +30,6 @@ public abstract class AbstractCodegenTest extends CodegenTestCase {
     }
 
     protected void doTest(String path) throws IOException {
-        String relativePath = path.substring(REDUNDANT_PATH_PREFIX.length());
-        blackBoxFile(relativePath);
+        blackBoxFileByFullPath(path);
     }
 }
