@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.libraries;
+package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
