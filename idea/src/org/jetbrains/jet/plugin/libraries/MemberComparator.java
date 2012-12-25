@@ -25,7 +25,12 @@ import java.util.Comparator;
 * @author Evgeny Gerashchenko
 * @since 4/8/12
 */
-class DeclarationDescriptorComparator implements Comparator<DeclarationDescriptor> {
+public class MemberComparator implements Comparator<DeclarationDescriptor> {
+    public static final MemberComparator INSTANCE = new MemberComparator();
+
+    private MemberComparator() {
+    }
+
     private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             return 4;

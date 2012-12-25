@@ -125,7 +125,7 @@ public class DecompiledDataFactory {
 
     private static List<DeclarationDescriptor> sortDeclarations(Collection<DeclarationDescriptor> input) {
         ArrayList<DeclarationDescriptor> r = new ArrayList<DeclarationDescriptor>(input);
-        Collections.sort(r, new DeclarationDescriptorComparator());
+        Collections.sort(r, MemberComparator.INSTANCE);
         return r;
     }
 
