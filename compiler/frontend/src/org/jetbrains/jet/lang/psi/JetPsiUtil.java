@@ -258,17 +258,22 @@ public class JetPsiUtil {
     @Nullable
     @IfNotParsed
     public static ImportPath getImportPath(JetImportDirective importDirective) {
+        if (PsiTreeUtil.hasErrorElements(importDirective)) {
+            return null;
+        }
+
         final JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
             return null;
         }
 
-        if (PsiTreeUtil.hasErrorElements(importedReference)) {
-            return null;
+        Name alias = null;
+        String aliasName = importDirective.getAliasName();
+        if (aliasName != null) {
+            alias = Name.identifier(aliasName);
         }
 
-        final String text = importedReference.getText();
-        return new ImportPath(text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : ""));
+        return new ImportPath(new FqName(importedReference.getText().replaceAll(" ", "")), importDirective.isAllUnder(), alias);
     }
 
     @Nullable

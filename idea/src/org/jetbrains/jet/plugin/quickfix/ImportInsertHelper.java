@@ -74,7 +74,7 @@ public class ImportInsertHelper {
      * @param file File where directive should be added.
      */
     public static void addImportDirective(@NotNull FqName importFqn, @NotNull JetFile file) {
-        addImportDirective(new ImportPath(importFqn, false), null, file);
+        addImportDirective(new ImportPath(importFqn, false), file);
     }
 
     public static void addImportDirectiveOrChangeToFqName(@NotNull FqName importFqn, @NotNull JetFile file, int refOffset, @NotNull PsiElement targetElement) {
@@ -109,15 +109,15 @@ public class ImportInsertHelper {
                 return;
             }
         }
-        addImportDirective(new ImportPath(importFqn, false), null, file);
+        addImportDirective(new ImportPath(importFqn, false), file);
     }
 
-    public static void addImportDirective(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull JetFile file) {
-        if (!doNeedImport(importPath, aliasName, file)) {
+    public static void addImportDirective(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        if (!doNeedImport(importPath, file)) {
             return;
         }
 
-        JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath, aliasName);
+        JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
         List<JetImportDirective> importDirectives = file.getImportDirectives();
 
         if (!importDirectives.isEmpty()) {
@@ -125,34 +125,36 @@ public class ImportInsertHelper {
             lastDirective.getParent().addAfter(newDirective, lastDirective);
         }
         else {
-            file.getNamespaceHeader().getParent().addAfter(newDirective, file.getNamespaceHeader());
+            JetNamespaceHeader header = file.getNamespaceHeader();
+            if (header == null) {
+                throw new IllegalStateException("Scripts are not supported: " + file.getName());
+            }
+
+            header.getParent().addAfter(newDirective, file.getNamespaceHeader());
         }
     }
 
     /**
      * Check that import is useless.
      */
-    private static boolean isImportedByDefault(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull FqName filePackageFqn) {
+    private static boolean isImportedByDefault(@NotNull ImportPath importPath, @NotNull FqName filePackageFqn) {
         if (importPath.fqnPart().isRoot()) {
             return true;
         }
 
-        if (aliasName != null) {
-            return false;
-        }
+        if (!importPath.isAllUnder() && !importPath.hasAlias()) {
+            // Single element import without .* and alias is useless
+            if (QualifiedNamesUtil.isOneSegmentFQN(importPath.fqnPart())) {
+                return true;
+            }
 
-        // Single element import without .* and alias is useless
-        if (!importPath.isAllUnder() && QualifiedNamesUtil.isOneSegmentFQN(importPath.fqnPart())) {
-            return true;
-        }
-
-        // There's no need to import a declaration from the package of current file
-        if (!importPath.isAllUnder() && filePackageFqn.equals(importPath.fqnPart().parent())) {
-            return true;
+            // There's no need to import a declaration from the package of current file
+            if (filePackageFqn.equals(importPath.fqnPart().parent())) {
+                return true;
+            }
         }
 
         if (isImportedWithKotlinDefault(importPath)) return true;
-
         if (isImportedWithJavaDefault(importPath)) return true;
 
         return false;
@@ -176,13 +178,13 @@ public class ImportInsertHelper {
         return false;
     }
 
-    public static boolean doNeedImport(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull JetFile file) {
-        if (QualifiedNamesUtil.getFirstSegment(importPath.fqnPart().getFqName()).equals(JavaDescriptorResolver.JAVA_ROOT.getName())) {
+    public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        if (importPath.fqnPart().firstSegmentIs(JavaDescriptorResolver.JAVA_ROOT)) {
             FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
-            importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder());
+            importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder(), importPath.getAlias());
         }
 
-        if (isImportedByDefault(importPath, null, JetPsiUtil.getFQName(file))) {
+        if (isImportedByDefault(importPath, JetPsiUtil.getFQName(file))) {
             return false;
         }
 
@@ -192,10 +194,8 @@ public class ImportInsertHelper {
             // Check if import is already present
             for (JetImportDirective directive : importDirectives) {
                 ImportPath existentImportPath = JetPsiUtil.getImportPath(directive);
-                if (directive.getAliasName() == null && aliasName == null) {
-                    if (existentImportPath != null && QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
-                        return false;
-                    }
+                if (existentImportPath != null && QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
+                    return false;
                 }
             }
         }
