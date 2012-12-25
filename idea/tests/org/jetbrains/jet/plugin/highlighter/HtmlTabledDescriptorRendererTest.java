@@ -26,6 +26,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -67,8 +68,20 @@ public class HtmlTabledDescriptorRendererTest extends JetLiteFixture {
 
         int index = 1;
         for (Diagnostic diagnostic : diagnostics) {
-            String readableDiagnosticHtml =  "<!-- " + name + index + " -->\n" + IdeErrorMessages.RENDERER.render(diagnostic).replaceAll(">", ">\n");
-            assertSameLinesWithFile(getTestDataPath() + "/" + name + index + ".html", readableDiagnosticHtml);
+            String readableDiagnosticText;
+            String extension;
+            if (IdeErrorMessages.MAP.get(diagnostic.getFactory()) != null) {
+                readableDiagnosticText = IdeErrorMessages.RENDERER.render(diagnostic).replaceAll(">", ">\n");
+                extension = "html";
+            }
+            else {
+                readableDiagnosticText = DefaultErrorMessages.RENDERER.render(diagnostic);
+                extension = "txt";
+            }
+            String errorMessageFileName = name + index;
+            String path = getTestDataPath() + "/" + errorMessageFileName + "." + extension;
+            String actualText = "<!-- " + errorMessageFileName + " -->\n" + readableDiagnosticText;
+            assertSameLinesWithFile(path, actualText);
 
             index++;
         }
@@ -80,5 +93,9 @@ public class HtmlTabledDescriptorRendererTest extends JetLiteFixture {
 
     public void testFunctionPlaceholder() throws Exception {
         doTest("functionPlaceholder", 3, Errors.TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH);
+    }
+
+    public void testRenderCollectionOfTypes() throws Exception {
+        doTest("renderCollectionOfTypes", 1, Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH);
     }
 }

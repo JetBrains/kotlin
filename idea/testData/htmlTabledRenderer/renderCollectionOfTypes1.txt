@@ -1,0 +1,2 @@
+<!-- renderCollectionOfTypes1 -->
+Expected 2 parameters of types jet.List<jet.Int>, java.util.ArrayList<jet.String>

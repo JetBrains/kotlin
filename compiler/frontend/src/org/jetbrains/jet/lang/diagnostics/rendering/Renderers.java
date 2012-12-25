@@ -19,7 +19,9 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -314,15 +316,12 @@ public class Renderers {
         @NotNull
         @Override
         public String render(@NotNull Collection<JetType> types) {
-            StringBuilder builder = new StringBuilder();
-            for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext(); ) {
-                JetType jetType = iterator.next();
-                builder.append(jetType);
-                if (iterator.hasNext()) {
-                    builder.append(", ");
+            return StringUtil.join(types, new Function<JetType, String>() {
+                @Override
+                public String fun(JetType type) {
+                    return RENDER_TYPE.render(type);
                 }
-            }
-            return builder.toString();
+            }, ", ");
         }
     };
 
