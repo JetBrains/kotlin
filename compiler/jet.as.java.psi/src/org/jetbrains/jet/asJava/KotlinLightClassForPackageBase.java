@@ -175,16 +175,4 @@ public abstract class KotlinLightClassForPackageBase extends AbstractLightClass 
     public PsiClass findInnerClassByName(@NonNls String name, boolean checkBases) {
         return null;
     }
-
-    @Nullable
-    @Override
-    public PsiElement getLBrace() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public PsiElement getRBrace() {
-        return null;
-    }
 }
