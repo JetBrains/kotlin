@@ -175,12 +175,24 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
             public boolean generateDeclaredClasses() {
                 return false;
             }
+
+            @Override
+            public String toString() {
+                // For subclasses to be identifiable in the debugger
+                return NoDeclaredClasses.class.getSimpleName();
+            }
         }
 
         abstract class WithDeclaredClasses implements StubGenerationStrategy {
             @Override
             public boolean generateDeclaredClasses() {
                 return true;
+            }
+
+            @Override
+            public String toString() {
+                // For subclasses to be identifiable in the debugger
+                return WithDeclaredClasses.class.getSimpleName();
             }
         }
     }
