@@ -150,4 +150,9 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
     public int hashCode() {
         return classFqName.hashCode();
     }
+
+    @Override
+    public PsiFile getContainingFile() {
+        return outermostClassOrObject.getContainingFile();
+    }
 }

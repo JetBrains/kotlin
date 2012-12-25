@@ -22,6 +22,7 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.util.CachedValue;
@@ -121,6 +122,11 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @Override
     public Icon getElementIcon(final int flags) {
         throw new UnsupportedOperationException("This should be done byt JetIconProvider");
+    }
+
+    @Override
+    public PsiFile getContainingFile() {
+        return null;
     }
 
     @Override
