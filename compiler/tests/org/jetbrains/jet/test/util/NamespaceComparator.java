@@ -30,6 +30,7 @@ import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -229,14 +230,17 @@ public class NamespaceComparator {
     }
 
     private String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
+        List<DeclarationDescriptor> members = Lists.newArrayList(ds);
+
+        Collections.sort(members, MemberComparator.INSTANCE);
+
         List<String> strings = new ArrayList<String>();
-        for (DeclarationDescriptor d : ds) {
+        for (DeclarationDescriptor d : members) {
             StringBuilder sb = new StringBuilder();
             new Serializer(conf.checkPrimaryConstructors, sb).serialize(d);
             strings.add(sb.toString());
         }
 
-        Collections.sort(strings, new MemberComparator());
 
         StringBuilder r = new StringBuilder();
         for (String string : strings) {
@@ -244,28 +248,6 @@ public class NamespaceComparator {
             r.append("\n");
         }
         return r.toString();
-    }
-
-    /**
-     * This comparator only affects test output, you can drop it if you don't want to understand it.
-     */
-    private static class MemberComparator implements Comparator<String> {
-
-        @NotNull
-        private String normalize(String s) {
-            // Serializers put "!" in front of the name in order to facilitate faster sorting of members
-            int i = s.indexOf("!");
-            if (i < 0) {
-                throw new IllegalStateException("No name mark in " + s);
-            }
-            String substring = s.substring(i + 1);
-            return substring;
-        }
-
-        @Override
-        public int compare(@NotNull String a, @NotNull String b) {
-            return normalize(a).compareTo(normalize(b));
-        }
     }
 
     private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b, @NotNull StringBuilder sb) {
@@ -754,7 +736,10 @@ public class NamespaceComparator {
             }
 
             JetScope memberScope = klass.getMemberScope(typeArguments);
-            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+            ArrayList<DeclarationDescriptor> members = Lists.newArrayList(memberScope.getAllDescriptors());
+            ContainerUtil.sort(members, MemberComparator.INSTANCE);
+
+            for (DeclarationDescriptor member : members) {
                 if (!conf.includeObject) {
                     if (member.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
                         continue;
@@ -770,8 +755,6 @@ public class NamespaceComparator {
                 new FullContentSerialier(checkPrimaryConstructors, objectSb).serialize(object);
                 memberStrings.add(objectSb.toString());
             }
-
-            Collections.sort(memberStrings, new MemberComparator());
 
             for (String memberString : memberStrings) {
                 sb.append(indent(memberString));
