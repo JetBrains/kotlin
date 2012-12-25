@@ -1,4 +1,4 @@
-// see org.jetbrains.jet.plugin.highlighter.HtmlTabledDescriptorRendererTest
+// see org.jetbrains.jet.plugin.highlighter.DiagnosticMessageTest
 
 import java.io.Closeable
 

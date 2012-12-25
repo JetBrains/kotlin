@@ -1,4 +1,4 @@
-//For testing error messages text see HtmlTabledDescriptorRendererTest.testFunctionPlaceholder
+//For testing error messages text see DiagnosticMessageTest.testFunctionPlaceholder
 package a
 
 class A<T, R>

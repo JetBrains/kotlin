@@ -38,7 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class HtmlTabledDescriptorRendererTest extends JetLiteFixture {
+public class DiagnosticMessageTest extends JetLiteFixture {
     @Override
     protected JetCoreEnvironment createEnvironment() {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY);
@@ -46,7 +46,7 @@ public class HtmlTabledDescriptorRendererTest extends JetLiteFixture {
 
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/htmlTabledRenderer/";
+        return PluginTestCaseBase.getTestDataPathBase() + "/diagnosticMessage/";
     }
 
     public void doTest(String name, int diagnosticNumber, AbstractDiagnosticFactory... diagnosticFactories) throws Exception {
