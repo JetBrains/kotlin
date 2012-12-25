@@ -72,7 +72,7 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
                     outermostClassOrObject,
                     JAVA_API_STUB,
                     KotlinLightClassProvider.createForDeclaredTopLevelClass(outermostClassOrObject),
-                    /*trackValue = */true);
+                    /*trackValue = */false);
 
             PsiClass psiClass = LightClassUtil.findClass(classFqName, javaFileStub);
             if (psiClass == null) {

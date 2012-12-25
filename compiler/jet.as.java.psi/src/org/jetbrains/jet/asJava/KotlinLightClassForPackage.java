@@ -58,7 +58,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
         KotlinLightClassProvider stubProvider = KotlinLightClassProvider.createForPackageClass(getProject(), packageFqName, files);
-        this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider);
+        this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
     }
 
     @Nullable
