@@ -16,12 +16,16 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Map;
 
 public class JetPsiBuilder {
@@ -36,6 +40,7 @@ public class JetPsiBuilder {
         this.project = project;
     }
 
+    @NotNull
     public JetImportDirective createImportDirective(@NotNull ImportPath importPath) {
         JetImportDirective directive = importsCache.get(importPath);
         if (directive != null) {
@@ -46,5 +51,17 @@ public class JetPsiBuilder {
         importsCache.put(importPath, createdDirective);
 
         return createdDirective;
+    }
+
+    @NotNull
+    public Collection<JetImportDirective> createImportDirectives(@NotNull Collection<ImportPath> importPaths) {
+        return Collections2.transform(importPaths,
+                                      new Function<ImportPath, JetImportDirective>() {
+                                          @Override
+                                          public JetImportDirective apply(@Nullable ImportPath path) {
+                                              assert path != null;
+                                              return createImportDirective(path);
+                                          }
+                                      });
     }
 }

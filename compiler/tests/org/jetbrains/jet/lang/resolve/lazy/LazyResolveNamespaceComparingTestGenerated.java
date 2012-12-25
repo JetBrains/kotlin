@@ -1952,6 +1952,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/genericFunction.kt");
         }
         
+        @TestMetadata("importFunctionWithAllUnderImportAfterNamedImport.kt")
+        public void testImportFunctionWithAllUnderImportAfterNamedImport() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/importFunctionWithAllUnderImportAfterNamedImport.kt");
+        }
+        
         @TestMetadata("InnerClassNameClash.kt")
         public void testInnerClassNameClash() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/InnerClassNameClash.kt");

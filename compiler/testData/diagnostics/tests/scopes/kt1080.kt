@@ -7,9 +7,13 @@ import <!UNRESOLVED_REFERENCE!>reflect<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Const
 
 import b.*
 import <!UNRESOLVED_REFERENCE!>d<!>
+import <!UNRESOLVED_REFERENCE!>d<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Test<!>
 import b.d
 
+class Some: <!UNRESOLVED_REFERENCE!>Test<!>()
 
 //FILE:b.kt
 
 package b.d
+
+public open class Test
