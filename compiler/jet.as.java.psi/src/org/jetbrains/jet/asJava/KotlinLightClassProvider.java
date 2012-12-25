@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFileStub> {
 
@@ -145,9 +144,7 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
             throw e;
         }
 
-        List<Object> dependencies = Lists.<Object>newArrayList(files);
-        dependencies.add(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
-        return Result.<PsiJavaFileStub>create(javaFileStub, dependencies);
+        return Result.<PsiJavaFileStub>create(javaFileStub, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
     }
 
     private static void checkForBuiltIns(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
