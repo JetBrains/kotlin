@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.IncorrectOperationException;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -41,31 +43,31 @@ import java.util.Collection;
 
 public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase implements JetJavaMirrorMarker {
 
-    private final FqName fqName;
+    private final FqName packageFqName;
     private final Collection<JetFile> files;
     private final int hashCode;
-    private final CachedValue<PsiClass> delegate;
+    private final CachedValue<PsiJavaFileStub> javaFileStub;
 
-    public KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName fqName, @NotNull Collection<JetFile> files) {
+    public KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
         super(manager);
-        this.fqName = fqName;
-        assert !files.isEmpty() : "No files for package " + fqName;
+        this.packageFqName = packageFqName;
+        assert !files.isEmpty() : "No files for package " + packageFqName;
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
-        KotlinLightClassProvider stubProvider = KotlinLightClassProvider.createForPackageClass(getProject(), fqName, files);
-        this.delegate = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider);
+        KotlinLightClassProvider stubProvider = KotlinLightClassProvider.createForPackageClass(getProject(), packageFqName, files);
+        this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider);
     }
 
     @Nullable
     @Override
     public String getName() {
-        return fqName.shortName().getName();
+        return packageFqName.shortName().getName();
     }
 
     @Nullable
     @Override
     public String getQualifiedName() {
-        return fqName.getFqName();
+        return packageFqName.getFqName();
     }
 
     @Override
@@ -83,13 +85,18 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @NotNull
     @Override
     public PsiElement copy() {
-        return new KotlinLightClassForPackage(getManager(), fqName, files);
+        return new KotlinLightClassForPackage(getManager(), packageFqName, files);
     }
 
     @NotNull
     @Override
     public PsiClass getDelegate() {
-        return delegate.getValue();
+        FqName packageClassFqName = packageFqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
+        PsiClass psiClass = LightClassUtil.findClass(packageClassFqName, javaFileStub.getValue());
+        if (psiClass == null) {
+            throw new IllegalStateException("Package class was not found " + packageFqName);
+        }
+        return psiClass;
     }
 
     @NotNull
@@ -108,7 +115,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
         for (JetFile file : files) {
             JetNamespaceHeader header = file.getNamespaceHeader();
             assert header != null : "Cannot rename a package of a script";
-            String newHeaderText = "package " + fqName.parent().child(Name.identifier(name)).toString();
+            String newHeaderText = "package " + packageFqName.parent().child(Name.identifier(name)).toString();
             JetNamespaceHeader newHeader = JetPsiFactory.createFile(getProject(), newHeaderText).getNamespaceHeader();
             assert newHeader != null;
             header.replace(newHeader);
@@ -135,7 +142,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     private int computeHashCode() {
         int result = getManager().hashCode();
         result = 31 * result + files.hashCode();
-        result = 31 * result + fqName.hashCode();
+        result = 31 * result + packageFqName.hashCode();
         return result;
     }
 
@@ -151,7 +158,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
         if (this.hashCode != lightClass.hashCode) return false;
         if (getManager() != lightClass.getManager()) return false;
         if (!files.equals(lightClass.files)) return false;
-        if (!fqName.equals(lightClass.fqName)) return false;
+        if (!packageFqName.equals(lightClass.packageFqName)) return false;
 
         return true;
     }

@@ -16,41 +16,86 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClassBody;
+import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class KotlinLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
+    private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
-    private final FqName fqName;
-    private final JetClassOrObject jetClassOrObject;
-    private final CachedValue<PsiClass> delegate;
+    private final FqName classFqName; // FqName of (possibly inner) class
+    private final JetClassOrObject outermostClassOrObject; // outermost parent of this class (may be equal to this class itself)
+    private PsiClass delegate;
 
-    protected KotlinLightClass(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject object) {
+    protected KotlinLightClass(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
         super(manager, JetLanguage.INSTANCE);
-        this.fqName = name;
-        this.jetClassOrObject = object;
-        KotlinLightClassProvider stubProvider = KotlinLightClassProvider.createForDeclaredClass(getProject(), fqName, jetClassOrObject);
-        this.delegate = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider);
-    }
-
-    @NotNull
-    @Override
-    public PsiClass getDelegate() {
-        return delegate.getValue();
+        this.classFqName = name;
+        this.outermostClassOrObject = getOutermostClassOrObject(classOrObject);
+        assert outermostClassOrObject != null : "Attempt to build a light class for a local class: " + classOrObject.getText();
     }
 
     @NotNull
     @Override
     public PsiElement copy() {
-        return new KotlinLightClass(getManager(), fqName, jetClassOrObject);
+        // It's fine to pass outermostClassOrObject, because getOutermostClassOrObject() will return the same thing
+        return new KotlinLightClass(getManager(), classFqName, outermostClassOrObject);
+    }
+
+    @NotNull
+    @Override
+    public PsiClass getDelegate() {
+        if (delegate == null) {
+            PsiJavaFileStub javaFileStub = CachedValuesManager.getManager(getProject()).getCachedValue(
+                    outermostClassOrObject,
+                    JAVA_API_STUB,
+                    KotlinLightClassProvider.createForDeclaredTopLevelClass(outermostClassOrObject),
+                    /*trackValue = */true);
+
+            PsiClass psiClass = LightClassUtil.findClass(classFqName, javaFileStub);
+            if (psiClass == null) {
+                throw new IllegalStateException("Class was not found " + classFqName + " in " + outermostClassOrObject.getText());
+            }
+            delegate = psiClass;
+        }
+
+        return delegate;
+    }
+
+    @Nullable
+    private static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        JetClassOrObject current = classOrObject;
+        while (true) {
+            PsiElement parent = current.getParent();
+            assert classOrObject.getParent() != null : "Class with no parent: " + classOrObject.getText();
+
+            if (parent instanceof PsiFile) {
+                return current;
+            }
+            if (parent instanceof JetClassObject) {
+                // current class IS the class object declaration
+                parent = parent.getParent();
+                assert parent instanceof JetClassBody : "Parent of class object is not a class body: " + parent;
+            }
+            if (!(parent instanceof JetClassBody)) {
+                // It is a local class, no legitimate outer
+                return null;
+            }
+
+            current = (JetClassOrObject) parent.getParent();
+        }
     }
 }

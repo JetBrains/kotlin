@@ -20,13 +20,10 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
-import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -41,24 +38,23 @@ import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class KotlinLightClassProvider implements CachedValueProvider<PsiClass> {
+public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFileStub> {
 
+    @NotNull
     public static KotlinLightClassProvider createForPackageClass(
             @NotNull Project project,
             @NotNull FqName packageFqName,
             @NotNull Collection<JetFile> files
     ) {
-        FqName packageClassFqName = packageFqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
-        return new KotlinLightClassProvider(project, packageClassFqName, files, new StubGenerationStrategy.NoDeclaredClasses() {
+        return new KotlinLightClassProvider(project, packageFqName, files, new StubGenerationStrategy.NoDeclaredClasses() {
             @Override
             public void generate(GenerationState state, GenerationStrategy strategy) {
                 KotlinCodegenFacade.compileCorrectFiles(state, strategy, CompilationErrorHandler.THROW_EXCEPTION);
@@ -68,22 +64,24 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiClass> {
         });
     }
 
-    public static KotlinLightClassProvider createForDeclaredClass(
-            @NotNull Project project,
-            @NotNull final FqName classFqName,
-            @NotNull final JetClassOrObject jetClassOrObject
+    @NotNull
+    public static KotlinLightClassProvider createForDeclaredTopLevelClass(
+            @NotNull final JetClassOrObject classOrObject
     ) {
-        JetFile file = (JetFile) jetClassOrObject.getContainingFile();
-        return new KotlinLightClassProvider(project, classFqName, Collections.singletonList(file), new StubGenerationStrategy.WithDeclaredClasses() {
+        JetFile file = (JetFile) classOrObject.getContainingFile();
+        assert classOrObject.getParent() == file : "Not a top-level class: " + classOrObject.getText();
+
+        final FqName packageFqName = JetPsiUtil.getFQName(file);
+
+        return new KotlinLightClassProvider(classOrObject.getProject(), packageFqName, Collections.singletonList(file), new StubGenerationStrategy.WithDeclaredClasses() {
             @Override
             public void generate(GenerationState state, GenerationStrategy strategy) {
-                FqName packageFqName = classFqName.parent();
 
                 NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(packageFqName, state.getFiles());
                 NamespaceDescriptor namespaceDescriptor =
                         state.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, packageFqName);
-                assert namespaceDescriptor != null : "No package descriptor for " + packageFqName + " for class " + jetClassOrObject.getText();
-                namespaceCodegen.generateClassOrObject(namespaceDescriptor, jetClassOrObject);
+                assert namespaceDescriptor != null : "No package descriptor for " + packageFqName + " for class " + classOrObject.getText();
+                namespaceCodegen.generateClassOrObject(namespaceDescriptor, classOrObject);
 
                 state.getFactory().files();
             }
@@ -93,26 +91,26 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiClass> {
     private static final Logger LOG = Logger.getInstance(KotlinLightClassProvider.class);
 
     private final Collection<JetFile> files;
-    private final FqName fqName;
+    private final FqName packageFqName;
     private final Project project;
     private final StubGenerationStrategy stubGenerationStrategy;
 
     private KotlinLightClassProvider(
             @NotNull Project project,
-            @NotNull FqName fqName,
+            @NotNull FqName packageFqName,
             @NotNull Collection<JetFile> files,
             @NotNull StubGenerationStrategy stubGenerationStrategy
     ) {
         this.files = files;
-        this.fqName = fqName;
+        this.packageFqName = packageFqName;
         this.project = project;
         this.stubGenerationStrategy = stubGenerationStrategy;
     }
 
     @Nullable
     @Override
-    public Result<PsiClass> compute() {
-        checkForBuiltIns(fqName, files);
+    public Result<PsiJavaFileStub> compute() {
+        checkForBuiltIns(packageFqName, files);
 
         LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(files);
 
@@ -121,7 +119,7 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiClass> {
             throw new IllegalStateException("failed to analyze: " + error, error);
         }
 
-        PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(fqName.parent().getFqName(), true);
+        PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.getFqName(), true);
 
         try {
             Stack<StubElement> stubStack = new Stack<StubElement>();
@@ -143,26 +141,21 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiClass> {
             throw e;
         }
         catch (RuntimeException e) {
-            logErrorWithOSInfo(e, fqName, null);
+            logErrorWithOSInfo(e, packageFqName, null);
             throw e;
-        }
-
-        PsiClass psiClass = findClass(fqName, javaFileStub);
-        if (psiClass == null) {
-            throw new IllegalStateException("Class was not found " + fqName + " for files " + files);
         }
 
         List<Object> dependencies = Lists.<Object>newArrayList(files);
         dependencies.add(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
-        return Result.create(psiClass, files);
+        return Result.<PsiJavaFileStub>create(javaFileStub, dependencies);
     }
 
-    private static void checkForBuiltIns(@NotNull FqName classFqName, @NotNull Collection<JetFile> files) {
+    private static void checkForBuiltIns(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
         for (JetFile file : files) {
             if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
                 // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
                 // If it fails later, there will be an exception logged
-                logErrorWithOSInfo(null, classFqName, file.getVirtualFile());
+                logErrorWithOSInfo(null, fqName, file.getVirtualFile());
             }
         }
     }
@@ -174,22 +167,6 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiClass> {
                 "built-ins dir URL is " + LightClassUtil.getBuiltInsDirResourceUrl() + "\n" +
                 "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
                 cause);
-    }
-
-    @Nullable
-    private static PsiClass findClass(@NotNull FqName fqn, @NotNull StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub) stub).getQualifiedName())) {
-            return (PsiClass)stub.getPsi();
-        }
-
-        if (stub instanceof PsiClassStub || stub instanceof PsiFileStub) {
-            for (StubElement child : stub.getChildrenStubs()) {
-                PsiClass answer = findClass(fqn, child);
-                if (answer != null) return answer;
-            }
-        }
-
-        return null;
     }
 
     private interface StubGenerationStrategy {
