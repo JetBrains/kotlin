@@ -125,8 +125,7 @@ public class NamespaceCodegen extends MemberCodegen {
             }
             else if (declaration instanceof JetClassOrObject) {
                 if (state.isGenerateDeclaredClasses()) {
-                    final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
-                    genClassOrObject(context, (JetClassOrObject) declaration);
+                    generateClassOrObject(descriptor, (JetClassOrObject) declaration);
                 }
             }
             else if (declaration instanceof JetScript) {
@@ -175,6 +174,11 @@ public class NamespaceCodegen extends MemberCodegen {
                 builder.done();
             }
         }
+    }
+
+    public void generateClassOrObject(@NotNull NamespaceDescriptor descriptor, @NotNull JetClassOrObject classOrObject) {
+        CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
+        genClassOrObject(context, classOrObject);
     }
 
     /**
