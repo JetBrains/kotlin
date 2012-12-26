@@ -33,11 +33,12 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import org.jetbrains.jet.utils.Printer;
 import org.junit.Assert;
-import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -189,82 +190,6 @@ public class NamespaceComparator {
         }
         else {
             printer.printlnWithNoIndent();
-        }
-    }
-
-
-    private static <T extends Comparable<T>> List<T> sorted(Collection<T> items) {
-        List<T> r = new ArrayList<T>(items);
-        Collections.sort(r);
-        return r;
-    }
-
-    private static class DeferredAssertions {
-        private final List<AssertionError> assertionFailures = Lists.newArrayList();
-
-        private void assertTrue(String message, Boolean b) {
-            try {
-                Assert.assertTrue(message, b);
-            }
-            catch (AssertionError e) {
-                assertionFailures.add(e);
-            }
-        }
-
-        private void assertTrue(Boolean b) {
-            try {
-                Assert.assertTrue(b);
-            }
-            catch (AssertionError e) {
-                assertionFailures.add(e);
-            }
-        }
-
-        private void assertNotNull(Object a) {
-            try {
-                Assert.assertNotNull(a);
-            }
-            catch (AssertionError e) {
-                assertionFailures.add(e);
-            }
-        }
-
-        private void assertEquals(Object a, Object b) {
-            try {
-                Assert.assertEquals(a, b);
-            }
-            catch (AssertionError e) {
-                assertionFailures.add(e);
-            }
-        }
-
-        private void assertEquals(String message, Object a, Object b) {
-            try {
-                Assert.assertEquals(message, a, b);
-            }
-            catch (AssertionError e) {
-                assertionFailures.add(e);
-            }
-        }
-
-        public void throwFailures() {
-            StringBuilder expected = new StringBuilder();
-            StringBuilder actual = new StringBuilder();
-            for (AssertionError failure : assertionFailures) {
-                if (failure instanceof ComparisonFailure) {
-                    ComparisonFailure comparisonFailure = (ComparisonFailure) failure;
-                    expected.append(comparisonFailure.getExpected());
-                    actual.append(comparisonFailure.getActual());
-                }
-                else {
-                    throw failure;
-                }
-            }
-            Assert.assertEquals(expected.toString(), actual.toString());
-        }
-
-        public boolean failed() {
-            return !assertionFailures.isEmpty();
         }
     }
 }
