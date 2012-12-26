@@ -368,7 +368,7 @@ public class ExpressionTypingServices {
                     mismatchFound[0] = true;
                 }
                 if (TYPE_INFERENCE_ERRORS.contains(diagnostic.getFactory()) &&
-                    PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), JetQualifiedExpression.class, false) == expressionToWatch) {
+                    PsiTreeUtil.isAncestor(expressionToWatch, diagnostic.getPsiElement(), false)) {
                     mismatchFound[0] = true;
                 }
                 super.report(diagnostic);
