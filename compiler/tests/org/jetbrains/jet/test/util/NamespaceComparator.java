@@ -18,6 +18,7 @@ package org.jetbrains.jet.test.util;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -52,6 +53,9 @@ public class NamespaceComparator {
             .setWithDefinedIn(false)
             .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
             .setVerbose(true).build();
+
+    private static final ImmutableSet<String> JAVA_OBJECT_METHOD_NAMES = ImmutableSet.of(
+            "equals", "hashCode", "finalize", "wait", "notify", "notifyAll", "toString", "clone", "getClass");
 
     private final Configuration conf;
 
@@ -105,15 +109,15 @@ public class NamespaceComparator {
             Collections.sort(subDescriptors, MemberComparator.INSTANCE);
 
             for (DeclarationDescriptor subDescriptor : subDescriptors) {
-                if (!conf.includeMethodsOfJavaObject) {
-                    // TODO regexp check? oh dear
-                    if (subDescriptor.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
-                        continue;
-                    }
+                if (!conf.includeMethodsOfJavaObject && subDescriptor instanceof FunctionDescriptor
+                    && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().getName())) {
+                    continue;
                 }
+
                 if (subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor))) {
                     continue;
                 }
+
                 appendDeclarationRecursively(subDescriptor, printer, false);
             }
 
