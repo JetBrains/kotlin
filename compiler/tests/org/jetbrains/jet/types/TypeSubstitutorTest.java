@@ -53,7 +53,6 @@ import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
-    public static final String ILLEGAL_SUBSTITUTION = "[NULL]";
     private JetScope scope;
     private InjectorForTests injector;
 
@@ -106,7 +105,13 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
         JetType result = substitutor.substitute(initialType, Variance.INVARIANT);
 
-        assertEquals(expectedTypeStr, DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(result));
+        if (expectedTypeStr == null) {
+            assertNull(result);
+        }
+        else {
+            assertNotNull(result);
+            assertEquals(expectedTypeStr, DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(result));
+        }
     }
 
     private Map<TypeConstructor, TypeProjection> stringsToSubstitutionMap(Pair<String, String>[] substitutionStrs) {
@@ -218,7 +223,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
     public void testInOutProjection() throws Exception {
         doTest(
-                ILLEGAL_SUBSTITUTION,
+                null,
                 "C<in T>",
                 map("T", "out String")
         );

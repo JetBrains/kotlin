@@ -45,7 +45,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();
 
     @NotNull
-    String renderType(@Nullable JetType type);
+    String renderType(@NotNull JetType type);
 
     @NotNull
     @Override

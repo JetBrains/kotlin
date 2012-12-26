@@ -215,6 +215,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             textBuilder.append("(").append(parametersString).append(")");
 
             JetType returnType = functionDescriptor.getReturnType();
+            assert returnType != null;
             textBuilder.append(":").append(DescriptorRenderer.TEXT.renderType(returnType));
         }
         else if (descriptor instanceof VariableDescriptor) {

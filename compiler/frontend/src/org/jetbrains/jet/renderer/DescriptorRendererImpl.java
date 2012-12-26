@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -180,15 +179,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     /* TYPES RENDERING */
     @NotNull
     @Override
-    public String renderType(@Nullable JetType type) {
+    public String renderType(@NotNull JetType type) {
         return escape(renderTypeWithoutEscape(type));
     }
 
-    private String renderTypeWithoutEscape(@Nullable JetType type) {
-        if (type == null) {
-            return "[NULL]";
-        }
-        else if (type == CallResolverUtil.DONT_CARE || type == CallResolverUtil.CANT_INFER) {
+    private String renderTypeWithoutEscape(@NotNull JetType type) {
+        if (type == CallResolverUtil.DONT_CARE || type == CallResolverUtil.CANT_INFER) {
             return "???";
         }
         else if (type == CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE) {
@@ -432,7 +428,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         renderName(function, builder);
         renderValueParameters(function, builder);
-        builder.append(" : ").append(escape(renderType(function.getReturnType())));
+        JetType returnType = function.getReturnType();
+        builder.append(" : ").append(returnType == null ? "[NULL]" : escape(renderType(returnType)));
         renderWhereSuffix(function.getTypeParameters(), builder);
     }
 

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.rendering.*;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -86,7 +87,9 @@ public class IdeErrorMessages {
                     @NotNull
                     @Override
                     public String render(@NotNull CallableMemberDescriptor object) {
-                        return DescriptorRenderer.HTML.renderType(object.getReturnType());
+                        JetType returnType = object.getReturnType();
+                        assert returnType != null;
+                        return DescriptorRenderer.HTML.renderType(returnType);
                     }
                 }, DescriptorRenderer.HTML);
 
