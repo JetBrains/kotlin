@@ -44,7 +44,7 @@ public trait TwoUpperBounds<T> where T: Number, T: Any
 //public constructor InternalClass() defined in rendererTest.InternalClass
 //internal trait TheTrait defined in rendererTest
 //internal abstract fun abstractFun() : Unit defined in rendererTest.TheTrait
-//class object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
+//internal class object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
 //private constructor <class-object-for-TheTrait>() defined in rendererTest.TheTrait.<class-object-for-TheTrait>
 //internal final fun classObjectFunction() : jet.Int defined in rendererTest.TheTrait.<class-object-for-TheTrait>
 //public final class WithReified<reified A, reified out B> defined in rendererTest

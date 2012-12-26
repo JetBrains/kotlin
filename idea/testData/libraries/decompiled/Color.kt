@@ -4,7 +4,7 @@
 package testData.libraries
 
 [[public final enum class Color(rgb : jet.Int) : jet.Enum<testData.libraries.Color> {
-    class object {
+    public class object {
         [public final val BLUE : testData.libraries.Color] /* compiled code */
 
         [public final val GREEN : testData.libraries.Color] /* compiled code */

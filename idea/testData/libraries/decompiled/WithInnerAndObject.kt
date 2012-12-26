@@ -4,7 +4,7 @@
 package testData.libraries
 
 [[public final class WithInnerAndObject() {
-    class object {
+    public class object {
         [internal final fun foo() : Unit { /* compiled code */ }]
     }
 

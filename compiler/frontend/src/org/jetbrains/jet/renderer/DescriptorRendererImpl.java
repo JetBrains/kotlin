@@ -559,12 +559,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private void renderClass(@NotNull ClassDescriptor klass, @NotNull StringBuilder builder) {
         boolean classObject = klass.getKind() == ClassKind.CLASS_OBJECT;
         if (!startFromName) {
-            if (!classObject) {
-                renderAnnotations(klass, builder);
-                renderVisibility(klass.getVisibility(), builder);
-                if (klass.getKind() != ClassKind.TRAIT && klass.getKind() != ClassKind.OBJECT) {
-                    renderModality(klass.getModality(), builder);
-                }
+            renderAnnotations(klass, builder);
+            renderVisibility(klass.getVisibility(), builder);
+            if (klass.getKind() != ClassKind.TRAIT && !klass.getKind().isObject()) {
+                renderModality(klass.getModality(), builder);
             }
             builder.append(renderKeyword(getClassKindPrefix(klass)));
             if (!classObject) {
