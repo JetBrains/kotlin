@@ -33,6 +33,6 @@ deprecated("") fun deprecatedFun()
 //value-parameter val a : jet.Array<T> defined in rendererTest.withTypeParam
 //internal trait Foo defined in rendererTest
 //internal trait Bar defined in rendererTest
-//internal final fun <P> funTypeParameterWithTwoUpperBounds() : jet.Int where P : rendererTest.Foo, P : rendererTest.Bar defined in rendererTest
+//internal final fun <P> funTypeParameterWithTwoUpperBounds() : jet.Int where P : rendererTest.Bar, P : rendererTest.Foo defined in rendererTest
 //<P : rendererTest.Foo & rendererTest.Bar> defined in rendererTest.funTypeParameterWithTwoUpperBounds
 //jet.deprecated internal final fun deprecatedFun() : Unit defined in rendererTest

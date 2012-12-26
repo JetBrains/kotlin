@@ -18,6 +18,7 @@ package org.jetbrains.jet.renderer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -449,24 +450,20 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderWhereSuffix(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull StringBuilder builder) {
-        boolean first = true;
+        List<String> upperBoundStrings = Lists.newArrayList();
+
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             if (typeParameter.getUpperBounds().size() > 1) {
                 for (JetType upperBound : typeParameter.getUpperBounds()) {
-                    if (first) {
-                        builder.append(" ");
-                        builder.append(renderKeyword("where"));
-                        builder.append(" ");
-                    }
-                    else {
-                        builder.append(", ");
-                    }
-                    builder.append(typeParameter.getName());
-                    builder.append(" : ");
-                    builder.append(escape(renderType(upperBound)));
-                    first = false;
+                    upperBoundStrings.add(typeParameter.getName() + " : " + escape(renderType(upperBound)));
                 }
             }
+        }
+        Collections.sort(upperBoundStrings); // TODO workaround for failing load kotlin test
+
+        if (!upperBoundStrings.isEmpty()) {
+            builder.append(" ").append(renderKeyword("where")).append(" ");
+            builder.append(StringUtil.join(upperBoundStrings, ", "));
         }
     }
 
