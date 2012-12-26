@@ -96,7 +96,9 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 
         String documentText = document.getText();
 
-        boolean braces = bracketType == BracketType.BRACES && context.getCompletionChar() != '(';
+        char completionChar = context.getCompletionChar();
+
+        boolean braces = bracketType == BracketType.BRACES && completionChar != '(';
         char openingBracket = braces ? '{' : '(';
         char closingBracket = braces ? '}' : ')';
 
@@ -106,7 +108,7 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         if (openingBracketIndex == -1) {
             // Insert ()/{} if it's not already exist
             if (braces) {
-                if (context.getCompletionChar() == ' ') {
+                if (completionChar == ' ') {
                     context.setAddCompletionChar(false);
                 }
 
@@ -133,7 +135,11 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         int closeBracketIndex = indexOfSkippingSpace(documentText, closingBracket, openingBracketIndex + 1);
 
         Editor editor = context.getEditor();
-        if (caretPosition == CaretPosition.IN_BRACKETS || closeBracketIndex == -1) {
+
+        // Satisfy TypedHandler.handleRParen() algorithm for preventing doubling ')' char if user typed "()" manually.
+        boolean forcePlaceCaretIntoParentheses = completionChar == '(';
+
+        if (caretPosition == CaretPosition.IN_BRACKETS || forcePlaceCaretIntoParentheses || closeBracketIndex == -1) {
             editor.getCaretModel().moveToOffset(openingBracketIndex + 1 + inBracketsShift);
             AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, offsetElement);
         }

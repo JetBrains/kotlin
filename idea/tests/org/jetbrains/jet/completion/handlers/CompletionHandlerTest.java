@@ -92,6 +92,12 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest(CompletionType.BASIC, 2, null, null, ' ');
     }
 
+    public void testInsertFunctionWithBothParentheses() {
+        configureByFile(getBeforeFileName());
+        type("test()");
+        checkResultByFile(getAfterFileName());
+    }
+
     public void testInsertImportOnTab() {
         doTest(CompletionType.BASIC, 2, "ArrayList", null, '\t');
     }
