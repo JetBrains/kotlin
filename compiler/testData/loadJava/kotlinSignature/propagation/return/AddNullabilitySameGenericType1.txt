@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.AddNullabilitySameGenericType1 : java.lang.Object {
-    public abstract trait test.AddNullabilitySameGenericType1.Sub : test.AddNullabilitySameGenericType1.Super {
-        public abstract override /*1*/ fun foo(): jet.MutableList<jet.String>
+public trait AddNullabilitySameGenericType1 : java.lang.Object {
+    
+    public trait Sub : test.AddNullabilitySameGenericType1.Super {
+        public abstract override /*1*/ fun foo() : jet.MutableList<jet.String>
     }
-    public abstract trait test.AddNullabilitySameGenericType1.Super : java.lang.Object {
-        public abstract fun foo(): jet.MutableList<jet.String>
+    
+    public trait Super : java.lang.Object {
+        public abstract fun foo() : jet.MutableList<jet.String>
     }
 }

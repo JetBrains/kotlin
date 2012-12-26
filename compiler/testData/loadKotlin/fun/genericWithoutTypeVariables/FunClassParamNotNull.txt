@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun ff(/*0*/ p: jet.List<jet.CharSequence>): jet.Int
+internal final fun ff(/*0*/ p : jet.List<jet.CharSequence>) : jet.Int

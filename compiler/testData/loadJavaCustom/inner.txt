@@ -1,5 +1,5 @@
 namespace test
 
-public open class test.inner : test.B.C {
-    public final /*constructor*/ fun <init>(): test.inner
+public open class inner : test.B.C {
+    public constructor inner()
 }

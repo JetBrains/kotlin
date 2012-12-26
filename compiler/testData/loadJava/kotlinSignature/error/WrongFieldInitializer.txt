@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.WrongFieldInitializer : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.WrongFieldInitializer
-    public final var foo: jet.String?
+public open class WrongFieldInitializer : java.lang.Object {
+    public constructor WrongFieldInitializer()
+    public final var foo : jet.String?
 }

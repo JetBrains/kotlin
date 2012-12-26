@@ -1,5 +1,5 @@
 namespace test
 
-public open class test.ConstructorWithoutParams : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.ConstructorWithoutParams
+public open class ConstructorWithoutParams : java.lang.Object {
+    public constructor ConstructorWithoutParams()
 }

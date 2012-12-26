@@ -1,7 +1,7 @@
 namespace test
 
-public open class test.JavaBeanVarOfGenericType</*0*/ P : jet.Any?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.JavaBeanVarOfGenericType<P>
-    public open fun getCharacters(): java.util.ArrayList<P>?
-    public open fun setCharacters(/*0*/ p0: java.util.ArrayList<P>?): jet.Tuple0
+public open class JavaBeanVarOfGenericType</*0*/ P> : java.lang.Object {
+    public constructor JavaBeanVarOfGenericType</*0*/ P>()
+    public open fun getCharacters() : java.util.ArrayList<P>?
+    public open fun setCharacters(/*0*/ p0 : java.util.ArrayList<P>?) : Unit
 }

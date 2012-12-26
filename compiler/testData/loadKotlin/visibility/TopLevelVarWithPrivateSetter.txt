@@ -1,3 +1,2 @@
 namespace test
-
-internal final var topLevelVar: jet.Int private set
+internal final var topLevelVar : jet.Int

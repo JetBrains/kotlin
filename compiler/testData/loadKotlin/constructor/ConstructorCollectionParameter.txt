@@ -1,6 +1,6 @@
 namespace test
 
-internal final class test.TestingKotlinCollections : jet.Any {
-    public final /*primary constructor*/ fun <init>(/*0*/ arguments: jet.Collection<jet.String>): test.TestingKotlinCollections
-    internal final val arguments: jet.Collection<jet.String>
+internal final class TestingKotlinCollections {
+    /*primary*/ public constructor TestingKotlinCollections(/*0*/ arguments : jet.Collection<jet.String>)
+    internal final val arguments : jet.Collection<jet.String>
 }

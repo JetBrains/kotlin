@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun fff(/*0*/ a: java.lang.Integer?): jet.Int
+internal final fun fff(/*0*/ a : java.lang.Integer?) : jet.Int

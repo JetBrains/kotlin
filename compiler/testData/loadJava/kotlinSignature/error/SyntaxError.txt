@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.SyntaxError : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.SyntaxError
-    public open fun foo(): jet.Int?
+public open class SyntaxError : java.lang.Object {
+    public constructor SyntaxError()
+    public open fun foo() : jet.Int?
 }

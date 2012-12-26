@@ -1,3 +1,2 @@
 namespace Simple
-
-public open fun bar(): jet.Tuple0
+public open fun bar() : Unit

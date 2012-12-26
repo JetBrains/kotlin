@@ -1,8 +1,9 @@
 namespace test
 
-public open class test.InnerClassReferencesOuterTP</*0*/ P : jet.Any?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.InnerClassReferencesOuterTP<P>
-    public open class test.InnerClassReferencesOuterTP.Inner</*0*/ Q : P> : java.lang.Object {
-        public final /*constructor*/ fun </*0*/ Q : P><init>(): test.InnerClassReferencesOuterTP.Inner<Q>
+public open class InnerClassReferencesOuterTP</*0*/ P> : java.lang.Object {
+    public constructor InnerClassReferencesOuterTP</*0*/ P>()
+    
+    public open class Inner</*0*/ Q : P> : java.lang.Object {
+        public constructor Inner</*0*/ Q : P>()
     }
 }

@@ -1,12 +1,14 @@
 namespace test
 
-public open class test.InnerClassesInGeneric</*0*/ P : jet.Any?, /*1*/ Q : jet.Any?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ P : jet.Any?, /*1*/ Q : jet.Any?><init>(): test.InnerClassesInGeneric<P, Q>
-    public open class test.InnerClassesInGeneric.Inner : java.lang.Object {
-        public final /*constructor*/ fun <init>(): test.InnerClassesInGeneric.Inner
+public open class InnerClassesInGeneric</*0*/ P, /*1*/ Q> : java.lang.Object {
+    public constructor InnerClassesInGeneric</*0*/ P, /*1*/ Q>()
+    
+    public open class Inner : java.lang.Object {
+        public constructor Inner()
     }
-    public open class test.InnerClassesInGeneric.Inner2 : test.InnerClassesInGeneric.Inner {
-        public final /*constructor*/ fun <init>(): test.InnerClassesInGeneric.Inner2
-        public open fun iterator(): jet.MutableIterator<P>?
+    
+    public open class Inner2 : test.InnerClassesInGeneric.Inner {
+        public constructor Inner2()
+        public open fun iterator() : jet.MutableIterator<P>?
     }
 }

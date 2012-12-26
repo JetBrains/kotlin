@@ -1,3 +1,2 @@
 namespace test
-
-internal final val jet.Int.itIs: jet.Int
+internal final val jet.Int.itIs : jet.Int

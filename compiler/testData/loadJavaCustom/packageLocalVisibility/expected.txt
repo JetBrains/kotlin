@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.JFrame : awt.Frame {
-    public final /*constructor*/ fun <init>(): test.JFrame
-    protected final var accessibleContext: jet.String?
+public open class JFrame : awt.Frame {
+    public constructor JFrame()
+    protected final var accessibleContext : jet.String?
 }

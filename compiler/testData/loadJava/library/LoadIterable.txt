@@ -1,6 +1,6 @@
 namespace test
 
-public abstract trait test.LoadIterable</*0*/ T : jet.Any?> : java.lang.Object {
-    public abstract fun getIterable(): jet.MutableIterable<T>?
-    public abstract fun setIterable(/*0*/ p0: jet.Iterable<T>?): jet.Tuple0
+public trait LoadIterable</*0*/ T> : java.lang.Object {
+    public abstract fun getIterable() : jet.MutableIterable<T>?
+    public abstract fun setIterable(/*0*/ p0 : jet.Iterable<T>?) : Unit
 }

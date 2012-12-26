@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.MethodTypePOneUpperBound : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.MethodTypePOneUpperBound
-    public open fun </*0*/ T : java.lang.Cloneable?>bar(): jet.Tuple0
+public open class MethodTypePOneUpperBound : java.lang.Object {
+    public constructor MethodTypePOneUpperBound()
+    public open fun </*0*/ T : java.lang.Cloneable?> bar() : Unit
 }

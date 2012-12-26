@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.ExtraUpperBound : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.ExtraUpperBound
-    public open fun </*0*/ A : java.lang.Runnable?>foo(): jet.String?
+public open class ExtraUpperBound : java.lang.Object {
+    public constructor ExtraUpperBound()
+    public open fun </*0*/ A : java.lang.Runnable?> foo() : jet.String?
 }

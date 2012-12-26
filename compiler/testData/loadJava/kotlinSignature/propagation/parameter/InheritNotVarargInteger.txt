@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.InheritNotVarargInteger : java.lang.Object {
-    public abstract trait test.InheritNotVarargInteger.Sub : test.InheritNotVarargInteger.Super {
-        public abstract override /*1*/ fun foo(/*0*/ p0: jet.Array<out jet.Int>?): jet.Tuple0
+public trait InheritNotVarargInteger : java.lang.Object {
+    
+    public trait Sub : test.InheritNotVarargInteger.Super {
+        public abstract override /*1*/ fun foo(/*0*/ p0 : jet.Array<out jet.Int>?) : Unit
     }
-    public abstract trait test.InheritNotVarargInteger.Super : java.lang.Object {
-        public abstract fun foo(/*0*/ p0: jet.Array<out jet.Int>?): jet.Tuple0
+    
+    public trait Super : java.lang.Object {
+        public abstract fun foo(/*0*/ p0 : jet.Array<out jet.Int>?) : Unit
     }
 }

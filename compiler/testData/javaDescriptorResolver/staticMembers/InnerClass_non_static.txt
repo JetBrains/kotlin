@@ -1,9 +1,10 @@
 namespace test
 
-public open class test.InnerClass : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.InnerClass
-    public open class test.InnerClass.Inner : java.lang.Object {
-        public final /*constructor*/ fun <init>(): test.InnerClass.Inner
-        public open fun foo(): jet.Tuple0
+public open class InnerClass : java.lang.Object {
+    public constructor InnerClass()
+    
+    public open class Inner : java.lang.Object {
+        public constructor Inner()
+        public open fun foo() : Unit
     }
 }

@@ -1,10 +1,10 @@
 namespace test
 
-jet.data() internal final class test.DataClass : jet.Any {
-    public final /*primary constructor*/ fun <init>(/*0*/ x: jet.String, /*1*/ y: jet.Int): test.DataClass
-    internal final /*synthesized*/ fun component1(): jet.String
-    internal final /*synthesized*/ fun component2(): jet.Int
-    internal final /*synthesized*/ fun copy(/*0*/ x: jet.String = ?, /*1*/ y: jet.Int = ?): test.DataClass
-    internal final var x: jet.String
-    internal final var y: jet.Int
+jet.data() internal final class DataClass {
+    /*primary*/ public constructor DataClass(/*0*/ x : jet.String, /*1*/ y : jet.Int)
+    internal final var x : jet.String
+    internal final var y : jet.Int
+    internal final /*synthesized*/ fun component1() : jet.String
+    internal final /*synthesized*/ fun component2() : jet.Int
+    internal final /*synthesized*/ fun copy(/*0*/ x : jet.String = ..., /*1*/ y : jet.Int = ...) : test.DataClass
 }

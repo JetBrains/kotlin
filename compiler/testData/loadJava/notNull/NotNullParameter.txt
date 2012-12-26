@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.NotNullParameter : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.NotNullParameter
-    public open fun hi(/*0*/ p0: jet.String): jet.Tuple0
+public open class NotNullParameter : java.lang.Object {
+    public constructor NotNullParameter()
+    public open fun hi(/*0*/ p0 : jet.String) : Unit
 }

@@ -1,5 +1,5 @@
 namespace test
 
-internal final class test.InternalClass : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.InternalClass
+internal final class InternalClass {
+    /*primary*/ public constructor InternalClass()
 }

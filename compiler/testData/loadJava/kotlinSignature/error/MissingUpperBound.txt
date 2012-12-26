@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.MissingUpperBound : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.MissingUpperBound
-    public open fun </*0*/ A : java.lang.Cloneable? & java.lang.Runnable?>foo(): jet.String?
+public open class MissingUpperBound : java.lang.Object {
+    public constructor MissingUpperBound()
+    public open fun </*0*/ A> foo() : jet.String? where A : java.lang.Cloneable?, A : java.lang.Runnable?
 }

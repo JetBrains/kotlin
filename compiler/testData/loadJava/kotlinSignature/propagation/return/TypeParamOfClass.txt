@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.TypeParamOfClass : java.lang.Object {
-    public abstract trait test.TypeParamOfClass.Sub</*0*/ T : jet.Any?> : test.TypeParamOfClass.Super<T> {
-        public abstract override /*1*/ fun foo(): T
+public trait TypeParamOfClass : java.lang.Object {
+    
+    public trait Sub</*0*/ T> : test.TypeParamOfClass.Super<T> {
+        public abstract override /*1*/ fun foo() : T
     }
-    public abstract trait test.TypeParamOfClass.Super</*0*/ T : jet.Any?> : java.lang.Object {
-        public abstract fun foo(): T
+    
+    public trait Super</*0*/ T> : java.lang.Object {
+        public abstract fun foo() : T
     }
 }

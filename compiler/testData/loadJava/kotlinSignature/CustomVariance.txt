@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.CustomVariance : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.CustomVariance
-    public open fun foo(): jet.MutableList<out jet.Number>
+public open class CustomVariance : java.lang.Object {
+    public constructor CustomVariance()
+    public open fun foo() : jet.MutableList<out jet.Number>
 }

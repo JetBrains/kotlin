@@ -1,9 +1,10 @@
 namespace test
 
-public final class test.MethodReferencesOuterClassTP</*0*/ P : jet.Any?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.MethodReferencesOuterClassTP<P>
-    public final class test.MethodReferencesOuterClassTP.Inner : java.lang.Object {
-        public final /*constructor*/ fun <init>(): test.MethodReferencesOuterClassTP.Inner
-        public final fun </*0*/ Q : P>f(): jet.Tuple0
+public final class MethodReferencesOuterClassTP</*0*/ P> : java.lang.Object {
+    public constructor MethodReferencesOuterClassTP</*0*/ P>()
+    
+    public final class Inner : java.lang.Object {
+        public constructor Inner()
+        public final fun </*0*/ Q : P> f() : Unit
     }
 }

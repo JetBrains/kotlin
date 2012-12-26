@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.WrongTypeName1 : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.WrongTypeName1
-    public open fun foo(/*0*/ p0: jet.String?): jet.String?
+public open class WrongTypeName1 : java.lang.Object {
+    public constructor WrongTypeName1()
+    public open fun foo(/*0*/ p0 : jet.String?) : jet.String?
 }

@@ -1,5 +1,5 @@
 namespace test
 
-internal final class test.ClassWithConstructorAndTypeParameter</*0*/ P : jet.Any?, /*1*/ Q : jet.Any?> : jet.Any {
-    public final /*primary constructor*/ fun </*0*/ P : jet.Any?, /*1*/ Q : jet.Any?><init>(/*0*/ q: jet.Int): test.ClassWithConstructorAndTypeParameter<P, Q>
+internal final class ClassWithConstructorAndTypeParameter</*0*/ P, /*1*/ Q> {
+    /*primary*/ public constructor ClassWithConstructorAndTypeParameter</*0*/ P, /*1*/ Q>(/*0*/ q : jet.Int)
 }

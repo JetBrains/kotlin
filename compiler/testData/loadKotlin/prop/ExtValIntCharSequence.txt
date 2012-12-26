@@ -1,3 +1,2 @@
 namespace test
-
-internal final val jet.Int.ggg: java.lang.CharSequence
+internal final val jet.Int.ggg : java.lang.CharSequence

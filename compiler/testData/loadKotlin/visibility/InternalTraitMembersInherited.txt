@@ -1,13 +1,14 @@
 namespace test
 
-internal abstract trait test.A : jet.Any {
-    internal open fun f(): jet.Int
-    public open var p: jet.Int internal set
-    internal open val v: jet.Int
+internal trait A {
+    public open var p : jet.Int
+    internal open val v : jet.Int
+    internal open fun f() : jet.Int
 }
-internal final class test.B : test.A {
-    public final /*primary constructor*/ fun <init>(): test.B
-    internal open override /*1*/ /*fake_override*/ fun f(): jet.Int
-    public open override /*1*/ /*fake_override*/ var p: jet.Int internal set
-    internal open override /*1*/ /*fake_override*/ val v: jet.Int
+
+internal final class B : test.A {
+    /*primary*/ public constructor B()
+    public open override /*1*/ /*fake_override*/ var p : jet.Int
+    internal open override /*1*/ /*fake_override*/ val v : jet.Int
+    internal open override /*1*/ /*fake_override*/ fun f() : jet.Int
 }

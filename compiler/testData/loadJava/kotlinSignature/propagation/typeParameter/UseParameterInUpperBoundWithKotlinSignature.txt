@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.UseParameterInUpperBoundWithKotlinSignature : java.lang.Object {
-    public abstract trait test.UseParameterInUpperBoundWithKotlinSignature.Sub : test.UseParameterInUpperBoundWithKotlinSignature.Super {
-        public abstract override /*1*/ fun </*0*/ B : jet.Any?, /*1*/ A : jet.List<B>>foo(/*0*/ p0: B, /*1*/ p1: A): jet.Tuple0
+public trait UseParameterInUpperBoundWithKotlinSignature : java.lang.Object {
+    
+    public trait Sub : test.UseParameterInUpperBoundWithKotlinSignature.Super {
+        public abstract override /*1*/ fun </*0*/ B, /*1*/ A : jet.List<B>> foo(/*0*/ p0 : B, /*1*/ p1 : A) : Unit
     }
-    public abstract trait test.UseParameterInUpperBoundWithKotlinSignature.Super : java.lang.Object {
-        public abstract fun </*0*/ A : jet.Any?, /*1*/ B : jet.List<A>>foo(/*0*/ p0: A, /*1*/ p1: B): jet.Tuple0
+    
+    public trait Super : java.lang.Object {
+        public abstract fun </*0*/ A, /*1*/ B : jet.List<A>> foo(/*0*/ p0 : A, /*1*/ p1 : B) : Unit
     }
 }

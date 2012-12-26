@@ -1,26 +1,28 @@
 namespace test
-
 // <namespace name="p">
 namespace p
 
-internal final class test.p.C : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.p.C
-    internal final fun f(): jet.Tuple0
+internal final class C {
+    /*primary*/ public constructor C()
+    internal final fun f() : Unit
 }
-internal open class test.p.G</*0*/ T : jet.Any?> : jet.Any {
-    public final /*primary constructor*/ fun </*0*/ T : jet.Any?><init>(): test.p.G<T>
-    internal final fun a(): jet.Tuple0
-    internal open fun f(): T
+
+internal open class G</*0*/ T> {
+    /*primary*/ public constructor G</*0*/ T>()
+    internal final fun a() : Unit
+    internal open fun f() : T
 }
-internal final class test.p.G2</*0*/ E : jet.Any?> : test.p.G<E> {
-    public final /*primary constructor*/ fun </*0*/ E : jet.Any?><init>(): test.p.G2<E>
-    internal final override /*1*/ /*fake_override*/ fun a(): jet.Tuple0
-    internal open override /*1*/ fun f(): E
-    internal final fun g(): E
+
+internal final class G2</*0*/ E> : test.p.G<E> {
+    /*primary*/ public constructor G2</*0*/ E>()
+    internal final override /*1*/ /*fake_override*/ fun a() : Unit
+    internal open override /*1*/ fun f() : E
+    internal final fun g() : E
 }
-internal final fun foo(): jet.Tuple0
-internal final fun foo(/*0*/ a: test.p.C): jet.Tuple0
+internal final fun foo() : Unit
+internal final fun foo(/*0*/ a : test.p.C) : Unit
 // </namespace name="p">
-internal final class test.A : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.A
+
+internal final class A {
+    /*primary*/ public constructor A()
 }

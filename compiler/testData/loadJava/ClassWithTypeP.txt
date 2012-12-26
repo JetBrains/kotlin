@@ -1,5 +1,5 @@
 namespace test
 
-public final class test.ClassWithTypeP</*0*/ P : jet.Any?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.ClassWithTypeP<P>
+public final class ClassWithTypeP</*0*/ P> : java.lang.Object {
+    public constructor ClassWithTypeP</*0*/ P>()
 }

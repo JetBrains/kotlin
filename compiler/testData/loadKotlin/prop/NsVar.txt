@@ -1,3 +1,2 @@
 namespace test
-
-internal final var nsVal: jet.Int
+internal final var nsVal : jet.Int

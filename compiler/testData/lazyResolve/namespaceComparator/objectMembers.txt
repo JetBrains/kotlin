@@ -1,7 +1,7 @@
 namespace test
 
-internal final object test.SomeObject : jet.Any {
-    private final /*primary constructor*/ fun <init>(): test.SomeObject
-    internal final fun test(/*0*/ a: jet.Int): jet.Int
+internal object SomeObject {
+    /*primary*/ private constructor SomeObject()
+    internal final fun test(/*0*/ a : jet.Int) : jet.Int
 }
-internal final val SomeObject: test.SomeObject
+internal final val SomeObject : test.SomeObject

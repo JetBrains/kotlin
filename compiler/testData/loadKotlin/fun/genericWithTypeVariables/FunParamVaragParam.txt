@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun </*0*/ P : jet.Any?>funParamVarargParam(/*0*/ a: jet.Int, /*1*/ vararg b: P /*jet.Array<P>*/): jet.Int
+internal final fun </*0*/ P> funParamVarargParam(/*0*/ a : jet.Int, /*1*/ vararg b : P /*jet.Array<P>*/) : jet.Int

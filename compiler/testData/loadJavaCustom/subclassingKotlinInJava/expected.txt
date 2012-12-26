@@ -1,10 +1,11 @@
 namespace test
 
-public open class test.JavaSubclass : test.KotlinClass {
-    public final /*constructor*/ fun <init>(): test.JavaSubclass
-    public open override /*1*/ fun foo(): jet.String
+public open class JavaSubclass : test.KotlinClass {
+    public constructor JavaSubclass()
+    public open override /*1*/ fun foo() : jet.String
 }
-public open class test.KotlinClass : jet.Any {
-    public final /*constructor*/ fun <init>(): test.KotlinClass
-    public open fun foo(): jet.String
+
+public open class KotlinClass {
+    public constructor KotlinClass()
+    public open fun foo() : jet.String
 }

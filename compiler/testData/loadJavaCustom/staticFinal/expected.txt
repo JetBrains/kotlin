@@ -1,3 +1,2 @@
 namespace test
-
-public final val foo: jet.String
+public final val foo : jet.String

@@ -1,5 +1,5 @@
 namespace test
 
-public open class test.MyException : java.lang.Object {
-    public final /*constructor*/ fun <init>(/*0*/ p0: jet.String?, /*1*/ p1: jet.Throwable?): test.MyException
+public open class MyException : java.lang.Object {
+    public constructor MyException(/*0*/ p0 : jet.String?, /*1*/ p1 : jet.Throwable?)
 }

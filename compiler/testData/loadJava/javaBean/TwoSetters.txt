@@ -1,7 +1,7 @@
 namespace test
 
-public open class test.TwoSetters : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.TwoSetters
-    public open fun setSize(/*0*/ p0: jet.Int): jet.Tuple0
-    public open fun setSize(/*0*/ p0: jet.String?): jet.Tuple0
+public open class TwoSetters : java.lang.Object {
+    public constructor TwoSetters()
+    public open fun setSize(/*0*/ p0 : jet.Int) : Unit
+    public open fun setSize(/*0*/ p0 : jet.String?) : Unit
 }

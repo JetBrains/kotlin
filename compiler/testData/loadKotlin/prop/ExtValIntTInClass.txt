@@ -1,6 +1,6 @@
 namespace test
 
-internal final class test.ExtValInClass</*0*/ T : jet.Any?> : jet.Any {
-    public final /*primary constructor*/ fun </*0*/ T : jet.Any?><init>(): test.ExtValInClass<T>
-    internal final val jet.Int.asas: T
+internal final class ExtValInClass</*0*/ T> {
+    /*primary*/ public constructor ExtValInClass</*0*/ T>()
+    internal final val jet.Int.asas : T
 }

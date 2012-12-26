@@ -1,5 +1,5 @@
 namespace test
 
-internal final class test.ClassParamReferencesParam</*0*/ A : jet.Any?, /*1*/ in B : A> : jet.Any {
-    public final /*primary constructor*/ fun </*0*/ A : jet.Any?, /*1*/ in B : A><init>(): test.ClassParamReferencesParam<A, B>
+internal final class ClassParamReferencesParam</*0*/ A, /*1*/ in B : A> {
+    /*primary*/ public constructor ClassParamReferencesParam</*0*/ A, /*1*/ in B : A>()
 }

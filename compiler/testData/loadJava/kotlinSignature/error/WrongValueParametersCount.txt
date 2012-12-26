@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.WrongValueParametersCount : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.WrongValueParametersCount
-    public open fun foo(): jet.Int?
+public open class WrongValueParametersCount : java.lang.Object {
+    public constructor WrongValueParametersCount()
+    public open fun foo() : jet.Int?
 }

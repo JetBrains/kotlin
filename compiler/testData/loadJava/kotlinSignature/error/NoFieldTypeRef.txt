@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.NoFieldTypeRef : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.NoFieldTypeRef
-    public final var foo: jet.String?
+public open class NoFieldTypeRef : java.lang.Object {
+    public constructor NoFieldTypeRef()
+    public final var foo : jet.String?
 }

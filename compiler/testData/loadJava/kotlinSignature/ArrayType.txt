@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.ArrayType : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.ArrayType
-    public open fun foo(): jet.Array<jet.String>
+public open class ArrayType : java.lang.Object {
+    public constructor ArrayType()
+    public open fun foo() : jet.Array<jet.String>
 }

@@ -1,50 +1,58 @@
 namespace test
 
-internal final enum class test.In : jet.Enum<test.In> {
-    private final /*primary constructor*/ fun <init>(): test.In
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-    internal final class object test.In.<class-object-for-In> {
-        private final /*constructor*/ fun <init>(): test.In.<class-object-for-In>
-        public final val A: test.In
-        private final enum entry test.In.<class-object-for-In>.A : test.In {
-            private final /*constructor*/ fun <init>(): test.In.<class-object-for-In>.A
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+internal final enum class In : jet.Enum<test.In> {
+    /*primary*/ private constructor In()
+    public final override /*1*/ /*fake_override*/ fun name() : jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    
+    internal class object <class-object-for-In> {
+        /*primary*/ private constructor <class-object-for-In>()
+        public final val A : test.In
+        public final fun valueOf(/*0*/ value : jet.String) : test.In
+        public final fun values() : jet.Array<test.In>
+        
+        private enum entry A : test.In {
+            /*primary*/ private constructor A()
+            public final override /*1*/ /*fake_override*/ fun name() : jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
         }
-        public final fun valueOf(/*0*/ value: jet.String): test.In
-        public final fun values(): jet.Array<test.In>
     }
 }
-private final enum class test.Pr : jet.Enum<test.Pr> {
-    private final /*primary constructor*/ fun <init>(): test.Pr
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-    private final class object test.Pr.<class-object-for-Pr> {
-        private final /*constructor*/ fun <init>(): test.Pr.<class-object-for-Pr>
-        public final val A: test.Pr
-        private final enum entry test.Pr.<class-object-for-Pr>.A : test.Pr {
-            private final /*constructor*/ fun <init>(): test.Pr.<class-object-for-Pr>.A
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+
+private final enum class Pr : jet.Enum<test.Pr> {
+    /*primary*/ private constructor Pr()
+    public final override /*1*/ /*fake_override*/ fun name() : jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    
+    private class object <class-object-for-Pr> {
+        /*primary*/ private constructor <class-object-for-Pr>()
+        public final val A : test.Pr
+        public final fun valueOf(/*0*/ value : jet.String) : test.Pr
+        public final fun values() : jet.Array<test.Pr>
+        
+        private enum entry A : test.Pr {
+            /*primary*/ private constructor A()
+            public final override /*1*/ /*fake_override*/ fun name() : jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
         }
-        public final fun valueOf(/*0*/ value: jet.String): test.Pr
-        public final fun values(): jet.Array<test.Pr>
     }
 }
-public final enum class test.Pu : jet.Enum<test.Pu> {
-    private final /*primary constructor*/ fun <init>(): test.Pu
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-    public final class object test.Pu.<class-object-for-Pu> {
-        private final /*constructor*/ fun <init>(): test.Pu.<class-object-for-Pu>
-        public final val A: test.Pu
-        private final enum entry test.Pu.<class-object-for-Pu>.A : test.Pu {
-            private final /*constructor*/ fun <init>(): test.Pu.<class-object-for-Pu>.A
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+
+public final enum class Pu : jet.Enum<test.Pu> {
+    /*primary*/ private constructor Pu()
+    public final override /*1*/ /*fake_override*/ fun name() : jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    
+    public class object <class-object-for-Pu> {
+        /*primary*/ private constructor <class-object-for-Pu>()
+        public final val A : test.Pu
+        public final fun valueOf(/*0*/ value : jet.String) : test.Pu
+        public final fun values() : jet.Array<test.Pu>
+        
+        private enum entry A : test.Pu {
+            /*primary*/ private constructor A()
+            public final override /*1*/ /*fake_override*/ fun name() : jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
         }
-        public final fun valueOf(/*0*/ value: jet.String): test.Pu
-        public final fun values(): jet.Array<test.Pu>
     }
 }

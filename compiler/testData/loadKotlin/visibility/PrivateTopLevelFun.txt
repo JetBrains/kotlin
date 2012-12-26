@@ -1,3 +1,2 @@
 namespace test
-
-private final fun topLevelFun(): jet.Int
+private final fun topLevelFun() : jet.Int

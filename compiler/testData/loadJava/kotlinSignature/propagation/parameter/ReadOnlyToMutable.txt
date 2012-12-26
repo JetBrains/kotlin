@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.ReadOnlyToMutable : java.lang.Object {
-    public abstract trait test.ReadOnlyToMutable.Sub : test.ReadOnlyToMutable.Super {
-        public abstract override /*1*/ fun foo(/*0*/ p0: jet.List<jet.String>): jet.Tuple0
+public trait ReadOnlyToMutable : java.lang.Object {
+    
+    public trait Sub : test.ReadOnlyToMutable.Super {
+        public abstract override /*1*/ fun foo(/*0*/ p0 : jet.List<jet.String>) : Unit
     }
-    public abstract trait test.ReadOnlyToMutable.Super : java.lang.Object {
-        public abstract fun foo(/*0*/ p0: jet.List<jet.String>): jet.Tuple0
+    
+    public trait Super : java.lang.Object {
+        public abstract fun foo(/*0*/ p0 : jet.List<jet.String>) : Unit
     }
 }

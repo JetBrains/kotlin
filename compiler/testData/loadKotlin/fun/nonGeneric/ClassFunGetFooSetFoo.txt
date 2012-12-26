@@ -1,7 +1,7 @@
 namespace test
 
-internal final class test.ClassFunGetFoo : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.ClassFunGetFoo
-    internal final fun getFoo(): jet.Int
-    internal final fun setFoo(/*0*/ p: jet.Int): jet.Tuple0
+internal final class ClassFunGetFoo {
+    /*primary*/ public constructor ClassFunGetFoo()
+    internal final fun getFoo() : jet.Int
+    internal final fun setFoo(/*0*/ p : jet.Int) : Unit
 }

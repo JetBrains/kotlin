@@ -1,5 +1,5 @@
 namespace test
 
-public open class test.ConstructorWithParentTypeParams</*0*/ T : jet.Any?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ T : jet.Any?><init>(/*0*/ p0: T): test.ConstructorWithParentTypeParams<T>
+public open class ConstructorWithParentTypeParams</*0*/ T> : java.lang.Object {
+    public constructor ConstructorWithParentTypeParams</*0*/ T>(/*0*/ p0 : T)
 }

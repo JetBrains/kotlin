@@ -1,3 +1,2 @@
 namespace test
-
-private final val topLevelVal: jet.Int
+private final val topLevelVal : jet.Int

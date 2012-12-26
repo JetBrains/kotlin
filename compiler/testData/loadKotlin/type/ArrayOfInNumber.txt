@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun nothing(): jet.Array<in jet.Number>
+internal final fun nothing() : jet.Array<in jet.Number>

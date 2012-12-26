@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun getFoo(): jet.Int
+internal final fun getFoo() : jet.Int

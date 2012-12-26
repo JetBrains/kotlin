@@ -1,12 +1,13 @@
 namespace test
 
-public final object test.Outer : jet.Any {
-    private final /*primary constructor*/ fun <init>(): test.Outer
-    public final val Obj: test.Outer.Obj
-    public final object test.Outer.Obj : jet.Any {
-        private final /*primary constructor*/ fun <init>(): test.Outer.Obj
-        public final fun f(): jet.String
-        public final val v: jet.String
+public object Outer {
+    /*primary*/ private constructor Outer()
+    public final val Obj : test.Outer.Obj
+    
+    public object Obj {
+        /*primary*/ private constructor Obj()
+        public final val v : jet.String
+        public final fun f() : jet.String
     }
 }
-public final val Outer: test.Outer
+public final val Outer : test.Outer

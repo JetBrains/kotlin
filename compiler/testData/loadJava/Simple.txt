@@ -1,5 +1,5 @@
 namespace test
 
-public final class test.Simple : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.Simple
+public final class Simple : java.lang.Object {
+    public constructor Simple()
 }

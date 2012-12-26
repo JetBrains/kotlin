@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.VarargReplacedWithNotVararg : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.VarargReplacedWithNotVararg
-    public open fun foo(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+public open class VarargReplacedWithNotVararg : java.lang.Object {
+    public constructor VarargReplacedWithNotVararg()
+    public open fun foo(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : Unit
 }

@@ -1,9 +1,10 @@
 namespace test
 
-internal final class test.ClassObjectDeclaresProperty : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.ClassObjectDeclaresProperty
-    internal final class object test.ClassObjectDeclaresProperty.<class-object-for-ClassObjectDeclaresProperty> : jet.Any {
-        private final /*constructor*/ fun <init>(): test.ClassObjectDeclaresProperty.<class-object-for-ClassObjectDeclaresProperty>
-        internal final val i: jet.Int
+internal final class ClassObjectDeclaresProperty {
+    /*primary*/ public constructor ClassObjectDeclaresProperty()
+    
+    internal class object <class-object-for-ClassObjectDeclaresProperty> {
+        /*primary*/ private constructor <class-object-for-ClassObjectDeclaresProperty>()
+        internal final val i : jet.Int
     }
 }

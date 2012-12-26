@@ -1,5 +1,5 @@
 namespace test
 
-private final class test.PrivateClass : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.PrivateClass
+private final class PrivateClass {
+    /*primary*/ public constructor PrivateClass()
 }

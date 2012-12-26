@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.ReturnTypeMissing : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.ReturnTypeMissing
-    public open fun foo(/*0*/ p0: jet.String?): jet.Int
+public open class ReturnTypeMissing : java.lang.Object {
+    public constructor ReturnTypeMissing()
+    public open fun foo(/*0*/ p0 : jet.String?) : jet.Int
 }

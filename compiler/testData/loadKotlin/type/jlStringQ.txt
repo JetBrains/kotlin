@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun fff(): java.lang.String?
+internal final fun fff() : java.lang.String?

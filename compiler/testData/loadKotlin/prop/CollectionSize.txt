@@ -1,3 +1,2 @@
 namespace test
-
-internal final val jet.Collection<jet.Any?>.anotherSize: jet.Int
+internal final val jet.Collection<jet.Any?>.anotherSize : jet.Int

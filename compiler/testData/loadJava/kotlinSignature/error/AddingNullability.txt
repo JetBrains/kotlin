@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.AddingNullability : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.AddingNullability
-    public open fun foo(): jet.Int
+public open class AddingNullability : java.lang.Object {
+    public constructor AddingNullability()
+    public open fun foo() : jet.Int
 }

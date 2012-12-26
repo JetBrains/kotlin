@@ -1,14 +1,17 @@
 namespace test
 
-public abstract trait test.TwoSuperclassesVarargAndNot : java.lang.Object {
-    public abstract trait test.TwoSuperclassesVarargAndNot.Sub : test.TwoSuperclassesVarargAndNot.Super1, test.TwoSuperclassesVarargAndNot.Super2 {
-        public abstract override /*1*/ fun foo(/*0*/ p0: jet.Array<out jet.String?>?): jet.Tuple0
-        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+public trait TwoSuperclassesVarargAndNot : java.lang.Object {
+    
+    public trait Sub : test.TwoSuperclassesVarargAndNot.Super1, test.TwoSuperclassesVarargAndNot.Super2 {
+        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : Unit
+        public abstract override /*1*/ fun foo(/*0*/ p0 : jet.Array<out jet.String?>?) : Unit
     }
-    public abstract trait test.TwoSuperclassesVarargAndNot.Super1 : java.lang.Object {
-        public abstract fun foo(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+    
+    public trait Super1 : java.lang.Object {
+        public abstract fun foo(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : Unit
     }
-    public abstract trait test.TwoSuperclassesVarargAndNot.Super2 : java.lang.Object {
-        public abstract fun foo(/*0*/ p0: jet.Array<out jet.String?>?): jet.Tuple0
+    
+    public trait Super2 : java.lang.Object {
+        public abstract fun foo(/*0*/ p0 : jet.Array<out jet.String?>?) : Unit
     }
 }

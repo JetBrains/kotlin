@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.WrongTypeVariance : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.WrongTypeVariance
-    public open fun copy(/*0*/ p0: jet.Array<out jet.Number>?, /*1*/ p1: jet.Array<out jet.Number>?): jet.MutableList<jet.Number>?
+public open class WrongTypeVariance : java.lang.Object {
+    public constructor WrongTypeVariance()
+    public open fun copy(/*0*/ p0 : jet.Array<out jet.Number>?, /*1*/ p1 : jet.Array<out jet.Number>?) : jet.MutableList<jet.Number>?
 }

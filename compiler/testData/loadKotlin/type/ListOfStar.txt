@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun listOfStar(): jet.List<jet.Any?>
+internal final fun listOfStar() : jet.List<jet.Any?>

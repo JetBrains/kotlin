@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.CantMakeImmutableInSubclass : java.lang.Object {
-    public abstract trait test.CantMakeImmutableInSubclass.Sub : test.CantMakeImmutableInSubclass.Super {
-        public abstract override /*1*/ fun foo(): jet.MutableList<jet.String>
+public trait CantMakeImmutableInSubclass : java.lang.Object {
+    
+    public trait Sub : test.CantMakeImmutableInSubclass.Super {
+        public abstract override /*1*/ fun foo() : jet.MutableList<jet.String>
     }
-    public abstract trait test.CantMakeImmutableInSubclass.Super : java.lang.Object {
-        public abstract fun foo(): jet.MutableCollection<jet.String>
+    
+    public trait Super : java.lang.Object {
+        public abstract fun foo() : jet.MutableCollection<jet.String>
     }
 }

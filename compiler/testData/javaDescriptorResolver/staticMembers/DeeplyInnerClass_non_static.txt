@@ -1,16 +1,19 @@
 namespace test
 
-public open class test.DeeplyInnerClass : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.DeeplyInnerClass
-    package open class test.DeeplyInnerClass.A : java.lang.Object {
-        package final /*constructor*/ fun <init>(): test.DeeplyInnerClass.A
-        package open fun a(): jet.Tuple0
-        package open class test.DeeplyInnerClass.A.B : java.lang.Object {
-            package final /*constructor*/ fun <init>(): test.DeeplyInnerClass.A.B
-            package open fun b(): jet.Tuple0
-            package open class test.DeeplyInnerClass.A.B.C : java.lang.Object {
-                package final /*constructor*/ fun <init>(): test.DeeplyInnerClass.A.B.C
-                package open fun c(): jet.Tuple0
+public open class DeeplyInnerClass : java.lang.Object {
+    public constructor DeeplyInnerClass()
+    
+    public/*package*/ open class A : java.lang.Object {
+        public/*package*/ constructor A()
+        public/*package*/ open fun a() : Unit
+        
+        public/*package*/ open class B : java.lang.Object {
+            public/*package*/ constructor B()
+            public/*package*/ open fun b() : Unit
+            
+            public/*package*/ open class C : java.lang.Object {
+                public/*package*/ constructor C()
+                public/*package*/ open fun c() : Unit
             }
         }
     }

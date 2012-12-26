@@ -1,8 +1,9 @@
 namespace test
 
-public final class test.StarProjection : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.StarProjection
-    public final fun foo(): test.StarProjection.MyClass<out jet.CharSequence?>
-    public abstract trait test.StarProjection.MyClass</*0*/ T : jet.CharSequence?> : java.lang.Object {
+public final class StarProjection : java.lang.Object {
+    public constructor StarProjection()
+    public final fun foo() : test.StarProjection.MyClass<out jet.CharSequence?>
+    
+    public trait MyClass</*0*/ T : jet.CharSequence?> : java.lang.Object {
     }
 }

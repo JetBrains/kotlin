@@ -1,23 +1,26 @@
 namespace test
 
-public final enum class test.Enum : jet.Enum<test.Enum> {
-    private final /*constructor*/ fun <init>(): test.Enum
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-    public open class test.Enum.Inner : java.lang.Object {
-        public final /*constructor*/ fun <init>(): test.Enum.Inner
-        package open fun bar(): jet.Tuple0
-    }
-    public final class object test.Enum.<class-object-for-Enum> {
-        private final /*constructor*/ fun <init>(): test.Enum.<class-object-for-Enum>
-        public final val A: test.Enum
-        public final val B: test.Enum
-        public final val C: test.Enum
-        public open class test.Enum.Nested : java.lang.Object {
-            public final /*constructor*/ fun <init>(): test.Enum.Nested
-            package open fun foo(): jet.Tuple0
+public final enum class Enum : jet.Enum<test.Enum> {
+    private constructor Enum()
+    public final override /*1*/ /*fake_override*/ fun name() : jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+    
+    public class object <class-object-for-Enum> {
+        private constructor <class-object-for-Enum>()
+        public final val A : test.Enum
+        public final val B : test.Enum
+        public final val C : test.Enum
+        public final fun valueOf(/*0*/ value : jet.String) : test.Enum
+        public final fun values() : jet.Array<test.Enum>
+        
+        public open class Nested : java.lang.Object {
+            public constructor Nested()
+            public/*package*/ open fun foo() : Unit
         }
-        public final fun valueOf(/*0*/ value: jet.String): test.Enum
-        public final fun values(): jet.Array<test.Enum>
+    }
+    
+    public open class Inner : java.lang.Object {
+        public constructor Inner()
+        public/*package*/ open fun bar() : Unit
     }
 }

@@ -1,6 +1,6 @@
 namespace test
 
-public final class test.FieldAsVar : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.FieldAsVar
-    public final var f: jet.Int
+public final class FieldAsVar : java.lang.Object {
+    public constructor FieldAsVar()
+    public final var f : jet.Int
 }

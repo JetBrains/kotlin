@@ -1,7 +1,7 @@
 namespace test
 
-public open class test.DifferentGetterAndSetter : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.DifferentGetterAndSetter
-    public open fun getSomething(): jet.Int
-    public open fun setSomething(/*0*/ p0: jet.String?): jet.Tuple0
+public open class DifferentGetterAndSetter : java.lang.Object {
+    public constructor DifferentGetterAndSetter()
+    public open fun getSomething() : jet.Int
+    public open fun setSomething(/*0*/ p0 : jet.String?) : Unit
 }

@@ -1,5 +1,5 @@
 namespace test
 
-public open class test.ConstructorGenericSimple : java.lang.Object {
-    public final /*constructor*/ fun <init>(/*0*/ p0: jet.Any?): test.ConstructorGenericSimple
+public open class ConstructorGenericSimple : java.lang.Object {
+    public constructor ConstructorGenericSimple(/*0*/ p0 : jet.Any?)
 }

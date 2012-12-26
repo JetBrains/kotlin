@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun </*0*/ A : java.io.Serializable & java.lang.Number>tres(): jet.Int
+internal final fun </*0*/ A> tres() : jet.Int where A : java.io.Serializable, A : java.lang.Number

@@ -1,6 +1,6 @@
 namespace test
 
-public final class test.MethosWithPRefTP : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.MethosWithPRefTP
-    public final fun </*0*/ P : jet.Any?>f(/*0*/ p0: P?): jet.Tuple0
+public final class MethosWithPRefTP : java.lang.Object {
+    public constructor MethosWithPRefTP()
+    public final fun </*0*/ P> f(/*0*/ p0 : P?) : Unit
 }

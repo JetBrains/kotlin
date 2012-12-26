@@ -1,7 +1,7 @@
 namespace test
 
-public open class test.WrongFieldMutability : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.WrongFieldMutability
-    public final val fooFinal: jet.String?
-    public final var fooNotFinal: jet.String?
+public open class WrongFieldMutability : java.lang.Object {
+    public constructor WrongFieldMutability()
+    public final val fooFinal : jet.String?
+    public final var fooNotFinal : jet.String?
 }

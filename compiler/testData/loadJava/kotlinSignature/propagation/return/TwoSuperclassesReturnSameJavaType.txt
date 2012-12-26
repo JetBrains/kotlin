@@ -1,13 +1,16 @@
 namespace test
 
-public abstract trait test.TwoSuperclassesReturnSameJavaType : java.lang.Object {
-    public abstract trait test.TwoSuperclassesReturnSameJavaType.Sub : test.TwoSuperclassesReturnSameJavaType.Super1, test.TwoSuperclassesReturnSameJavaType.Super2 {
-        public abstract override /*2*/ fun foo(): jet.CharSequence
+public trait TwoSuperclassesReturnSameJavaType : java.lang.Object {
+    
+    public trait Sub : test.TwoSuperclassesReturnSameJavaType.Super1, test.TwoSuperclassesReturnSameJavaType.Super2 {
+        public abstract override /*2*/ fun foo() : jet.CharSequence
     }
-    public abstract trait test.TwoSuperclassesReturnSameJavaType.Super1 : java.lang.Object {
-        public abstract fun foo(): jet.CharSequence?
+    
+    public trait Super1 : java.lang.Object {
+        public abstract fun foo() : jet.CharSequence?
     }
-    public abstract trait test.TwoSuperclassesReturnSameJavaType.Super2 : java.lang.Object {
-        public abstract fun foo(): jet.CharSequence
+    
+    public trait Super2 : java.lang.Object {
+        public abstract fun foo() : jet.CharSequence
     }
 }

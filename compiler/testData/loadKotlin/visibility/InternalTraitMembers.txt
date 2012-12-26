@@ -1,7 +1,7 @@
 namespace test
 
-internal abstract trait test.A : jet.Any {
-    internal abstract fun f(): jet.Int
-    public abstract var p: jet.Int internal set
-    internal abstract val v: jet.Int
+internal trait A {
+    public abstract var p : jet.Int
+    internal abstract val v : jet.Int
+    internal abstract fun f() : jet.Int
 }

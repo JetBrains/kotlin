@@ -1,13 +1,16 @@
 namespace test
 
-public abstract trait test.TwoSuperclassesConflictingProjectionKinds : java.lang.Object {
-    public abstract trait test.TwoSuperclassesConflictingProjectionKinds.Sub : test.TwoSuperclassesConflictingProjectionKinds.Super1, test.TwoSuperclassesConflictingProjectionKinds.Super2 {
-        public abstract override /*2*/ fun foo(): jet.MutableCollection<jet.CharSequence>
+public trait TwoSuperclassesConflictingProjectionKinds : java.lang.Object {
+    
+    public trait Sub : test.TwoSuperclassesConflictingProjectionKinds.Super1, test.TwoSuperclassesConflictingProjectionKinds.Super2 {
+        public abstract override /*2*/ fun foo() : jet.MutableCollection<jet.CharSequence>
     }
-    public abstract trait test.TwoSuperclassesConflictingProjectionKinds.Super1 : java.lang.Object {
-        public abstract fun foo(): jet.MutableCollection<jet.CharSequence>
+    
+    public trait Super1 : java.lang.Object {
+        public abstract fun foo() : jet.MutableCollection<jet.CharSequence>
     }
-    public abstract trait test.TwoSuperclassesConflictingProjectionKinds.Super2 : java.lang.Object {
-        public abstract fun foo(): jet.MutableCollection<out jet.CharSequence>
+    
+    public trait Super2 : java.lang.Object {
+        public abstract fun foo() : jet.MutableCollection<out jet.CharSequence>
     }
 }

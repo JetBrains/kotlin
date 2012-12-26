@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.InheritVariance : java.lang.Object {
-    public abstract trait test.InheritVariance.Sub : test.InheritVariance.Super {
-        public abstract override /*1*/ fun foo(): jet.MutableList<out jet.Number>
+public trait InheritVariance : java.lang.Object {
+    
+    public trait Sub : test.InheritVariance.Super {
+        public abstract override /*1*/ fun foo() : jet.MutableList<out jet.Number>
     }
-    public abstract trait test.InheritVariance.Super : java.lang.Object {
-        public abstract fun foo(): jet.MutableCollection<out jet.Number>
+    
+    public trait Super : java.lang.Object {
+        public abstract fun foo() : jet.MutableCollection<out jet.Number>
     }
 }

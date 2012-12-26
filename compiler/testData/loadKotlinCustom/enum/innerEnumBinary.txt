@@ -1,18 +1,21 @@
 namespace test
 
-internal final class test.A : jet.Any {
-    public final /*constructor*/ fun <init>(): test.A
-    internal final class object test.A.<class-object-for-A> {
-        private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>
-        internal final enum class test.A.<class-object-for-A>.E : jet.Enum<test.A.<class-object-for-A>.E> {
-            private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>.E
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            internal final class object test.A.<class-object-for-A>.E.<class-object-for-E> {
-                private final /*constructor*/ fun <init>(): test.A.<class-object-for-A>.E.<class-object-for-E>
-                public final val ENTRY: test.A.<class-object-for-A>.E
-                public final fun valueOf(/*0*/ value: jet.String): test.A.<class-object-for-A>.E
-                public final fun values(): jet.Array<test.A.<class-object-for-A>.E>
+internal final class A {
+    public constructor A()
+    
+    internal class object <class-object-for-A> {
+        private constructor <class-object-for-A>()
+        
+        internal final enum class E : jet.Enum<test.A.<class-object-for-A>.E> {
+            private constructor E()
+            public final override /*1*/ /*fake_override*/ fun name() : jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal() : jet.Int
+            
+            internal class object <class-object-for-E> {
+                private constructor <class-object-for-E>()
+                public final val ENTRY : test.A.<class-object-for-A>.E
+                public final fun valueOf(/*0*/ value : jet.String) : test.A.<class-object-for-A>.E
+                public final fun values() : jet.Array<test.A.<class-object-for-A>.E>
             }
         }
     }

@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.TwoBounds : java.lang.Object {
-    public abstract trait test.TwoBounds.Sub : test.TwoBounds.Super {
-        public abstract override /*1*/ fun </*0*/ B : java.lang.Cloneable & jet.CharSequence>foo(/*0*/ p0: B): jet.Tuple0
+public trait TwoBounds : java.lang.Object {
+    
+    public trait Sub : test.TwoBounds.Super {
+        public abstract override /*1*/ fun </*0*/ B> foo(/*0*/ p0 : B) : Unit where B : java.lang.Cloneable, B : jet.CharSequence
     }
-    public abstract trait test.TwoBounds.Super : java.lang.Object {
-        public abstract fun </*0*/ A : java.lang.Cloneable & jet.CharSequence>foo(/*0*/ p0: A): jet.Tuple0
+    
+    public trait Super : java.lang.Object {
+        public abstract fun </*0*/ A> foo(/*0*/ p0 : A) : Unit where A : java.lang.Cloneable, A : jet.CharSequence
     }
 }

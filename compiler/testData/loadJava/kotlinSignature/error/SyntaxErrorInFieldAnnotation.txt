@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.SyntaxErrorInFieldAnnotation : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.SyntaxErrorInFieldAnnotation
-    public final var foo: jet.String?
+public open class SyntaxErrorInFieldAnnotation : java.lang.Object {
+    public constructor SyntaxErrorInFieldAnnotation()
+    public final var foo : jet.String?
 }

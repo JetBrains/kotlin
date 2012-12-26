@@ -1,7 +1,7 @@
 namespace test
 
-public open class test.JavaBeanVar : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.JavaBeanVar
-    public open fun getColor(): jet.String?
-    public open fun setColor(/*0*/ p0: jet.String?): jet.Tuple0
+public open class JavaBeanVar : java.lang.Object {
+    public constructor JavaBeanVar()
+    public open fun getColor() : jet.String?
+    public open fun setColor(/*0*/ p0 : jet.String?) : Unit
 }

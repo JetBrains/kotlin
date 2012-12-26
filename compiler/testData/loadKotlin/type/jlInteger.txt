@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun integer(): java.lang.Integer
+internal final fun integer() : java.lang.Integer

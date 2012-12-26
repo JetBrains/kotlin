@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.VarargString : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.VarargString
-    public open fun vararg(/*0*/ vararg p0: jet.String? /*jet.Array<jet.String?>*/): jet.Tuple0
+public open class VarargString : java.lang.Object {
+    public constructor VarargString()
+    public open fun vararg(/*0*/ vararg p0 : jet.String? /*jet.Array<jet.String?>*/) : Unit
 }

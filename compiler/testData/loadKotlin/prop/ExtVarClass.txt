@@ -1,3 +1,2 @@
 namespace test
-
-internal final var  </*0*/ P : jet.Any?> P.anotherJavaClass: java.lang.Class<P>
+internal final var </*0*/ P> P.anotherJavaClass : java.lang.Class<P>

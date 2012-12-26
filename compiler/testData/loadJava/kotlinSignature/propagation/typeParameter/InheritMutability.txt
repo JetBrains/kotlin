@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.InheritMutability : java.lang.Object {
-    public abstract trait test.InheritMutability.Sub : test.InheritMutability.Super {
-        public abstract override /*1*/ fun </*0*/ B : jet.MutableList<jet.String>>foo(/*0*/ p0: B): jet.Tuple0
+public trait InheritMutability : java.lang.Object {
+    
+    public trait Sub : test.InheritMutability.Super {
+        public abstract override /*1*/ fun </*0*/ B : jet.MutableList<jet.String>> foo(/*0*/ p0 : B) : Unit
     }
-    public abstract trait test.InheritMutability.Super : java.lang.Object {
-        public abstract fun </*0*/ A : jet.MutableList<jet.String>>foo(/*0*/ p0: A): jet.Tuple0
+    
+    public trait Super : java.lang.Object {
+        public abstract fun </*0*/ A : jet.MutableList<jet.String>> foo(/*0*/ p0 : A) : Unit
     }
 }

@@ -1,6 +1,6 @@
 namespace test
 
-internal final class test.ExtPropInClass : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.ExtPropInClass
-    internal final var jet.Int.itIs: jet.Int
+internal final class ExtPropInClass {
+    /*primary*/ public constructor ExtPropInClass()
+    internal final var jet.Int.itIs : jet.Int
 }

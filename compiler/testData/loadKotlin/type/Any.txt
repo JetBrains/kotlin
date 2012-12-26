@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun any(): jet.Any
+internal final fun any() : jet.Any

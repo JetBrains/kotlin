@@ -1,10 +1,12 @@
 namespace test
 
-internal abstract trait test.Bbb : jet.Any {
+internal trait Bbb {
 }
-internal final class test.ClassObjectextendsTrait : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.ClassObjectextendsTrait
-    internal final class object test.ClassObjectextendsTrait.<class-object-for-ClassObjectextendsTrait> : test.Bbb {
-        private final /*constructor*/ fun <init>(): test.ClassObjectextendsTrait.<class-object-for-ClassObjectextendsTrait>
+
+internal final class ClassObjectextendsTrait {
+    /*primary*/ public constructor ClassObjectextendsTrait()
+    
+    internal class object <class-object-for-ClassObjectextendsTrait> : test.Bbb {
+        /*primary*/ private constructor <class-object-for-ClassObjectextendsTrait>()
     }
 }

@@ -1,6 +1,6 @@
 namespace test
 
-internal final class test.CompositeIterator</*0*/ T : jet.Any?> : jet.Any {
-    public final /*primary constructor*/ fun </*0*/ T : jet.Any?><init>(/*0*/ vararg iterators: java.util.Iterator<T> /*jet.Array<java.util.Iterator<T>>*/): test.CompositeIterator<T>
-    internal final val iteratorsIter: jet.Iterator<java.util.Iterator<T>>
+internal final class CompositeIterator</*0*/ T> {
+    /*primary*/ public constructor CompositeIterator</*0*/ T>(/*0*/ vararg iterators : java.util.Iterator<T> /*jet.Array<java.util.Iterator<T>>*/)
+    internal final val iteratorsIter : jet.Iterator<java.util.Iterator<T>>
 }

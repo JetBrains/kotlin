@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun nothing(): jet.IntArray
+internal final fun nothing() : jet.IntArray

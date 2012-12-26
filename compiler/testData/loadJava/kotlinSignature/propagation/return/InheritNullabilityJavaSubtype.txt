@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.InheritNullabilityJavaSubtype : java.lang.Object {
-    public abstract trait test.InheritNullabilityJavaSubtype.Sub : test.InheritNullabilityJavaSubtype.Super {
-        public abstract override /*1*/ fun foo(): jet.String
+public trait InheritNullabilityJavaSubtype : java.lang.Object {
+    
+    public trait Sub : test.InheritNullabilityJavaSubtype.Super {
+        public abstract override /*1*/ fun foo() : jet.String
     }
-    public abstract trait test.InheritNullabilityJavaSubtype.Super : java.lang.Object {
-        public abstract fun foo(): jet.CharSequence
+    
+    public trait Super : java.lang.Object {
+        public abstract fun foo() : jet.CharSequence
     }
 }

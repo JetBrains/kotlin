@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun </*0*/ T : jet.Any?>nothing(): jet.Array<out T>
+internal final fun </*0*/ T> nothing() : jet.Array<out T>

@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.MethodWithFunctionTypes : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.MethodWithFunctionTypes
-    public open fun foo(/*0*/ p0: jet.Function1<jet.String?, jet.String>): jet.ExtensionFunction0<jet.String, jet.String?>?
+public open class MethodWithFunctionTypes : java.lang.Object {
+    public constructor MethodWithFunctionTypes()
+    public open fun foo(/*0*/ p0 : (jet.String?) -> jet.String) : (jet.String.() -> jet.String?)?
 }

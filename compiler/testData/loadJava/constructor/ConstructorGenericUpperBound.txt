@@ -1,5 +1,5 @@
 namespace test
 
-public open class test.ConstructorGenericUpperBound : java.lang.Object {
-    public final /*constructor*/ fun <init>(/*0*/ p0: java.util.RandomAccess?): test.ConstructorGenericUpperBound
+public open class ConstructorGenericUpperBound : java.lang.Object {
+    public constructor ConstructorGenericUpperBound(/*0*/ p0 : java.util.RandomAccess?)
 }

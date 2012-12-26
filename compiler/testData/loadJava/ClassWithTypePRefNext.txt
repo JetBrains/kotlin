@@ -1,5 +1,5 @@
 namespace test
 
-public open class test.ClassWithTypePRefNext</*0*/ R : jet.Iterable<P>?, /*1*/ P : jet.Any?> : java.lang.Object {
-    public final /*constructor*/ fun </*0*/ R : jet.Iterable<P>?, /*1*/ P : jet.Any?><init>(): test.ClassWithTypePRefNext<R, P>
+public open class ClassWithTypePRefNext</*0*/ R : jet.Iterable<P>?, /*1*/ P> : java.lang.Object {
+    public constructor ClassWithTypePRefNext</*0*/ R : jet.Iterable<P>?, /*1*/ P>()
 }

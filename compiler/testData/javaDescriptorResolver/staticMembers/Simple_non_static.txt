@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.Simple : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.Simple
-    public open fun foo(): jet.Tuple0
+public open class Simple : java.lang.Object {
+    public constructor Simple()
+    public open fun foo() : Unit
 }

@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun fff(): jet.Array<jet.String>
+internal final fun fff() : jet.Array<jet.String>

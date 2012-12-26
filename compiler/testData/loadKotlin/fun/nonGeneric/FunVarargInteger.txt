@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun varargCharSequence(/*0*/ a: jet.Int, /*1*/ vararg b: java.lang.Integer /*jet.Array<java.lang.Integer>*/): jet.Int
+internal final fun varargCharSequence(/*0*/ a : jet.Int, /*1*/ vararg b : java.lang.Integer /*jet.Array<java.lang.Integer>*/) : jet.Int

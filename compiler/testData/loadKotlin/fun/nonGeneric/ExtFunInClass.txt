@@ -1,6 +1,6 @@
 namespace test
 
-internal final class test.ExtFunInClass : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.ExtFunInClass
-    internal final fun jet.Int.shuffle(): jet.Int
+internal final class ExtFunInClass {
+    /*primary*/ public constructor ExtFunInClass()
+    internal final fun jet.Int.shuffle() : jet.Int
 }

@@ -1,7 +1,7 @@
 namespace test
 
-public open class test.PropertySimpleType : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.PropertySimpleType
-    public final var fieldOne: jet.String
-    public final var fieldTwo: jet.String?
+public open class PropertySimpleType : java.lang.Object {
+    public constructor PropertySimpleType()
+    public final var fieldOne : jet.String
+    public final var fieldTwo : jet.String?
 }

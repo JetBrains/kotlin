@@ -1,6 +1,6 @@
 namespace test
 
-public abstract trait test.RemoveRedundantProjectionKind : java.lang.Object {
-    public abstract fun f(/*0*/ p0: jet.Collection<jet.CharSequence?>?): jet.Tuple0
-    public abstract fun f(/*0*/ p0: jet.Comparable<jet.CharSequence?>?): jet.Tuple0
+public trait RemoveRedundantProjectionKind : java.lang.Object {
+    public abstract fun f(/*0*/ p0 : jet.Collection<jet.CharSequence?>?) : Unit
+    public abstract fun f(/*0*/ p0 : jet.Comparable<jet.CharSequence?>?) : Unit
 }

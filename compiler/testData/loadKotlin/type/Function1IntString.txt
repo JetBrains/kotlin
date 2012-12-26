@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun fun1(): jet.Function1<jet.String, jet.Int>
+internal final fun fun1() : (jet.String) -> jet.Int

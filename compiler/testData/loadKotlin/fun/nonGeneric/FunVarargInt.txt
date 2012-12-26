@@ -1,3 +1,2 @@
 namespace test
-
-internal final fun varargInt(/*0*/ a: jet.Int, /*1*/ vararg b: jet.Int /*jet.IntArray*/): jet.Int
+internal final fun varargInt(/*0*/ a : jet.Int, /*1*/ vararg b : jet.Int /*jet.IntArray*/) : jet.Int

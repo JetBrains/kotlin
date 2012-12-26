@@ -1,10 +1,12 @@
 namespace test
 
-public abstract trait test.InheritReadOnlinessSameClass : java.lang.Object {
-    public abstract trait test.InheritReadOnlinessSameClass.Sub : test.InheritReadOnlinessSameClass.Super {
-        public abstract override /*1*/ fun foo(): jet.List<jet.String>
+public trait InheritReadOnlinessSameClass : java.lang.Object {
+    
+    public trait Sub : test.InheritReadOnlinessSameClass.Super {
+        public abstract override /*1*/ fun foo() : jet.List<jet.String>
     }
-    public abstract trait test.InheritReadOnlinessSameClass.Super : java.lang.Object {
-        public abstract fun foo(): jet.List<jet.String>
+    
+    public trait Super : java.lang.Object {
+        public abstract fun foo() : jet.List<jet.String>
     }
 }

@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.MethodWithTypeParameters : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.MethodWithTypeParameters
-    public open fun </*0*/ A : jet.Any?, /*1*/ B : java.lang.Runnable & jet.List<java.lang.Cloneable>>foo(/*0*/ p0: A, /*1*/ p1: jet.List<out B>, /*2*/ p2: jet.MutableList<in jet.String?>): jet.Tuple0
+public open class MethodWithTypeParameters : java.lang.Object {
+    public constructor MethodWithTypeParameters()
+    public open fun </*0*/ A, /*1*/ B> foo(/*0*/ p0 : A, /*1*/ p1 : jet.List<out B>, /*2*/ p2 : jet.MutableList<in jet.String?>) : Unit where B : java.lang.Runnable, B : jet.List<java.lang.Cloneable>
 }

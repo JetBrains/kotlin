@@ -1,6 +1,6 @@
 namespace test
 
-public open class test.WrongMethodName : java.lang.Object {
-    public final /*constructor*/ fun <init>(): test.WrongMethodName
-    public open fun foo(): jet.String?
+public open class WrongMethodName : java.lang.Object {
+    public constructor WrongMethodName()
+    public open fun foo() : jet.String?
 }
