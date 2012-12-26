@@ -53,6 +53,11 @@ public class DefaultArgumentsReflectionTestGenerated extends AbstractDefaultCons
         doTest("compiler/testData/codegen/defaultArguments/reflection/classWithVararg.kt");
     }
     
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        doTest("compiler/testData/codegen/defaultArguments/reflection/enum.kt");
+    }
+    
     @TestMetadata("internalClass.kt")
     public void testInternalClass() throws Exception {
         doTest("compiler/testData/codegen/defaultArguments/reflection/internalClass.kt");

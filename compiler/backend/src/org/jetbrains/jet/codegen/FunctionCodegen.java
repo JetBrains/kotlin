@@ -536,7 +536,7 @@ public class FunctionCodegen extends GenerationStateAware {
             @NotNull ClassBuilder classBuilder
     ) {
         if (!isDefaultConstructorNeeded(state.getBindingContext(), constructorDescriptor)) {
-             return;
+            return;
         }
         int flags = getVisibilityAccessFlag(constructorDescriptor);
         MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null, null);
@@ -651,6 +651,9 @@ public class FunctionCodegen extends GenerationStateAware {
     ) {
         mv.visitCode();
 
+        boolean isEnumConstructor = functionDescriptor instanceof ConstructorDescriptor &&
+                                    DescriptorUtils.isEnumClass(functionDescriptor.getContainingDeclaration());
+
         FrameMap frameMap = owner.prepareFrame(state.getTypeMapper());
 
         if (kind instanceof OwnerKind.StaticDelegateKind) {
@@ -661,58 +664,40 @@ public class FunctionCodegen extends GenerationStateAware {
             frameMap.enterTemp(OBJECT_TYPE);
         }
 
+        if (isEnumConstructor) {
+            frameMap.enterTemp(OBJECT_TYPE);
+            frameMap.enterTemp(Type.INT_TYPE);
+        }
+
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), owner, state);
 
-        int var = 0;
-        if (!aStatic) {
-            var++;
-        }
-
-        if (hasOuter) {
-            var++;
-        }
-
-        Type receiverType;
+        Type receiverType = null;
         if (hasReceiver) {
             receiverType = state.getTypeMapper().mapType(receiverParameter.getType());
-            var += receiverType.getSize();
         }
-        else {
-            receiverType = Type.DOUBLE_TYPE;
-        }
+
+        final int extraInLocalVariablesTable = getSizeOfExplicitArgumentsInLocalVariablesTable(aStatic, hasOuter, isEnumConstructor, receiverType);
+        final int countOfExtraVarsInMethodArgs = getCountOfExplicitArgumentsInMethodArguments(hasOuter, hasReceiver, isEnumConstructor);
 
         Type[] argTypes = jvmSignature.getArgumentTypes();
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
+        int paramSizeInLocalVariablesTable = 0;
         for (int i = 0; i < paramDescrs.size(); i++) {
-            Type argType = argTypes[i + ((hasReceiver || hasOuter) ? 1 : 0)];
+            Type argType = argTypes[i + countOfExtraVarsInMethodArgs];
             int size = argType.getSize();
             frameMap.enter(paramDescrs.get(i), argType);
-            var += size;
+            paramSizeInLocalVariablesTable += size;
         }
 
-        int maskIndex = var;
+        final int maskIndex = extraInLocalVariablesTable + paramSizeInLocalVariablesTable;
 
-        var = 0;
-        if (!aStatic) {
-            mv.visitVarInsn(ALOAD, var++);
-        }
+        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, receiverType, ownerInternalName.getAsmType(), aStatic, hasOuter, isEnumConstructor);
 
-        if (hasOuter) {
-            iv.load(var, ownerInternalName.getAsmType());
-            var++;
-        }
-
-        if (hasReceiver) {
-            iv.load(var, receiverType);
-            var += receiverType.getSize();
-        }
-
-        int extra = (hasReceiver || hasOuter) ? 1 : 0;
-
+        int indexInLocalVariablesTable = extraInLocalVariablesTable;
         for (int index = 0; index < paramDescrs.size(); index++) {
             ValueParameterDescriptor parameterDescriptor = paramDescrs.get(index);
 
-            Type t = argTypes[extra + index];
+            Type t = argTypes[countOfExtraVarsInMethodArgs + index];
 
             if (frameMap.getIndex(parameterDescriptor) < 0) {
                 frameMap.enter(parameterDescriptor, t);
@@ -733,8 +718,8 @@ public class FunctionCodegen extends GenerationStateAware {
                 iv.mark(loadArg);
             }
 
-            iv.load(var, t);
-            var += t.getSize();
+            iv.load(indexInLocalVariablesTable, t);
+            indexInLocalVariablesTable += t.getSize();
         }
 
         final String internalName = ownerInternalName.getInternalName();
@@ -761,6 +746,54 @@ public class FunctionCodegen extends GenerationStateAware {
 
         endVisit(mv, "default method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
         mv.visitEnd();
+    }
+
+    private static int getSizeOfExplicitArgumentsInLocalVariablesTable(
+            boolean isStatic,
+            boolean hasOuter,
+            boolean isEnumConstructor,
+            @Nullable Type receiverType
+    ) {
+        int result = 0;
+        if (!isStatic) result++;
+        if (receiverType != null) result += receiverType.getSize();
+        if (hasOuter) result++;
+        if (isEnumConstructor) result += 2;
+        return result;
+    }
+
+    private static int getCountOfExplicitArgumentsInMethodArguments(
+            boolean hasOuter,
+            boolean hasReceiver,
+            boolean isEnumConstructor
+    ) {
+        int result = 0;
+        if (hasReceiver) result++;
+        if (hasOuter) result++;
+        if (isEnumConstructor) result += 2;
+        return result;
+    }
+
+    private static void loadExplicitArgumentsOnStack(@NotNull InstructionAdapter iv,
+            @NotNull Type ownerType, @Nullable Type receiverType, @NotNull Type outerType,
+            boolean isStatic, boolean hasOuter, boolean isEnumConstructor) {
+        int var = 0;
+        if (!isStatic) {
+            iv.load(var++, ownerType);
+        }
+
+        if (hasOuter) {
+            iv.load(var++, outerType);
+        }
+
+        if (isEnumConstructor) {
+            iv.load(var++, OBJECT_TYPE);
+            iv.load(var++, Type.INT_TYPE);
+        }
+
+        if (receiverType != null) {
+            iv.load(var, receiverType);
+        }
     }
 
     private static boolean isDefaultNeeded(FunctionDescriptor functionDescriptor) {

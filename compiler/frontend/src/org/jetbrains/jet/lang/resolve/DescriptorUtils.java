@@ -258,6 +258,11 @@ public class DescriptorUtils {
                && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_ENTRY;
     }
 
+    public static boolean isEnumClass(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor instanceof ClassDescriptor
+               && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_CLASS;
+    }
+
     @NotNull
     public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
         Collection<JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
