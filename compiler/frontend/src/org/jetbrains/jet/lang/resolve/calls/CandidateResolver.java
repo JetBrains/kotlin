@@ -276,8 +276,11 @@ public class CandidateResolver {
         ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
         ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getReceiverParameter();
         if (receiverArgument.exists() && receiverParameter != null) {
-            constraintsSystem.addSubtypeConstraint(receiverParameter.getType(), receiverArgument.getType(),
-                                                   ConstraintPosition.RECEIVER_POSITION);
+            JetType receiverType =
+                    context.candidateCall.isSafeCall()
+                    ? TypeUtils.makeNotNullable(receiverArgument.getType())
+                    : receiverArgument.getType();
+            constraintsSystem.addSubtypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
         }
 
         ConstraintSystem
