@@ -56,7 +56,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         final Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
         NamespaceComparator.compareNamespaces(
                 expected, actual,
-                NamespaceComparator.RECURSIVE.filterRecusion(new Predicate<FqNameUnsafe>() {
+                NamespaceComparator.RECURSIVE.filterRecursion(new Predicate<FqNameUnsafe>() {
                     @Override
                     public boolean apply(FqNameUnsafe fqName) {
                         if (fqName.isRoot()) return true;

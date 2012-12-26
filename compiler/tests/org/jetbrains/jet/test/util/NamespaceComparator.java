@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -44,73 +45,13 @@ import java.util.List;
  * @author Stepan Koltsov
  */
 public class NamespaceComparator {
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, Predicates.<FqNameUnsafe>alwaysTrue());
+    public static final Configuration RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysTrue());
+
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
             .setVerbose(true).build();
-
-    public static void compareNamespaces(
-            @NotNull NamespaceDescriptor expectedNamespace,
-            @NotNull NamespaceDescriptor actualNamespace,
-            @NotNull Configuration configuration,
-            @NotNull File txtFile
-    ) {
-        String serializedFormWithDemarkedNames = assertNamespacesEqual(expectedNamespace, actualNamespace, configuration);
-        // The serializer puts "!" in front of the name because it allows for speedy sorting of members
-        // see MemberComparator.normalize()
-        String serialized = serializedFormWithDemarkedNames.replace("!", "");
-        try {
-            if (!txtFile.exists()) {
-                FileUtil.writeToFile(txtFile, serialized);
-                Assert.fail("Expected data file did not exist. Generating: " + txtFile);
-            }
-            String expected = FileUtil.loadFile(txtFile, true);
-
-            // compare with hardcopy: make sure nothing is lost in output
-            Assert.assertEquals(expected, serialized);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static String assertNamespacesEqual(
-            NamespaceDescriptor expectedNamespace,
-            NamespaceDescriptor actualNamespace,
-            @NotNull Configuration configuration
-    ) {
-        NamespaceComparator comparator = new NamespaceComparator(configuration);
-        String serialized = comparator.doCompareNamespaces(expectedNamespace, actualNamespace);
-        return serialized;
-    }
-
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, Predicates.<FqNameUnsafe>alwaysTrue());
-    public static final Configuration RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysTrue());
-
-    public static class Configuration {
-
-        private final boolean checkPrimaryConstructors;
-        private final boolean includeObject;
-        private final Predicate<FqNameUnsafe> recurseIntoPackage;
-
-        public Configuration(
-                boolean checkPrimaryConstructors,
-                boolean includeObject,
-                Predicate<FqNameUnsafe> recurseIntoPackage
-        ) {
-            this.checkPrimaryConstructors = checkPrimaryConstructors;
-            this.includeObject = includeObject;
-            this.recurseIntoPackage = recurseIntoPackage;
-        }
-
-        public Configuration filterRecusion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
-            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage);
-        }
-
-        public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
-            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage);
-        }
-    }
 
     private final Configuration conf;
 
@@ -118,15 +59,7 @@ public class NamespaceComparator {
         this.conf = conf;
     }
 
-    private String doCompareNamespaces(@NotNull NamespaceDescriptor expectedNamespace, @NotNull NamespaceDescriptor actualNamespace) {
-        String expectedSerialized = recursiveSerialize(expectedNamespace);
-        String actualSerialized = recursiveSerialize(actualNamespace);
-
-        Assert.assertEquals(expectedSerialized, actualSerialized);
-        return actualSerialized;
-    }
-
-    private String recursiveSerialize(@NotNull DeclarationDescriptor declarationDescriptor) {
+    private String serializeRecursively(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder result = new StringBuilder();
         appendDeclarationRecursively(declarationDescriptor, new Printer(result, 1), true);
         return result.toString();
@@ -172,7 +105,7 @@ public class NamespaceComparator {
             Collections.sort(subDescriptors, MemberComparator.INSTANCE);
 
             for (DeclarationDescriptor subDescriptor : subDescriptors) {
-                if (!conf.includeObject) {
+                if (!conf.includeMethodsOfJavaObject) {
                     // TODO regexp check? oh dear
                     if (subDescriptor.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
                         continue;
@@ -190,6 +123,60 @@ public class NamespaceComparator {
         }
         else {
             printer.printlnWithNoIndent();
+        }
+    }
+
+    public static void compareNamespaces(
+            @NotNull NamespaceDescriptor expectedNamespace,
+            @NotNull NamespaceDescriptor actualNamespace,
+            @NotNull Configuration configuration,
+            @Nullable File txtFile
+    ) {
+        NamespaceComparator comparator = new NamespaceComparator(configuration);
+
+        String expectedSerialized = comparator.serializeRecursively(expectedNamespace);
+        String actualSerialized = comparator.serializeRecursively(actualNamespace);
+
+        Assert.assertEquals("Expected and actual namespaces differ", expectedSerialized, actualSerialized);
+
+        if (txtFile != null) {
+            try {
+                if (!txtFile.exists()) {
+                    FileUtil.writeToFile(txtFile, actualSerialized);
+                    Assert.fail("Expected data file did not exist. Generating: " + txtFile);
+                }
+                String expected = FileUtil.loadFile(txtFile, true);
+
+                // compare with hardcopy: make sure nothing is lost in output
+                Assert.assertEquals("Expected and actual namespaces differ from " + txtFile.getName(), expected, actualSerialized);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static class Configuration {
+        private final boolean checkPrimaryConstructors;
+        private final boolean includeMethodsOfJavaObject;
+        private final Predicate<FqNameUnsafe> recurseIntoPackage;
+
+        public Configuration(
+                boolean checkPrimaryConstructors,
+                boolean includeMethodsOfJavaObject,
+                Predicate<FqNameUnsafe> recurseIntoPackage
+        ) {
+            this.checkPrimaryConstructors = checkPrimaryConstructors;
+            this.includeMethodsOfJavaObject = includeMethodsOfJavaObject;
+            this.recurseIntoPackage = recurseIntoPackage;
+        }
+
+        public Configuration filterRecursion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
+            return new Configuration(checkPrimaryConstructors, includeMethodsOfJavaObject, recurseIntoPackage);
+        }
+
+        public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
+            return new Configuration(checkPrimaryConstructors, includeMethodsOfJavaObject, recurseIntoPackage);
         }
     }
 }

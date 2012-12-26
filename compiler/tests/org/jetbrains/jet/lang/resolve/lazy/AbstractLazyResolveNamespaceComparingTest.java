@@ -72,7 +72,7 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
         NamespaceComparator.compareNamespaces(expected, actual,
-                                              NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecusion(
+                                              NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
                                                       new Predicate<FqNameUnsafe>() {
                                                           @Override
                                                           public boolean apply(FqNameUnsafe fqName) {
