@@ -204,6 +204,13 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         if (constrainingTypeDescriptor instanceof TypeParameterDescriptor) {
             assert typeParameterConstraints.get(constrainingTypeDescriptor) == null : "Constraining type contains type variable " + constrainingTypeDescriptor.getName();
         }
+        if (constraintKind == SUB_TYPE && KotlinBuiltIns.getInstance().isNothingOrNullableNothing(constrainingType)) {
+            // following constraints are always true:
+            // 'Nothing' is a subtype of any type
+            if (!constrainingType.isNullable()) return;
+            // 'Nothing?' is a subtype of nullable type
+            if (subjectType.isNullable()) return;
+        }
         if (!(constrainingTypeDescriptor instanceof ClassDescriptor) || !(subjectTypeDescriptor instanceof ClassDescriptor)) {
             errorConstraintPositions.add(constraintPosition);
             return;
