@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class ReturnTypeMissing : java.lang.Object {
     public constructor ReturnTypeMissing()

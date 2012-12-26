@@ -1,8 +1,9 @@
-namespace test
+package test
+
+internal final fun </*0*/ T> foo() : Unit where T : test.Bar, T : test.Foo
 
 internal trait Bar {
 }
 
 internal trait Foo {
 }
-internal final fun </*0*/ T> foo() : Unit where T : test.Bar, T : test.Foo

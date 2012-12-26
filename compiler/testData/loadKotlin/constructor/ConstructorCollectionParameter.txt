@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class TestingKotlinCollections {
     /*primary*/ public constructor TestingKotlinCollections(/*0*/ arguments : jet.Collection<jet.String>)

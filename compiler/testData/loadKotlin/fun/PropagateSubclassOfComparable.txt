@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class PropagateSubclassOfComparable : jet.Comparable<test.PropagateSubclassOfComparable> {
     /*primary*/ public constructor PropagateSubclassOfComparable()

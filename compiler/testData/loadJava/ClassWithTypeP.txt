@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public final class ClassWithTypeP</*0*/ P> : java.lang.Object {
     public constructor ClassWithTypeP</*0*/ P>()

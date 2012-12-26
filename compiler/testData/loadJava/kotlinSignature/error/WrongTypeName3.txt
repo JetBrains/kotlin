@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class WrongTypeName3 : java.lang.Object {
     public constructor WrongTypeName3()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class NoFieldTypeRef : java.lang.Object {
     public constructor NoFieldTypeRef()

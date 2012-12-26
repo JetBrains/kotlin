@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class ClassParamUsedInFun</*0*/ in T> {
     /*primary*/ public constructor ClassParamUsedInFun</*0*/ in T>()

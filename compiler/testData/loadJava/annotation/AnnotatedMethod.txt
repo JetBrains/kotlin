@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class AnnotatedMethod : java.lang.Object {
     public constructor AnnotatedMethod()

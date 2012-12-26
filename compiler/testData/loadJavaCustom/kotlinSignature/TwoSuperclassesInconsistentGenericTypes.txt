@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public trait TwoSuperclassesInconsistentGenericTypes : java.lang.Object {
     public abstract fun foo() : jet.MutableList<jet.String?>

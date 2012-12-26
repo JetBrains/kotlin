@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public trait SubclassOfMapEntry</*0*/ K, /*1*/ V> : jet.MutableMap.MutableEntry<K, V> {
     public abstract override /*1*/ /*fake_override*/ fun getKey() : K

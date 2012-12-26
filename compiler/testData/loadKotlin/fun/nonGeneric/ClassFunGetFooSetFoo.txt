@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class ClassFunGetFoo {
     /*primary*/ public constructor ClassFunGetFoo()

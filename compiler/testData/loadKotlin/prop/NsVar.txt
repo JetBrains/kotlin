@@ -1,2 +1,3 @@
-namespace test
+package test
+
 internal final var nsVal : jet.Int

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public trait RemoveRedundantProjectionKind : java.lang.Object {
     public abstract fun f(/*0*/ p0 : jet.Collection<jet.CharSequence?>?) : Unit

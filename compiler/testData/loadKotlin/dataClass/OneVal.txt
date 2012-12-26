@@ -1,4 +1,4 @@
-namespace test
+package test
 
 jet.data() internal final class DataClass {
     /*primary*/ public constructor DataClass(/*0*/ x : jet.String)

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal abstract class Aaa</*0*/ P> {
     /*primary*/ public constructor Aaa</*0*/ P>()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class WrongFieldName : java.lang.Object {
     public constructor WrongFieldName()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public final class MethodWithTypeP : java.lang.Object {
     public constructor MethodWithTypeP()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class ModalityOfFakeOverrides : java.util.AbstractList<jet.String> {
     public constructor ModalityOfFakeOverrides()

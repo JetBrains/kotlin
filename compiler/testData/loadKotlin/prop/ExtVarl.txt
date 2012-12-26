@@ -1,3 +1,4 @@
-namespace test
+package test
+
 internal final var jet.Int.junk : jet.Short
 internal final val jet.String.junk : jet.Int

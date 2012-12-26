@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class DifferentGetterAndSetter : java.lang.Object {
     public constructor DifferentGetterAndSetter()

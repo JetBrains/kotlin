@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class ClassParamReferencesSelf</*0*/ A : test.TraitWithP<A>> {
     /*primary*/ public constructor ClassParamReferencesSelf</*0*/ A : test.TraitWithP<A>>()

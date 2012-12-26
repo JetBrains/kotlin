@@ -1,4 +1,4 @@
-namespace test
+package test
 
 test.AnnotatedAnnotation() public final annotation class AnnotatedAnnotation : jet.Annotation {
     public constructor AnnotatedAnnotation()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class PropertyArrayTypes</*0*/ T> : java.lang.Object {
     public constructor PropertyArrayTypes</*0*/ T>()

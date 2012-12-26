@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class MethodWithFunctionTypes : java.lang.Object {
     public constructor MethodWithFunctionTypes()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal open class Base</*0*/ T> {
     /*primary*/ public constructor Base</*0*/ T>()

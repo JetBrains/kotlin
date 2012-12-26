@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class WrongFieldMutability : java.lang.Object {
     public constructor WrongFieldMutability()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class Juice</*0*/ in T> {
     /*primary*/ public constructor Juice</*0*/ in T>()

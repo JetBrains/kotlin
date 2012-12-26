@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class ConstructorGenericSimple : java.lang.Object {
     public constructor ConstructorGenericSimple(/*0*/ p0 : jet.Any?)

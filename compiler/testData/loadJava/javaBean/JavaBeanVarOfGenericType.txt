@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class JavaBeanVarOfGenericType</*0*/ P> : java.lang.Object {
     public constructor JavaBeanVarOfGenericType</*0*/ P>()

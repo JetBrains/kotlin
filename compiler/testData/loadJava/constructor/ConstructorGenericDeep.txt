@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class ConstructorGenericDeep : java.lang.Object {
     public constructor ConstructorGenericDeep(/*0*/ p0 : java.lang.Class<jet.Any?>?)

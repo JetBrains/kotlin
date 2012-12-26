@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class ExtValPIntInClass</*0*/ P> {
     /*primary*/ public constructor ExtValPIntInClass</*0*/ P>()

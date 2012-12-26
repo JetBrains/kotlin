@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public final class MethodReferencesOuterClassTP</*0*/ P> : java.lang.Object {
     public constructor MethodReferencesOuterClassTP</*0*/ P>()

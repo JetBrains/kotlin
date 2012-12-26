@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal trait Bbb</*0*/ P> {
 }

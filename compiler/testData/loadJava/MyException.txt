@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class MyException : java.lang.Object {
     public constructor MyException(/*0*/ p0 : jet.String?, /*1*/ p1 : jet.Throwable?)

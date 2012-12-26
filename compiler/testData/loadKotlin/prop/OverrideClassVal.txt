@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal open class BaseClass {
     /*primary*/ public constructor BaseClass()

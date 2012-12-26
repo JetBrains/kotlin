@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final enum class EnumWithGenericConstructorParameter : jet.Enum<test.EnumWithGenericConstructorParameter> {
     /*primary*/ private constructor EnumWithGenericConstructorParameter(/*0*/ list : jet.List<jet.String>?)

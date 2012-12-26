@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public abstract class ClassDoesNotOverrideMethod : java.util.Date {
     public constructor ClassDoesNotOverrideMethod()

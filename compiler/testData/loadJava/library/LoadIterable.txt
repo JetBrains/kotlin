@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public trait LoadIterable</*0*/ T> : java.lang.Object {
     public abstract fun getIterable() : jet.MutableIterable<T>?

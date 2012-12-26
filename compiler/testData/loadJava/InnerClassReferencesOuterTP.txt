@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class InnerClassReferencesOuterTP</*0*/ P> : java.lang.Object {
     public constructor InnerClassReferencesOuterTP</*0*/ P>()

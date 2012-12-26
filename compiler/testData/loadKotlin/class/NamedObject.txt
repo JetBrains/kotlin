@@ -1,8 +1,9 @@
-namespace test
+package test
+
+public final val Obj : test.Obj
 
 public object Obj {
     /*primary*/ private constructor Obj()
     public final val v : jet.String
     public final fun f() : jet.String
 }
-public final val Obj : test.Obj

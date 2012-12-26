@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class ExplicitFieldGettersAndSetters : java.lang.Object {
     public constructor ExplicitFieldGettersAndSetters()

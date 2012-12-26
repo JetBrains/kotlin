@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class JavaSubclass : test.KotlinClass {
     public constructor JavaSubclass()

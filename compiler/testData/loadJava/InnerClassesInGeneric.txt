@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class InnerClassesInGeneric</*0*/ P, /*1*/ Q> : java.lang.Object {
     public constructor InnerClassesInGeneric</*0*/ P, /*1*/ Q>()

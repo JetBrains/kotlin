@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public trait SubclassOfCollection</*0*/ E> : jet.MutableCollection<E> {
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e : E) : jet.Boolean

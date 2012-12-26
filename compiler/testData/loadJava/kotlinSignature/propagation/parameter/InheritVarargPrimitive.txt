@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public trait InheritVarargPrimitive : java.lang.Object {
     

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class WrongValueParameterStructure2 : java.lang.Object {
     public constructor WrongValueParameterStructure2()

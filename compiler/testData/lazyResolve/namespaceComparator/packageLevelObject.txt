@@ -1,6 +1,7 @@
-namespace test
+package test
+
+internal final val Bar : test.Bar
 
 internal object Bar {
     /*primary*/ private constructor Bar()
 }
-internal final val Bar : test.Bar

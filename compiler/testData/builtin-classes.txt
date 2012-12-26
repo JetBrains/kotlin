@@ -1,4 +1,20 @@
-namespace jet
+package jet
+
+public final fun </*0*/ T> arrayOfNulls(/*0*/ size : jet.Int) : jet.Array<T?>
+public final fun </*0*/ R> synchronized(/*0*/ lock : jet.Any, /*1*/ block : () -> R) : R
+public final fun jet.Any?.equals(/*0*/ other : jet.Any?) : jet.Boolean
+public final fun jet.Any?.identityEquals(/*0*/ other : jet.Any?) : jet.Boolean
+public final fun jet.BooleanIterator.iterator() : jet.BooleanIterator
+public final fun jet.ByteIterator.iterator() : jet.ByteIterator
+public final fun jet.CharIterator.iterator() : jet.CharIterator
+public final fun jet.DoubleIterator.iterator() : jet.DoubleIterator
+public final fun jet.FloatIterator.iterator() : jet.FloatIterator
+public final fun jet.IntIterator.iterator() : jet.IntIterator
+public final fun </*0*/ T> jet.Iterator<T>.iterator() : jet.Iterator<T>
+public final fun jet.LongIterator.iterator() : jet.LongIterator
+public final fun jet.ShortIterator.iterator() : jet.ShortIterator
+public final fun jet.String?.plus(/*0*/ other : jet.Any?) : jet.String
+public final fun jet.Any?.toString() : jet.String
 
 public trait Annotation {
 }
@@ -1606,18 +1622,3 @@ public final annotation class deprecated : jet.Annotation {
 public final annotation class volatile : jet.Annotation {
     public constructor volatile()
 }
-public final fun </*0*/ T> arrayOfNulls(/*0*/ size : jet.Int) : jet.Array<T?>
-public final fun jet.Any?.equals(/*0*/ other : jet.Any?) : jet.Boolean
-public final fun jet.Any?.identityEquals(/*0*/ other : jet.Any?) : jet.Boolean
-public final fun jet.BooleanIterator.iterator() : jet.BooleanIterator
-public final fun jet.ByteIterator.iterator() : jet.ByteIterator
-public final fun jet.CharIterator.iterator() : jet.CharIterator
-public final fun jet.DoubleIterator.iterator() : jet.DoubleIterator
-public final fun jet.FloatIterator.iterator() : jet.FloatIterator
-public final fun jet.IntIterator.iterator() : jet.IntIterator
-public final fun </*0*/ T> jet.Iterator<T>.iterator() : jet.Iterator<T>
-public final fun jet.LongIterator.iterator() : jet.LongIterator
-public final fun jet.ShortIterator.iterator() : jet.ShortIterator
-public final fun jet.String?.plus(/*0*/ other : jet.Any?) : jet.String
-public final fun </*0*/ R> synchronized(/*0*/ lock : jet.Any, /*1*/ block : () -> R) : R
-public final fun jet.Any?.toString() : jet.String

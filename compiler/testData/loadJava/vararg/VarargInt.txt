@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class VarargInt : java.lang.Object {
     public constructor VarargInt()

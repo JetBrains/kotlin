@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal abstract class ModifierAbstract {
     /*primary*/ public constructor ModifierAbstract()

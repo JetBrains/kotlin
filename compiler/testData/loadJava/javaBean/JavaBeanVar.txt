@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class JavaBeanVar : java.lang.Object {
     public constructor JavaBeanVar()

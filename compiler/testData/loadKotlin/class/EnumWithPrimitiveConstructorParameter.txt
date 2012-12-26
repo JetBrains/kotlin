@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final enum class EnumWithPrimitiveConstructorParameter : jet.Enum<test.EnumWithPrimitiveConstructorParameter> {
     /*primary*/ private constructor EnumWithPrimitiveConstructorParameter(/*0*/ b : jet.Boolean)

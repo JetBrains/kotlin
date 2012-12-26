@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final class ClassObjectDeclaresProperty {
     /*primary*/ public constructor ClassObjectDeclaresProperty()

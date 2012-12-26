@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class VarargReplacedWithNotVararg : java.lang.Object {
     public constructor VarargReplacedWithNotVararg()

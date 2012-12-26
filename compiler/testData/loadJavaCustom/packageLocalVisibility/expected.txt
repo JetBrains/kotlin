@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class JFrame : awt.Frame {
     public constructor JFrame()

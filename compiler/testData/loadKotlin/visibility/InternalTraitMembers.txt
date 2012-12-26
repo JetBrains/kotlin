@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal trait A {
     public abstract var p : jet.Int

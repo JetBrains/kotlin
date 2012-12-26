@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class ClassWithTypePRefNext</*0*/ R : jet.Iterable<P>?, /*1*/ P> : java.lang.Object {
     public constructor ClassWithTypePRefNext</*0*/ R : jet.Iterable<P>?, /*1*/ P>()

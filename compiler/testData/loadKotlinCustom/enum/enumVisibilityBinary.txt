@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final enum class In : jet.Enum<test.In> {
     private constructor In()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class TwoSetters : java.lang.Object {
     public constructor TwoSetters()

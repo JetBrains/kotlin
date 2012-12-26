@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class MethodTypePTwoUpperBounds : java.lang.Object {
     public constructor MethodTypePTwoUpperBounds()

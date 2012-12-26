@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public abstract class ClassWithTypePExtendsIterableP</*0*/ P> : jet.MutableIterable<P> {
     public constructor ClassWithTypePExtendsIterableP</*0*/ P>()

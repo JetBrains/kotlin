@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class RawSuperType : java.lang.Object {
     public constructor RawSuperType()

@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal final enum class Test : jet.Enum<test.Test> {
     /*primary*/ private constructor Test(/*0*/ a : jet.Int)

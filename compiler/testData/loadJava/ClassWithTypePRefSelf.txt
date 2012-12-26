@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public final class ClassWithTypePRefSelf</*0*/ P : jet.Enum<P>?> : java.lang.Object {
     public constructor ClassWithTypePRefSelf</*0*/ P : jet.Enum<P>?>()

@@ -1,4 +1,6 @@
-namespace test
+package test
+
+public final val Outer : test.Outer
 
 public object Outer {
     /*primary*/ private constructor Outer()
@@ -10,4 +12,3 @@ public object Outer {
         public final fun f() : jet.String
     }
 }
-public final val Outer : test.Outer

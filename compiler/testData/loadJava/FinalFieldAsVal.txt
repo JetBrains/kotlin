@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public final class FinalFieldAsVal : java.lang.Object {
     public constructor FinalFieldAsVal()

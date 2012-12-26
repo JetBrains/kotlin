@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class PropertySimpleType : java.lang.Object {
     public constructor PropertySimpleType()

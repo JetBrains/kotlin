@@ -1,4 +1,4 @@
-namespace test
+package test
 
 public open class AddingNullability : java.lang.Object {
     public constructor AddingNullability()

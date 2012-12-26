@@ -1,4 +1,4 @@
-namespace test
+package test
 
 internal abstract class ClassValAbstract {
     /*primary*/ public constructor ClassValAbstract()
