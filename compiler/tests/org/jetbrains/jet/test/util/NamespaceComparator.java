@@ -19,18 +19,15 @@ package org.jetbrains.jet.test.util;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -83,7 +80,6 @@ public class NamespaceComparator {
     ) {
         NamespaceComparator comparator = new NamespaceComparator(configuration);
         String serialized = comparator.doCompareNamespaces(expectedNamespace, actualNamespace);
-        comparator.deferred.throwFailures();
         return serialized;
     }
 
@@ -116,161 +112,61 @@ public class NamespaceComparator {
     }
 
     private final Configuration conf;
-    private final DeferredAssertions deferred = new DeferredAssertions();
 
     private NamespaceComparator(@NotNull Configuration conf) {
         this.conf = conf;
     }
 
     private String doCompareNamespaces(@NotNull NamespaceDescriptor expectedNamespace, @NotNull NamespaceDescriptor actualNamespace) {
-        StringBuilder sb = new StringBuilder();
-        deferred.assertEquals(expectedNamespace.getName(), actualNamespace.getName());
+        String expectedSerialized = recursiveSerialize(expectedNamespace);
+        String actualSerialized = recursiveSerialize(actualNamespace);
 
-        sb.append("namespace " + expectedNamespace.getName() + "\n");
-
-        //deferred.assertTrue("namespace " + expectedNamespace.getName() + " is empty", !expectedNamespace.getMemberScope().getAllDescriptors().isEmpty());
-
-        Set<Name> classifierNames = Sets.newHashSet();
-        Set<Name> propertyNames = Sets.newHashSet();
-        Set<Name> functionNames = Sets.newHashSet();
-        Set<Name> objectNames = Sets.newHashSet();
-
-        for (DeclarationDescriptor ad : expectedNamespace.getMemberScope().getAllDescriptors()) {
-            if (ad instanceof ClassifierDescriptor) {
-                classifierNames.add(ad.getName());
-            }
-            else if (ad instanceof PropertyDescriptor) {
-                propertyNames.add(ad.getName());
-            }
-            else if (ad instanceof FunctionDescriptor) {
-                functionNames.add(ad.getName());
-            }
-            else if (ad instanceof NamespaceDescriptor) {
-                if (conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(ad))) {
-                    NamespaceDescriptor namespaceDescriptorA = (NamespaceDescriptor) ad;
-                    NamespaceDescriptor namespaceDescriptorB = actualNamespace.getMemberScope().getNamespace(namespaceDescriptorA.getName());
-                    //deferred.assertNotNull("Namespace not found: " + namespaceDescriptorA.getQualifiedName(), namespaceDescriptorB);
-                    if (namespaceDescriptorB == null) {
-                        System.err.println("Namespace not found: " + namespaceDescriptorA.getQualifiedName());
-                    }
-                    else {
-                        String comparison = doCompareNamespaces(namespaceDescriptorA, namespaceDescriptorB);
-                        sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
-                        sb.append(comparison);
-                        sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
-                    }
-                }
-            }
-            else {
-                throw new AssertionError("unknown member: " + ad);
-            }
-        }
-
-        for (ClassDescriptor objectDescriptor : expectedNamespace.getMemberScope().getObjectDescriptors()) {
-            objectNames.add(objectDescriptor.getName());
-        }
-
-        for (Name name : sorted(classifierNames)) {
-            ClassifierDescriptor ca = expectedNamespace.getMemberScope().getClassifier(name);
-            ClassifierDescriptor cb = actualNamespace.getMemberScope().getClassifier(name);
-            deferred.assertTrue("Classifier not found in " + expectedNamespace + ": " + name, ca != null);
-            deferred.assertTrue("Classifier not found in " + actualNamespace + ": " + name, cb != null);
-            if (ca != null && cb != null) {
-                compareClassifiers(ca, cb, sb);
-            }
-        }
-
-        for (Name name : sorted(objectNames)) {
-            ClassifierDescriptor ca = expectedNamespace.getMemberScope().getObjectDescriptor(name);
-            ClassifierDescriptor cb = actualNamespace.getMemberScope().getObjectDescriptor(name);
-            deferred.assertTrue("Object not found in " + expectedNamespace + ": " + name, ca != null);
-            deferred.assertTrue("Object not found in " + actualNamespace + ": " + name, cb != null);
-            if (ca != null && cb != null) {
-                compareClassifiers(ca, cb, sb);
-            }
-        }
-
-        for (Name name : sorted(propertyNames)) {
-            Collection<VariableDescriptor> pa = expectedNamespace.getMemberScope().getProperties(name);
-            Collection<VariableDescriptor> pb = actualNamespace.getMemberScope().getProperties(name);
-            compareDeclarationSets("Properties in package " + expectedNamespace, pa, pb, sb);
-
-            deferred.assertTrue(actualNamespace.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.getterName(name))).isEmpty());
-            deferred.assertTrue(actualNamespace.getMemberScope().getFunctions(Name.identifier(PropertyCodegen.setterName(name))).isEmpty());
-        }
-
-        for (Name name : sorted(functionNames)) {
-            Collection<FunctionDescriptor> fa = expectedNamespace.getMemberScope().getFunctions(name);
-            Collection<FunctionDescriptor> fb = actualNamespace.getMemberScope().getFunctions(name);
-            compareDeclarationSets("Functions in package " + expectedNamespace, fa, fb, sb);
-        }
-
-        return sb.toString();
+        Assert.assertEquals(expectedSerialized, actualSerialized);
+        return actualSerialized;
     }
 
-    private void compareDeclarationSets(String message,
-            Collection<? extends DeclarationDescriptor> a,
-            Collection<? extends DeclarationDescriptor> b,
-            @NotNull StringBuilder sb) {
-        String at = serializedDeclarationSets(a);
-        String bt = serializedDeclarationSets(b);
-        deferred.assertEquals(message, at, bt);
-        sb.append(at);
-    }
-
-    private String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
-        List<DeclarationDescriptor> members = Lists.newArrayList(ds);
-
-        Collections.sort(members, MemberComparator.INSTANCE);
-
-        List<String> strings = new ArrayList<String>();
-        for (DeclarationDescriptor d : members) {
-            strings.add(RENDERER.render(d));
-        }
-
-
-        StringBuilder r = new StringBuilder();
-        for (String string : strings) {
-            r.append(string);
-            r.append("\n");
-        }
-        return r.toString();
-    }
-
-    private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b, @NotNull StringBuilder sb) {
-        String as = serializeClassifier(a);
-        String bs = serializeClassifier(b);
-
-        deferred.assertEquals(as, bs);
-        sb.append(as);
-    }
-
-    private String serializeClassifier(@NotNull ClassifierDescriptor classifier) {
+    private String recursiveSerialize(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder result = new StringBuilder();
-        serializeDeclarationRecursively(classifier, new Printer(result));
+        appendDeclarationRecursively(declarationDescriptor, new Printer(result, 1), true);
         return result.toString();
     }
 
-    private void serializeDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull Printer printer) {
-        if (descriptor instanceof ClassDescriptor) {
+    private void appendDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull Printer printer, boolean topLevel) {
+        if (descriptor instanceof ClassOrNamespaceDescriptor && !topLevel) {
             printer.println();
         }
 
         boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
         printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", RENDERER.render(descriptor));
 
-        if (descriptor instanceof ClassDescriptor) {
-            printer.printlnWithNoIndent(" {");
-            printer.pushIndent();
-
-            ClassDescriptor klass = (ClassDescriptor) descriptor;
-            JetScope memberScope = klass.getDefaultType().getMemberScope();
+        if (descriptor instanceof ClassOrNamespaceDescriptor) {
+            if (topLevel) {
+                printer.println();
+                printer.println();
+            }
+            else {
+                printer.printlnWithNoIndent(" {").pushIndent();
+            }
 
             List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
-            subDescriptors.addAll(klass.getConstructors());
-            subDescriptors.addAll(memberScope.getAllDescriptors());
-            subDescriptors.addAll(memberScope.getObjectDescriptors());
-            ContainerUtil.addIfNotNull(subDescriptors, klass.getClassObjectDescriptor());
+
+            if (descriptor instanceof ClassDescriptor) {
+                ClassDescriptor klass = (ClassDescriptor) descriptor;
+                JetScope memberScope = klass.getDefaultType().getMemberScope();
+
+                subDescriptors.addAll(klass.getConstructors());
+                subDescriptors.addAll(memberScope.getAllDescriptors());
+                subDescriptors.addAll(memberScope.getObjectDescriptors());
+                ContainerUtil.addIfNotNull(subDescriptors, klass.getClassObjectDescriptor());
+            }
+            else if (descriptor instanceof NamespaceDescriptor) {
+                JetScope memberScope = ((NamespaceDescriptor) descriptor).getMemberScope();
+                subDescriptors.addAll(memberScope.getAllDescriptors());
+                subDescriptors.addAll(memberScope.getObjectDescriptors());
+            }
+            else {
+                throw new IllegalStateException("Should be class or namespace: " + descriptor.getClass());
+            }
 
             Collections.sort(subDescriptors, MemberComparator.INSTANCE);
 
@@ -281,11 +177,15 @@ public class NamespaceComparator {
                         continue;
                     }
                 }
-                serializeDeclarationRecursively(subDescriptor, printer);
+                if (subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor))) {
+                    continue;
+                }
+                appendDeclarationRecursively(subDescriptor, printer, false);
             }
 
-            printer.popIndent();
-            printer.println("}");
+            if (!topLevel) {
+                printer.popIndent().println("}");
+            }
         }
         else {
             printer.printlnWithNoIndent();
