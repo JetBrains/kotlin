@@ -455,7 +455,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             if (typeParameter.getUpperBounds().size() > 1) {
                 for (JetType upperBound : typeParameter.getUpperBounds()) {
-                    upperBoundStrings.add(typeParameter.getName() + " : " + escape(renderType(upperBound)));
+                    upperBoundStrings.add(renderName(typeParameter.getName()) + " : " + escape(renderType(upperBound)));
                 }
             }
         }

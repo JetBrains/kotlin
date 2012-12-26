@@ -11,7 +11,7 @@ class `class`<`in`>(p: `in`?) {
 val `is` = `class`.`class`()
 val `in` = `class`<`trait`>(null)
 
-fun `trait`.`fun`(`false`: `trait`): `trait`
+fun <`in`: `trait`> `trait`.`fun`(`false`: `trait`): `trait` where `in`: Number
 
 //internal final annotation class `true` : jet.Annotation defined in root package
 //public constructor `true`() defined in `true`
@@ -25,5 +25,6 @@ fun `trait`.`fun`(`false`: `trait`): `trait`
 //public constructor `class`() defined in `class`.`class`
 //internal final val `is` : `class`.`class` defined in root package
 //internal final val `in` : `class`<`trait`> defined in root package
-//internal final fun `trait`.`fun`(`false` : `trait`) : `trait` defined in root package
+//internal final fun <`in`> `trait`.`fun`(`false` : `trait`) : `trait` where `in` : `trait`, `in` : jet.Number defined in root package
+//<`in` : `trait` & jet.Number> defined in `fun`
 //value-parameter val `false` : `trait` defined in `fun`
