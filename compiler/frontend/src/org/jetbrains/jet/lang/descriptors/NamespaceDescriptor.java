@@ -26,8 +26,5 @@ public interface NamespaceDescriptor extends Annotated, Named, FqNamed, ClassOrN
     JetScope getMemberScope();
 
     @NotNull
-    NamespaceType getNamespaceType();
-
-    @Override
     NamespaceDescriptorParent getContainingDeclaration();
 }

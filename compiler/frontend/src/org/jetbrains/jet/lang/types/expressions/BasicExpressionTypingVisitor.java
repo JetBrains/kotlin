@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -78,29 +79,33 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private JetType lookupNamespaceOrClassObject(JetSimpleNameExpression expression, Name referencedName, ExpressionTypingContext context) {
+    private JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
+        Name referencedName = expression.getReferencedNameAsName();
         ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
         if (classifier != null) {
             JetType classObjectType = classifier.getClassObjectType();
-            JetType result = null;
             if (classObjectType != null) {
-                if (context.namespacesAllowed || classifier.isClassObjectAValue()) {
+                context.trace.record(REFERENCE_TARGET, expression, classifier);
+                JetType result;
+                if (context.namespacesAllowed && classifier instanceof ClassDescriptor) {
+                    JetScope scope = new ChainedScope(classifier, classObjectType.getMemberScope(),
+                                                      getStaticNestedClassesScope((ClassDescriptor) classifier));
+                    result = new NamespaceType(referencedName, scope);
+                }
+                else if (context.namespacesAllowed || classifier.isClassObjectAValue()) {
                     result = classObjectType;
                 }
                 else {
                     context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
+                    result = null;
                 }
-                context.trace.record(REFERENCE_TARGET, expression, classifier);
-                //if (result == null) {
-                //    return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
-                //}
                 return DataFlowUtils.checkType(result, expression, context);
             }
         }
         JetType[] result = new JetType[1];
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 context.trace, "trace for namespace/class object lookup of name", referencedName);
-        if (furtherNameLookup(expression, referencedName, result, context.replaceBindingTrace(temporaryTrace))) {
+        if (furtherNameLookup(expression, result, context.replaceBindingTrace(temporaryTrace))) {
             temporaryTrace.commit();
             return DataFlowUtils.checkType(result[0], expression, context);
         }
@@ -130,27 +135,43 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         });
     }
 
-    protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull Name referencedName, @NotNull JetType[] result, ExpressionTypingContext context) {
+    private boolean furtherNameLookup(
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull JetType[] result,
+            @NotNull ExpressionTypingContext context
+    ) {
+        NamespaceType namespaceType = lookupNamespaceType(expression, context);
+        if (namespaceType == null) {
+            return false;
+        }
         if (context.namespacesAllowed) {
-            result[0] = lookupNamespaceType(expression, referencedName, context);
-            return result[0] != null;
+            result[0] = namespaceType;
+            return true;
         }
-        NamespaceType namespaceType = lookupNamespaceType(expression, referencedName, context);
-        if (namespaceType != null) {
-            context.trace.report(EXPRESSION_EXPECTED_NAMESPACE_FOUND.on(expression));
-            result[0] = ErrorUtils.createErrorType("Type for " + referencedName);
-        }
+        context.trace.report(EXPRESSION_EXPECTED_NAMESPACE_FOUND.on(expression));
+        result[0] = ErrorUtils.createErrorType("Type for " + expression.getReferencedNameAsName());
         return false;
     }
 
     @Nullable
-    protected NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull Name referencedName, ExpressionTypingContext context) {
-        NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
+    private NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
+        Name name = expression.getReferencedNameAsName();
+        NamespaceDescriptor namespace = context.scope.getNamespace(name);
         if (namespace == null) {
             return null;
         }
         context.trace.record(REFERENCE_TARGET, expression, namespace);
-        return namespace.getNamespaceType();
+
+        // Construct a NamespaceType with everything from the namespace and with static nested classes of the corresponding class (if any)
+        JetScope scope;
+        ClassifierDescriptor classifier = context.scope.getClassifier(name);
+        if (classifier instanceof ClassDescriptor) {
+            scope = new ChainedScope(namespace, namespace.getMemberScope(), getStaticNestedClassesScope((ClassDescriptor) classifier));
+        }
+        else {
+            scope = namespace.getMemberScope();
+        }
+        return new NamespaceType(name, scope);
     }
 
     @Override
@@ -769,7 +790,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                              : context;
         TemporaryBindingTrace traceForNamespaceOrClassObject = TemporaryBindingTrace.create(
                 context.trace, "trace to resolve as namespace or class object", nameExpression);
-        JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedNameAsName(), newContext.replaceBindingTrace(traceForNamespaceOrClassObject));
+        JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceBindingTrace(traceForNamespaceOrClassObject));
         if (jetType != null) {
             traceForNamespaceOrClassObject.commit();
 

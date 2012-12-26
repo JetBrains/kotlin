@@ -5,10 +5,10 @@ val `val` = 5
 `true` trait `trait`
 
 class `class`<`in`>(p: `in`?) {
-   class `class`
+   inner class `class`
 }
 
-val `is` = `class`.`class`()
+val `is` = `class`<`trait`>(null).`class`()
 val `in` = `class`<`trait`>(null)
 
 fun <`in`: `trait`> `trait`.`fun`(`false`: `trait`): `trait` where `in`: Number
@@ -21,7 +21,7 @@ fun <`in`: `trait`> `trait`.`fun`(`false`: `trait`): `trait` where `in`: Number
 //public constructor `class`<`in`>(p : `in`?) defined in `class`
 //<`in`> defined in `class`
 //value-parameter val p : `in`? defined in `class`.<init>
-//internal final class `class` defined in `class`
+//internal final inner class `class` defined in `class`
 //public constructor `class`() defined in `class`.`class`
 //internal val `is` : `class`.`class` defined in root package
 //internal val `in` : `class`<`trait`> defined in root package

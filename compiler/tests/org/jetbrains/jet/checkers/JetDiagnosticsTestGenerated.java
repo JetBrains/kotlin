@@ -2399,6 +2399,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/inner")
+        @InnerTestClasses({Inner.QualifiedExpression.class})
         public static class Inner extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInInner() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inner"), "kt", true);
@@ -2479,6 +2480,70 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inner/visibility.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/inner/qualifiedExpression")
+            public static class QualifiedExpression extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInQualifiedExpression() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inner/qualifiedExpression"), "kt", true);
+                }
+                
+                @TestMetadata("classObjectOfNestedClass.kt")
+                public void testClassObjectOfNestedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/classObjectOfNestedClass.kt");
+                }
+                
+                @TestMetadata("constructNestedClass.kt")
+                public void testConstructNestedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/constructNestedClass.kt");
+                }
+                
+                @TestMetadata("dataLocalVariable.kt")
+                public void testDataLocalVariable() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/dataLocalVariable.kt");
+                }
+                
+                @TestMetadata("enumConstant.kt")
+                public void testEnumConstant() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/enumConstant.kt");
+                }
+                
+                @TestMetadata("genericNestedClass.kt")
+                public void testGenericNestedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/genericNestedClass.kt");
+                }
+                
+                @TestMetadata("importNestedClass.kt")
+                public void testImportNestedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/importNestedClass.kt");
+                }
+                
+                @TestMetadata("nestedClassInPackage.kt")
+                public void testNestedClassInPackage() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/nestedClassInPackage.kt");
+                }
+                
+                @TestMetadata("nestedEnumConstant.kt")
+                public void testNestedEnumConstant() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/nestedEnumConstant.kt");
+                }
+                
+                @TestMetadata("nestedObjects.kt")
+                public void testNestedObjects() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/nestedObjects.kt");
+                }
+                
+                @TestMetadata("typePosition.kt")
+                public void testTypePosition() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inner/qualifiedExpression/typePosition.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Inner");
+                suite.addTestSuite(Inner.class);
+                suite.addTestSuite(QualifiedExpression.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/j+k")
@@ -4192,7 +4257,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTest(IncompleteCode.innerSuite());
             suite.addTest(Inference.innerSuite());
             suite.addTestSuite(Infos.class);
-            suite.addTestSuite(Inner.class);
+            suite.addTest(Inner.innerSuite());
             suite.addTestSuite(J_k.class);
             suite.addTest(Jdk_annotations.innerSuite());
             suite.addTestSuite(Library.class);

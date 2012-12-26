@@ -25,8 +25,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import java.util.List;
 
 public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorNonRootImpl implements NamespaceDescriptor {
-    private NamespaceType namespaceType;
-
     public AbstractNamespaceDescriptorImpl(
             @NotNull NamespaceDescriptorParent containingDeclaration,
             List<AnnotationDescriptor> annotations,
@@ -49,15 +47,6 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         throw new IllegalStateException("immutable");
-    }
-
-    @Override
-    @NotNull
-    public NamespaceType getNamespaceType() {
-        if (namespaceType == null) {
-            namespaceType = new NamespaceType(getName(), getMemberScope());
-        }
-        return namespaceType;
     }
 
     @NotNull
