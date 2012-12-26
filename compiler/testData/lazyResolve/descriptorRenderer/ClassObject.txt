@@ -1,7 +1,0 @@
-namespace <root>
-
-internal abstract trait TheTrait : jet.Any {
-    internal final object TheTrait.<no name provided> : jet.Any {
-        internal final /*constructor*/ fun <init>(): TheTrait.<no name provided>
-    }
-}

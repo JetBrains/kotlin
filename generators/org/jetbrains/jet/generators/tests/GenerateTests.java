@@ -170,8 +170,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LazyResolveDescriptorRendererTestGenerated",
                 AbstractLazyResolveDescriptorRendererTest.class,
-                testModel("compiler/testData/renderer"),
-                testModel("compiler/testData/lazyResolve/descriptorRenderer")
+                testModel("compiler/testData/renderer")
         );
 
         // TODO test is temporarily disabled

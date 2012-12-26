@@ -1816,6 +1816,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/lazyResolve/namespaceComparator"), "kt", true);
         }
         
+        @TestMetadata("classObject.kt")
+        public void testClassObject() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/classObject.kt");
+        }
+        
         @TestMetadata("classObjectAnnotation.kt")
         public void testClassObjectAnnotation() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/classObjectAnnotation.kt");

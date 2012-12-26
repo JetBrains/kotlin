@@ -1,0 +1,8 @@
+package test
+
+internal trait TheTrait {
+    
+    internal class object <class-object-for-TheTrait> {
+        /*primary*/ private constructor <class-object-for-TheTrait>()
+    }
+}
