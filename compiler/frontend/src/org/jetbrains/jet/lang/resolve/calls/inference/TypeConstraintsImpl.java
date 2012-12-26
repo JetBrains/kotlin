@@ -44,10 +44,10 @@ public class TypeConstraintsImpl implements TypeConstraints {
 
     public void addBound(@NotNull ConstraintKind constraintKind, @NotNull JetType type) {
         switch (constraintKind) {
-            case SUPER_TYPE:
+            case SUB_TYPE:
                 lowerBounds.add(type);
                 break;
-            case SUB_TYPE:
+            case SUPER_TYPE:
                 upperBounds.add(type);
                 break;
             case EQUAL:
@@ -93,6 +93,6 @@ public class TypeConstraintsImpl implements TypeConstraints {
     }
 
     public static enum ConstraintKind {
-        SUB_TYPE, SUPER_TYPE, EQUAL
+        SUPER_TYPE, SUB_TYPE, EQUAL
     }
 }

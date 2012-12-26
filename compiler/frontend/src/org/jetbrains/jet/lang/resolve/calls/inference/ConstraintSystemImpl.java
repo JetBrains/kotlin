@@ -146,7 +146,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @Nullable JetType constrainingType,
             @NotNull ConstraintPosition constraintPosition
     ) {
-        addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);
+        addConstraint(SUPER_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             @Nullable JetType constrainingType,
             @NotNull ConstraintPosition constraintPosition
     ) {
-        addConstraint(SUPER_TYPE, subjectType, constrainingType, constraintPosition);
+        addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);
     }
 
     private void addConstraint(@NotNull ConstraintKind constraintKind,
@@ -209,7 +209,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             return;
         }
         switch (constraintKind) {
-            case SUPER_TYPE: {
+            case SUB_TYPE: {
                 if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(constrainingType)) break;
                 JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
                 if (correspondingSupertype != null) {
@@ -217,7 +217,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 }
                 break;
             }
-            case SUB_TYPE: {
+            case SUPER_TYPE: {
                 if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(subjectType)) break;
                 JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
                 if (correspondingSupertype != null) {
@@ -283,10 +283,10 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         if (typeParameterVariance != INVARIANT) {
             varianceForTypeParameter = typeParameterVariance;
         }
-        else if (upperConstraintKind == SUB_TYPE) {
+        else if (upperConstraintKind == SUPER_TYPE) {
             varianceForTypeParameter = constrainingTypeProjection.getProjectionKind();
         }
-        else if (upperConstraintKind == SUPER_TYPE) {
+        else if (upperConstraintKind == SUB_TYPE) {
             varianceForTypeParameter = subjectTypeProjection.getProjectionKind();
         }
         else {
@@ -299,11 +299,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     /**
      * Let class {@code MyClass<T, out R, in S>} is declared.<br/><br/>
      *
-     * If upperConstraintKind is SUB_TYPE:
+     * If upperConstraintKind is SUPER_TYPE:
      * {@code MyClass<A, B, C> <: MyClass<D, E, F>}, <br/>
      * then constraints {@code A = D, B <: E, C >: F} are generated. <br/><br/>
      *
-     * If upperConstraintKind is SUPER_TYPE:
+     * If upperConstraintKind is SUB_TYPE:
      * {@code MyClass<A, B, C> >: MyClass<D, E, F>}, <br/>
      * then constraints {@code A = D, B >: E, C <: F} are generated. <br/><br/>
      *
@@ -322,11 +322,11 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         if (upperConstraintKind == EQUAL || typeParameterVariance == INVARIANT) {
             return EQUAL;
         }
-        if ((upperConstraintKind == SUPER_TYPE && typeParameterVariance == OUT_VARIANCE) ||
-            (upperConstraintKind == SUB_TYPE   && typeParameterVariance == IN_VARIANCE)) {
-            return SUPER_TYPE;
+        if ((upperConstraintKind == SUB_TYPE && typeParameterVariance == OUT_VARIANCE) ||
+            (upperConstraintKind == SUPER_TYPE && typeParameterVariance == IN_VARIANCE)) {
+            return SUB_TYPE;
         }
-        return SUB_TYPE;
+        return SUPER_TYPE;
     }
 
     @NotNull
