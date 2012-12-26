@@ -19,28 +19,19 @@ package org.jetbrains.jet.test.util;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import org.jetbrains.jet.utils.Printer;
@@ -49,7 +40,6 @@ import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -97,38 +87,31 @@ public class NamespaceComparator {
         return serialized;
     }
 
-    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
-    public static final Configuration RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysTrue(), Predicates.<NamespaceDescriptor>alwaysTrue());
+    public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, Predicates.<FqNameUnsafe>alwaysTrue());
+    public static final Configuration RECURSIVE = new Configuration(false, true, Predicates.<FqNameUnsafe>alwaysTrue());
 
     public static class Configuration {
 
         private final boolean checkPrimaryConstructors;
         private final boolean includeObject;
         private final Predicate<FqNameUnsafe> recurseIntoPackage;
-        private final Predicate<NamespaceDescriptor> includeIntoOutput;
 
         public Configuration(
                 boolean checkPrimaryConstructors,
                 boolean includeObject,
-                Predicate<FqNameUnsafe> recurseIntoPackage,
-                Predicate<NamespaceDescriptor> includeIntoOutput
+                Predicate<FqNameUnsafe> recurseIntoPackage
         ) {
             this.checkPrimaryConstructors = checkPrimaryConstructors;
             this.includeObject = includeObject;
             this.recurseIntoPackage = recurseIntoPackage;
-            this.includeIntoOutput = includeIntoOutput;
-        }
-
-        public Configuration filterOutput(@NotNull Predicate<NamespaceDescriptor> includeIntoOutput) {
-            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage, includeIntoOutput);
         }
 
         public Configuration filterRecusion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
-            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage, includeIntoOutput);
+            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage);
         }
 
         public Configuration checkPrimaryConstructors(boolean checkPrimaryConstructors) {
-            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage, includeIntoOutput);
+            return new Configuration(checkPrimaryConstructors, includeObject, recurseIntoPackage);
         }
     }
 
@@ -172,11 +155,9 @@ public class NamespaceComparator {
                     }
                     else {
                         String comparison = doCompareNamespaces(namespaceDescriptorA, namespaceDescriptorB);
-                        if (conf.includeIntoOutput.apply(namespaceDescriptorA)) {
-                            sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
-                            sb.append(comparison);
-                            sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
-                        }
+                        sb.append("// <namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
+                        sb.append(comparison);
+                        sb.append("// </namespace name=\"" + namespaceDescriptorA.getName() + "\">\n");
                     }
                 }
             }
