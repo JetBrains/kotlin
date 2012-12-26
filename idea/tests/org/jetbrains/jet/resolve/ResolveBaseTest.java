@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.resolve;
 
+import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
@@ -30,6 +32,12 @@ import org.jetbrains.jet.testing.ReferenceUtils;
 import java.io.File;
 
 public class ResolveBaseTest extends LightCodeInsightTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+    }
+
     public void testMultiResolve() throws Exception {
         doMultiResolveTest();
     }

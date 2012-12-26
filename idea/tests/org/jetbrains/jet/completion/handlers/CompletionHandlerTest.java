@@ -22,7 +22,9 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import junit.framework.Assert;
@@ -34,6 +36,11 @@ import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 import java.io.File;
 
 public class CompletionHandlerTest extends LightCompletionTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+    }
 
     public void testClassCompletionImport() {
         doTest(CompletionType.BASIC, 2, "SortedSet", null, '\n');

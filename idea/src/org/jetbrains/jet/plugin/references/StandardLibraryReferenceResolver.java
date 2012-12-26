@@ -53,10 +53,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
-    @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
     private BindingContext bindingContext = null;
 
-    private final Object lock = new Object();
     private final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(KotlinBuiltIns.getInstance().getTuple(0)).toSafe();
 
     public StandardLibraryReferenceResolver(
@@ -72,50 +70,46 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
-                ensureInitialized();
+                initialize();
             }
         });
     }
 
-    private void ensureInitialized() {
-        synchronized (lock) {
-            if (bindingContext != null) {
-                return;
+    private void initialize() {
+        assert bindingContext == null : "Attempt to initialize twice";
+
+        BindingTraceContext context = new BindingTraceContext();
+        FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
+        context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
+
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
+                                                        "Builtin classes scope");
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        jetNamespace.setMemberScope(scope);
+
+        Predicate<JetFile> jetFilesIndependentOfUnit = new Predicate<JetFile>() {
+            @Override
+            public boolean apply(@Nullable JetFile file) {
+                return "Unit.jet".equals(file.getName());
             }
+        };
+        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
+                                                        getJetFiles("jet", jetFilesIndependentOfUnit));
 
-            BindingTraceContext context = new BindingTraceContext();
-            FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
-            context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
+        ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
+        assert tuple0 != null : "Can't find the declaration for Tuple0. Please invoke File -> Invalidate Caches...";
+        scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
+                                      "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        scope.addClassifierAlias(KotlinBuiltIns.UNIT_ALIAS, tuple0);
+        jetNamespace.setMemberScope(scope);
 
-            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
-                                                            "Builtin classes scope");
-            scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            jetNamespace.setMemberScope(scope);
+        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
+                                                        getJetFiles("jet", Predicates.not(jetFilesIndependentOfUnit)));
 
-            Predicate<JetFile> jetFilesIndependentOfUnit = new Predicate<JetFile>() {
-                @Override
-                public boolean apply(@Nullable JetFile file) {
-                    return "Unit.jet".equals(file.getName());
-                }
-            };
-            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
-                                                            getJetFiles("jet", jetFilesIndependentOfUnit));
+        AnalyzingUtils.throwExceptionOnErrors(context.getBindingContext());
 
-            ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
-            assert tuple0 != null : "Can't find the declaration for Tuple0";
-            scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
-                                          "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
-            scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            scope.addClassifierAlias(KotlinBuiltIns.UNIT_ALIAS, tuple0);
-            jetNamespace.setMemberScope(scope);
-
-            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
-                                                            getJetFiles("jet", Predicates.not(jetFilesIndependentOfUnit)));
-
-            AnalyzingUtils.throwExceptionOnErrors(context.getBindingContext());
-
-            bindingContext = context.getBindingContext();
-        }
+        bindingContext = context.getBindingContext();
     }
 
     private List<JetFile> getJetFiles(String dir, final Predicate<JetFile> filter) {
@@ -132,7 +126,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         vf.refresh(false, true);
 
         PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(vf);
-        assert psiDirectory != null;
+        assert psiDirectory != null : "No PsiDirectory for " + vf;
         return ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
             @Override
             public JetFile fun(PsiFile file) {
@@ -200,7 +194,10 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     @NotNull
     public Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext originalContext,
             @Nullable JetReferenceExpression referenceExpression) {
-        ensureInitialized();
+        if (bindingContext == null) {
+            return Collections.emptyList();
+        }
+
         DeclarationDescriptor declarationDescriptor = originalContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
 
         return declarationDescriptor != null ? resolveStandardLibrarySymbol(declarationDescriptor) : Collections.<PsiElement>emptyList();
@@ -208,7 +205,10 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
 
     @NotNull
     public Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
-        ensureInitialized();
+        if (bindingContext == null) {
+            return Collections.emptyList();
+        }
+
         DeclarationDescriptor descriptor = declarationDescriptor;
 
         descriptor = descriptor.getOriginal();
