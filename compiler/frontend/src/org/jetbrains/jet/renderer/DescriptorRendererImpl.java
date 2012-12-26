@@ -565,16 +565,14 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 renderModality(klass.getModality(), builder);
             }
             builder.append(renderKeyword(getClassKindPrefix(klass)));
-            if (!classObject) {
-                builder.append(" ");
-            }
+        }
+
+        if (!classObject || verbose) {
+            builder.append(" ");
+            renderName(klass, builder);
         }
 
         List<TypeParameterDescriptor> typeParameters = klass.getTypeConstructor().getParameters();
-
-        if (!classObject || verbose) {
-            renderName(klass, builder);
-        }
         renderTypeParameters(typeParameters, builder, false);
 
         if (!classObject && classWithPrimaryConstructor) {
