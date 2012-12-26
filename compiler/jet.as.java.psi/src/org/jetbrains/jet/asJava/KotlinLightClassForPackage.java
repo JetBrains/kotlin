@@ -22,7 +22,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.util.CachedValue;
@@ -48,6 +47,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     }
 
     private final FqName packageFqName;
+    private final FqName packageClassFqName; // derived from packageFqName
     private final Collection<JetFile> files;
     private final int hashCode;
     private final CachedValue<PsiJavaFileStub> javaFileStub;
@@ -55,6 +55,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     private KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
         super(manager);
         this.packageFqName = packageFqName;
+        this.packageClassFqName = packageFqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
         assert !files.isEmpty() : "No files for package " + packageFqName;
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
@@ -65,13 +66,13 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @Nullable
     @Override
     public String getName() {
-        return packageFqName.shortName().getName();
+        return packageClassFqName.shortName().getName();
     }
 
     @Nullable
     @Override
     public String getQualifiedName() {
-        return packageFqName.getFqName();
+        return packageClassFqName.getFqName();
     }
 
     @Override
@@ -95,7 +96,6 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @NotNull
     @Override
     public PsiClass getDelegate() {
-        FqName packageClassFqName = packageFqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
         PsiClass psiClass = LightClassUtil.findClass(packageClassFqName, javaFileStub.getValue());
         if (psiClass == null) {
             throw new IllegalStateException("Package class was not found " + packageFqName);
@@ -122,11 +122,6 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @Override
     public Icon getElementIcon(final int flags) {
         throw new UnsupportedOperationException("This should be done byt JetIconProvider");
-    }
-
-    @Override
-    public PsiFile getContainingFile() {
-        return null;
     }
 
     @Override
