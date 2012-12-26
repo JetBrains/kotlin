@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -40,6 +41,9 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
+import org.jetbrains.jet.utils.Printer;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
@@ -52,6 +56,10 @@ import java.util.*;
  * @author Stepan Koltsov
  */
 public class NamespaceComparator {
+    private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
+            .setVerbose(true).build();
 
     public static void compareNamespaces(
             @NotNull NamespaceDescriptor expectedNamespace,
@@ -135,7 +143,7 @@ public class NamespaceComparator {
         StringBuilder sb = new StringBuilder();
         deferred.assertEquals(expectedNamespace.getName(), actualNamespace.getName());
 
-        sb.append("namespace " + expectedNamespace.getName() + "\n\n");
+        sb.append("namespace " + expectedNamespace.getName() + "\n");
 
         //deferred.assertTrue("namespace " + expectedNamespace.getName() + " is empty", !expectedNamespace.getMemberScope().getAllDescriptors().isEmpty());
 
@@ -236,9 +244,7 @@ public class NamespaceComparator {
 
         List<String> strings = new ArrayList<String>();
         for (DeclarationDescriptor d : members) {
-            StringBuilder sb = new StringBuilder();
-            new Serializer(conf.checkPrimaryConstructors, sb).serialize(d);
-            strings.add(sb.toString());
+            strings.add(RENDERER.render(d));
         }
 
 
@@ -251,570 +257,60 @@ public class NamespaceComparator {
     }
 
     private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b, @NotNull StringBuilder sb) {
-        StringBuilder sba = new StringBuilder();
-        StringBuilder sbb = new StringBuilder();
-
-        new FullContentSerialier(conf.checkPrimaryConstructors, sba).serialize((ClassDescriptor) a);
-        new FullContentSerialier(conf.checkPrimaryConstructors, sbb).serialize((ClassDescriptor) b);
-
-        String as = sba.toString();
-        String bs = sbb.toString();
+        String as = serializeClassifier(a);
+        String bs = serializeClassifier(b);
 
         deferred.assertEquals(as, bs);
         sb.append(as);
     }
 
-
-    private static class MethodCache {
-        // Argument type -> method
-        private final Map<Class<?>, Method> methodCache = Maps.newHashMap();
-        private final Class<? extends Serializer> serializerClass;
-
-        private MethodCache(Class<? extends Serializer> aClass) {
-            serializerClass = aClass;
-        }
-
-        @NotNull
-        public Class<? extends Serializer> getSerializerClass() {
-            return serializerClass;
-        }
-
-        private void buildMethodCache() {
-            if (!methodCache.isEmpty()) return;
-            for (Method method : serializerClass.getMethods()) {
-                if (!method.getName().equals("serialize")) {
-                    continue;
-                }
-                if (method.getParameterTypes().length != 1) {
-                    continue;
-                }
-                if (method.getParameterTypes()[0].equals(Object.class)) {
-                    continue;
-                }
-                method.setAccessible(true);
-                methodCache.put(method.getParameterTypes()[0], method);
-            }
-        }
-
-        @NotNull
-        public Method getMethodToSerialize(Object o) {
-            if (o == null) {
-                throw new IllegalStateException("won't serialize null");
-            }
-
-            buildMethodCache();
-            Method method = methodCache.get(o.getClass());
-            if (method != null) {
-                return method;
-            }
-            for (Map.Entry<Class<?>, Method> entry : methodCache.entrySet()) {
-                Class<?> parameterType = entry.getKey();
-                Method serializeMethod = entry.getValue();
-                if (parameterType.isInstance(o)) {
-                    methodCache.put(o.getClass(), serializeMethod);
-                    return serializeMethod;
-                }
-            }
-            throw new IllegalStateException("don't know how to serialize " + o + " (of " + o.getClass() + ")");
-        }
+    private String serializeClassifier(@NotNull ClassifierDescriptor classifier) {
+        StringBuilder result = new StringBuilder();
+        serializeDeclarationRecursively(classifier, new Printer(result));
+        return result.toString();
     }
 
-
-    private static class Serializer {
-
-        private static final MethodCache SERIALIZER_METHOD_CACHE = new MethodCache(Serializer.class);
-
-        protected final boolean checkPrimaryConstructors;
-        protected final StringBuilder sb;
-
-
-        public Serializer(boolean checkPrimaryConstructors, StringBuilder sb) {
-            this.checkPrimaryConstructors = checkPrimaryConstructors;
-            this.sb = sb;
+    private void serializeDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull Printer printer) {
+        if (descriptor instanceof ClassDescriptor) {
+            printer.println();
         }
 
-        protected MethodCache doGetMethodCache() {
-            return SERIALIZER_METHOD_CACHE;
-        }
+        boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
+        printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", RENDERER.render(descriptor));
 
-        private MethodCache getMethodCache() {
-            MethodCache methodCache = doGetMethodCache();
-            if (methodCache.getSerializerClass() != this.getClass()) {
-                throw new IllegalStateException("No method cache for class " + this.getClass() + ". Please, override doGetMethodCache()");
-            }
-            return methodCache;
-        }
+        if (descriptor instanceof ClassDescriptor) {
+            printer.printlnWithNoIndent(" {");
+            printer.pushIndent();
 
-        public void serialize(ClassKind kind) {
-            switch (kind) {
-                case CLASS:
-                    sb.append("class");
-                    break;
-                case TRAIT:
-                    sb.append("trait");
-                    break;
-                case OBJECT:
-                    sb.append("object");
-                    break;
-                case ANNOTATION_CLASS:
-                    sb.append("annotation class");
-                    break;
-                case ENUM_CLASS:
-                    sb.append("enum class");
-                    break;
-                case ENUM_ENTRY:
-                    sb.append("enum entry");
-                    break;
-                default:
-                    throw new IllegalStateException("unknown class kind: " + kind);
-            }
-        }
+            ClassDescriptor klass = (ClassDescriptor) descriptor;
+            JetScope memberScope = klass.getDefaultType().getMemberScope();
 
+            List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
+            subDescriptors.addAll(klass.getConstructors());
+            subDescriptors.addAll(memberScope.getAllDescriptors());
+            subDescriptors.addAll(memberScope.getObjectDescriptors());
+            ContainerUtil.addIfNotNull(subDescriptors, klass.getClassObjectDescriptor());
 
-        private static Object invoke(Method method, Object thiz, Object... args) {
-            try {
-                return method.invoke(thiz, args);
-            } catch (Exception e) {
-                throw new RuntimeException("failed to invoke " + method + ": " + e, e);
-            }
-        }
+            Collections.sort(subDescriptors, MemberComparator.INSTANCE);
 
-        // We want to skip @ExpectLoadErrors annotations when comparing
-        private static List<AnnotationDescriptor> filterAnnotations(List<AnnotationDescriptor> annotations) {
-            return ContainerUtil.filter(annotations, new Condition<AnnotationDescriptor>() {
-                @Override
-                public boolean value(AnnotationDescriptor annotation) {
-                    ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
-                    assert annotationClass != null;
-
-                    return !DescriptorUtils.getFQName(annotationClass).getFqName().equals(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME);
-                }
-            });
-        }
-
-        public void serialize(FunctionDescriptor fun) {
-            serialize(fun.getVisibility());
-            sb.append(" ");
-            serialize(fun.getModality());
-            sb.append(" ");
-
-            List<AnnotationDescriptor> annotations = filterAnnotations(fun.getAnnotations());
-            if (!annotations.isEmpty()) {
-                new Serializer(checkPrimaryConstructors, sb).serializeSeparated(annotations, " ");
-                sb.append(" ");
-            }
-
-            if (!fun.getOverriddenDescriptors().isEmpty()) {
-                sb.append("override /*").append(fun.getOverriddenDescriptors().size()).append("*/ ");
-            }
-
-            if (fun.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-                sb.append("/*");
-                new Serializer(checkPrimaryConstructors, sb).serialize(fun.getKind());
-                sb.append("*/ ");
-            }
-
-            if (fun instanceof ConstructorDescriptor) {
-                if (((ConstructorDescriptor) fun).isPrimary() && checkPrimaryConstructors) {
-                    sb.append("/*primary constructor*/ ");
-                }
-                else {
-                    sb.append("/*constructor*/ ");
-                }
-            }
-            sb.append("fun ");
-            if (!fun.getTypeParameters().isEmpty()) {
-                sb.append("<");
-                new Serializer(checkPrimaryConstructors, sb).serializeCommaSeparated(fun.getTypeParameters());
-                sb.append(">");
-            }
-
-            sb.append("!");
-            serializeReceiver(fun);
-            sb.append(fun.getName());
-
-            sb.append("(");
-            new TypeSerializer(sb).serializeCommaSeparated(fun.getValueParameters());
-            sb.append("): ");
-            JetType returnType = fun.getReturnType();
-            if (returnType == null) {
-                throw new IllegalStateException("No return type for " + fun);
-            }
-            else {
-                new TypeSerializer(sb).serialize(returnType);
-            }
-        }
-
-        private void serializeReceiver(CallableDescriptor fun) {
-            if (fun.getReceiverParameter() != null) {
-                new TypeSerializer(sb).serialize(fun.getReceiverParameter());
-                sb.append(".");
-            }
-        }
-
-        public void serialize(ReceiverParameterDescriptor receiverParameterDescriptor) {
-            serialize(receiverParameterDescriptor.getType());
-        }
-
-        private void serialize(@NotNull PropertyAccessorDescriptor accessor) {
-            if (accessor.getCorrespondingProperty().getVisibility() == accessor.getVisibility()) {
-                // don't serialize if visibility is the same
-                return;
-            }
-            sb.append(" ");
-            sb.append(accessor.getVisibility());
-            if (accessor instanceof PropertyGetterDescriptor) {
-                sb.append(" get");
-            }
-            else if (accessor instanceof PropertySetterDescriptor) {
-                sb.append(" set");
-            }
-            else {
-                throw new IllegalArgumentException("neither getter nor setter");
-            }
-        }
-
-        public void serialize(PropertyDescriptor prop) {
-            serialize(prop.getVisibility());
-            sb.append(" ");
-            serialize(prop.getModality());
-            sb.append(" ");
-
-            List<AnnotationDescriptor> annotations = filterAnnotations(prop.getAnnotations());
-            if (!annotations.isEmpty()) {
-                new Serializer(checkPrimaryConstructors, sb).serializeSeparated(annotations, " ");
-                sb.append(" ");
-            }
-
-            if (!prop.getOverriddenDescriptors().isEmpty()) {
-                sb.append("override /*").append(prop.getOverriddenDescriptors().size()).append("*/ ");
-            }
-
-            if (prop.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-                sb.append("/*");
-                new Serializer(checkPrimaryConstructors, sb).serialize(prop.getKind());
-                sb.append("*/ ");
-            }
-
-            if (prop.isVar()) {
-                sb.append("var ");
-            }
-            else {
-                sb.append("val ");
-            }
-            if (!prop.getTypeParameters().isEmpty()) {
-                sb.append(" <");
-                new Serializer(checkPrimaryConstructors, sb).serializeCommaSeparated(prop.getTypeParameters());
-                sb.append("> ");
-            }
-            sb.append("!");
-            ReceiverParameterDescriptor receiverParameter = prop.getReceiverParameter();
-            if (receiverParameter != null) {
-                new TypeSerializer(sb).serialize(receiverParameter.getType());
-                sb.append(".");
-            }
-            sb.append(prop.getName());
-            sb.append(": ");
-            new TypeSerializer(sb).serialize(prop.getType());
-
-            for (PropertyAccessorDescriptor accessor : prop.getAccessors()) {
-                serialize(accessor);
-            }
-        }
-
-        public void serialize(ValueParameterDescriptor valueParameter) {
-            sb.append("/*");
-            sb.append(valueParameter.getIndex());
-            sb.append("*/ ");
-            if (valueParameter.getVarargElementType() != null) {
-                sb.append("vararg ");
-            }
-            sb.append("!");
-            sb.append(valueParameter.getName());
-            sb.append(": ");
-            if (valueParameter.getVarargElementType() != null) {
-                new TypeSerializer(sb).serialize(valueParameter.getVarargElementType());
-                sb.append(" /*");
-                new TypeSerializer(sb).serialize(valueParameter.getType());
-                sb.append("*/");
-            }
-            else {
-                new TypeSerializer(sb).serialize(valueParameter.getType());
-            }
-            if (valueParameter.hasDefaultValue()) {
-                sb.append(" = ?");
-            }
-        }
-
-        public void serialize(Variance variance) {
-            if (variance == Variance.INVARIANT) {
-
-            }
-            else {
-                sb.append(variance);
-                sb.append(' ');
-            }
-        }
-
-        public void serialize(Modality modality) {
-            sb.append(modality.name().toLowerCase());
-        }
-
-        public void serialize(Visibility visibility) {
-            sb.append(visibility);
-        }
-
-        public void serialize(CallableMemberDescriptor.Kind kind) {
-            sb.append(kind.name().toLowerCase());
-        }
-
-        public void serialize(AnnotationDescriptor annotation) {
-            new TypeSerializer(sb).serialize(annotation.getType());
-            sb.append("(");
-            serializeCommaSeparated(DescriptorUtils.getSortedValueArguments(annotation));
-            sb.append(")");
-        }
-
-        public void serializeCommaSeparated(List<?> list) {
-            serializeSeparated(list, ", ");
-        }
-
-        public void serializeSeparated(List<?> list, String sep) {
-            boolean first = true;
-            for (Object o : list) {
-                if (!first) {
-                    sb.append(sep);
-                }
-                serialize(o);
-                first = false;
-            }
-        }
-
-        public void serialize(Object o) {
-            Method method = getMethodCache().getMethodToSerialize(o);
-            invoke(method, this, o);
-        }
-
-        public void serialize(String s) {
-            sb.append(s);
-        }
-
-        public void serialize(CompileTimeConstant s) {
-            sb.append(s);
-        }
-
-        public void serialize(ClassDescriptor clazz) {
-            sb.append(DescriptorUtils.getFQName(clazz));
-        }
-
-        public void serialize(NamespaceDescriptor ns) {
-            sb.append(DescriptorUtils.getFQName(ns));
-        }
-
-        public void serialize(TypeParameterDescriptor param) {
-            sb.append("/*");
-            sb.append(param.getIndex());
-            if (param.isReified()) {
-                sb.append(",r");
-            }
-            sb.append("*/ ");
-            serialize(param.getVariance());
-            sb.append(param.getName());
-            if (!param.getUpperBounds().isEmpty()) {
-                sb.append(" : ");
-                List<String> list = new ArrayList<String>();
-                for (JetType upper : param.getUpperBounds()) {
-                    StringBuilder sb = new StringBuilder();
-                    new TypeSerializer(sb).serialize(upper);
-                    list.add(sb.toString());
-                }
-                Collections.sort(list);
-                serializeSeparated(list, " & "); // TODO: use where
-            }
-            // TODO: lower bounds
-        }
-
-    }
-    
-    private static class TypeSerializer extends Serializer {
-
-        private static final MethodCache TYPE_SERIALIZER_METHOD_CACHE = new MethodCache(TypeSerializer.class);
-
-        public TypeSerializer(StringBuilder sb) {
-            super(false, sb);
-        }
-
-        @Override
-        protected MethodCache doGetMethodCache() {
-            return TYPE_SERIALIZER_METHOD_CACHE;
-        }
-
-        @Override
-        public void serialize(TypeParameterDescriptor param) {
-            sb.append(param.getName());
-        }
-
-        public void serialize(@NotNull JetType type) {
-            if (ErrorUtils.isErrorType(type)) {
-                sb.append(type);
-                return;
-            }
-            serialize(type.getConstructor().getDeclarationDescriptor());
-            if (!type.getArguments().isEmpty()) {
-                sb.append("<");
-                boolean first = true;
-                for (TypeProjection proj : type.getArguments()) {
-                    if (!first) {
-                        sb.append(", ");
-                    }
-                    serialize(proj.getProjectionKind());
-                    serialize(proj.getType());
-                    first = false;
-                }
-                sb.append(">");
-            }
-            if (type.isNullable()) {
-                sb.append("?");
-            }
-        }
-
-    }
-
-    private static final MethodCache FULL_CONTENT_SERIALIZER_METHOD_CACHE = new MethodCache(FullContentSerialier.class);
-    private class FullContentSerialier extends Serializer {
-
-        private FullContentSerialier(boolean checkPrimaryConstructors, StringBuilder sb) {
-            super(checkPrimaryConstructors, sb);
-        }
-
-        @Override
-        protected MethodCache doGetMethodCache() {
-            return FULL_CONTENT_SERIALIZER_METHOD_CACHE;
-        }
-
-        public void serialize(ClassDescriptor klass) {
-
-            if (!klass.getAnnotations().isEmpty()) {
-                new Serializer(checkPrimaryConstructors, sb).serializeSeparated(klass.getAnnotations(), " ");
-                sb.append(" ");
-            }
-            serialize(klass.getVisibility());
-            sb.append(" ");
-            serialize(klass.getModality());
-            sb.append(" ");
-
-            serialize(klass.getKind());
-            sb.append(" ");
-
-            sb.append("!");
-            new Serializer(checkPrimaryConstructors, sb).serialize(klass);
-
-            if (!klass.getTypeConstructor().getParameters().isEmpty()) {
-                sb.append("<");
-                serializeCommaSeparated(klass.getTypeConstructor().getParameters());
-                sb.append(">");
-            }
-
-            if (KotlinBuiltIns.getInstance().getNothing() != klass && !klass.getTypeConstructor().getSupertypes().isEmpty()) {
-                sb.append(" : ");
-                new TypeSerializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
-            }
-
-            sb.append(" {\n");
-
-            List<TypeProjection> typeArguments = new ArrayList<TypeProjection>();
-            for (TypeParameterDescriptor param : klass.getTypeConstructor().getParameters()) {
-                typeArguments.add(new TypeProjection(Variance.INVARIANT, param.getDefaultType()));
-            }
-
-            List<String> memberStrings = new ArrayList<String>();
-
-            for (ConstructorDescriptor constructor : klass.getConstructors()) {
-                StringBuilder constructorSb = new StringBuilder();
-                new Serializer(checkPrimaryConstructors, constructorSb).serialize(constructor);
-                memberStrings.add(constructorSb.toString());
-            }
-
-            JetScope memberScope = klass.getMemberScope(typeArguments);
-            ArrayList<DeclarationDescriptor> members = Lists.newArrayList(memberScope.getAllDescriptors());
-            ContainerUtil.sort(members, MemberComparator.INSTANCE);
-
-            for (DeclarationDescriptor member : members) {
+            for (DeclarationDescriptor subDescriptor : subDescriptors) {
                 if (!conf.includeObject) {
-                    if (member.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
+                    // TODO regexp check? oh dear
+                    if (subDescriptor.getName().getName().matches("equals|hashCode|finalize|wait|notify(All)?|toString|clone|getClass")) {
                         continue;
                     }
                 }
-                StringBuilder memberSb = new StringBuilder();
-                new FullContentSerialier(checkPrimaryConstructors, memberSb).serialize(member);
-                memberStrings.add(memberSb.toString());
+                serializeDeclarationRecursively(subDescriptor, printer);
             }
 
-            for (DeclarationDescriptor object : memberScope.getObjectDescriptors()) {
-                StringBuilder objectSb = new StringBuilder();
-                new FullContentSerialier(checkPrimaryConstructors, objectSb).serialize(object);
-                memberStrings.add(objectSb.toString());
-            }
-
-            for (String memberString : memberStrings) {
-                sb.append(indent(memberString));
-            }
-
-            if (klass.getClassObjectDescriptor() != null) {
-                StringBuilder sbForClassObject = new StringBuilder();
-                new ClassObjectSerializer(sbForClassObject).serialize(klass.getClassObjectDescriptor());
-                sb.append(indent(sbForClassObject.toString()));
-            }
-
-            sb.append("}\n");
+            printer.popIndent();
+            printer.println("}");
+        }
+        else {
+            printer.printlnWithNoIndent();
         }
     }
 
-    private static final MethodCache CLASS_OBJECT_SERIALIZER_METHOD_CACHE = new MethodCache(ClassObjectSerializer.class);
-    private class ClassObjectSerializer extends FullContentSerialier {
-
-        private ClassObjectSerializer(StringBuilder sb) {
-            super(false, sb);
-        }
-
-        @Override
-        protected MethodCache doGetMethodCache() {
-            return CLASS_OBJECT_SERIALIZER_METHOD_CACHE;
-        }
-
-        @Override
-        public void serialize(ClassKind kind) {
-            assert kind == ClassKind.CLASS_OBJECT : "Must be called for class objects only";
-            sb.append("class object");
-        }
-    }
-
-
-    private static String indent(String string) {
-        // This method gets called a lot, so the performance is critical
-        // That's why the hand-written code
-
-        String indent = "    ";
-        StringBuilder r = new StringBuilder(string.length());
-        r.append(indent);
-        boolean lastCharIsNewLine = false;
-        for (int i = 0; i < string.length(); i++) {
-             char c = string.charAt(i);
-            r.append(c);
-            if (c == '\n') {
-                if (i != string.length() - 1) {
-                    r.append(indent);
-                }
-                else {
-                    lastCharIsNewLine = true;
-                }
-            }
-        }
-        if (!lastCharIsNewLine) {
-            r.append("\n");
-        }
-        return r.toString();
-    }
 
     private static <T extends Comparable<T>> List<T> sorted(Collection<T> items) {
         List<T> r = new ArrayList<T>(items);
