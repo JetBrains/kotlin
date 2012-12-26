@@ -3,15 +3,15 @@
 
 package testData.libraries
 
+[public final val globalVal : testData.libraries.Pair<jet.Int, jet.String>] /* compiled code */
+
+[public final val globalValWithGetter : jet.Long] /* compiled code */
+
 [public final val jet.Int.exProp : jet.Int] /* compiled code */
 
 [public final val jet.String.exProp : jet.String] /* compiled code */
 
 [public final val <T> testData.libraries.Pair<T, T>.exProp : jet.String] /* compiled code */
-
-[public final val globalVal : testData.libraries.Pair<jet.Int, jet.String>] /* compiled code */
-
-[public final val globalValWithGetter : jet.Long] /* compiled code */
 
 [public final fun func() : Unit { /* compiled code */ }]
 
