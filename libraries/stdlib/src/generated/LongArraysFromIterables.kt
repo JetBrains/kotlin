@@ -197,7 +197,7 @@ public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long =
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> LongArray.groupBy(toKey: (Long) -> K) : Map<K, MutableList<Long>> = groupByTo<K>(HashMap<K, MutableList<Long>>(), toKey)
+public inline fun <K> LongArray.groupBy(toKey: (Long) -> K) : Map<K, List<Long>> = groupByTo<K>(HashMap<K, MutableList<Long>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

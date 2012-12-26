@@ -197,7 +197,7 @@ public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double)
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> DoubleArray.groupBy(toKey: (Double) -> K) : Map<K, MutableList<Double>> = groupByTo<K>(HashMap<K, MutableList<Double>>(), toKey)
+public inline fun <K> DoubleArray.groupBy(toKey: (Double) -> K) : Map<K, List<Double>> = groupByTo<K>(HashMap<K, MutableList<Double>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

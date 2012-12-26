@@ -197,7 +197,7 @@ public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Sh
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> ShortArray.groupBy(toKey: (Short) -> K) : Map<K, MutableList<Short>> = groupByTo<K>(HashMap<K, MutableList<Short>>(), toKey)
+public inline fun <K> ShortArray.groupBy(toKey: (Short) -> K) : Map<K, List<Short>> = groupByTo<K>(HashMap<K, MutableList<Short>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

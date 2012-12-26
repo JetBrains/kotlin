@@ -197,7 +197,7 @@ public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte): Byte =
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> ByteArray.groupBy(toKey: (Byte) -> K) : Map<K, MutableList<Byte>> = groupByTo<K>(HashMap<K, MutableList<Byte>>(), toKey)
+public inline fun <K> ByteArray.groupBy(toKey: (Byte) -> K) : Map<K, List<Byte>> = groupByTo<K>(HashMap<K, MutableList<Byte>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

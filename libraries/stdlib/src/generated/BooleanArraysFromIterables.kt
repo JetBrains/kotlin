@@ -197,7 +197,7 @@ public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Bool
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> BooleanArray.groupBy(toKey: (Boolean) -> K) : Map<K, MutableList<Boolean>> = groupByTo<K>(HashMap<K, MutableList<Boolean>>(), toKey)
+public inline fun <K> BooleanArray.groupBy(toKey: (Boolean) -> K) : Map<K, List<Boolean>> = groupByTo<K>(HashMap<K, MutableList<Boolean>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

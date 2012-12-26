@@ -197,7 +197,7 @@ public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char =
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> CharArray.groupBy(toKey: (Char) -> K) : Map<K, MutableList<Char>> = groupByTo<K>(HashMap<K, MutableList<Char>>(), toKey)
+public inline fun <K> CharArray.groupBy(toKey: (Char) -> K) : Map<K, List<Char>> = groupByTo<K>(HashMap<K, MutableList<Char>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

@@ -197,7 +197,7 @@ public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Fl
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> FloatArray.groupBy(toKey: (Float) -> K) : Map<K, MutableList<Float>> = groupByTo<K>(HashMap<K, MutableList<Float>>(), toKey)
+public inline fun <K> FloatArray.groupBy(toKey: (Float) -> K) : Map<K, List<Float>> = groupByTo<K>(HashMap<K, MutableList<Float>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

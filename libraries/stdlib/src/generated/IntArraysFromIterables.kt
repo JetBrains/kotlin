@@ -197,7 +197,7 @@ public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int): Int = reve
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <K> IntArray.groupBy(toKey: (Int) -> K) : Map<K, MutableList<Int>> = groupByTo<K>(HashMap<K, MutableList<Int>>(), toKey)
+public inline fun <K> IntArray.groupBy(toKey: (Int) -> K) : Map<K, List<Int>> = groupByTo<K>(HashMap<K, MutableList<Int>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by

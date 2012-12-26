@@ -196,7 +196,7 @@ public inline fun <T> Iterator<T>.reduceRight(operation: (T, T) -> T): T = rever
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <T, K> Iterator<T>.groupBy(toKey: (T) -> K) : Map<K, MutableList<T>> = groupByTo<T,K>(HashMap<K, MutableList<T>>(), toKey)
+public inline fun <T, K> Iterator<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> = groupByTo<T,K>(HashMap<K, MutableList<T>>(), toKey)
 
 /**
  * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
