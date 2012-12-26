@@ -59,7 +59,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
         assert !files.isEmpty() : "No files for package " + packageFqName;
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
-        KotlinLightClassProvider stubProvider = KotlinLightClassProvider.createForPackageClass(getProject(), packageFqName, files);
+        KotlinJavaFileStubProvider stubProvider = KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, files);
         this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
     }
 

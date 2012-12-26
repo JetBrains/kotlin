@@ -76,7 +76,7 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
             PsiJavaFileStub javaFileStub = CachedValuesManager.getManager(getProject()).getCachedValue(
                     outermostClassOrObject,
                     JAVA_API_STUB,
-                    KotlinLightClassProvider.createForDeclaredTopLevelClass(outermostClassOrObject),
+                    KotlinJavaFileStubProvider.createForDeclaredTopLevelClass(outermostClassOrObject),
                     /*trackValue = */false);
 
             PsiClass psiClass = LightClassUtil.findClass(classFqName, javaFileStub);

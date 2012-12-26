@@ -51,15 +51,15 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.Collection;
 import java.util.Collections;
 
-public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFileStub> {
+public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFileStub> {
 
     @NotNull
-    public static KotlinLightClassProvider createForPackageClass(
+    public static KotlinJavaFileStubProvider createForPackageClass(
             @NotNull Project project,
             @NotNull final FqName packageFqName,
             @NotNull final Collection<JetFile> files
     ) {
-        return new KotlinLightClassProvider(project, packageFqName, files, new StubGenerationStrategy.NoDeclaredClasses() {
+        return new KotlinJavaFileStubProvider(project, packageFqName, files, new StubGenerationStrategy.NoDeclaredClasses() {
             @Override
             public void generate(GenerationState state) {
                 NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
@@ -70,7 +70,7 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
     }
 
     @NotNull
-    public static KotlinLightClassProvider createForDeclaredTopLevelClass(
+    public static KotlinJavaFileStubProvider createForDeclaredTopLevelClass(
             @NotNull final JetClassOrObject classOrObject
     ) {
         JetFile file = (JetFile) classOrObject.getContainingFile();
@@ -78,7 +78,7 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
 
         final FqName packageFqName = JetPsiUtil.getFQName(file);
 
-        return new KotlinLightClassProvider(classOrObject.getProject(), packageFqName, Collections.singletonList(file), new StubGenerationStrategy.WithDeclaredClasses() {
+        return new KotlinJavaFileStubProvider(classOrObject.getProject(), packageFqName, Collections.singletonList(file), new StubGenerationStrategy.WithDeclaredClasses() {
             @Override
             public void generate(GenerationState state) {
 
@@ -93,14 +93,14 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
         });
     }
 
-    private static final Logger LOG = Logger.getInstance(KotlinLightClassProvider.class);
+    private static final Logger LOG = Logger.getInstance(KotlinJavaFileStubProvider.class);
 
     private final Collection<JetFile> files;
     private final FqName packageFqName;
     private final Project project;
     private final StubGenerationStrategy stubGenerationStrategy;
 
-    private KotlinLightClassProvider(
+    private KotlinJavaFileStubProvider(
             @NotNull Project project,
             @NotNull FqName packageFqName,
             @NotNull Collection<JetFile> files,
