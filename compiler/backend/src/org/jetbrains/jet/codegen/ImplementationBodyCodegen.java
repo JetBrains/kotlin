@@ -107,7 +107,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isAnnotation = true;
                 signature.getInterfaces().add("java/lang/annotation/Annotation");
             }
-            else if (jetClass.hasModifier(JetTokens.ENUM_KEYWORD)) {
+            else if (jetClass.isEnum()) {
                 isAbstract = hasAbstractMembers(descriptor);
                 isEnum = true;
             }

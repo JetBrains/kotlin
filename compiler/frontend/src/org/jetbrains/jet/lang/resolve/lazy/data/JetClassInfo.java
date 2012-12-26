@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -36,10 +35,10 @@ public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
         else if (element.isTrait()) {
             this.kind = ClassKind.TRAIT;
         }
-        else if (element.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
+        else if (element.isAnnotation()) {
             this.kind = ClassKind.ANNOTATION_CLASS;
         }
-        else if (element.hasModifier(JetTokens.ENUM_KEYWORD)) {
+        else if (element.isEnum()) {
             this.kind = ClassKind.ENUM_CLASS;
         }
         else {

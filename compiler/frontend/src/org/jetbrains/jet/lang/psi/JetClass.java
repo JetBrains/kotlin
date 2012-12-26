@@ -142,6 +142,15 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
         return findChildByType(JetTokens.TRAIT_KEYWORD) != null;
     }
 
+    public boolean isEnum() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.isEnumClass();
+        }
+
+        return hasModifier(JetTokens.ENUM_KEYWORD);
+    }
+
     public boolean isAnnotation() {
         PsiJetClassStub stub = getStub();
         if (stub != null) {

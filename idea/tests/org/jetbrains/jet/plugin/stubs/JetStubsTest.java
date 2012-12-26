@@ -141,7 +141,7 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testSimpleEnumBuild() {
         doBuildTest("enum class Test { First\n Second\n }",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]\n" +
+                    "  CLASS:PsiJetClassStubImpl[enumClass name=Test fqn=Test superNames=[]]\n" +
                     "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
                     "    ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=First fqn=Test.First superNames=[]]\n" +
                     "    ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=Second fqn=Test.Second superNames=[]]\n"

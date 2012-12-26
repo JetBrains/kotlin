@@ -208,8 +208,8 @@ public class TypeHierarchyResolver {
     @NotNull
     private static ClassKind getClassKind(@NotNull JetClass jetClass) {
         if (jetClass.isTrait()) return ClassKind.TRAIT;
-        if (jetClass.hasModifier(JetTokens.ANNOTATION_KEYWORD)) return ClassKind.ANNOTATION_CLASS;
-        if (jetClass.hasModifier(JetTokens.ENUM_KEYWORD)) return ClassKind.ENUM_CLASS;
+        if (jetClass.isAnnotation()) return ClassKind.ANNOTATION_CLASS;
+        if (jetClass.isEnum()) return ClassKind.ENUM_CLASS;
         return ClassKind.CLASS;
     }
 

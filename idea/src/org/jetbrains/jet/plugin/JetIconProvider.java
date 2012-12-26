@@ -130,7 +130,7 @@ public class JetIconProvider extends IconProvider {
                 return JetIcons.TRAIT;
             }
 
-            Icon icon = jetClass.hasModifier(JetTokens.ENUM_KEYWORD) ? PlatformIcons.ENUM_ICON : JetIcons.CLASS;
+            Icon icon = jetClass.isEnum() ? PlatformIcons.ENUM_ICON : JetIcons.CLASS;
             if (jetClass instanceof JetEnumEntry) {
                 JetEnumEntry enumEntry = (JetEnumEntry) jetClass;
                 if (enumEntry.getPrimaryConstructorParameterList() == null) {
