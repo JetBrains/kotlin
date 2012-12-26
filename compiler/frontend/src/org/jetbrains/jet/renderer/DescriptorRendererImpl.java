@@ -293,7 +293,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             assert annotationClass != null;
 
             if (!excludedAnnotationClasses.contains(DescriptorUtils.getFQName(annotationClass).toSafe())) {
-                builder.append(renderType(annotation.getType())).append(" ");
+                builder.append(renderType(annotation.getType()));
+                if (verbose) {
+                    builder.append("(").append(StringUtil.join(DescriptorUtils.getSortedValueArguments(annotation), ", ")).append(")");
+                }
+                builder.append(" ");
             }
         }
     }
