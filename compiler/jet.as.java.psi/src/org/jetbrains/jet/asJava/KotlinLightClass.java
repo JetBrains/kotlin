@@ -16,29 +16,38 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.AbstractLightClass;
+import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.JetClassObject;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.List;
+
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class KotlinLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
@@ -52,27 +61,30 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
     }
 
     private final FqName classFqName; // FqName of (possibly inner) class
-    private final JetClassOrObject outermostClassOrObject; // outermost parent of this class (may be equal to this class itself)
+    private final JetClassOrObject classOrObject;
     private PsiClass delegate;
+
+    @Nullable
+    private PsiModifierList modifierList;
 
     private KotlinLightClass(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
         super(manager, JetLanguage.INSTANCE);
         this.classFqName = name;
-        this.outermostClassOrObject = getOutermostClassOrObject(classOrObject);
-        assert outermostClassOrObject != null : "Attempt to build a light class for a local class: " + classOrObject.getText();
+        this.classOrObject = classOrObject;
     }
 
     @NotNull
     @Override
     public PsiElement copy() {
-        // It's fine to pass outermostClassOrObject, because getOutermostClassOrObject() will return the same thing
-        return new KotlinLightClass(getManager(), classFqName, outermostClassOrObject);
+        return new KotlinLightClass(getManager(), classFqName, classOrObject);
     }
 
     @NotNull
     @Override
     public PsiClass getDelegate() {
         if (delegate == null) {
+            JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
+            assert outermostClassOrObject != null : "Attempt to build a light class for a local class: " + classOrObject.getText();
             PsiJavaFileStub javaFileStub = CachedValuesManager.getManager(getProject()).getCachedValue(
                     outermostClassOrObject,
                     JAVA_API_STUB,
@@ -116,7 +128,7 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        return outermostClassOrObject;
+        return classOrObject;
     }
 
     @Override
@@ -153,6 +165,129 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
 
     @Override
     public PsiFile getContainingFile() {
-        return outermostClassOrObject.getContainingFile();
+        return classOrObject.getContainingFile();
+    }
+
+    @Nullable
+    @Override
+    public String getName() {
+        return classFqName.shortName().getName();
+    }
+
+    @Nullable
+    @Override
+    public String getQualifiedName() {
+        return classFqName.getFqName();
+    }
+
+    @NotNull
+    @Override
+    public PsiModifierList getModifierList() {
+        if (modifierList == null) {
+            modifierList = new LightModifierList(getManager(), JetLanguage.INSTANCE, computeModifiers());
+        }
+        return modifierList;
+    }
+
+    @NotNull
+    private String[] computeModifiers() {
+        JetModifierList jetModifierList = classOrObject.getModifierList();
+        if (jetModifierList == null) {
+            return new String[0];
+        }
+        Collection<String> psiModifiers = Sets.newHashSet();
+
+        // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
+        List<Pair<JetKeywordToken, String>> jetTokenToPsiModifier = Lists.newArrayList(
+                Pair.create(PUBLIC_KEYWORD, PsiModifier.PUBLIC),
+                Pair.create(INTERNAL_KEYWORD, PsiModifier.PUBLIC),
+                Pair.create(PROTECTED_KEYWORD, PsiModifier.PROTECTED),
+                Pair.create(PRIVATE_KEYWORD, PsiModifier.PRIVATE),
+                Pair.create(ABSTRACT_KEYWORD, PsiModifier.ABSTRACT),
+                Pair.create(FINAL_KEYWORD, PsiModifier.FINAL));
+
+        for (Pair<JetKeywordToken, String> tokenAndModifier : jetTokenToPsiModifier) {
+            if (jetModifierList.hasModifier(tokenAndModifier.first)) {
+                psiModifiers.add(tokenAndModifier.second);
+            }
+        }
+
+        // FINAL
+        if (!jetModifierList.hasModifier(OPEN_KEYWORD) && !jetModifierList.hasModifier(ABSTRACT_KEYWORD)) {
+            psiModifiers.add(PsiModifier.FINAL);
+        }
+
+        // STATIC
+        if (classOrObject.getParent() != classOrObject.getContainingFile()
+                //TODO: && !jetModifierList.hasModifier(INNER_KEYWORD)
+                ) {
+            psiModifiers.add(PsiModifier.STATIC);
+        }
+
+        return psiModifiers.toArray(new String[psiModifiers.size()]);
+    }
+
+    @Override
+    public boolean hasModifierProperty(@NonNls @NotNull String name) {
+        return getModifierList().hasModifierProperty(name);
+    }
+
+    @Override
+    public boolean isDeprecated() {
+        JetModifierList jetModifierList = classOrObject.getModifierList();
+        if (jetModifierList == null) {
+            return false;
+        }
+
+        ClassDescriptor deprecatedAnnotation = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
+        String deprecatedName = deprecatedAnnotation.getName().getName();
+        FqNameUnsafe deprecatedFqName = DescriptorUtils.getFQName(deprecatedAnnotation);
+
+        for (JetAnnotationEntry annotationEntry : jetModifierList.getAnnotationEntries()) {
+            JetTypeReference typeReference = annotationEntry.getTypeReference();
+            if (typeReference == null) continue;
+
+            JetTypeElement typeElement = typeReference.getTypeElement();
+            if (typeElement == null) continue;
+
+            // typeElement.getText() is either
+            //   simple name => we just compare it to "deprecated"
+            //   qualified name => we compare to FqName, there may be spaces, comments etc, we do not support these cases
+            //   function type, etc => comparisons below fail
+            String text = typeElement.getText();
+            if (deprecatedFqName.getFqName().equals(text)) return true;
+            if (deprecatedName.equals(text)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isInterface() {
+        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
+    }
+
+    @Override
+    public boolean isAnnotationType() {
+        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isAnnotation();
+    }
+
+    @Override
+    public boolean isEnum() {
+        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isEnum();
+    }
+
+    @Override
+    public boolean hasTypeParameters() {
+        return classOrObject instanceof JetClass && !((JetClass) classOrObject).getTypeParameters().isEmpty();
+    }
+
+    @Override
+    public boolean isValid() {
+        return classOrObject.isValid();
+    }
+
+    @Override
+    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+        return super.setName(name); // TODO
     }
 }
