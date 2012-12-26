@@ -2315,6 +2315,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/NoAmbiguityForDifferentFunctionTypes.kt");
                 }
                 
+                @TestMetadata("subtypeForInvariantWithErrorGenerics.kt")
+                public void testSubtypeForInvariantWithErrorGenerics() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/reportingImprovements/subtypeForInvariantWithErrorGenerics.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/inference/varargs")

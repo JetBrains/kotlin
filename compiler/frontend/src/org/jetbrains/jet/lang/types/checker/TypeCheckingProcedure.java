@@ -197,7 +197,9 @@ public class TypeCheckingProcedure {
             JetType superIn = getInType(parameter, superArgument);
             JetType superOut = getOutType(parameter, superArgument);
 
-            if (parameter.getVariance() == INVARIANT && subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
+            boolean argumentIsErrorType = ErrorUtils.isErrorType(subArgument.getType()) || ErrorUtils.isErrorType(superArgument.getType());
+            if (!argumentIsErrorType && parameter.getVariance() == INVARIANT
+                    && subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
                 if (!constraints.assertEqualTypes(subArgument.getType(), superArgument.getType(), this)) return false;
             }
             else {
