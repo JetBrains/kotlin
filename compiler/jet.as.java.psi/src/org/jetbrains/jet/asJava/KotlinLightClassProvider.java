@@ -22,8 +22,13 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.ClassFileViewProvider;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiManagerImpl;
+import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
+import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -31,9 +36,10 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.BuiltinToJavaTypesMapping;
+import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -50,14 +56,14 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
     @NotNull
     public static KotlinLightClassProvider createForPackageClass(
             @NotNull Project project,
-            @NotNull FqName packageFqName,
-            @NotNull Collection<JetFile> files
+            @NotNull final FqName packageFqName,
+            @NotNull final Collection<JetFile> files
     ) {
         return new KotlinLightClassProvider(project, packageFqName, files, new StubGenerationStrategy.NoDeclaredClasses() {
             @Override
-            public void generate(GenerationState state, GenerationStrategy strategy) {
-                KotlinCodegenFacade.compileCorrectFiles(state, strategy, CompilationErrorHandler.THROW_EXCEPTION);
-
+            public void generate(GenerationState state) {
+                NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
+                codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                 state.getFactory().files();
             }
         });
@@ -74,7 +80,7 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
 
         return new KotlinLightClassProvider(classOrObject.getProject(), packageFqName, Collections.singletonList(file), new StubGenerationStrategy.WithDeclaredClasses() {
             @Override
-            public void generate(GenerationState state, GenerationStrategy strategy) {
+            public void generate(GenerationState state) {
 
                 NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(packageFqName, state.getFiles());
                 NamespaceDescriptor namespaceDescriptor =
@@ -118,23 +124,29 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
             throw new IllegalStateException("failed to analyze: " + error, error);
         }
 
-        PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.getFqName(), true);
-
+        PsiJavaFileStub javaFileStub = createJavaFileStub(getRepresentativeVirtualFile(files));
         try {
             Stack<StubElement> stubStack = new Stack<StubElement>();
-            ClassBuilderFactory builderFactory = new KotlinLightClassBuilderFactory(stubStack);
+            stubStack.push(javaFileStub);
+
             GenerationState state = new GenerationState(
                     project,
-                    builderFactory,
+                    new KotlinLightClassBuilderFactory(stubStack),
                     Progress.DEAF,
                     context.getBindingContext(),
                     Lists.newArrayList(files),
                     BuiltinToJavaTypesMapping.ENABLED,
                     /*not-null assertions*/false, false,
                     /*generateDeclaredClasses=*/stubGenerationStrategy.generateDeclaredClasses());
-            GenerationStrategy strategy = new LightClassGenerationStrategy(new LightVirtualFile(), stubStack, javaFileStub);
+            state.beforeCompile();
 
-            stubGenerationStrategy.generate(state, strategy);
+            stubGenerationStrategy.generate(state);
+
+            StubElement pop = stubStack.pop();
+            if (pop != javaFileStub) {
+                LOG.error("Unbalanced stack operations: " + pop);
+            }
+
         }
         catch (ProcessCanceledException e) {
             throw e;
@@ -144,7 +156,42 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
             throw e;
         }
 
-        return Result.<PsiJavaFileStub>create(javaFileStub, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+        return Result.create(javaFileStub, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+    }
+
+    @NotNull
+    private PsiJavaFileStub createJavaFileStub(VirtualFile virtualFile) {
+        PsiManager manager = PsiManager.getInstance(project);
+
+        final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.getFqName(), true);
+        javaFileStub.setPsiFactory(new ClsWrapperStubPsiFactory());
+
+        ClsFileImpl fakeFile =
+                new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, virtualFile)) {
+                    @NotNull
+                    @Override
+                    public PsiClassHolderFileStub getStub() {
+                        return javaFileStub;
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getPackageName() {
+                        return packageFqName.getFqName();
+                    }
+                };
+
+        fakeFile.setPhysical(false);
+        javaFileStub.setPsi(fakeFile);
+        return javaFileStub;
+    }
+
+    @NotNull
+    private static VirtualFile getRepresentativeVirtualFile(@NotNull Collection<JetFile> files) {
+        JetFile firstFile = files.iterator().next();
+        VirtualFile virtualFile = files.size() == 1 ? firstFile.getVirtualFile() : new LightVirtualFile();
+        assert virtualFile != null : "No virtual file for " + firstFile;
+        return virtualFile;
     }
 
     private static void checkForBuiltIns(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
@@ -168,7 +215,7 @@ public class KotlinLightClassProvider implements CachedValueProvider<PsiJavaFile
 
     private interface StubGenerationStrategy {
         boolean generateDeclaredClasses();
-        void generate(GenerationState state, GenerationStrategy strategy);
+        void generate(GenerationState state);
 
         abstract class NoDeclaredClasses implements StubGenerationStrategy {
             @Override
