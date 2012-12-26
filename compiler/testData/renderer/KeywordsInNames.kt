@@ -14,15 +14,15 @@ val `in` = `class`<`trait`>(null)
 fun `trait`.`fun`(`false`: `trait`): `trait`
 
 //internal final annotation class `true` : jet.Annotation defined in root package
-//public ctor `true`() defined in `true`
+//public constructor `true`() defined in `true`
 //internal final val `val` : jet.Int defined in root package
 //`true` internal trait `trait` defined in root package
 //internal final class `class`<`in`> defined in root package
-//public ctor `class`<`in`>(p : `in`?) defined in `class`
+//public constructor `class`<`in`>(p : `in`?) defined in `class`
 //<`in`> defined in `class`
 //value-parameter val p : `in`? defined in `class`.<init>
 //internal final class `class` defined in `class`
-//public ctor `class`() defined in `class`.`class`
+//public constructor `class`() defined in `class`.`class`
 //internal final val `is` : `class`.`class` defined in root package
 //internal final val `in` : `class`<`trait`> defined in root package
 //internal final fun `trait`.`fun`(`false` : `trait`) : `trait` defined in root package

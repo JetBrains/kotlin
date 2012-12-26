@@ -30,25 +30,25 @@ public trait TwoUpperBounds<T> where T: Number, T: Any
 
 //package rendererTest defined in root package
 //internal final annotation class TheAnnotation : jet.Annotation defined in rendererTest
-//public ctor TheAnnotation() defined in rendererTest.TheAnnotation
+//public constructor TheAnnotation() defined in rendererTest.TheAnnotation
 //rendererTest.TheAnnotation public open class TheClass<out T : jet.Int, X> defined in rendererTest
-//public ctor TheClass<out T : jet.Int, X>() defined in rendererTest.TheClass
+//public constructor TheClass<out T : jet.Int, X>() defined in rendererTest.TheClass
 //<out T : jet.Int> defined in rendererTest.TheClass
 //<X> defined in rendererTest.TheClass
 //private final val privateVal : jet.Int defined in rendererTest.TheClass
 //internal final val shouldBeFinal : jet.Int defined in rendererTest.TheClass
 //protected abstract fun foo() : Unit defined in rendererTest.TheClass
 //private final class Inner defined in rendererTest.TheClass
-//public ctor Inner() defined in rendererTest.TheClass.Inner
+//public constructor Inner() defined in rendererTest.TheClass.Inner
 //internal final class InternalClass defined in rendererTest
-//public ctor InternalClass() defined in rendererTest.InternalClass
+//public constructor InternalClass() defined in rendererTest.InternalClass
 //internal trait TheTrait defined in rendererTest
 //internal abstract fun abstractFun() : Unit defined in rendererTest.TheTrait
 //class object : rendererTest.TheClass<jet.Int, jet.Int> defined in rendererTest.TheTrait
-//private ctor <class-object-for-TheTrait>() defined in rendererTest.TheTrait.<class-object-for-TheTrait>
+//private constructor <class-object-for-TheTrait>() defined in rendererTest.TheTrait.<class-object-for-TheTrait>
 //internal final fun classObjectFunction() : jet.Int defined in rendererTest.TheTrait.<class-object-for-TheTrait>
 //public final class WithReified<reified A, reified out B> defined in rendererTest
-//public ctor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
+//public constructor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
 //<reified A> defined in rendererTest.WithReified
 //<reified out B> defined in rendererTest.WithReified
 //public trait TwoUpperBounds<T> where T : jet.Number, T : jet.Any defined in rendererTest

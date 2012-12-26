@@ -435,7 +435,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderAnnotations(constructor, builder);
         renderVisibility(constructor.getVisibility(), builder);
 
-        builder.append(renderKeyword("ctor")).append(" ");
+        builder.append(renderKeyword("constructor")).append(" ");
 
         ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
         renderName(classDescriptor, builder);

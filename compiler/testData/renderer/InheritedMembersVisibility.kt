@@ -21,7 +21,7 @@ class B : A {
 //private abstract fun <set-int>(<set-?> : jet.Int) : Unit defined in A
 //protected abstract fun f() : jet.Int defined in A
 //internal final class B : A defined in root package
-//public ctor B() defined in B
+//public constructor B() defined in B
 //public open var int : jet.Int defined in B
 //public open fun <get-int>() : jet.Int defined in B
 //private open fun <set-int>(<set-?> : jet.Int) : Unit defined in B
