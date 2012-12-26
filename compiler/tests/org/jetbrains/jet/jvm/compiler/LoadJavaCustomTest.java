@@ -49,6 +49,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceAndBindingContextFromBinary;
+import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 
 /**
  * @author Pavel Talanov
@@ -73,16 +74,14 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
             }
         });
         files.add(ExpectedLoadErrorsUtil.ANNOTATION_SOURCE_FILE);
-        File expected = new File(expectedFileName);
-        File tmpDir = JetTestUtils.tmpDir(expected.getName());
+        File expectedFile = new File(expectedFileName);
+        File tmpDir = JetTestUtils.tmpDir(expectedFile.getName());
 
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
                 = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
                                                                              ConfigurationKind.JDK_ONLY);
 
-        NamespaceDescriptor javaNamespace = javaNamespaceAndBindingContext.first;
-        //NOTE: comparing namespace to file (hack)
-        AbstractLoadJavaTest.checkLoadedNamespaces(expected, javaNamespace, javaNamespaceAndBindingContext);
+        AbstractLoadJavaTest.checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
     }
 
     public void testPackageLocalVisibility() throws Exception {
@@ -172,8 +171,8 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
                     LoadDescriptorUtil.TEST_PACKAGE_FQNAME, DescriptorSearchRule.INCLUDE_KOTLIN);
             assert namespaceDescriptor != null;
 
-            NamespaceComparator.compareNamespaces(namespaceDescriptor, namespaceDescriptor,
-                                                  NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT, new File(dir, "expected.txt"));
+            compareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
+                                     new File(dir, "expected.txt"));
 
             ExpectedLoadErrorsUtil.checkForLoadErrors(namespaceDescriptor, bindingTrace.getBindingContext());
         }

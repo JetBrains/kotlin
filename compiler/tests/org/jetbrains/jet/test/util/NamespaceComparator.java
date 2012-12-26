@@ -130,18 +130,42 @@ public class NamespaceComparator {
         }
     }
 
+    public static void compareNamespaceWithFile(
+            @NotNull NamespaceDescriptor actualNamespace,
+            @NotNull Configuration configuration,
+            @NotNull File txtFile
+    ) {
+        doCompareNamespaces(null, actualNamespace, configuration, txtFile);
+    }
+
     public static void compareNamespaces(
             @NotNull NamespaceDescriptor expectedNamespace,
             @NotNull NamespaceDescriptor actualNamespace,
             @NotNull Configuration configuration,
             @Nullable File txtFile
     ) {
+        if (expectedNamespace == actualNamespace) {
+            throw new IllegalArgumentException("Don't invoke this method with expectedNamespace == actualNamespace." +
+                                               "Invoke compareNamespaceWithFile() instead.");
+        }
+        doCompareNamespaces(expectedNamespace, actualNamespace, configuration, txtFile);
+    }
+
+    private static void doCompareNamespaces(
+            @Nullable NamespaceDescriptor expectedNamespace,
+            @NotNull NamespaceDescriptor actualNamespace,
+            @NotNull Configuration configuration,
+            @Nullable File txtFile
+    ) {
         NamespaceComparator comparator = new NamespaceComparator(configuration);
 
-        String expectedSerialized = comparator.serializeRecursively(expectedNamespace);
         String actualSerialized = comparator.serializeRecursively(actualNamespace);
 
-        Assert.assertEquals("Expected and actual namespaces differ", expectedSerialized, actualSerialized);
+        if (expectedNamespace != null) {
+            String expectedSerialized = comparator.serializeRecursively(expectedNamespace);
+
+            Assert.assertEquals("Expected and actual namespaces differ", expectedSerialized, actualSerialized);
+        }
 
         if (txtFile != null) {
             try {
@@ -151,7 +175,7 @@ public class NamespaceComparator {
                 }
                 String expected = FileUtil.loadFile(txtFile, true);
 
-                // compare with hardcopy: make sure nothing is lost in output
+                // compare with hard copy: make sure nothing is lost in output
                 Assert.assertEquals("Expected and actual namespaces differ from " + txtFile.getName(), expected, actualSerialized);
             }
             catch (IOException e) {

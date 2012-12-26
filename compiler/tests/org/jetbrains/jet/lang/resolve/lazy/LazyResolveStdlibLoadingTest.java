@@ -59,9 +59,9 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, stdlibEnvironment);
 
         for (Name name : namespaceShortNames) {
-            NamespaceDescriptor a = module.getRootNamespace().getMemberScope().getNamespace(name);
-            NamespaceDescriptor b = lazyModule.getRootNamespace().getMemberScope().getNamespace(name);
-            NamespaceComparator.compareNamespaces(a, b, NamespaceComparator.RECURSIVE, null);
+            NamespaceDescriptor eager = module.getRootNamespace().getMemberScope().getNamespace(name);
+            NamespaceDescriptor lazy = lazyModule.getRootNamespace().getMemberScope().getNamespace(name);
+            NamespaceComparator.compareNamespaces(eager, lazy, NamespaceComparator.RECURSIVE, null);
         }
     }
 

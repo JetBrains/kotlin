@@ -31,6 +31,7 @@ import java.util.Arrays;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.analyzeKotlinAndLoadTestNamespace;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceAndBindingContextFromBinary;
 import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
+import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
 /**
@@ -46,23 +47,22 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
-        NamespaceDescriptor nsa = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-        Pair<NamespaceDescriptor, BindingContext> nsbAndBindingContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
+        NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
                 Arrays.asList(javaFile, ExpectedLoadErrorsUtil.ANNOTATION_SOURCE_FILE),
                 tmpdir, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
-        checkLoadedNamespaces(txtFile, nsa, nsbAndBindingContext);
+        checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext);
     }
 
-    public static void checkLoadedNamespaces(
-            File txtFile,
-            NamespaceDescriptor nsa,
-            Pair<NamespaceDescriptor, BindingContext> nsbAndBindingContext
+    private static void checkForLoadErrorsAndCompare(
+            @NotNull Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext,
+            @NotNull Runnable compareNamespacesRunnable
     ) {
-        NamespaceDescriptor nsb = nsbAndBindingContext.first;
+        NamespaceDescriptor javaNamespace = javaNamespaceAndContext.first;
 
         boolean fail = false;
         try {
-            ExpectedLoadErrorsUtil.checkForLoadErrors(nsb, nsbAndBindingContext.second);
+            ExpectedLoadErrorsUtil.checkForLoadErrors(javaNamespace, javaNamespaceAndContext.second);
         }
         catch (ComparisonFailure e) {
             // to let the next check run even if this one failed
@@ -76,9 +76,34 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             fail = true;
         }
 
-        compareNamespaces(nsa, nsb, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+        compareNamespacesRunnable.run();
         if (fail) {
             fail("See error above");
         }
+    }
+
+    public static void checkLoadedNamespaces(
+            final File txtFile,
+            final NamespaceDescriptor kotlinNamespace,
+            final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
+    ) {
+        checkForLoadErrorsAndCompare(javaNamespaceAndContext, new Runnable() {
+            @Override
+            public void run() {
+                compareNamespaces(kotlinNamespace, javaNamespaceAndContext.first, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+            }
+        });
+    }
+
+    public static void checkJavaNamespace(
+            final File txtFile,
+            final Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext
+    ) {
+        checkForLoadErrorsAndCompare(javaNamespaceAndContext, new Runnable() {
+            @Override
+            public void run() {
+                compareNamespaceWithFile(javaNamespaceAndContext.first, DONT_INCLUDE_METHODS_OF_OBJECT, txtFile);
+            }
+        });
     }
 }

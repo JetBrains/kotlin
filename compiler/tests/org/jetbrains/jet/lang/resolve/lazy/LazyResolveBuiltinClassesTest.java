@@ -25,6 +25,8 @@ import org.junit.Test;
 
 import java.io.File;
 
+import static org.jetbrains.jet.test.util.NamespaceComparator.*;
+
 /**
  * @author abreslav
  */
@@ -37,8 +39,6 @@ public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
     @Test
     public void testJetStandardLibrary() throws Exception {
         NamespaceDescriptor builtInsPackage = KotlinBuiltIns.getInstance().getBuiltInsPackage();
-        NamespaceComparator.compareNamespaces(builtInsPackage, builtInsPackage,
-                                              NamespaceComparator.RECURSIVE, new File("compiler/testData/builtin-classes.txt"));
-
+        compareNamespaceWithFile(builtInsPackage, RECURSIVE, new File("compiler/testData/builtin-classes.txt"));
     }
 }

@@ -28,7 +28,7 @@ import java.io.File;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
-import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
+import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 
 /**
  * @author Pavel Talanov
@@ -48,7 +48,7 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
         NamespaceDescriptor namespaceFromClass =
                 compileKotlinAndLoadTestNamespaceDescriptorFromBinary(kotlinFile, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
 
-        compareNamespaces(namespaceFromClass, namespaceFromClass, DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
+        compareNamespaceWithFile(namespaceFromClass, DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
     }
 
     private void loadDescriptorsFromSourceAndCompareWithTxt(@NotNull File expectedFile, @NotNull File kotlinFile)
@@ -57,8 +57,8 @@ public final class LoadKotlinCustomTest extends TestCaseWithTmpdir {
         NamespaceDescriptor namespaceFromSource = exhaust.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
                                                                                   TEST_PACKAGE_FQNAME);
         assert namespaceFromSource != null;
-        compareNamespaces(namespaceFromSource, namespaceFromSource, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.checkPrimaryConstructors(true),
-                          expectedFile);
+        compareNamespaceWithFile(namespaceFromSource, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.checkPrimaryConstructors(true),
+                                 expectedFile);
     }
 
     private void doTest(

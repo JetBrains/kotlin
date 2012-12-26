@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
-import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
+import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 
 public final class StaticMembersJavaDescriptorResolverTest extends AbstractJavaResolverDescriptorTest {
 
@@ -59,15 +59,14 @@ public final class StaticMembersJavaDescriptorResolverTest extends AbstractJavaR
         compileJavaFile(name + ".java");
         NamespaceDescriptor namespaceWithClass = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE));
         Assert.assertNotNull(namespaceWithClass);
-        compareNamespaces(namespaceWithClass, namespaceWithClass, DONT_INCLUDE_METHODS_OF_OBJECT, new File(PATH + name + "_non_static.txt"));
+        compareNamespaceWithFile(namespaceWithClass, DONT_INCLUDE_METHODS_OF_OBJECT, new File(PATH + name + "_non_static.txt"));
 
         NamespaceDescriptor namespaceWithStaticMembers = javaDescriptorResolver.resolveNamespace(new FqName(DEFAULT_PACKAGE + "." + name));
         File fileWithStaticMembers = new File(PATH + name + "_static.txt");
         if (namespaceWithStaticMembers == null) {
             Assert.assertTrue(!fileWithStaticMembers.exists());
         } else {
-            compareNamespaces(namespaceWithStaticMembers, namespaceWithStaticMembers, DONT_INCLUDE_METHODS_OF_OBJECT,
-                              fileWithStaticMembers);
+            compareNamespaceWithFile(namespaceWithStaticMembers, DONT_INCLUDE_METHODS_OF_OBJECT, fileWithStaticMembers);
         }
     }
 }
