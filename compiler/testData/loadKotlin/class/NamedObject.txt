@@ -1,6 +1,6 @@
 package test
 
-public final val Obj : test.Obj
+public val Obj : test.Obj
 
 public object Obj {
     /*primary*/ private constructor Obj()

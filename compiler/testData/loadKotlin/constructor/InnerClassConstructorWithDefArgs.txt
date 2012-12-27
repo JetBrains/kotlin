@@ -1,8 +1,9 @@
-namespace test
+package test
 
-internal final class test.A : jet.Any {
-    public final /*primary constructor*/ fun <init>(): test.A
-    internal final class test.A.TestConstructor : jet.Any {
-        public final /*primary constructor*/ fun <init>(/*0*/ p: jet.Int = ?): test.A.TestConstructor
+internal final class A {
+    /*primary*/ public constructor A()
+    
+    internal final class TestConstructor {
+        /*primary*/ public constructor TestConstructor(/*0*/ p : jet.Int = ...)
     }
 }

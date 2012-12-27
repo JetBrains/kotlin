@@ -1,3 +1,3 @@
 package test
 
-internal final val jet.Int.ggg : java.lang.CharSequence
+internal val jet.Int.ggg : java.lang.CharSequence

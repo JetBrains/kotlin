@@ -1,6 +1,6 @@
 package test
 
-internal final fun </*0*/ T> foo() : Unit where T : test.Bar, T : test.Foo
+internal fun </*0*/ T> foo() : Unit where T : test.Bar, T : test.Foo
 
 internal trait Bar {
 }

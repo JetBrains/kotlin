@@ -1,7 +1,7 @@
 package test
 
-public final val Obj : test.Obj
-internal final val x : jet.Int
+public val Obj : test.Obj
+internal val x : jet.Int
 
 public object Obj {
     /*primary*/ private constructor Obj()

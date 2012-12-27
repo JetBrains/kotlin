@@ -1,6 +1,6 @@
 package test
 
-public final val Outer : test.Outer
+public val Outer : test.Outer
 
 public object Outer {
     /*primary*/ private constructor Outer()

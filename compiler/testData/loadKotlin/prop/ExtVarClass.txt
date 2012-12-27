@@ -1,3 +1,3 @@
 package test
 
-internal final var </*0*/ P> P.anotherJavaClass : java.lang.Class<P>
+internal var </*0*/ P> P.anotherJavaClass : java.lang.Class<P>

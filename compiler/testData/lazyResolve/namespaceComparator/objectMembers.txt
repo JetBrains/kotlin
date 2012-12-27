@@ -1,6 +1,6 @@
 package test
 
-internal final val SomeObject : test.SomeObject
+internal val SomeObject : test.SomeObject
 
 internal object SomeObject {
     /*primary*/ private constructor SomeObject()

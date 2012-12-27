@@ -5,8 +5,8 @@ internal final class A {
 }
 
 package p {
-    internal final fun foo() : Unit
-    internal final fun foo(/*0*/ a : test.p.C) : Unit
+    internal fun foo() : Unit
+    internal fun foo(/*0*/ a : test.p.C) : Unit
     
     internal final class C {
         /*primary*/ public constructor C()

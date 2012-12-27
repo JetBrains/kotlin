@@ -1,4 +1,4 @@
 package test
 
-internal final val x : jet.Int
-internal final fun f() : jet.Int
+internal val x : jet.Int
+internal fun f() : jet.Int
