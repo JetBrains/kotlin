@@ -170,6 +170,13 @@ public class KotlinLightClass extends AbstractLightClass implements JetJavaMirro
 
     @Nullable
     @Override
+    public PsiClass getContainingClass() {
+        if (classOrObject.getParent() == classOrObject.getContainingFile()) return null;
+        return super.getContainingClass();
+    }
+
+    @Nullable
+    @Override
     public String getName() {
         return classFqName.shortName().getName();
     }
