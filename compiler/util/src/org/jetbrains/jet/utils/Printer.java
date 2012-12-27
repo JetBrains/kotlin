@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 */
 public class Printer {
     private static final String INDENTATION_UNIT = "    ";
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
     private final StringBuilder out;
     private final int maxBlankLines;
 
@@ -49,7 +51,7 @@ public class Printer {
     private void printLineSeparator() {
         if (blankLineCountIncludingCurrent <= maxBlankLines) {
             blankLineCountIncludingCurrent++;
-            out.append(System.getProperty("line.separator"));
+            out.append(LINE_SEPARATOR);
         }
     }
 
