@@ -129,7 +129,8 @@ public final class DescriptorLookupConverter {
             }
 
             if (functionDescriptor.getValueParameters().size() == 1
-                    && KotlinBuiltIns.getInstance().isFunctionType(functionDescriptor.getValueParameters().get(0).getType())) {
+                    && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
+                    functionDescriptor.getValueParameters().get(0).getType())) {
                 return PARAMS_BRACES_FUNCTION_HANDLER;
             }
 

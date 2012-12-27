@@ -97,7 +97,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (bodyExpression == null) return null;
 
         JetType expectedType = context.expectedType;
-        boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionType(expectedType);
+        boolean functionTypeExpected = expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
+                expectedType);
 
         SimpleFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
         JetType safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected);
@@ -107,7 +108,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         List<JetType> valueParametersTypes = DescriptorUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
                 Collections.<AnnotationDescriptor>emptyList(), receiver, valueParametersTypes, safeReturnType);
-        if (expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionType(expectedType)) {
+        if (expectedType != NO_EXPECTED_TYPE && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
         }

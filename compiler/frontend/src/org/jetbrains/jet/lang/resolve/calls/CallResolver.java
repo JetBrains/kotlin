@@ -50,7 +50,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -231,7 +230,7 @@ public class CallResolver {
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
                 JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace); // We are actually expecting a function, but there seems to be no easy way of expressing this
 
-                if (!KotlinBuiltIns.getInstance().isFunctionType(calleeType)) {
+                if (!KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(calleeType)) {
 //                    checkTypesWithNoCallee(trace, scope, call);
                     if (!ErrorUtils.isErrorType(calleeType)) {
                         context.trace.report(CALLEE_NOT_A_FUNCTION.on(calleeExpression, calleeType));

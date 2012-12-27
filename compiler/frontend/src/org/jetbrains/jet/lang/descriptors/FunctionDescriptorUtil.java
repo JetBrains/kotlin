@@ -127,7 +127,7 @@ public class FunctionDescriptorUtil {
             @NotNull Visibility visibility
     ) {
 
-        assert KotlinBuiltIns.getInstance().isFunctionType(functionType);
+        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(functionType);
         functionDescriptor.initialize(KotlinBuiltIns.getInstance().getReceiverType(functionType),
                                       expectedThisObject,
                                       Collections.<TypeParameterDescriptorImpl>emptyList(),
@@ -142,7 +142,7 @@ public class FunctionDescriptorUtil {
     }
 
     public static FunctionDescriptor getInvokeFunction(@NotNull JetType functionType) {
-        assert KotlinBuiltIns.getInstance().isFunctionType(functionType);
+        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(functionType);
 
         ClassifierDescriptor classDescriptorForFunction = functionType.getConstructor().getDeclarationDescriptor();
         assert classDescriptorForFunction instanceof ClassDescriptor;

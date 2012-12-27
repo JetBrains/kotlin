@@ -846,13 +846,21 @@ public class KotlinBuiltIns {
         return builder.build();
     }
 
+    public boolean isFunctionOrExtensionFunctionType(@NotNull JetType type) {
+        return isFunctionType(type) || isExtensionFunctionType(type);
+    }
+
     public boolean isFunctionType(@NotNull JetType type) {
-        return setContainsClassOf(functionClassesSet, type) || setContainsClassOf(extensionFunctionClassesSet, type);
+        return setContainsClassOf(functionClassesSet, type);
+    }
+
+    public boolean isExtensionFunctionType(@NotNull JetType type) {
+        return setContainsClassOf(extensionFunctionClassesSet, type);
     }
 
     @Nullable
     public JetType getReceiverType(@NotNull JetType type) {
-        assert isFunctionType(type) : type;
+        assert isFunctionOrExtensionFunctionType(type) : type;
         if (setContainsClassOf(extensionFunctionClassesSet, type)) {
             return type.getArguments().get(0).getType();
         }
@@ -861,7 +869,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
-        assert isFunctionType(type);
+        assert isFunctionOrExtensionFunctionType(type);
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         List<TypeProjection> parameterTypes = getParameterTypeProjectionsFromFunctionType(type);
         for (int i = 0; i < parameterTypes.size(); i++) {
@@ -876,14 +884,14 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getReturnTypeFromFunctionType(@NotNull JetType type) {
-        assert isFunctionType(type);
+        assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         return arguments.get(arguments.size() - 1).getType();
     }
 
     @NotNull
     public List<TypeProjection> getParameterTypeProjectionsFromFunctionType(@NotNull JetType type) {
-        assert isFunctionType(type);
+        assert isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         int first = setContainsClassOf(extensionFunctionClassesSet, type) ? 1 : 0;
         int last = arguments.size() - 2;

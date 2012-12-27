@@ -178,7 +178,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         if (ErrorUtils.isErrorType(subjectType)) return;
 
         if (constrainingType == PLACEHOLDER_FUNCTION_TYPE) {
-            if (!KotlinBuiltIns.getInstance().isFunctionType(subjectType)) {
+            if (!KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(subjectType)) {
                 errorConstraintPositions.add(constraintPosition);
             }
             return;

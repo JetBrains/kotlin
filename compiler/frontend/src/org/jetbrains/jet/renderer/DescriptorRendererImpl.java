@@ -166,7 +166,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         else if (KotlinBuiltIns.getInstance().isUnit(type)) {
             return KotlinBuiltIns.UNIT_ALIAS + (type.isNullable() ? "?" : "");
         }
-        else if (KotlinBuiltIns.getInstance().isFunctionType(type)) {
+        else if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type)) {
             return renderFunctionType(type);
         }
         return renderDefaultType(type);
