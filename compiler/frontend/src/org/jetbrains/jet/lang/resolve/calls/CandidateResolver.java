@@ -232,7 +232,7 @@ public class CandidateResolver {
 
         context.trace.get(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement());
 
-        ConstraintSystemImpl constraintsSystem = new ConstraintSystemImpl();
+        ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
 
         // If the call is recursive, e.g.
         //   fun foo<T>(t : T) : T = foo(t)
@@ -244,7 +244,7 @@ public class CandidateResolver {
 
 
         for (TypeParameterDescriptor typeParameterDescriptor : candidateWithFreshVariables.getTypeParameters()) {
-            constraintsSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
+            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
         }
 
         TypeSubstitutor substituteDontCare = ConstraintSystemWithPriorities
@@ -263,7 +263,7 @@ public class CandidateResolver {
                 // and throw the results away
                 // We'll type check the arguments later, with the inferred types expected
                 boolean[] isErrorType = new boolean[1];
-                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, substituteDontCare, constraintsSystem,
+                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, substituteDontCare, constraintSystem,
                                               context, isErrorType, SKIP_FUNCTION_ARGUMENTS);
                 if (isErrorType[0]) {
                     candidateCall.argumentHasNoType();
@@ -280,11 +280,11 @@ public class CandidateResolver {
                     context.candidateCall.isSafeCall()
                     ? TypeUtils.makeNotNullable(receiverArgument.getType())
                     : receiverArgument.getType();
-            constraintsSystem.addSubtypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
+            constraintSystem.addSubtypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
         }
 
         ConstraintSystem
-                constraintSystemWithRightTypeParameters = constraintsSystem.replaceTypeVariables(new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
+                constraintSystemWithRightTypeParameters = constraintSystem.replaceTypeVariables(new Function<TypeParameterDescriptor, TypeParameterDescriptor>() {
             @Override
             public TypeParameterDescriptor apply(@Nullable TypeParameterDescriptor typeParameterDescriptor) {
                 assert typeParameterDescriptor != null;
@@ -295,8 +295,8 @@ public class CandidateResolver {
 
 
         // Solution
-        boolean hasContradiction = constraintsSystem.hasContradiction();
-        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintsSystem);
+        boolean hasContradiction = constraintSystem.hasContradiction();
+        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem);
         if (!hasContradiction && boundsAreSatisfied) {
             candidateCall.setHasUnknownTypeParameters(true);
             return SUCCESS;
