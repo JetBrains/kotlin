@@ -163,35 +163,23 @@ public class JetFunctionParameterInfoHandler implements
     private static String getDefaultExpressionString(@Nullable PsiElement parameterDeclaration) {
         if (parameterDeclaration instanceof JetParameter) {
             JetExpression defaultValue = ((JetParameter) parameterDeclaration).getDefaultValue();
-            if (defaultValue != null && isConstantExpression(defaultValue)) {
+            if (defaultValue != null) {
                 String defaultExpression = defaultValue.getText();
-                if (defaultExpression.length() > 10) {
+                if (defaultExpression.length() <= 32) {
+                    return defaultExpression;
+                }
+
+                if (defaultValue instanceof JetConstantExpression || defaultValue instanceof JetStringTemplateExpression) {
                     if (defaultExpression.startsWith("\"")) {
                         return "\"...\"";
                     }
                     else if (defaultExpression.startsWith("\'")) {
                         return "\'...\'";
                     }
-                    else {
-                        return defaultExpression.substring(0, 7) + "...";
-                    }
-                }
-                return defaultExpression;
-            }
-        }
-        return "?";
-    }
-
-    private static boolean isConstantExpression(@NotNull JetExpression expression) {
-        if (expression instanceof JetStringTemplateExpression) {
-            for (JetStringTemplateEntry templateEntry : ((JetStringTemplateExpression) expression).getEntries()) {
-                if (templateEntry instanceof JetStringTemplateEntryWithExpression) {
-                    return false;
                 }
             }
-            return true;
         }
-        return expression instanceof JetConstantExpression;
+        return "...";
     }
 
     private static JetType getActualParameterType(ValueParameterDescriptor descriptor) {
