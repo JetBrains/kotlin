@@ -63,6 +63,18 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     };
 
     public void testJunit3() throws IOException {
+        doJUnit3test();
+    }
+
+    public void testJunit4() throws IOException {
+        doJUnit4test();
+    }
+
+    public void testJunit4Alias() throws IOException {
+        doJUnit4test();
+    }
+
+    private void doJUnit3test() throws IOException {
         myFixture.configureByFile(getFileName());
         List<String> directives = InTextDirectivesUtils.findListWithPrefix("// CLASS: ", FileUtil.loadFile(new File(getPathToFile())));
         assertFalse("Specify CLASS directive in test file", directives.isEmpty());
@@ -71,7 +83,7 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
         checkResult(ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
     }
 
-    public void testJunit4() throws IOException {
+    private void doJUnit4test() throws IOException {
         myFixture.configureByFile(getFileName());
         List<String> directives = InTextDirectivesUtils.findListWithPrefix("// ANNOTATION: ", FileUtil.loadFile(new File(getPathToFile())));
         assertFalse("Specify ANNOTATION directive in test file", directives.isEmpty());

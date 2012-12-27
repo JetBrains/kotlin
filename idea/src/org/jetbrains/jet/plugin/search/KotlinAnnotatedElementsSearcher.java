@@ -101,7 +101,15 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
             @Override
             public Collection<? extends PsiElement> compute() {
                 if (useScope instanceof GlobalSearchScope) {
-                    return JetAnnotationsIndex.getInstance().get(annClass.getName(), annClass.getProject(), (GlobalSearchScope)useScope);
+                    Collection<JetAnnotationEntry> annotationEntries =
+                            JetAnnotationsIndex.getInstance().get(annClass.getName(), annClass.getProject(), (GlobalSearchScope) useScope);
+
+                    // Add annotations 'test' as often used alias when we search Test annotation
+                    if (annClass.getName().equals("Test")) {
+                        annotationEntries.addAll(JetAnnotationsIndex.getInstance().get(annClass.getName().toLowerCase(), annClass.getProject(), (GlobalSearchScope) useScope));
+                    }
+
+                    return annotationEntries;
                 }
                 /*
                 TODO getJetAnnotationCandidates works only with global search scope
