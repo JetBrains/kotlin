@@ -326,6 +326,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderKeyword(keyword)).append(" ");
     }
 
+    private void renderModalityForCallable(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
+        if (!(callable.getContainingDeclaration() instanceof NamespaceDescriptor) || callable.getModality() != Modality.FINAL) {
+            renderModality(callable.getModality(), builder);
+        }
+    }
+
     private void renderOverrideAndMemberKind(@NotNull CallableMemberDescriptor callableMember, @NotNull StringBuilder builder) {
         if (verbose) {
             if (!callableMember.getOverriddenDescriptors().isEmpty()) {
@@ -425,7 +431,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (!startFromName) {
             renderAnnotations(function, builder);
             renderVisibility(function.getVisibility(), builder);
-            renderModality(function.getModality(), builder);
+            renderModalityForCallable(function, builder);
             renderOverrideAndMemberKind(function, builder);
 
             builder.append(renderKeyword("fun")).append(" ");
@@ -541,7 +547,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (!startFromName) {
             renderAnnotations(property, builder);
             renderVisibility(property.getVisibility(), builder);
-            renderModality(property.getModality(), builder);
+            renderModalityForCallable(property, builder);
             renderOverrideAndMemberKind(property, builder);
 
             renderValVarPrefix(property, builder);

@@ -8,11 +8,11 @@ var v6  : Int.(String, Int) -> Unit
 var v7  : ExtensionFunction1<Int, String, Boolean>
 
 
-//internal final var v1 : () -> Unit defined in root package
-//internal final var v2 : (jet.Int) -> jet.Int defined in root package
-//internal final var v3 : (jet.Int, jet.String) -> jet.String defined in root package
-//internal final var v4 : (jet.Int) -> jet.String defined in root package
-//internal final var v4 : (() -> jet.Int, (jet.String) -> Unit) -> jet.String defined in root package
-//internal final var v5 : jet.Int.() -> jet.Int defined in root package
-//internal final var v6 : jet.Int.(jet.String, jet.Int) -> Unit defined in root package
-//internal final var v7 : jet.Int.(jet.String) -> jet.Boolean defined in root package
+//internal var v1 : () -> Unit defined in root package
+//internal var v2 : (jet.Int) -> jet.Int defined in root package
+//internal var v3 : (jet.Int, jet.String) -> jet.String defined in root package
+//internal var v4 : (jet.Int) -> jet.String defined in root package
+//internal var v4 : (() -> jet.Int, (jet.String) -> Unit) -> jet.String defined in root package
+//internal var v5 : jet.Int.() -> jet.Int defined in root package
+//internal var v6 : jet.Int.(jet.String, jet.Int) -> Unit defined in root package
+//internal var v7 : jet.Int.(jet.String) -> jet.Boolean defined in root package

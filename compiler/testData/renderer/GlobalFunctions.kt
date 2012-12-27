@@ -20,19 +20,19 @@ fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 deprecated("") fun deprecatedFun()
 
 //package rendererTest defined in root package
-//public final fun pub() : Unit defined in rendererTest
-//internal final fun int() : jet.String defined in rendererTest
-//internal final fun int2(vararg ints : jet.Int) : jet.Int defined in rendererTest
+//public fun pub() : Unit defined in rendererTest
+//internal fun int() : jet.String defined in rendererTest
+//internal fun int2(vararg ints : jet.Int) : jet.Int defined in rendererTest
 //value-parameter vararg val ints : jet.Int defined in rendererTest.int2
-//private final fun prv(a : jet.String, b : jet.Int = ...) : jet.Int defined in rendererTest
+//private fun prv(a : jet.String, b : jet.Int = ...) : jet.Int defined in rendererTest
 //value-parameter val a : jet.String defined in rendererTest.prv
 //value-parameter val b : jet.Int = ... defined in rendererTest.prv
-//public final fun jet.Int.ext() : jet.Int defined in rendererTest
-//public final fun <out T> withTypeParam(a : jet.Array<T>) : jet.Int defined in rendererTest
+//public fun jet.Int.ext() : jet.Int defined in rendererTest
+//public fun <out T> withTypeParam(a : jet.Array<T>) : jet.Int defined in rendererTest
 //<out T> defined in rendererTest.withTypeParam
 //value-parameter val a : jet.Array<T> defined in rendererTest.withTypeParam
 //internal trait Foo defined in rendererTest
 //internal trait Bar defined in rendererTest
-//internal final fun <P> funTypeParameterWithTwoUpperBounds() : jet.Int where P : rendererTest.Bar, P : rendererTest.Foo defined in rendererTest
+//internal fun <P> funTypeParameterWithTwoUpperBounds() : jet.Int where P : rendererTest.Bar, P : rendererTest.Foo defined in rendererTest
 //<P : rendererTest.Foo & rendererTest.Bar> defined in rendererTest.funTypeParameterWithTwoUpperBounds
-//jet.deprecated internal final fun deprecatedFun() : Unit defined in rendererTest
+//jet.deprecated internal fun deprecatedFun() : Unit defined in rendererTest
