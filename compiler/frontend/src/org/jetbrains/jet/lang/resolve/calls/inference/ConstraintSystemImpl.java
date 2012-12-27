@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
@@ -177,15 +178,29 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         assert subjectType != TypeUtils.NO_EXPECTED_TYPE : "Subject type shouldn't be NO_EXPECTED_TYPE (in position " + constraintPosition + " )";
         if (ErrorUtils.isErrorType(subjectType)) return;
 
+        DeclarationDescriptor subjectTypeDescriptor = subjectType.getConstructor().getDeclarationDescriptor();
+
+        KotlinBuiltIns kotlinBuiltIns = KotlinBuiltIns.getInstance();
         if (constrainingType == PLACEHOLDER_FUNCTION_TYPE) {
-            if (!KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(subjectType)) {
+            if (!kotlinBuiltIns.isFunctionOrExtensionFunctionType(subjectType)) {
+                if (subjectTypeDescriptor instanceof TypeParameterDescriptor && typeParameterConstraints.get(subjectTypeDescriptor) != null) {
+                    // a constraint binds type parameter and any function type, so there is no new info and no error
+                    return;
+                }
                 errorConstraintPositions.add(constraintPosition);
             }
             return;
         }
 
+        // todo temporary hack
+        // function literal without declaring receiver type { x -> ... }
+        // can be considered as extension function if one is expected
+        // (special type constructor for function/ extension function should be introduced like PLACEHOLDER_FUNCTION_TYPE)
+        if (constraintKind == SUB_TYPE && kotlinBuiltIns.isFunctionType(constrainingType) && kotlinBuiltIns.isExtensionFunctionType(subjectType)) {
+            constrainingType = createCorrespondingExtensionFunctionType(constrainingType, DONT_CARE);
+        }
+
         DeclarationDescriptor constrainingTypeDescriptor = constrainingType.getConstructor().getDeclarationDescriptor();
-        DeclarationDescriptor subjectTypeDescriptor = subjectType.getConstructor().getDeclarationDescriptor();
 
         if (subjectTypeDescriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) subjectTypeDescriptor;
@@ -204,7 +219,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         if (constrainingTypeDescriptor instanceof TypeParameterDescriptor) {
             assert typeParameterConstraints.get(constrainingTypeDescriptor) == null : "Constraining type contains type variable " + constrainingTypeDescriptor.getName();
         }
-        if (constraintKind == SUB_TYPE && KotlinBuiltIns.getInstance().isNothingOrNullableNothing(constrainingType)) {
+        if (constraintKind == SUB_TYPE && kotlinBuiltIns.isNothingOrNullableNothing(constrainingType)) {
             // following constraints are always true:
             // 'Nothing' is a subtype of any type
             if (!constrainingType.isNullable()) return;
@@ -217,7 +232,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
         switch (constraintKind) {
             case SUB_TYPE: {
-                if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(constrainingType)) break;
+                if (kotlinBuiltIns.isNothingOrNullableNothing(constrainingType)) break;
                 JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(constrainingType, subjectType);
                 if (correspondingSupertype != null) {
                     constrainingType = correspondingSupertype;
@@ -225,7 +240,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
                 break;
             }
             case SUPER_TYPE: {
-                if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(subjectType)) break;
+                if (kotlinBuiltIns.isNothingOrNullableNothing(subjectType)) break;
                 JetType correspondingSupertype = TypeCheckingProcedure.findCorrespondingSupertype(subjectType, constrainingType);
                 if (correspondingSupertype != null) {
                     subjectType = correspondingSupertype;
@@ -387,5 +402,26 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @Override
     public TypeSubstitutor getCurrentSubstitutor() {
         return currentSubstitutor;
+    }
+
+    @NotNull
+    public static JetType createCorrespondingExtensionFunctionType(@NotNull JetType functionType, @NotNull JetType receiverType) {
+        assert KotlinBuiltIns.getInstance().isFunctionType(functionType);
+
+        List<TypeProjection> typeArguments = functionType.getArguments();
+        assert !typeArguments.isEmpty();
+
+        List<JetType> arguments = Lists.newArrayList();
+        // excluding the last type argument of the function type, which is the return type
+        int index = 0;
+        int lastIndex = typeArguments.size() - 1;
+        for (TypeProjection typeArgument : typeArguments) {
+            if (index < lastIndex) {
+                arguments.add(typeArgument.getType());
+            }
+            index++;
+        }
+        JetType returnType = typeArguments.get(lastIndex).getType();
+        return KotlinBuiltIns.getInstance().getFunctionType(functionType.getAnnotations(), receiverType, arguments, returnType);
     }
 }
