@@ -117,6 +117,17 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     @NotNull
+    private String arrow() {
+        switch (textFormat) {
+            case PLAIN:
+                return escape("->");
+            case HTML:
+                return "&rarr;";
+        }
+        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
+    }
+
+    @NotNull
     private String renderMessage(@NotNull String message) {
         switch (textFormat) {
             case PLAIN:
@@ -188,7 +199,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return "???";
         }
         else if (type == CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE) {
-            return "??? -> ???";
+            return "??? " + arrow() + " ???";
         }
         else if (ErrorUtils.isErrorType(type)) {
             return type.toString();
@@ -258,7 +269,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         sb.append("(");
         appendTypeProjections(KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type), sb);
-        sb.append(") -> ");
+        sb.append(") " + arrow() + " ");
         sb.append(renderType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type)));
 
         if (type.isNullable()) {
