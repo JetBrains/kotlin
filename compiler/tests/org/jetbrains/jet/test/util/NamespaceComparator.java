@@ -39,6 +39,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,47 +79,21 @@ public class NamespaceComparator {
         printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", RENDERER.render(descriptor));
 
         if (descriptor instanceof ClassOrNamespaceDescriptor) {
-            if (topLevel) {
-                printer.println();
-                printer.println();
-            }
-            else {
+            if (!topLevel) {
                 printer.printlnWithNoIndent(" {").pushIndent();
             }
-
-            List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
+            else {
+                printer.println();
+                printer.println();
+            }
 
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
-                JetScope memberScope = klass.getDefaultType().getMemberScope();
-
-                subDescriptors.addAll(klass.getConstructors());
-                subDescriptors.addAll(memberScope.getAllDescriptors());
-                subDescriptors.addAll(memberScope.getObjectDescriptors());
-                ContainerUtil.addIfNotNull(subDescriptors, klass.getClassObjectDescriptor());
+                appendSubDescriptors(klass.getDefaultType().getMemberScope(), getConstructorsAndClassObject(klass), printer);
             }
             else if (descriptor instanceof NamespaceDescriptor) {
-                JetScope memberScope = ((NamespaceDescriptor) descriptor).getMemberScope();
-                subDescriptors.addAll(memberScope.getAllDescriptors());
-                subDescriptors.addAll(memberScope.getObjectDescriptors());
-            }
-            else {
-                throw new IllegalStateException("Should be class or namespace: " + descriptor.getClass());
-            }
-
-            Collections.sort(subDescriptors, MemberComparator.INSTANCE);
-
-            for (DeclarationDescriptor subDescriptor : subDescriptors) {
-                if (!conf.includeMethodsOfJavaObject && subDescriptor instanceof FunctionDescriptor
-                    && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().getName())) {
-                    continue;
-                }
-
-                if (subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor))) {
-                    continue;
-                }
-
-                appendDeclarationRecursively(subDescriptor, printer, false);
+                appendSubDescriptors(((NamespaceDescriptor) descriptor).getMemberScope(),
+                                     Collections.<DeclarationDescriptor>emptyList(), printer);
             }
 
             if (!topLevel) {
@@ -127,6 +102,43 @@ public class NamespaceComparator {
         }
         else {
             printer.printlnWithNoIndent();
+        }
+    }
+
+    @NotNull
+    private static List<DeclarationDescriptor> getConstructorsAndClassObject(@NotNull ClassDescriptor klass) {
+        List<DeclarationDescriptor> constructorsAndClassObject = Lists.newArrayList();
+        constructorsAndClassObject.addAll(klass.getConstructors());
+        ContainerUtil.addIfNotNull(constructorsAndClassObject, klass.getClassObjectDescriptor());
+        return constructorsAndClassObject;
+    }
+
+    private boolean shouldSkip(@NotNull DeclarationDescriptor subDescriptor) {
+        return subDescriptor.getContainingDeclaration() instanceof ClassDescriptor
+                && subDescriptor instanceof FunctionDescriptor
+                && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().getName())
+                && !conf.includeMethodsOfJavaObject
+            ||
+                subDescriptor instanceof NamespaceDescriptor && !conf.recurseIntoPackage.apply(DescriptorUtils.getFQName(subDescriptor));
+    }
+
+    private void appendSubDescriptors(
+            @NotNull JetScope memberScope,
+            @NotNull Collection<DeclarationDescriptor> extraSubDescriptors,
+            @NotNull Printer printer
+    ) {
+        List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
+
+        subDescriptors.addAll(memberScope.getAllDescriptors());
+        subDescriptors.addAll(memberScope.getObjectDescriptors());
+        subDescriptors.addAll(extraSubDescriptors);
+
+        Collections.sort(subDescriptors, MemberComparator.INSTANCE);
+
+        for (DeclarationDescriptor subDescriptor : subDescriptors) {
+            if (!shouldSkip(subDescriptor)) {
+                appendDeclarationRecursively(subDescriptor, printer, false);
+            }
         }
     }
 
