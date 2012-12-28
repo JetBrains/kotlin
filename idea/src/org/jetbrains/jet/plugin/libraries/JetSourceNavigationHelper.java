@@ -160,7 +160,7 @@ public class JetSourceNavigationHelper {
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor.second;
             if (receiverType == null) {
                 // non-extension property
-                for (Descr candidate : navigationStrategy.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
+                for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
                     if (candidate.getReceiverParameter() == null) {
                         if (navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
                             return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
@@ -171,7 +171,7 @@ public class JetSourceNavigationHelper {
             else {
                 // extension property
                 String expectedTypeString = receiverType.getText();
-                for (Descr candidate : navigationStrategy.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
+                for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
                     ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
                     if (receiverParameter != null) {
                         String thisReceiverType = DescriptorRenderer.TEXT.renderType(receiverParameter.getType());
@@ -206,7 +206,7 @@ public class JetSourceNavigationHelper {
                 }
 
                 ClassDescriptor expectedContainer = isClassObject ? classDescriptor.getClassObjectDescriptor() : classDescriptor;
-                for (Descr candidate : navigationStrategy.getCandidatesFromScope(memberScope, entityNameAsName)) {
+                for (Descr candidate : navigationStrategy.getCandidateDescriptors(memberScope, entityNameAsName)) {
                     if (candidate.getContainingDeclaration() == expectedContainer) {
                         JetDeclaration property = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                         if (property != null) {
@@ -232,7 +232,7 @@ public class JetSourceNavigationHelper {
     private interface NavigationStrategy<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
         boolean declarationAndDescriptorMatch(Decl declaration, Descr descriptor);
 
-        Collection<Descr> getCandidatesFromScope(JetScope scope, Name name);
+        Collection<Descr> getCandidateDescriptors(JetScope scope, Name name);
     }
 
     private static class FunctionNavigationStrategy implements NavigationStrategy<JetFunction, FunctionDescriptor> {
@@ -268,7 +268,7 @@ public class JetSourceNavigationHelper {
         }
 
         @Override
-        public Collection<FunctionDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
+        public Collection<FunctionDescriptor> getCandidateDescriptors(JetScope scope, Name name) {
             return scope.getFunctions(name);
         }
     }
@@ -280,7 +280,7 @@ public class JetSourceNavigationHelper {
         }
 
         @Override
-        public Collection<VariableDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
+        public Collection<VariableDescriptor> getCandidateDescriptors(JetScope scope, Name name) {
             return scope.getProperties(name);
         }
     }
