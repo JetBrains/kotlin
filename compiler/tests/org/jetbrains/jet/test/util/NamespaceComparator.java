@@ -21,6 +21,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -188,7 +189,9 @@ public class NamespaceComparator {
                 String expected = FileUtil.loadFile(txtFile, true);
 
                 // compare with hard copy: make sure nothing is lost in output
-                Assert.assertEquals("Expected and actual namespaces differ from " + txtFile.getName(), expected, actualSerialized);
+                Assert.assertEquals("Expected and actual namespaces differ from " + txtFile.getName(),
+                                    StringUtil.convertLineSeparators(expected),
+                                    StringUtil.convertLineSeparators(actualSerialized));
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
