@@ -140,9 +140,9 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     private static <Decl extends JetDeclaration, Descr extends CallableDescriptor> JetDeclaration
-            getSourcePropertyOrFunction(final @NotNull Decl decompiledDeclaration,
-                                        JetTypeReference receiverType,
-                                        NavigationStrategy<Decl, Descr> navigationStrategy
+            getSourcePropertyOrFunction(
+            final @NotNull Decl decompiledDeclaration,
+            NavigationStrategy<Decl, Descr> navigationStrategy
     ) {
         String entityName = decompiledDeclaration.getName();
         if (entityName == null) {
@@ -150,6 +150,8 @@ public class JetSourceNavigationHelper {
         }
 
         Name entityNameAsName = Name.identifier(entityName);
+
+        JetTypeReference receiverType = navigationStrategy.getReceiverType(decompiledDeclaration);
 
         PsiElement declarationContainer = decompiledDeclaration.getParent();
         if (declarationContainer instanceof JetFile) {
@@ -159,7 +161,7 @@ public class JetSourceNavigationHelper {
             BindingContext bindingContext = bindingContextAndNamespaceDescriptor.first;
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor.second;
             if (receiverType == null) {
-                // non-extension property
+                // non-extension member
                 for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
                     if (candidate.getReceiverParameter() == null) {
                         if (navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
@@ -169,7 +171,7 @@ public class JetSourceNavigationHelper {
                 }
             }
             else {
-                // extension property
+                // extension member
                 String expectedTypeString = receiverType.getText();
                 for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
                     ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
@@ -221,18 +223,20 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static JetDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
-        return getSourcePropertyOrFunction(decompiledProperty, decompiledProperty.getReceiverTypeRef(), new PropertyNavigationStrategy());
+        return getSourcePropertyOrFunction(decompiledProperty, new PropertyNavigationStrategy());
     }
 
     @Nullable
     public static JetDeclaration getSourceFunction(final @NotNull JetFunction decompiledFunction) {
-        return getSourcePropertyOrFunction(decompiledFunction, decompiledFunction.getReceiverTypeRef(), new FunctionNavigationStrategy());
+        return getSourcePropertyOrFunction(decompiledFunction, new FunctionNavigationStrategy());
     }
 
     private interface NavigationStrategy<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
         boolean declarationAndDescriptorMatch(Decl declaration, Descr descriptor);
 
         Collection<Descr> getCandidateDescriptors(JetScope scope, Name name);
+
+        @Nullable JetTypeReference getReceiverType(@NotNull Decl declaration);
     }
 
     private static class FunctionNavigationStrategy implements NavigationStrategy<JetFunction, FunctionDescriptor> {
@@ -271,6 +275,12 @@ public class JetSourceNavigationHelper {
         public Collection<FunctionDescriptor> getCandidateDescriptors(JetScope scope, Name name) {
             return scope.getFunctions(name);
         }
+
+        @Nullable
+        @Override
+        public JetTypeReference getReceiverType(@NotNull JetFunction declaration) {
+            return declaration.getReceiverTypeRef();
+        }
     }
 
     private static class PropertyNavigationStrategy implements NavigationStrategy<JetProperty, VariableDescriptor> {
@@ -282,6 +292,12 @@ public class JetSourceNavigationHelper {
         @Override
         public Collection<VariableDescriptor> getCandidateDescriptors(JetScope scope, Name name) {
             return scope.getProperties(name);
+        }
+
+        @Nullable
+        @Override
+        public JetTypeReference getReceiverType(@NotNull JetProperty declaration) {
+            return declaration.getReceiverTypeRef();
         }
     }
 }
