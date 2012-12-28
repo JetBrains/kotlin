@@ -473,8 +473,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 }
             }
         }
-        Collections.sort(upperBoundStrings); // TODO workaround for failing load kotlin test
-
         if (!upperBoundStrings.isEmpty()) {
             builder.append(" ").append(renderKeyword("where")).append(" ");
             builder.append(StringUtil.join(upperBoundStrings, ", "));

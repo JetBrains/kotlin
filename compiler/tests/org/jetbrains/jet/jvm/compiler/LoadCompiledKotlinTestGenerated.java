@@ -95,11 +95,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTest("compiler/testData/loadKotlin/class/ClassParamUpperInterfaceBound.kt");
         }
         
-        @TestMetadata("ClassParamUpperInterfaceClassBound.kt")
-        public void testClassParamUpperInterfaceClassBound() throws Exception {
-            doTest("compiler/testData/loadKotlin/class/ClassParamUpperInterfaceClassBound.kt");
-        }
-        
         @TestMetadata("ClassTwoParams.kt")
         public void testClassTwoParams() throws Exception {
             doTest("compiler/testData/loadKotlin/class/ClassTwoParams.kt");
@@ -415,11 +410,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             @TestMetadata("FunParamUpperInterfaceBound.kt")
             public void testFunParamUpperInterfaceBound() throws Exception {
                 doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceBound.kt");
-            }
-            
-            @TestMetadata("FunParamUpperInterfaceClassBound.kt")
-            public void testFunParamUpperInterfaceClassBound() throws Exception {
-                doTest("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceClassBound.kt");
             }
             
             @TestMetadata("FunParamVaragParam.kt")

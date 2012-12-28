@@ -1,3 +1,0 @@
-package test
-
-internal fun </*0*/ A> cuatro() : jet.Int where A : java.io.Serializable, A : java.lang.Number

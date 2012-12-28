@@ -97,11 +97,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/ClassParamUpperInterfaceBound.kt");
             }
             
-            @TestMetadata("ClassParamUpperInterfaceClassBound.kt")
-            public void testClassParamUpperInterfaceClassBound() throws Exception {
-                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/ClassParamUpperInterfaceClassBound.kt");
-            }
-            
             @TestMetadata("ClassTwoParams.kt")
             public void testClassTwoParams() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/ClassTwoParams.kt");
@@ -417,11 +412,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("FunParamUpperInterfaceBound.kt")
                 public void testFunParamUpperInterfaceBound() throws Exception {
                     doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceBound.kt");
-                }
-                
-                @TestMetadata("FunParamUpperInterfaceClassBound.kt")
-                public void testFunParamUpperInterfaceClassBound() throws Exception {
-                    doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceClassBound.kt");
                 }
                 
                 @TestMetadata("FunParamVaragParam.kt")
@@ -1816,9 +1806,9 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/lazyResolve/namespaceComparator"), "kt", true);
         }
         
-        @TestMetadata("classObject.kt")
+        @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
-            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/classObject.kt");
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/ClassObject.kt");
         }
         
         @TestMetadata("classObjectAnnotation.kt")

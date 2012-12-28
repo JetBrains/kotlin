@@ -51,5 +51,5 @@ public trait TwoUpperBounds<T> where T: Number, T: Any
 //public constructor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
 //<reified A> defined in rendererTest.WithReified
 //<reified out B> defined in rendererTest.WithReified
-//public trait TwoUpperBounds<T> where T : jet.Any, T : jet.Number defined in rendererTest
+//public trait TwoUpperBounds<T> where T : jet.Number, T : jet.Any defined in rendererTest
 //<T : jet.Number & jet.Any> defined in rendererTest.TwoUpperBounds
