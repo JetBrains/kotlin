@@ -88,7 +88,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        ClassDescriptor classDescriptor = trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName);
+        ClassDescriptor classDescriptor = getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName);
         if (classDescriptor != null) {
             PsiElement element = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
             if (element != null && PsiSearchScopeUtil.isInScope(searchScope, element)) {
@@ -101,9 +101,9 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
-        NamespaceDescriptor namespaceDescriptor = trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
+        NamespaceDescriptor namespaceDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
         if (namespaceDescriptor != null) {
-            Collection<JetFile> files = trace.get(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor);
+            Collection<JetFile> files = getTrace().get(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor);
             if (files != null) {
                 return Collections2.filter(files, new Predicate<JetFile>() {
                     @Override
@@ -137,13 +137,13 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     public boolean packageExists(
             @NotNull FqName fqName, @NotNull GlobalSearchScope scope
     ) {
-        return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName) != null;
+        return getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName) != null;
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        NamespaceDescriptor namespaceDescriptor = trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqn);
+        NamespaceDescriptor namespaceDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqn);
         if (namespaceDescriptor == null) return Collections.emptyList();
 
         Collection<DeclarationDescriptor> allDescriptors = namespaceDescriptor.getMemberScope().getAllDescriptors();
