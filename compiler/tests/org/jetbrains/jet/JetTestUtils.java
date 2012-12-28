@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
@@ -331,6 +332,11 @@ public class JetTestUtils {
         }
 
         return configuration;
+    }
+
+    public static void newTrace(@NotNull JetCoreEnvironment environment) {
+        // let the next analysis use another trace
+        CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).newBindingTrace();
     }
 
     public interface TestFileFactory<F> {

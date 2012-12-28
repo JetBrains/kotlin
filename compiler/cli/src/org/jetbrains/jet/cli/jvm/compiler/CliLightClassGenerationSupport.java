@@ -74,7 +74,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return trace;
     }
 
-    public void clearBindingTrace() {
+    public void newBindingTrace() {
         assert ApplicationManager.getApplication().isUnitTestMode() : "Mutating project service's state shouldn't happen other than in tests";
         trace = null;
     }
