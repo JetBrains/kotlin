@@ -1952,6 +1952,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/genericFunction.kt");
         }
         
+        @TestMetadata("importFunctionWithAllUnderImport.kt")
+        public void testImportFunctionWithAllUnderImport() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/importFunctionWithAllUnderImport.kt");
+        }
+        
         @TestMetadata("importFunctionWithAllUnderImportAfterNamedImport.kt")
         public void testImportFunctionWithAllUnderImportAfterNamedImport() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/importFunctionWithAllUnderImportAfterNamedImport.kt");
@@ -1980,6 +1985,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("packageLevelObject.kt")
         public void testPackageLevelObject() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/packageLevelObject.kt");
+        }
+        
+        @TestMetadata("propertyClassFileDependencyRecursion.kt")
+        public void testPropertyClassFileDependencyRecursion() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/namespaceComparator/propertyClassFileDependencyRecursion.kt");
         }
         
         @TestMetadata("simpleClass.kt")
