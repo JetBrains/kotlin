@@ -11,6 +11,6 @@ class TestClass5 {
 }
 
 // ANNOTATION: java.lang.Deprecated
-// SEARCH: JetLightClass:TestClass1, JetLightClass:TestClass2, JetLightClass:TestClass3
-// SEARCH: JetLightClass:TestClass4
-// SEARCH: JetLightClass:TestClass5.innerTestClass5
+// SEARCH: KotlinLightClass:TestClass1, KotlinLightClass:TestClass2, KotlinLightClass:TestClass3
+// SEARCH: KotlinLightClass:TestClass4
+// SEARCH: KotlinLightClass:TestClass5.innerTestClass5

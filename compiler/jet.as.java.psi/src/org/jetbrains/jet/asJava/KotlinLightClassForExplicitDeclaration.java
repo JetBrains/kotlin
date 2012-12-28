@@ -306,4 +306,14 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
         return super.setName(name); // TODO
     }
+
+    @Override
+    public String toString() {
+        try {
+            return KotlinLightClass.class.getSimpleName() + ":" + getQualifiedName();
+        }
+        catch (Throwable e) {
+            return KotlinLightClass.class.getSimpleName() + ":" + e.toString();
+        }
+    }
 }
