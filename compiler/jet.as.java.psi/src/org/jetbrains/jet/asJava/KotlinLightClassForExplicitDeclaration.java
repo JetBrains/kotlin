@@ -224,6 +224,10 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             }
         }
 
+        if (!psiModifiers.contains(PsiModifier.PRIVATE) && !psiModifiers.contains(PsiModifier.PROTECTED)) {
+            psiModifiers.add(PsiModifier.PUBLIC); // For internal (default) visibility
+        }
+
         // FINAL
         if (!jetModifierList.hasModifier(OPEN_KEYWORD) && !jetModifierList.hasModifier(ABSTRACT_KEYWORD)) {
             psiModifiers.add(PsiModifier.FINAL);
