@@ -27,7 +27,6 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.*;
@@ -155,10 +154,6 @@ public class JetIconProvider extends IconProvider {
         if (psiElement instanceof JetProperty) {
             JetProperty property = (JetProperty) psiElement;
             return property.isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
-        }
-
-        if (psiElement instanceof JetLightClass) {
-            return JetIcons.CLASS;
         }
 
         return null;

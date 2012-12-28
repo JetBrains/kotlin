@@ -37,7 +37,8 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClass;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
@@ -79,7 +80,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                 return null;
             }
         }
-        JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) element);
+        KotlinLightClass lightClass = LightClassUtil.createLightClass((JetClass) element);
         if (lightClass == null) {
             return null;
         }
@@ -251,7 +252,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (!element.hasModifier(JetTokens.OPEN_KEYWORD)) {
             return;
         }
-        JetLightClass lightClass = JetLightClass.wrapDelegate(element);
+        PsiClass lightClass = LightClassUtil.createLightClass(element);
         if (lightClass == null) {
             return;
         }

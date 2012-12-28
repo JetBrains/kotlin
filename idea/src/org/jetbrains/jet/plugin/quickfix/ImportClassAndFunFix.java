@@ -39,16 +39,13 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -229,20 +226,6 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     }
 
     private static boolean isAccessible(PsiMember member) {
-        if (member instanceof JetLightClass) {
-            // TODO: Now light classes losing accessibility information
-            JetLightClass lightClass = (JetLightClass) member;
-            BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) lightClass.getContainingFile()).getBindingContext();
-            ClassDescriptor descriptor = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, lightClass.getFqName());
-
-            if (descriptor != null) {
-                return descriptor.getVisibility() == Visibilities.PUBLIC || descriptor.getVisibility() == Visibilities.INTERNAL;
-            }
-            else {
-                assert false : "Descriptor of the class isn't found in the binding context: " + member;
-            }
-        }
-
         return member.hasModifierProperty(PsiModifier.PUBLIC) || member.hasModifierProperty(PsiModifier.PROTECTED);
     }
 

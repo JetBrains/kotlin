@@ -34,7 +34,8 @@ import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClass;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -81,11 +82,11 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
                     if (!(DescriptorUtils.getFQName(descriptor).getFqName().equals(annotationFQN))) return;
 
                     if (parentOfType instanceof JetClass) {
-                        JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) parentOfType);
+                        KotlinLightClass lightClass = LightClassUtil.createLightClass((JetClass) parentOfType);
                         consumer.process(lightClass);
                     }
                     else if (parentOfType instanceof JetNamedFunction) {
-                        PsiMethod wrappedMethod = JetLightClass.wrapMethod((JetNamedFunction) parentOfType);
+                        PsiMethod wrappedMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) parentOfType);
                         consumer.process(wrappedMethod);
                     }
                 }

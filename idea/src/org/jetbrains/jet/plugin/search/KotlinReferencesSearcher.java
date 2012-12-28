@@ -19,13 +19,14 @@ package org.jetbrains.jet.plugin.search;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.Computable;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
@@ -36,14 +37,14 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         if (element instanceof JetClass) {
             String className = ((JetClass) element).getName();
             if (className != null) {
-                JetLightClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<JetLightClass>() {
+                PsiClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
                     @Override
-                    public JetLightClass compute() {
-                        return JetLightClass.wrapDelegate((JetClass) element);
+                    public PsiClass compute() {
+                        return LightClassUtil.createLightClass((JetClass) element);
                     }
                 });
                 if (lightClass != null) {
-                    queryParameters.getOptimizer().searchWord(className, queryParameters.getScope(), true, lightClass);
+                    queryParameters.getOptimizer().searchWord(className, queryParameters.getEffectiveSearchScope(), true, lightClass);
                 }
             }
         }
@@ -54,11 +55,11 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                 final PsiMethod method = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
                     @Override
                     public PsiMethod compute() {
-                        return JetLightClass.wrapMethod(function);
+                        return LightClassUtil.getLightClassMethod(function);
                     }
                 });
                 if (method != null) {
-                    queryParameters.getOptimizer().searchWord(name, queryParameters.getScope(), true, method);
+                    queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, method);
                 }
             }
         }

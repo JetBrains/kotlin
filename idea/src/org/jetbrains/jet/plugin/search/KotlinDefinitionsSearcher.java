@@ -25,17 +25,17 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
 
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
     public void processQuery(@NotNull final PsiElement queryParameters, @NotNull final Processor<PsiElement> consumer) {
         if (queryParameters instanceof JetClass) {
-            JetLightClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<JetLightClass>() {
+            PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
                 @Override
-                public JetLightClass compute() {
-                    return JetLightClass.wrapDelegate((JetClass) queryParameters);
+                public PsiClass compute() {
+                    return LightClassUtil.createLightClass((JetClass) queryParameters);
                 }
             });
             if (psiClass != null) {

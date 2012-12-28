@@ -19,21 +19,21 @@ package org.jetbrains.jet.plugin.presentation;
 import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.psi.presentation.java.ClassPresentationUtil;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClass;
 
-public class JetLightClassListCellRenderer extends PsiElementListCellRenderer<JetLightClass> {
+public class JetLightClassListCellRenderer extends PsiElementListCellRenderer<KotlinLightClass> {
     @Override
-    public String getElementText(JetLightClass element) {
+    public String getElementText(KotlinLightClass element) {
         return ClassPresentationUtil.getNameForClass(element, false);
     }
 
     @Override
-    protected String getContainerText(JetLightClass element, final String name) {
+    protected String getContainerText(KotlinLightClass element, final String name) {
         return getContainerTextStatic(element);
     }
 
     @Nullable
-    public static String getContainerTextStatic(final JetLightClass element) {
+    public static String getContainerTextStatic(final KotlinLightClass element) {
         return "(" + element.getFqName().parent() + ")";
     }
 

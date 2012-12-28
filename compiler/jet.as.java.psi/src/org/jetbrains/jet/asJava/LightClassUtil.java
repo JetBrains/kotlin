@@ -17,16 +17,24 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiCompiledElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.KotlinVfsUtil;
@@ -85,8 +93,6 @@ public class LightClassUtil {
                 cause);
     }
 
-    private LightClassUtil() {}
-
     @Nullable
     /*package*/ static PsiClass findClass(@NotNull FqName fqn, @NotNull StubElement<?> stub) {
         if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub) stub).getQualifiedName())) {
@@ -102,4 +108,63 @@ public class LightClassUtil {
 
         return null;
     }
+
+    @Nullable
+    public static KotlinLightClass createLightClass(@Nullable JetClassOrObject classOrObject) {
+        if (classOrObject == null) return null;
+
+        JvmClassName jvmClassName = PsiCodegenPredictor.getPredefinedJvmClassName(classOrObject);
+        if (jvmClassName == null) return null;
+
+        return  KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), jvmClassName.getFqName(), classOrObject);
+    }
+
+    @Nullable
+    public static PsiMethod getLightClassMethod(@NotNull JetNamedFunction function) {
+        //noinspection unchecked
+        if (PsiTreeUtil.getParentOfType(function, JetFunction.class, JetProperty.class) != null) {
+            // Don't genClassOrObject method wrappers for internal declarations. Their classes are not generated during calcStub
+            // with ClassBuilderMode.SIGNATURES mode, and this produces "Class not found exception" in getDelegate()
+            return null;
+        }
+
+        Project project = function.getProject();
+        JvmClassName jvmClassName = PsiCodegenPredictor.getPredefinedJvmClassNameForFun(function);
+        if (jvmClassName == null) return null;
+
+        String fqName = jvmClassName.getFqName().getFqName();
+        PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project));
+        if (psiClass == null) return null;
+
+        for (PsiMethod method : psiClass.getMethods()) {
+            try {
+                if (method instanceof PsiCompiledElement && ((PsiCompiledElement) method).getMirror() == function) {
+                    return method;
+                }
+            }
+            catch (ProcessCanceledException e) {
+                throw e;
+            }
+            catch (Throwable e) {
+                throw new IllegalStateException(
+                        "Error while wrapping function " + function.getName() +
+                        "Context\n:" +
+                        String.format("=== In file ===\n" +
+                                        "%s\n" +
+                                        "===On element===\n" +
+                                        "%s\n" +
+                                        "===WrappedElement===\n" +
+                                        "%s\n",
+                                        function.getContainingFile().getText(),
+                                        function.getText(),
+                                        method.toString()),
+                        e
+                );
+            }
+        }
+
+        return null;
+    }
+
+    private LightClassUtil() {}
 }

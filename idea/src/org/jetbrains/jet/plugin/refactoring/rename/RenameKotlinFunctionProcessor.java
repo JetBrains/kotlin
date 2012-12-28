@@ -20,22 +20,16 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.lang.psi.JetFunction;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class RenameKotlinFunctionProcessor extends RenamePsiElementProcessor {
     @Override
     public boolean canProcessElement(@NotNull PsiElement element) {
-        if (element instanceof PsiMethod && ((PsiMethod) element).getContainingClass() instanceof JetLightClass) {
+        if (element instanceof PsiMethod && ((PsiMethod) element).getContainingClass() instanceof KotlinLightClass) {
             return true;
         }
         return element instanceof JetFunction;
@@ -44,7 +38,7 @@ public class RenameKotlinFunctionProcessor extends RenamePsiElementProcessor {
     @Override
     public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
         if (element instanceof PsiMethod && element instanceof PsiCompiledElement &&
-            ((PsiMethod) element).getContainingClass() instanceof JetLightClass) {
+            ((PsiMethod) element).getContainingClass() instanceof KotlinLightClass) {
             return ((PsiCompiledElement) element).getMirror();
         }
         return super.substituteElementToRename(element, editor);

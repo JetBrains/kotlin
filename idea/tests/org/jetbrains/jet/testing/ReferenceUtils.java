@@ -21,7 +21,7 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
 
 public final class ReferenceUtils {
@@ -29,8 +29,8 @@ public final class ReferenceUtils {
     }
 
     public static String renderAsGotoImplementation(@NotNull PsiElement element) {
-        if (element instanceof JetLightClass) {
-            JetLightClass jetLightClass = (JetLightClass) element;
+        if (element instanceof KotlinLightClass) {
+            KotlinLightClass jetLightClass = (KotlinLightClass) element;
             JetLightClassListCellRenderer renderer = new JetLightClassListCellRenderer();
             String elementText = renderer.getElementText(jetLightClass);
             String containerText = JetLightClassListCellRenderer.getContainerTextStatic(jetLightClass);

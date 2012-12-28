@@ -23,4 +23,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 public interface KotlinLightClass extends PsiClass {
     @NotNull
     FqName getFqName();
+
+    @NotNull
+    PsiClass getDelegate();
 }

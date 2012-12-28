@@ -23,7 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetLightClass;
+import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -70,7 +70,7 @@ public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, 
                         if (declarationDescriptor != null) {
                             String fqName = DescriptorUtils.getFQName(declarationDescriptor).getFqName();
                             if (qualifiedName.equals(fqName)) {
-                                JetLightClass lightClass = JetLightClass.wrapDelegate((JetClass) candidate);
+                                PsiClass lightClass = LightClassUtil.createLightClass(candidate);
                                 if (lightClass != null) {
                                     consumer.process(lightClass);
                                 }
