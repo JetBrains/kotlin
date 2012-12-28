@@ -85,7 +85,7 @@ public class LabelResolver {
                 element = (JetElement) BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
             }
             else {
-                throw new UnsupportedOperationException(); // TODO
+                throw new UnsupportedOperationException(declarationDescriptor.getClass().toString()); // TODO
             }
             context.trace.record(LABEL_TARGET, labelExpression, element);
             return element;
