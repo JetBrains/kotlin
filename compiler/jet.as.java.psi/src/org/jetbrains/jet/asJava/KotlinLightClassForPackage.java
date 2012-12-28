@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import javax.swing.*;
 import java.util.Collection;
 
-public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase implements JetJavaMirrorMarker {
+public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase implements KotlinLightClass, JetJavaMirrorMarker {
     @Nullable
     public static KotlinLightClassForPackage create(@NotNull PsiManager manager, @NotNull FqName qualifiedName, @NotNull Collection<JetFile> files) {
         for (JetFile file : files) {
@@ -61,6 +61,12 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
         this.hashCode = computeHashCode();
         KotlinJavaFileStubProvider stubProvider = KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, files);
         this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
+    }
+
+    @NotNull
+    @Override
+    public FqName getFqName() {
+        return packageClassFqName;
     }
 
     @Nullable
