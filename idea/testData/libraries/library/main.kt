@@ -29,6 +29,10 @@ public class WithTraitClassObject {
 public abstract class AbstractClass {
 }
 
+public object NamedObject {
+    public val objectMember: Int = 1
+}
+
 public enum class Color(val rgb : Int) {
     RED : Color(0xFF0000)
     GREEN : Color(0x00FF00)

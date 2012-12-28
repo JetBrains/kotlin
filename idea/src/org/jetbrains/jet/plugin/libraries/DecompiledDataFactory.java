@@ -89,7 +89,8 @@ public class DecompiledDataFactory {
 
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
-                    if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor) {
+                    if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor
+                        || isNamedObjectProperty(member, bindingContext)) {
                         continue;
                     }
                     appendDescriptor(member, "");
@@ -127,6 +128,7 @@ public class DecompiledDataFactory {
     }
 
     private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
+        // Don't render property for object declaration
         int startOffset = builder.length();
         String renderedDescriptor = DESCRIPTOR_RENDERER.render(descriptor);
         renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);
@@ -161,6 +163,9 @@ public class DecompiledDataFactory {
                     continue;
                 }
                 if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                    continue;
+                }
+                if (isNamedObjectProperty(member, bindingContext)) {
                     continue;
                 }
 
@@ -204,6 +209,16 @@ public class DecompiledDataFactory {
                         return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isNamedObjectProperty(@NotNull DeclarationDescriptor descriptor, BindingContext bindingContext) {
+        if (descriptor instanceof PropertyDescriptor) {
+            ClassDescriptor objectDeclaration = bindingContext.get(BindingContext.OBJECT_DECLARATION_CLASS, (PropertyDescriptor) descriptor);
+            if (objectDeclaration != null && objectDeclaration.getKind() == ClassKind.OBJECT) {
+                return true;
             }
         }
         return false;

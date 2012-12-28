@@ -27,14 +27,14 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsClassImpl clsClass) {
-        JetClass jetClass = (JetClass) getJetDeclarationByClsElement(clsClass);
-        if (jetClass != null) {
-            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClass(jetClass);
+        JetClassOrObject jetClassOrObject = (JetClassOrObject) getJetDeclarationByClsElement(clsClass);
+        if (jetClassOrObject != null) {
+            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClassOrObject(jetClassOrObject);
             if (sourceClass != null) {
                 return sourceClass;
             }
         }
-        return jetClass;
+        return jetClassOrObject;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
         }
         else if (jetDeclaration instanceof JetClass) {
             assert clsMethod.getReturnType() == null; // constructor
-            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClass((JetClass) jetDeclaration);
+            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClassOrObject((JetClass) jetDeclaration);
             if (sourceClass != null) {
                 return sourceClass;
             }

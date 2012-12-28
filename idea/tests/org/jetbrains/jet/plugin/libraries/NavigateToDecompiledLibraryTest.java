@@ -71,6 +71,10 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
         doTest();
     }
 
+    public void testNamedObject() {
+        doTest();
+    }
+
     private void doTest() {
         classFile = getClassFile();
 

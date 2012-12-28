@@ -79,9 +79,9 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static Pair<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClass decompiledClass) {
-        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, decompiledClass,
-                                                              JetPsiUtil.getFQName(decompiledClass));
+    private static Pair<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClassOrObject decompiledClassOrObject) {
+        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, decompiledClassOrObject,
+                                                              JetPsiUtil.getFQName((JetNamedDeclaration) decompiledClassOrObject));
     }
 
     @Nullable
@@ -93,8 +93,8 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetClassOrObject getSourceClass(@NotNull JetClass decompiledClass) {
-        Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClass);
+    public static JetClassOrObject getSourceClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
+        Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClassOrObject);
         if (bindingContextAndClassDescriptor == null) return null;
         PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(
                 bindingContextAndClassDescriptor.first, bindingContextAndClassDescriptor.second);
