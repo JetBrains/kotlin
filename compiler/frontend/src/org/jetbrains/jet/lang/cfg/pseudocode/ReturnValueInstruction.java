@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
-/**
- * @author abreslav
- */
 public class ReturnValueInstruction extends AbstractJumpInstruction implements JetElementInstruction {
 
     private final JetElement element;

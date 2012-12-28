@@ -20,10 +20,6 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/9/12
- */
 public class CommonConfigurationKeys {
     private CommonConfigurationKeys() {
     }

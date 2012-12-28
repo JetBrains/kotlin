@@ -30,9 +30,6 @@ import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 
-/**
- * @author Pavel Talanov
- */
 /*
  *  This test should be implemented via AbstractLoadCompiledKotlinTest.
  *  Atm it's not possible due to enums being loaded differently from binaries (in contrast to from sources).

@@ -32,9 +32,6 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.io.IOException;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetTypeParameterElementType extends JetStubElementType<PsiJetTypeParameterStub, JetTypeParameter> {
     public JetTypeParameterElementType(@NotNull @NonNls String debugName) {
         super(debugName);

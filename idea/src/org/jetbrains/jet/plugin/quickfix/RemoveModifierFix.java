@@ -34,9 +34,6 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- */
 public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetKeywordToken modifier;
     private final boolean isRedundant;

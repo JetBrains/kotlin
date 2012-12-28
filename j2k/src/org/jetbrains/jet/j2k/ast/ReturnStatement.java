@@ -19,9 +19,6 @@ package org.jetbrains.jet.j2k.ast;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
-/**
- * @author ignatov
- */
 public class ReturnStatement extends Statement {
     private final Expression myExpression;
     private String myConversion = EMPTY;

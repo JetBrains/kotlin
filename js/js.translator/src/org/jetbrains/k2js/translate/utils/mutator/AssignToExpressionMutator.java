@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 
-/**
- * @author Pavel Talanov
- */
 public final class AssignToExpressionMutator implements Mutator {
 
     @NotNull

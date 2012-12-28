@@ -28,9 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class EmptyPackageMemberDeclarationProvider implements PackageMemberDeclarationProvider {
 
     public static final EmptyPackageMemberDeclarationProvider INSTANCE = new EmptyPackageMemberDeclarationProvider();

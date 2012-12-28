@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-/**
- * @author yole
- */
 public class Not implements IntrinsicMethod {
     @Override
     public StackValue generate(

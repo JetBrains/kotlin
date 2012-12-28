@@ -57,9 +57,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author yole
- */
 public abstract class CodegenTestCase extends UsefulTestCase {
 
     // for environment and classloader

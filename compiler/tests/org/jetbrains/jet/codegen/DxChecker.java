@@ -25,9 +25,6 @@ import java.io.StringWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class DxChecker {
 

@@ -25,8 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * Common methods for working with qualified names.
- *
- * @author Nikolay Krasko
  */
 public final class QualifiedNamesUtil {
 

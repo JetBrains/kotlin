@@ -25,9 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.jar.JarOutputStream;
 
-/**
- * @author Stepan Koltsov
- */
 public class ForTestPackJdkAnnotations {
 
     private ForTestPackJdkAnnotations() {

@@ -32,10 +32,6 @@ import java.util.List;
 import static org.jetbrains.asm4.Opcodes.INVOKESPECIAL;
 import static org.jetbrains.asm4.Opcodes.INVOKESTATIC;
 
-/**
- * @author yole
- * @author alex.tkacman
- */
 public class CallableMethod implements Callable {
     @NotNull
     private final JvmClassName owner;

@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 
-/**
- * @author svtk
- */
 public class DefaultModuleConfiguration implements ModuleConfiguration {
     public static final ImportPath[] DEFAULT_JET_IMPORTS = new ImportPath[] {
             new ImportPath("kotlin.*"), new ImportPath("kotlin.io.*"), new ImportPath("jet.*"), };

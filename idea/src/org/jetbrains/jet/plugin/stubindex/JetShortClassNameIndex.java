@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 
 import java.util.Collection;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetShortClassNameIndex extends StringStubIndexExtension<JetClassOrObject> {
     private static final JetShortClassNameIndex ourInstance = new JetShortClassNameIndex();
 

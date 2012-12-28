@@ -30,9 +30,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author slukjanov aka Frostman
- */
 public final class JetProjectViewUtil {
 
     private JetProjectViewUtil() {

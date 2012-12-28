@@ -28,9 +28,6 @@ import java.util.Stack;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author abreslav
- */
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
     private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL);
     private final Stack<Boolean> joinComplexTokens = new Stack<Boolean>();

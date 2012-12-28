@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.scopes.receivers;
 
-/**
- * @author abreslav
- */
 public class ReceiverValueVisitor<R, D> {
     public R visitNoReceiver(ReceiverValue noReceiver, D data) {
         return null;

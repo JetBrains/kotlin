@@ -27,9 +27,6 @@ import java.io.File;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.*;
 
-/**
- * @author abreslav
- */
 public class LazyResolveBuiltinClassesTest extends KotlinTestWithEnvironment {
     @Override
     protected JetCoreEnvironment createEnvironment() {

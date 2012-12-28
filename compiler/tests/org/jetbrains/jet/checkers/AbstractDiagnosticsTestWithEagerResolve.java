@@ -27,9 +27,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJetDiagnosticsTest {
 
     @Override

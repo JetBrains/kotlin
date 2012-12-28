@@ -40,9 +40,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class JetStructureViewElement implements StructureViewTreeElement {
     private final NavigatablePsiElement myElement;
 

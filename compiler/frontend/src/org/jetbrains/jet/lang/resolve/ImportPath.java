@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Nikolay Krasko
- */
 public final class ImportPath {
     private final @NotNull FqName fqName;
     private final boolean isAllUnder;

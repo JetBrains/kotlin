@@ -27,9 +27,6 @@ import java.net.URLConnection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class SDKDownloader {
     private final String platformZipPath;

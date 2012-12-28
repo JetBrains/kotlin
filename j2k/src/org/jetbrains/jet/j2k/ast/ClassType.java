@@ -22,9 +22,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class ClassType extends Type {
     private final Identifier myType;
     private final List<? extends Element> myParameters;

@@ -23,9 +23,6 @@ import org.jetbrains.k2js.translate.reference.InlinedCallExpressionTranslator;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 
-/**
- * @author Pavel Talanov
- */
 public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
 
     @NotNull

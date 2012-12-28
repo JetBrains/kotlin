@@ -22,9 +22,6 @@ import java.io.PrintStream;
 import java.util.EnumSet;
 import java.util.Set;
 
-/**
- * @author Stepan Koltsov
- */
 public class MessageCollectorPlainTextToStream implements MessageCollector {
     public static final EnumSet<CompilerMessageSeverity> VERBOSE = EnumSet.of(CompilerMessageSeverity.LOGGING, CompilerMessageSeverity.OUTPUT);
     public static final EnumSet<CompilerMessageSeverity> NON_VERBOSE = EnumSet.complementOf(VERBOSE);

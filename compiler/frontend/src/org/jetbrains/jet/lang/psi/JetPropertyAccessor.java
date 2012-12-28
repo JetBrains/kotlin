@@ -27,9 +27,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetPropertyAccessor extends JetDeclarationImpl
         implements JetDeclarationWithBody, JetModifierListOwner, JetWithExpressionInitializer {
     public JetPropertyAccessor(@NotNull ASTNode node) {

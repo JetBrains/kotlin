@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 
 import java.util.Collection;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetTopLevelPropertiesFqnNameIndex extends StringStubIndexExtension<JetProperty> {
     private static final JetTopLevelPropertiesFqnNameIndex INSTANCE = new JetTopLevelPropertiesFqnNameIndex();
 

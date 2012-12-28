@@ -20,9 +20,6 @@ import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.Method;
 
-/**
- * @author yole
- */
 public class PatternMatchingTest extends CodegenTestCase {
 
     @Override

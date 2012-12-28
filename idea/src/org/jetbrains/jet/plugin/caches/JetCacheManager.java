@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetCacheManager implements ProjectComponent {
     private Project myProject;
     private JetShortNamesCache myCache;

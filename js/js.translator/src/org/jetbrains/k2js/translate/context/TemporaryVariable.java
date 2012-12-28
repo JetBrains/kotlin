@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
-/**
- * @author Pavel Talanov
- */
 public class TemporaryVariable {
     @Nullable
     private final JsExpression assignmentExpression;

@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-/**
- * @author Pavel Talanov
- */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class SimpleTest extends SingleFileTranslationTest {
 

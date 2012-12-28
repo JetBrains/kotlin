@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 
-/**
- * @author alex.tkachman
-*/
 public class MethodContext extends CodegenContext {
     public MethodContext(
             @NotNull FunctionDescriptor contextType,

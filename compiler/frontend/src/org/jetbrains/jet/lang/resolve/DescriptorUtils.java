@@ -39,9 +39,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
-/**
- * @author abreslav
- */
 public class DescriptorUtils {
 
     @NotNull

@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.diagnostic.Logger;

@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
-* @author abreslav
-*/
 public interface TypeSubstitution {
     TypeSubstitution EMPTY = new TypeSubstitution() {
         @Override

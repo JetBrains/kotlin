@@ -32,10 +32,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/14/12
- */
 public class IdeTemplatesTest extends LightCodeInsightFixtureTestCase {
     private ArrayList<Region> myExpectedRegions;
 

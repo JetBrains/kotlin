@@ -45,9 +45,6 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
 import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
-/**
- * @author svtk
- */
 public class Renderers {
     public static final Renderer<Object> TO_STRING = new Renderer<Object>() {
         @NotNull

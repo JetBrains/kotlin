@@ -36,9 +36,6 @@ import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
-/**
- * @author alex.tkachman
-*/
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 

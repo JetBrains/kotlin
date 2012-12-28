@@ -33,9 +33,6 @@ import java.io.PrintStream;
 import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class CLICompiler<A extends CompilerArguments> {
 
     @NotNull

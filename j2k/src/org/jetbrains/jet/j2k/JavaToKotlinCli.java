@@ -18,9 +18,6 @@
 //import static org.apache.commons.io.FileUtils.readFileToString;
 //import static org.apache.commons.io.FileUtils.writeStringToFile;
 //
-///**
-// * @author ignatov
-// */
 //@SuppressWarnings({"CallToPrintStackTrace", "UseOfSystemOutOrSystemErr"})
 //public class JavaToKotlinCli {
 //  private static final Logger myLogger = Logger.getAnonymousLogger();

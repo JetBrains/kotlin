@@ -43,9 +43,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author yole
- */
 public abstract class OverrideImplementMethodsHandler implements LanguageCodeInsightActionHandler {
 
     public static List<DescriptorClassMember> membersFromDescriptors(

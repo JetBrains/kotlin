@@ -27,9 +27,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetClassBody extends JetElementImpl implements JetDeclarationContainer {
     public JetClassBody(@NotNull ASTNode node) {
         super(node);

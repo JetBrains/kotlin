@@ -28,9 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
-* @author abreslav
-*/
 public class SlicedMapImpl implements MutableSlicedMap {
 
     public static SlicedMapImpl create() {

@@ -19,8 +19,5 @@ package org.jetbrains.jet.lang.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetParameterList;
 
-/**
- * @author Nikolay Krasko
- */
 public interface PsiJetParameterListStub extends StubElement<JetParameterList> {
 }

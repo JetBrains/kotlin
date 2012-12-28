@@ -29,10 +29,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class Inv implements IntrinsicMethod {
     @Override
     public StackValue generate(

@@ -21,10 +21,6 @@ import org.jetbrains.jet.ConfigurationKind;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class StringsTest extends CodegenTestCase {
 
     @Override

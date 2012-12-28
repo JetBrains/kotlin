@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.parsing;
 
-/**
- * @author abreslav
- */
 public class SemanticWhitespaceAwarePsiBuilderForByClause extends SemanticWhitespaceAwarePsiBuilderAdapter {
 
     private int stackSize = 0;

@@ -34,11 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author peter (originally from IDEA platform)
- * @author Evgeny Gerashchenko
- * @since 2/2/2012
- */
 public class JetLiveTemplateCompletionContributor extends CompletionContributor {
     public JetLiveTemplateCompletionContributor() {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(), new CompletionProvider<CompletionParameters>() {

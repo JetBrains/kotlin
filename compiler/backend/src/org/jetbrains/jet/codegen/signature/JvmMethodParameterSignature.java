@@ -19,9 +19,6 @@ package org.jetbrains.jet.codegen.signature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 
-/**
- * @author Stepan Koltsov
- */
 public class JvmMethodParameterSignature {
     @NotNull
     private final Type asmType;

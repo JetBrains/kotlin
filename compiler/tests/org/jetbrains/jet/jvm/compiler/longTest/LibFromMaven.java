@@ -18,9 +18,6 @@ package org.jetbrains.jet.jvm.compiler.longTest;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Stepan Koltsov
- */
 public class LibFromMaven {
     @NotNull
     private final String org;

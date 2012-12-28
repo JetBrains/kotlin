@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- * @author alex.tkachman
- */
 package org.jetbrains.jet.codegen.state;
 
 import com.intellij.openapi.project.Project;

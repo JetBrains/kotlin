@@ -33,9 +33,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public final class CallBuilder {
 
     public static CallBuilder build(@NotNull TranslationContext context) {

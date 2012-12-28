@@ -34,9 +34,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetPsiCheckerMultifileTest extends JetQuickFixMultiFileTest {
 
     public final static String MAIN_SUBSTRING = ".Main";

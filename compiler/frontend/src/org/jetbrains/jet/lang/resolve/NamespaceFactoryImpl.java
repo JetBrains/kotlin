@@ -41,9 +41,6 @@ import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
-/**
- * @author Stepan Koltsov
- */
 public class NamespaceFactoryImpl implements NamespaceFactory {
 
     private ModuleDescriptor moduleDescriptor;

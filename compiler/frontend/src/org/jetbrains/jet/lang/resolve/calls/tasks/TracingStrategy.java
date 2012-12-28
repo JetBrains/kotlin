@@ -34,9 +34,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
-/**
-* @author abreslav
-*/
 public interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
 

@@ -36,8 +36,6 @@ import java.util.regex.Pattern;
 /**
  * Extract a number of statements about completion from the given text. Those statements
  * should be asserted during test execution.
- *
- * @author Nikolay Krasko
  */
 public class ExpectedCompletionUtils {
 

@@ -20,10 +20,6 @@ import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.Method;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class ExtensionFunctionsTest extends CodegenTestCase {
     @Override
     protected String getPrefix() {

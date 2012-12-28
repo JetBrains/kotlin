@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private JetScope memberScope;
     private final FqName qualifiedName;

@@ -31,8 +31,6 @@ import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
  * Quick showing possible problems with jet internals in IDEA with a tooltips
- *
- * @author abreslav
  */
 public class DebugInfoAnnotator implements Annotator {
 

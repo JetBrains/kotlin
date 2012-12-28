@@ -32,9 +32,6 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.scope.ScopeUtils.computeAllPackageDeclarations;
 
-/**
- * @author abreslav
- */
 public abstract class JavaPackageScope extends JavaBaseScope {
 
     @NotNull

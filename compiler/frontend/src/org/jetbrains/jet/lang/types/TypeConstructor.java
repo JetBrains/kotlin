@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public interface TypeConstructor extends Annotated {
     @NotNull
     List<TypeParameterDescriptor> getParameters();

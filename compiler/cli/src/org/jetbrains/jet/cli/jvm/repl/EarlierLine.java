@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
-/**
- * @author Stepan Koltsov
- */
 public class EarlierLine {
     @NotNull
     private final String code;

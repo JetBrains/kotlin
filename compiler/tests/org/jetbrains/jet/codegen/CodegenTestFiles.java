@@ -34,10 +34,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Stepan Koltsov
- * @author alex.tkachman
- */
 public class CodegenTestFiles {
 
     @NotNull

@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-/**
- * @author abreslav
- */
 public class TemporaryBindingTrace extends DelegatingBindingTrace {
 
     public static TemporaryBindingTrace create(@NotNull BindingTrace trace, String debugName) {

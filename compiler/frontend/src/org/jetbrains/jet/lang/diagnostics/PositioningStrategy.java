@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-/**
-* @author svtk
-*/
 public class PositioningStrategy<E extends PsiElement> {
     @NotNull
     public List<TextRange> mark(@NotNull E element) {

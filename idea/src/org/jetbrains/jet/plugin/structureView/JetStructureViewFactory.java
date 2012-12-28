@@ -24,9 +24,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-/**
- * @author yole
- */
 public class JetStructureViewFactory implements PsiStructureViewFactory {
     @Override
     public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {

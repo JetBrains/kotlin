@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.parsing;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractTokenStreamPredicate implements TokenStreamPredicate {
 
     @Override

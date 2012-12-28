@@ -34,9 +34,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import javax.swing.*;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class JetIconProvider extends IconProvider {
 
     public static JetIconProvider INSTANCE = new JetIconProvider();

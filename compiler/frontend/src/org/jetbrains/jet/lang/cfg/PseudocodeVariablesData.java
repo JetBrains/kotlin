@@ -38,9 +38,6 @@ import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.LookInsideStrategy.
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 
-/**
- * @author svtk
- */
 public class PseudocodeVariablesData {
     private final Pseudocode pseudocode;
     private final BindingContext bindingContext;

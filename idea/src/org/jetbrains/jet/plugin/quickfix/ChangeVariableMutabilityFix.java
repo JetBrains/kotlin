@@ -35,9 +35,6 @@ import org.jetbrains.jet.plugin.JetBundle;
 
 import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
-/**
- * @author svtk
- */
 public class ChangeVariableMutabilityFix implements IntentionAction {
     private boolean isVar;
     

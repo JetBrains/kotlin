@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Collection;
 
-/**
- * @author Stepan Koltsov
- */
 public class AnalyzeExhaust {
     private static final ModuleConfiguration ERROR_CONFIGURATION = new ModuleConfiguration() {
         @Override

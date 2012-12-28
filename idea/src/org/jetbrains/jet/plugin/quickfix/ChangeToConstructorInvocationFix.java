@@ -30,9 +30,6 @@ import org.jetbrains.jet.plugin.JetBundle;
 
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class ChangeToConstructorInvocationFix extends JetIntentionAction<JetDelegatorToSuperClass> {
 
     public ChangeToConstructorInvocationFix(@NotNull JetDelegatorToSuperClass element) {

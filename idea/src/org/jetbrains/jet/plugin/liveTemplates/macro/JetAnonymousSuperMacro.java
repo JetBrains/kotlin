@@ -46,10 +46,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/2/12
- */
 public class JetAnonymousSuperMacro extends Macro {
     @Override
     public String getName() {

@@ -20,9 +20,6 @@ import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Stepan Koltsov
- */
 public class TypeSource {
 
     @NotNull

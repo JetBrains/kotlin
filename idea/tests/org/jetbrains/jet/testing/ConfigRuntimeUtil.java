@@ -25,8 +25,6 @@ import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 /**
  * Helper for configuring kotlin runtime in tested project.
- *
- * @author Nikolay Krasko
  */
 public class ConfigRuntimeUtil {
     private ConfigRuntimeUtil() {

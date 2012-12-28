@@ -19,9 +19,6 @@ package org.jetbrains.jet.codegen.binding;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-/**
- * @author alex.tkachman
- */
 public class BindingContextAware {
     @NotNull protected final BindingContext bindingContext;
 

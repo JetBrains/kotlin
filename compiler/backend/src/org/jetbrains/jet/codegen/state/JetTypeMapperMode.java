@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.codegen.state;
 
-/**
- * @author Stepan Koltsov
- */
 public enum JetTypeMapperMode {
     /**
      * foo.Bar is mapped to Lfoo/Bar;

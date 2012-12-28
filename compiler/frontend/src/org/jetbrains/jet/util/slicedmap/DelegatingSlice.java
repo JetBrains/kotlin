@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Do nothing but dispatching all invokes to internal writable slice.
- *
- * @author abreslav
  */
 public class DelegatingSlice<K, V> implements WritableSlice<K, V> {
     private final WritableSlice<K, V> delegate;

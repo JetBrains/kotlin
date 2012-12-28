@@ -23,9 +23,6 @@ import java.io.IOException;
 
 import static com.intellij.openapi.util.io.FileUtil.loadTextAndClose;
 
-/**
- * @author Pavel Talanov
- */
 public final class StringTest extends AbstractExpressionTest {
 
     public StringTest() {

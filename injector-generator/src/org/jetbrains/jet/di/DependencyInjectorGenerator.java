@@ -39,9 +39,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 
-/**
-* @author abreslav
-*/
 public class DependencyInjectorGenerator {
 
     public static final String INDENT_STEP = "    ";

@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class JvmClassName {
 
     @NotNull

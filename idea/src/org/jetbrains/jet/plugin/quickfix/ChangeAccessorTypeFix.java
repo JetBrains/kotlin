@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- */
 public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
     public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element) {
         super(element);

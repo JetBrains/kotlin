@@ -29,9 +29,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractPsiBasedDeclarationProvider implements DeclarationProvider {
     private final List<JetDeclaration> allDeclarations = Lists.newArrayList();
     private final Multimap<Name, JetNamedFunction> functions = HashMultimap.create();

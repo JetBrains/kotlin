@@ -37,9 +37,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
 
-/**
- * @author abreslav
- */
 public class JavaTypeTransformer {
 
     private JavaSemanticServices javaSemanticServices;

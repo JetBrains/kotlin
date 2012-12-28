@@ -31,9 +31,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class TabledDescriptorRenderer {
     public interface TableOrTextRenderer {}
 

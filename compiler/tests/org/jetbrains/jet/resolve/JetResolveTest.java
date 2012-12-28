@@ -55,9 +55,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.resolveFakeCall;
 
-/**
- * @author abreslav
- */
 public class JetResolveTest extends ExtensibleResolveTestCase {
 
     private final String path;

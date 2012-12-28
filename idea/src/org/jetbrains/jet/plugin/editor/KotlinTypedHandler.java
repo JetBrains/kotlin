@@ -29,10 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/16/12
- */
 public class KotlinTypedHandler extends TypedHandlerDelegate {
 
     private boolean jetLTTyped;

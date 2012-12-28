@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 
-/**
- * @author abreslav
- */
 public abstract class JetLabelQualifiedInstanceExpression extends JetLabelQualifiedExpression
         implements JetStatementExpression {
 

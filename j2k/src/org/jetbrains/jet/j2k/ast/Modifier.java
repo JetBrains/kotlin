@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public abstract class Modifier {
     @NotNull
     public static final String PUBLIC = "public";

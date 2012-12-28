@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.cfg.Label;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
-* @author abreslav
-*/
 public abstract class AbstractJumpInstruction extends InstructionImpl {
     private final Label targetLabel;
     private Instruction resolvedTarget;

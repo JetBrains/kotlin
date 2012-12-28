@@ -31,9 +31,6 @@ import java.util.List;
 import static org.jetbrains.jet.codegen.AsmUtil.genInvokeAppendMethod;
 import static org.jetbrains.jet.codegen.AsmUtil.genStringBuilderConstructor;
 
-/**
- * @author yole
- */
 public class Concat implements IntrinsicMethod {
     @Override
     public StackValue generate(

@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
-* @author abreslav
-*/
 public abstract class ResolutionContext {
     public final BindingTrace trace;
     public final JetScope scope;

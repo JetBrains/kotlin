@@ -28,9 +28,6 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 
-/**
- * @author Pavel Talanov
- */
 public final class CachedPropertyAccessTranslator implements CachedAccessTranslator {
 
     @NotNull

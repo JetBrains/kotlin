@@ -32,9 +32,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author abreslav
- */
 public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     @Override
     protected JetCoreEnvironment createEnvironment() {

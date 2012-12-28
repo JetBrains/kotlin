@@ -39,10 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/23/12
- */
 public abstract class AbstractNavigateToLibraryTest extends PlatformTestCase {
     protected static final String PACKAGE = "testData.libraries";
     protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";

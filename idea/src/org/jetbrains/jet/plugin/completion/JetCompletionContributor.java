@@ -46,9 +46,6 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetCompletionContributor extends CompletionContributor {
     public JetCompletionContributor() {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(),

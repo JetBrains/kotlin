@@ -9,9 +9,6 @@ import org.jetbrains.jet.plugin.references.StandardLibraryReferenceResolver;
 
 import java.util.Collection;
 
-/**
- * @author Vladimir Rudev
- */
 public final class DescriptorToDeclarationUtil {
     private DescriptorToDeclarationUtil() {
     }

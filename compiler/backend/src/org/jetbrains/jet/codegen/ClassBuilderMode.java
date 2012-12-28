@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-/**
- * @author Stepan Koltsov
- */
 public enum ClassBuilderMode {
     /**
      * Full function bodies

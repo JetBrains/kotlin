@@ -34,8 +34,6 @@ import java.util.List;
 /**
  * TODO Temporary class until {@link JavaPsiFacadeImpl} hacked.
  *
- * @author Stepan Koltsov
- *
  * @see JavaPsiFacadeImpl
  */
 public class JavaPsiFacadeKotlinHacks {

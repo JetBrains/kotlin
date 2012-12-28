@@ -20,9 +20,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-/**
- * @author Nikolay Krasko
- */
 public class ExtensionsCompletionTest extends JetCompletionTestBase {
 
     public void testExtensionInExtendedClass() {

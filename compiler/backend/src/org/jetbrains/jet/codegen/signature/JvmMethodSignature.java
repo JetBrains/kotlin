@@ -24,9 +24,6 @@ import org.jetbrains.asm4.commons.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class JvmMethodSignature {
 
     @NotNull

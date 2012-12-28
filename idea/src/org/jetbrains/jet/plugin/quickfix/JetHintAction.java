@@ -24,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A fix with the user information hint.
- *
- * @author Nikolay Krasko
  */
 public abstract class JetHintAction<T extends PsiElement> extends JetIntentionAction<T> implements HintAction {
 

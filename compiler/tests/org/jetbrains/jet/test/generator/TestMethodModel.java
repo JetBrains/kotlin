@@ -19,9 +19,6 @@ package org.jetbrains.jet.test.generator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.Printer;
 
-/**
- * @author abreslav
- */
 public interface TestMethodModel extends TestEntityModel {
     void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName);
 }

@@ -20,9 +20,6 @@ import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel Talanov
- */
 public final class K2JSConfigurationSettings {
 
     @NotNull

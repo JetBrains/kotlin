@@ -19,10 +19,6 @@ package org.jetbrains.jet.editor;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/16/12
- */
 public class TypedHandlerTest extends LightCodeInsightTestCase {
     public void testTypeStringTemplateStart() throws Exception {
         configureFromFileText("a.kt", "val x = \"$<caret>\"");

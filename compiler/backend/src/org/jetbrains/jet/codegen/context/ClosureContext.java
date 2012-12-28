@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 
-/**
- * @author alex.tkachman
-*/
 class ClosureContext extends CodegenContext {
     private final ClassDescriptor classDescriptor;
 

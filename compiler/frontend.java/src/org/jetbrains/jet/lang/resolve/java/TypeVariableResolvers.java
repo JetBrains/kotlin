@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class TypeVariableResolvers {
 
     @NotNull

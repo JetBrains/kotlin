@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-/**
- * @author abreslav
- */
 public interface Named {
     @NotNull
     Name getName();

@@ -20,9 +20,6 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.jet.compiler.PathManager;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class PermissionManager {
     private PermissionManager() {

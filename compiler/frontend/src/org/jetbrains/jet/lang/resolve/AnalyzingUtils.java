@@ -31,9 +31,6 @@ import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class AnalyzingUtils {
 
     public abstract static class PsiErrorElementVisitor extends JetTreeVisitorVoid {

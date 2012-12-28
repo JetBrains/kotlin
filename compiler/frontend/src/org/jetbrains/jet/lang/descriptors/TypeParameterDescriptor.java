@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public interface TypeParameterDescriptor extends ClassifierDescriptor {
     boolean isReified();
 

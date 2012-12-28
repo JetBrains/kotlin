@@ -31,9 +31,6 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 
-/**
- * @author svtk
- */
 public class PseudocodeUtil {
 
     public static Pseudocode generatePseudocode(@NotNull JetDeclaration declaration, @NotNull final BindingContext bindingContext) {

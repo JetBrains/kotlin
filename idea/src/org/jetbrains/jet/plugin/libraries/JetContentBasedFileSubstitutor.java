@@ -28,10 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.highlighter.JetHighlighter;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/15/12
- */
 public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProcessor {
 
     @Override

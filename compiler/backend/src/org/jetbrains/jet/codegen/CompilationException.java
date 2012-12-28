@@ -23,10 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 
-/**
- * @author alex.tkachman
- * @author abreslav
- */
 public class CompilationException extends RuntimeException {
     private final PsiElement element;
 

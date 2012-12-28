@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.plugin.run;
 
 import com.intellij.execution.JavaRunConfigurationExtensionManager;

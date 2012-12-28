@@ -22,10 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/11/12
- */
 public class DiagnosticWithParameters2<E extends PsiElement, A, B> extends AbstractDiagnostic<E> {
     private A a;
     private B b;

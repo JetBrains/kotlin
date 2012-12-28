@@ -23,10 +23,6 @@ import com.intellij.codeInsight.template.Result;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/7/12
- */
 public class JetSuggestVariableNameMacro extends Macro {
     @Override
     public String getName() {

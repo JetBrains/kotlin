@@ -53,9 +53,6 @@ import java.util.Set;
 import static org.jetbrains.jet.compiler.runner.CompilerRunnerUtil.invokeExecMethod;
 import static org.jetbrains.jet.compiler.runner.CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode;
 
-/**
- * @author Pavel Talanov
- */
 public final class K2JSCompiler implements TranslatingCompiler {
     @Override
     public boolean isCompilableFile(VirtualFile file, CompileContext context) {

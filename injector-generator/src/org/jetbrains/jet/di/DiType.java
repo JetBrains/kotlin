@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class DiType {
     @NotNull
     private final Class<?> clazz;

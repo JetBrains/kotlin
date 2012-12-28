@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-/**
- * @author Pavel Talanov
- */
 public final class ClosureUtils {
     private ClosureUtils() {
     }

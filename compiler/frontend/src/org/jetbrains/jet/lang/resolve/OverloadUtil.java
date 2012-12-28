@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 
-/**
- * @author Stepan Koltsov
- */
 public class OverloadUtil {
 
     /**

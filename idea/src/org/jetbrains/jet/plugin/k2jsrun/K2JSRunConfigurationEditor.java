@@ -38,9 +38,6 @@ import java.io.File;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
 
-/**
- * @author Pavel Talanov
- */
 public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConfiguration> {
 
     private JPanel mainPanel;

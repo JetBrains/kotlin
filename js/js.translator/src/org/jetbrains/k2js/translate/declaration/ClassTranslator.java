@@ -47,9 +47,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorP
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Generates a definition of a single class.
+ * Generates a definition of a single class.
  */
 public final class ClassTranslator extends AbstractTranslator {
     @NotNull

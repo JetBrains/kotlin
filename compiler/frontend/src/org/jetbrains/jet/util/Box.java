@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.util;
 
-/**
-* @author abreslav
-*/
 public class Box<T> {
     private final T data;
 

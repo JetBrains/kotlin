@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.parsing;
 
-/**
-* @author abreslav
-*/
 public class FirstBefore extends AbstractTokenStreamPattern {
     private final TokenStreamPredicate lookFor;
     private final TokenStreamPredicate stopAt;

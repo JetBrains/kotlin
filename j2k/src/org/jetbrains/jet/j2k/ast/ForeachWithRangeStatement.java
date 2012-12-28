@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class ForeachWithRangeStatement extends Statement {
     private final Expression myStart;
     private final IdentifierImpl myIdentifier;

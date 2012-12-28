@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author alex.tkachman
- */
 public class FloatValue implements CompileTimeConstant<Float> {
     private final float value;
 

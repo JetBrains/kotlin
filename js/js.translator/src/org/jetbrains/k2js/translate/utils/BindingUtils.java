@@ -36,10 +36,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         This class contains some code related to BindingContext use. Intention is not to pollute other classes.
- *         Every call to BindingContext.get() is supposed to be wrapped by this utility class.
+ * This class contains some code related to BindingContext use. Intention is not to pollute other classes.
+ * Every call to BindingContext.get() is supposed to be wrapped by this utility class.
  */
 public final class BindingUtils {
 

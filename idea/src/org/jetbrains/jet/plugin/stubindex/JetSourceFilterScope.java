@@ -25,9 +25,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     private final ProjectFileIndex myIndex;
 

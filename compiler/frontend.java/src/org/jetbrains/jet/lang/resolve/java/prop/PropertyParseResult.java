@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.prop;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Stepan Koltsov
- */
 public class PropertyParseResult {
     @NotNull
     private final String propertyName;

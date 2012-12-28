@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class ContinueStatement extends Statement {
     private Identifier myLabel = Identifier.EMPTY_IDENTIFIER;
 

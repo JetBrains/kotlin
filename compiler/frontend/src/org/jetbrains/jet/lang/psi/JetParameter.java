@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author max
- */
 public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
     public static final JetParameter[] EMPTY_ARRAY = new JetParameter[0];
 

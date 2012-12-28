@@ -30,9 +30,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.comparisonOperandType;
 
-/**
- * @author alex.tkachman
- */
 public class CompareTo implements IntrinsicMethod {
     @Override
     public StackValue generate(

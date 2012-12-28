@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
-* @author abreslav
-*/
 public class BasicResolutionContext extends ResolutionContext {
     @NotNull
     public static BasicResolutionContext create(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull Call call, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {

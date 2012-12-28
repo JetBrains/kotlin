@@ -34,9 +34,6 @@ import java.util.Collections;
 import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
 import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
 
-/**
- * @author yole
- */
 public class JetCompilerManager implements ProjectComponent {
     private static final Logger LOG = Logger.getInstance(JetCompilerManager.class);
 

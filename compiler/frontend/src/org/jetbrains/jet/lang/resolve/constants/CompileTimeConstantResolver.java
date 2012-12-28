@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class CompileTimeConstantResolver {
     public static final ErrorValue OUT_OF_RANGE = new ErrorValue("The value is out of range");
 

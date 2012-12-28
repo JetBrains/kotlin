@@ -20,9 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-/**
- * @author abreslav
- */
 public interface MutableSlicedMap extends SlicedMap {
 
     <K, V> void put(WritableSlice<K, V> slice, K key, V value);

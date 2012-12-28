@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public class RedeclarationDiagnosticFactory extends DiagnosticFactory1<PsiElement, String> {
     private static final PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
         @NotNull

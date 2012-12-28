@@ -66,11 +66,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author yole
- * @author abreslav
- * @author alex.tkachman
- */
 public class KotlinToJVMBytecodeCompiler {
 
     private KotlinToJVMBytecodeCompiler() {

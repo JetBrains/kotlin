@@ -38,9 +38,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
-/**
- * @author abreslav
- */
 public class ResolveSession {
     private static final Function<FqName, Name> NO_ALIASES = new Function<FqName, Name>() {
 

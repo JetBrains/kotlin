@@ -25,9 +25,6 @@ import org.jetbrains.k2js.translate.reference.CallBuilder;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 
-/**
- * @author Pavel Talanov
- */
 public final class OverloadedIncrementTranslator extends IncrementTranslator {
 
     @NotNull

@@ -27,9 +27,6 @@ import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class WritableScopeImpl extends WritableScopeWithImports {
 
     private final Collection<DeclarationDescriptor> allDescriptors = Lists.newArrayList();

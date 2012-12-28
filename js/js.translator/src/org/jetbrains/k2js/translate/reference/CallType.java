@@ -30,9 +30,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullConditionalTestExpression;
 
-/**
- * @author Pavel Talanov
- */
 public enum CallType {
     SAFE {
         @NotNull

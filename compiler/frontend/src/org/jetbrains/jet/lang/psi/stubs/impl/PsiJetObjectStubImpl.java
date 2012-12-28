@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> implements PsiJetObjectStub {
     private final StringRef name;
     private final FqName fqName;

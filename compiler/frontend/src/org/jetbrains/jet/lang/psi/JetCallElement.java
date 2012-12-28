@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public interface JetCallElement extends PsiElement {
     @Nullable
     JetExpression getCalleeExpression();

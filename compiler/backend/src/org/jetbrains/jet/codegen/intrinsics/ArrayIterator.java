@@ -36,9 +36,6 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.List;
 
-/**
- * @author alex.tkachman
- */
 public class ArrayIterator implements IntrinsicMethod {
     @Override
     public StackValue generate(

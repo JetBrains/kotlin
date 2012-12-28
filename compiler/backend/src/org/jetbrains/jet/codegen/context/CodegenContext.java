@@ -36,10 +36,6 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLASS_FOR_FUNCTIO
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.FQN;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/*
- * @author max
- * @author alex.tkachman
- */
 public abstract class CodegenContext {
 
     public static final CodegenContext STATIC = new RootContext();

@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-/**
- * @author Pavel Talanov
- */
 public final class AccessTranslationUtils {
     private AccessTranslationUtils() {
     }

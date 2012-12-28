@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public abstract class ASTIndentStrategy {
     public static ASTIndentStrategy constIndent(Indent indent) {
         return new ConstIndentStrategy(indent);

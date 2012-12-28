@@ -44,9 +44,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Generates a big block where are all the classes(objects representing them) are created.
+ * Generates a big block where are all the classes(objects representing them) are created.
  */
 public final class ClassDeclarationTranslator extends AbstractTranslator {
     private final LabelGenerator localLabelGenerator = new LabelGenerator('c');

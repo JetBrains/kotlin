@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author max
- */
 public class JetValueArgument extends JetElementImpl implements ValueArgument {
     public JetValueArgument(@NotNull ASTNode node) {
         super(node);

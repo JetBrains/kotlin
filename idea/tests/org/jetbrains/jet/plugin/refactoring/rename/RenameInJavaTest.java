@@ -27,9 +27,6 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-/**
- * @author Nikolay Krasko
- */
 public class RenameInJavaTest extends MultiFileTestCase {
 
     @Override

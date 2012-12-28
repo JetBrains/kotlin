@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.*;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     protected @Nullable JetControlFlowBuilder builder;
 

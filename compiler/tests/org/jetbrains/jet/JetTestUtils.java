@@ -64,9 +64,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author abreslav
- */
 public class JetTestUtils {
     private static List<File> filesToDelete = new ArrayList<File>();
 

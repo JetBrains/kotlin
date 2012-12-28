@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-/**
- * @author Stepan Koltsov
- */
 public class ScriptReceiver implements ThisReceiver {
 
     @NotNull

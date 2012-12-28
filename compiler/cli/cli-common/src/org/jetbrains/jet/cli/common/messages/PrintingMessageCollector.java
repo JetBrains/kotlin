@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.PrintStream;
 import java.util.Collection;
 
-/**
- * @author Pavel Talanov
- */
 public class PrintingMessageCollector implements MessageCollector {
 
     private boolean verbose;

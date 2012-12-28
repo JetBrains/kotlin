@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;

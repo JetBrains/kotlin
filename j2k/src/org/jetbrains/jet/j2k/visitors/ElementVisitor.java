@@ -26,9 +26,6 @@ import java.util.List;
 import static org.jetbrains.jet.j2k.Converter.modifiersListToModifiersSet;
 import static org.jetbrains.jet.j2k.ConverterUtil.isAnnotatedAsNotNull;
 
-/**
- * @author ignatov
- */
 public class ElementVisitor extends JavaElementVisitor implements J2KVisitor {
     
     private final Converter myConverter;

@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-/**
- * @author abreslav
- */
 public interface VariableDescriptor extends CallableDescriptor {
     @NotNull
     JetType getType();

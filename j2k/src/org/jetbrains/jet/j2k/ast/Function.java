@@ -23,9 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public class Function extends Member {
     private final Identifier myName;
     private final Type myType;

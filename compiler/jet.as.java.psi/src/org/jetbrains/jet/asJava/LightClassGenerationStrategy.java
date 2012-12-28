@@ -34,9 +34,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
-/**
- * @author alex.tkachman
-*/
 class LightClassGenerationStrategy extends GenerationStrategy {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.LightClassGenerationStrategy");
 

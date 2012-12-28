@@ -33,9 +33,6 @@ import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetImportOptimizer implements ImportOptimizer {
     @Override
     public boolean supports(PsiFile file) {

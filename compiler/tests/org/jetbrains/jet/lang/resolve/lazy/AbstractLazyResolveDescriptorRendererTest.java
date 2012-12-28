@@ -38,9 +38,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTestWithEnvironment {
 
     @Override

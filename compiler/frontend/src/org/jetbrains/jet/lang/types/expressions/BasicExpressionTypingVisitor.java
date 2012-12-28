@@ -60,9 +60,6 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 
-/**
- * @author abreslav
- */
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     protected BasicExpressionTypingVisitor(@NotNull ExpressionTypingInternals facade) {

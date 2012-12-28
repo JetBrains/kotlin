@@ -28,8 +28,6 @@ import java.util.List;
 /**
  * Type reference element.
  * Underlying token is {@link org.jetbrains.jet.JetNodeTypes#TYPE_REFERENCE}
- *
- * @author max
  */
 public class JetTypeReference extends JetElementImpl {
     public JetTypeReference(@NotNull ASTNode node) {

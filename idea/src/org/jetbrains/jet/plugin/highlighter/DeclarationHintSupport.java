@@ -50,10 +50,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 5/16/12
- */
 public class DeclarationHintSupport extends AbstractProjectComponent {
     private static final Logger LOG = Logger.getInstance(DeclarationHintSupport.class.getName());
 

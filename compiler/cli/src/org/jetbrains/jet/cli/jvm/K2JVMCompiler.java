@@ -47,10 +47,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 

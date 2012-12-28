@@ -67,8 +67,6 @@ import java.util.Set;
 
 /**
  * Check possibility and perform fix for unresolved references.
- *
- * @author Nikolay Krasko
  */
 public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression> implements HighPriorityAction {
 

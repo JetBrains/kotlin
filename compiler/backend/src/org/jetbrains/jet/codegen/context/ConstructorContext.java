@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author alex.tkachman
-*/
 public class ConstructorContext extends MethodContext {
     private static final StackValue local1 = StackValue.local(1, OBJECT_TYPE);
 

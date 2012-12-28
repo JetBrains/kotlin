@@ -46,9 +46,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationNa
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
-/**
- * @author Pavel Talanov
- */
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull

@@ -34,9 +34,6 @@ import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.IOException;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     public static final int STUB_VERSION = 18;
 

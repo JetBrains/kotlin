@@ -28,9 +28,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 
-/**
- * @author abreslav
- */
 public class DeferredType implements JetType {
     
     public static DeferredType create(BindingTrace trace, LazyValue<JetType> lazyValue) {

@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-/**
- * @author abreslav
- */
 public interface JetNamed {
     @Nullable
     Name getNameAsName();

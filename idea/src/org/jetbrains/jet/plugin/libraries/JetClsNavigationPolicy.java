@@ -23,10 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/2/12
- */
 public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable

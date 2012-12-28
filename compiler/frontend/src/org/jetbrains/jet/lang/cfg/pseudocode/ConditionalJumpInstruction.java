@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.cfg.Label;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
-* @author abreslav
-*/
 public class ConditionalJumpInstruction extends AbstractJumpInstruction {
     private final boolean onTrue;
     private Instruction nextOnTrue;

@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class PrintingConstraintResolutionListener implements ConstraintResolutionListener {
 
     @Override

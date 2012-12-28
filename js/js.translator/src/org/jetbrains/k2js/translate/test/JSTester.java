@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class JSTester {
 
     @Nullable

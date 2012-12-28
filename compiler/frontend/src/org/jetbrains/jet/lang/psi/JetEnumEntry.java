@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetEnumEntry extends JetClass {
     public JetEnumEntry(@NotNull ASTNode node) {
         super(node);

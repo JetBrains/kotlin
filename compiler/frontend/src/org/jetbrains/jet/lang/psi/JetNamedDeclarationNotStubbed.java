@@ -25,9 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author max
- */
 // TODO: Remove when all named declarations get stubs
 @Deprecated
 abstract class JetNamedDeclarationNotStubbed extends JetDeclarationImpl implements JetNamedDeclaration {

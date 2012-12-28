@@ -34,9 +34,6 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
 
-/**
- * @author Pavel Talanov
- */
 public final class RangeForTranslator extends ForTranslator {
 
     @NotNull

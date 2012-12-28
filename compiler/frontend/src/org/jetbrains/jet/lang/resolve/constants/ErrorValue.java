@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class ErrorValue implements CompileTimeConstant<Void> {
     private final String message;
 

@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import java.util.List;
 import java.util.Set;
 
-/**
-* @author abreslav
-*/
 public interface CallableDescriptor extends DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot {
     @Nullable
     ReceiverParameterDescriptor getReceiverParameter();

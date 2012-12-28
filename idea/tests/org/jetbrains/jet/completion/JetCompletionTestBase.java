@@ -30,9 +30,6 @@ import org.jetbrains.jet.testing.ConfigRuntimeUtil;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
-/**
- * @author Nikolay.Krasko
- */
 public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
     private final ExpectedCompletionUtils completionUtils = new ExpectedCompletionUtils();

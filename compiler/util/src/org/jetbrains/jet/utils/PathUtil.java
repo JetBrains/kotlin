@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.utils;
 
 import com.intellij.openapi.application.PathManager;

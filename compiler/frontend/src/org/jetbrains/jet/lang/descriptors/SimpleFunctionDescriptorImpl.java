@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl implements SimpleFunctionDescriptor {
 
     private boolean isInline = false;

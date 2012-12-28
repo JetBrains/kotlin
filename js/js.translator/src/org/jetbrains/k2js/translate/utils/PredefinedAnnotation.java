@@ -18,9 +18,6 @@ package org.jetbrains.k2js.translate.utils;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel Talanov
- */
 public enum PredefinedAnnotation {
     LIBRARY("js.library"),
     NATIVE("js.native");

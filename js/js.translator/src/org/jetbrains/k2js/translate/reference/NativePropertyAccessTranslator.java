@@ -29,9 +29,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         For native apis that use .property notation for access.
+ * For native apis that use .property notation for access.
  */
 public final class NativePropertyAccessTranslator extends PropertyAccessTranslator {
 

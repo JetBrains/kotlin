@@ -29,8 +29,6 @@ import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
  * Special contributor for getting completion of type for extensions receiver.
- *
- * @author Nikolay Krasko
  */
 public class JetExtensionReceiverTypeContributor extends CompletionContributor {
     private static class ReceiverTypeCompletionProvider extends CompletionProvider<CompletionParameters> {

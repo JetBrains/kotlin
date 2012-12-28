@@ -21,9 +21,6 @@ import junit.framework.TestCase;
 import java.lang.String;
 import java.lang.reflect.Method;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class AbstractCodegenTestCaseOnAndroid extends TestCase {
 

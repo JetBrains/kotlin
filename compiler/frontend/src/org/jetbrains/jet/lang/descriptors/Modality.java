@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-/**
- * @author abreslav
- */
 public enum Modality {
     // THE ORDER OF ENTRIES MATTERS HERE
     FINAL(false),

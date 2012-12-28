@@ -28,9 +28,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.fromExpressionList;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.toExpressionList;
 
-/**
- * @author Pavel Talanov
- */
 public final class CachedArrayAccessTranslator extends ArrayAccessTranslator implements CachedAccessTranslator {
 
     @NotNull

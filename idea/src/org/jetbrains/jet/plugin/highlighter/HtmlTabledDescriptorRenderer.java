@@ -36,9 +36,6 @@ import java.util.List;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.error;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 
-/**
-* @author svtk
-*/
 public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     @Override

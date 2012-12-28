@@ -33,9 +33,6 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.*;
 
-/**
- * @author svtk
- */
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
     private static JavaToKotlinClassMap instance = null;
 

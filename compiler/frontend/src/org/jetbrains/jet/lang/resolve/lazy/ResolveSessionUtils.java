@@ -38,9 +38,6 @@ import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
 
-/**
- * @author Nikolay Krasko
- */
 public class ResolveSessionUtils {
 
     // This name is used as a key for the case when something has no name _due to a syntactic error_

@@ -19,9 +19,6 @@ package org.jetbrains.k2js.test.semantics;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.mozilla.javascript.JavaScriptException;
 
-/**
- * @author Pavel Talanov
- */
 public final class PatternMatchingTest extends SingleFileTranslationTest {
 
     public PatternMatchingTest() {

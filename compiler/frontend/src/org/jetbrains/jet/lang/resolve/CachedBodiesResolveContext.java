@@ -32,8 +32,6 @@ import java.util.Map;
 /**
  * A storage for the part of {@see TopDownAnalysisContext} collected during headers analysis that will be used during resolution of
  * bodies
- *
-* @author Nikolay Krasko
 */
 public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Collection<JetFile> files;

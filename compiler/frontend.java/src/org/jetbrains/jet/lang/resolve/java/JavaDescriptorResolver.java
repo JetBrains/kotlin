@@ -34,9 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");

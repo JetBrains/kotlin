@@ -27,9 +27,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 abstract public class JetFunctionNotStubbed extends JetTypeParameterListOwnerNotStubbed
         implements JetFunction {
 

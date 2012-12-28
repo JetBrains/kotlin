@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
 
-/**
- * @author abreslav
- */
 public class TraceBasedRedeclarationHandler implements RedeclarationHandler {
     private final BindingTrace trace;
 

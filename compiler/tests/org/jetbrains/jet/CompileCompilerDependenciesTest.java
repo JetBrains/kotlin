@@ -31,9 +31,6 @@ import static org.jetbrains.jet.ConfigurationKind.ALL;
 import static org.jetbrains.jet.ConfigurationKind.JDK_AND_ANNOTATIONS;
 import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.*;
 
-/**
- * @author Stepan Koltsov
- */
 public class CompileCompilerDependenciesTest {
 
     @Test

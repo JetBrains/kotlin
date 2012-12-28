@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class JetObjectInfo extends JetClassOrObjectInfo<JetClassOrObject> {
 
     @NotNull

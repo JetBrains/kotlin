@@ -58,11 +58,6 @@ import java.util.WeakHashMap;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isMultiFileNamespace;
 
-/**
- * @author yole
- * @author alex.tkachman
- * @author udalov
- */
 public class JetPositionManager implements PositionManager {
     private final DebugProcess myDebugProcess;
     private final WeakHashMap<FqName, CachedValue<JetTypeMapper>> myTypeMappers = new WeakHashMap<FqName, CachedValue<JetTypeMapper>>();

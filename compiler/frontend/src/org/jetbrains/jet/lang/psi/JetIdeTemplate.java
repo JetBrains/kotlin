@@ -22,10 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/8/12
- */
 public class JetIdeTemplate extends JetElementImpl {
     public JetIdeTemplate(@NotNull ASTNode node) {
         super(node);

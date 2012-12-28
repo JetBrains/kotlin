@@ -18,9 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
 
-/**
- * @author alex.tkachman
- */
 public class LocalClassGenTest extends CodegenTestCase {
     @Override
     public void setUp() throws Exception {

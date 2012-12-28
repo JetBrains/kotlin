@@ -26,9 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
-/**
-* @author svtk
-*/
 public abstract class JetIntentionAction<T extends PsiElement> implements IntentionAction {
     protected @NotNull T element;
 

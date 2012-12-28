@@ -18,9 +18,6 @@ package org.jetbrains.jet.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Stepan Koltsov
- */
 public class JvmPropertyAccessorSignature {
     @NotNull
     private final JvmMethodSignature jvmMethodSignature;

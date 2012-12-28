@@ -20,8 +20,6 @@ import org.jetbrains.jet.ConfigurationKind;
 
 /**
  * Test correct code is generated for descriptors loaded with alt jdk annotations
- *
- * @author Stepan Koltsov
  */
 public class JdkAnnotationsTest extends CodegenTestCase {
 

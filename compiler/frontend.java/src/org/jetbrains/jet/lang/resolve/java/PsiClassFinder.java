@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Stepan Koltsov
- */
 public interface PsiClassFinder {
     enum RuntimeClassesHandleMode {
         THROW,

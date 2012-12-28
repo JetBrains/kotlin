@@ -46,10 +46,6 @@ import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 5/22/12
- */
 public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent {
     private static final String UNKNOWN_VERSION = "UNKNOWN";
     private static final String SUPPRESSED_PROPERTY_NAME = "oudtdated.runtime.suppressed.plugin.version";

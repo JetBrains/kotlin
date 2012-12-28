@@ -34,7 +34,6 @@ import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
- * @author yole
  * @see Block for good JavaDoc documentation
  */
 public class JetBlock extends AbstractBlock {

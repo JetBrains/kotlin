@@ -22,8 +22,6 @@ import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 /**
- * @author Stepan Koltsov
- *
  * @see BindingContext
  */
 public class JavaBindingContext {

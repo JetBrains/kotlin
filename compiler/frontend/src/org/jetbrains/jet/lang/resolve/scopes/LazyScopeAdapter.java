@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
-/**
- * @author abreslav
- */
 public class LazyScopeAdapter extends AbstractScopeAdapter {
 
     private final LazyValue<JetScope> scope;

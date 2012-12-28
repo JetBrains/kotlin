@@ -34,10 +34,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.Map;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/2/12
- */
 @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public class JetDecompiledData {
     private final JetFile jetFile;

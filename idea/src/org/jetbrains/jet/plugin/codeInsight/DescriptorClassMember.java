@@ -35,9 +35,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 
-/**
- * @author yole
- */
 public class DescriptorClassMember implements ClassMemberWithElement {
 
     public static final String NO_PARENT_FOR = "No parent for ";

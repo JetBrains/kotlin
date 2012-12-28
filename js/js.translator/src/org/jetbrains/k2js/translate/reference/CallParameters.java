@@ -20,9 +20,6 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Pavel Talanov
- */
 public final class CallParameters {
 
     @Nullable

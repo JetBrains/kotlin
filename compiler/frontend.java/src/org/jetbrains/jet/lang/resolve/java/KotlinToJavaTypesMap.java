@@ -32,9 +32,6 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import java.util.Map;
 import java.util.Set;
 
-/**
-* @author svtk
-*/
 public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     private static KotlinToJavaTypesMap instance = null;
 

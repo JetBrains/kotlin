@@ -25,9 +25,6 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-/**
-* @author Nikolay Krasko
-*/
 public class Location {
     @Nullable
     final Editor editor;

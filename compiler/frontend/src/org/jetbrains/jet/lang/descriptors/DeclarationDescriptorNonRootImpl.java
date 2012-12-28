@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class DeclarationDescriptorNonRootImpl
         extends DeclarationDescriptorImpl
         implements DeclarationDescriptorNonRoot {

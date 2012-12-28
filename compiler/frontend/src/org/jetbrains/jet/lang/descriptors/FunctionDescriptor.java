@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public interface FunctionDescriptor extends CallableMemberDescriptor {
     @Override
     @NotNull

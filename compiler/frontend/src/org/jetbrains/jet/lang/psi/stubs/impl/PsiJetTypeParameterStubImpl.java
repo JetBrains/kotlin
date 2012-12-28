@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetTypeParameterElementType;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> implements PsiJetTypeParameterStub {
     private final StringRef name;
     private final StringRef extendBoundTypeText;

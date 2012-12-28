@@ -32,9 +32,6 @@ import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetParameterStubImpl;
 
 import java.io.IOException;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetParameterElementType extends JetStubElementType<PsiJetParameterStub, JetParameter> {
     public JetParameterElementType(@NotNull @NonNls String debugName) {
         super(debugName);

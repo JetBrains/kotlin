@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class SubtypingConstraint {
     private final ConstraintType type;
     private final JetType subtype;

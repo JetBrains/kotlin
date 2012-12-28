@@ -25,10 +25,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/29/12
- */
 class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     TypeKindHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
         super(holder, bindingContext);

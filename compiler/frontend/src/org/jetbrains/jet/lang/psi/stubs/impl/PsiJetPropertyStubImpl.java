@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements PsiJetPropertyStub {
     private final StringRef name;
     private final boolean isVar;

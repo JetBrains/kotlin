@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author alex.tkachman
- */
 public interface CalculatedClosure {
 
     @Nullable

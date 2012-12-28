@@ -28,9 +28,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.NOT_NULL_ANNOTATIONS;
 
-/**
- * @author ignatov
- */
 public class ConverterUtil {
     private ConverterUtil() {
     }

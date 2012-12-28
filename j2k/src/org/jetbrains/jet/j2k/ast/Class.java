@@ -29,9 +29,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.j2k.util.AstUtil.*;
 
-/**
- * @author ignatov
- */
 public class Class extends Member {
     @NotNull
     String TYPE = "class";

@@ -32,9 +32,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isAssignment;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class AssignmentTranslator extends AbstractTranslator {
 
     public static boolean isAssignmentOperator(JetBinaryExpression expression) {

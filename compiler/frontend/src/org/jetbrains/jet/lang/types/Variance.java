@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.types;
 
-/**
- * @author max
- */
 public enum Variance {
     INVARIANT("", true, true, 0),
     IN_VARIANCE("in", true, false, -1),

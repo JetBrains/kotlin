@@ -33,10 +33,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 1/27/12
- */
 public abstract class JetTemplateContextType extends TemplateContextType {
     protected JetTemplateContextType(@NotNull @NonNls String id, @NotNull String presentableName, @Nullable java.lang.Class<? extends TemplateContextType> baseContextType) {
         super(id, presentableName, baseContextType);

@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public interface ModuleConfiguration {
     ModuleConfiguration EMPTY = new ModuleConfiguration() {
         @Override

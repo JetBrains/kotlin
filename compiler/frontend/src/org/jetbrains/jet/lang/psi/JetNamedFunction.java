@@ -34,9 +34,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFunctionStub> implements JetFunction, JetWithExpressionInitializer {
     public JetNamedFunction(@NotNull ASTNode node) {
         super(node);

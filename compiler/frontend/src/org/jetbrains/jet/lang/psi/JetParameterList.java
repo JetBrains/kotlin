@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetParameterList extends JetElementImplStub<PsiJetParameterListStub> {
     public JetParameterList(@NotNull ASTNode node) {
         super(node);

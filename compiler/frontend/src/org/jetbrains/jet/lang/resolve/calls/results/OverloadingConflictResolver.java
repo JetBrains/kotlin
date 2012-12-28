@@ -35,9 +35,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class OverloadingConflictResolver {
 
     public static OverloadingConflictResolver INSTANCE = new OverloadingConflictResolver();

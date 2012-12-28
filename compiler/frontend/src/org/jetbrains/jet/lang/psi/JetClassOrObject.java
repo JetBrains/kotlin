@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public interface JetClassOrObject extends PsiNameIdentifierOwner, JetDeclarationContainer, JetElement, JetModifierListOwner, JetDeclaration {
     @Nullable
     JetDelegationSpecifierList getDelegationSpecifierList();

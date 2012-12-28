@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author svtk
- */
 public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<FunctionDescriptor> {
     private final ResolvedCallWithTrace<FunctionDescriptor> functionCall;
     private final ResolvedCallWithTrace<VariableDescriptor> variableCall;

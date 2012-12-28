@@ -25,9 +25,6 @@ import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
-/**
- * @author svtk
- */
 public abstract class AbstractDiagnostic<E extends PsiElement> implements ParametrizedDiagnostic<E> {
     private final E psiElement;
     private final DiagnosticFactoryWithPsiElement<E> factory;

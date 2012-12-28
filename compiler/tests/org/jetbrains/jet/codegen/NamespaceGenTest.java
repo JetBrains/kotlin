@@ -24,9 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-/**
- * @author yole
- */
 public class NamespaceGenTest extends CodegenTestCase {
 
     @Override

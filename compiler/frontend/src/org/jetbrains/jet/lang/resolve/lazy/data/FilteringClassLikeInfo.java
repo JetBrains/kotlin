@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class FilteringClassLikeInfo implements JetClassLikeInfo {
     private final JetClassLikeInfo delegate;
     private final Predicate<? super JetDeclaration> declarationFilter;

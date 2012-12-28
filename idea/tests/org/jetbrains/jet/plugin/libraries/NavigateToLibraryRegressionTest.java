@@ -28,10 +28,6 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/27/12
- */
 public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
     /**
      * Regression test against KT-1652

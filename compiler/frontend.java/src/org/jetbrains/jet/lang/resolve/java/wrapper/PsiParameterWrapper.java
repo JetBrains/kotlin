@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.kt.JetTypeParameterAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
 
-/**
- * @author Stepan Koltsov
- */
 public class PsiParameterWrapper {
     private final PsiParameter psiParameter;
 

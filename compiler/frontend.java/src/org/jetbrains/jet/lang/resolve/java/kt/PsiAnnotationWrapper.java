@@ -20,9 +20,6 @@ import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Stepan Koltsov
- */
 public abstract class PsiAnnotationWrapper {
 
     @Nullable

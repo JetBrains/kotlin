@@ -37,9 +37,6 @@ import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex;
 
 import java.util.Collection;
 
-/**
- * @author yole
- */
 public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters> {
     public KotlinDirectInheritorsSearcher() {
         super(true);

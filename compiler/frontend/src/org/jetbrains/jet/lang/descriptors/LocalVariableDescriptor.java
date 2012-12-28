@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class LocalVariableDescriptor extends VariableDescriptorImpl {
     private final boolean isVar;
 

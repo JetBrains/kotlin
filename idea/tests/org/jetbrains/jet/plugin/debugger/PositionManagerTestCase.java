@@ -45,9 +45,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author udalov
- */
 public abstract class PositionManagerTestCase extends MultiFileTestCase {
 
     // Breakpoint is given as a line comment on a specific line, containing the name of the class, where that line can be found.

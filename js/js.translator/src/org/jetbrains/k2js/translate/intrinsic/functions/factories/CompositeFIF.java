@@ -28,9 +28,6 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredi
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class CompositeFIF implements FunctionIntrinsicFactory {
 
     @NotNull final Map<DescriptorPredicate, FunctionIntrinsic> patternToIntrinsic = Maps.newHashMap();

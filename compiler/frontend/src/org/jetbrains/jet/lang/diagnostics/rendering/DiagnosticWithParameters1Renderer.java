@@ -24,10 +24,6 @@ import java.text.MessageFormat;
 
 import static org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRendererUtil.renderParameter;
 
-/**
-* @author Evgeny Gerashchenko
-* @since 4/12/12
-*/
 public class DiagnosticWithParameters1Renderer<A> implements DiagnosticRenderer<DiagnosticWithParameters1<?, A>> {
     private final MessageFormat messageFormat;
     private final Renderer<? super A> rendererForA;

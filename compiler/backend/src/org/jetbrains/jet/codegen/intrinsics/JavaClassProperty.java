@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 
 import java.util.List;
 
-/**
- * @author alex.tkachman
- */
 public class JavaClassProperty implements IntrinsicMethod {
     @Override
     public StackValue generate(

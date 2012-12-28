@@ -21,9 +21,6 @@ import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetExtensionFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
     private static final JetExtensionFunctionNameIndex instance = new JetExtensionFunctionNameIndex();
 

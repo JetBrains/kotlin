@@ -24,9 +24,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Encapuslates different types of constants and naming conventions.
+ * Encapuslates different types of constants and naming conventions.
  */
 public final class Namer {
     public static final String CALLEE_NAME = "$fun";

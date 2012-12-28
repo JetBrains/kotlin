@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Nikolay Krasko
- */
 public interface PsiJetFunctionStub extends NamedStub<JetNamedFunction> {
     @Nullable
     FqName getTopFQName();

@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 class Field {
 
     public static Field create(boolean isPublic, DiType type, String name, @Nullable Expression init) {

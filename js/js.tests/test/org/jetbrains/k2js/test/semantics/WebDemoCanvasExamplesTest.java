@@ -21,9 +21,6 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.mozilla.javascript.EcmaError;
 
-/**
- * @author Pavel Talanov
- */
 /*
 * We can't really check that this examples work in non-browser environment, so we just check that examples compile and
 * running them produce expected error.

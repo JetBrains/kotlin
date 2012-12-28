@@ -44,8 +44,6 @@ import java.util.Set;
 
 /**
  * Number of helper methods for searching jet element prototypes in java. Methods use java indices for search.
- *
- * @author Nikolay Krasko
  */
 class JetFromJavaDescriptorHelper {
 

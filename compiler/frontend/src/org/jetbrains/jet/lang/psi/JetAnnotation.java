@@ -22,9 +22,6 @@ import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetAnnotation extends JetElementImpl {
     public JetAnnotation(@NotNull ASTNode node) {
         super(node);

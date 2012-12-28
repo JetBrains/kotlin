@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author abreslav
- */
 public class SubroutineExitInstruction extends InstructionImpl {
     private final JetElement subroutine;
     private final String debugLabel;

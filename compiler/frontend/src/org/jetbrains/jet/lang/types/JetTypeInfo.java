@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 
-/**
- * @author udalov
- */
 public class JetTypeInfo {
 
     @NotNull

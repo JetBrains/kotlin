@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.resolve.name;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Stepan Koltsov
- */
 public class Name implements Comparable<Name> {
     @NotNull
     private final String name;

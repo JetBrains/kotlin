@@ -25,9 +25,6 @@ import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 
 import static org.jetbrains.k2js.test.utils.JsTestUtils.readFile;
 
-/**
- * @author Pavel Talanov
- */
 @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
 public abstract class SingleFileTranslationTest extends BasicTest {
     public SingleFileTranslationTest(@NotNull String main) {

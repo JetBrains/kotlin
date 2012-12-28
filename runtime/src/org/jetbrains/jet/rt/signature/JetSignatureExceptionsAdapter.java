@@ -18,9 +18,6 @@ package org.jetbrains.jet.rt.signature;
 
 import jet.typeinfo.TypeInfoVariance;
 
-/**
- * @author Stepan Koltsov
- */
 public class JetSignatureExceptionsAdapter implements JetSignatureVisitor {
     @Override
     public JetSignatureVisitor visitFormalTypeParameter(String name, TypeInfoVariance variance, boolean reified) {

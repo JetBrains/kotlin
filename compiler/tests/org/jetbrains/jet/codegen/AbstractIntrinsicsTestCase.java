@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-/**
- * @author svtk
- */
 public abstract class AbstractIntrinsicsTestCase extends CodegenTestCase {
     @Override
     protected String getPrefix() {

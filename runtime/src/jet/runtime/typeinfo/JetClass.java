@@ -20,8 +20,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * @author alex.tkachman
- *
  * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 @Retention(RetentionPolicy.RUNTIME)

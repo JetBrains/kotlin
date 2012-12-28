@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author abreslav
- */
 public abstract class InstructionWithNext extends JetElementInstructionImpl {
     private Instruction next;
 

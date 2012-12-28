@@ -33,9 +33,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-/**
- * @author alex.tkachman
- */
 public class StdlibTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {

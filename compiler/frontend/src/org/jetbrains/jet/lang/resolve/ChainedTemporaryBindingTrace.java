@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author svtk
- */
 public class ChainedTemporaryBindingTrace extends TemporaryBindingTrace {
 
     public static ChainedTemporaryBindingTrace create(TemporaryBindingTrace trace, String debugName, @Nullable Object resolutionSubjectForMessage) {

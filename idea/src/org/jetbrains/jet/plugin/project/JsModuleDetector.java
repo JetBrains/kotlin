@@ -31,9 +31,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.util.List;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         This class has utility functions to determine whether the project (or module) is js project.
+ * This class has utility functions to determine whether the project (or module) is js project.
  */
 public final class JsModuleDetector {
     private JsModuleDetector() {

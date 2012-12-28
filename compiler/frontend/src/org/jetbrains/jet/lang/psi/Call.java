@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public interface Call {
 
     // SAFE_ACCESS or DOT or so

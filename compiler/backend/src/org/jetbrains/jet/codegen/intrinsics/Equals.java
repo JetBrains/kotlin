@@ -34,9 +34,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.genEqualsForExpressionsOnStack;
 
-/**
- * @author alex.tkachman
- */
 public class Equals implements IntrinsicMethod {
     @Override
     public StackValue generate(

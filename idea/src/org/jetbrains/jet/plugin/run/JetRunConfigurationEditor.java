@@ -29,9 +29,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * @author yole
- */
 public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguration> {
     private JPanel myMainPanel;
     private JTextField myMainClassField;

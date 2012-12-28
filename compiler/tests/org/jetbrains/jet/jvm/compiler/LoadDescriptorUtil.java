@@ -51,9 +51,6 @@ import java.util.*;
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
 import static org.jetbrains.jet.lang.psi.JetPsiFactory.createFile;
 
-/**
- * @author Pavel Talanov
- */
 public final class LoadDescriptorUtil {
 
     @NotNull

@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class ForeachStatement extends Statement {
     private final Parameter myVariable;
     private final Expression myExpression;

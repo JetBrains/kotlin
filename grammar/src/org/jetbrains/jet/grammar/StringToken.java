@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.grammar;
 
-/**
- * @author abreslav
- */
 public class StringToken extends Token {
     public StringToken(CharSequence text, String fileName, int line) {
         super(text, fileName, line);

@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.intellij.psi.search.GlobalSearchScope;

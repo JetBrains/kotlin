@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public interface AnalyzerFacade {
 
     @NotNull

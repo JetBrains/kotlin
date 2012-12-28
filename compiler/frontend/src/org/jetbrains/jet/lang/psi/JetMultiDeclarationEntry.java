@@ -26,9 +26,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
 import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
 
-/**
- * @author abreslav
- */
 public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed implements JetVariableDeclaration {
     public JetMultiDeclarationEntry(@NotNull ASTNode node) {
         super(node);

@@ -23,8 +23,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 /**
  * TODO: make more accurate wrapper
- *
- * @author Nikolay Krasko
  */
 public class JetLightPackage extends PsiPackageImpl {
 

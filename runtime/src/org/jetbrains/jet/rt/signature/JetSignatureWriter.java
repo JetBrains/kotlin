@@ -19,8 +19,6 @@ package org.jetbrains.jet.rt.signature;
 import jet.typeinfo.TypeInfoVariance;
 
 /**
- * @author Stepan Koltsov
- *
  * @see SignatureWriter
  */
 public class JetSignatureWriter implements JetSignatureVisitor {

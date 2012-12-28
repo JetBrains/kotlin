@@ -24,9 +24,6 @@ import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-/**
- * @author max
- */
 public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
     public JetElementImpl(@NotNull ASTNode node) {
         super(node);

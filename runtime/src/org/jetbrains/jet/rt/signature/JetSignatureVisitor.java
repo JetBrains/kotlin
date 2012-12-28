@@ -19,8 +19,6 @@ package org.jetbrains.jet.rt.signature;
 import jet.typeinfo.TypeInfoVariance;
 
 /**
- * @author Stepan Koltsov
- *
  * @see SignatureVisitor
  * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */

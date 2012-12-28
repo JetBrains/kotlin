@@ -30,9 +30,6 @@ import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFunction> {
     @Override
     public ItemPresentation getPresentation(final JetNamedFunction function) {

@@ -22,9 +22,6 @@ import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetTypeConstraintList extends JetElementImpl {
     public JetTypeConstraintList(@NotNull ASTNode node) {
         super(node);

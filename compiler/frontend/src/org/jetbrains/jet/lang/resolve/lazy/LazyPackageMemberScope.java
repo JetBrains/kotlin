@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.Map;
 import java.util.Set;
 
-/**
-* @author abreslav
-*/
 public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, PackageMemberDeclarationProvider> {
 
     private final Map<Name, NamespaceDescriptor> packageDescriptors = Maps.newHashMap();

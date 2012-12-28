@@ -38,9 +38,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.hasCorrespondingFunctionIntrinsic;
 
-/**
- * @author Pavel Talanov
- */
 // TODO: provide better increment translator logic
 public abstract class IncrementTranslator extends AbstractTranslator {
 

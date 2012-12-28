@@ -8,9 +8,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 //TODO: find should be usages
 public final class BuiltInPropertyIntrinsic extends FunctionIntrinsic {
 

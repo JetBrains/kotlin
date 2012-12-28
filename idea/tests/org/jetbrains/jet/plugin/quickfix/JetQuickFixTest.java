@@ -38,9 +38,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author svtk
- */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public class JetQuickFixTest extends LightQuickFixTestCase {
     private final String dataPath;

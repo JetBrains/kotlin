@@ -22,9 +22,6 @@ import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author abreslav
- */
 public class JetThisReferenceExpression extends JetReferenceExpression {
     public JetThisReferenceExpression(@NotNull ASTNode node) {
         super(node);

@@ -26,9 +26,6 @@ import static org.jetbrains.jet.plugin.compilerMessages.Message.error;
 import static org.jetbrains.jet.plugin.compilerMessages.Message.stats;
 import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
 
-/**
- * @author Pavel Talanov
- */
 public final class K2JSCompilerMessagingTest extends IDECompilerMessagingTest {
 
     private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/compilerMessages/k2js";

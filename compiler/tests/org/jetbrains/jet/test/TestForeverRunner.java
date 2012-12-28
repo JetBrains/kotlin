@@ -26,9 +26,6 @@ import org.junit.Assert;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-/**
- * @author Stepan Koltsov
- */
 public class TestForeverRunner {
     public static void runTestForever(String[] args, Supplier<Test> suite) {
         Assert.assertTrue(TestRunner.run(suite.get()).wasSuccessful());

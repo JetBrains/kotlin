@@ -40,9 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyDescriptor {
     private final ResolveSession resolveSession;
 

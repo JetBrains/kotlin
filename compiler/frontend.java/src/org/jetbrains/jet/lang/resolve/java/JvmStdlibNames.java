@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import jet.runtime.typeinfo.JetConstructor;
 
-/**
- * @author Stepan Koltsov
- */
 public class JvmStdlibNames {
 
     public static final JvmClassName JET_VALUE_PARAMETER = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetValueParameter");

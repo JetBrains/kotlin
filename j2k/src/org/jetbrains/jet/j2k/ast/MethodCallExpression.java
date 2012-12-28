@@ -21,9 +21,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class MethodCallExpression extends Expression {
     private final Expression myMethodCall;
     private final List<Expression> myArguments;

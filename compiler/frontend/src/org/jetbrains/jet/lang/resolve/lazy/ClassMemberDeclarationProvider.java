@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 
-/**
- * @author abreslav
- */
 public interface ClassMemberDeclarationProvider extends DeclarationProvider {
     @NotNull
     JetClassLikeInfo getOwnerInfo();

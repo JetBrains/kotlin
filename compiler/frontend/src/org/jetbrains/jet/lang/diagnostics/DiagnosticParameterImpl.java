@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-/**
- * @author svtk
- */
 public class DiagnosticParameterImpl<P> implements DiagnosticParameter<P> {
     private final String value;
 

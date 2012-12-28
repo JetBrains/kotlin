@@ -31,9 +31,6 @@ import org.jetbrains.k2js.translate.reference.CallBuilder;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
-/**
- * @author Pavel Talanov
- */
 public final class IteratorForTranslator extends ForTranslator {
     @NotNull
     private final Pair<JsVars.JsVar, JsNameRef> iterator;

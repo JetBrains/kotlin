@@ -23,9 +23,6 @@ import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetTryExpression extends JetExpressionImpl {
     public JetTryExpression(@NotNull ASTNode node) {
         super(node);

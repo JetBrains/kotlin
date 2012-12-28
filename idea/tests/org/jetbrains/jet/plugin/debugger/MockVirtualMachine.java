@@ -24,9 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author udalov
- */
 public class MockVirtualMachine implements VirtualMachine {
     @Override
     public List<ThreadGroupReference> topLevelThreadGroups() {

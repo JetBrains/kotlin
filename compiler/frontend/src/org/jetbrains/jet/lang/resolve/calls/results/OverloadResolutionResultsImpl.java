@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
-* @author abreslav
-*/
 public class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallWithTrace<D> candidate) {

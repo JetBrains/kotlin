@@ -24,9 +24,6 @@ import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 
-/**
-* @author abreslav
-*/
 public class SimpleTestMethodModel implements TestMethodModel {
     private final File rootDir;
     private final File file;

@@ -19,9 +19,6 @@ package org.jetbrains.jet.plugin.editor;
 import com.intellij.openapi.options.BeanConfigurable;
 import com.intellij.openapi.options.UnnamedConfigurable;
 
-/**
- * @author ignatov
- */
 public class JetSettingEditorConfigurable extends BeanConfigurable<JetEditorOptions> implements UnnamedConfigurable {
     public JetSettingEditorConfigurable() {
         super(JetEditorOptions.getInstance());

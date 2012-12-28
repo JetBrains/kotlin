@@ -25,9 +25,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.test.utils.JsTestUtils.getAllFilesInDir;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class MultipleFilesTranslationTest extends BasicTest {
 
     public MultipleFilesTranslationTest(@NotNull String main) {

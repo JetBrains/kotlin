@@ -33,9 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;

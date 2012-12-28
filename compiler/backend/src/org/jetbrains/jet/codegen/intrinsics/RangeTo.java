@@ -28,10 +28,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class RangeTo implements IntrinsicMethod {
 
     public RangeTo() {

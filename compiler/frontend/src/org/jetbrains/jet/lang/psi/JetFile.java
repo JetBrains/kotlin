@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;

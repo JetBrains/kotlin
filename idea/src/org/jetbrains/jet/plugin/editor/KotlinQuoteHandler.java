@@ -22,10 +22,6 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author Alefas
- * @since 03.04.12
- */
 public class KotlinQuoteHandler implements QuoteHandler {
     @Override
     public boolean isClosingQuote(HighlighterIterator iterator, int offset) {

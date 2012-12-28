@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-/**
- * @author abreslav
- */
 public interface WritableScope extends JetScope {
     enum LockLevel {
         WRITING,

@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;

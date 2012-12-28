@@ -21,9 +21,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class ReferenceElement extends Element {
     @NotNull
     private final Identifier myReference;

@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Stepan Koltsov
- */
 public class ReplSessionTestFile {
 
     public enum MatchType {

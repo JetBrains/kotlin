@@ -41,8 +41,6 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.
 
 /**
  * For error messages, see DefaultErrorMessages and IdeErrorMessages.
- *
- * @author abreslav
  */
 public interface Errors {
 

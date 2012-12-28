@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-/**
- * @author Stepan Koltsov
- */
 public interface DeclarationDescriptorVisitor<R, D> {
     R visitNamespaceDescriptor(NamespaceDescriptor descriptor, D data);
 

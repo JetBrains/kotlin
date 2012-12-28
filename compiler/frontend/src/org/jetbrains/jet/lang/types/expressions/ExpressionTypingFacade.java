@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 
-/**
- * @author abreslav
- */
 public interface ExpressionTypingFacade {
     @NotNull
     JetTypeInfo safeGetTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context);

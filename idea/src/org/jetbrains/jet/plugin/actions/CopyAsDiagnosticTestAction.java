@@ -38,9 +38,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class CopyAsDiagnosticTestAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {

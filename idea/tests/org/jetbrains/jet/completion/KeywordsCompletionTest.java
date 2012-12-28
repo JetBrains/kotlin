@@ -22,8 +22,6 @@ import java.io.File;
 
 /**
  * Test auto completion messages
- *
- * @author Nikolay.Krasko
  */
 public class KeywordsCompletionTest extends JetCompletionTestBase {
 

@@ -38,9 +38,6 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.factories.NumberC
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
-/**
- * @author Pavel Talanov
- */
 public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     INSTANCE;
 

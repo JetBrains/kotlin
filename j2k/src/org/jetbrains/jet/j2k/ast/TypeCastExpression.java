@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class TypeCastExpression extends Expression {
     private final Type myType;
     private final Expression myExpression;

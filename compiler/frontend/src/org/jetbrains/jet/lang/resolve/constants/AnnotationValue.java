@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-/**
- * @author Natalia Ukhorskaya
- */
 public class AnnotationValue implements CompileTimeConstant<AnnotationDescriptor> {
     
     private final AnnotationDescriptor value;

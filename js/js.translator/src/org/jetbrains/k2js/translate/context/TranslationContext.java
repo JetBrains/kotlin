@@ -33,9 +33,7 @@ import java.util.Map;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         All the info about the state of the translation process.
+ * All the info about the state of the translation process.
  */
 public class TranslationContext {
     @NotNull

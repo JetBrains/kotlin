@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-/**
- * @author Stepan Koltsov
- */
 public enum JavaNamespaceKind {
     PROPER,
     CLASS_STATICS,

@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public class LocalVariable extends Expression {
     private final Identifier myIdentifier;
     private final Set<String> myModifiersSet;

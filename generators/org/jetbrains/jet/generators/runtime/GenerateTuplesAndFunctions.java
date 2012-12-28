@@ -20,9 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-/**
- * @author abreslav
- */
 public class GenerateTuplesAndFunctions {
     private static final int TUPLE_COUNT = 23;
 

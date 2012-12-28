@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
-/**
- * @author Nikolay Krasko
- */
 // class ExplicitlyImportedWeigher extends ProximityWeigher {
 public class JetExplicitlyImportedWeigher extends LookupElementWeigher {
     private final JetFile file;

@@ -23,10 +23,6 @@ import org.jetbrains.jet.lang.cfg.Label;
 
 import java.util.*;
 
-/**
-* @author abreslav
-* @author svtk
-*/
 public class NondeterministicJumpInstruction extends InstructionImpl{
     private Instruction next;
     private final List<Label> targetLabels;

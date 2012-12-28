@@ -35,9 +35,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
-/**
- * @author svtk
- */
 public class QualifiedExpressionResolver {
 
     @NotNull

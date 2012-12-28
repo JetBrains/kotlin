@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author max
- */
 public abstract class JetQualifiedExpression extends JetExpressionImpl {
     public JetQualifiedExpression(@NotNull ASTNode node) {
         super(node);

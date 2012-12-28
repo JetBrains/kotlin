@@ -32,9 +32,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.test.util.NamespaceComparator.*;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
 
     public static final File TEST_DATA_DIR = new File("compiler/testData/diagnostics/tests");

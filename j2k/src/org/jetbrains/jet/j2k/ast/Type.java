@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public abstract class Type extends Element {
     @NotNull
     public static final Type EMPTY_TYPE = new EmptyType();
@@ -46,9 +43,6 @@ public abstract class Type extends Element {
         return isNullable() ? QUEST : EMPTY;
     }
 
-    /**
-     * @author ignatov
-     */
     private static class EmptyType extends Type {
         @NotNull
         @Override

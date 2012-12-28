@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Set;
 
-/**
-* @author abreslav
-*/
 public class TypeValue implements BoundsOwner {
     private final Set<TypeValue> upperBounds = Sets.newLinkedHashSet();
     private final Set<TypeValue> lowerBounds = Sets.newLinkedHashSet();

@@ -29,9 +29,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForExtensionCallReceiver;
 
-/**
- * @author Pavel Talanov
- */
 public final class CallParametersResolver {
     public static CallParameters resolveCallParameters(@Nullable JsExpression qualifier,
             @Nullable JsExpression callee,

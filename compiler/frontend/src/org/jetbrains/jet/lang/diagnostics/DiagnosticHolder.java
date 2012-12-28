@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public interface DiagnosticHolder {
     DiagnosticHolder DO_NOTHING = new DiagnosticHolder() {
         @Override

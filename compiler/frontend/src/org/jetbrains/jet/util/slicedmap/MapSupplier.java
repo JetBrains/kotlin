@@ -20,9 +20,6 @@ import com.google.common.collect.Maps;
 
 import java.util.Map;
 
-/**
-* @author abreslav
-*/
 public interface MapSupplier {
 
     MapSupplier HASH_MAP_SUPPLIER = new MapSupplier() {

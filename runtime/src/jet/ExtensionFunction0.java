@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;

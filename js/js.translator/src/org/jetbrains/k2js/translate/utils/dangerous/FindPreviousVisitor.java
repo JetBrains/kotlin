@@ -25,9 +25,6 @@ import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 
-/**
- * @author Pavel Talanov
- */
 //TODO: refactor
 public final class FindPreviousVisitor extends JetTreeVisitor<DangerousData> {
 

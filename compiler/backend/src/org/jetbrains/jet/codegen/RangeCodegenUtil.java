@@ -29,9 +29,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitiveNumberClassDescriptor;
 
-/**
- * @author abreslav
- */
 public class RangeCodegenUtil {
     private static final ImmutableMap<String, JetType> RANGE_TO_ELEMENT_TYPE = ImmutableMap.<String, JetType>builder()
             .put("ByteRange", KotlinBuiltIns.getInstance().getByteType())

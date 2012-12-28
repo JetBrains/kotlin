@@ -28,9 +28,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.List;
 
-/**
- * @author udalov
- */
 public class JetPositionManagerTest extends PositionManagerTestCase {
     private final JetPositionManagerFactory jetPositionManagerFactory = new JetPositionManagerFactory();
 

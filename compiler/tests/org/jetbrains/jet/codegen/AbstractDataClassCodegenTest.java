@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-/**
- * @author udalov
- */
 public abstract class AbstractDataClassCodegenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {

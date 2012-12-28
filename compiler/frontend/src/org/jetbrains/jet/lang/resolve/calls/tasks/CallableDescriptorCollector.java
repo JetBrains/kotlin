@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 
-/**
- * @author svtk
- */
 public interface CallableDescriptorCollector<D extends CallableDescriptor> {
     @NotNull
     Collection<D> getNonExtensionsByName(JetScope scope, Name name);

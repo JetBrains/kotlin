@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public interface ResolvedCall<D extends CallableDescriptor> {
     /** A target callable descriptor as it was accessible in the corresponding scope, i.e. with type arguments not substituted */
     @NotNull

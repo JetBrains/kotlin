@@ -21,9 +21,6 @@ import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Pavel Talanov
- */
 @SuppressWarnings("ConstantConditions")
 public final class Message {
 

@@ -26,9 +26,6 @@ import org.jetbrains.jet.JetNodeTypes;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 abstract class JetTypeParameterListOwnerStub<T extends NamedStub> extends JetNamedDeclarationStub<T> implements JetTypeParameterListOwner {
     public JetTypeParameterListOwnerStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
         super(stub, nodeType);

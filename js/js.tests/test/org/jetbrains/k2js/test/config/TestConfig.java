@@ -25,9 +25,6 @@ import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public class TestConfig extends Config {
 
     @NotNull

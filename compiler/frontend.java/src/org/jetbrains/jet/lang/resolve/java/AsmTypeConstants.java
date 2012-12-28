@@ -22,9 +22,6 @@ import org.jetbrains.asm4.Type;
 
 import java.util.Map;
 
-/**
- * @author alex.tkachman
- */
 public class AsmTypeConstants {
     private static final Map<Class<?>, Type> TYPES_MAP = Maps.newHashMap();
 

@@ -18,9 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 
-/**
- * @author Pavel Talanov
- */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class StdLibSetTest extends JsUnitTestBase {
     public static Test suite() throws Exception {

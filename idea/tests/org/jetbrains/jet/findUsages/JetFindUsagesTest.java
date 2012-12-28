@@ -42,9 +42,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author yole
- */
 public class JetFindUsagesTest extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override

@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class AbstractTranslator {
 
     @NotNull

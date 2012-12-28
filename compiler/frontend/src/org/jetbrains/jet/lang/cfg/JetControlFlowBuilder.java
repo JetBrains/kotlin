@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.*;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public interface JetControlFlowBuilder {
     void read(@NotNull JetElement element);
     void readUnit(@NotNull JetExpression expression);

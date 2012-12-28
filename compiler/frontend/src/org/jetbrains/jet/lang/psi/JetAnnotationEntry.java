@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationStub> implements JetCallElement {
     public JetAnnotationEntry(@NotNull ASTNode node) {
         super(node);

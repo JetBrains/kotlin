@@ -31,10 +31,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/23/12
- */
 public class JetListSelectioner extends BasicSelectioner {
     @Override
     public boolean canSelect(PsiElement e) {

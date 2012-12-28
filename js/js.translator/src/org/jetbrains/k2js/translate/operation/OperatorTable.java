@@ -25,9 +25,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Map;
 
-/**
- * @author Pavel Talanov
- */
 public final class OperatorTable {
 
     //TODO : not all operators , add and test bit operators

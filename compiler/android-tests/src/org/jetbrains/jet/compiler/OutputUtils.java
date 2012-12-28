@@ -25,9 +25,6 @@ import org.jetbrains.jet.compiler.run.result.RunResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class OutputUtils {
 

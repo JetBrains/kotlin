@@ -34,9 +34,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallFor
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 import static org.jetbrains.jet.lang.psi.JetPsiUtil.isBackingFieldReference;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class PropertyAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     @NotNull

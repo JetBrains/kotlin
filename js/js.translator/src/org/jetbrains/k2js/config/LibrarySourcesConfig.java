@@ -35,9 +35,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-/**
- * @author Pavel Talanov
- */
 public class LibrarySourcesConfig extends Config {
     @NotNull
     public static final Key<String> EXTERNAL_MODULE_NAME = new Key<String>("externalModule");

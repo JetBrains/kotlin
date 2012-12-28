@@ -49,10 +49,6 @@ import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class JetTypeMapper extends BindingTraceAware {
 
     private final boolean mapBuiltinsToJava;

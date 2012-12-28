@@ -25,10 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 14 August 2012
- */
 public class CoreExternalAnnotationsManager extends BaseExternalAnnotationsManager {
     static {
         // This is an ugly workaround for JDOM 1.1 used from application started from Ant 1.8 without forking

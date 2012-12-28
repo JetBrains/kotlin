@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public class Initializer extends Member {
     private final Block myBlock;
 

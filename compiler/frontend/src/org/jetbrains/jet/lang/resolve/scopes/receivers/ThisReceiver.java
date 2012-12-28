@@ -21,8 +21,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 /**
  * Describes a "this" receiver
- *
- * @author abreslav
  */
 public interface ThisReceiver extends ReceiverValue {
     @NotNull

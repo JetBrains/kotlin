@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-/**
- * @author Pavel Talanov
- */
 public final class FacadeUtils {
     private FacadeUtils() {
     }

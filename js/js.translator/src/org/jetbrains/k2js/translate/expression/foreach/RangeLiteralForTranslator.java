@@ -34,9 +34,6 @@ import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesIni
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
-/**
- * @author Pavel Talanov
- */
 
 // TODO: implement reverse semantics
 public final class RangeLiteralForTranslator extends ForTranslator {

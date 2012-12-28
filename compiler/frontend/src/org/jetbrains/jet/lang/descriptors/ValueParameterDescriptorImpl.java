@@ -29,9 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements MutableValueParameterDescriptor {
     private Boolean hasDefaultValue;
     private final boolean declaresDefaultValue;

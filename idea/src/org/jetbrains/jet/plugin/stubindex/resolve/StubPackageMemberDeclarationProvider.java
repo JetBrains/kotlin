@@ -35,9 +35,6 @@ import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 import java.util.Collection;
 import java.util.HashSet;
 
-/**
- * @author Nikolay Krasko
- */
 public class StubPackageMemberDeclarationProvider extends AbstractStubDeclarationProvider implements PackageMemberDeclarationProvider {
     @NotNull private final FqName fqName;
     @NotNull private final Project project;

@@ -21,9 +21,6 @@ import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.kt.KotlinSignatureAnnotation;
 
-/**
- * @author Stepan Koltsov
- */
 public abstract class PsiMemberWrapper {
 
     @NotNull

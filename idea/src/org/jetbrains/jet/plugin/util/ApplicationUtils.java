@@ -21,9 +21,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.ShutDownTracker;
 
-/**
- * @author Nikolay Krasko
- */
 public final class ApplicationUtils {
     private ApplicationUtils() {
     }

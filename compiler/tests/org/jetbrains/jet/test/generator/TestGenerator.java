@@ -26,9 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class TestGenerator {
 
     private static final List<String> JUNIT3_IMPORTS = Arrays.asList(

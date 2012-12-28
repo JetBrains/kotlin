@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-/**
- * @author alex.tkachman
- */
 public class StringPlus implements IntrinsicMethod {
     @Override
     public StackValue generate(

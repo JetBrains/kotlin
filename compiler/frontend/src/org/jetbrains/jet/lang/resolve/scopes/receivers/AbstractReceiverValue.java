@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve.scopes.receivers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractReceiverValue implements ReceiverValue {
     protected final JetType receiverType;
 

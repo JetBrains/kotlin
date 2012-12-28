@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class WriteThroughScope extends WritableScopeWithImports {
     private final WritableScope writableWorker;
     private Collection<DeclarationDescriptor> allDescriptors;

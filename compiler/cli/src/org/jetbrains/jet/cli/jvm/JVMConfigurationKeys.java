@@ -23,10 +23,6 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import java.io.File;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/3/12
- */
 public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }

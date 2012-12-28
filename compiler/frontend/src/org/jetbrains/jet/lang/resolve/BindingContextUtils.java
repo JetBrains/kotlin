@@ -32,10 +32,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.AMBIGUOUS_LABEL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
-/**
- * @author abreslav
- * @author svtk
- */
 public class BindingContextUtils {
     private BindingContextUtils() {
     }

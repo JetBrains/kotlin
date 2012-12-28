@@ -23,10 +23,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class ClassGenTest extends CodegenTestCase {
 
     @Override

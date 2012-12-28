@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.cli.common;
 
-/**
-* @author Pavel Talanov
-*/
 public enum ExitCode {
     OK(0),
     COMPILATION_ERROR(1),

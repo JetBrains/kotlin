@@ -28,9 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
     private final JetScope[] scopeChain;

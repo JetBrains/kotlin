@@ -20,9 +20,6 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author yole
- */
 public class KotlinFindFunctionUsagesHandler extends FindUsagesHandler {
     protected KotlinFindFunctionUsagesHandler(@NotNull PsiElement psiElement) {
         super(psiElement);

@@ -30,9 +30,6 @@ import java.util.List;
 import static org.jetbrains.jet.j2k.Converter.isConstructorPrimary;
 import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
 
-/**
- * @author ignatov
- */
 public class ExpressionVisitor extends StatementVisitor {
     @NotNull
     Expression myResult = Expression.EMPTY_EXPRESSION;

@@ -19,9 +19,6 @@ package org.jetbrains.jet.di;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 
-/**
- * @author abreslav
- */
 public interface InjectorForTopDownAnalyzer {
     ModuleConfiguration getModuleConfiguration();
 

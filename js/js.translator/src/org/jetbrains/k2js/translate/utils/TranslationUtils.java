@@ -34,9 +34,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
-/**
- * @author Pavel Talanov
- */
 public final class TranslationUtils {
     private TranslationUtils() {
     }

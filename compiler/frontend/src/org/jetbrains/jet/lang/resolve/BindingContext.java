@@ -42,9 +42,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
-/**
- * @author abreslav
- */
 public interface BindingContext {
     BindingContext EMPTY = new BindingContext() {
         @Override

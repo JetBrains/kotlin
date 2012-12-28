@@ -31,9 +31,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetArrayAccessExpression extends JetReferenceExpression {
     public JetArrayAccessExpression(@NotNull ASTNode node) {
         super(node);

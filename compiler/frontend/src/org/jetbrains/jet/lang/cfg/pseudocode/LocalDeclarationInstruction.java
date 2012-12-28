@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
-* @author svtk
-*/
 public class LocalDeclarationInstruction extends InstructionWithNext {
 
     private final Pseudocode body;

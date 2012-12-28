@@ -30,9 +30,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.AUTOCAST_IMPOSSIBLE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
 import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 
-/**
- * @author abreslav
- */
 public class AutoCastUtils {
 
     private AutoCastUtils() {}

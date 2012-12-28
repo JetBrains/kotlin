@@ -37,9 +37,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForCallExpression;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class AbstractCallExpressionTranslator extends AbstractTranslator {
 
     @NotNull

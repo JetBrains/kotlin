@@ -33,9 +33,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectStub> implements JetClassOrObject  {
     public JetObjectDeclaration(@NotNull ASTNode node) {
         super(node);

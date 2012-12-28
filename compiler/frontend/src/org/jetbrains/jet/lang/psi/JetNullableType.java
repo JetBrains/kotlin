@@ -22,9 +22,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetNullableType extends JetTypeElement {
     public JetNullableType(@NotNull ASTNode node) {
         super(node);

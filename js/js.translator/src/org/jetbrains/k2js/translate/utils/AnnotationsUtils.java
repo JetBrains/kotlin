@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 
-/**
- * @author Pavel Talanov
- */
 public final class AnnotationsUtils {
 
     private static final String ENUMERABLE = "js.enumerable";

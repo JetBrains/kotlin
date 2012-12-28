@@ -29,9 +29,6 @@ import org.jetbrains.jet.plugin.JetBundle;
 
 import java.util.Set;
 
-/**
- * @author yole
- */
 public class ImplementMethodsHandler extends OverrideImplementMethodsHandler implements IntentionAction {
 
     @Override

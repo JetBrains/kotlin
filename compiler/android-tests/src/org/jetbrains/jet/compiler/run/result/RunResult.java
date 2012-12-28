@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.compiler.run.result;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class RunResult {
     private final boolean status;

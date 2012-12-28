@@ -66,11 +66,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescrip
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author max
- * @author yole
- * @author alex.tkachman
- */
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String VALUES = "$VALUES";
     private JetDelegationSpecifier superCall;

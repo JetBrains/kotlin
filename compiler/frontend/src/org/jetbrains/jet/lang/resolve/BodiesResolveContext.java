@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import java.util.Collection;
 import java.util.Map;
 
-/**
-* @author Nikolay Krasko
-*/
 public interface BodiesResolveContext {
     Collection<JetFile> getFiles();
     Map<JetClass, MutableClassDescriptor> getClasses();

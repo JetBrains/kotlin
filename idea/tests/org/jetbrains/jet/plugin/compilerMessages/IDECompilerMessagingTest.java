@@ -31,9 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class IDECompilerMessagingTest extends PlatformTestCase {
 
     protected void performTest(@NotNull Function1<MessageChecker, Void> whatToExpect,

@@ -29,10 +29,6 @@ import org.jetbrains.jet.plugin.JetBundle;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 1/30/12
- */
 public class JetFunctionParametersMacro extends Macro {
     public String getName() {
         return "functionParameters";

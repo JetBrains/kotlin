@@ -20,9 +20,6 @@ package org.jetbrains.jet.codegen;
  * Marks if backend's JetTypeMapper should map built-in types to Java types (e.g., jet.String into java.lang.String).
  * Disabling is needed for compiling builtins: we want types to be jet.* instead of java.util* to make it possible to load
  * builtins without JDK.
- *
- * @author Evgeny Gerashchenko
- * @since 7/5/12
  */
 public enum BuiltinToJavaTypesMapping {
     ENABLED,

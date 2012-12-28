@@ -28,8 +28,6 @@ import org.jetbrains.jet.lang.resolve.lazy.LazyClassDescriptor;
 import java.util.Collection;
 
 /**
- * @author Stepan Koltsov
- *
  * @see LazyClassDescriptor
  */
 public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {

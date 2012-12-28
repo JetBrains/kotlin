@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public class AmbiguousDescriptorDiagnosticFactory extends DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<? extends CallableDescriptor>>> {
     public static AmbiguousDescriptorDiagnosticFactory create() {
         return new AmbiguousDescriptorDiagnosticFactory();

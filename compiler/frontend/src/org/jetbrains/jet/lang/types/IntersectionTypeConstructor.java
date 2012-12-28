@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeConstructor {
     private final Set<JetType> intersectedTypes;
     private final int hashCode;

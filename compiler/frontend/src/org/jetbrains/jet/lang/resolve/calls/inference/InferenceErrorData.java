@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class InferenceErrorData {
     public final CallableDescriptor descriptor;
     public final ConstraintSystem constraintSystem;

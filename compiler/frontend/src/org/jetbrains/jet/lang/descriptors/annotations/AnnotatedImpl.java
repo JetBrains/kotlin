@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.descriptors.annotations;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class AnnotatedImpl implements Annotated {
     private final List<AnnotationDescriptor> annotations;
 

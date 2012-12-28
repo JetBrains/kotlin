@@ -18,9 +18,6 @@ package org.jetbrains.jet.cli.common.messages;
 
 import java.util.EnumSet;
 
-/**
- * @author abreslav
- */
 public enum CompilerMessageSeverity {
     INFO,
     ERROR,

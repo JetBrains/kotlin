@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
 
     public ScriptCodeDescriptor(@NotNull ScriptDescriptor containingDeclaration) {

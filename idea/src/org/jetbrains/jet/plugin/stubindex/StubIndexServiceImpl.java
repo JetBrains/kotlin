@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.psi.stubs.*;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Nikolay Krasko
- */
 public class StubIndexServiceImpl implements StubIndexService {
 
     @Override

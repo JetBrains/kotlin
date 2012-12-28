@@ -33,9 +33,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public abstract class JetQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
 
     protected static boolean shouldBeAvailableAfterExecution() {

@@ -24,10 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 6/1/12
- */
 public class KotlinSignatureAnnotation extends PsiAnnotationWrapper {
     private static final KotlinSignatureAnnotation NULL_ANNOTATION = new KotlinSignatureAnnotation(null);
     static {

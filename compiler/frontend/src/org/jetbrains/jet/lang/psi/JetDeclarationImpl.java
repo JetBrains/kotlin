@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
-/**
- * @author max
- */
 abstract class JetDeclarationImpl extends JetExpressionImpl implements JetDeclaration {
     public JetDeclarationImpl(@NotNull ASTNode node) {
         super(node);

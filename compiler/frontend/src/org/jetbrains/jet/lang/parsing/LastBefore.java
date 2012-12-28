@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.parsing;
 
-/**
-* @author abreslav
-*/
 public class LastBefore extends AbstractTokenStreamPattern {
     private final boolean dontStopRightAfterOccurrence;
     private final TokenStreamPredicate lookFor;

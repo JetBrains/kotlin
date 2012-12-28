@@ -23,9 +23,6 @@ import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-/**
- * @author Stepan Koltsov
- */
 public class MessageCollectorToString implements MessageCollector {
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private final MessageCollector actualCollector = new MessageCollectorPlainTextToStream(new PrintStream(outputStream),

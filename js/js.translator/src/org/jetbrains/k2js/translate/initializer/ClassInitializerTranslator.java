@@ -39,9 +39,6 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgumentList;
 
-/**
- * @author Pavel Talanov
- */
 public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
     private final JetClassOrObject classDeclaration;

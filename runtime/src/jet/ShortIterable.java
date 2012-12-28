@@ -18,9 +18,6 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-/**
- * @author alex.tkachman
- */
 @AssertInvisibleInResolver
 public interface ShortIterable extends Iterable<Short> {
     @Override

@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author abreslav
- */
 public interface JetVariableDeclaration extends JetDeclaration, JetWithExpressionInitializer, JetNamedDeclaration {
     boolean isVar();
 

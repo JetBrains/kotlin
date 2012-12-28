@@ -33,9 +33,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Stepan Koltsov
- */
 public class OverloadResolver {
     private TopDownAnalysisContext context;
     private BindingTrace trace;

@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-/**
-* @author abreslav
-*/
 public class BasicWritableSlice<K, V> implements WritableSlice<K, V> {
 
     public static Void initSliceDebugNames(Class<?> declarationOwner) {

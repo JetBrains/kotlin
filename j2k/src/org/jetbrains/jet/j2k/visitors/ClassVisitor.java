@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public class ClassVisitor extends JavaRecursiveElementVisitor {
     private final Set<String> myClassIdentifiers;
 

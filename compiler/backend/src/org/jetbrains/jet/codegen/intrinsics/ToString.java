@@ -29,9 +29,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.genToString;
 
-/**
- * @author alex.tkachman
- */
 public class ToString implements IntrinsicMethod {
     @Override
     public StackValue generate(

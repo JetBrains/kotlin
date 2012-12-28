@@ -26,9 +26,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.types.Variance.*;
 
-/**
-* @author abreslav
-*/
 public class TypeCheckingProcedure {
 
     // This method returns the supertype of the first parameter that has the same constructor

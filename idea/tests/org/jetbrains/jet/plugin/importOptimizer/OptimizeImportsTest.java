@@ -28,9 +28,6 @@ import org.jetbrains.jet.testing.ConfigRuntimeUtil;
 
 import java.io.File;
 
-/**
- * @author Nikolay Krasko
- */
 public class OptimizeImportsTest extends LightCodeInsightTestCase {
     public void testAlreadyOptimized() throws Exception {
         doTest();

@@ -22,9 +22,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class BinaryExpression extends Expression {
     private final Expression myLeft;
     private final Expression myRight;

@@ -24,9 +24,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetTypingIndentationTest extends LightCodeInsightTestCase {
 
     public void testAfterCatch() {

@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.psi.ValueArgument;
 
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public interface ResolvedValueArgument {
     @NotNull
     List<ValueArgument> getArguments();

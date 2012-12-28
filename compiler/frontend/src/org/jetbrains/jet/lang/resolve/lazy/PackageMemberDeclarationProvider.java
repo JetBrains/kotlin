@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public interface PackageMemberDeclarationProvider extends DeclarationProvider {
 
     boolean isPackageDeclared(@NotNull Name name);

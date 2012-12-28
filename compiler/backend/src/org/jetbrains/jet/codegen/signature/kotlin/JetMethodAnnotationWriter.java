@@ -21,9 +21,6 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
-/**
- * @author Stepan Koltsov
- */
 public class JetMethodAnnotationWriter {
     private final AnnotationVisitor av;
 

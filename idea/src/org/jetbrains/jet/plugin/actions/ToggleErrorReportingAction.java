@@ -21,9 +21,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
-/**
- * @author Andrey Breslav
- */
 public class ToggleErrorReportingAction extends ToggleAction {
     @Override
     public boolean isSelected(AnActionEvent e) {

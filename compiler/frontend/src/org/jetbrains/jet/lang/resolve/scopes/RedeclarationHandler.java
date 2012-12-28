@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
-/**
- * @author abreslav
- */
 public interface RedeclarationHandler {
     RedeclarationHandler DO_NOTHING = new RedeclarationHandler() {
         @Override

@@ -22,9 +22,7 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import java.util.List;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Represents a translator which guaranties that all expression will be computed only once.
+ * Represents a translator which guaranties that all expression will be computed only once.
  */
 public interface CachedAccessTranslator extends AccessTranslator {
     @NotNull

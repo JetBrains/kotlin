@@ -27,9 +27,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetCallExpression extends JetExpressionImpl implements JetCallElement {
     public JetCallExpression(@NotNull ASTNode node) {
         super(node);

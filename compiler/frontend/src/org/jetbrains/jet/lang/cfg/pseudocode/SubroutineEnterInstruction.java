@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-/**
- * @author abreslav
- */
 public class SubroutineEnterInstruction extends InstructionWithNext {
     private final JetElement subroutine;
 

@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-/**
- * @author abreslav
- */
 public class ReturnNoValueInstruction extends AbstractJumpInstruction implements  JetElementInstruction {
 
     private final JetElement element;

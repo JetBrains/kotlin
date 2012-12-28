@@ -40,9 +40,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
 
-/**
-* @author Pavel Talanov
-*/
 public class JsConfiguration implements ModuleConfiguration {
 
     @NotNull

@@ -24,9 +24,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.IOException;
 
-/**
- * @author Nikolay Krasko
- */
 public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
     public void testDoNotImportIfGeneralExist() {
         doFileTest("jettesting.data.testFunction");

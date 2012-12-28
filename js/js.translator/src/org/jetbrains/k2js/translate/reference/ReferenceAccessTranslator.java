@@ -31,9 +31,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsLocalNameReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
-/**
- * @author Pavel Talanov
- */
 public final class ReferenceAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
 
     @NotNull

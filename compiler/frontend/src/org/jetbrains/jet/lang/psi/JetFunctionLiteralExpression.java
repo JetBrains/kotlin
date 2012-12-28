@@ -22,9 +22,6 @@ import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetFunctionLiteralExpression extends JetExpressionImpl implements JetDeclarationWithBody {
     public JetFunctionLiteralExpression(@NotNull ASTNode node) {
         super(node);

@@ -25,9 +25,6 @@ import org.junit.Assert;
 
 import java.lang.reflect.Field;
 
-/**
- * @author Nikolay Krasko
- */
 public class FormattingSettingsConfigurator {
     private final String[] settingsToTrue;
     private final String[] settingsToFalse;

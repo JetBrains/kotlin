@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
 
-/**
- * @author Nikolay Krasko
- */
 class JetLocalPreferableWeigher extends LookupElementWeigher {
     JetLocalPreferableWeigher() {
         super("JetLocalElementWeigher");

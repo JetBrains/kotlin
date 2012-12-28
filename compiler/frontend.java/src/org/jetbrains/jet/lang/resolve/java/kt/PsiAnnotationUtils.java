@@ -22,9 +22,6 @@ import com.intellij.psi.PsiLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Stepan Koltsov
- */
 public class PsiAnnotationUtils {
 
     private PsiAnnotationUtils() {

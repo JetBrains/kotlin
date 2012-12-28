@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 
-/**
- * @author abreslav
- */
 public interface AnnotationArgumentVisitor<R, D> {
     R visitLongValue(@NotNull LongValue value, D data);
 

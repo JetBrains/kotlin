@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFileStubImpl;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetFileStubBuilder extends DefaultStubBuilder {
     @Override
     protected StubElement createStubForFile(@NotNull PsiFile file) {

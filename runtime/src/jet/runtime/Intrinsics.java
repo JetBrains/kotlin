@@ -20,9 +20,6 @@ import jet.Function0;
 
 import java.util.*;
 
-/**
- * @author alex.tkachman
- */
 public class Intrinsics {
     private Intrinsics() {
     }

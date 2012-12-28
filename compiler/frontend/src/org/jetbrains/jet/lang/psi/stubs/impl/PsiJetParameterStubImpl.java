@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements PsiJetParameterStub {
     private final StringRef name;
     private final boolean isMutable;

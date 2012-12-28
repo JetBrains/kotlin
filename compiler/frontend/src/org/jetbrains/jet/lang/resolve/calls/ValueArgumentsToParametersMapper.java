@@ -41,9 +41,6 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.ERROR;
 import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.STRONG_ERROR;
 
-/**
- * @author abreslav
- */
 /*package*/ class ValueArgumentsToParametersMapper {
 
     public enum Status {

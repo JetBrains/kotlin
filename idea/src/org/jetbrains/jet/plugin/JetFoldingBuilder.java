@@ -32,9 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     @NotNull
     @Override

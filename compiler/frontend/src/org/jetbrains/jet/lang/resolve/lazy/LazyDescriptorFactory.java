@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 
-/**
- * @author abreslav
- */
 public class LazyDescriptorFactory {
 
     @NotNull

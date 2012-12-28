@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElementVisitor;
 
-/**
- * @author max
- */
 public class JetVisitorVoid extends PsiElementVisitor {
     public void visitJetElement(JetElement element) {
         visitElement(element);

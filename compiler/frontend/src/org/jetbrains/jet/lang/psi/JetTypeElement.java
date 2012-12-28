@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public abstract class JetTypeElement extends JetElementImpl {
     public JetTypeElement(@NotNull ASTNode node) {
         super(node);

@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
 import java.util.Collection;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetTopLevelFunctionsFqnNameIndex extends StringStubIndexExtension<JetNamedFunction> {
     private static final JetTopLevelFunctionsFqnNameIndex INSTANCE = new JetTopLevelFunctionsFqnNameIndex();
 

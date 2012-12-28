@@ -24,8 +24,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Stepan Koltsov
- *
  * @see org.jetbrains.jet.lang.types.ref.SimpleParser
  */
 class SimpleLinesParser {

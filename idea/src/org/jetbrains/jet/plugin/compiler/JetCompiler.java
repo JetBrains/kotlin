@@ -40,9 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author yole
- */
 public class JetCompiler implements TranslatingCompiler {
 
     private static final boolean RUN_OUT_OF_PROCESS = false;

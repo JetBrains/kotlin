@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.psi.tree.IElementType;
 
-/**
- * @author abreslav
- */
 public interface TokenStreamPattern {
     /**
      * Called on each token

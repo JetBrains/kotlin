@@ -21,9 +21,6 @@ import org.jetbrains.jet.j2k.Converter;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public class Trait extends Class {
     public Trait(Converter converter, Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
                  List<Expression> baseClassParams, List<Type> implementsTypes, List<Member> members) {

@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 
-/**
- * @author abreslav
- */
 public class WriteValueInstruction extends InstructionWithNext {
     @NotNull
     private final JetElement lValue;

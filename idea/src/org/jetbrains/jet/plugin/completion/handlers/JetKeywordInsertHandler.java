@@ -29,9 +29,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Set;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetKeywordInsertHandler implements InsertHandler<LookupElement> {
 
     private final static Set<String> NO_SPACE_AFTER = Sets.newHashSet(

@@ -28,10 +28,6 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 07.05.12
- */
 public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
     @Override
     public PsiElement[] getSymbolTypeDeclarations(PsiElement symbol) {

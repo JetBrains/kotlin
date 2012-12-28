@@ -30,9 +30,6 @@ import org.jetbrains.k2js.translate.general.Translation;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Pavel Talanov
- */
 public final class DangerousTranslator extends AbstractTranslator {
     @NotNull
     private final DangerousData data;

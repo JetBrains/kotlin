@@ -18,9 +18,6 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.lang.Commenter;
 
-/**
- * @author max
- */
 public class JetCommenter implements Commenter {
     @Override
     public String getLineCommentPrefix() {

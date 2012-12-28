@@ -19,9 +19,6 @@ package org.jetbrains.jet.plugin.stubindex;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.jet.lang.psi.*;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetIndexKeys {
     StubIndexKey<String, JetClassOrObject> SHORT_NAME_KEY = StubIndexKey.createIndexKey("jet.class.shortName");
     StubIndexKey<String, JetClassOrObject> SUPERCLASS_NAME_KEY = StubIndexKey.createIndexKey("jet.class.superClassName");

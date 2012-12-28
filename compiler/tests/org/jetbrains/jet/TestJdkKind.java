@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet;
 
-/**
-* @author abreslav
-*/
 public enum TestJdkKind {
     MOCK_JDK,
     FULL_JDK,

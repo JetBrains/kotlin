@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-/**
- * @author yole
- */
 public class JetRunConfigurationType extends ConfigurationTypeBase {
     public static JetRunConfigurationType getInstance() {
         return ConfigurationTypeUtil.findConfigurationType(JetRunConfigurationType.class);

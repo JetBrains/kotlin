@@ -22,9 +22,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-/**
- * @author alex.tkachman
- */
 public class VarArgTest extends CodegenTestCase {
     public void testStringArray () throws InvocationTargetException, IllegalAccessException {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);

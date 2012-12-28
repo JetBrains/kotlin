@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class UnresolvedReferenceDiagnosticFactory extends DiagnosticFactory1<JetReferenceExpression, String> {
     public UnresolvedReferenceDiagnosticFactory() {
         super(Severity.ERROR, new PositioningStrategy<JetReferenceExpression>() {

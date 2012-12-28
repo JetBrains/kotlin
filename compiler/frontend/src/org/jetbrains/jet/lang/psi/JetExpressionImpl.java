@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
 
-/**
- * @author max
- */
 abstract class JetExpressionImpl extends JetElementImpl implements JetExpression {
     public JetExpressionImpl(@NotNull ASTNode node) {
         super(node);

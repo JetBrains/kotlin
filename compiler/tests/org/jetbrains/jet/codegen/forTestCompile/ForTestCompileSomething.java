@@ -31,9 +31,6 @@ import java.util.Stack;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-/**
- * @author Stepan Koltsov
- */
 abstract class ForTestCompileSomething {
 
     public static final boolean ACTUALLY_COMPILE = !"false".equals(System.getenv("kotlin.tests.actually.compile"));

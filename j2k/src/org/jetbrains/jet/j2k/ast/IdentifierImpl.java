@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class IdentifierImpl extends Expression implements Identifier {
     private final String myName;
     private boolean myIsNullable = true;

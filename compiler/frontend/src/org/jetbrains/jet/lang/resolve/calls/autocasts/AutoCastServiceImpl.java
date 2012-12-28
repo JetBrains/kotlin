@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public class AutoCastServiceImpl implements AutoCastService {
     private final DataFlowInfo dataFlowInfo;
     private final BindingContext bindingContext;

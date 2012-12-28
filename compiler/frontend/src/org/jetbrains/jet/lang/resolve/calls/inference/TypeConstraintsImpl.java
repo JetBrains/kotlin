@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Set;
 
-/**
- * @author svtk
- */
 public class TypeConstraintsImpl implements TypeConstraints {
     private final Variance varianceOfPosition;
     private final Set<JetType> upperBounds = Sets.newLinkedHashSet();

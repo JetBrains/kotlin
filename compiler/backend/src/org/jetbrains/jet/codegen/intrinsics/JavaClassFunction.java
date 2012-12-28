@@ -35,9 +35,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 
-/**
- * @author alex.tkachman
- */
 public class JavaClassFunction implements IntrinsicMethod {
     @Override
     public StackValue generate(

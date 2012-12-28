@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Set;
 
-/**
- * @author svtk
- */
 public interface ConstraintSystem {
 
     /**

@@ -21,10 +21,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/4/12
- */
 public class NamesHighlightingTest extends LightDaemonAnalyzerTestCase {
     public void testTypesAndAnnotations() throws Exception {
         doTest();

@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-/**
- * @author abreslav
- */
 public interface ConstraintSystemSolution {
     @NotNull
     SolutionStatus getStatus();

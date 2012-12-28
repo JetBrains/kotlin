@@ -21,9 +21,6 @@ import com.intellij.psi.impl.JavaCodeBlockModificationListener;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-/**
- * @author Nikolay Krasko
- */
 public class OutOfBlockModificationTest extends LightCodeInsightFixtureTestCase {
 
     public void testFunInFun() {

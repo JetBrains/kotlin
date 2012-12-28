@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 
 import javax.swing.*;
 
-/**
- * @author Nikolay Krasko
- */
 public final class JetDescriptorIconProvider {
 
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.JetDescriptorIconProvider");

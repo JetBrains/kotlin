@@ -34,9 +34,6 @@ import java.util.Map;
 
 import static org.jetbrains.k2js.test.utils.LibraryFilePathsUtil.getAdditionalLibraryFiles;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class JsUnitTestBase extends MultipleFilesTranslationTest {
 
     @NotNull

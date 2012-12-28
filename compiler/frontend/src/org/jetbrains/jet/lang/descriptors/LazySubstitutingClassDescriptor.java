@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     private final ClassDescriptor original;

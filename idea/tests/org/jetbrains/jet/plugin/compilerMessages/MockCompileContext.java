@@ -37,9 +37,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Pavel Talanov
- */
 public class MockCompileContext implements CompileContextEx {
 
     @NotNull

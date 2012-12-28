@@ -37,9 +37,6 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.newWritableScopeImpl;
 
-/**
- * @author abreslav
- */
 public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     protected PatternMatchingTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);

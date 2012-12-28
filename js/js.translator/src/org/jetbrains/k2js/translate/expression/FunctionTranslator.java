@@ -45,9 +45,6 @@ import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translat
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
-/**
- * @author Pavel Talanov
- */
 public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     public static FunctionTranslator newInstance(@NotNull JetDeclarationWithBody function,

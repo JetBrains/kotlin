@@ -57,10 +57,6 @@ import java.awt.event.KeyEvent;
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION;
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.signatureToNameValuePairs;
 
-/**
-* @author Evgeny Gerashchenko
-* @since 10.08.12
-*/
 class EditSignatureBalloon implements Disposable {
     private final Editor editor;
     private final PsiModifierListOwner annotatedElement;

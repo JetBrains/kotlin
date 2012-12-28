@@ -20,9 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
-/**
-* @author svtk
-*/
 public interface JetIntentionActionFactory {
 
     @Nullable

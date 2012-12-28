@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.util.lazy;
 
-/**
- * @author abreslav
- */
 public abstract class LazyValueWithDefault<T> extends LazyValue<T> {
     private final T defaultValue;
 

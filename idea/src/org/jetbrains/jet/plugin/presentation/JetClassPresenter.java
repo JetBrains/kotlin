@@ -20,9 +20,6 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
 import org.jetbrains.jet.lang.psi.JetClass;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetClassPresenter implements ItemPresentationProvider<JetClass> {
     @Override
     public ItemPresentation getPresentation(final JetClass item) {

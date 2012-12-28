@@ -39,9 +39,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public final class NavigationTestUtils {
     private NavigationTestUtils() {
     }

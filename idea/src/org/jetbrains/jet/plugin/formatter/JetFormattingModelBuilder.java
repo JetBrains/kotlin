@@ -30,9 +30,6 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author yole
- */
 public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
     @Override

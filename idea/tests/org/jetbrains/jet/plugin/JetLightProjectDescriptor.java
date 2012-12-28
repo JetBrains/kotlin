@@ -24,9 +24,6 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.testFramework.LightProjectDescriptor;
 
-/**
- * @author yole
- */
 public class JetLightProjectDescriptor implements LightProjectDescriptor {
     private JetLightProjectDescriptor() {
     }

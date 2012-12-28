@@ -38,9 +38,6 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getSuperclassDescriptors;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 
-/**
- * @author Pavel Talanov
- */
 public final class JsDescriptorUtils {
 
     private JsDescriptorUtils() {

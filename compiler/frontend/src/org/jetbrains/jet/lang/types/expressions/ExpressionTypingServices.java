@@ -52,9 +52,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.STATEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
-/**
-* @author abreslav
-*/
 public class ExpressionTypingServices {
 
     private final ExpressionTypingFacade expressionTypingFacade = ExpressionTypingVisitorDispatcher.create();

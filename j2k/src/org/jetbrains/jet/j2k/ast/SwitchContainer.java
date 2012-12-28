@@ -21,9 +21,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class SwitchContainer extends Statement {
     private final Expression myExpression;
     private final List<CaseContainer> myCaseContainers;

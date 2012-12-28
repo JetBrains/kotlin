@@ -39,9 +39,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
- * @author Pavel Talanov
- */
 @SuppressWarnings("deprecation")
 public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
         implements RunConfigurationWithSuppressedDefaultRunAction {

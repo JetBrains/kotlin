@@ -33,9 +33,6 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-/**
- * @author yole
- */
 public class ShowExpressionTypeAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {

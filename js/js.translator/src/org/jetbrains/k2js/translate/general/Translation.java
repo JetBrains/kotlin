@@ -56,10 +56,8 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         This class provides a interface which all translators use to interact with each other.
- *         Goal is to simplify interaction between translators.
+ * This class provides a interface which all translators use to interact with each other.
+ * Goal is to simplify interaction between translators.
  */
 public final class Translation {
 

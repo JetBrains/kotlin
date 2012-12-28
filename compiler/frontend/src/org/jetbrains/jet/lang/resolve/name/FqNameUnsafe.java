@@ -24,8 +24,6 @@ import java.util.List;
 
 /**
  * Like {@link FqName} but allows '<' and '>' characters in name.
- *
- * @author Stepan Koltsov
  */
 public class FqNameUnsafe extends FqNameBase {
 

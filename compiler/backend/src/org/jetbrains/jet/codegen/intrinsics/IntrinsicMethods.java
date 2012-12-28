@@ -37,10 +37,6 @@ import java.util.Map;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
     private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();

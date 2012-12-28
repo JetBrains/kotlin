@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public abstract class ClassDescriptorBase implements ClassDescriptor {
 
     protected JetType defaultType;

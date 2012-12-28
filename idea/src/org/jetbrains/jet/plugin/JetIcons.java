@@ -21,9 +21,6 @@ import com.intellij.util.PlatformIcons;
 
 import javax.swing.*;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetIcons {
     Icon SMALL_LOGO = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin.png");
 

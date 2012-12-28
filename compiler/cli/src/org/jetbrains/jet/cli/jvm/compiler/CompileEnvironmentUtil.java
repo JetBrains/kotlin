@@ -50,9 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.*;
 
-/**
- * @author abreslav
- */
 public class CompileEnvironmentUtil {
     public static Disposable createMockDisposable() {
         return new Disposable() {

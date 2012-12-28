@@ -38,9 +38,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
 
-/**
- * @author abreslav
- */
 public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCallWithTrace<D> {
 
     public static final Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor>() {

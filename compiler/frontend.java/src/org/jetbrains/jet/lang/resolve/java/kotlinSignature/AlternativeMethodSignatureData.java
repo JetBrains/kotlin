@@ -43,10 +43,6 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.UPPER_BOUND;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 6/5/12
- */
 public class AlternativeMethodSignatureData extends ElementAlternativeSignatureData {
     private final JetNamedFunction altFunDeclaration;
 

@@ -32,9 +32,6 @@ import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 //TODO: use method object instead of static functions
 public final class JSTestGenerator {
     private JSTestGenerator() {

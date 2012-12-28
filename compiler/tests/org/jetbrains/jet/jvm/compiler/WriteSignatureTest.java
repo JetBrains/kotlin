@@ -47,8 +47,6 @@ import java.util.regex.Pattern;
 /**
  * Test correctness of written JVM signature
  *
- * @author Stepan Koltsov
- *
  * @see CompileJavaAgainstKotlinTestGenerated
  */
 public class WriteSignatureTest extends TestCaseWithTmpdir {

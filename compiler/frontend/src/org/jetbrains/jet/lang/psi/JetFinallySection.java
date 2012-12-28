@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 
-/**
- * @author max
- */
 public class JetFinallySection extends JetElementImpl {
     public JetFinallySection(@NotNull ASTNode node) {
         super(node);

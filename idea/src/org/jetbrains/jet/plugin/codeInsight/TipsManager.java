@@ -44,9 +44,6 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
 
-/**
- * @author Nikolay Krasko, Alefas
- */
 public final class TipsManager {
 
     private TipsManager() {

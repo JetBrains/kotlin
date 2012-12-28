@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
     private WritableScope memberScope;

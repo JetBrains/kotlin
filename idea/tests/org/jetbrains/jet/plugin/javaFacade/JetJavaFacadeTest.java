@@ -31,9 +31,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-/**
- * @author max
- */
 public class JetJavaFacadeTest extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override

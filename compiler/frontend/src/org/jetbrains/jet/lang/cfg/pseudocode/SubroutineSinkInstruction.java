@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author svtk
- */
 public class SubroutineSinkInstruction extends InstructionImpl {
     private final JetElement subroutine;
     private final String debugLabel;

@@ -35,9 +35,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author svtk
- */
 public class ModifiersChecker {
     private static final Collection<JetKeywordToken> MODALITY_MODIFIERS =
             Lists.newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, OVERRIDE_KEYWORD);

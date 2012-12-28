@@ -33,9 +33,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStub, JetNamedFunction> {
 
     public JetFunctionElementType(@NotNull @NonNls String debugName) {

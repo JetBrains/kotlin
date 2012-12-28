@@ -25,9 +25,6 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
-/**
- * @author Pavel Talanov
- */
 public final class AnalyzerFacadeProvider {
 
     private final static Logger LOG = Logger.getInstance(AnalyzerFacade.class);

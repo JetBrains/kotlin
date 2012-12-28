@@ -28,9 +28,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
-/**
- * @author abreslav
- */
 public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements ConstructorDescriptor {
 
     private final boolean isPrimary;

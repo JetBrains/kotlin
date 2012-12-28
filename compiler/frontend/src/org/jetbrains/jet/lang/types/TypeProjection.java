@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author abreslav
- */
 public class TypeProjection {
     private final Variance projection;
     private final JetType type;

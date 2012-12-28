@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author abreslav
- */
 public interface Renderer<O> {
     @NotNull
     String render(@NotNull O object);

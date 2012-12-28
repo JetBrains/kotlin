@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public interface ConstructorDescriptor extends FunctionDescriptor {
     /**
      * @throws UnsupportedOperationException -- no type parameters supported for constructors

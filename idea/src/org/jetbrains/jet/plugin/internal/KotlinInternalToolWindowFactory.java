@@ -24,10 +24,6 @@ import com.intellij.ui.content.ContentManager;
 import org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow;
 import org.jetbrains.jet.plugin.internal.resolvewindow.ResolveToolwindow;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/20/12
- */
 public class KotlinInternalToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {

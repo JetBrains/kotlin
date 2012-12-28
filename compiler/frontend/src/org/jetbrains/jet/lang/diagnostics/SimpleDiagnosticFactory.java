@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author svtk
- */
 public class SimpleDiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
 
     protected SimpleDiagnosticFactory(Severity severity, PositioningStrategy<? super E> positioningStrategy) {

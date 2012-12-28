@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.psi.Call.CallType;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class CallMaker {
 
     private static class ExpressionValueArgument implements ValueArgument {

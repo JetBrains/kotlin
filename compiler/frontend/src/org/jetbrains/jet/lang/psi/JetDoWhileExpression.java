@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author max
- */
 public class JetDoWhileExpression extends JetWhileExpressionBase {
     public JetDoWhileExpression(@NotNull ASTNode node) {
         super(node);

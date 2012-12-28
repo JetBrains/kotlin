@@ -23,9 +23,6 @@ import org.jetbrains.asm4.util.TraceClassVisitor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-/**
- * @author Stepan Koltsov
- */
 @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class ClassBuilderFactories {
 

@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetWithExpressionInitializer extends PsiElement {
     @Nullable
     JetExpression getInitializer();

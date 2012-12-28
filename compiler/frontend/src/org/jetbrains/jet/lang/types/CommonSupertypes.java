@@ -32,9 +32,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.types.Variance.*;
 
-/**
-* @author abreslav
-*/
 public class CommonSupertypes {
     @NotNull
     public static JetType commonSupertype(@NotNull Collection<JetType> types) {

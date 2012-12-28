@@ -39,9 +39,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
-/**
- * @author Pavel Talanov
- */
 public final class DescriptorResolverUtils {
     public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 

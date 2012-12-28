@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
-/**
-* @author yole
-*/
 public class JetSimpleNameReference extends JetPsiReference {
 
     @NotNull

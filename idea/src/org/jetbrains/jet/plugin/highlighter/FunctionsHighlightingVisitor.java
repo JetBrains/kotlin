@@ -22,10 +22,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/2/12
- */
 public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     public FunctionsHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
         super(holder, bindingContext);

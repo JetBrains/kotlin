@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
-/**
- * @author abreslav
- */
 public class DataFlowValueFactory {
     public static final DataFlowValueFactory INSTANCE = new DataFlowValueFactory();
 

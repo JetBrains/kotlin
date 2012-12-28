@@ -32,9 +32,6 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();

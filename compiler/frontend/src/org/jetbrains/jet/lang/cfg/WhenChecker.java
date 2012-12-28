@@ -32,9 +32,6 @@ import org.jetbrains.jet.lang.types.TypeProjection;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author svtk
- */
 public final class WhenChecker {
     private WhenChecker() {
     }

@@ -16,9 +16,6 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-/**
- * @author Pavel Talanov
- */
 public class FunctionTest extends AbstractExpressionTest {
 
     public FunctionTest() {

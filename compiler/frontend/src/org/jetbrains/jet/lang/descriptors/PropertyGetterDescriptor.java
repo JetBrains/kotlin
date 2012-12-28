@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     private JetType returnType;
 

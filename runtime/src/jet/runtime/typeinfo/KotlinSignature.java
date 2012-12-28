@@ -19,10 +19,6 @@ package jet.runtime.typeinfo;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 5/23/12
- */
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.FIELD})
 public @interface KotlinSignature {
     String value();

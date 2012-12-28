@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 
 import java.util.Collections;
 
-/**
- * @author abreslav
- */
 public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl implements LazyDescriptor, NamespaceDescriptor {
     private final JetScope memberScope;
     private final JetScope lazyScope;

@@ -45,9 +45,6 @@ import org.jetbrains.jet.plugin.util.ApplicationUtils;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author Pavel Talanov
- */
 public final class AnalyzerFacadeWithCache {
 
     private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache");

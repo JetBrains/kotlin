@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author svtk
- */
 public interface Pseudocode {
     @NotNull
     JetElement getCorrespondingElement();

@@ -25,9 +25,6 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class ObservableBindingTrace implements BindingTrace {
     public interface RecordHandler<K, V> {
 

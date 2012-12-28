@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-/**
- * @author Nikolay Krasko
- */
 public class StubClassMemberDeclarationProvider extends AbstractStubDeclarationProvider implements ClassMemberDeclarationProvider {
     @NotNull
     @Override

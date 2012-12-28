@@ -27,9 +27,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetBlockExpression extends JetExpressionImpl implements JetStatementExpression, PsiModifiableCodeBlock {
     public JetBlockExpression(@NotNull ASTNode node) {
         super(node);

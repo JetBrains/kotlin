@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
-/**
- * @author abreslav
- */
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
     private JetCoreEnvironment environment;
 

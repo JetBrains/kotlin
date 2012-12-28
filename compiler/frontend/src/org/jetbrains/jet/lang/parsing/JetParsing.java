@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.PsiBuilder;
@@ -32,10 +29,6 @@ import java.util.Map;
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author max
- * @author abreslav
- */
 public class JetParsing extends AbstractJetParsing {
     // TODO: token sets to constants, including derived methods
     public static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();

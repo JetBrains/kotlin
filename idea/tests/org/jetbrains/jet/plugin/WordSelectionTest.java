@@ -22,10 +22,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/24/12
- */
 public class WordSelectionTest extends LightCodeInsightFixtureTestCase {
     public void testStatements() {
         doTest(11);

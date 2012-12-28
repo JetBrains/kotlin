@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
-/**
- * @author svtk
- */
 public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> {
     private final boolean removeInitializer;
     private final boolean removeGetter;

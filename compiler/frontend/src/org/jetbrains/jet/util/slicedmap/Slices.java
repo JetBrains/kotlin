@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class Slices {
 
     public static final RewritePolicy ONLY_REWRITE_TO_EQUAL = new RewritePolicy() {

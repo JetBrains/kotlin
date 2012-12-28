@@ -38,9 +38,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     private JetDefaultModalityModifiersTestCase tc = new JetDefaultModalityModifiersTestCase();
 

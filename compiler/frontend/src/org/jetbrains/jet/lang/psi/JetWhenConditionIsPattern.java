@@ -22,9 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author abreslav
- */
 public class JetWhenConditionIsPattern extends JetWhenCondition {
     public JetWhenConditionIsPattern(@NotNull ASTNode node) {
         super(node);

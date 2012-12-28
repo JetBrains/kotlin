@@ -40,9 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class JetPsiUtil {
 
     public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");

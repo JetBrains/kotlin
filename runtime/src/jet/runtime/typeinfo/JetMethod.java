@@ -26,8 +26,6 @@ import java.lang.annotation.Target;
  *
  * The fact of receiver presence must be deducted from presence of '$receiver' parameter
  *
- * @author alex.tkachman
- *
  * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 @Target({ElementType.METHOD})

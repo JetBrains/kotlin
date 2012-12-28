@@ -20,9 +20,6 @@ import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.plugin.JetIcons;
 
-/**
- * @author Pavel Talanov
- */
 public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
     public static K2JSRunConfigurationType getInstance() {
         return ConfigurationTypeUtil.findConfigurationType(K2JSRunConfigurationType.class);

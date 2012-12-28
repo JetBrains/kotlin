@@ -20,9 +20,6 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
-/**
- * @author abreslav
- */
 public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase {
     static {
         System.setProperty("java.awt.headless", "true");

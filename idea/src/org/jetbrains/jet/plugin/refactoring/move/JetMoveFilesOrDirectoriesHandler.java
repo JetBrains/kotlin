@@ -29,10 +29,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Alefas
- * @since 06.03.12
- */
 public class JetMoveFilesOrDirectoriesHandler extends MoveFilesOrDirectoriesHandler {
     public static boolean isMovableClass(JetClassOrObject clazz) {
         if (!(clazz.getParent() instanceof JetFile)) return false;

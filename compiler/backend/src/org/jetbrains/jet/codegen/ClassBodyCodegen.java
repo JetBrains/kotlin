@@ -35,10 +35,6 @@ import java.util.List;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 
-/**
- * @author max
- * @author yole
- */
 public abstract class ClassBodyCodegen extends MemberCodegen {
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;

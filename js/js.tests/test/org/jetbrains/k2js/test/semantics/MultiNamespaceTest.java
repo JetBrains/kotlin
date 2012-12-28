@@ -18,9 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
 
-/**
- * @author Pavel Talanov
- */
 public class MultiNamespaceTest extends MultipleFilesTranslationTest {
 
 

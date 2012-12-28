@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * @author Stepan Koltsov
- */
 class JetTypeNameParser extends SimpleParser {
     public JetTypeNameParser(String input) {
         super(input);

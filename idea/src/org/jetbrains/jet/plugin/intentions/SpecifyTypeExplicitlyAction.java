@@ -42,10 +42,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collections;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/20/12
- */
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     @NotNull
     @Override

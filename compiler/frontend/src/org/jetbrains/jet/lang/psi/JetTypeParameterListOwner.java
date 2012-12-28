@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetTypeParameterListOwner extends JetNamedDeclaration {
     @NotNull
     List<JetTypeConstraint> getTypeConstraints();

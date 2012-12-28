@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.psi.ValueArgument;
 import java.util.Collections;
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public class DefaultValueArgument implements ResolvedValueArgument {
     public static final DefaultValueArgument DEFAULT = new DefaultValueArgument();
 

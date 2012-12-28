@@ -27,10 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- * @author slukjanov aka Frostman
- */
 public class ReplaceCallFix implements IntentionAction {
     private final boolean toSafe;
 

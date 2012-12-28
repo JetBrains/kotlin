@@ -31,9 +31,6 @@ import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 
-/**
- * @author abreslav
- */
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
     @Override

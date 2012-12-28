@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class ExtensionReceiver extends AbstractReceiverValue implements ThisReceiver {
 
     private final CallableDescriptor descriptor;

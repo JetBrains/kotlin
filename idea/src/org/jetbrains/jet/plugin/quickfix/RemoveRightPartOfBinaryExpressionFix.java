@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- */
 public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
     private final String message;
     

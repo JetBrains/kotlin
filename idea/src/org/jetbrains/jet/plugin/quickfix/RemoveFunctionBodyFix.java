@@ -31,9 +31,6 @@ import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- */
 public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
 
     public RemoveFunctionBodyFix(@NotNull JetFunction element) {

@@ -38,9 +38,6 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.PLACEHOLDER_
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeConstraintsImpl.ConstraintKind.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
-/**
- * @author svtk
- */
 public class ConstraintSystemImpl implements ConstraintSystem {
 
     private final Map<TypeParameterDescriptor, TypeConstraintsImpl> typeParameterConstraints = Maps.newLinkedHashMap();

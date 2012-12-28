@@ -29,9 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class SubstitutionUtils {
     @NotNull
     public static Map<TypeConstructor, TypeProjection> buildSubstitutionContext(@NotNull  JetType context) {

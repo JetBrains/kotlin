@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls.tasks;
 
-/**
- * @author svtk
- */
 public enum ExplicitReceiverKind {
     RECEIVER_ARGUMENT,
     THIS_OBJECT,

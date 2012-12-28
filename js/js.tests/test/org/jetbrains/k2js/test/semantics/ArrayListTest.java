@@ -18,9 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.mozilla.javascript.JavaScriptException;
 
-/**
- * @author Pavel Talanov
- */
 public final class ArrayListTest extends JavaClassesTest {
 
     public ArrayListTest() {

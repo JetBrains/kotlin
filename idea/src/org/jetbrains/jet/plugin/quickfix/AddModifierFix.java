@@ -37,9 +37,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author svtk
- */
 public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetKeywordToken modifier;
     private final JetToken[] modifiersThanCanBeReplaced;

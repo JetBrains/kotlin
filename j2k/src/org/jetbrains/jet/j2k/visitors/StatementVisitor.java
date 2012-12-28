@@ -31,9 +31,6 @@ import java.util.List;
 import static org.jetbrains.jet.j2k.Converter.identifierToIdentifier;
 import static org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses;
 
-/**
- * @author ignatov
- */
 public class StatementVisitor extends ElementVisitor {
     private Statement myResult = Statement.EMPTY_STATEMENT;
 

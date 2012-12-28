@@ -34,10 +34,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 
-/**
- * @author max
- * @author alex.tkachman
- */
 public final class ClassFileFactory extends GenerationStateAware {
     @NotNull private ClassBuilderFactory builderFactory;
 

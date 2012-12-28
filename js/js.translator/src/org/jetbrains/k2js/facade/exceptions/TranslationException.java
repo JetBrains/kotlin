@@ -18,9 +18,6 @@ package org.jetbrains.k2js.facade.exceptions;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel Talanov
- */
 public class TranslationException extends Exception {
 
     public TranslationException(@NotNull String message) {

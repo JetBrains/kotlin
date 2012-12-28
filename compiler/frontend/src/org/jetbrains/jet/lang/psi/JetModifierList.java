@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetModifierList extends JetElementImpl {
     public JetModifierList(@NotNull ASTNode node) {
         super(node);

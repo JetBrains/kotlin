@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author svtk
- */
 public interface ParametrizedDiagnostic<E extends PsiElement> extends Diagnostic {
     @NotNull
     @Override

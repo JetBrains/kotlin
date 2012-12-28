@@ -51,8 +51,6 @@ import java.util.*;
 /**
  * Will provide both java elements from jet context and some special declarations special to jet.
  * All those declaration are planned to be used in completion.
- *
- * @author Nikolay Krasko
  */
 public class JetShortNamesCache extends PsiShortNamesCache {
 

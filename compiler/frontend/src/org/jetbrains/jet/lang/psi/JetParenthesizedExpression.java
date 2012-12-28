@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author max
- */
 public class JetParenthesizedExpression extends JetExpressionImpl {
     public JetParenthesizedExpression(@NotNull ASTNode node) {
         super(node);

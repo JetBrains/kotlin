@@ -25,9 +25,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetValueArgumentList extends JetElementImpl {
     public JetValueArgumentList(@NotNull ASTNode node) {
         super(node);

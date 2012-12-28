@@ -28,9 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructor {
     private final List<TypeParameterDescriptor> parameters;
     private Collection<JetType> supertypes;

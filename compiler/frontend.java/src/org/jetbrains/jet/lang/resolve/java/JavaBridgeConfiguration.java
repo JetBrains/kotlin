@@ -33,9 +33,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     public static final ImportPath[] DEFAULT_JAVA_IMPORTS = new ImportPath[] { new ImportPath("java.lang.*") };

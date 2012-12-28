@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public abstract class ClassBuilderOnDemand {
 
     private ClassBuilder classBuilder;

@@ -19,10 +19,6 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/18/12
- */
 public class DiagnosticRendererUtil {
     private DiagnosticRendererUtil() {
     }

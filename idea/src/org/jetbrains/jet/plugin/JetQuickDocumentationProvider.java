@@ -33,10 +33,6 @@ import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-/**
- * @author abreslav
- * @author Evgeny Gerashchenko
- */
 public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
     private static String getText(PsiElement element, PsiElement originalElement, boolean mergeKotlinAndJava) {
         JetReferenceExpression ref;

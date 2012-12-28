@@ -21,9 +21,7 @@ import org.jetbrains.k2js.translate.intrinsic.functions.FunctionIntrinsics;
 import org.jetbrains.k2js.translate.intrinsic.operation.BinaryOperationIntrinsics;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Provides mechanism to substitute method calls /w native constructs directly.
+ * Provides mechanism to substitute method calls /w native constructs directly.
  */
 public final class Intrinsics {
 

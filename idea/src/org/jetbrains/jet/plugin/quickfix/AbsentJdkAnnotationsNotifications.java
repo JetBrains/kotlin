@@ -32,10 +32,6 @@ import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/22/12
- */
 public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("add.kotlin.jdk.annotations");
 

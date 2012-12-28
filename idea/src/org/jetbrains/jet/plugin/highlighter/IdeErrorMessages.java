@@ -33,9 +33,6 @@ import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
 
 /**
  * @see DefaultErrorMessages
- *
- * @author Evgeny Gerashchenko
- * @since 4/13/12
  */
 public class IdeErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();

@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
-/**
- * @author abreslav
- */
 public class JetVisibilityChecker {
     /**
      * @param locationOwner owner of the call site

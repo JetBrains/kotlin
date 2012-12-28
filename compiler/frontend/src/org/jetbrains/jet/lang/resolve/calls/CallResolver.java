@@ -54,9 +54,6 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode.
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
-/**
- * @author abreslav
- */
 public class CallResolver {
     @NotNull
     private ExpressionTypingServices expressionTypingServices;

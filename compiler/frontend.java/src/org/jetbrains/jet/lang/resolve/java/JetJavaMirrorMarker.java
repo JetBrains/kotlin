@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;

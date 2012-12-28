@@ -33,9 +33,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
-/**
- * @author svtk
- */
 public class QuickFixUtil {
     private QuickFixUtil() {
     }

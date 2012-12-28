@@ -46,9 +46,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.copyFileToDir;
 
-/**
- * @author Pavel Talanov
- */
 public final class JsModuleSetUp {
 
     private JsModuleSetUp() {

@@ -51,8 +51,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * Stores candidates for call resolution.
- *
- * @author abreslav
  */
 public class ResolutionTask<D extends CallableDescriptor, F extends D> extends ResolutionContext {
     private final Collection<ResolutionCandidate<D>> candidates;

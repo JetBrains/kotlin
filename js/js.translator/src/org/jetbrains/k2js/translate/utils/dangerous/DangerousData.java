@@ -27,15 +27,13 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import java.util.List;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         This module uses a methaphor for naming.
- *         <p/>
- *         Dangerous are the nodes that can be expressions in Kotlin but can't be expressions in JavaScript.
- *         These are: when, if, inlined functions.
- *         The issue with them is that we have to translate them to a list of statements. And also all the expressions which must be computed before
- *         the dangerous expressions.
- *         RootNode is a node which contains such an expression. For example, it may be a statement expression belongs to.
+ * This module uses a methaphor for naming.
+ * <p/>
+ * Dangerous are the nodes that can be expressions in Kotlin but can't be expressions in JavaScript.
+ * These are: when, if, inlined functions.
+ * The issue with them is that we have to translate them to a list of statements. And also all the expressions which must be computed before
+ * the dangerous expressions.
+ * RootNode is a node which contains such an expression. For example, it may be a statement expression belongs to.
  */
 public class DangerousData {
     @NotNull

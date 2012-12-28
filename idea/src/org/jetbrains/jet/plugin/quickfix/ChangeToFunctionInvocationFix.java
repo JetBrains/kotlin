@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- */
 public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpression> {
 
     public ChangeToFunctionInvocationFix(@NotNull JetExpression element) {

@@ -30,10 +30,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 5/11/12
- */
 public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
     public void testAny() throws Exception {
         doTest();

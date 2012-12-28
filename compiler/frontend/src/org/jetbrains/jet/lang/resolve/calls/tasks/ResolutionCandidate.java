@@ -27,9 +27,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
-/**
- * @author svtk
- */
 public class ResolutionCandidate<D extends CallableDescriptor> {
     private final D candidateDescriptor;
     private ReceiverValue thisObject; // receiver object of a method

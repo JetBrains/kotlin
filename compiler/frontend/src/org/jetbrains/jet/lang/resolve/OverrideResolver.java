@@ -43,9 +43,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
-/**
- * @author abreslav
- */
 public class OverrideResolver {
 
     private TopDownAnalysisContext context;

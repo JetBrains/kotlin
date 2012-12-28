@@ -33,9 +33,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     private List<AnnotationDescriptor> annotations = Lists.newArrayList();

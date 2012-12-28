@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import java.util.Collections;
 
-/**
- * @author Stepan Koltsov
- */
 public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorImpl {
     // used for diagnostic only
     @NotNull

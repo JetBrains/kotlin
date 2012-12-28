@@ -23,9 +23,6 @@ import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 import java.io.File;
 
-/**
- * @author Pavel Talanov
- */
 
 //TODO:
 //Inlining turned off

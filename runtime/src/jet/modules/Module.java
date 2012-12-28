@@ -20,9 +20,6 @@ import jet.runtime.typeinfo.KotlinSignature;
 
 import java.util.List;
 
-/**
- * @author yole
- */
 public interface Module {
     @KotlinSignature("fun getModuleName(): String")
     String getModuleName();

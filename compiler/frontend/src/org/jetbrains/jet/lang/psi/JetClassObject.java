@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
-/**
- * @author max
- */
 public class JetClassObject extends JetDeclarationImpl implements JetStatementExpression {
     public JetClassObject(@NotNull ASTNode node) {
         super(node);

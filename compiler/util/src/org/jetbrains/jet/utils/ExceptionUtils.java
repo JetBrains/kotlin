@@ -18,9 +18,6 @@ package org.jetbrains.jet.utils;
 
 import java.io.Closeable;
 
-/**
- * @author Stepan Koltsov
- */
 public class ExceptionUtils {
 
     /**

@@ -22,9 +22,6 @@ import org.jetbrains.jet.j2k.Converter;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class AnonymousClass extends Class {
     public AnonymousClass(Converter converter, List<Member> members) {
         super(converter,

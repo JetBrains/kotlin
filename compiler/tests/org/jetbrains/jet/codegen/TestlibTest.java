@@ -52,9 +52,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Set;
 
-/**
- * @author alex.tkachman
- */
 public class TestlibTest extends CodegenTestCase {
 
     private File junitJar;

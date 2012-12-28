@@ -23,9 +23,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
 
-/**
- * @author Pavel Talanov
- */
 public final class LastExpressionMutator {
     public static JsStatement mutateLastExpression(@NotNull JsNode node, @NotNull Mutator mutator) {
         return convertToStatement(new LastExpressionMutator(mutator).apply(node));

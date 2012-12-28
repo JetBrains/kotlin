@@ -22,9 +22,6 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetParameterList;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterListStub;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetParameterListStubImpl extends StubBase<JetParameterList> implements PsiJetParameterListStub {
     public PsiJetParameterListStubImpl(IStubElementType elementType, StubElement parent) {
         super(parent, elementType);

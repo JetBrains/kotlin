@@ -30,9 +30,6 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopParameter;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class ForTranslator extends AbstractTranslator {
 
     @NotNull

@@ -20,9 +20,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         A messy class where all new tests go before they are sorted which never happens.
+ * A messy class where all new tests go before they are sorted which never happens.
  */
 public final class MiscTest extends AbstractExpressionTest {
 

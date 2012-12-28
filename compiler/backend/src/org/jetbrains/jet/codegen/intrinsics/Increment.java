@@ -31,9 +31,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 
-/**
- * @author yole
- */
 public class Increment implements IntrinsicMethod {
     private final int myDelta;
 

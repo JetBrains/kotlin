@@ -23,9 +23,6 @@ import org.jetbrains.asm4.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Stepan Koltsov
- */
 public enum JvmPrimitiveType {
     BOOLEAN(PrimitiveType.BOOLEAN, "boolean", "java.lang.Boolean", Type.BOOLEAN_TYPE),
     CHAR(PrimitiveType.CHAR, "char", "java.lang.Character", Type.CHAR_TYPE),

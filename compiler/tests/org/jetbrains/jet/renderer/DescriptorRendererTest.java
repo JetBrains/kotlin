@@ -38,10 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/6/12
- */
 public class DescriptorRendererTest extends JetLiteFixture {
 
     @Override

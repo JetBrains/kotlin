@@ -38,9 +38,6 @@ import java.util.Map;
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class BasicTest extends KotlinTestWithEnvironment {
     // predictable order of ecma version in tests
     protected static final Iterable<EcmaVersion> DEFAULT_ECMA_VERSIONS = Lists.newArrayList(EcmaVersion.v5, EcmaVersion.v3);

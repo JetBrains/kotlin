@@ -24,8 +24,6 @@ import java.lang.annotation.Target;
 /**
  * Annotation for parameters
  *
- * @author alex.tkachman
- *
  * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 @Target({ElementType.PARAMETER})

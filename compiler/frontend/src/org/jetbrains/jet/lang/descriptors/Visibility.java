@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author svtk
- */
 public abstract class Visibility {
     private final boolean isPublicAPI;
     private final String name;

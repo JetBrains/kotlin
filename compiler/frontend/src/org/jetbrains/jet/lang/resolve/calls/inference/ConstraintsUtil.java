@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.*;
 
-/**
- * @author svtk
- */
 public class ConstraintsUtil {
 
     @NotNull

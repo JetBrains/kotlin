@@ -42,9 +42,6 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftE
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
 
 
-/**
- * @author Pavel Talanov
- */
 public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull

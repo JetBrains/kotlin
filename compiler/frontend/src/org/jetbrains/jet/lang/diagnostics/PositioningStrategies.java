@@ -30,9 +30,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class PositioningStrategies {
 
     public static final PositioningStrategy<PsiElement> DEFAULT = new PositioningStrategy<PsiElement>();

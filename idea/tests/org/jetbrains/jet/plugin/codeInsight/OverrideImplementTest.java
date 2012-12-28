@@ -37,10 +37,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 
-/**
- * @author yole
- * @author slukjanov aka Frostman
- */
 public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override

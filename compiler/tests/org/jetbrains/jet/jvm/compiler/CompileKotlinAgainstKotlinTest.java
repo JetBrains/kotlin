@@ -41,9 +41,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-/**
- * @author Stepan Koltsov
- */
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
 public final class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir {
 

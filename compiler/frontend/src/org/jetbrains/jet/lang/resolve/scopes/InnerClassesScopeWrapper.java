@@ -32,9 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     private final JetScope actualScope;
 

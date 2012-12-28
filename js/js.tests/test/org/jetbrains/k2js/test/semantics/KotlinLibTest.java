@@ -23,9 +23,6 @@ import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 
-/**
- * @author Pavel Talanov
- */
 public final class KotlinLibTest extends SingleFileTranslationTest {
 
     public KotlinLibTest() {

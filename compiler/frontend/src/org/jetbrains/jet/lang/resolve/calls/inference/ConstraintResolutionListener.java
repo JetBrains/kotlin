@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public interface ConstraintResolutionListener {
 
     public static final ConstraintResolutionListener DO_NOTHING = new ConstraintResolutionListener() {

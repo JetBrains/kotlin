@@ -26,9 +26,6 @@ import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
-* @author Nikolay Krasko
-*/
 public abstract class LongRunningReadTask<RequestInfo, ResultData> {
     enum State {
         NOT_INITIALIZED,

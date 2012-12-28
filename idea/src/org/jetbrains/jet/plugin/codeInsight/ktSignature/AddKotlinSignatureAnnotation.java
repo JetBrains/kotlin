@@ -49,10 +49,6 @@ import javax.swing.*;
 
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 16 Aug 2012
- */
 public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setShortNames(true)

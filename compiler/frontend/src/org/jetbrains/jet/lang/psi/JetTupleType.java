@@ -22,9 +22,6 @@ import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
-/**
- * @author max
- */
 @Deprecated // Tuples are to be removed in Kotlin M4
 public class JetTupleType extends JetTypeElement {
 

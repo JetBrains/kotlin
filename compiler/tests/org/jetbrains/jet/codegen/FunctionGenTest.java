@@ -22,9 +22,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-/**
- * @author alex.tkachman
- */
 public class FunctionGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {

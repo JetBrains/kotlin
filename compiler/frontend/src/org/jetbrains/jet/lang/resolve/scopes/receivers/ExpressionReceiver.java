@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class ExpressionReceiver extends AbstractReceiverValue implements ReceiverValue {
 
     private final JetExpression expression;

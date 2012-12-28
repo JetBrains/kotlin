@@ -31,9 +31,6 @@ import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- */
 public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
     public AddFunctionBodyFix(@NotNull JetFunction element) {
         super(element);

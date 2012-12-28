@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class TypeSubstitutor {
 
     private static final int MAX_RECURSION_DEPTH = 100;

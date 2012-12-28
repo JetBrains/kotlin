@@ -23,9 +23,6 @@ import java.util.Iterator;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * @author Pavel Talanov
- */
 public final class MessageChecker {
 
     private final Iterator<Message> iterator;

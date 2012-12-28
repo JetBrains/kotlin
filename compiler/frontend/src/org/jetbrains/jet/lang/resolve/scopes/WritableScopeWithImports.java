@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public abstract class WritableScopeWithImports extends JetScopeAdapter implements WritableScope {
 
     @NotNull

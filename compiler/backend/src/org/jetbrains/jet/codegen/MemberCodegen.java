@@ -30,9 +30,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
-/**
- * @author alex.tkachman
- */
 public class MemberCodegen extends GenerationStateAware {
     public MemberCodegen(@NotNull GenerationState state) {
         super(state);

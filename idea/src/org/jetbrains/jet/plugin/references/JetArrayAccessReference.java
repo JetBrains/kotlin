@@ -35,9 +35,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
-/**
-* @author yole
-*/
 class JetArrayAccessReference extends JetPsiReference implements MultiRangeReference {
     private JetArrayAccessExpression expression;
 

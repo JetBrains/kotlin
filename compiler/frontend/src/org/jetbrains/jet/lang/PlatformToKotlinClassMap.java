@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
-* @author svtk
-*/
 public interface PlatformToKotlinClassMap {
     PlatformToKotlinClassMap EMPTY = new PlatformToKotlinClassMap() {
         @NotNull

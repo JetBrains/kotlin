@@ -20,9 +20,6 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 import java.util.Iterator;
 
-/**
- * @author alex.tkachman
- */
 @AssertInvisibleInResolver
 public abstract class FloatIterator implements Iterator<Float> {
     @Override

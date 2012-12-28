@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-/**
- * @author Pavel Talanov
- */
 public interface BinaryOperationIntrinsic {
 
     boolean isApplicable(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context);

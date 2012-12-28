@@ -32,9 +32,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.File;
 
-/**
- * @author udalov
- */
 public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {

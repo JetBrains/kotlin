@@ -39,9 +39,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
 
     @Override

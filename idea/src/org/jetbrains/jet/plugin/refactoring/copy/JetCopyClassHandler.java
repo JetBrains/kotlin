@@ -25,10 +25,6 @@ import org.jetbrains.jet.plugin.refactoring.move.JetMoveFilesOrDirectoriesHandle
 
 import java.util.ArrayList;
 
-/**
- * @author Alefas
- * @since 06.03.12
- */
 public class JetCopyClassHandler extends CopyHandlerDelegateBase {
     private CopyFilesOrDirectoriesHandler delegate = new CopyFilesOrDirectoriesHandler();
 

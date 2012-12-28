@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 public class ArrayValue implements CompileTimeConstant<List<CompileTimeConstant<?>>> {
 
     private final List<CompileTimeConstant<?>> value;

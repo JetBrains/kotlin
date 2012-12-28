@@ -31,9 +31,6 @@ import java.util.*;
 
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 
-/**
- * @author Pavel Talanov
- */
 public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private final Iterable<JetFile> files;
     private final Map<NamespaceDescriptor,NamespaceTranslator> descriptorToTranslator =

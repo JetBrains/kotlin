@@ -29,9 +29,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class FileBasedDeclarationProviderFactory implements DeclarationProviderFactory {
 
     private final Collection<JetFile> allFiles;

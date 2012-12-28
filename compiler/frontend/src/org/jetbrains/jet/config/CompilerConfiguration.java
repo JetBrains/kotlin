@@ -22,10 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/3/12
- */
 public class CompilerConfiguration {
     private final Map<Key, Object> map = new HashMap<Key, Object>();
     private boolean readOnly = false;

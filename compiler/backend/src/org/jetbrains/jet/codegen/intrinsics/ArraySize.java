@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-/**
- * @author yole
- */
 public class ArraySize implements IntrinsicMethod {
     @Override
     public StackValue generate(

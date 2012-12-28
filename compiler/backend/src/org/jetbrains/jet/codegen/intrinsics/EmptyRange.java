@@ -30,10 +30,6 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 08.08.12
- */
 public class EmptyRange implements IntrinsicMethod {
     private final PrimitiveType elementType;
 

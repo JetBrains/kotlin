@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import java.util.List;
 
 /**
- * @author abreslav
  * @see JetTypeChecker#isSubtypeOf(JetType, JetType)
  */
 public interface JetType extends Annotated {

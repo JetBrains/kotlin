@@ -28,10 +28,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
 

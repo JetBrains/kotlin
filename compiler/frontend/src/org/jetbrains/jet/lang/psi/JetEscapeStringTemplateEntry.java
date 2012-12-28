@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author abreslav
- */
 public class JetEscapeStringTemplateEntry extends JetStringTemplateEntry {
     public JetEscapeStringTemplateEntry(@NotNull ASTNode node) {
         super(node);

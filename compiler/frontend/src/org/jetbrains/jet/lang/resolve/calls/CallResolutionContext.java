@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
-/**
-* @author svtk
-*/
 public final class CallResolutionContext<D extends CallableDescriptor, F extends D> extends ResolutionContext {
     /*package*/ final ResolvedCallImpl<D> candidateCall;
     /*package*/ final TracingStrategy tracing;

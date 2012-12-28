@@ -23,10 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 
-/**
- * @author Stepan Koltsov
- * @author alex.tkachman
- */
 public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     private static final JetValueParameterAnnotation NULL_ANNOTATION = new JetValueParameterAnnotation(null);
     static {

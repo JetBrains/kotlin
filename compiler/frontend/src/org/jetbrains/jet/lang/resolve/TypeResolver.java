@@ -41,9 +41,6 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.types.Variance.*;
 
-/**
- * @author abreslav
- */
 public class TypeResolver {
 
     private AnnotationResolver annotationResolver;

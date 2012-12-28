@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 public  class EnumValue implements CompileTimeConstant<PropertyDescriptor> {
     
     private final PropertyDescriptor value;

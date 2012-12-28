@@ -48,9 +48,6 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData.ExtendedInferenceErrorData;
 
-/**
- * @author svtk
- */
 public class IdeRenderers {
     private static final String RED_TEMPLATE = "<font color=red><b>%s</b></font>";
     private static final String STRONG_TEMPLATE = "<b>%s</b>";

@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-/**
- * @author abreslav
- */
 public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements DeclarationDescriptorVisitor<R, D> {
     public R visitDeclarationDescriptor(DeclarationDescriptor descriptor, D data) {
         return null;

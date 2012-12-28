@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetExpression extends JetElement {
     @Override
     void accept(@NotNull JetVisitorVoid visitor);

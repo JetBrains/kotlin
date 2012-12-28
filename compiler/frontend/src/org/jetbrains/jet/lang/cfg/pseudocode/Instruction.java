@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public interface Instruction {
     @NotNull
     Pseudocode getOwner();

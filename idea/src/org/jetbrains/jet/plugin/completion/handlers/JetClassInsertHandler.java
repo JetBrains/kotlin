@@ -30,9 +30,6 @@ import org.jetbrains.jet.plugin.completion.JetLookupObject;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetClassInsertHandler implements InsertHandler<LookupElement> {
 
     public static final InsertHandler<LookupElement> INSTANCE = new JetClassInsertHandler();

@@ -43,8 +43,6 @@ import java.util.List;
 /**
  * Automatically adds import directive to the file for resolving reference.
  * Based on {@link AddImportAction}
- *
- * @author Nikolay Krasko
  */
 public class JetAddImportAction implements QuestionAction {
 

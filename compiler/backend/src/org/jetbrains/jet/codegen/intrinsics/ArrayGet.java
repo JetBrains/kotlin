@@ -30,9 +30,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.correctElementType;
 
-/**
- * @author alex.tkachman
- */
 public class ArrayGet implements IntrinsicMethod {
     @Override
     public StackValue generate(

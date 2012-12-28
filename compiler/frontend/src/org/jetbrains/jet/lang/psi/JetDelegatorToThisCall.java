@@ -24,9 +24,6 @@ import org.jetbrains.jet.JetNodeTypes;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetDelegatorToThisCall extends JetDelegationSpecifier implements JetCallElement {
 
     public JetDelegatorToThisCall(@NotNull ASTNode node) {

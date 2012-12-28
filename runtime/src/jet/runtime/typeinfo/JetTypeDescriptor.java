@@ -18,8 +18,6 @@ package jet.runtime.typeinfo;
 
 
 /**
- * @author alex.tkachman
- *
  * @url http://confluence.jetbrains.net/display/JET/Jet+Signatures
  */
 public @interface JetTypeDescriptor{

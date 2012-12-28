@@ -34,9 +34,6 @@ import java.util.Collections;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
 
-/**
- * @author abreslav
- */
 public class DelegationResolver {
 
     private DelegationResolver() {}

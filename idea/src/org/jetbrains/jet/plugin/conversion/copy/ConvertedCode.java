@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
 
-/**
- * @author ignatov
- */
 class ConvertedCode implements TextBlockTransferableData {
     @NotNull
     public static final DataFlavor DATA_FLAVOR = new DataFlavor(JavaCopyPastePostProcessor.class, "class: JavaCopyPastePostProcessor");

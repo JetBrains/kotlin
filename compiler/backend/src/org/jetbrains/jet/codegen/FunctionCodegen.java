@@ -59,11 +59,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescrip
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author max
- * @author yole
- * @author alex.tkachman
- */
 public class FunctionCodegen extends GenerationStateAware {
     private final CodegenContext owner;
     private final ClassBuilder v;

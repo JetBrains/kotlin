@@ -39,9 +39,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.IOException;
 
-/**
- * @author abreslav
- */
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run either this class, or /build.xml/generateInjectors task
 public class GenerateInjectors {

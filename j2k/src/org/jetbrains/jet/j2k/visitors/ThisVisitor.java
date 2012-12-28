@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public class ThisVisitor extends JavaRecursiveElementVisitor {
     @NotNull
     private final Set<PsiMethod> myResolvedConstructors = Sets.newLinkedHashSet();

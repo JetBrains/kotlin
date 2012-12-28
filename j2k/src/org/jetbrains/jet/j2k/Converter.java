@@ -38,9 +38,6 @@ import static org.jetbrains.jet.j2k.ConverterUtil.createMainFunction;
 import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 
-/**
- * @author ignatov
- */
 public class Converter {
     @NotNull
     public static final Set<String> NOT_NULL_ANNOTATIONS = ImmutableSet.of(

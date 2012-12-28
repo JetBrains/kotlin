@@ -38,9 +38,6 @@ import java.util.Arrays;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 
-/**
- * @author Pavel Talanov
- */
 public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
 
     @Override

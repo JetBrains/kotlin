@@ -34,9 +34,6 @@ import org.jetbrains.jet.j2k.visitors.ClassVisitor;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author ignatov
- */
 public class JavaToKotlinActionUtil {
 
     static void setClassIdentifiers(@NotNull Converter converter, @NotNull PsiFile psiFile) {

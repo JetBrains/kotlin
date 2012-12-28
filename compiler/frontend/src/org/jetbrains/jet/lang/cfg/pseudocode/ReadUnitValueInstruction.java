@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
-/**
-* @author abreslav
-*/
 public class ReadUnitValueInstruction extends InstructionWithNext {
 
     public ReadUnitValueInstruction(@NotNull JetExpression expression) {

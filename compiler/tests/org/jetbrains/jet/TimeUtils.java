@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet;
 
-/**
- * @author Stepan Koltsov
- */
 public class TimeUtils {
 
     public static String millisecondsToSecondsString(long millis) {

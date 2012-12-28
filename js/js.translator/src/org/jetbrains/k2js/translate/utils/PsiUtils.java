@@ -27,9 +27,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public final class PsiUtils {
 
     private PsiUtils() {

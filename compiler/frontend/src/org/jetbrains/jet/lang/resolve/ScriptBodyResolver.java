@@ -32,9 +32,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
-/**
- * @author Stepan Koltsov
- */
 public class ScriptBodyResolver {
 
     @NotNull

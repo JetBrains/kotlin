@@ -42,10 +42,6 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public abstract class StackValue {
     @NotNull
     public final Type type;

@@ -30,9 +30,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.PARAMETER_BOUND;
 
-/**
- * @author abreslav
- */
 public class ConstraintSystemWithPriorities {
 
     public static final Comparator<SubtypingConstraint> SUBTYPING_CONSTRAINT_ORDER = new Comparator<SubtypingConstraint>() {

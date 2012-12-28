@@ -28,10 +28,6 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 
 import java.util.Map;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/11/12
- */
 public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTest {
     private VirtualFile classFile;
 

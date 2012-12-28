@@ -42,9 +42,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
-/**
- * @author abreslav
- */
 public class AnnotationResolver {
 
     private ExpressionTypingServices expressionTypingServices;

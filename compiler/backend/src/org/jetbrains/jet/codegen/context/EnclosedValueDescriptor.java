@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.asm4.Type;

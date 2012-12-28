@@ -18,9 +18,6 @@ package org.jetbrains.jet.compiler;
 
 import java.io.File;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class PathManager {
 

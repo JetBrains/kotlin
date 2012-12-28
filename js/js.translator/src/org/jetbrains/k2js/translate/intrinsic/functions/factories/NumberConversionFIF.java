@@ -37,9 +37,6 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternB
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.subtract;
 
-/**
- * @author Pavel Talanov
- */
 public final class NumberConversionFIF extends CompositeFIF {
     @NotNull
     private static final NamePredicate SUPPORTED_CONVERSIONS;

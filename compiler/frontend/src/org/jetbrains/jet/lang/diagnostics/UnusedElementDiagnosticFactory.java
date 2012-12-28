@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.psi.PsiElement;
 
-/**
- * @author svtk
- */
 public class UnusedElementDiagnosticFactory<T extends PsiElement, A> extends DiagnosticFactory1<T, A> {
     private UnusedElementDiagnosticFactory(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
         super(severity, positioningStrategy);

@@ -43,9 +43,6 @@ import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import java.io.File;
 import java.util.Collections;
 
-/**
- * @author Nikolay Krasko
- */
 public class RenameInKotlinTest extends MultiFileTestCase {
     @Override
     protected void setUp() throws Exception {

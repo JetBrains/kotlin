@@ -16,9 +16,6 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-/**
- * @author Pavel Talanov
- */
 public final class ForeachTest extends AbstractExpressionTest {
 
     public ForeachTest() {

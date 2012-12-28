@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetClassElementType;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetClassStub {
     private final StringRef qualifiedName;
     private final StringRef name;

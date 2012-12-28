@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.util.slicedmap;
 
-/**
- * @author abreslav
- */
 public interface RewritePolicy {
 
     RewritePolicy DO_NOTHING = new RewritePolicy() {

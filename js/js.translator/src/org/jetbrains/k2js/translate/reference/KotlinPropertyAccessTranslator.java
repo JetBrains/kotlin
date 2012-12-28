@@ -26,9 +26,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         For properies /w accessors.
+ * For properies /w accessors.
  */
 public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslator {
 

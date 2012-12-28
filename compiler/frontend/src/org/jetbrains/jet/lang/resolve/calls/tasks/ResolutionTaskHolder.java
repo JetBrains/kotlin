@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private final JetReferenceExpression reference;
     private final BasicResolutionContext basicResolutionContext;

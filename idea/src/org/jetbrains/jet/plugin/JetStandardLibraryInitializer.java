@@ -24,8 +24,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 /**
  * This project component initializes JetStandardLibrary so that throwing a ProcessCanceledException while
  * loading PSI from declaration files is prevented.
- *
- * @author abreslav
  */
 public class JetStandardLibraryInitializer {
     public JetStandardLibraryInitializer(@NotNull final Project project) {

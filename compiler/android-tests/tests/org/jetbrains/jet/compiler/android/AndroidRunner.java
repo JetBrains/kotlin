@@ -25,9 +25,6 @@ import org.jetbrains.jet.compiler.PathManager;
 
 import java.io.File;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class AndroidRunner extends TestSuite {
 

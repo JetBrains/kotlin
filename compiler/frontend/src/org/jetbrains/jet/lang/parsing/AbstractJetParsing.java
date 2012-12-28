@@ -29,9 +29,6 @@ import java.util.Stack;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author abreslav
- */
 /*package*/ abstract class AbstractJetParsing {
     private static final Map<String, JetKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, JetKeywordToken>();
     static {

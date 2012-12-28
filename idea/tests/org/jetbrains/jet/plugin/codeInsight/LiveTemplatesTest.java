@@ -40,10 +40,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/10/12
- */
 public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() throws Exception {

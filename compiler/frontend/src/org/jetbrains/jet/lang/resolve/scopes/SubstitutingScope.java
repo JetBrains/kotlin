@@ -30,9 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class SubstitutingScope implements JetScope {
 
     private final JetScope workerScope;

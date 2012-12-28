@@ -36,8 +36,6 @@ import java.util.regex.Pattern;
 
 /**
  * Test correctness of written local variables in class file for specified method
- *
- * @author Natalia.Ukhorskaya
  */
 
 public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithTmpdir {

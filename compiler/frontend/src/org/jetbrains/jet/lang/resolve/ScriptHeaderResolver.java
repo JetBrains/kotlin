@@ -39,9 +39,6 @@ import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import javax.inject.Inject;
 import java.util.*;
 
-/**
- * @author Stepan Koltsov
- */
 public class ScriptHeaderResolver {
 
     public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");

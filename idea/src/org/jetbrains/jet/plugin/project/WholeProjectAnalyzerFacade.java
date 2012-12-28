@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
-/**
- * @author abreslav
- */
 public final class WholeProjectAnalyzerFacade {
 
     private WholeProjectAnalyzerFacade() {

@@ -39,9 +39,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBa
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Translates single property /w accessors.
+ * Translates single property /w accessors.
  */
 public final class PropertyTranslator extends AbstractTranslator {
     @NotNull

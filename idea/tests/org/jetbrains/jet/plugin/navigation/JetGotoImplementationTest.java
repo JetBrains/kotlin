@@ -23,9 +23,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetGotoImplementationTest extends LightCodeInsightTestCase {
     public void testClassNavigation() {
         doTest();

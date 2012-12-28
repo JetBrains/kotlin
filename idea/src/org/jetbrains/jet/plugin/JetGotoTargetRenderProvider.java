@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.plugin.presentation.JetLightClassListCellRenderer;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetGotoTargetRenderProvider implements GotoTargetRendererProvider {
     @Nullable
     @Override

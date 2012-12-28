@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 
-/**
- * @author Nikolay Krasko
- */
 public final class JetModifiableBlockHelper {
     private JetModifiableBlockHelper() {
     }

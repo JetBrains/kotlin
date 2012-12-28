@@ -36,9 +36,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class DescriptorRendererImpl implements DescriptorRenderer {
     private static final Set<String> KEYWORDS = Sets.newHashSet();
     static {

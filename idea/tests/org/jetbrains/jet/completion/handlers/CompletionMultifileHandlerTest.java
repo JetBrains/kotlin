@@ -21,9 +21,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
 
-/**
- * @author Nikolay Krasko
- */
 public class CompletionMultifileHandlerTest extends CompletionTestCase {
 
     public void testExtensionFunctions() throws Exception {

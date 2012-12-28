@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class WhileStatement extends Statement {
     final Expression myCondition;
     final Statement myStatement;

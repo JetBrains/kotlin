@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
 import java.util.Collection;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetShortFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
     private static final JetShortFunctionNameIndex ourInstance = new JetShortFunctionNameIndex();
 

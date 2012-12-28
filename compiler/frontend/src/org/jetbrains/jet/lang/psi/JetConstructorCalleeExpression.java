@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author abreslav
- */
 public class JetConstructorCalleeExpression extends JetExpressionImpl {
     public JetConstructorCalleeExpression(@NotNull ASTNode node) {
         super(node);

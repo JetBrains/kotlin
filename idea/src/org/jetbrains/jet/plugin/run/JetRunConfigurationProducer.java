@@ -35,9 +35,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
-/**
- * @author yole
- */
 public class JetRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
     @Nullable
     private PsiElement mySourceElement;

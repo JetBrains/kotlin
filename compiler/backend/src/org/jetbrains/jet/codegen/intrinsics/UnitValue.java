@@ -30,9 +30,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_TUPLE0_TYPE;
 
-/**
- * @author abreslav
- */
 public class UnitValue implements IntrinsicMethod {
 
     @Override

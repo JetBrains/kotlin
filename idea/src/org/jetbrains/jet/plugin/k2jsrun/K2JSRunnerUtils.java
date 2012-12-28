@@ -33,9 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author Pavel Talanov
- */
 public final class K2JSRunnerUtils {
 
     private K2JSRunnerUtils() {

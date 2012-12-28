@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
-/**
- * @author Stepan Koltsov
- */
 public enum DescriptorSearchRule {
     INCLUDE_KOTLIN {
         @Override

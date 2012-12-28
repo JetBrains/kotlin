@@ -25,9 +25,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.j2k.Converter.getDefaultInitializer;
 
-/**
- * @author ignatov
- */
 public class Field extends Member {
     final Identifier myIdentifier;
     private final int myWritingAccesses;

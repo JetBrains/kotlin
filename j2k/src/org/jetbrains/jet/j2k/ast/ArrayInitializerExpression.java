@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.*;
 
-/**
- * @author ignatov
- */
 public class ArrayInitializerExpression extends Expression {
     private final Type myType;
     private final List<Expression> myInitializers;

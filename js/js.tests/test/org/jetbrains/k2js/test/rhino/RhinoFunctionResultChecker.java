@@ -25,9 +25,6 @@ import org.mozilla.javascript.Scriptable;
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.flushSystemOut;
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Pavel Talanov
- */
 public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
     private final String moduleId;

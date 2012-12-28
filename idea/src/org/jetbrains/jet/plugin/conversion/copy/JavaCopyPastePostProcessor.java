@@ -38,9 +38,6 @@ import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBlockTransferableData> {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.conversion.copy.JavaCopyPastePostProcessor");
 

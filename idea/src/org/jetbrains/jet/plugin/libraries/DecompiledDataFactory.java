@@ -44,10 +44,6 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.util.*;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/11/12
- */
 public class DecompiledDataFactory {
     private static final String JET_CLASS = JetClass.class.getName();
     private static final String JET_METHOD = JetMethod.class.getName();

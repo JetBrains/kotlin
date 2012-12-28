@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-/**
- * @author yole
- */
 public class ModuleExecutionException extends RuntimeException {
     public ModuleExecutionException(String message) {
         super(message);

@@ -30,9 +30,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelector;
 
-/**
- * @author Pavel Talanov
- */
 public final class QualifiedExpressionTranslator {
 
     private QualifiedExpressionTranslator() {

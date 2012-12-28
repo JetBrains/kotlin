@@ -29,9 +29,6 @@ import static org.jetbrains.k2js.translate.general.Translation.translateAsStatem
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.generateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 
-/**
- * @author Pavel Talanov
- */
 public final class InitializerVisitor extends TranslatorVisitor<Void> {
     private final List<JsStatement> result;
 

@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 
-/**
-* @author abreslav
-*/
 public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
 
 

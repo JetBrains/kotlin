@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Map;
 
-/**
- * @author Stepan Koltsov
- */
 class IntrinsicsMap {
 
 

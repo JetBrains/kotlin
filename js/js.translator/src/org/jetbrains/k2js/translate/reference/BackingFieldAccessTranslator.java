@@ -33,9 +33,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
-/**
- * @author Pavel Talanov
- */
 public final class BackingFieldAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
 
     @NotNull

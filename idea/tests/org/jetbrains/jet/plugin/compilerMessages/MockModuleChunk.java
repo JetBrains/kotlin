@@ -19,9 +19,6 @@ package org.jetbrains.jet.plugin.compilerMessages;
 import com.intellij.openapi.module.Module;
 import com.intellij.util.Chunk;
 
-/**
- * @author Pavel Talanov
- */
 public class MockModuleChunk extends Chunk<Module> {
     public MockModuleChunk(Module module) {
         super(module);

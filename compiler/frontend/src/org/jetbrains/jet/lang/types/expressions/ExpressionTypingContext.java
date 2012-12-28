@@ -38,9 +38,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public class ExpressionTypingContext {
 
     @NotNull

@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValueVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class AutoCastReceiver extends AbstractReceiverValue {
     private final ReceiverValue original;
     private final boolean canCast;

@@ -30,9 +30,6 @@ import org.junit.Assert;
 
 import java.io.IOException;
 
-/**
- * @author abreslav
- */
 public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
     @NonNls
     protected final String myFullDataPath;

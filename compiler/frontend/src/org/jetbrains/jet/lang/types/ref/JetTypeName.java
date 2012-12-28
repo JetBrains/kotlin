@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class JetTypeName {
     // generic types one day
     private final FqName className;

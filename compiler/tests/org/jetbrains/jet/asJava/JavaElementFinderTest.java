@@ -23,9 +23,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 
-/**
- * @author Nikolay Krasko
- */
 public class JavaElementFinderTest extends JetLiteFixture {
     private JavaElementFinder finder;
 

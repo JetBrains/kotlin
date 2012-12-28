@@ -18,9 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 
-/**
- * @author Pavel Talanov
- */
 //NOTE: well, it has tests
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class StdLibMapTest extends JsUnitTestBase {

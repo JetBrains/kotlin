@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 
-/**
- * @author svtk
- */
 public interface ResolvedCallWithTrace<D extends CallableDescriptor> extends ResolvedCall<D>  {
 
     @NotNull

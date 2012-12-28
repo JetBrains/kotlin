@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 
-/**
- * @author abreslav
- */
 /*package*/ interface ExpressionTypingInternals extends ExpressionTypingFacade {
 
     @NotNull

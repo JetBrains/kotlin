@@ -46,9 +46,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author udalov
- */
 public class LineNumberTest extends TestCaseWithTmpdir {
 
     private static final String LINE_NUMBER_FUN = "lineNumber";

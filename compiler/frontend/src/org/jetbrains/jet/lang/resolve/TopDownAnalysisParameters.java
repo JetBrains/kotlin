@@ -24,8 +24,6 @@ import java.util.List;
 
 /**
  * Various junk that cannot be placed into context (yet).
- *
- * @author Stepan Koltsov
  */
 public class TopDownAnalysisParameters {
     @NotNull

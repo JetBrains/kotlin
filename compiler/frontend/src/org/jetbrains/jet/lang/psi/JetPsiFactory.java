@@ -32,9 +32,6 @@ import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetPsiFactory {
     public static ASTNode createValNode(Project project) {
         JetProperty property = createProperty(project, "val x = 1");

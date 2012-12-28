@@ -36,8 +36,6 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 /**
  * Performs completion in package directive. Should suggest only packages and avoid showing fake package produced by
  * DUMMY_IDENTIFIER.
- *
- * @author Nikolay Krasko
  */
 public class JetPackagesContributor extends CompletionContributor {
 

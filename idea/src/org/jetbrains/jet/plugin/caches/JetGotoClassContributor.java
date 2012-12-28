@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetGotoClassContributor implements GotoClassContributor {
     @Override
     public String getQualifiedName(NavigationItem item) {

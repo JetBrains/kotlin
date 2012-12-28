@@ -45,10 +45,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
-/**
-* @author abreslav
-* @author svtk
-*/
 public class JetControlFlowProcessor {
 
     private final JetControlFlowBuilder builder;

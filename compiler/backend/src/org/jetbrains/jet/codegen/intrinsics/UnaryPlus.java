@@ -30,9 +30,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
-/**
- * @author alex.tkachman
- */
 public class UnaryPlus implements IntrinsicMethod {
     @Override
     public StackValue generate(

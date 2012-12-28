@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.di;
 
-/**
-* @author abreslav
-*/
 class SetterDependency {
     private final Field dependent;
     private final String setterName;

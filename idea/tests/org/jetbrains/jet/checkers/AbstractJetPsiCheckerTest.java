@@ -21,9 +21,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
     public void doTest(@NotNull String filePath) throws Exception {
         doTest(filePath, true, false);

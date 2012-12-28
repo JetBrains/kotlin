@@ -32,9 +32,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author alex.tkachman
- */
 public class IdentityEquals implements IntrinsicMethod {
     @Override
     public StackValue generate(

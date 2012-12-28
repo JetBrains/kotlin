@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 
-/**
- * @author Stepan Koltsov
- */
 public class JetClassAnnotation extends PsiAnnotationWithFlags {
     private static final JetClassAnnotation NULL_ANNOTATION = new JetClassAnnotation(null);
     static {

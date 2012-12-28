@@ -22,9 +22,7 @@ import org.jetbrains.jet.lang.psi.JetVisitor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         This class is a base class for all visitors.
+ * This class is a base class for all visitors.
  */
 public class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
 

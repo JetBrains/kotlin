@@ -19,10 +19,6 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/13/12
- */
 public class DispatchingDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> {
     private final DiagnosticFactoryToRendererMap[] maps;
 

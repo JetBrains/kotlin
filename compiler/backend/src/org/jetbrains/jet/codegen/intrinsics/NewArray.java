@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.List;
 
-/**
- * @author alex.tkachman
- */
 public class NewArray implements IntrinsicMethod {
     @Override
     public StackValue generate(

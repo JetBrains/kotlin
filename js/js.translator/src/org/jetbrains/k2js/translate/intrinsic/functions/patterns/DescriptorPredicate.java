@@ -20,9 +20,6 @@ import com.google.common.base.Predicate;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 
-/**
- * @author Pavel Talanov
- */
 public interface DescriptorPredicate extends Predicate<FunctionDescriptor> {
     @Override
     boolean apply(@Nullable FunctionDescriptor descriptor);

@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
-/**
- * @author Pavel Talanov
- */
 class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
     @NotNull
     private final BindingContext bindingContext;

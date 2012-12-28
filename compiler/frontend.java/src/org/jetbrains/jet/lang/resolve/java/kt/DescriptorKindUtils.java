@@ -19,10 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.kt;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
-/**
- * @author udalov
- * @author alex.tkachman
- */
 public class DescriptorKindUtils {
     private DescriptorKindUtils() {
     }

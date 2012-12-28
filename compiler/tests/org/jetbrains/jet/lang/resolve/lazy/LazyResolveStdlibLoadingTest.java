@@ -36,9 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-/**
- * @author abreslav
- */
 public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManagement {
 
     private static final File STD_LIB_SRC = new File("libraries/stdlib/src");

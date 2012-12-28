@@ -34,9 +34,6 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author slukjanov aka Frostman
- */
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class ExclExclCallFix implements IntentionAction {
 

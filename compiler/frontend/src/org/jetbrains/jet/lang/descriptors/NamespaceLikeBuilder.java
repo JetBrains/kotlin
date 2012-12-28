@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public interface NamespaceLikeBuilder {
 
     @NotNull

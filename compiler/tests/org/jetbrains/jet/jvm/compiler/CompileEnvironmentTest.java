@@ -33,10 +33,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class CompileEnvironmentTest extends TestCase {
 
     public void testSmokeWithCompilerJar() throws IOException {

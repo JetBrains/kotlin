@@ -38,9 +38,6 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 
-/**
- * @author Pavel Talanov
- */
 //TODO: write tests on calling backing fields as functions
 public final class CallTranslator extends AbstractTranslator {
     @NotNull

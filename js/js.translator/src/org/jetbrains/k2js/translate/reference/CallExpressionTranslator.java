@@ -38,9 +38,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getCallee;
 
-/**
- * @author Pavel Talanov
- */
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
 
     @NotNull

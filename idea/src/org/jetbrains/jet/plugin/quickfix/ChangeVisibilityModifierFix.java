@@ -34,9 +34,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 
-/**
- * @author svtk
- */
 public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierListOwner> {
     public ChangeVisibilityModifierFix(@NotNull JetModifierListOwner element) {
         super(element);

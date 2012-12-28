@@ -24,9 +24,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements Named, DeclarationDescriptor {
 
     @NotNull

@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public abstract class Member extends Node implements IMember {
     Set<String> myModifiers;
 

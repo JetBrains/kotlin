@@ -23,10 +23,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 1/30/12
- */
 public class JetAnyVariableMacro extends BaseJetVariableMacro {
     @Override
     public String getName() {

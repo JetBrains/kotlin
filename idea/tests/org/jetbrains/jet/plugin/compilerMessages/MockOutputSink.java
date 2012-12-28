@@ -21,9 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.Collection;
 
-/**
- * @author Pavel Talanov
- */
 public class MockOutputSink implements TranslatingCompiler.OutputSink {
     @Override
     public void add(String outputRoot, Collection<TranslatingCompiler.OutputItem> items, VirtualFile[] filesToRecompile) {

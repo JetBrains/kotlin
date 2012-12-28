@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.ValueArgument;
 import java.util.Iterator;
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public class VarargValueArgument implements ResolvedValueArgument {
     private final List<ValueArgument> arguments = Lists.newArrayList();
 

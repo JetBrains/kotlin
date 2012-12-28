@@ -21,9 +21,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-/**
- * @author Pavel Talanov
- */
 public final class AnalyzeSingleFileUtil {
 
     private AnalyzeSingleFileUtil() {

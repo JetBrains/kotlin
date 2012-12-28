@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.Call.CallType;
 
-/**
- * @author svtk
- */
 public class CallKey {
     private final CallType callType;
     private final JetExpression element;

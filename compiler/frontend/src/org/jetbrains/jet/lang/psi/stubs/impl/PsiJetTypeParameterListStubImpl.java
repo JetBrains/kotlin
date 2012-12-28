@@ -23,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetTypeParameterList;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterListStub;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetTypeParameterListStubImpl extends StubBase<JetTypeParameterList> implements PsiJetTypeParameterListStub {
     public PsiJetTypeParameterListStubImpl(@NotNull IStubElementType elementType, final StubElement parent) {
         super(parent, elementType);

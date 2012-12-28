@@ -33,9 +33,6 @@ import org.jetbrains.jet.plugin.JetFileType;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-/**
- * @author Stepan Koltsov
- */
 public class PsiClassFinderImpl implements PsiClassFinder {
 
     @NotNull

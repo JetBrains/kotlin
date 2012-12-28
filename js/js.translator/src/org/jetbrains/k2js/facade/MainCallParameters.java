@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class MainCallParameters {
     @NotNull
     public static MainCallParameters noCall() {

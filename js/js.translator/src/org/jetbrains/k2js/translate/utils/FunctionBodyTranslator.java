@@ -34,9 +34,6 @@ import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
-/**
- * @author Pavel Talanov
- */
 public final class FunctionBodyTranslator extends AbstractTranslator {
 
     @NotNull

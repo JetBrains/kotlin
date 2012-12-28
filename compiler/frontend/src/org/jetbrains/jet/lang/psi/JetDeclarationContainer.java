@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetDeclarationContainer {
     @NotNull
     List<JetDeclaration> getDeclarations();

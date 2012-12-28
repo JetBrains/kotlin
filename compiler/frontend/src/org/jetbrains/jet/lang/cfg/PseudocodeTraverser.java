@@ -30,9 +30,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 
-/**
- * @author svtk
- */
 public class PseudocodeTraverser {
     
     public static enum TraversalOrder {

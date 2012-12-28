@@ -18,9 +18,6 @@ package org.jetbrains.jet.cli.common.messages;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author abreslav
- */
 public class CompilerMessageLocation {
 
     public static final CompilerMessageLocation NO_LOCATION = new CompilerMessageLocation(null, -1, -1);

@@ -21,10 +21,6 @@ import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 31 August 2012
- */
 public class KotlinSignatureInJavaMarkerUpdater extends AbstractProjectComponent {
     protected KotlinSignatureInJavaMarkerUpdater(Project project) {
         super(project);

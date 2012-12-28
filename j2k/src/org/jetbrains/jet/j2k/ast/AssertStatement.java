@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class AssertStatement extends Statement {
     private final Expression myCondition;
     private final Expression myDetail;

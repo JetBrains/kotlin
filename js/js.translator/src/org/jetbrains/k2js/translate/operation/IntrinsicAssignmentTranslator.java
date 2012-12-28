@@ -29,9 +29,6 @@ import org.jetbrains.k2js.translate.reference.ReferenceAccessTranslator;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isAssignment;
 
-/**
- * @author Pavel Talanov
- */
 public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
 

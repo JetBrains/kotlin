@@ -36,9 +36,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class DiagnosticUtils {
     @NotNull
     private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = new Comparator<TextRange>() {

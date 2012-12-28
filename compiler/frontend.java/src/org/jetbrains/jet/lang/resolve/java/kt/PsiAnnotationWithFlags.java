@@ -20,10 +20,6 @@ import com.intellij.psi.PsiAnnotation;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 6/14/12
- */
 public abstract class PsiAnnotationWithFlags extends PsiAnnotationWrapper {
     private int flags;
 

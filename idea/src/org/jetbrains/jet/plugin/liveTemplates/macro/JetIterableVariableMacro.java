@@ -24,10 +24,6 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/7/12
- */
 public class JetIterableVariableMacro extends BaseJetVariableMacro {
 
     @Override

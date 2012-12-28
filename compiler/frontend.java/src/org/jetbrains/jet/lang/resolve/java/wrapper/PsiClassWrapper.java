@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class PsiClassWrapper {
 
     @NotNull

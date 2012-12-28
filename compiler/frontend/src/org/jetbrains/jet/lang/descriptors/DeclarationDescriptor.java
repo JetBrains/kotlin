@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-/**
- * @author abreslav
- */
 public interface DeclarationDescriptor extends Annotated, Named {
     /**
      * @return The descriptor that corresponds to the original declaration of this element.

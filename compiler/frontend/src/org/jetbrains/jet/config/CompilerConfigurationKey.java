@@ -20,10 +20,6 @@ import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/24/12
- */
 public class CompilerConfigurationKey<T> {
     Key<T> ideaKey;
 

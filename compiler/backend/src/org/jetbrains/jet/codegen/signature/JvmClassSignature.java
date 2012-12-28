@@ -20,9 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class JvmClassSignature {
     private final String name;
     private final String superclassName;

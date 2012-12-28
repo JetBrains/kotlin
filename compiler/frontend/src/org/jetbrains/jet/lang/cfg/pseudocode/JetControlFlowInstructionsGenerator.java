@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.psi.*;
 
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
 
     private final Stack<BreakableBlockInfo> loopInfo = new Stack<BreakableBlockInfo>();

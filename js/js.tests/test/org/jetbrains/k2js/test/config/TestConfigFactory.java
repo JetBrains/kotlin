@@ -24,9 +24,6 @@ import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public interface TestConfigFactory {
     TestConfig create(@NotNull Project project, @NotNull EcmaVersion version,
             @NotNull List<JetFile> files, @NotNull BindingContext context);

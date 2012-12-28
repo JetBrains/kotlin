@@ -29,9 +29,6 @@ import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.io.File;
 
-/**
- * @author Nikolay Krasko
- */
 public class ResolveBaseTest extends LightCodeInsightTestCase {
     public void testMultiResolve() throws Exception {
         doMultiResolveTest();

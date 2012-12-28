@@ -27,9 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
 
-/**
- * @author Pavel Talanov
- */
 @State(
         name = "K2JSModule",
         storages = @Storage(

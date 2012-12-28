@@ -28,9 +28,6 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public class ArrayAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     /*package*/

@@ -26,9 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public abstract class AbstractStubDeclarationProvider implements DeclarationProvider {
     @Override
     public List<JetDeclaration> getAllDeclarations() {

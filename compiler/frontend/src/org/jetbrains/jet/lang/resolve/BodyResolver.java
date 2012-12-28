@@ -49,9 +49,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
-/**
-* @author abreslav
-*/
 public class BodyResolver {
     @NotNull
     private BodiesResolveContext context;

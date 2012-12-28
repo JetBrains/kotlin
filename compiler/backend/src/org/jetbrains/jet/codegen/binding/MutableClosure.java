@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 
 import java.util.*;
 
-/**
- * @author alex.tkachman
- */
 public final class MutableClosure implements CalculatedClosure {
     private final JetDelegatorToSuperCall superCall;
 

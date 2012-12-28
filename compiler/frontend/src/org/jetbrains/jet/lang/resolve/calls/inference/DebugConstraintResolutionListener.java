@@ -29,9 +29,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo.*;
 
-/**
- * @author abreslav
- */
 public class DebugConstraintResolutionListener implements ConstraintResolutionListener {
 
     private final ResolutionDebugInfo.Data debugInfo;

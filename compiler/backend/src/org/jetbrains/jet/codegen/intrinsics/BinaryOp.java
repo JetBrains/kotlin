@@ -31,9 +31,6 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
-/**
- * @author yole
- */
 public class BinaryOp implements IntrinsicMethod {
     private final int opcode;
 

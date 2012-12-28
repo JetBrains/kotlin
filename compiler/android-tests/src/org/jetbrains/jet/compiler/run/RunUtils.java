@@ -35,9 +35,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class RunUtils {
     private RunUtils() {

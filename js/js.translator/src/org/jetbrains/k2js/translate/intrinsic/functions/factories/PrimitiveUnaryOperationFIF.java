@@ -39,9 +39,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate.PRIMITIVE_NUMBERS;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
-/**
- * @author Pavel Talanov
- */
 public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
 
     INSTANCE;

@@ -19,9 +19,6 @@ package org.jetbrains.jet.codegen.state;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.binding.BindingTraceAware;
 
-/**
- * @author alex.tkachman
- */
 public class TypeMapperAware extends BindingTraceAware {
     @NotNull protected final JetTypeMapper typeMapper;
 

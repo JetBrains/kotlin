@@ -35,9 +35,6 @@ import org.jetbrains.jet.util.lazy.LazyValue;
 
 import java.util.*;
 
-/**
-* @author abreslav
-*/
 public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescriptor, ClassMemberDeclarationProvider> {
 
     @NotNull

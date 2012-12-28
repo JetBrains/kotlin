@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package jet.modules;
 
 import java.util.ArrayList;

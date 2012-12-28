@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class GenerationUtils {
 
     private GenerationUtils() {

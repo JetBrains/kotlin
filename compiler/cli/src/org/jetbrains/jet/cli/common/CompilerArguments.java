@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class CompilerArguments {
     @NotNull
     private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();

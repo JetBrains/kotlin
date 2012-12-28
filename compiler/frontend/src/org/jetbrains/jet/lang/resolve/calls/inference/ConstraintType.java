@@ -23,8 +23,6 @@ import java.text.MessageFormat;
 
 /**
  * A specific type for subtype constraint of types.
- *
- * @author abreslav
  */
 public enum ConstraintType implements Comparable<ConstraintType> {
     // The order of these constants DOES matter

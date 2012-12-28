@@ -22,10 +22,6 @@ import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 
-/**
-* @author Evgeny Gerashchenko
-* @since 2/23/12
-*/
 public class LeafElementFilter implements ElementFilter {
     private static final ClassFilter LEAF_CLASS_FILTER = new ClassFilter(LeafPsiElement.class);
 

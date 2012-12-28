@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorNonRootImpl implements NamespaceDescriptor {
     private NamespaceType namespaceType;
 

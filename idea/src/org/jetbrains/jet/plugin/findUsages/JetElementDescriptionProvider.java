@@ -24,9 +24,6 @@ import com.intellij.usageView.UsageViewLongNameLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-/**
- * @author yole
- */
 public class JetElementDescriptionProvider implements ElementDescriptionProvider {
     @Override
     public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {

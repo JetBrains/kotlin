@@ -19,9 +19,6 @@ package org.jetbrains.jet.j2k.visitors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 
-/**
- * @author ignatov
- */
 public class Dispatcher {
     private ExpressionVisitor myExpressionVisitor;
 

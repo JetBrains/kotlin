@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-/**
- * @author Stepan Koltsov
- */
 public class JvmAbi {
     public static final String TRAIT_IMPL_CLASS_NAME = "$TImpl";
     public static final String TRAIT_IMPL_SUFFIX = "$" + TRAIT_IMPL_CLASS_NAME;

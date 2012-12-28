@@ -18,9 +18,6 @@ package org.jetbrains.k2js.facade.exceptions;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel Talanov
- */
 public class MainFunctionNotFoundException extends TranslationException {
     public MainFunctionNotFoundException(@NotNull String message) {
         super(message);

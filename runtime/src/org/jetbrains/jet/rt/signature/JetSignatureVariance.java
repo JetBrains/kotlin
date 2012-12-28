@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.rt.signature;
 
-/**
- * @author Stepan Koltsov
- */
 public enum JetSignatureVariance {
     INVARIANT('='),
     IN('-'),

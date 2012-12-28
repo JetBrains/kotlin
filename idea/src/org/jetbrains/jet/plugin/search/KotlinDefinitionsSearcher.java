@@ -28,9 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.psi.JetClass;
 
-/**
- * @author yole
- */
 public class KotlinDefinitionsSearcher extends QueryExecutorBase<PsiElement, PsiElement> {
     @Override
     public void processQuery(@NotNull final PsiElement queryParameters, @NotNull final Processor<PsiElement> consumer) {

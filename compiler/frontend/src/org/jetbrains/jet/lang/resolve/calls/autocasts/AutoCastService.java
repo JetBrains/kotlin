@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import java.util.Collections;
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public interface AutoCastService {
     AutoCastService NO_AUTO_CASTS = new AutoCastService() {
         @NotNull

@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
-/**
- * @author abreslav
- */
 public class JetTypeChecker {
 
     public static final JetTypeChecker INSTANCE = new JetTypeChecker();

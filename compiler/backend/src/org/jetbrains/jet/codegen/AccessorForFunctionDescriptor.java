@@ -25,9 +25,6 @@ import java.util.Collections;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
-/**
- * @author alex.tkachman
- */
 public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl {
     public AccessorForFunctionDescriptor(DeclarationDescriptor descriptor, DeclarationDescriptor containingDeclaration, int index) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(),

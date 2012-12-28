@@ -33,9 +33,6 @@ import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
 
     INSTANCE;

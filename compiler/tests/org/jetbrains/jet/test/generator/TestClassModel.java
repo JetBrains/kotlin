@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public interface TestClassModel extends TestEntityModel {
 
     @NotNull

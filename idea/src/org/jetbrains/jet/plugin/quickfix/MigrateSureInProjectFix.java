@@ -33,9 +33,6 @@ import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
     public MigrateSureInProjectFix(@NotNull PsiElement element) {
         super(element);

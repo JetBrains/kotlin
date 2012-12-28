@@ -29,9 +29,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class DelegatingBindingTrace implements BindingTrace {
     private final BindingContext parentContext;
     private final MutableSlicedMap map = SlicedMapImpl.create();

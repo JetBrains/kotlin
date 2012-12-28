@@ -27,9 +27,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class TranslatorTestCaseBuilder {
     public static FilenameFilter emptyFilter = new FilenameFilter() {
         @Override

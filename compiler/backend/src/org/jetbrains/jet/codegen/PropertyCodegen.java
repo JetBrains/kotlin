@@ -46,10 +46,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isExternallyAccessible;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author max
- * @author alex.tkachman
- */
 public class PropertyCodegen extends GenerationStateAware {
     private final FunctionCodegen functionCodegen;
     private final ClassBuilder v;

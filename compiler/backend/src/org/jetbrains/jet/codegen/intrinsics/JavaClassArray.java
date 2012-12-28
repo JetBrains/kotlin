@@ -36,9 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author alex.tkachman
- */
 public class JavaClassArray implements IntrinsicMethod {
     @Override
     public StackValue generate(

@@ -54,9 +54,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
-/**
- * @author abreslav
- */
 public class ExpressionTypingUtils {
 
     private ExpressionTypingUtils() {

@@ -36,9 +36,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
 
-/**
- * @author abreslav
- */
 public class DataFlowUtils {
     private DataFlowUtils() {
     }

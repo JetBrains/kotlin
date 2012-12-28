@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class DelegatingCall implements Call {
 
     private final Call delegate;

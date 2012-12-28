@@ -22,9 +22,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class NewClassExpression extends Expression {
     private final Element myName;
     private final List<Expression> myArguments;

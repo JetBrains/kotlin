@@ -23,9 +23,6 @@ import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.getLibLocationAndTargetForProject;
 
-/**
- * @author Pavel Talanov
- */
 public final class IDEAConfig extends LibrarySourcesConfig {
     public IDEAConfig(@NotNull Project project) {
         super(project, "default", getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion());

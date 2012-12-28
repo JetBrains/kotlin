@@ -19,9 +19,6 @@ package org.jetbrains.k2js.translate.test;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class CommonUnitTester extends JSTester {
 
     @Override

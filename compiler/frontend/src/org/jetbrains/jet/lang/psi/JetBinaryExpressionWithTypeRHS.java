@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
-/**
- * @author max
- */
 public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl {
     public JetBinaryExpressionWithTypeRHS(@NotNull ASTNode node) {
         super(node);

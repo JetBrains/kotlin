@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.grammar;
 
-/**
- * @author abreslav
- */
 public class Declaration extends Token {
     private final String name;
 

@@ -21,9 +21,6 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.TextOutputImpl;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel.Talanov
- */
 public final class CodeGenerator {
     private CodeGenerator() {
     }

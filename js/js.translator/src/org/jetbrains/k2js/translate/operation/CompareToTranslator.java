@@ -30,9 +30,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescrip
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isCompareTo;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 
-/**
- * @author Pavel Talanov
- */
 public final class CompareToTranslator extends AbstractTranslator {
 
     public static boolean isCompareToCall(@NotNull JetBinaryExpression expression,

@@ -49,9 +49,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public class JetPsiChecker implements Annotator {
     private static volatile boolean errorReportingEnabled = true;
     private static boolean namesHighlightingTest;

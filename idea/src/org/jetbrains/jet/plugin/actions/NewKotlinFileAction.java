@@ -31,9 +31,6 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetIcons;
 
-/**
- * @author Nikolay Krasko
- */
 public class NewKotlinFileAction extends CreateFileFromTemplateAction {
     public NewKotlinFileAction() {
         super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file", JetFileType.INSTANCE.getIcon());

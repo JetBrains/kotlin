@@ -23,9 +23,6 @@ import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetCatchClause extends JetElementImpl {
     public JetCatchClause(@NotNull ASTNode node) {
         super(node);

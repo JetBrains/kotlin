@@ -53,8 +53,6 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
  * A keyword contributor for Kotlin
- *
- * @author Nikolay Krasko
  */
 public class JetKeywordCompletionContributor extends CompletionContributor {
 

@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.plugin.internal.codewindow;
 
 import com.intellij.ide.highlighter.JavaFileType;

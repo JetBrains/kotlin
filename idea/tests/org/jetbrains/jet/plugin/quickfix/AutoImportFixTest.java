@@ -21,9 +21,6 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public class AutoImportFixTest extends JetQuickFixMultiFileTest {
 
     public void testClassImport() throws Exception {

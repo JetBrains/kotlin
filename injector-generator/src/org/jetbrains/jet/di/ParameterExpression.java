@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * @author abreslav
- */
 public class ParameterExpression implements Expression {
     private final Parameter parameter;
 

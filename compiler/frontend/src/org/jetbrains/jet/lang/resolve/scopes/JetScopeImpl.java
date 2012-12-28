@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
-* @author abreslav
-*/
 public abstract class JetScopeImpl implements JetScope {
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {

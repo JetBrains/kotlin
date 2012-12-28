@@ -33,9 +33,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author abreslav
- */
 public class ConfluenceHyperlinksGenerator {
 
     private static final String GRAMMAR_EXTENSION = "grm";

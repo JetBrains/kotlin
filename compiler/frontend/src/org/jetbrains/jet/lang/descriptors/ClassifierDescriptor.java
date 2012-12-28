@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
-/**
- * @author abreslav
- */
 public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
     @NotNull
     TypeConstructor getTypeConstructor();

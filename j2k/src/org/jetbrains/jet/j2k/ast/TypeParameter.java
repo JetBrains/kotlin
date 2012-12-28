@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class TypeParameter extends Element {
     private final Identifier myName;
     private final List<Type> myExtendsTypes;

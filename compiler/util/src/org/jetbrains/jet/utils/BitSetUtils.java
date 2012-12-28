@@ -18,10 +18,6 @@ package org.jetbrains.jet.utils;
 
 import java.util.BitSet;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 6/14/12
- */
 public class BitSetUtils {
     private BitSetUtils() {
     }

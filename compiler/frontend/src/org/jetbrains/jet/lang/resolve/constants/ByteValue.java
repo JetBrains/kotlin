@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class ByteValue implements CompileTimeConstant<Byte> {
     public static final Function<Long, ByteValue> CREATE = new Function<Long, ByteValue>() {
         @Override

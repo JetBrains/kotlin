@@ -21,9 +21,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public interface SlicedMap extends Iterable<Map.Entry<SlicedMapKey<?, ?>, ?>> {
 
     SlicedMap DO_NOTHING = new SlicedMap() {

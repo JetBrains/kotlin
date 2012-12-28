@@ -24,9 +24,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-/**
- * @author svtk
- */
 public class JetBundle {
     private static Reference<ResourceBundle> ourBundle;
 

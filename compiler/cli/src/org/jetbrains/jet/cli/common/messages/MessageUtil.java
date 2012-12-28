@@ -20,9 +20,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 
-/**
- * @author abreslav
- */
 public class MessageUtil {
     public static CompilerMessageLocation psiElementToMessageLocation(PsiElement element) {
         PsiFile file = element.getContainingFile();

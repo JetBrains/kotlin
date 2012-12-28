@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public interface OverloadResolutionResults<D extends CallableDescriptor> {
     enum Code {
         SUCCESS(true),

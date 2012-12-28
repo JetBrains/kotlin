@@ -31,9 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Pavel Talanov
- */
 public final class StdLibTest extends SingleFileTranslationTest {
 
     public StdLibTest() {

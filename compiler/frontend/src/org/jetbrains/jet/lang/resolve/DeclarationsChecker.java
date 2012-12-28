@@ -34,9 +34,6 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 
-/**
- * @author svtk
- */
 public class DeclarationsChecker {
     @NotNull
     private BindingTrace trace;

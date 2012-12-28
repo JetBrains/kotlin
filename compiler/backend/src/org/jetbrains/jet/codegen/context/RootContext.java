@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
-/**
- * @author alex.tkachman
-*/
 class RootContext extends CodegenContext {
     public RootContext() {
         super(new FakeDescriptor(), OwnerKind.NAMESPACE, null, null, null, null);

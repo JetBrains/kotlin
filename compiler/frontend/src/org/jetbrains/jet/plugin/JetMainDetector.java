@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.psi.*;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class JetMainDetector {
     private JetMainDetector() {
     }

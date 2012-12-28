@@ -24,10 +24,6 @@ import org.jetbrains.jet.lang.diagnostics.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 4/13/12
- */
 public final class DiagnosticFactoryToRendererMap {
     private final Map<AbstractDiagnosticFactory, DiagnosticRenderer<?>> map =
             new HashMap<AbstractDiagnosticFactory, DiagnosticRenderer<?>>();

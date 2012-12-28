@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 
-/**
- * @author abreslav
- */
 public class JavaSemanticServices {
     @NotNull
     private JavaTypeTransformer typeTransformer;

@@ -34,9 +34,6 @@ import org.jetbrains.jet.utils.PathUtil;
 import java.io.File;
 import java.io.IOException;
 
-/**
-* @author ignatov
-*/
 public class StandaloneJavaToKotlinConverterTest extends TestCase {
     private static final JetCoreEnvironment jetCoreEnvironment;
 

@@ -21,8 +21,6 @@ import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 
 /**
  * We need to wrap ITNReporter for force showing or errors from kotlin plugin even from released version of IDEA.
- *
- * @author abreslav
  */
 public class KotlinReportSubmitter extends ITNReporter {
     @Override

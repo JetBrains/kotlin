@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public interface ValueParameterDescriptor extends VariableDescriptor, Annotated {
     /**
      * Returns the 0-based index of the value parameter in the parameter list of its containing function.

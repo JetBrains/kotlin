@@ -21,10 +21,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Maxim.Manuylov
- *         Date: 29.05.12
- */
 public class JetRunConfigurationSettingsFormatConverterProvider extends ConverterProvider {
     protected JetRunConfigurationSettingsFormatConverterProvider() {
         super("jet-run-configuration-should-store-its-settings-as-java-app-configuration");

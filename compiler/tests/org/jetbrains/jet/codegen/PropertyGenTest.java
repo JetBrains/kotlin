@@ -21,9 +21,6 @@ import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.*;
 
-/**
- * @author yole
- */
 public class PropertyGenTest extends CodegenTestCase {
     @Override
     protected String getPrefix() {

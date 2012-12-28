@@ -32,10 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/2/12
- */
 class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileViewProvider {
     private final String text;
     private final PsiManager manager;

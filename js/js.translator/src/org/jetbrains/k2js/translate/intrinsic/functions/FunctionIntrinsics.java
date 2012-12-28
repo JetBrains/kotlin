@@ -27,9 +27,6 @@ import org.jetbrains.k2js.translate.intrinsic.functions.factories.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Pavel Talanov
- */
 public final class FunctionIntrinsics {
 
     @NotNull

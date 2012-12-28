@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-/**
- * @author abreslav
- */
 public interface ReceiverParameterDescriptor extends DeclarationDescriptor {
 
     // This field exists for better readability of the client code

@@ -20,9 +20,6 @@ import junit.framework.Assert;
 import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-/**
- * @author Pavel Talanov
- */
 public final class NumberTest extends SingleFileTranslationTest {
     public NumberTest() {
         super("number/");

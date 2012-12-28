@@ -36,9 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * @author Stepan Koltsov
- */
 public class BothSignatureWriter {
 
     private static final boolean DEBUG_SIGNATURE_WRITER = true;

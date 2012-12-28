@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-/**
- * @author abreslav
- */
 public interface CompileTimeConstant<T> {
     T getValue();
 

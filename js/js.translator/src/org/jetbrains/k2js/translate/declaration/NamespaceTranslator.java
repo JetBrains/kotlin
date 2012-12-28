@@ -41,9 +41,6 @@ import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isPredefinedOb
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 
-/**
- * @author Pavel.Talanov
- */
 final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private final NamespaceDescriptor descriptor;

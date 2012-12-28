@@ -30,9 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class DescriptorSubstitutor {
 
     private static final Function<TypeProjection,JetType> PROJECTIONS_TO_TYPES = new Function<TypeProjection, JetType>() {

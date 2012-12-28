@@ -35,9 +35,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
 
-/**
- * @author alex.tkachman
- */
 public class GenerationStrategy {
     public static final GenerationStrategy STANDARD = new GenerationStrategy();
 

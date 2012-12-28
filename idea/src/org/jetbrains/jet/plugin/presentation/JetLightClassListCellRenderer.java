@@ -21,9 +21,6 @@ import com.intellij.psi.presentation.java.ClassPresentationUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JetLightClass;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetLightClassListCellRenderer extends PsiElementListCellRenderer<JetLightClass> {
     @Override
     public String getElementText(JetLightClass element) {

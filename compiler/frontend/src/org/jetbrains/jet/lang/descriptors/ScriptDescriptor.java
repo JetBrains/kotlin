@@ -38,9 +38,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     private static final Name NAME = Name.special("<script>");
 

@@ -28,10 +28,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 5/3/12
- */
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class SpecifyTypeExplicitlyFix extends SpecifyTypeExplicitlyAction {
     @Override

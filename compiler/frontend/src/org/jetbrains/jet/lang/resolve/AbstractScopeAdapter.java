@@ -27,8 +27,6 @@ import java.util.List;
 
 /**
  * Introduces a simple wrapper for internal scope.
- *
- * @author abreslav
  */
 public abstract class AbstractScopeAdapter implements JetScope {
     @NotNull

@@ -45,8 +45,6 @@ import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
  * Performs number of code modification after insertion jet function:
  * - Insert ()
  * - Add import directive if necessary for top level functions
- *
- * @author Nikolay Krasko
  */
 public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 

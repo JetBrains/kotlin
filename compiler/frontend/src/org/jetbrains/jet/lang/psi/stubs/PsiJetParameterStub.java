@@ -20,9 +20,6 @@ import com.intellij.psi.stubs.NamedStub;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetParameter;
 
-/**
- * @author Nikolay Krasko
- */
 public interface PsiJetParameterStub extends NamedStub<JetParameter> {
     boolean isMutable();
     boolean isVarArg();

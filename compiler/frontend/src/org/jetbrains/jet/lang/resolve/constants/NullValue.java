@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class NullValue implements CompileTimeConstant<Void> {
 
     public static final NullValue NULL = new NullValue();

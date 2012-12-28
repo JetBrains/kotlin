@@ -48,10 +48,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author abreslav
- * @author alex.tkachman
- */
 public class CodegenUtil {
 
     private CodegenUtil() {

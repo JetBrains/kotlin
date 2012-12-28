@@ -24,9 +24,6 @@ import org.jetbrains.jet.JetNodeTypes;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements JetCallElement {
     public JetDelegatorToSuperCall(@NotNull ASTNode node) {
         super(node);

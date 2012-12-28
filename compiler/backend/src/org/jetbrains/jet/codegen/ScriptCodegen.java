@@ -44,9 +44,6 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-/**
- * @author Stepan Koltsov
- */
 public class ScriptCodegen extends MemberCodegen {
 
     @NotNull

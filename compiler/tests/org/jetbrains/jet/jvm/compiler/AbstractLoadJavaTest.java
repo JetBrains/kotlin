@@ -34,9 +34,6 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.DONT_INCLUDE_METHO
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
-/**
- * @author Stepan Koltsov
- */
 /*
     The generated test compares namespace descriptors loaded from kotlin sources and read from compiled java.
 */

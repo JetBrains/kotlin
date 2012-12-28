@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
 
-/**
- * @author svtk
- */
 public class OverloadResolutionResultsUtil {
     @NotNull
     public static <D extends CallableDescriptor> OverloadResolutionResults<D> ambiguity(OverloadResolutionResults<D> results1, OverloadResolutionResults<D> results2) {

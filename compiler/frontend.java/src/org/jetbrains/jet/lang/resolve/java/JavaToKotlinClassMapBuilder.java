@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
-/**
- * @author svtk
- */
 public abstract class JavaToKotlinClassMapBuilder {
 
     public enum Direction {

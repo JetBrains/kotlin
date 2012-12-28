@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-/**
- * @author Nikolay Krasko
- */
 public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJetFileStub {
 
     private final StringRef packageName;

@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetVisitor;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 
-/**
- * @author abreslav
- */
 /*package*/ abstract class ExpressionTypingVisitor extends JetVisitor<JetTypeInfo, ExpressionTypingContext> {
 
     protected final ExpressionTypingInternals facade;

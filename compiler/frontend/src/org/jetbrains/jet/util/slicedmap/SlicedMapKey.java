@@ -18,9 +18,6 @@ package org.jetbrains.jet.util.slicedmap;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
-* @author abreslav
-*/
 public final class SlicedMapKey<K, V> {
 
     private final WritableSlice<K, V> slice;

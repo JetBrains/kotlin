@@ -23,10 +23,6 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-/**
-* @author Evgeny Gerashchenko
-* @since 06.05.12
-*/
 public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRenderer {
     private final BindingContext bindingContext;
 

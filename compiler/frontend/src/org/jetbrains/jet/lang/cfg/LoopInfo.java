@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.jet.lang.psi.JetElement;
 
-/**
-* @author abreslav
-*/
 public class LoopInfo extends BreakableBlockInfo {
     private final Label bodyEntryPoint;
     private final Label conditionEntryPoint;

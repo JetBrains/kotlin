@@ -44,9 +44,6 @@ import java.util.Collection;
 
 import static org.jetbrains.asm4.Opcodes.*;
 
-/**
- * @author max
- */
 public class NamespaceCodegen extends MemberCodegen {
     @NotNull
     private final ClassBuilderOnDemand v;

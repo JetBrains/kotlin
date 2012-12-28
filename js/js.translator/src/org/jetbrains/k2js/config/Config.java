@@ -31,9 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Base class representing a configuration of translator.
+ * Base class representing a configuration of translator.
  */
 public abstract class Config {
     //NOTE: a hacky solution to be able to rerun code samples with lib loaded only once: used by tests and web demo

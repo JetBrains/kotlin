@@ -48,9 +48,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESC
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 
-/**
- * @author abreslav
- */
 public class TypeHierarchyResolver {
     @NotNull
     private TopDownAnalysisContext context;

@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.grammar;
 
-/**
- * @author abreslav
- */
 public class Comment extends Token {
     public Comment(CharSequence text, String fileName, int line) {
         super(text, fileName, line);

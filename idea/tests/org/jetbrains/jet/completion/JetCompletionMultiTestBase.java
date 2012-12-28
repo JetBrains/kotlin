@@ -18,9 +18,6 @@ package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.completion.CompletionTestCase;
 
-/**
- * @author Nikolay Krasko
- */
 public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
 
     abstract String[] getFileNameList();

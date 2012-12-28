@@ -32,9 +32,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
-/**
- * @author Pavel Talanov
- */
 public final class StringOperationFIF extends CompositeFIF {
 
     @NotNull

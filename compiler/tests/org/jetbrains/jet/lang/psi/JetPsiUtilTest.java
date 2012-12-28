@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-/**
- * @author Stepan Koltsov
- */
 public class JetPsiUtilTest extends TestCase {
     
     public void testUnquotedIdentifier() {

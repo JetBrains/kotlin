@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.ValueArgument;
 import java.util.Collections;
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public class ExpressionValueArgument implements ResolvedValueArgument {
     private final ValueArgument valueArgument;
 

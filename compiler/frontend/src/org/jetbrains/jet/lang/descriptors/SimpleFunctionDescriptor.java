@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple functions are the ones with 'fun' keyword and function literals
- *
- * @author Stepan Koltsov
  */
 public interface SimpleFunctionDescriptor extends FunctionDescriptor {
 

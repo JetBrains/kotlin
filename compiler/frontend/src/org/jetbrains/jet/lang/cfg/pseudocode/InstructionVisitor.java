@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
-/**
- * @author abreslav
- */
 public class InstructionVisitor {
     public void visitReadValue(ReadValueInstruction instruction) {
         visitInstructionWithNext(instruction);

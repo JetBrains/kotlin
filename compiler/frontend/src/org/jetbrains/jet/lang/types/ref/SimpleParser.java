@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Stepan Koltsov
- */
 class SimpleParser {
 
     private final String input;

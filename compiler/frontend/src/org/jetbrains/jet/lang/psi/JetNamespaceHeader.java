@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class JetNamespaceHeader extends JetReferenceExpression {
     private String qualifiedNameCache = null;
 

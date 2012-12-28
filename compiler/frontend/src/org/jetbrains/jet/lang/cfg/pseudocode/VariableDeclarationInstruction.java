@@ -22,9 +22,6 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetVariableDeclaration;
 
-/**
- * @author svtk
- */
 public class VariableDeclarationInstruction extends InstructionWithNext {
     protected VariableDeclarationInstruction(@NotNull JetParameter element) {
         super(element);

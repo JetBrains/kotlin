@@ -31,9 +31,6 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.classNameForAnony
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 
-/**
- * @author alex.tkachman
- */
 public interface LocalLookup {
     boolean lookupLocal(DeclarationDescriptor descriptor);
 

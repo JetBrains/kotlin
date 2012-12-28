@@ -30,9 +30,6 @@ import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 
-/**
- * @author Pavel Talanov
- */
 public final class CompareToInstrinsic implements BinaryOperationIntrinsic {
     @Override
     public boolean isApplicable(@NotNull JetBinaryExpression expression, @NotNull TranslationContext context) {

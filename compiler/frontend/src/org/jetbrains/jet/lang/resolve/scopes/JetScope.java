@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public interface JetScope {
     JetScope EMPTY = new JetScopeImpl() {
         @NotNull

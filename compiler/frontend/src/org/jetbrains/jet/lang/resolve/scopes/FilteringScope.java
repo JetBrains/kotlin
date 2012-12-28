@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
-/**
- * @author svtk
- */
 public class FilteringScope extends JetScopeAdapter {
     private final Predicate<DeclarationDescriptor> predicate;
 

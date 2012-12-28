@@ -23,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author abreslav
- */
 public class JetWhenConditionInRange extends JetWhenCondition {
     public JetWhenConditionInRange(@NotNull ASTNode node) {
         super(node);

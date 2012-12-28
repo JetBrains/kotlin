@@ -37,9 +37,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
-/**
-* @author abreslav
-*/
 public class DeclarationResolver {
     @NotNull
     private AnnotationResolver annotationResolver;

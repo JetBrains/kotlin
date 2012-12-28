@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Stepan Koltsov
- */
 public interface DeclarationDescriptorNonRoot extends DeclarationDescriptor {
 
     @Override

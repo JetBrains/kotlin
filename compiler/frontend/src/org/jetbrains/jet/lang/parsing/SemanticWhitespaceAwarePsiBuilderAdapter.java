@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.lang.impl.PsiBuilderAdapter;
 
-/**
- * @author abreslav
- */
 public class SemanticWhitespaceAwarePsiBuilderAdapter extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
 
     private final SemanticWhitespaceAwarePsiBuilder myBuilder;

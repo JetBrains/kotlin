@@ -42,9 +42,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.sortedDiagnostics;
 
-/**
- * @author Pavel Talanov
- */
 public final class AnalyzerWithCompilerReport {
 
     @NotNull

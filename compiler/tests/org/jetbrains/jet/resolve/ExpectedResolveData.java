@@ -57,9 +57,6 @@ import static junit.framework.Assert.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
-/**
- * @author abreslav
- */
 public abstract class ExpectedResolveData {
 
     protected static final String STANDARD_PREFIX = "kotlin::";

@@ -26,9 +26,6 @@ import java.io.File;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
 
-/**
- * @author Pavel Talanov
- */
 public final class CompilerEnvironment {
 
     public static CompilerEnvironment getEnvironmentFor(@NotNull KotlinPaths kotlinPaths, @Nullable File outputDir) {

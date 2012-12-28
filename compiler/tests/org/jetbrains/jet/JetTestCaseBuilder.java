@@ -30,9 +30,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class JetTestCaseBuilder {
     public static FilenameFilter emptyFilter = new FilenameFilter() {
         @Override

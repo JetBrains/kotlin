@@ -33,9 +33,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public final class JetFileUtils {
 
     private JetFileUtils() {

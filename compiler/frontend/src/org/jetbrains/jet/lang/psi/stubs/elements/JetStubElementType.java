@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetWithExpressionInitializer;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-/**
- * @author Nikolay Krasko
- */
 public abstract class JetStubElementType<StubT extends StubElement, PsiT extends PsiElement> extends IStubElementType<StubT, PsiT> {
 
     public JetStubElementType(@NotNull @NonNls String debugName) {

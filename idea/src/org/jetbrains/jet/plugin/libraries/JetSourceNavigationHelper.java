@@ -52,10 +52,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/13/12
- */
 public class JetSourceNavigationHelper {
     private JetSourceNavigationHelper() {
     }

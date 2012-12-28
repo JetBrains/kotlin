@@ -27,9 +27,6 @@ import org.junit.runner.Description;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author Stepan Koltsov
- */
 public class Tmpdir extends TestWatcher {
 
     private File tmpDir;

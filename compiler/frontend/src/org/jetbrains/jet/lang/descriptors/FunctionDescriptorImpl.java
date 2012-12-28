@@ -32,9 +32,6 @@ import org.jetbrains.jet.lang.types.Variance;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor {
 
     protected List<TypeParameterDescriptor> typeParameters;

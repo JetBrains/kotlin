@@ -44,10 +44,6 @@ import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 06.05.12
- */
 public class GotoSuperActionHandler implements CodeInsightActionHandler {
     @Override
     public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {

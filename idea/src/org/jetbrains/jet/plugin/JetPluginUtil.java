@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.LinkedList;
 
-/**
- * @author svtk
- */
 public class JetPluginUtil {
     @NotNull
     private static LinkedList<String> computeTypeFullNameList(JetType type) {

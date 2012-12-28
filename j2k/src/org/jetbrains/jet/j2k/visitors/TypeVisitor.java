@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
     public static final String JAVA_LANG_BYTE = "java.lang.Byte";
     public static final String JAVA_LANG_CHARACTER = "java.lang.Character";

@@ -21,9 +21,6 @@ import org.jetbrains.jet.JetTestUtils;
 
 import java.io.File;
 
-/**
- * @author Stepan Koltsov
- */
 public abstract class TestCaseWithTmpdir extends UsefulTestCase {
 
     protected File tmpdir;

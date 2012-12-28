@@ -42,10 +42,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3 August 2012
- */
 public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final String SHOW_MARKERS_PROPERTY = "kotlin.signature.markers.enabled";
 

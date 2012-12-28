@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls.results;
 
 import java.util.EnumSet;
 
-/**
- * @author abreslav
- */
 public enum ResolutionStatus {
     UNKNOWN_STATUS,
     UNSAFE_CALL_ERROR,

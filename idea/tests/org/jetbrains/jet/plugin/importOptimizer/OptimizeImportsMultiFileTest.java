@@ -24,9 +24,6 @@ import org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer;
 
 import java.io.File;
 
-/**
- * @author Natalia Ukhorskaya
- */
 public class OptimizeImportsMultiFileTest extends CodeInsightTestCase {
     
     public void testKotlinPackage() throws Exception {

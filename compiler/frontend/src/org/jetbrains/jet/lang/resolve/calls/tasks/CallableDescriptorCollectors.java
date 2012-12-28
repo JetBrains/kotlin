@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class CallableDescriptorCollectors {
 
     public static CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS = new CallableDescriptorCollector<FunctionDescriptor>() {

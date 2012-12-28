@@ -72,11 +72,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
-/**
- * @author max
- * @author yole
- * @author alex.tkachman
- */
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
 
     private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";

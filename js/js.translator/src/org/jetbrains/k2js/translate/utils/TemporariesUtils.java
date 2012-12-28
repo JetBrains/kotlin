@@ -26,9 +26,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newSequence;
 
-/**
- * @author Pavel Talanov
- */
 //TODO: look for what should go there
 public final class TemporariesUtils {
     private TemporariesUtils() {

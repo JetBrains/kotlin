@@ -24,9 +24,6 @@ import org.jetbrains.k2js.test.utils.JsTestUtils;
 
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public final class PropertyAccessTest extends SingleFileTranslationTest {
 
     public PropertyAccessTest() {

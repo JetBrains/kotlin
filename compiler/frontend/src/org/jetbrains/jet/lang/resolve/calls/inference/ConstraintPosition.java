@@ -20,9 +20,6 @@ import com.google.common.collect.Maps;
 
 import java.util.Map;
 
-/**
- * @author svtk
- */
 public class ConstraintPosition {
     public static final ConstraintPosition RECEIVER_POSITION = new ConstraintPosition("RECEIVER_POSITION");
     public static final ConstraintPosition EXPECTED_TYPE_POSITION = new ConstraintPosition("EXPECTED_TYPE_POSITION");

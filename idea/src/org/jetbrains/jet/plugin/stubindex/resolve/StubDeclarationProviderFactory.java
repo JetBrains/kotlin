@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.resolve.lazy.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Nikolay Krasko
- */
 public class StubDeclarationProviderFactory implements DeclarationProviderFactory {
     @NotNull
     @Override

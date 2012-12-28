@@ -24,9 +24,6 @@ import org.jetbrains.jet.JetNodeTypes;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author max
- */
 // TODO: Remove when all implementations of JetTypeParameterListOwner get stubs
 @Deprecated
 abstract class JetTypeParameterListOwnerNotStubbed extends JetNamedDeclarationNotStubbed implements JetTypeParameterListOwner {

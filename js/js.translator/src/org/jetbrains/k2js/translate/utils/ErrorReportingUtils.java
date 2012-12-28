@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public final class ErrorReportingUtils {
     private ErrorReportingUtils() {
     }

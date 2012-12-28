@@ -25,9 +25,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
-* @author abreslav
-*/
 public class ConstructorCall implements Expression {
     private final Constructor<?> constructor;
     private final List<Field> constructorArguments = Lists.newArrayList();

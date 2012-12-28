@@ -36,9 +36,6 @@ import java.util.*;
 
 /**
  * Attaching library with sources, and trying to navigate to its entities from source code.
- *
- * @author Evgeny Gerashchenko
- * @since 3/23/12
  */
 public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     private VirtualFile userFile;

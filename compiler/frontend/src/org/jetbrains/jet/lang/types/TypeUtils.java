@@ -37,9 +37,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class TypeUtils {
     public static final JetType NO_EXPECTED_TYPE = new JetType() {
         @NotNull

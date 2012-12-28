@@ -37,9 +37,6 @@ import java.util.Map;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForReceiver;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
-/**
- * @author Pavel Talanov
- */
 public class AliasingContext {
     private static final ThisAliasProvider EMPTY_THIS_ALIAS_PROVIDER = new ThisAliasProvider() {
         @Nullable

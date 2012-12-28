@@ -32,9 +32,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class CodegenTestsOnAndroidRunner {
     private static final Pattern ERROR_IN_TEST_OUTPUT_PATTERN =

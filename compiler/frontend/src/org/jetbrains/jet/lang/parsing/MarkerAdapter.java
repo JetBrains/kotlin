@@ -21,9 +21,6 @@ import com.intellij.lang.WhitespacesAndCommentsBinder;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author abreslav
- */
 public class MarkerAdapter implements PsiBuilder.Marker {
 
     private final PsiBuilder.Marker delegate;

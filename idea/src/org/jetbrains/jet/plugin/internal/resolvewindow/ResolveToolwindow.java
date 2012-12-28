@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.plugin.internal.resolvewindow;
 
 import com.intellij.openapi.Disposable;
@@ -61,9 +58,6 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo.*;
 
-/*
- * @author abreslav
- */
 public class ResolveToolwindow extends JPanel implements Disposable {
 
     public static final String BAR = "\n\n===\n\n";

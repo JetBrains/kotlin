@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
-* @author abreslav
-*/
 public enum Nullability {
     NULL(true, false),
     NOT_NULL(false, true),

@@ -35,9 +35,6 @@ import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 
 import java.util.List;
 
-/**
- * @author yole
- */
 public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     @NotNull
     @Override

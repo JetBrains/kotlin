@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.parsing;
 
 import com.intellij.psi.tree.IElementType;
 
-/**
- * @author abreslav
- */
 public class TruncatedSemanticWhitespaceAwarePsiBuilder extends SemanticWhitespaceAwarePsiBuilderAdapter {
 
     private final int myEOFPosition;

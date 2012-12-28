@@ -22,9 +22,6 @@ import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 
 import java.io.File;
 
-/**
- * @author Stepan Koltsov
- */
 public class ForTestCompileBuiltins {
 
     private ForTestCompileBuiltins() {

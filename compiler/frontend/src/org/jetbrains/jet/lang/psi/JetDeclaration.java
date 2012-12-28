@@ -16,8 +16,5 @@
 
 package org.jetbrains.jet.lang.psi;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetDeclaration extends JetExpression, JetModifierListOwner {
 }

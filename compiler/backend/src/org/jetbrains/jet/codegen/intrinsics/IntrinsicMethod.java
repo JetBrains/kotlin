@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-/**
- * @author yole
- */
 public interface IntrinsicMethod extends Callable {
     StackValue generate(
             ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,

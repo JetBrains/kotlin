@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.parsing;
 
 import com.intellij.openapi.application.PathManager;

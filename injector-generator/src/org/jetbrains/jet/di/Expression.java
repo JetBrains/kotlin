@@ -21,9 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-/**
-* @author abreslav
-*/
 interface Expression {
     @NotNull
     String renderAsCode();

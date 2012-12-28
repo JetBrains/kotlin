@@ -20,9 +20,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author svtk
- */
 public class JetWhenConditionWithExpression extends JetWhenCondition {
     public JetWhenConditionWithExpression(@NotNull ASTNode node) {
         super(node);

@@ -35,9 +35,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author yole
- */
 public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
     implements CommonJavaRunConfigurationParameters {
 

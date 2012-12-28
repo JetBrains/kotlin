@@ -54,8 +54,6 @@ import java.util.List;
  *   context#2. calls: 'foo'   'b.invoke(1)'
  *
  * If success VariableAsFunctionResolvedCall is created.
- *
- * @author svtk
  */
 public class CallTransformer<D extends CallableDescriptor, F extends D> {
     private CallTransformer() {}

@@ -38,9 +38,6 @@ import java.util.List;
 import static org.jetbrains.jet.JetNodeTypes.PROPERTY_ACCESSOR;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author max
- */
 public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStub> implements JetVariableDeclaration {
     public JetProperty(@NotNull ASTNode node) {
         super(node);

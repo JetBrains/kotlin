@@ -24,9 +24,6 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public interface BindingTrace extends DiagnosticHolder {
 
     BindingContext getBindingContext();

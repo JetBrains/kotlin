@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-/**
- * @author max
- */
 public class OwnerKind {
     private final String name;
 

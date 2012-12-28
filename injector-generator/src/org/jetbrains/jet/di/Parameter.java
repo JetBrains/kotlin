@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.di;
 
-/**
-* @author abreslav
-*/
 class Parameter {
     private final DiType type;
     private final String name;

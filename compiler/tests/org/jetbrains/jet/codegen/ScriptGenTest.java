@@ -32,9 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class ScriptGenTest extends CodegenTestCase {
 
     public static final JetScriptDefinition FIB_SCRIPT_DEFINITION =

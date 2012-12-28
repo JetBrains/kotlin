@@ -22,9 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public abstract class Node implements INode {
     @NotNull
     @Override

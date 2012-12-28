@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.grammar;
 
-/**
- * @author abreslav
- */
 public class Token {
     private final String fileName;
     private final CharSequence text;

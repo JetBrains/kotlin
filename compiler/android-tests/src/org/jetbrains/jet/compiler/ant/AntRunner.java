@@ -26,9 +26,6 @@ import org.jetbrains.jet.compiler.run.result.RunResult;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Natalia.Ukhorskaya
- */
 
 public class AntRunner {
     private final List<String> listOfAntCommands;

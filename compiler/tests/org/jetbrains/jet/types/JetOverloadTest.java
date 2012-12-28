@@ -31,9 +31,6 @@ import org.jetbrains.jet.lang.resolve.OverloadUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-/**
- * @author Stepan Koltsov
- */
 public class JetOverloadTest extends JetLiteFixture {
 
     private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));

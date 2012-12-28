@@ -22,9 +22,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class DeclarationStatement extends Statement {
     private final List<Element> myElements;
 

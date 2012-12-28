@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
-/**
- * @author abreslav
- */
 public class JetValueArgumentName extends JetElementImpl {
     public JetValueArgumentName(@NotNull ASTNode node) {
         super(node);

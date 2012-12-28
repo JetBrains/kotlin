@@ -18,9 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
 
-/**
- * @author max
- */
 public class ClosuresGenTest extends CodegenTestCase {
 
     @Override

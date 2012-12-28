@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 
 
-/**
- * @author ignatov
- */
 public class SuperVisitor extends JavaRecursiveElementVisitor {
     @NotNull
     private final HashSet<PsiExpressionList> myResolvedSuperCallParameters;

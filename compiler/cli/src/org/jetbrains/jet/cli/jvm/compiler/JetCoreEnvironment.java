@@ -53,9 +53,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class JetCoreEnvironment {
 
     private final JavaCoreApplicationEnvironment applicationEnvironment;

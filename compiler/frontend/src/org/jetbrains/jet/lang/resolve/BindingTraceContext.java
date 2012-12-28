@@ -29,9 +29,6 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class BindingTraceContext implements BindingTrace {
     private final List<Diagnostic> diagnostics = Lists.newArrayList();
 

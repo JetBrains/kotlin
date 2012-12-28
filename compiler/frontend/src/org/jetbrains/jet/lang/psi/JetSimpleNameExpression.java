@@ -31,9 +31,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-/**
- * @author max
- */
 public class JetSimpleNameExpression extends JetReferenceExpression {
     public static final TokenSet REFERENCE_TOKENS = TokenSet.orSet(LABELS, TokenSet.create(IDENTIFIER, FIELD_IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD));
 

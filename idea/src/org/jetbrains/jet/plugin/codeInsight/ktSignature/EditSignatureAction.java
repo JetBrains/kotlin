@@ -32,10 +32,6 @@ import java.awt.*;
 
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 5 Sep 12
- */
 public class EditSignatureAction extends AnAction {
     private final PsiModifierListOwner elementInEditor;
 

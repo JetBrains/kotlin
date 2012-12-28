@@ -21,9 +21,6 @@ import com.sun.jdi.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author udalov
- */
 public class MockReferenceType implements ReferenceType {
     private final String name;
 

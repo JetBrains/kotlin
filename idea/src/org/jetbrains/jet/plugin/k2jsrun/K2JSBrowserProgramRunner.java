@@ -29,9 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.copyJSFileFromOutputToDestination;
 import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.openBrowser;
 
-/**
- * @author Pavel Talanov
- */
 public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
     @Override
     protected RunContentDescriptor doExecute(final Project project,

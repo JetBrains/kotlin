@@ -19,9 +19,6 @@ package org.jetbrains.k2js.test.rhino;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
-/**
- * @author Pavel Talanov
- */
 public interface RhinoResultChecker {
     void runChecks(Context context, Scriptable scope) throws Exception;
 }

@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.jet.lang.types.Variance;
 
-/**
- * @author Stepan Koltsov
- */
 public class JetSignatureUtils {
     
     static {

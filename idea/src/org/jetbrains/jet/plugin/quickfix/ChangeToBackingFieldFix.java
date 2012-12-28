@@ -26,9 +26,6 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
-/**
- * @author svtk
- */
 public class ChangeToBackingFieldFix extends JetIntentionAction<JetSimpleNameExpression> {
     public ChangeToBackingFieldFix(@NotNull JetSimpleNameExpression element) {
         super(element);

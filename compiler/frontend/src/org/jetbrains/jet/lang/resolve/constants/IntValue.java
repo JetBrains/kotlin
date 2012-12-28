@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class IntValue implements CompileTimeConstant<Integer> {
     public static final Function<Long, IntValue> CREATE = new Function<Long, IntValue>() {
         @Override

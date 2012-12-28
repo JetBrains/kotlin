@@ -33,8 +33,6 @@ import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaces;
 
 /**
  * Compile Kotlin and then parse model from .class files.
- *
- * @author Stepan Koltsov
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir {

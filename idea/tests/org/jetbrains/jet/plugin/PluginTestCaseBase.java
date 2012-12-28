@@ -26,9 +26,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 
-/**
- * @author yole
- */
 public class PluginTestCaseBase {
     private PluginTestCaseBase() {
     }

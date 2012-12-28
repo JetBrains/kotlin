@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.psi.stubs.elements;
 
 import com.intellij.openapi.components.ServiceManager;
 
-/**
- * @author Nikolay Krasko
- */
 final class StubIndexServiceFactory {
 
     private StubIndexServiceFactory() {

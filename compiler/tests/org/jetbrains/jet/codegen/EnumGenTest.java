@@ -23,10 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-/**
- * @author Stepan Koltsov
- * @author alex.tkachman
- */
 public class EnumGenTest extends CodegenTestCase {
 
     @Override

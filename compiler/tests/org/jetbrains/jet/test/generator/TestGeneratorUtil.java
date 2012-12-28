@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.test.generator;
 
-/**
- * @author abreslav
- */
 public class TestGeneratorUtil {
     public static String escapeForJavaIdentifier(String fileName) {
         // A file name may contain characters (like ".") that can't be a part of method name

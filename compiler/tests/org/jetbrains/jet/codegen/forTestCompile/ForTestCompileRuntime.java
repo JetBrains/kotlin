@@ -33,8 +33,6 @@ import java.util.*;
  * Compile stdlib.jar that can be used in tests
  *
  * @see #runtimeJarForTests
- *
- * @author Stepan Koltsov
  */
 public class ForTestCompileRuntime {
 

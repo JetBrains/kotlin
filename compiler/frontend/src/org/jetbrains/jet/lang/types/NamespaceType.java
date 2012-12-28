@@ -26,8 +26,6 @@ import java.util.List;
 /**
  * This is a fake type assigned to namespace expressions. Only member lookup is
  * supposed to be done on these types.
- *
- * @author abreslav
  */
 public class NamespaceType implements JetType {
     private final Name name;

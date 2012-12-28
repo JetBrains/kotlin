@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.application.ApplicationManager;

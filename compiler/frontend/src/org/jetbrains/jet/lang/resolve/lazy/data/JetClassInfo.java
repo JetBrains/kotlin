@@ -23,9 +23,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
 
     @NotNull

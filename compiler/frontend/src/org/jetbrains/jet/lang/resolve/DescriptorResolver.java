@@ -53,9 +53,6 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getExpectedThisObje
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
 
-/**
- * @author abreslav
- */
 public class DescriptorResolver {
     public static final Name VALUE_OF_METHOD_NAME = Name.identifier("valueOf");
     public static final Name VALUES_METHOD_NAME = Name.identifier("values");

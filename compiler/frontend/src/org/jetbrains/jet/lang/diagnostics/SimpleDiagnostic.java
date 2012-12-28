@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author svtk
- */
 public class SimpleDiagnostic<E extends PsiElement> extends AbstractDiagnostic<E> {
     public SimpleDiagnostic(@NotNull E psiElement,
             @NotNull SimpleDiagnosticFactory<E> factory,

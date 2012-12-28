@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class TypeVariableResolverFromTypeDescriptors implements TypeVariableResolver {
 
     @NotNull

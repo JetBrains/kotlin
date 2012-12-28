@@ -29,9 +29,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public final class NamePredicate implements Predicate<Name> {
 
     @NotNull

@@ -32,9 +32,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.*;
 
-/**
- * @author ignatov
- */
 public class JavaToKotlinAction extends AnAction {
     @Override
     public void actionPerformed(final AnActionEvent e) {

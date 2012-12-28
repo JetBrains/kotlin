@@ -24,9 +24,6 @@ import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 
-/**
- * @author Nikolay Krasko
- */
 public class UnfocusedPossibleFunctionParameter extends CompletionConfidence {
     @NotNull
     @Override

@@ -43,9 +43,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
-/**
- * @author svtk
- */
 public class ImportInsertHelper {
     private ImportInsertHelper() {
     }

@@ -22,9 +22,6 @@ import com.intellij.openapi.command.WriteCommandAction;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-/**
- * @author Nikolay Krasko
- */
 public class CompletionWeigherTest extends CompletionAutoPopupTestCase {
     public void testLocalValuesAndParams() {
         doTest("init", "initLocal", "initParam", "initGlobal");

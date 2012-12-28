@@ -37,9 +37,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class TopDownAnalyzer {
 
     @NotNull

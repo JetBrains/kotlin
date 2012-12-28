@@ -37,9 +37,6 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-/**
- * @author Stepan Koltsov
- */
 public class CliTest {
 
     @Rule

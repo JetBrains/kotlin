@@ -27,9 +27,6 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetElementImplStub<T extends StubElement> extends StubBasedPsiElementBase<T>
         implements JetElement, StubBasedPsiElement<T> {
     public JetElementImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {

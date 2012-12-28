@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-/**
- * @author abreslav
- */
 public class ScopeProvider {
 
     private final ResolveSession resolveSession;

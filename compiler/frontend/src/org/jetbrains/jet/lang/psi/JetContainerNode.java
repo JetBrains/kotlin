@@ -21,9 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author max
- */
 public class JetContainerNode extends JetElementImpl {
     public JetContainerNode(@NotNull ASTNode node) {
         super(node);

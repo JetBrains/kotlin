@@ -19,9 +19,6 @@ package org.jetbrains.jet.codegen.binding;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
-/**
- * @author alex.tkachman
- */
 public class BindingTraceAware extends BindingContextAware {
     @NotNull protected final BindingTrace bindingTrace;
 

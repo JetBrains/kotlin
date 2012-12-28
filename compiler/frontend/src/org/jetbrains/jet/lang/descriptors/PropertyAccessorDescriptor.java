@@ -27,9 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author abreslav
- */
 public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorNonRootImpl implements FunctionDescriptor, MemberDescriptor {
 
     private final boolean hasBody;

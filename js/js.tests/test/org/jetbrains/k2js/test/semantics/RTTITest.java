@@ -18,9 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-/**
- * @author Pavel Talanov
- */
 public class RTTITest extends SingleFileTranslationTest {
 
     public RTTITest() {

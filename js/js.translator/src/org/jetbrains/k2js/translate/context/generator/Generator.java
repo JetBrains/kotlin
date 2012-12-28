@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Pavel Talanov
- */
 public class Generator<V> {
 
 

@@ -51,9 +51,6 @@ import java.util.List;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceAndBindingContextFromBinary;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 
-/**
- * @author Pavel Talanov
- */
 /*
    LoadJavaTestGenerated should be used instead if possible.
  */

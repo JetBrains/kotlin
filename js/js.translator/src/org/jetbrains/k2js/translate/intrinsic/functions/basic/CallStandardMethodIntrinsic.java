@@ -28,9 +28,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.atLocation;
 
-/**
- * @author Pavel Talanov
- */
 public final class CallStandardMethodIntrinsic extends FunctionIntrinsic {
     @NotNull
     private final JsNameRef methodName;

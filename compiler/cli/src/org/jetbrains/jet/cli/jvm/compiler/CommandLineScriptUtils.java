@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class CommandLineScriptUtils {
 
     private static final Name ARGS_NAME = Name.identifier("args");

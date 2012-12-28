@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author abreslav
- */
 public class OperatorConventions {
 
     public static final Name EQUALS = Name.identifier("equals");

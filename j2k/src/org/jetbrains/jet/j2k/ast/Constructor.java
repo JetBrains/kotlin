@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author ignatov
- */
 public class Constructor extends Function {
     private final boolean myIsPrimary;
 

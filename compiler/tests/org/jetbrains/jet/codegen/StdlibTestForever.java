@@ -21,9 +21,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.test.TestForeverRunner;
 
-/**
- * @author Stepan Koltsov
- */
 public class StdlibTestForever {
 
     public static void main(String[] args) {

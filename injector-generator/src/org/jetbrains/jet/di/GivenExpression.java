@@ -23,9 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
-* @author abreslav
-*/
 public class GivenExpression implements Expression {
     private final String expression;
     private final Collection<DiType> typesToImport;

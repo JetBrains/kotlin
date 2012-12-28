@@ -44,9 +44,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.isObjectDeclaratio
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Aggregates all the static parts of the context.
+ * Aggregates all the static parts of the context.
  */
 public final class StaticContext {
 

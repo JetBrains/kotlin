@@ -21,10 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-/**
- * @author yole
- * @author alex.tkachman
- */
 public class GeneratedClassLoader extends URLClassLoader {
     private ClassFileFactory state;
 

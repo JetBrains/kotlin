@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.util.lazy;
 
-/**
- * @author abreslav
- */
 public abstract class LazyValue<T> {
 
     private enum State {

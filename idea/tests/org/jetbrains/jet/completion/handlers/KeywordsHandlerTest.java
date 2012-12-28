@@ -22,9 +22,6 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author Nikolay Krasko
- */
 public class KeywordsHandlerTest extends LightCompletionTestCase {
 
     public void testSpaceAfter() throws IOException {

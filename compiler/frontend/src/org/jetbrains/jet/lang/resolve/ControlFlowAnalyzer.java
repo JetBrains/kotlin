@@ -30,9 +30,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
-/**
- * @author svtk
- */
 public class ControlFlowAnalyzer {
     private TopDownAnalysisParameters topDownAnalysisParameters;
     private BindingTrace trace;

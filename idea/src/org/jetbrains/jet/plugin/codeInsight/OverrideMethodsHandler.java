@@ -23,9 +23,6 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author yole
- */
 public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
     @Override
     protected Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor) {

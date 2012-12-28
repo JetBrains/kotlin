@@ -25,9 +25,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author svtk
- */
 public class JvmClassNameTest {
     @Test
     public void signatureName() {

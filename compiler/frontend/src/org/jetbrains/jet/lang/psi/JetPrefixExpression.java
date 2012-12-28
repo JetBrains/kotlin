@@ -21,9 +21,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author max
- */
 public class JetPrefixExpression extends JetUnaryExpression {
     public JetPrefixExpression(@NotNull ASTNode node) {
         super(node);

@@ -20,9 +20,6 @@ import jet.*;
 
 import java.util.Iterator;
 
-/**
- * @author alex.tkachman
- */
 public abstract class ArrayIterator<T> implements Iterator<T> {
     private final int size;
     protected int index;

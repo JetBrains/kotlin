@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     private ExpectedResolveData expectedResolveData;
 

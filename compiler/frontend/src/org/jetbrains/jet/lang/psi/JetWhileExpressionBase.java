@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
-/**
- * @author Pavel Talanov
- */
 public abstract class JetWhileExpressionBase extends JetLoopExpression {
     public JetWhileExpressionBase(@NotNull ASTNode node) {
         super(node);

@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-/**
- * @author abreslav
- */
 public class InstantiateType implements Expression {
 
     private final DiType type;

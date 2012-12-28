@@ -26,11 +26,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 
-/**
- * @author max (originally from objc)
- * @author Evgeny Gerashchenko
- * @since 1/31/12
- */
 public class JetTemplateInsertHandler implements InsertHandler<LookupElement> {
     private String myInsertion;
 

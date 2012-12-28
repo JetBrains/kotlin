@@ -55,9 +55,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author abreslav
- */
 public class JetTypeCheckerTest extends JetLiteFixture {
 
     private KotlinBuiltIns builtIns;

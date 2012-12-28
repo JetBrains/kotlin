@@ -46,10 +46,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/8/12
- */
 public abstract class BaseJetVariableMacro extends Macro {
     @Nullable
     private JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {

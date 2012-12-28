@@ -25,9 +25,6 @@ import org.jetbrains.asm4.util.TraceClassVisitor;
 import java.io.PrintWriter;
 import java.util.Map;
 
-/**
- * @author Stepan Koltsov
- */
 public class ReplClassLoader extends ClassLoader {
 
     private Map<JvmClassName, byte[]> classes = Maps.newLinkedHashMap();

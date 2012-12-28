@@ -45,9 +45,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public final class DescriptorLookupConverter {
 
     private final static JetFunctionInsertHandler EMPTY_FUNCTION_HANDLER = new JetFunctionInsertHandler(

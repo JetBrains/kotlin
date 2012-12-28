@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implements JetClassLikeInfo {
     protected final E element;
 

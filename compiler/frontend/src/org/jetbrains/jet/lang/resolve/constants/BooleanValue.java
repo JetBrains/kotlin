@@ -21,9 +21,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-/**
- * @author abreslav
- */
 public class BooleanValue implements CompileTimeConstant<Boolean> {
 
     public static final BooleanValue FALSE = new BooleanValue(false);

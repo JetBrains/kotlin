@@ -32,9 +32,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 
-/**
- * @author Pavel Talanov
- */
 //TODO: not tested at all
 //TODO: not implemented catch logic
 public final class TryTranslator extends AbstractTranslator {

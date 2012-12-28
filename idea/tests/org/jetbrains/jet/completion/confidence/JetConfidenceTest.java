@@ -28,9 +28,6 @@ import org.jetbrains.jet.InTextDirectivesUtils;
 
 import java.io.File;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetConfidenceTest extends LightCompletionTestCase {
     private static final String TYPE_DIRECTIVE_PREFIX = "// TYPE:";
 

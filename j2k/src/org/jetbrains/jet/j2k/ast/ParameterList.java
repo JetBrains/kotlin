@@ -21,9 +21,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class ParameterList extends Expression {
     private final List<Parameter> myParameters;
 

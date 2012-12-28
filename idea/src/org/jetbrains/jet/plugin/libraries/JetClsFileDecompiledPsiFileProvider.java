@@ -24,10 +24,6 @@ import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 3/20/12
- */
 public class JetClsFileDecompiledPsiFileProvider implements ClsFileDecompiledPsiFileProvider {
     @Nullable
     @Override

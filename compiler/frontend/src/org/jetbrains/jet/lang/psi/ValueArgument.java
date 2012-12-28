@@ -21,9 +21,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author abreslav
- */
 public interface ValueArgument {
     @Nullable
     @IfNotParsed

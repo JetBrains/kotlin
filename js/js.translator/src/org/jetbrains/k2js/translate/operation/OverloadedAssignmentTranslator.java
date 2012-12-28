@@ -24,9 +24,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
-/**
- * @author Pavel Talanov
- */
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull

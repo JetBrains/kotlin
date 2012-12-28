@@ -27,9 +27,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-/**
- * @author Pavel Talanov
- */
 public final class JsTestUtils {
 
     private JsTestUtils() {

@@ -18,9 +18,6 @@ package jet.typeinfo;
 
 import org.jetbrains.jet.rt.signature.JetSignatureVariance;
 
-/**
- * @author alex.tkachman
- */
 public enum TypeInfoVariance {
     INVARIANT("", JetSignatureVariance.INVARIANT) ,
     IN("in", JetSignatureVariance.IN),

@@ -28,10 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 
-/**
-* @author Evgeny Gerashchenko
-* @since 2/13/12
-*/
 public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectDescriptor {
     private JetWithJdkAndRuntimeLightProjectDescriptor() {
     }

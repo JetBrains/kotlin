@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author svtk
- */
 public class Visibilities {
     public static final Visibility PRIVATE = new Visibility("private", false) {
         @Override

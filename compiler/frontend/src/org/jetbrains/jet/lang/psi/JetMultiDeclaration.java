@@ -30,9 +30,6 @@ import static org.jetbrains.jet.lexer.JetTokens.EQ;
 import static org.jetbrains.jet.lexer.JetTokens.VAL_KEYWORD;
 import static org.jetbrains.jet.lexer.JetTokens.VAR_KEYWORD;
 
-/**
- * @author abreslav
- */
 public class JetMultiDeclaration extends JetDeclarationImpl {
     public JetMultiDeclaration(@NotNull ASTNode node) {
         super(node);

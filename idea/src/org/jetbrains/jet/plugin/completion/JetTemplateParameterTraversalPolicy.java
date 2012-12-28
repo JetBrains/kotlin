@@ -31,10 +31,6 @@ import org.jetbrains.jet.lang.psi.JetIdeTemplate;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 2/10/12
- */
 public class JetTemplateParameterTraversalPolicy implements TemplateParameterTraversalPolicy {
     @Override
     public boolean isValidForFile(Editor editor, PsiFile file) {

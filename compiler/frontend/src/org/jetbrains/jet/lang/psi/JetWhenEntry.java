@@ -22,9 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
-/**
- * @author abreslav
- */
 public class JetWhenEntry extends JetElementImpl {
     public JetWhenEntry(@NotNull ASTNode node) {
         super(node);

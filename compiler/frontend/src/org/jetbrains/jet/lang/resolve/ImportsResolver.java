@@ -36,10 +36,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.PLATFORM_CLASS_MAPPED_TO
 import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_HIDDEN_IMPORT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_SIMPLE_IMPORT;
 
-/**
- * @author abreslav
- * @author svtk
- */
 public class ImportsResolver {
     @NotNull
     private TopDownAnalysisContext context;

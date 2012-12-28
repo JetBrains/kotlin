@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class AnnotationDescriptor {
     private JetType annotationType;
     private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> valueArguments = Maps.newHashMap();

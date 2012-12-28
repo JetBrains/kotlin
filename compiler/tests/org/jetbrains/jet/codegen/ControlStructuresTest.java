@@ -23,9 +23,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class ControlStructuresTest extends CodegenTestCase {
     @Override
     protected String getPrefix() {

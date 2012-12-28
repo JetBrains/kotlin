@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-/**
- * @author yole
- */
 public class CompileEnvironmentException extends RuntimeException {
     public CompileEnvironmentException(String message) {
         super(message);

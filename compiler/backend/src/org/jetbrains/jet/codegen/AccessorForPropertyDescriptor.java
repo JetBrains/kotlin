@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 
-/**
- * @author alex.tkachman
- */
 public class AccessorForPropertyDescriptor extends PropertyDescriptor {
     public AccessorForPropertyDescriptor(PropertyDescriptor pd, DeclarationDescriptor containingDeclaration, int index) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,

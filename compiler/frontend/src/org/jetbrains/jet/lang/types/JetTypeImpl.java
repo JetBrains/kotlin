@@ -27,9 +27,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public final class JetTypeImpl extends AnnotatedImpl implements JetType {
 
     private final TypeConstructor constructor;

@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.cfg;
 
 import org.jetbrains.jet.lang.psi.JetElement;
 
-/**
-* @author abreslav
-*/
 public class BreakableBlockInfo extends BlockInfo {
     private final JetElement element;
     private final Label entryPoint;

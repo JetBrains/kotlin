@@ -18,9 +18,6 @@ package org.jetbrains.jet.utils;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
-* @author abreslav
-*/
 public class Printer {
     private static final String INDENTATION_UNIT = "    ";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");

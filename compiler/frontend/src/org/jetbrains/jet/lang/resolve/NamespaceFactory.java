@@ -20,9 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-/**
- * @author Stepan Koltsov
- */
 public interface NamespaceFactory {
     @NotNull
     NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName);

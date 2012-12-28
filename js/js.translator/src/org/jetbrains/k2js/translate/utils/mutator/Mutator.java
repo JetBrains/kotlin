@@ -19,9 +19,6 @@ package org.jetbrains.k2js.translate.utils.mutator;
 import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel Talanov
- */
 public interface Mutator {
     @NotNull
     JsNode mutate(@NotNull JsNode node);

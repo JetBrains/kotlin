@@ -27,8 +27,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 /**
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for removing duplicates
- *
- * @author Nikolay Krasko
  */
 public final class JetLookupObject {
     private static final Logger LOG = Logger.getInstance("#" + JetLookupObject.class.getName());

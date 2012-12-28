@@ -28,9 +28,6 @@ import org.jetbrains.jet.lang.resolve.java.kt.JetMethodAnnotation;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class PsiMethodWrapper extends PsiMemberWrapper {
 
     public PsiMethodWrapper(@NotNull PsiMethod psiMethod) {

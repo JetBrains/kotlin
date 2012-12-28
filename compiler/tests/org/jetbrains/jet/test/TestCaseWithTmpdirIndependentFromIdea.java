@@ -23,9 +23,6 @@ import org.junit.Before;
 
 import java.io.File;
 
-/**
- * @author Stepan Koltsov
- */
 public abstract class TestCaseWithTmpdirIndependentFromIdea {
     protected File tmpdir;
 

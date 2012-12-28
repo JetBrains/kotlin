@@ -21,9 +21,6 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionSorter;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-/**
- * @author Nikolay Krasko
- */
 public final class JetCompletionSorting {
     private JetCompletionSorting() {
     }

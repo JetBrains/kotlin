@@ -66,9 +66,6 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class ReplInterpreter {
 
     private int lineNumber = 0;

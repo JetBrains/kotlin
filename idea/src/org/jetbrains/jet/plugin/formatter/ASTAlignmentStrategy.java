@@ -22,11 +22,6 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- *
- *
- * @author Nikolay Krasko
- */
 public abstract class ASTAlignmentStrategy {
 
     private static final ASTAlignmentStrategy NULL_STRATEGY = fromTypes(AlignmentStrategy.wrap(null));

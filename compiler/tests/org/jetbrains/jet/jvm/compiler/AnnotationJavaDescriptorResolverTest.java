@@ -37,9 +37,6 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter;
 
-/**
- * @author Natalia Ukhorskaya
- */
 public class AnnotationJavaDescriptorResolverTest extends AbstractJavaResolverDescriptorTest {
 
     private static final String PATH = "compiler/testData/javaDescriptorResolver/annotations/";

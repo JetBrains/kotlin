@@ -20,9 +20,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Pavel Talanov
- */
 public enum EcmaVersion {
     v3, v5;
 

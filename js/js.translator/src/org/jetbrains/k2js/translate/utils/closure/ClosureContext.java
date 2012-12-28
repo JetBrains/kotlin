@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import java.util.Collection;
 import java.util.Set;
 
-/**
- * @author Pavel Talanov
- */
 public final class ClosureContext {
     @NotNull
     private final Set<VariableDescriptor> descriptors = new OrderedSet<VariableDescriptor>();

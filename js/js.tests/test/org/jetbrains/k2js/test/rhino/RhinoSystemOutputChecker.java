@@ -23,9 +23,6 @@ import org.mozilla.javascript.Scriptable;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author Pavel Talanov
- */
 public final class RhinoSystemOutputChecker implements RhinoResultChecker {
 
     private final String expectedResult;

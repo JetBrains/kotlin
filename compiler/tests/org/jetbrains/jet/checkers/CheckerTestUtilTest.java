@@ -31,9 +31,6 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class CheckerTestUtilTest extends JetLiteFixture {
 
     public CheckerTestUtilTest() {

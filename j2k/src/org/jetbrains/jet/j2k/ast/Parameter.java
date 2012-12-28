@@ -18,9 +18,6 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author ignatov
- */
 public class Parameter extends Expression {
     private final Identifier myIdentifier;
     private final Type myType;

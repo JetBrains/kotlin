@@ -32,9 +32,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author abreslav
- */
 public class ResolutionDebugInfo {
     public static final WritableSlice<One, List<? extends ResolutionTask<? extends CallableDescriptor, ?>>> TASKS = Slices.createSimpleSlice();
     public static final WritableSlice<One, ResolvedCall<? extends CallableDescriptor>> RESULT = Slices.createSimpleSlice();

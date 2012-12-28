@@ -25,9 +25,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-/**
- * @author abreslav
- */
 public class JetWhenExpression extends JetExpressionImpl {
     public JetWhenExpression(@NotNull ASTNode node) {
         super(node);

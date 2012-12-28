@@ -42,9 +42,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
 
-/**
- * @author Pavel Talanov
- */
 //TODO: use method object
 public final class TranslationUtils {
 

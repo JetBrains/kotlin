@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-/**
- * @author Nikolay Krasko
- */
 public interface JetStubElementTypes {
     JetFileElementType FILE = new JetFileElementType();
 

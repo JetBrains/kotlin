@@ -43,9 +43,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
-/**
- * @author alex.tkachman
- */
 public abstract class AnnotationCodegen {
     private final JetTypeMapper typeMapper;
     private final BindingContext bindingContext;

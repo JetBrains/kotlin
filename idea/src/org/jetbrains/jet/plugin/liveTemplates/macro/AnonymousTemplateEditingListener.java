@@ -39,10 +39,6 @@ import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
-* @author Evgeny Gerashchenko
-* @since 2/7/12
-*/
 class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
     private JetReferenceExpression classRef;
     private ClassDescriptor classDescriptor;

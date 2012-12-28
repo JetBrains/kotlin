@@ -18,9 +18,6 @@ package jet;
 
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-/**
- * @author alex.tkachman
- */
 @AssertInvisibleInResolver
 public interface DoubleIterable extends Iterable<Double> {
     @Override

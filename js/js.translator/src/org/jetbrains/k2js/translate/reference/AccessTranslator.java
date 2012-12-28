@@ -20,9 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Pavel Talanov
- *         <p/>
- *         Abstract entity for language constructs that you can get/set.
+ * Abstract entity for language constructs that you can get/set.
  */
 public interface AccessTranslator {
 

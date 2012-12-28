@@ -18,9 +18,6 @@ package jet;
 
 import java.io.Serializable;
 
-/**
- * @author alex.tkachman
- */
 public class DefaultJetObject implements Serializable  {
     protected DefaultJetObject() {
     }

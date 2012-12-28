@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.psi.stubs.elements;
 import com.intellij.psi.stubs.IndexSink;
 import org.jetbrains.jet.lang.psi.stubs.*;
 
-/**
- * @author Nikolay Krasko
- */
 public interface StubIndexService {
 
     /**

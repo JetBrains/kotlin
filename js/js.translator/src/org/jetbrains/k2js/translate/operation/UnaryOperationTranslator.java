@@ -35,9 +35,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullConditionalTestExpression;
 
-/**
- * @author Pavel Talanov
- */
 
 public final class UnaryOperationTranslator {
     private UnaryOperationTranslator() {

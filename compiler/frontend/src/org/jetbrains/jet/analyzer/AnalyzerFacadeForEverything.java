@@ -30,9 +30,6 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 
 import java.util.List;
 
-/**
- * @author Stepan Koltsov
- */
 public class AnalyzerFacadeForEverything {
 
     private AnalyzerFacadeForEverything() {

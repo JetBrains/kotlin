@@ -25,9 +25,6 @@ import org.jetbrains.jet.lang.psi.JetThisReferenceExpression;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-/**
- * @author yole
- */
 public class JetReferenceContributor extends PsiReferenceContributor {
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar registrar) {

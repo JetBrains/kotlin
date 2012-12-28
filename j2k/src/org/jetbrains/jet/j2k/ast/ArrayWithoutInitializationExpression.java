@@ -21,9 +21,6 @@ import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;
 
-/**
- * @author ignatov
- */
 public class ArrayWithoutInitializationExpression extends Expression {
     private final Type myType;
     private final List<Expression> myExpressions;

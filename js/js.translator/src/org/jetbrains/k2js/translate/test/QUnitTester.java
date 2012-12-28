@@ -21,9 +21,6 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Pavel Talanov
- */
 public final class QUnitTester extends CommonUnitTester {
     @NotNull
     private static final JsNameRef TEST_FUN_REF = AstUtil.newQualifiedNameRef("QUnit.test");

@@ -29,8 +29,6 @@ import java.util.List;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetAnalyzeExhaust;
 
 /**
- * @author Stepan Koltsov
- *
  * @see WriteSignatureTest
  */
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})

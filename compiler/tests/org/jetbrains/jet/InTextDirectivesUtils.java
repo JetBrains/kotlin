@@ -27,9 +27,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public final class InTextDirectivesUtils {
 
     private InTextDirectivesUtils() {

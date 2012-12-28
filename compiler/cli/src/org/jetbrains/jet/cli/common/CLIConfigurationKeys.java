@@ -21,10 +21,6 @@ import org.jetbrains.jet.config.CompilerConfigurationKey;
 
 import java.util.List;
 
-/**
- * @author Evgeny Gerashchenko
- * @since 7/23/12
- */
 public class CLIConfigurationKeys {
     public static final CompilerConfigurationKey<MessageCollector> MESSAGE_COLLECTOR_KEY =
             CompilerConfigurationKey.create("message collector");

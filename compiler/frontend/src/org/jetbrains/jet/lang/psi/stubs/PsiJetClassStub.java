@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.psi.JetClass;
 
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public interface PsiJetClassStub extends NamedStub<JetClass> {
     @NonNls
     @Nullable

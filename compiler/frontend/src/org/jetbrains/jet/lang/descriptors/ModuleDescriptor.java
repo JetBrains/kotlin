@@ -24,9 +24,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
 
-/**
- * @author abreslav
- */
 public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
     private NamespaceDescriptor rootNamepsace;
 

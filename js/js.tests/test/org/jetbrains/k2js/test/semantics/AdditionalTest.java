@@ -22,9 +22,6 @@ import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.translate.context.Namer;
 
-/**
- * @author Pavel Talanov
- */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class AdditionalTest extends SingleFileTranslationTest {
 

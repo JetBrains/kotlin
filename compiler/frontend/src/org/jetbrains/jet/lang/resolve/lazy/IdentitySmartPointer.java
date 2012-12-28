@@ -24,9 +24,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.SmartPsiElementPointer;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author abreslav
- */
 public class IdentitySmartPointer<E extends PsiElement> implements SmartPsiElementPointer<E> {
     private final E element;
 

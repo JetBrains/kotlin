@@ -21,10 +21,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Comparator;
 
-/**
-* @author Evgeny Gerashchenko
-* @since 4/8/12
-*/
 public class MemberComparator implements Comparator<DeclarationDescriptor> {
     public static final MemberComparator INSTANCE = new MemberComparator();
 

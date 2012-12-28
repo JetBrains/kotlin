@@ -30,9 +30,6 @@ import org.jetbrains.jet.plugin.stubindex.resolve.StubPackageMemberDeclarationPr
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Nikolay Krasko
- */
 public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
     public void testSinglePackageFunction() {
         myFixture.configureByText(JetFileType.INSTANCE,

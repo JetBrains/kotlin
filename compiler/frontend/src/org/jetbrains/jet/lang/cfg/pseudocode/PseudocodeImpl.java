@@ -26,10 +26,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.*;
 
-/**
-* @author abreslav
-* @author svtk
-*/
 public class PseudocodeImpl implements Pseudocode {
 
     public class PseudocodeLabel implements Label {
