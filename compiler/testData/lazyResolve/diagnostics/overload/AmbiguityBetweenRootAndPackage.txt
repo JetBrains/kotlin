@@ -1,0 +1,9 @@
+namespace <root>
+
+// <namespace name="test">
+namespace test
+
+internal final val t: [ERROR : Type for testFun()]
+internal final fun testFun(): jet.Int
+// </namespace name="test">
+internal final fun testFun(): jet.Int

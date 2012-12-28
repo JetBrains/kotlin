@@ -3810,6 +3810,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/scopes"), "kt", true);
             }
             
+            @TestMetadata("AmbiguityBetweenRootAndPackage.kt")
+            public void testAmbiguityBetweenRootAndPackage() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/scopes/AmbiguityBetweenRootAndPackage.kt");
+            }
+            
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")
             public void testImportFromCurrentWithDifferentName() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/scopes/ImportFromCurrentWithDifferentName.kt");
