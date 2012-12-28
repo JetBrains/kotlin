@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
@@ -64,7 +65,8 @@ public class LazyResolveTestUtil {
     public static InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptor module, JetCoreEnvironment environment) {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
-        return new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, new BindingTraceContext(), module);
+        BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
+        return new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, module);
     }
 
     public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
@@ -78,8 +80,9 @@ public class LazyResolveTestUtil {
         ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
 
         final Project project = environment.getProject();
+        BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
         InjectorForJavaDescriptorResolver injector =
-                new InjectorForJavaDescriptorResolver(project, new BindingTraceContext(), javaModule);
+                new InjectorForJavaDescriptorResolver(project, sharedTrace, javaModule);
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
         final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 

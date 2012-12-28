@@ -16,12 +16,19 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+
+import java.io.File;
+import java.util.List;
 
 public class JavaElementFinderTest extends JetLiteFixture {
     private JavaElementFinder finder;
@@ -43,7 +50,15 @@ public class JavaElementFinderTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
 
-        finder = new JavaElementFinder(getProject(), null);
+        // We need to resolve all the files in order too fill in the trace that sits inside LightClassGenerationSupport
+        List<String> paths = getEnvironment().getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
+        assert paths != null;
+        List<JetFile> jetFiles = Lists.newArrayList();
+        for (String path : paths) {
+            jetFiles.add(JetTestUtils.loadJetFile(getProject(), new File(path)));
+        }
+        LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
+        finder = new JavaElementFinder(getProject(), LightClassGenerationSupport.getInstance(getProject()));
     }
 
     public void testFromEnumEntry() {
