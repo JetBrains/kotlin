@@ -144,8 +144,7 @@ public class JetSourceNavigationHelper {
         PsiElement declarationContainer = decompiledDeclaration.getParent();
 
         if (declarationContainer instanceof JetFile) {
-            Pair<BindingContext, NamespaceDescriptor> contextAndNamespace =
-                    getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
+            Pair<BindingContext, NamespaceDescriptor> contextAndNamespace = getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
             if (contextAndNamespace == null) {
                 return null;
             }
@@ -153,29 +152,32 @@ public class JetSourceNavigationHelper {
         }
         if (declarationContainer instanceof JetClassBody) {
             JetClassOrObject decompiledClassOrObject = (JetClassOrObject) declarationContainer.getParent();
-            boolean isClassObject =
-                    decompiledClassOrObject instanceof JetObjectDeclaration && decompiledClassOrObject.getParent() instanceof JetClassObject;
-            JetClassOrObject namedClassOrObject =
-                    isClassObject ? PsiTreeUtil.getParentOfType(decompiledClassOrObject, JetClass.class) : decompiledClassOrObject;
-            assert namedClassOrObject != null;
+            assert decompiledClassOrObject != null;
 
-            Pair<BindingContext, ClassDescriptor> contextAndClass =
-                    getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, namedClassOrObject,
-                                                                   JetPsiUtil.getFQName((JetNamedDeclaration) namedClassOrObject));
-            if (contextAndClass == null) {
-                return null;
-            }
+            if (decompiledClassOrObject instanceof JetObjectDeclaration && decompiledClassOrObject.getParent() instanceof JetClassObject) {
+                // class object case
 
-            BindingContext bindingContext = contextAndClass.first;
-            ClassDescriptor classDescriptor = contextAndClass.second;
+                JetClass klass = PsiTreeUtil.getParentOfType(decompiledClassOrObject, JetClass.class);
+                assert klass != null;
+                Pair<BindingContext, ClassDescriptor> contextAndClass = getBindingContextAndClassDescriptor(klass);
 
-            if (isClassObject) {
-                JetType classObjectType = classDescriptor.getClassObjectType();
+                if (contextAndClass == null) {
+                    return null;
+                }
+
+                JetType classObjectType = contextAndClass.second.getClassObjectType();
                 assert classObjectType != null;
-                return Pair.create(bindingContext, classObjectType.getMemberScope());
+                return Pair.create(contextAndClass.first, classObjectType.getMemberScope());
             }
+            else {
+                Pair<BindingContext, ClassDescriptor> contextAndClass = getBindingContextAndClassDescriptor(decompiledClassOrObject);
 
-            return Pair.create(bindingContext, classDescriptor.getDefaultType().getMemberScope());
+                if (contextAndClass == null) {
+                    return null;
+                }
+
+                return Pair.create(contextAndClass.first, contextAndClass.second.getDefaultType().getMemberScope());
+            }
         }
 
         throw new IllegalStateException("Unexpected container of decompiled declaration: "
