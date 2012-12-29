@@ -59,7 +59,7 @@ public class JetSourceNavigationHelper {
     @Nullable
     private static<D extends ClassOrNamespaceDescriptor> Pair<BindingContext, D>
             getBindingContextAndClassOrNamespaceDescriptor(@NotNull ReadOnlySlice<FqName, D> slice,
-                                                           @NotNull JetDeclaration declaration,
+                                                           @NotNull JetNamedDeclaration declaration,
                                                            @Nullable FqName fqName) {
         if (fqName == null || DumbService.isDumb(declaration.getProject())) {
             return null;
@@ -80,16 +80,17 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     private static Pair<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClassOrObject decompiledClassOrObject) {
-        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, decompiledClassOrObject,
-                                                              JetPsiUtil.getFQName((JetNamedDeclaration) decompiledClassOrObject));
+        JetNamedDeclaration asNamed = (JetNamedDeclaration) decompiledClassOrObject;
+        return getBindingContextAndClassOrNamespaceDescriptor(
+                BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, asNamed, JetPsiUtil.getFQName(asNamed));
     }
 
     @Nullable
     private static Pair<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(
-            @NotNull JetDeclaration declaration) {
+            @NotNull JetNamedDeclaration declaration) {
         JetFile file = (JetFile) declaration.getContainingFile();
-        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, declaration,
-                                                              JetPsiUtil.getFQName(file));
+        return getBindingContextAndClassOrNamespaceDescriptor(
+                BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, declaration, JetPsiUtil.getFQName(file));
     }
 
     @Nullable
@@ -119,7 +120,7 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static List<JetFile> findAllSourceFilesWhichContainIdentifier(@NotNull JetDeclaration jetDeclaration) {
+    private static List<JetFile> findAllSourceFilesWhichContainIdentifier(@NotNull JetNamedDeclaration jetDeclaration) {
         VirtualFile libraryFile = jetDeclaration.getContainingFile().getVirtualFile();
         String name = jetDeclaration.getName();
         if (libraryFile == null || name == null) {
@@ -141,7 +142,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static <Decl extends JetDeclaration> Pair<BindingContext, JetScope> getBindingContextAndMemberScopeForLibrarySources(
+    private static <Decl extends JetNamedDeclaration> Pair<BindingContext, JetScope> getBindingContextAndMemberScopeForLibrarySources(
             @NotNull Decl decompiledDeclaration) {
         PsiElement declarationContainer = decompiledDeclaration.getParent();
 
@@ -187,7 +188,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static <Decl extends JetDeclaration, Descr extends CallableDescriptor> JetDeclaration
+    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> JetNamedDeclaration
             getSourcePropertyOrFunction(
             @NotNull Decl decompiledDeclaration,
             @NotNull NavigationStrategy<Decl, Descr> navigationStrategy
@@ -207,7 +208,7 @@ public class JetSourceNavigationHelper {
             if (candidate.getContainingDeclaration() == expectedContainer
                 && receiversMatch(receiverType, candidate.getReceiverParameter())
                 && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
-                return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
+                return (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
             }
         }
 
@@ -228,16 +229,16 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
+    public static JetNamedDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
         return getSourcePropertyOrFunction(decompiledProperty, new PropertyNavigationStrategy());
     }
 
     @Nullable
-    public static JetDeclaration getSourceFunction(final @NotNull JetFunction decompiledFunction) {
+    public static JetNamedDeclaration getSourceFunction(final @NotNull JetNamedFunction decompiledFunction) {
         return getSourcePropertyOrFunction(decompiledFunction, new FunctionNavigationStrategy());
     }
 
-    private interface NavigationStrategy<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
+    private interface NavigationStrategy<Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> {
         boolean declarationAndDescriptorMatch(@NotNull Decl declaration, @NotNull Descr descriptor);
 
         @NotNull Collection<Descr> getCandidateDescriptors(@NotNull JetScope scope, @NotNull Name name);
@@ -245,9 +246,9 @@ public class JetSourceNavigationHelper {
         @Nullable JetTypeReference getReceiverType(@NotNull Decl declaration);
     }
 
-    private static class FunctionNavigationStrategy implements NavigationStrategy<JetFunction, FunctionDescriptor> {
+    private static class FunctionNavigationStrategy implements NavigationStrategy<JetNamedFunction, FunctionDescriptor> {
         @Override
-        public boolean declarationAndDescriptorMatch(@NotNull JetFunction declaration, @NotNull FunctionDescriptor descriptor) {
+        public boolean declarationAndDescriptorMatch(@NotNull JetNamedFunction declaration, @NotNull FunctionDescriptor descriptor) {
             List<JetParameter> declarationParameters = declaration.getValueParameters();
             List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
             if (descriptorParameters.size() != declarationParameters.size()) {
@@ -285,7 +286,7 @@ public class JetSourceNavigationHelper {
 
         @Nullable
         @Override
-        public JetTypeReference getReceiverType(@NotNull JetFunction declaration) {
+        public JetTypeReference getReceiverType(@NotNull JetNamedFunction declaration) {
             return declaration.getReceiverTypeRef();
         }
     }
