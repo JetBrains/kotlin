@@ -118,6 +118,7 @@ public class JetSourceNavigationHelper {
         return resultScope;
     }
 
+    @NotNull
     private static List<JetFile> findAllSourceFilesWhichContainIdentifier(@NotNull JetDeclaration jetDeclaration) {
         VirtualFile libraryFile = jetDeclaration.getContainingFile().getVirtualFile();
         String name = jetDeclaration.getName();
@@ -139,6 +140,7 @@ public class JetSourceNavigationHelper {
         return jetFiles;
     }
 
+    @Nullable
     private static <Decl extends JetDeclaration> Pair<BindingContext, JetScope> getBindingContextAndMemberScopeForLibrarySources(
             @NotNull Decl decompiledDeclaration) {
         PsiElement declarationContainer = decompiledDeclaration.getParent();
@@ -187,8 +189,8 @@ public class JetSourceNavigationHelper {
     @Nullable
     private static <Decl extends JetDeclaration, Descr extends CallableDescriptor> JetDeclaration
             getSourcePropertyOrFunction(
-            final @NotNull Decl decompiledDeclaration,
-            NavigationStrategy<Decl, Descr> navigationStrategy
+            @NotNull Decl decompiledDeclaration,
+            @NotNull NavigationStrategy<Decl, Descr> navigationStrategy
     ) {
         String memberNameAsString = decompiledDeclaration.getName();
         assert memberNameAsString != null;
@@ -236,16 +238,16 @@ public class JetSourceNavigationHelper {
     }
 
     private interface NavigationStrategy<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
-        boolean declarationAndDescriptorMatch(Decl declaration, Descr descriptor);
+        boolean declarationAndDescriptorMatch(@NotNull Decl declaration, @NotNull Descr descriptor);
 
-        Collection<Descr> getCandidateDescriptors(JetScope scope, Name name);
+        @NotNull Collection<Descr> getCandidateDescriptors(@NotNull JetScope scope, @NotNull Name name);
 
         @Nullable JetTypeReference getReceiverType(@NotNull Decl declaration);
     }
 
     private static class FunctionNavigationStrategy implements NavigationStrategy<JetFunction, FunctionDescriptor> {
         @Override
-        public boolean declarationAndDescriptorMatch(JetFunction declaration, FunctionDescriptor descriptor) {
+        public boolean declarationAndDescriptorMatch(@NotNull JetFunction declaration, @NotNull FunctionDescriptor descriptor) {
             List<JetParameter> declarationParameters = declaration.getValueParameters();
             List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
             if (descriptorParameters.size() != declarationParameters.size()) {
@@ -275,8 +277,9 @@ public class JetSourceNavigationHelper {
             return true;
         }
 
+        @NotNull
         @Override
-        public Collection<FunctionDescriptor> getCandidateDescriptors(JetScope scope, Name name) {
+        public Collection<FunctionDescriptor> getCandidateDescriptors(@NotNull JetScope scope, @NotNull Name name) {
             return scope.getFunctions(name);
         }
 
@@ -289,12 +292,13 @@ public class JetSourceNavigationHelper {
 
     private static class PropertyNavigationStrategy implements NavigationStrategy<JetProperty, VariableDescriptor> {
         @Override
-        public boolean declarationAndDescriptorMatch(JetProperty declaration, VariableDescriptor descriptor) {
+        public boolean declarationAndDescriptorMatch(@NotNull JetProperty declaration, @NotNull VariableDescriptor descriptor) {
             return true;
         }
 
+        @NotNull
         @Override
-        public Collection<VariableDescriptor> getCandidateDescriptors(JetScope scope, Name name) {
+        public Collection<VariableDescriptor> getCandidateDescriptors(@NotNull JetScope scope, @NotNull Name name) {
             return scope.getProperties(name);
         }
 
