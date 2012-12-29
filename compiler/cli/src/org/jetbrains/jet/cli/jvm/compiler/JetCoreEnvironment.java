@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.intellij.codeInsight.ExternalAnnotationsManager;
+import com.intellij.core.CoreApplicationEnvironment;
 import com.intellij.core.CoreJavaFileManager;
 import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.core.JavaCoreProjectEnvironment;
@@ -31,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
@@ -87,6 +89,10 @@ public class JetCoreEnvironment {
         Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(project));
+
+        // This extension point should be registered in JavaCoreApplicationEnvironment
+        CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME,
+                                                          ClsCustomNavigationPolicy.class);
 
         annotationsManager = new CoreExternalAnnotationsManager(project.getComponent(PsiManager.class));
         project.registerService(ExternalAnnotationsManager.class, annotationsManager);
