@@ -145,10 +145,7 @@ public class JetSourceNavigationHelper {
             NavigationStrategy<Decl, Descr> navigationStrategy
     ) {
         String entityName = decompiledDeclaration.getName();
-        if (entityName == null) {
-            return null;
-        }
-
+        assert entityName != null;
         Name entityNameAsName = Name.identifier(entityName);
 
         JetTypeReference receiverType = navigationStrategy.getReceiverType(decompiledDeclaration);
@@ -172,9 +169,8 @@ public class JetSourceNavigationHelper {
             JetClassOrObject parent = (JetClassOrObject)declarationContainer.getParent();
             boolean isClassObject = parent instanceof JetObjectDeclaration && parent.getParent() instanceof JetClassObject;
             JetClassOrObject classOrObject = isClassObject ? PsiTreeUtil.getParentOfType(parent, JetClass.class) : parent;
-            if (classOrObject == null) {
-                return null;
-            }
+            assert classOrObject != null;
+
             Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(classOrObject);
             if (bindingContextAndClassDescriptor != null) {
                 BindingContext bindingContext = bindingContextAndClassDescriptor.first;
@@ -182,9 +178,7 @@ public class JetSourceNavigationHelper {
                 JetScope memberScope = classDescriptor.getDefaultType().getMemberScope();
                 if (isClassObject) {
                     JetType classObjectType = classDescriptor.getClassObjectType();
-                    if (classObjectType == null) {
-                        return null;
-                    }
+                    assert classObjectType != null;
                     memberScope = classObjectType.getMemberScope();
                 }
 
