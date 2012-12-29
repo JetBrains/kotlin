@@ -197,6 +197,13 @@ public class DecompiledDataFactory {
         PsiElement clsMember = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (clsMember != null) {
             clsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
+
+            if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.OBJECT) {
+                assert clsMember instanceof PsiClass;
+                PsiField instanceField = ((PsiClass) clsMember).findFieldByName(JvmAbi.INSTANCE_FIELD, false);
+                assert instanceField != null;
+                clsMembersToRanges.put(instanceField, new TextRange(startOffset, endOffset));
+            }
         }
     }
 

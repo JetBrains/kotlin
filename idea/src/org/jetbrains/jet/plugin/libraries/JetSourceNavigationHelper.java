@@ -188,13 +188,12 @@ public class JetSourceNavigationHelper {
         }
         else if (declarationContainer instanceof JetClassBody) {
             JetClassOrObject parent = (JetClassOrObject)declarationContainer.getParent();
-            boolean isClassObject = parent instanceof JetObjectDeclaration;
-            JetClass jetClass =
-                isClassObject ? PsiTreeUtil.getParentOfType(parent, JetClass.class) : (JetClass)parent;
-            if (jetClass == null) {
+            boolean isClassObject = parent instanceof JetObjectDeclaration && parent.getParent() instanceof JetClassObject;
+            JetClassOrObject classOrObject = isClassObject ? PsiTreeUtil.getParentOfType(parent, JetClass.class) : parent;
+            if (classOrObject == null) {
                 return null;
             }
-            Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(jetClass);
+            Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(classOrObject);
             if (bindingContextAndClassDescriptor != null) {
                 BindingContext bindingContext = bindingContextAndClassDescriptor.first;
                 ClassDescriptor classDescriptor = bindingContextAndClassDescriptor.second;

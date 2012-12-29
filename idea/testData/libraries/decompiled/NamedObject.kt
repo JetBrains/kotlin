@@ -3,6 +3,6 @@
 
 package testData.libraries
 
-[public object NamedObject {
+[[public object NamedObject {
     [public final val objectMember : jet.Int] /* compiled code */
-}]
+}]]
