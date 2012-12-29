@@ -54,6 +54,6 @@ public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
     }
 
     protected void doFileTest() {
-        doFileTest(1, getFileNameList());
+        doFileTest(0, getFileNameList());
     }
 }
