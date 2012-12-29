@@ -179,7 +179,6 @@ public class DeclarationsChecker {
 
         if (abstractNode != null) { //has abstract modifier
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-                JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
                 String name = property.getName();
                 trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
                 return;
@@ -246,6 +245,9 @@ public class DeclarationsChecker {
             if (!error && property.getTypeRef() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
+            if (inTrait && property.hasModifier(JetTokens.FINAL_KEYWORD) && backingFieldRequired) {
+                trace.report(FINAL_PROPERTY_IN_TRAIT.on(property));
+            }
             return;
         }
         if (inTrait) {
@@ -266,17 +268,20 @@ public class DeclarationsChecker {
             boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
-            if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+            if (hasAbstractModifier && !inAbstractClass && !inEnum) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().getName(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait) {
                 trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
             }
-            if (function.getBodyExpression() != null && hasAbstractModifier) {
+            boolean hasBody = function.getBodyExpression() != null;
+            if (hasBody && hasAbstractModifier) {
                 trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
-            if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait) {
+            if (!hasBody && function.hasModifier(JetTokens.FINAL_KEYWORD) && inTrait) {
+                trace.report(FINAL_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
+            }
+            if (!hasBody && !hasAbstractModifier && !inTrait) {
                 trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
             }
             return;

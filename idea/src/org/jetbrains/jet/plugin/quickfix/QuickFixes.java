@@ -63,6 +63,8 @@ public class QuickFixes {
 
         factories.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
 
+        JetIntentionActionFactory removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD);
+
         JetIntentionActionFactory addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, JetClass.class);
         factories.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
         factories.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
@@ -73,6 +75,9 @@ public class QuickFixes {
 
         factories.put(ABSTRACT_FUNCTION_WITH_BODY, removeAbstractModifierFactory);
         factories.put(ABSTRACT_FUNCTION_WITH_BODY, removeFunctionBodyFactory);
+
+        factories.put(FINAL_PROPERTY_IN_TRAIT, removeFinalModifierFactory);
+        factories.put(FINAL_FUNCTION_WITH_NO_BODY, removeFinalModifierFactory);
 
         JetIntentionActionFactory addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
         factories.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
@@ -96,7 +101,7 @@ public class QuickFixes {
         factories.put(REDUNDANT_MODIFIER, removeRedundantModifierFactory);
         factories.put(ABSTRACT_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true));
         factories.put(OPEN_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true));
-        factories.put(TRAIT_CAN_NOT_BE_FINAL, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD));
+        factories.put(TRAIT_CAN_NOT_BE_FINAL, removeFinalModifierFactory);
 
         JetIntentionActionFactory removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD);
         factories.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, AddModifierFix.createFactory(OPEN_KEYWORD, JetClass.class));

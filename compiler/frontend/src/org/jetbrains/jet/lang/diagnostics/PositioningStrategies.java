@@ -165,6 +165,8 @@ public class PositioningStrategies {
 
     public static final PositioningStrategy<JetModifierListOwner> OVERRIDE_MODIFIER = modifierSetPosition(JetTokens.OVERRIDE_KEYWORD);
 
+    public static final PositioningStrategy<JetModifierListOwner> FINAL_MODIFIER = modifierSetPosition(JetTokens.FINAL_KEYWORD);
+
     public static final PositioningStrategy<JetModifierListOwner> VARIANCE_MODIFIER = modifierSetPosition(JetTokens.IN_KEYWORD,
                                                                                                           JetTokens.OUT_KEYWORD);
 
