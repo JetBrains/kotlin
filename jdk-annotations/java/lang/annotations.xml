@@ -1785,4 +1785,7 @@
     <item name='java.lang.StringBuffer java.lang.AbstractStringBuilder insert(int, java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+  <item name='java.lang.Class java.lang.Class&lt;?&gt; forName(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
