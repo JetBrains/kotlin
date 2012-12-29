@@ -27,68 +27,58 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsClassImpl clsClass) {
-        JetClassOrObject jetClassOrObject = (JetClassOrObject) getJetDeclarationByClsElement(clsClass);
-        if (jetClassOrObject != null) {
-            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClassOrObject(jetClassOrObject);
-            if (sourceClass != null) {
-                return sourceClass;
-            }
-        }
-        return jetClassOrObject;
+        return getNavigationElementForMember(clsClass);
     }
 
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsMethodImpl clsMethod) {
-        JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsMethod);
-        if (jetDeclaration instanceof JetProperty) {
-            JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
-            if (sourceProperty != null) {
-                return sourceProperty;
-            }
-        }
-        else if (jetDeclaration instanceof JetFunction) {
-            JetDeclaration sourceFunction = JetSourceNavigationHelper.getSourceFunction((JetFunction) jetDeclaration);
-            if (sourceFunction != null) {
-                return sourceFunction;
-            }
-        }
-        else if (jetDeclaration instanceof JetClass) {
-            assert clsMethod.getReturnType() == null; // constructor
-            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClassOrObject((JetClass) jetDeclaration);
-            if (sourceClass != null) {
-                return sourceClass;
-            }
-        }
-        return jetDeclaration;
+        return getNavigationElementForMember(clsMethod);
     }
 
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsFieldImpl clsField) {
-        JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsField);
-        if (jetDeclaration instanceof JetProperty) {
-            JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
-            if (sourceProperty != null) {
-                return sourceProperty;
-            }
-        }
-        else if (jetDeclaration instanceof JetClassOrObject) {
-            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClassOrObject((JetClassOrObject) jetDeclaration);
-            if (sourceClass != null) {
-                return sourceClass;
-            }
-        }
-        return jetDeclaration;
+        return getNavigationElementForMember(clsField);
     }
 
     @Nullable
-    private static JetDeclaration getJetDeclarationByClsElement(ClsElementImpl clsElement) {
-        VirtualFile virtualFile = clsElement.getContainingFile().getVirtualFile();
-        if (virtualFile == null || !JetDecompiledData.isKotlinFile(clsElement.getProject(), virtualFile)) {
+    private static PsiElement getNavigationElementForMember(@NotNull ClsMemberImpl clsMember) {
+        VirtualFile virtualFile = clsMember.getContainingFile().getVirtualFile();
+        if (virtualFile == null || !JetDecompiledData.isKotlinFile(clsMember.getProject(), virtualFile)) {
             return null;
         }
-        JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData((ClsFileImpl) clsElement.getContainingFile());
-        return decompiledData.getJetDeclarationByClsElement(clsElement);
+
+        JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData((ClsFileImpl) clsMember.getContainingFile());
+        JetDeclaration decompiledDeclaration = decompiledData.getJetDeclarationByClsElement(clsMember);
+
+        if (decompiledDeclaration == null) {
+            return null;
+        }
+
+        JetDeclaration sourceElement = decompiledDeclaration.accept(new SourceForDecompiledExtractingVisitor(), null);
+        return sourceElement != null ? sourceElement : decompiledDeclaration;
+    }
+
+    private static class SourceForDecompiledExtractingVisitor extends JetVisitor<JetDeclaration, Void> {
+        @Override
+        public JetDeclaration visitNamedFunction(JetNamedFunction function, Void data) {
+            return JetSourceNavigationHelper.getSourceFunction(function);
+        }
+
+        @Override
+        public JetDeclaration visitProperty(JetProperty property, Void data) {
+            return JetSourceNavigationHelper.getSourceProperty(property);
+        }
+
+        @Override
+        public JetDeclaration visitObjectDeclaration(JetObjectDeclaration declaration, Void data) {
+            return JetSourceNavigationHelper.getSourceClassOrObject(declaration);
+        }
+
+        @Override
+        public JetDeclaration visitClass(JetClass klass, Void data) {
+            return JetSourceNavigationHelper.getSourceClassOrObject(klass);
+        }
     }
 }
