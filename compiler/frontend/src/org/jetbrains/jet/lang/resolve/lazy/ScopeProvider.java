@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
+import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 
@@ -78,7 +79,7 @@ public class ScopeProvider {
             fileScope.importScope(rootPackageDescriptor.getMemberScope());
         }
 
-        ImportsResolver.processImportsInFile(true, fileScope, Lists.newArrayList(file.getImportDirectives()),
+        ImportsResolver.processImportsInFile(QualifiedExpressionResolver.LookupMode.ONLY_CLASSES, fileScope, Lists.newArrayList(file.getImportDirectives()),
                                              rootPackageDescriptor.getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
                                              resolveSession.getInjector().getQualifiedExpressionResolver(),
@@ -119,7 +120,7 @@ public class ScopeProvider {
 
         fileMemberScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        ImportsResolver.processImportsInFile(false, fileMemberScope, Lists.newArrayList(file.getImportDirectives()),
+        ImportsResolver.processImportsInFile(QualifiedExpressionResolver.LookupMode.EVERYTHING, fileMemberScope, Lists.newArrayList(file.getImportDirectives()),
                                              rootPackageDescriptor.getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
                                              resolveSession.getInjector().getQualifiedExpressionResolver(),

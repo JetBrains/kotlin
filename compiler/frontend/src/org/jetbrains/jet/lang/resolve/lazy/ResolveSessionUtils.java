@@ -38,6 +38,8 @@ import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
+
 public class ResolveSessionUtils {
 
     // This name is used as a key for the case when something has no name _due to a syntactic error_
@@ -285,11 +287,11 @@ public class ResolveSessionUtils {
 
                     if (element instanceof JetDotQualifiedExpression) {
                         descriptors = qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                                (JetDotQualifiedExpression) element, rootPackage.getMemberScope(), scope, trace, false, false);
+                                (JetDotQualifiedExpression) element, rootPackage.getMemberScope(), scope, trace, LookupMode.EVERYTHING, false);
                     }
                     else {
                         descriptors = qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                                (JetSimpleNameExpression) element, rootPackage.getMemberScope(), scope, trace, false, false, false);
+                                (JetSimpleNameExpression) element, rootPackage.getMemberScope(), scope, trace, LookupMode.EVERYTHING, false, false);
                     }
 
                     for (DeclarationDescriptor descriptor : descriptors) {
