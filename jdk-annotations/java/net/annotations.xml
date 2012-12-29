@@ -131,9 +131,6 @@
     <item name='java.net.SocketImpl java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='java.net.Socket void bind(java.net.SocketAddress) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='java.net.CookieHandler void put(java.net.URI, java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.String&gt;&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
