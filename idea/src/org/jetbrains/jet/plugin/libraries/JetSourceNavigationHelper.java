@@ -160,29 +160,11 @@ public class JetSourceNavigationHelper {
             if (bindingContextAndNamespaceDescriptor == null) return null;
             BindingContext bindingContext = bindingContextAndNamespaceDescriptor.first;
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor.second;
-            if (receiverType == null) {
-                // non-extension member
-                for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
-                    if (candidate.getReceiverParameter() == null) {
-                        if (navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
-                            return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
-                        }
-                    }
-                }
-            }
-            else {
-                // extension member
-                String expectedTypeString = receiverType.getText();
-                for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
-                    ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
-                    if (receiverParameter != null) {
-                        String thisReceiverType = DescriptorRenderer.TEXT.renderType(receiverParameter.getType());
-                        if (expectedTypeString.equals(thisReceiverType)) {
-                            if (navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
-                                return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
-                            }
-                        }
-                    }
+
+            for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
+                if (receiversMatch(receiverType, candidate.getReceiverParameter())
+                        && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
+                    return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                 }
             }
         }
@@ -218,6 +200,19 @@ public class JetSourceNavigationHelper {
             }
         }
         return null;
+    }
+
+    private static boolean receiversMatch(
+            @Nullable JetTypeReference receiverTypeRef,
+            @Nullable ReceiverParameterDescriptor receiverParameter
+    ) {
+        if (receiverTypeRef == null && receiverParameter == null) {
+            return true;
+        }
+        if (receiverTypeRef != null && receiverParameter != null) {
+            return receiverTypeRef.getText().equals(DescriptorRenderer.TEXT.renderType(receiverParameter.getType()));
+        }
+        return false;
     }
 
     @Nullable
