@@ -1949,6 +1949,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/namedFun.kt");
                 }
                 
+                @TestMetadata("typeReferenceError.kt")
+                public void testTypeReferenceError() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/typeReferenceError.kt");
+                }
+                
             }
             
             public static Test innerSuite() {

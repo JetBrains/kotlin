@@ -37,10 +37,9 @@ public class JetConstructorCalleeExpression extends JetExpressionImpl {
             return null;
         }
         JetTypeElement typeElement = typeReference.getTypeElement();
-        if (typeElement == null) {
+        if (!(typeElement instanceof JetUserType)) {
             return null;
         }
-        assert typeElement instanceof JetUserType : typeElement;
         return ((JetUserType) typeElement).getReferenceExpression();
     }
 
