@@ -144,9 +144,9 @@ public class JetSourceNavigationHelper {
             final @NotNull Decl decompiledDeclaration,
             NavigationStrategy<Decl, Descr> navigationStrategy
     ) {
-        String entityName = decompiledDeclaration.getName();
-        assert entityName != null;
-        Name entityNameAsName = Name.identifier(entityName);
+        String memberNameAsString = decompiledDeclaration.getName();
+        assert memberNameAsString != null;
+        Name memberName = Name.identifier(memberNameAsString);
 
         JetTypeReference receiverType = navigationStrategy.getReceiverType(decompiledDeclaration);
 
@@ -158,7 +158,7 @@ public class JetSourceNavigationHelper {
             BindingContext bindingContext = bindingContextAndNamespaceDescriptor.first;
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor.second;
 
-            for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
+            for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), memberName)) {
                 if (receiversMatch(receiverType, candidate.getReceiverParameter())
                         && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
                     return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
@@ -183,7 +183,7 @@ public class JetSourceNavigationHelper {
                 }
 
                 ClassDescriptor expectedContainer = isClassObject ? classDescriptor.getClassObjectDescriptor() : classDescriptor;
-                for (Descr candidate : navigationStrategy.getCandidateDescriptors(memberScope, entityNameAsName)) {
+                for (Descr candidate : navigationStrategy.getCandidateDescriptors(memberScope, memberName)) {
                     if (candidate.getContainingDeclaration() == expectedContainer) {
                         JetDeclaration property = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                         if (property != null) {
