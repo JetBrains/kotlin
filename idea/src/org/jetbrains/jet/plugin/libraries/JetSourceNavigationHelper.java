@@ -94,7 +94,8 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static JetClassOrObject getSourceClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
-        Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClassOrObject);
+        Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(
+                decompiledClassOrObject);
         if (bindingContextAndClassDescriptor == null) return null;
         PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(
                 bindingContextAndClassDescriptor.first, bindingContextAndClassDescriptor.second);
@@ -138,6 +139,49 @@ public class JetSourceNavigationHelper {
         return jetFiles;
     }
 
+    private static <Decl extends JetDeclaration> Pair<BindingContext, JetScope> getBindingContextAndMemberScopeForLibrarySources(
+            @NotNull Decl decompiledDeclaration) {
+        PsiElement declarationContainer = decompiledDeclaration.getParent();
+
+        if (declarationContainer instanceof JetFile) {
+            Pair<BindingContext, NamespaceDescriptor> contextAndNamespace =
+                    getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
+            if (contextAndNamespace == null) {
+                return null;
+            }
+            return Pair.create(contextAndNamespace.first, contextAndNamespace.second.getMemberScope());
+        }
+        if (declarationContainer instanceof JetClassBody) {
+            JetClassOrObject decompiledClassOrObject = (JetClassOrObject) declarationContainer.getParent();
+            boolean isClassObject =
+                    decompiledClassOrObject instanceof JetObjectDeclaration && decompiledClassOrObject.getParent() instanceof JetClassObject;
+            JetClassOrObject namedClassOrObject =
+                    isClassObject ? PsiTreeUtil.getParentOfType(decompiledClassOrObject, JetClass.class) : decompiledClassOrObject;
+            assert namedClassOrObject != null;
+
+            Pair<BindingContext, ClassDescriptor> contextAndClass =
+                    getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, namedClassOrObject,
+                                                                   JetPsiUtil.getFQName((JetNamedDeclaration) namedClassOrObject));
+            if (contextAndClass == null) {
+                return null;
+            }
+
+            BindingContext bindingContext = contextAndClass.first;
+            ClassDescriptor classDescriptor = contextAndClass.second;
+
+            if (isClassObject) {
+                JetType classObjectType = classDescriptor.getClassObjectType();
+                assert classObjectType != null;
+                return Pair.create(bindingContext, classObjectType.getMemberScope());
+            }
+
+            return Pair.create(bindingContext, classDescriptor.getDefaultType().getMemberScope());
+        }
+
+        throw new IllegalStateException("Unexpected container of decompiled declaration: "
+                                        + declarationContainer.getClass().getSimpleName());
+    }
+
     @Nullable
     private static <Decl extends JetDeclaration, Descr extends CallableDescriptor> JetDeclaration
             getSourcePropertyOrFunction(
@@ -148,51 +192,21 @@ public class JetSourceNavigationHelper {
         assert memberNameAsString != null;
         Name memberName = Name.identifier(memberNameAsString);
 
+        Pair<BindingContext, JetScope> contextAndMemberScope = getBindingContextAndMemberScopeForLibrarySources(decompiledDeclaration);
+        if (contextAndMemberScope == null) return null;
+        BindingContext bindingContext = contextAndMemberScope.first;
+        JetScope memberScope = contextAndMemberScope.second;
+
         JetTypeReference receiverType = navigationStrategy.getReceiverType(decompiledDeclaration);
-
-        PsiElement declarationContainer = decompiledDeclaration.getParent();
-        if (declarationContainer instanceof JetFile) {
-            Pair<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor =
-                    getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
-            if (bindingContextAndNamespaceDescriptor == null) return null;
-            BindingContext bindingContext = bindingContextAndNamespaceDescriptor.first;
-            NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor.second;
-
-            for (Descr candidate : navigationStrategy.getCandidateDescriptors(namespaceDescriptor.getMemberScope(), memberName)) {
-                if (receiversMatch(receiverType, candidate.getReceiverParameter())
-                        && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
-                    return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
-                }
+        DeclarationDescriptor expectedContainer = memberScope.getContainingDeclaration();
+        for (Descr candidate : navigationStrategy.getCandidateDescriptors(contextAndMemberScope.second, memberName)) {
+            if (candidate.getContainingDeclaration() == expectedContainer
+                && receiversMatch(receiverType, candidate.getReceiverParameter())
+                && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
+                return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
             }
         }
-        else if (declarationContainer instanceof JetClassBody) {
-            JetClassOrObject parent = (JetClassOrObject)declarationContainer.getParent();
-            boolean isClassObject = parent instanceof JetObjectDeclaration && parent.getParent() instanceof JetClassObject;
-            JetClassOrObject classOrObject = isClassObject ? PsiTreeUtil.getParentOfType(parent, JetClass.class) : parent;
-            assert classOrObject != null;
 
-            Pair<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(classOrObject);
-            if (bindingContextAndClassDescriptor != null) {
-                BindingContext bindingContext = bindingContextAndClassDescriptor.first;
-                ClassDescriptor classDescriptor = bindingContextAndClassDescriptor.second;
-                JetScope memberScope = classDescriptor.getDefaultType().getMemberScope();
-                if (isClassObject) {
-                    JetType classObjectType = classDescriptor.getClassObjectType();
-                    assert classObjectType != null;
-                    memberScope = classObjectType.getMemberScope();
-                }
-
-                ClassDescriptor expectedContainer = isClassObject ? classDescriptor.getClassObjectDescriptor() : classDescriptor;
-                for (Descr candidate : navigationStrategy.getCandidateDescriptors(memberScope, memberName)) {
-                    if (candidate.getContainingDeclaration() == expectedContainer) {
-                        JetDeclaration property = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
-                        if (property != null) {
-                            return property;
-                        }
-                    }
-                }
-            }
-        }
         return null;
     }
 
