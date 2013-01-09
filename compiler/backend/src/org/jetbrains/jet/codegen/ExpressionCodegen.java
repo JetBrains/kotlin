@@ -1449,16 +1449,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            PsiElement declaration = descriptorToDeclaration(bindingContext, descriptor);
-            if (declaration instanceof JetClass) {
-                final ClassDescriptor classObjectDescriptor = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
-                assert classObjectDescriptor != null;
-                return StackValue.singleton(classObjectDescriptor, typeMapper);
-            }
-            else {
-                // todo ?
-                return StackValue.none();
-            }
+            ClassDescriptor classObjectDescriptor = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
+            assert classObjectDescriptor != null : "Class object is not found for " + descriptor;
+            return StackValue.singleton(classObjectDescriptor, typeMapper);
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
