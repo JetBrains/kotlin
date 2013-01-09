@@ -6,6 +6,6 @@ fun foo() {
 }
 
 // extra.kt
-//public fun <1>func(str : String) {
+//public fun <1>func(str : gogland.String) {
 // main.kt
 //public fun <2>func(a : Int, b : String = "55") {

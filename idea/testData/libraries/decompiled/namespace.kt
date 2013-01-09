@@ -15,6 +15,8 @@ package testData.libraries
 
 [public fun func() : Unit { /* compiled code */ }]
 
+[public fun func(cs : jet.CharSequence) : Unit { /* compiled code */ }]
+
 [public fun func(a : jet.Int, b : jet.Int) : Unit { /* compiled code */ }]
 
 [public fun func(a : jet.Int, b : jet.String = /* compiled code */) : Unit { /* compiled code */ }]

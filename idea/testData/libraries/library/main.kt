@@ -99,6 +99,9 @@ public fun func(a : Int, b : Int) {
 public fun func() {
 }
 
+public fun func(cs : CharSequence) {
+}
+
 public inline fun <T> T.filter(predicate: (T)-> Boolean) : T? = this
 
 

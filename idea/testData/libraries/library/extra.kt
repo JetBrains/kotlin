@@ -1,4 +1,6 @@
 package testData.libraries
 
-public fun func(str : String) {
+import jet as gogland
+
+public fun func(str : gogland.String) {
 }
