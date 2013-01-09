@@ -16,90 +16,48 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.google.common.base.Predicates;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.cache.CacheManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
-import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class JetSourceNavigationHelper {
     private static boolean forceResolve = false;
 
     private JetSourceNavigationHelper() {
-    }
-
-    @Nullable
-    private static<D extends ClassOrNamespaceDescriptor> Pair<BindingContext, D>
-            getBindingContextAndClassOrNamespaceDescriptor(@NotNull ReadOnlySlice<FqName, D> slice,
-                                                           @NotNull JetNamedDeclaration declaration,
-                                                           @Nullable FqName fqName) {
-        if (fqName == null || DumbService.isDumb(declaration.getProject())) {
-            return null;
-        }
-        final Project project = declaration.getProject();
-        final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
-        BindingContext bindingContext = AnalyzerFacadeForJVM.INSTANCE.analyzeFiles(
-                project,
-                libraryFiles,
-                Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
-        D descriptor = bindingContext.get(slice, fqName);
-        if (descriptor != null) {
-            return new Pair<BindingContext, D>(bindingContext, descriptor);
-        }
-        return null;
-    }
-
-    @Nullable
-    private static Pair<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClassOrObject decompiledClassOrObject) {
-        JetNamedDeclaration asNamed = (JetNamedDeclaration) decompiledClassOrObject;
-        return getBindingContextAndClassOrNamespaceDescriptor(
-                BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, asNamed, JetPsiUtil.getFQName(asNamed));
-    }
-
-    @Nullable
-    private static Pair<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(
-            @NotNull JetNamedDeclaration declaration) {
-        JetFile file = (JetFile) declaration.getContainingFile();
-        return getBindingContextAndClassOrNamespaceDescriptor(
-                BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, declaration, JetPsiUtil.getFQName(file));
     }
 
     @Nullable
@@ -156,74 +114,6 @@ public class JetSourceNavigationHelper {
             }
         }
         return Lists.newArrayList(result);
-    }
-
-    @NotNull
-    private static List<JetFile> findAllSourceFilesWhichContainIdentifier(@NotNull JetNamedDeclaration jetDeclaration) {
-        VirtualFile libraryFile = jetDeclaration.getContainingFile().getVirtualFile();
-        String name = jetDeclaration.getName();
-        if (libraryFile == null || name == null) {
-            return Collections.emptyList();
-        }
-        Project project = jetDeclaration.getProject();
-        CacheManager cacheManager = CacheManager.SERVICE.getInstance(project);
-        PsiFile[] filesWithWord = cacheManager.getFilesWithWord(name,
-                                                                UsageSearchContext.IN_CODE,
-                                                                createLibrarySourcesScopeForFile(libraryFile, project),
-                                                                true);
-        List<JetFile> jetFiles = new ArrayList<JetFile>();
-        for (PsiFile psiFile : filesWithWord) {
-            if (psiFile instanceof JetFile) {
-                jetFiles.add((JetFile) psiFile);
-            }
-        }
-        return jetFiles;
-    }
-
-    @Nullable
-    private static <Decl extends JetNamedDeclaration> Pair<BindingContext, JetScope> getBindingContextAndMemberScopeForLibrarySources(
-            @NotNull Decl decompiledDeclaration) {
-        PsiElement declarationContainer = decompiledDeclaration.getParent();
-
-        if (declarationContainer instanceof JetFile) {
-            Pair<BindingContext, NamespaceDescriptor> contextAndNamespace = getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
-            if (contextAndNamespace == null) {
-                return null;
-            }
-            return Pair.create(contextAndNamespace.first, contextAndNamespace.second.getMemberScope());
-        }
-        if (declarationContainer instanceof JetClassBody) {
-            JetClassOrObject decompiledClassOrObject = (JetClassOrObject) declarationContainer.getParent();
-            assert decompiledClassOrObject != null;
-
-            if (decompiledClassOrObject instanceof JetObjectDeclaration && decompiledClassOrObject.getParent() instanceof JetClassObject) {
-                // class object case
-
-                JetClass klass = PsiTreeUtil.getParentOfType(decompiledClassOrObject, JetClass.class);
-                assert klass != null;
-                Pair<BindingContext, ClassDescriptor> contextAndClass = getBindingContextAndClassDescriptor(klass);
-
-                if (contextAndClass == null) {
-                    return null;
-                }
-
-                JetType classObjectType = contextAndClass.second.getClassObjectType();
-                assert classObjectType != null;
-                return Pair.create(contextAndClass.first, classObjectType.getMemberScope());
-            }
-            else {
-                Pair<BindingContext, ClassDescriptor> contextAndClass = getBindingContextAndClassDescriptor(decompiledClassOrObject);
-
-                if (contextAndClass == null) {
-                    return null;
-                }
-
-                return Pair.create(contextAndClass.first, contextAndClass.second.getDefaultType().getMemberScope());
-            }
-        }
-
-        throw new IllegalStateException("Unexpected container of decompiled declaration: "
-                                        + declarationContainer.getClass().getSimpleName());
     }
 
     private static boolean haveRenamesInImports(@NotNull List<JetFile> files) {
@@ -354,18 +244,27 @@ public class JetSourceNavigationHelper {
             }
         }
 
-        Pair<BindingContext, JetScope> contextAndMemberScope = getBindingContextAndMemberScopeForLibrarySources(decompiledDeclaration);
-        if (contextAndMemberScope == null) return null;
-        BindingContext bindingContext = contextAndMemberScope.first;
-        JetScope memberScope = contextAndMemberScope.second;
+        Project project = decompiledDeclaration.getProject();
+        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(getContainingFiles(candidates),
+                new Predicate<FqName>() {
+                    @Override
+                    public boolean apply(@Nullable FqName fqName) {
+                        return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
+                    }
+                });
+        ResolveSession resolveSession = new ResolveSession(
+                project,
+                new ModuleDescriptor(Name.special("<library module>")),
+                DefaultModuleConfiguration.createStandardConfiguration(project),
+                providerFactory);
 
         JetTypeReference receiverType = navigationStrategy.getReceiverType(decompiledDeclaration);
-        DeclarationDescriptor expectedContainer = memberScope.getContainingDeclaration();
-        for (Descr candidate : navigationStrategy.getCandidateDescriptors(contextAndMemberScope.second, memberName)) {
-            if (candidate.getContainingDeclaration() == expectedContainer
-                && receiversMatch(receiverType, candidate.getReceiverParameter())
-                && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidate)) {
-                return (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
+        for (Decl candidate : candidates) {
+            //noinspection unchecked
+            Descr candidateDescriptor = (Descr) resolveSession.resolveToDescriptor(candidate);
+            if (receiversMatch(receiverType, candidateDescriptor.getReceiverParameter())
+                    && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidateDescriptor)) {
+                return candidate;
             }
         }
 
@@ -501,8 +400,6 @@ public class JetSourceNavigationHelper {
 
         boolean declarationAndDescriptorMatch(@NotNull Decl declaration, @NotNull Descr descriptor);
 
-        @NotNull Collection<Descr> getCandidateDescriptors(@NotNull JetScope scope, @NotNull Name name);
-
         @Nullable JetTypeReference getReceiverType(@NotNull Decl declaration);
 
         @NotNull
@@ -573,12 +470,6 @@ public class JetSourceNavigationHelper {
             return true;
         }
 
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getCandidateDescriptors(@NotNull JetScope scope, @NotNull Name name) {
-            return scope.getFunctions(name);
-        }
-
         @Nullable
         @Override
         public JetTypeReference getReceiverType(@NotNull JetNamedFunction declaration) {
@@ -612,12 +503,6 @@ public class JetSourceNavigationHelper {
         @Override
         public boolean declarationAndDescriptorMatch(@NotNull JetProperty declaration, @NotNull VariableDescriptor descriptor) {
             return true;
-        }
-
-        @NotNull
-        @Override
-        public Collection<VariableDescriptor> getCandidateDescriptors(@NotNull JetScope scope, @NotNull Name name) {
-            return scope.getProperties(name);
         }
 
         @Nullable
