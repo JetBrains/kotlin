@@ -16,17 +16,20 @@
 
 package org.jetbrains.jet.plugin.references;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
+import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
@@ -69,7 +72,18 @@ public class JetSimpleNameReference extends JetPsiReference {
 
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        PsiElement element = JetPsiFactory.createNameIdentifier(myExpression.getProject(), newElementName);
+        IElementType type = myExpression.getReferencedNameElementType();
+        final PsiElement element;
+        final Project project = myExpression.getProject();
+        if (JetTokens.FIELD_IDENTIFIER == type) {
+            element = JetPsiFactory.createFieldIdentifier(project, newElementName);
+        }
+        else if (JetTokens.LABEL_IDENTIFIER == type) {
+            element = JetPsiFactory.createClassLabel(project, newElementName);
+        }
+        else {
+            element = JetPsiFactory.createNameIdentifier(project, newElementName);
+        }
         return myExpression.getReferencedNameElement().replace(element);
     }
 

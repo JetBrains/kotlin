@@ -30,9 +30,11 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 public class JetPsiFactory {
+
     public static ASTNode createValNode(Project project) {
         JetProperty property = createProperty(project, "val x = 1");
         return property.getValOrVarNode();
@@ -199,5 +201,19 @@ public class JetPsiFactory {
     public static PsiElement createPrimaryConstructor(Project project) {
         JetClass aClass = createClass(project, "class A()");
         return aClass.findElementAt(7).getParent();
+    }
+
+    public static PsiElement createClassLabel(Project project, @NotNull String labelName) {
+        final String labelTemplate = "class {0}()'{' fun aFun()'{' this@{0}'}'}";
+        JetClass aClass = createClass(project, MessageFormat.format(labelTemplate, labelName));
+        final int offset = 29;    // @labelName
+        return aClass.findElementAt(offset);
+    }
+
+    public static PsiElement createFieldIdentifier(Project project, @NotNull String fieldName){
+        final String labelTemplate = "class aClass()'{'var {0}:Int=0;set(value)'{'${0}'} '}";
+        JetClass aClass = createClass(project, MessageFormat.format(labelTemplate, fieldName));
+        final int offset = 44;   // $fieldName
+        return aClass.findElementAt(offset);
     }
 }
