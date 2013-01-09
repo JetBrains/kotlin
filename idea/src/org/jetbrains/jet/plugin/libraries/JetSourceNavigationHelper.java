@@ -38,6 +38,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -59,6 +60,8 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import java.util.*;
 
 public class JetSourceNavigationHelper {
+    private static boolean forceResolve = false;
+
     private JetSourceNavigationHelper() {
     }
 
@@ -335,17 +338,19 @@ public class JetSourceNavigationHelper {
                                             + decompiledContainer.getClass().getSimpleName());
         }
 
-        candidates = filterByReceiverPresenceAndParametersCount(decompiledDeclaration, navigationStrategy, candidates);
-
-        if (candidates.size() <= 1) {
-            return getUnambiguousCandidate(candidates);
-        }
-
-        if (!haveRenamesInImports(getContainingFiles(candidates))) {
-            candidates = filterByReceiverAndParameterTypes(decompiledDeclaration, navigationStrategy, candidates);
+        if (!forceResolve) {
+            candidates = filterByReceiverPresenceAndParametersCount(decompiledDeclaration, navigationStrategy, candidates);
 
             if (candidates.size() <= 1) {
                 return getUnambiguousCandidate(candidates);
+            }
+
+            if (!haveRenamesInImports(getContainingFiles(candidates))) {
+                candidates = filterByReceiverAndParameterTypes(decompiledDeclaration, navigationStrategy, candidates);
+
+                if (candidates.size() <= 1) {
+                    return getUnambiguousCandidate(candidates);
+                }
             }
         }
 
@@ -479,6 +484,11 @@ public class JetSourceNavigationHelper {
     @Nullable
     public static JetNamedDeclaration getSourceFunction(final @NotNull JetNamedFunction decompiledFunction) {
         return getSourcePropertyOrFunction(decompiledFunction, new FunctionNavigationStrategy());
+    }
+
+    @TestOnly
+    static void setForceResolve(boolean forceResolve) {
+        JetSourceNavigationHelper.forceResolve = forceResolve;
     }
 
     private interface NavigationStrategy<Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> {

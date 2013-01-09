@@ -84,6 +84,12 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         userFile = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
         assertNotNull(userFile);
 
+        checkAnnotatedLibraryCode(false);
+        checkAnnotatedLibraryCode(true);
+    }
+
+    private void checkAnnotatedLibraryCode(boolean forceResolve) {
+        JetSourceNavigationHelper.setForceResolve(forceResolve);
         String actualCode = getActualAnnotatedLibraryCode();
         String expectedCode = getExpectedAnnotatedLibraryCode();
         assertSameLines(expectedCode, actualCode);
