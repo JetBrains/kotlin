@@ -49,4 +49,15 @@ class StringTest {
         assertEquals("uRL", "URL".decapitalize())
     }
 
+    test fun filter() {
+        assertEquals("acdca", "abcdcba".filter { !it.equals('b') })
+        assertEquals("1234", "a1b2c3d4".filter { it.isDigit() })
+    }
+
+    test fun reverse() {
+        assertEquals("dcba", "abcd".reverse())
+        assertEquals("4321", "1234".reverse())
+        assertEquals("", "".reverse())
+    }
+
 }
