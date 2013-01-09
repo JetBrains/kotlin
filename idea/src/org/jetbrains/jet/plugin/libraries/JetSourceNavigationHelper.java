@@ -85,7 +85,14 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static GlobalSearchScope createLibrarySourcesScopeForFile(@NotNull VirtualFile libraryFile, @NotNull Project project) {
+    private static GlobalSearchScope createLibrarySourcesScope(@NotNull JetNamedDeclaration decompiledDeclaration) {
+        JetFile containingFile = (JetFile) decompiledDeclaration.getContainingFile();
+        VirtualFile libraryFile = containingFile.getVirtualFile();
+        if (libraryFile == null) {
+            return GlobalSearchScope.EMPTY_SCOPE;
+        }
+
+        Project project = decompiledDeclaration.getProject();
         ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 
         GlobalSearchScope resultScope = GlobalSearchScope.EMPTY_SCOPE;
@@ -95,14 +102,6 @@ public class JetSourceNavigationHelper {
             }
         }
         return resultScope;
-    }
-
-    @NotNull
-    private static GlobalSearchScope createLibrarySourcesScope(@NotNull JetNamedDeclaration decompiledDeclaration) {
-        JetFile containingFile = (JetFile) decompiledDeclaration.getContainingFile();
-        VirtualFile libraryFile = containingFile.getVirtualFile();
-        Project project = decompiledDeclaration.getProject();
-        return libraryFile == null ? GlobalSearchScope.EMPTY_SCOPE : createLibrarySourcesScopeForFile(libraryFile, project);
     }
 
     private static List<JetFile> getContainingFiles(@NotNull Iterable<? extends JetNamedDeclaration> declarations) {
@@ -168,11 +167,6 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static <Decl extends JetNamedDeclaration> Decl getUnambiguousCandidate(@NotNull Collection<Decl> candidates) {
-        return candidates.isEmpty() ? null : candidates.iterator().next();
-    }
-
-    @Nullable
     private static JetNamedDeclaration findSpecialProperty(@NotNull Name memberName, @NotNull JetClass containingClass) {
         // property constructor parameters
         List<JetParameter> constructorParameters = containingClass.getPrimaryConstructorParameters();
@@ -232,14 +226,14 @@ public class JetSourceNavigationHelper {
             candidates = filterByReceiverPresenceAndParametersCount(decompiledDeclaration, navigationStrategy, candidates);
 
             if (candidates.size() <= 1) {
-                return getUnambiguousCandidate(candidates);
+                return candidates.isEmpty() ? null : candidates.iterator().next();
             }
 
             if (!haveRenamesInImports(getContainingFiles(candidates))) {
                 candidates = filterByReceiverAndParameterTypes(decompiledDeclaration, navigationStrategy, candidates);
 
                 if (candidates.size() <= 1) {
-                    return getUnambiguousCandidate(candidates);
+                    return candidates.isEmpty() ? null : candidates.iterator().next();
                 }
             }
         }
