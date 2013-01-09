@@ -1893,6 +1893,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/kt2014.kt");
             }
             
+            @TestMetadata("NoSenselessComparisonForErrorType.kt")
+            public void testNoSenselessComparisonForErrorType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/NoSenselessComparisonForErrorType.kt");
+            }
+            
             @TestMetadata("plusOnTheRight.kt")
             public void testPlusOnTheRight() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/plusOnTheRight.kt");

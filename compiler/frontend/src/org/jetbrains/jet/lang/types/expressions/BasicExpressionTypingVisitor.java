@@ -1251,6 +1251,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         JetType type = facade.getTypeInfo(expr, context).getType();
+        if (type == null || ErrorUtils.isErrorType(type)) return;
+
         DataFlowValue value = DataFlowValueFactory.INSTANCE.createDataFlowValue(expr, type, context.trace.getBindingContext());
         Nullability nullability = context.dataFlowInfo.getNullability(value);
 
