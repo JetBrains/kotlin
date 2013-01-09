@@ -80,6 +80,10 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         doTest();
     }
 
+    public void testTypeWithSameShortName() {
+        doTest();
+    }
+
     private void doTest() {
         userFile = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
         assertNotNull(userFile);

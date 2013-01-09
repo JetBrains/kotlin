@@ -23,4 +23,8 @@ package testData.libraries
 
 [public fun main(args : jet.Array<jet.String>) : Unit { /* compiled code */ }]
 
+[public fun processDouble(d : jet.Double) : Unit { /* compiled code */ }]
+
+[public fun processDouble(d : testData.libraries.Double) : Unit { /* compiled code */ }]
+
 [public fun <T> T.filter(predicate : (T) -> jet.Boolean) : T? { /* compiled code */ }]

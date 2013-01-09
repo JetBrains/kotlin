@@ -100,3 +100,10 @@ public fun func() {
 }
 
 public inline fun <T> T.filter(predicate: (T)-> Boolean) : T? = this
+
+
+public class Double
+
+public fun processDouble(d: Double) {}
+
+public fun processDouble(d: jet.Double) {}
