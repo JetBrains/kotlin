@@ -1045,7 +1045,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitBlockExpression(JetBlockExpression expression, StackValue receiver) {
         List<JetElement> statements = expression.getStatements();
-        return generateBlock(statements);
+        JetType unitType = KotlinBuiltIns.getInstance().getUnitType();
+        boolean lastStatementIsExpression = !unitType.equals(bindingContext.get(EXPRESSION_TYPE, expression));
+        return generateBlock(statements, lastStatementIsExpression);
     }
 
     @Override
@@ -1069,7 +1071,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //noinspection ConstantConditions
         if (bindingContext.get(BindingContext.BLOCK, expression)) {
             //noinspection ConstantConditions
-            return generateBlock(expression.getFunctionLiteral().getBodyExpression().getStatements());
+            return gen(expression.getFunctionLiteral().getBodyExpression());
         }
         else {
             return genClosure(expression);
@@ -1165,7 +1167,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private StackValue generateBlock(List<JetElement> statements) {
+    private StackValue generateBlock(List<JetElement> statements, boolean lastStatementIsExpression) {
         final Label blockEnd = new Label();
 
         List<Function<StackValue, Void>> leaveTasks = Lists.newArrayList();
@@ -1197,9 +1199,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 generateLocalFunctionDeclaration((JetNamedFunction) statement, leaveTasks);
             }
 
-            boolean isStatement = iterator.hasNext() || !isInsideNonUnitFunction();
+            boolean isExpression = !iterator.hasNext() && lastStatementIsExpression;
 
-            StackValue result = isStatement ? genStatement(statement) : gen(statement);
+            StackValue result = isExpression ? gen(statement) : genStatement(statement);
 
             if (!iterator.hasNext()) {
                 answer = result;
@@ -1216,12 +1218,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         return answer;
-    }
-
-    private boolean isInsideNonUnitFunction() {
-        DeclarationDescriptor descriptor = context.getContextDescriptor();
-        JetType unit = KotlinBuiltIns.getInstance().getUnitType();
-        return descriptor instanceof CallableDescriptor && !unit.equals(((CallableDescriptor) descriptor).getReturnType());
     }
 
     private void generateLocalVariableDeclaration(
