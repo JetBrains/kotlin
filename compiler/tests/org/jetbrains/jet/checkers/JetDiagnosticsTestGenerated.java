@@ -2384,6 +2384,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/j+k"), "kt", true);
             }
             
+            @TestMetadata("innerNestedClassFromJava.kt")
+            public void testInnerNestedClassFromJava() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/innerNestedClassFromJava.kt");
+            }
+            
             @TestMetadata("kt1402.kt")
             public void testKt1402() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/kt1402.kt");

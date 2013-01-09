@@ -75,8 +75,7 @@ public final class JavaInnerClassResolver {
     }
 
     private static boolean shouldBeIgnored(DeclarationDescriptor owner, PsiClass psiClass, PsiClass innerPsiClass, boolean isStatic) {
-        if (innerPsiClass.hasModifierProperty(PsiModifier.PRIVATE)
-            || innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)
+        if (innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)
             || DescriptorResolverUtils.isInnerEnum(innerPsiClass, owner)) {
             return true;
         }
