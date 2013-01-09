@@ -263,7 +263,7 @@ public class JetSourceNavigationHelper {
             //noinspection unchecked
             Descr candidateDescriptor = (Descr) resolveSession.resolveToDescriptor(candidate);
             if (receiversMatch(receiverType, candidateDescriptor.getReceiverParameter())
-                    && navigationStrategy.declarationAndDescriptorMatch(decompiledDeclaration, candidateDescriptor)) {
+                    && navigationStrategy.declarationAndDescriptorMatchByParameterTypes(decompiledDeclaration, candidateDescriptor)) {
                 return candidate;
             }
         }
@@ -398,7 +398,7 @@ public class JetSourceNavigationHelper {
 
         boolean declarationsMatchByParameterTypes(@NotNull Decl a, @NotNull Decl b);
 
-        boolean declarationAndDescriptorMatch(@NotNull Decl declaration, @NotNull Descr descriptor);
+        boolean declarationAndDescriptorMatchByParameterTypes(@NotNull Decl declaration, @NotNull Descr descriptor);
 
         @Nullable JetTypeReference getReceiverType(@NotNull Decl declaration);
 
@@ -440,7 +440,10 @@ public class JetSourceNavigationHelper {
         }
 
         @Override
-        public boolean declarationAndDescriptorMatch(@NotNull JetNamedFunction declaration, @NotNull FunctionDescriptor descriptor) {
+        public boolean declarationAndDescriptorMatchByParameterTypes(
+                @NotNull JetNamedFunction declaration,
+                @NotNull FunctionDescriptor descriptor
+        ) {
             List<JetParameter> declarationParameters = declaration.getValueParameters();
             List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
             if (descriptorParameters.size() != declarationParameters.size()) {
@@ -501,7 +504,10 @@ public class JetSourceNavigationHelper {
         }
 
         @Override
-        public boolean declarationAndDescriptorMatch(@NotNull JetProperty declaration, @NotNull VariableDescriptor descriptor) {
+        public boolean declarationAndDescriptorMatchByParameterTypes(
+                @NotNull JetProperty declaration,
+                @NotNull VariableDescriptor descriptor
+        ) {
             return true;
         }
 
