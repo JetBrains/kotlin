@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 
 public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectDescriptor {
-    private JetWithJdkAndRuntimeLightProjectDescriptor() {
+    protected JetWithJdkAndRuntimeLightProjectDescriptor() {
     }
 
     public static final JetWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new JetWithJdkAndRuntimeLightProjectDescriptor();

@@ -66,7 +66,7 @@ public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTest
         return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
-    private PsiElement configureAndResolve(String text) {
+    protected PsiElement configureAndResolve(String text) {
         myFixture.configureByText(JetFileType.INSTANCE, text);
         PsiReference ref = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
         //noinspection ConstantConditions
