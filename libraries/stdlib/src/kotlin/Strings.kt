@@ -63,3 +63,52 @@ public inline fun String.count(predicate: (Char) -> Boolean): Int {
     }
     return answer
 }
+
+/**
+ * Filters characters which match the given predicate into new String object
+ *
+ * @includeFunctionBody ../../test/StringTest.kt filter
+ */
+public inline fun String.filter(predicate: (Char) -> Boolean): String {
+    val sb = StringBuilder()
+    for (c in this) {
+        if(predicate(c)) {
+            sb.append(c)
+        }
+    }
+    return sb.toString()
+}
+
+/**
+  * Returns order of characters into a string
+  *
+  * @includeFunctionBody ../../test/StringTest.kt reverse
+  */
+public inline fun String.reverse(): String = StringBuilder(this).reverse().toString()
+
+/**
+ * Performs the given *operation* on each character
+ *
+ * @includeFunctionBody ../../test/StringTest.kt forEach
+ */
+public inline fun String.forEach(operation: (Char) -> Unit): Unit = for(c in this) operation(c)
+
+/**
+ * Returns *true* if all characters match the given *predicate*
+ *
+ * @includeFunctionBody ../../test/StringTest.kt all
+ */
+public inline fun String.all(predicate: (Char) -> Boolean): Boolean {
+    for(c in this) if(!predicate(c)) return false
+    return true
+}
+
+/**
+ * Returns *true* if any character matches the given *predicate*
+ *
+ * @includeFunctionBody ../../test/StringTest.kt any
+ */
+public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
+    for (c in this) if (predicate(c)) return true
+    return false
+}
