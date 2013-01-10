@@ -24,6 +24,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiCompiledElement;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -129,11 +130,26 @@ public class LightClassUtil {
         }
 
         Project project = function.getProject();
-        JvmClassName jvmClassName = PsiCodegenPredictor.getPredefinedJvmClassNameForFun(function);
-        if (jvmClassName == null) return null;
 
-        String fqName = jvmClassName.getFqName().getFqName();
-        PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project));
+        PsiElement parent = function.getParent();
+        PsiClass psiClass;
+        if (parent == function.getContainingFile()) {
+            // top-level function
+            JvmClassName jvmClassName = PsiCodegenPredictor.getPredefinedJvmClassName((JetFile) parent, true);
+            if (jvmClassName == null) return null;
+
+            String fqName = jvmClassName.getFqName().getFqName();
+            psiClass = JavaElementFinder.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project));
+        }
+        else {
+            if (!(parent instanceof JetClassBody)) return null;
+            assert parent.getParent() instanceof JetClassOrObject;
+
+            // function in a class
+            JetClassOrObject classOrObject = (JetClassOrObject) parent.getParent();
+            psiClass = createLightClass(classOrObject);
+        }
+
         if (psiClass == null) return null;
 
         for (PsiMethod method : psiClass.getMethods()) {

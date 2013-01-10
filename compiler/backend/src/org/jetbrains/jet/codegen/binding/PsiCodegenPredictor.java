@@ -79,6 +79,11 @@ public final class PsiCodegenPredictor {
         // TODO: Method won't give correct class name for traits implementations
 
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(declaration, JetDeclaration.class);
+        if (parentDeclaration instanceof JetClassObject) {
+            assert declaration instanceof JetObjectDeclaration : "Only object declarations can be children of JetClassObject: " + declaration;
+            return getPredefinedJvmClassName(parentDeclaration);
+        }
+
         JvmClassName parentClassName = parentDeclaration != null ?
                                        getPredefinedJvmClassName(parentDeclaration) :
                                        getPredefinedJvmClassName((JetFile) declaration.getContainingFile(), false);
