@@ -203,7 +203,7 @@ public class JetSourceNavigationHelper {
 
         Collection<Decl> candidates;
         if (decompiledContainer instanceof JetFile) {
-            candidates = getInitialCandidates(decompiledDeclaration, navigationStrategy);
+            candidates = getInitialTopLevelCandidates(decompiledDeclaration, navigationStrategy);
         }
         else if (decompiledContainer instanceof JetClassBody) {
             JetClassOrObject decompiledClassOrObject = (JetClassOrObject) decompiledContainer.getParent();
@@ -211,7 +211,8 @@ public class JetSourceNavigationHelper {
 
             candidates = sourceClassOrObject == null
                          ? Collections.<Decl>emptyList()
-                         : getInitialCandidates(sourceClassOrObject, memberName, navigationStrategy.getDeclarationClass());
+                         : getInitialMemberCandidates(sourceClassOrObject, memberName,
+                                                      navigationStrategy.getDeclarationClass());
 
             if (candidates.isEmpty()) {
                 if (decompiledDeclaration instanceof JetProperty && sourceClassOrObject instanceof JetClass) {
@@ -286,7 +287,7 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> Collection<Decl> getInitialCandidates(
+    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> Collection<Decl> getInitialTopLevelCandidates(
             @NotNull Decl decompiledDeclaration,
             @NotNull NavigationStrategy<Decl, Descr> navigationStrategy
     ) {
@@ -302,7 +303,7 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static <Decl extends JetNamedDeclaration> List<Decl> getInitialCandidates(
+    private static <Decl extends JetNamedDeclaration> List<Decl> getInitialMemberCandidates(
             @NotNull JetClassOrObject sourceClassOrObject,
             @NotNull final Name name,
             @NotNull Class<Decl> declarationClass
