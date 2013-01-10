@@ -30,13 +30,13 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
@@ -53,10 +53,10 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         return new JetCoreEnvironment(
                 getTestRootDisposable(),
                 CompileCompilerDependenciesTest.compilerConfigurationForTests(
-                   ConfigurationKind.JDK_AND_ANNOTATIONS,
-                   TestJdkKind.MOCK_JDK,
-                   JetTestUtils.getAnnotationsJar(),
-                   javaFilesDir
+                        ConfigurationKind.JDK_AND_ANNOTATIONS,
+                        TestJdkKind.MOCK_JDK,
+                        Arrays.asList(JetTestUtils.getAnnotationsJar()),
+                        Arrays.asList(javaFilesDir)
                 )
         );
     }

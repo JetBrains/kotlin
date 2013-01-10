@@ -158,8 +158,8 @@ public class JavaTypeTransformer {
                     }
 
                     List<TypeProjection> arguments = Lists.newArrayList();
-                    if (classType.isRaw()) {
-                        List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
+                    List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
+                    if (isRaw(classType, !parameters.isEmpty())) {
                         for (TypeParameterDescriptor parameter : parameters) {
                             TypeProjection starProjection = SubstitutionUtils.makeStarProjection(parameter);
                             if (howThisTypeIsUsed == SUPERTYPE) {
@@ -172,7 +172,6 @@ public class JavaTypeTransformer {
                         }
                     }
                     else {
-                        List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
                         PsiType[] psiArguments = classType.getParameters();
                         
                         if (parameters.size() != psiArguments.length) {
@@ -252,4 +251,12 @@ public class JavaTypeTransformer {
         });
         return result;
     }
+
+    private static boolean isRaw(@NotNull PsiClassType classType, boolean argumentsExpected) {
+        // The second option is needed because sometimes we get weird versions of JDK classes in teh class path,
+        // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
+        // their Kotlin analogs, so we treat them as raw to avoid exceptions
+        return classType.isRaw() || argumentsExpected && classType.getParameterCount() == 0;
+    }
+
 }
