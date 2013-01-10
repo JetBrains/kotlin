@@ -25,10 +25,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -149,16 +150,20 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         public void testSubclassingKotlinInJava() throws Exception {
             File dir = new File(PATH + "/subclassingKotlinInJava");
 
-            InjectorForJavaSemanticServices injectorForJava = new InjectorForJavaSemanticServices(getProject());
+            ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<test module>"));
 
             // we need the same binding trace for resolve from Java and Kotlin
-            BindingTrace bindingTrace = injectorForJava.getBindingTrace();
+            BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
+
+            InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(getProject(),
+                                                                                                    trace,
+                                                                                                    moduleDescriptor);
 
             InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                     getProject(),
                     new TopDownAnalysisParameters(Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
-                    bindingTrace,
-                    new ModuleDescriptor(Name.special("<test module>")));
+                    trace,
+                    moduleDescriptor);
 
             injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(getEnvironment().getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
@@ -170,7 +175,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
             compareNamespaceWithFile(namespaceDescriptor, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
                                      new File(dir, "expected.txt"));
 
-            ExpectedLoadErrorsUtil.checkForLoadErrors(namespaceDescriptor, bindingTrace.getBindingContext());
+            ExpectedLoadErrorsUtil.checkForLoadErrors(namespaceDescriptor, trace.getBindingContext());
         }
     }
 }
