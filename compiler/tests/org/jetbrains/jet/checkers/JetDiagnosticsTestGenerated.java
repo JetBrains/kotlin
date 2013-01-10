@@ -1913,6 +1913,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/senselessComparisonWithNull.kt");
             }
             
+            @TestMetadata("SupertypeOfErrorType.kt")
+            public void testSupertypeOfErrorType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/SupertypeOfErrorType.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError")
             public static class DiagnosticWithSyntaxError extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInDiagnosticWithSyntaxError() throws Exception {
