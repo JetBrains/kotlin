@@ -391,15 +391,22 @@ public class JetSourceNavigationHelper {
         }
 
         for (JetTypeConstraint typeConstraint : typeParameterListOwner.getTypeConstraints()) {
-            Name name = typeConstraint.getSubjectTypeParameterName().getReferencedNameAsName();
-            decompiledParameterToBounds.put(name, typeConstraint.getBoundTypeReference().getText());
+            JetSimpleNameExpression typeParameterName = typeConstraint.getSubjectTypeParameterName();
+            assert typeParameterName != null;
+
+            JetTypeReference bound = typeConstraint.getBoundTypeReference();
+            assert bound != null;
+
+            decompiledParameterToBounds.put(typeParameterName.getReferencedNameAsName(), bound.getText());
         }
 
         for (int i = 0; i < decompiledParameters.size(); i++) {
             JetTypeParameter decompiledParameter = decompiledParameters.get(i);
             TypeParameterDescriptor descriptor = typeParameterDescriptors.get(i);
 
-            if (!decompiledParameter.getNameAsName().equals(descriptor.getName())) {
+            Name name = decompiledParameter.getNameAsName();
+            assert name != null;
+            if (!name.equals(descriptor.getName())) {
                 return false;
             }
 
@@ -504,14 +511,16 @@ public class JetSourceNavigationHelper {
                     return false;
                 }
                 JetModifierList modifierList = declarationParameter.getModifierList();
-                boolean vararg = modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
-                if (vararg != (descriptorParameter.getVarargElementType() != null)) {
+                boolean varargInDeclaration = modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
+                boolean varargInDescriptor = descriptorParameter.getVarargElementType() != null;
+                if (varargInDeclaration != varargInDescriptor) {
                     return false;
                 }
                 String declarationTypeText = typeReference.getText();
-                String descriptorParameterText = DescriptorRenderer.TEXT.renderType(vararg
-                                                                                    ? descriptorParameter.getVarargElementType()
-                                                                                    : descriptorParameter.getType());
+
+                JetType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
+                assert typeToRender != null;
+                String descriptorParameterText = DescriptorRenderer.TEXT.renderType(typeToRender);
                 if (!declarationTypeText.equals(descriptorParameterText)) {
                     return false;
                 }
