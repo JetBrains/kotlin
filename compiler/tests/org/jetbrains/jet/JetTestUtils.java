@@ -34,6 +34,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
+import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
@@ -52,6 +55,7 @@ import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
+import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Assert;
 
 import javax.tools.*;
@@ -63,6 +67,11 @@ import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.jetbrains.jet.ConfigurationKind.ALL;
+import static org.jetbrains.jet.ConfigurationKind.JDK_AND_ANNOTATIONS;
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.ANNOTATIONS_PATH_KEY;
+import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
 public class JetTestUtils {
     private static List<File> filesToDelete = new ArrayList<File>();
@@ -213,7 +222,7 @@ public class JetTestUtils {
             @NotNull ConfigurationKind configurationKind,
             @NotNull TestJdkKind jdkKind
     ) {
-        return new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
+        return new JetCoreEnvironment(disposable, compilerConfigurationForTests(
                 configurationKind, jdkKind, getAnnotationsJar()));
     }
 
@@ -298,6 +307,30 @@ public class JetTestUtils {
 
     public static String getFilePath(File file) {
         return FileUtil.toSystemIndependentName(file.getPath());
+    }
+
+    @NotNull
+    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind, File... extraClasspath) {
+        return compilerConfigurationForTests(configurationKind, jdkKind, Arrays.asList(extraClasspath), Collections.<File>emptyList());
+    }
+
+    @NotNull
+    public static CompilerConfiguration compilerConfigurationForTests(@NotNull ConfigurationKind configurationKind,
+            @NotNull TestJdkKind jdkKind, @NotNull Collection<File> extraClasspath, @NotNull Collection<File> priorityClasspath) {
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.addAll(CLASSPATH_KEY, priorityClasspath);
+        configuration.add(CLASSPATH_KEY, jdkKind == TestJdkKind.MOCK_JDK ? findMockJdkRtJar() : PathUtil.findRtJar());
+        if (configurationKind == ALL) {
+            configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
+        }
+        configuration.addAll(CLASSPATH_KEY, extraClasspath);
+
+        if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
+            configuration.add(ANNOTATIONS_PATH_KEY, ForTestPackJdkAnnotations.jdkAnnotationsForTests());
+        }
+
+        return configuration;
     }
 
     public interface TestFileFactory<F> {

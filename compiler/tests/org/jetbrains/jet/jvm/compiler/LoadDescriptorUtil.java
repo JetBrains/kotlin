@@ -21,7 +21,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -94,7 +93,7 @@ public final class LoadDescriptorUtil {
     ) {
         Disposer.dispose(disposable);
 
-        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), outDir,
                 ForTestCompileRuntime.runtimeJarForTests());
         JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);

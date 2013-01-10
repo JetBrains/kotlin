@@ -20,7 +20,6 @@ import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -153,8 +152,8 @@ public class TestlibTest extends CodegenTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.ALL,
-                                                                                                            TestJdkKind.FULL_JDK);
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL,
+                                                                                         TestJdkKind.FULL_JDK);
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
 
         junitJar = new File("libraries/lib/junit-4.9.jar");

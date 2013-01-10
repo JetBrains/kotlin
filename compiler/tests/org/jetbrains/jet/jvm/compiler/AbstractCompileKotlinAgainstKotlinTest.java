@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -75,7 +74,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     }
 
     private void compileB(@NotNull File ktBFile) throws IOException {
-        CompilerConfiguration configurationWithADirInClasspath = CompileCompilerDependenciesTest
+        CompilerConfiguration configurationWithADirInClasspath = JetTestUtils
                 .compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
         compileKotlin(ktBFile, bDir, new JetCoreEnvironment(getTestRootDisposable(), configurationWithADirInClasspath),
                       getTestRootDisposable());

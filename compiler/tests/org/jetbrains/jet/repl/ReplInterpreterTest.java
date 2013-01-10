@@ -20,8 +20,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.repl.ReplInterpreter;
@@ -51,7 +51,7 @@ public class ReplInterpreterTest {
 
     private void testFile(@NotNull String relativePath) {
         CompilerConfiguration configuration =
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
+                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("out/production/runtime"));
         ReplInterpreter repl = new ReplInterpreter(disposable, configuration);
 

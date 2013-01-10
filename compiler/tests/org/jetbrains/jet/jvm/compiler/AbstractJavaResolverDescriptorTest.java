@@ -18,7 +18,6 @@ package org.jetbrains.jet.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -74,7 +73,7 @@ public abstract class AbstractJavaResolverDescriptorTest extends TestCaseWithTmp
 
     private void setUpJavaDescriptorResolver() {
         JetCoreEnvironment jetCoreEnvironment =
-                new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                new JetCoreEnvironment(myTestRootDisposable, JetTestUtils.compilerConfigurationForTests(
                         ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), tmpdir));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());

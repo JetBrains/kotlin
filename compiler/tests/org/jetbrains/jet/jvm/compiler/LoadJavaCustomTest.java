@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -141,7 +140,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         protected JetCoreEnvironment createEnvironment() {
             File dir = new File(PATH + "/subclassingKotlinInJava");
 
-            CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
+            CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                     ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, new File(dir, "java"));
             configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(new File(dir, "kotlin").getAbsolutePath()));
             return new JetCoreEnvironment(getTestRootDisposable(), configuration);

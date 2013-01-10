@@ -21,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -73,7 +72,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
             throw new AssertionError();
         }
 
-        environmentWithFullJdkAndJUnit = new JetCoreEnvironment(myTestRootDisposable, CompileCompilerDependenciesTest.compilerConfigurationForTests(
+        environmentWithFullJdkAndJUnit = new JetCoreEnvironment(myTestRootDisposable, JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
 
     }

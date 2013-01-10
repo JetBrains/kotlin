@@ -26,7 +26,6 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -292,7 +291,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected void blackBoxFileWithJava(@NotNull String ktFile, boolean classPathInTheSameClassLoader) throws Exception {
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
         blackBoxFile(ktFile, "OK", classPathInTheSameClassLoader);

@@ -52,7 +52,7 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         }
         return new JetCoreEnvironment(
                 getTestRootDisposable(),
-                CompileCompilerDependenciesTest.compilerConfigurationForTests(
+                JetTestUtils.compilerConfigurationForTests(
                         ConfigurationKind.JDK_AND_ANNOTATIONS,
                         TestJdkKind.MOCK_JDK,
                         Arrays.asList(JetTestUtils.getAnnotationsJar()),

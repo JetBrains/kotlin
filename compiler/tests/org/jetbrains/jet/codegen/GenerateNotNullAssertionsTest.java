@@ -21,8 +21,8 @@ import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
@@ -39,7 +39,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     private void setUpEnvironment(boolean generateAssertions, boolean generateParamAssertions, File... extraClassPath) {
-        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, extraClassPath);
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, generateAssertions);
@@ -73,7 +73,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     public void testNoAssertionsForKotlinFromBinary() throws Exception {
-        CompilerConfiguration configuration = CompileCompilerDependenciesTest.compilerConfigurationForTests(
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
         JetCoreEnvironment tmpEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
         GenerationState state = generateCommon(ClassBuilderFactories.TEST, tmpEnvironment,

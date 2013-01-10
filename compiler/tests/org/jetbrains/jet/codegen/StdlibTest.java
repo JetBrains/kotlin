@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -46,7 +45,7 @@ public class StdlibTest extends CodegenTestCase {
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironemnt twice");
         }
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), CompileCompilerDependenciesTest.compilerConfigurationForTests(
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
     }
 
