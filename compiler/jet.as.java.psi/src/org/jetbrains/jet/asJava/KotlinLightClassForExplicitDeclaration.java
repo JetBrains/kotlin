@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,10 +203,6 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
 
     @NotNull
     private String[] computeModifiers() {
-        JetModifierList jetModifierList = classOrObject.getModifierList();
-        if (jetModifierList == null) {
-            return new String[0];
-        }
         Collection<String> psiModifiers = Sets.newHashSet();
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
@@ -219,7 +215,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
                 Pair.create(FINAL_KEYWORD, PsiModifier.FINAL));
 
         for (Pair<JetKeywordToken, String> tokenAndModifier : jetTokenToPsiModifier) {
-            if (jetModifierList.hasModifier(tokenAndModifier.first)) {
+            if (classOrObject.hasModifier(tokenAndModifier.first)) {
                 psiModifiers.add(tokenAndModifier.second);
             }
         }
@@ -229,7 +225,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         }
 
         // FINAL
-        if (!jetModifierList.hasModifier(OPEN_KEYWORD) && !jetModifierList.hasModifier(ABSTRACT_KEYWORD)) {
+        if (!classOrObject.hasModifier(OPEN_KEYWORD) && !classOrObject.hasModifier(ABSTRACT_KEYWORD)) {
             psiModifiers.add(PsiModifier.FINAL);
         }
 
