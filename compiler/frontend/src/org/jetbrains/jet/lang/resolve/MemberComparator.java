@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Comparator;
+import java.util.List;
 
 public class MemberComparator implements Comparator<DeclarationDescriptor> {
     public static final MemberComparator INSTANCE = new MemberComparator();
@@ -84,15 +85,33 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             }
         }
 
-        for (int i = 0; i < Math.min(c1.getValueParameters().size(), c2.getValueParameters().size()); i++) {
-            String p1 = DescriptorRenderer.TEXT.renderType(c1.getValueParameters().get(i).getType());
-            String p2 = DescriptorRenderer.TEXT.renderType(c2.getValueParameters().get(i).getType());
+        List<ValueParameterDescriptor> c1ValueParameters = c1.getValueParameters();
+        List<ValueParameterDescriptor> c2ValueParameters = c2.getValueParameters();
+        for (int i = 0; i < Math.min(c1ValueParameters.size(), c2ValueParameters.size()); i++) {
+            String p1 = DescriptorRenderer.TEXT.renderType(c1ValueParameters.get(i).getType());
+            String p2 = DescriptorRenderer.TEXT.renderType(c2ValueParameters.get(i).getType());
             int parametersCompareTo = p1.compareTo(p2);
             if (parametersCompareTo != 0) {
                 return parametersCompareTo;
             }
         }
 
-        return c1.getValueParameters().size() - c2.getValueParameters().size();
+        int valueParametersNumberCompareTo = c1ValueParameters.size() - c2ValueParameters.size();
+        if (valueParametersNumberCompareTo != 0) {
+            return valueParametersNumberCompareTo;
+        }
+
+        List<TypeParameterDescriptor> c1TypeParameters = c1.getTypeParameters();
+        List<TypeParameterDescriptor> c2TypeParameters = c2.getTypeParameters();
+        for (int i = 0; i < Math.min(c1TypeParameters.size(), c2TypeParameters.size()); i++) {
+            String p1 = DescriptorRenderer.TEXT.renderType(c1TypeParameters.get(i).getUpperBoundsAsType());
+            String p2 = DescriptorRenderer.TEXT.renderType(c2TypeParameters.get(i).getUpperBoundsAsType());
+            int parametersCompareTo = p1.compareTo(p2);
+            if (parametersCompareTo != 0) {
+                return parametersCompareTo;
+            }
+        }
+
+        return c1TypeParameters.size() - c2TypeParameters.size();
     }
 }
