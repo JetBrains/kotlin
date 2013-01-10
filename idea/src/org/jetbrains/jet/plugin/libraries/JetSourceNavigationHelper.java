@@ -17,8 +17,7 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
@@ -31,6 +30,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,12 +42,14 @@ import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -257,7 +259,8 @@ public class JetSourceNavigationHelper {
             //noinspection unchecked
             Descr candidateDescriptor = (Descr) resolveSession.resolveToDescriptor(candidate);
             if (receiversMatch(receiverType, candidateDescriptor.getReceiverParameter())
-                    && navigationStrategy.declarationAndDescriptorMatchByParameterTypes(decompiledDeclaration, candidateDescriptor)) {
+                    && navigationStrategy.declarationAndDescriptorMatchByParameterTypes(decompiledDeclaration, candidateDescriptor)
+                    && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {
                 return candidate;
             }
         }
@@ -367,6 +370,55 @@ public class JetSourceNavigationHelper {
             return receiverTypeRef.getText().equals(DescriptorRenderer.TEXT.renderType(receiverParameter.getType()));
         }
         return false;
+    }
+
+    private static boolean typeParametersMatch(
+            @NotNull JetTypeParameterListOwner typeParameterListOwner,
+            @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
+    ) {
+        List<JetTypeParameter> decompiledParameters = typeParameterListOwner.getTypeParameters();
+        if (decompiledParameters.size() != typeParameterDescriptors.size()) {
+            return false;
+        }
+
+        Multimap<Name, String> decompiledParameterToBounds = Multimaps.newSetMultimap(
+                Maps.<Name, Collection<String>>newHashMap(), CommonSuppliers.<String>getHashSetSupplier());
+        for (JetTypeParameter parameter : decompiledParameters) {
+            JetTypeReference extendsBound = parameter.getExtendsBound();
+            if (extendsBound != null) {
+                decompiledParameterToBounds.put(parameter.getNameAsName(), extendsBound.getText());
+            }
+        }
+
+        for (JetTypeConstraint typeConstraint : typeParameterListOwner.getTypeConstraints()) {
+            Name name = typeConstraint.getSubjectTypeParameterName().getReferencedNameAsName();
+            decompiledParameterToBounds.put(name, typeConstraint.getBoundTypeReference().getText());
+        }
+
+        for (int i = 0; i < decompiledParameters.size(); i++) {
+            JetTypeParameter decompiledParameter = decompiledParameters.get(i);
+            TypeParameterDescriptor descriptor = typeParameterDescriptors.get(i);
+
+            if (!decompiledParameter.getNameAsName().equals(descriptor.getName())) {
+                return false;
+            }
+
+            Set<String> descriptorUpperBounds = Sets.newHashSet(ContainerUtil.map(
+                    descriptor.getUpperBounds(), new Function<JetType, String>() {
+                                                    @Override
+                                                    public String fun(JetType type) {
+                                                        return DescriptorRenderer.TEXT.renderType(type);
+                                                    }
+                                                }));
+
+            Set<String> decompiledUpperBounds = decompiledParameterToBounds.get(descriptor.getName()).isEmpty()
+                    ? Sets.newHashSet(DescriptorRenderer.TEXT.renderType(KotlinBuiltIns.getInstance().getDefaultBound()))
+                    : Sets.newHashSet(decompiledParameterToBounds.get(descriptor.getName()));
+            if (!descriptorUpperBounds.equals(decompiledUpperBounds)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Nullable

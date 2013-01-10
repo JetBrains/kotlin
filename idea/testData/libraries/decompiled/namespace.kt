@@ -13,6 +13,10 @@ package testData.libraries
 
 [public val <T> testData.libraries.Pair<T, T>.exProp : jet.String] /* compiled code */
 
+[public fun <T : jet.CharSequence> funWithTypeParam(t : T) : Unit { /* compiled code */ }]
+
+[public fun <T : jet.Number> funWithTypeParam(t : T) : Unit { /* compiled code */ }]
+
 [public fun func() : Unit { /* compiled code */ }]
 
 [public fun func(cs : jet.CharSequence) : Unit { /* compiled code */ }]
