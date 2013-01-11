@@ -30,7 +30,6 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 public class JetPsiFactory {
@@ -203,13 +202,12 @@ public class JetPsiFactory {
         return aClass.findElementAt(7).getParent();
     }
 
-    public static PsiElement createClassLabel(Project project, @NotNull String labelName) {
-        JetExpression expression = createExpression(project, "this@" + labelName);
-        return expression.getLastChild();
+    public static JetSimpleNameExpression createClassLabel(Project project, @NotNull String labelName) {
+        JetThisExpression expression = (JetThisExpression) createExpression(project, "this@" + labelName);
+        return expression.getTargetLabel();
     }
 
-    public static PsiElement createFieldIdentifier(Project project, @NotNull String fieldName) {
-        JetExpression expression = createExpression(project, "$" + fieldName);
-        return expression.getFirstChild();
+    public static JetExpression createFieldIdentifier(Project project, @NotNull String fieldName) {
+        return createExpression(project, "$" + fieldName);
     }
 }
