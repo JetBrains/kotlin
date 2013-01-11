@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.intellij.psi.stubs.StringStubIndexExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -24,16 +23,11 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 
 import java.util.Collections;
 import java.util.List;
 
 interface MemberNavigationStrategy<Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> {
-    @NotNull
-    Class<Decl> getDeclarationClass();
-
     @NotNull
     List<JetParameter> getValueParameters(@NotNull Decl declaration);
 
@@ -43,15 +37,7 @@ interface MemberNavigationStrategy<Decl extends JetNamedDeclaration, Descr exten
     @Nullable
     JetTypeReference getReceiverType(@NotNull Decl declaration);
 
-    @NotNull
-    StringStubIndexExtension<Decl> getIndexForTopLevelMembers();
-
     class FunctionStrategy implements MemberNavigationStrategy<JetNamedFunction, FunctionDescriptor> {
-        @NotNull
-        @Override
-        public Class<JetNamedFunction> getDeclarationClass() {
-            return JetNamedFunction.class;
-        }
 
         @NotNull
         @Override
@@ -70,20 +56,9 @@ interface MemberNavigationStrategy<Decl extends JetNamedDeclaration, Descr exten
         public JetTypeReference getReceiverType(@NotNull JetNamedFunction declaration) {
             return declaration.getReceiverTypeRef();
         }
-
-        @NotNull
-        @Override
-        public StringStubIndexExtension<JetNamedFunction> getIndexForTopLevelMembers() {
-            return JetTopLevelFunctionsFqnNameIndex.getInstance();
-        }
     }
 
     class PropertyStrategy implements MemberNavigationStrategy<JetProperty, VariableDescriptor> {
-        @NotNull
-        @Override
-        public Class<JetProperty> getDeclarationClass() {
-            return JetProperty.class;
-        }
 
         @NotNull
         @Override
@@ -101,12 +76,6 @@ interface MemberNavigationStrategy<Decl extends JetNamedDeclaration, Descr exten
         @Override
         public JetTypeReference getReceiverType(@NotNull JetProperty declaration) {
             return declaration.getReceiverTypeRef();
-        }
-
-        @NotNull
-        @Override
-        public StringStubIndexExtension<JetProperty> getIndexForTopLevelMembers() {
-            return JetTopLevelPropertiesFqnNameIndex.getInstance();
         }
     }
 }

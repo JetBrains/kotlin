@@ -46,6 +46,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -161,7 +163,7 @@ public class JetSourceNavigationHelper {
 
         Collection<Decl> candidates;
         if (decompiledContainer instanceof JetFile) {
-            candidates = getInitialTopLevelCandidates(decompiledDeclaration, navigationStrategy);
+            candidates = getInitialTopLevelCandidates(decompiledDeclaration);
         }
         else if (decompiledContainer instanceof JetClassBody) {
             JetClassOrObject decompiledClassOrObject = (JetClassOrObject) decompiledContainer.getParent();
@@ -169,8 +171,7 @@ public class JetSourceNavigationHelper {
 
             candidates = sourceClassOrObject == null
                          ? Collections.<Decl>emptyList()
-                         : getInitialMemberCandidates(sourceClassOrObject, memberName,
-                                                      navigationStrategy.getDeclarationClass());
+                         : getInitialMemberCandidates(sourceClassOrObject, memberName, (Class<Decl>) decompiledDeclaration.getClass());
 
             if (candidates.isEmpty()) {
                 if (decompiledDeclaration instanceof JetProperty && sourceClassOrObject instanceof JetClass) {
@@ -245,10 +246,7 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> Collection<Decl> getInitialTopLevelCandidates(
-            @NotNull Decl decompiledDeclaration,
-            @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy
-    ) {
+    private static <Decl extends JetNamedDeclaration> Collection<Decl> getInitialTopLevelCandidates(@NotNull Decl decompiledDeclaration) {
         FqName memberFqName = JetPsiUtil.getFQName(decompiledDeclaration);
         assert memberFqName != null;
 
@@ -256,8 +254,21 @@ public class JetSourceNavigationHelper {
         if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
             return Collections.emptyList();
         }
-        StringStubIndexExtension<Decl> index = navigationStrategy.getIndexForTopLevelMembers();
+        StringStubIndexExtension<Decl> index =
+                (StringStubIndexExtension<Decl>) getIndexForTopLevelPropertyOrFunction(decompiledDeclaration);
         return index.get(memberFqName.getFqName(), decompiledDeclaration.getProject(), librarySourcesScope);
+    }
+
+    private static StringStubIndexExtension<? extends JetNamedDeclaration> getIndexForTopLevelPropertyOrFunction(
+            @NotNull JetNamedDeclaration decompiledDeclaration
+    ) {
+        if (decompiledDeclaration instanceof JetNamedFunction) {
+            return JetTopLevelFunctionsFqnNameIndex.getInstance();
+        }
+        if (decompiledDeclaration instanceof JetProperty) {
+            return JetTopLevelPropertiesFqnNameIndex.getInstance();
+        }
+        throw new IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration.getClass().getName());
     }
 
     @NotNull
