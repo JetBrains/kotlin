@@ -22,11 +22,13 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.light.LightModifierList;
+import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.IncorrectOperationException;
@@ -66,6 +68,25 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
 
     @Nullable
     private PsiModifierList modifierList;
+
+    private NullableLazyValue<PsiTypeParameterList> typeParameterList = new NullableLazyValue<PsiTypeParameterList>() {
+        @Nullable
+        @Override
+        protected PsiTypeParameterList compute() {
+            LightTypeParameterListBuilder builder = new LightTypeParameterListBuilder(getManager(), getLanguage());
+            if (classOrObject instanceof JetTypeParameterListOwner) {
+                JetTypeParameterListOwner typeParameterListOwner = (JetTypeParameterListOwner) classOrObject;
+                List<JetTypeParameter> parameters = typeParameterListOwner.getTypeParameters();
+                for (int i = 0; i < parameters.size(); i++) {
+                    JetTypeParameter jetTypeParameter = parameters.get(i);
+                    String name = jetTypeParameter.getName();
+                    String safeName = name == null ? "__no_name__" : name;
+                    builder.addParameter(new KotlinLightTypeParameter(KotlinLightClassForExplicitDeclaration.this, i, safeName));
+                }
+            }
+            return builder;
+        }
+    };
 
     private KotlinLightClassForExplicitDeclaration(
             @NotNull PsiManager manager,
@@ -178,6 +199,19 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     public PsiClass getContainingClass() {
         if (classOrObject.getParent() == classOrObject.getContainingFile()) return null;
         return super.getContainingClass();
+    }
+
+    @Nullable
+    @Override
+    public PsiTypeParameterList getTypeParameterList() {
+        return typeParameterList.getValue();
+    }
+
+    @NotNull
+    @Override
+    public PsiTypeParameter[] getTypeParameters() {
+        PsiTypeParameterList typeParameterList = getTypeParameterList();
+        return typeParameterList == null ? PsiTypeParameter.EMPTY_ARRAY : typeParameterList.getTypeParameters();
     }
 
     @Nullable
