@@ -17,7 +17,8 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
@@ -30,29 +31,28 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.jetbrains.jet.plugin.libraries.MemberMatching.*;
 
 public class JetSourceNavigationHelper {
     private static boolean forceResolve = false;
@@ -124,46 +124,6 @@ public class JetSourceNavigationHelper {
             }
         }
         return false;
-    }
-
-    private static String getTypeShortName(@NotNull JetTypeReference typeReference) {
-        JetTypeElement typeElement = typeReference.getTypeElement();
-        assert typeElement != null;
-        return typeElement.accept(new JetVisitor<String, Void>() {
-            @Override
-            public String visitDeclaration(JetDeclaration declaration, Void data) {
-                throw new IllegalStateException("This visitor shouldn't be invoked for " + declaration.getClass());
-            }
-
-            @Override
-            public String visitUserType(JetUserType type, Void data) {
-                JetSimpleNameExpression referenceExpression = type.getReferenceExpression();
-                assert referenceExpression != null;
-                return referenceExpression.getReferencedName();
-            }
-
-            @Override
-            public String visitFunctionType(JetFunctionType type, Void data) {
-                KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-                int parameterCount = type.getParameters().size();
-
-                if (type.getReceiverTypeRef() == null) {
-                    return builtIns.getFunction(parameterCount).getName().getName();
-                }
-                else {
-                    return builtIns.getExtensionFunction(parameterCount).getName().getName();
-                }
-            }
-
-            @Override
-            public String visitNullableType(JetNullableType nullableType, Void data) {
-                return nullableType.getInnerType().accept(this, null);
-            }
-        }, null);
-    }
-
-    private static boolean typesHaveSameShortName(@NotNull JetTypeReference a, @NotNull JetTypeReference b) {
-        return getTypeShortName(a).equals(getTypeShortName(b));
     }
 
     @Nullable
@@ -349,143 +309,14 @@ public class JetSourceNavigationHelper {
                 if (decompiledReceiver != null) {
                     JetTypeReference candidateReceiver = navigationStrategy.getReceiverType(candidate);
                     assert candidateReceiver != null;
-                    if (!typesHaveSameShortName(decompiledReceiver, candidateReceiver)) {
+                    if (!MemberMatching.typesHaveSameShortName(decompiledReceiver, candidateReceiver)) {
                         return false;
                     }
                 }
 
-                return parameterShortTypesMatch(navigationStrategy, candidate, decompiledDeclaration);
+                return MemberMatching.parameterShortTypesMatch(navigationStrategy, candidate, decompiledDeclaration);
             }
         });
-    }
-
-    private static boolean receiversMatch(
-            @Nullable JetTypeReference receiverTypeRef,
-            @Nullable ReceiverParameterDescriptor receiverParameter
-    ) {
-        if (receiverTypeRef == null && receiverParameter == null) {
-            return true;
-        }
-        if (receiverTypeRef != null && receiverParameter != null) {
-            return receiverTypeRef.getText().equals(DescriptorRenderer.TEXT.renderType(receiverParameter.getType()));
-        }
-        return false;
-    }
-
-    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> boolean valueParametersTypesMatch(
-            @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
-            @NotNull Decl declaration,
-            @NotNull Descr descriptor
-    ) {
-        List<JetParameter> declarationParameters = navigationStrategy.getValueParameters(declaration);
-        List<ValueParameterDescriptor> descriptorParameters = navigationStrategy.getValueParameters(descriptor);
-        if (descriptorParameters.size() != declarationParameters.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < descriptorParameters.size(); i++) {
-            ValueParameterDescriptor descriptorParameter = descriptorParameters.get(i);
-            JetParameter declarationParameter = declarationParameters.get(i);
-            JetTypeReference typeReference = declarationParameter.getTypeReference();
-            if (typeReference == null) {
-                return false;
-            }
-            JetModifierList modifierList = declarationParameter.getModifierList();
-            boolean varargInDeclaration = modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
-            boolean varargInDescriptor = descriptorParameter.getVarargElementType() != null;
-            if (varargInDeclaration != varargInDescriptor) {
-                return false;
-            }
-            String declarationTypeText = typeReference.getText();
-
-            JetType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
-            assert typeToRender != null;
-            String descriptorParameterText = DescriptorRenderer.TEXT.renderType(typeToRender);
-            if (!declarationTypeText.equals(descriptorParameterText)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static <Decl extends JetNamedDeclaration> boolean parameterShortTypesMatch(
-            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
-            @NotNull Decl a,
-            @NotNull Decl b
-    ) {
-        List<JetParameter> aParameters = navigationStrategy.getValueParameters(a);
-        List<JetParameter> bParameters = navigationStrategy.getValueParameters(b);
-        if (aParameters.size() != bParameters.size()) {
-            return false;
-        }
-        for (int i = 0; i < aParameters.size(); i++) {
-            JetTypeReference aType = aParameters.get(i).getTypeReference();
-            JetTypeReference bType = bParameters.get(i).getTypeReference();
-
-            assert aType != null;
-            assert bType != null;
-
-            if (!typesHaveSameShortName(aType, bType)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean typeParametersMatch(
-            @NotNull JetTypeParameterListOwner typeParameterListOwner,
-            @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
-    ) {
-        List<JetTypeParameter> decompiledParameters = typeParameterListOwner.getTypeParameters();
-        if (decompiledParameters.size() != typeParameterDescriptors.size()) {
-            return false;
-        }
-
-        Multimap<Name, String> decompiledParameterToBounds = Multimaps.newSetMultimap(
-                Maps.<Name, Collection<String>>newHashMap(), CommonSuppliers.<String>getHashSetSupplier());
-        for (JetTypeParameter parameter : decompiledParameters) {
-            JetTypeReference extendsBound = parameter.getExtendsBound();
-            if (extendsBound != null) {
-                decompiledParameterToBounds.put(parameter.getNameAsName(), extendsBound.getText());
-            }
-        }
-
-        for (JetTypeConstraint typeConstraint : typeParameterListOwner.getTypeConstraints()) {
-            JetSimpleNameExpression typeParameterName = typeConstraint.getSubjectTypeParameterName();
-            assert typeParameterName != null;
-
-            JetTypeReference bound = typeConstraint.getBoundTypeReference();
-            assert bound != null;
-
-            decompiledParameterToBounds.put(typeParameterName.getReferencedNameAsName(), bound.getText());
-        }
-
-        for (int i = 0; i < decompiledParameters.size(); i++) {
-            JetTypeParameter decompiledParameter = decompiledParameters.get(i);
-            TypeParameterDescriptor descriptor = typeParameterDescriptors.get(i);
-
-            Name name = decompiledParameter.getNameAsName();
-            assert name != null;
-            if (!name.equals(descriptor.getName())) {
-                return false;
-            }
-
-            Set<String> descriptorUpperBounds = Sets.newHashSet(ContainerUtil.map(
-                    descriptor.getUpperBounds(), new Function<JetType, String>() {
-                                                    @Override
-                                                    public String fun(JetType type) {
-                                                        return DescriptorRenderer.TEXT.renderType(type);
-                                                    }
-                                                }));
-
-            Set<String> decompiledUpperBounds = decompiledParameterToBounds.get(descriptor.getName()).isEmpty()
-                    ? Sets.newHashSet(DescriptorRenderer.TEXT.renderType(KotlinBuiltIns.getInstance().getDefaultBound()))
-                    : Sets.newHashSet(decompiledParameterToBounds.get(descriptor.getName()));
-            if (!descriptorUpperBounds.equals(decompiledUpperBounds)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     @Nullable
