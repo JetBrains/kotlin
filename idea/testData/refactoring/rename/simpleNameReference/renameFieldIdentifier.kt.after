@@ -1,6 +1,6 @@
 class aClass(){
-    var renamed: Int = 0;
+    var anotherRenamed: Int = 0;
         set(value){
-            $renamed =value
+            $anotherRenamed =value
         }
 }

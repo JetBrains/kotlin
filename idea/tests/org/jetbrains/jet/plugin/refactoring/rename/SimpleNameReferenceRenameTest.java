@@ -39,7 +39,7 @@ public class SimpleNameReferenceRenameTest extends LightCodeInsightTestCase {
     }
 
     public void testRenameLabel2() throws Exception {
-        doTest("foo");
+        doTest("anotherFoo");
     }
 
     public void testRenameField() throws Exception {
@@ -47,7 +47,7 @@ public class SimpleNameReferenceRenameTest extends LightCodeInsightTestCase {
     }
 
     public void testRenameFieldIdentifier() throws Exception {
-        doTest("renamed");
+        doTest("anotherRenamed");
     }
 
     private void doTest(final String newName) throws Exception {
