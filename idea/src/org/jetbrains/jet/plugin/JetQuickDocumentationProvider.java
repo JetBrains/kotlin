@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.plugin.references.StandardLibraryReferenceResolver;
+import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collection;
@@ -92,8 +92,8 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
     private static boolean isKotlinDeclaration(DeclarationDescriptor descriptor, BindingContext bindingContext, Project project) {
         PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (declaration == null) {
-            StandardLibraryReferenceResolver libraryReferenceResolver = project
-                    .getComponent(StandardLibraryReferenceResolver.class);
+            BuiltInsReferenceResolver libraryReferenceResolver = project
+                    .getComponent(BuiltInsReferenceResolver.class);
             Collection<PsiElement> elements = libraryReferenceResolver.resolveStandardLibrarySymbol(descriptor);
             return !elements.isEmpty();
         }

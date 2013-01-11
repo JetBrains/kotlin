@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.plugin.JetStandardLibraryInitializer;
+import org.jetbrains.jet.plugin.BuiltInsInitializer;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.net.URL;
@@ -52,15 +52,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
+public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
 
     private final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(KotlinBuiltIns.getInstance().getTuple(0)).toSafe();
 
-    public StandardLibraryReferenceResolver(
+    public BuiltInsReferenceResolver(
             Project project,
             // This parameter is needed to initialize built-ins before this component
-            JetStandardLibraryInitializer makeSureStandardLibraryIsInitialized
+            BuiltInsInitializer ignored
     ) {
         super(project);
     }
@@ -113,7 +113,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     }
 
     private List<JetFile> getJetFiles(String dir, final Predicate<JetFile> filter) {
-        URL url = StandardLibraryReferenceResolver.class.getResource("/" + dir + "/");
+        URL url = BuiltInsReferenceResolver.class.getResource("/" + dir + "/");
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null : "Virtual file not found by URL: " + url;
 

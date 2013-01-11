@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
+public class BuiltInsReferenceResolverTest extends ResolveTestCase {
     public void testAny() throws Exception {
         doTest();
     }
@@ -76,7 +76,7 @@ public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
     }
 
     public void testAllReferencesResolved() {
-        StandardLibraryReferenceResolver referenceResolver = getProject().getComponent(StandardLibraryReferenceResolver.class);
+        BuiltInsReferenceResolver referenceResolver = getProject().getComponent(BuiltInsReferenceResolver.class);
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackage())) {
             if (descriptor instanceof NamespaceDescriptor && "jet".equals(descriptor.getName().getName())) continue;
             assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveStandardLibrarySymbol(descriptor));

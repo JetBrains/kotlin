@@ -22,11 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 /**
- * This project component initializes JetStandardLibrary so that throwing a ProcessCanceledException while
+ * This project component initializes KotlinBuiltIns so that throwing a ProcessCanceledException while
  * loading PSI from declaration files is prevented.
  */
-public class JetStandardLibraryInitializer {
-    public JetStandardLibraryInitializer(@NotNull final Project project) {
+public class BuiltInsInitializer {
+    public BuiltInsInitializer(@NotNull final Project project) {
         ProgressManager.getInstance().executeNonCancelableSection(new Runnable() {
             @Override
             public void run() {

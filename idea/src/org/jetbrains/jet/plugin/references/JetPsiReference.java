@@ -149,7 +149,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     }
 
     private Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext bindingContext) {
-        return myExpression.getProject().getComponent(StandardLibraryReferenceResolver.class)
+        return myExpression.getProject().getComponent(BuiltInsReferenceResolver.class)
                 .resolveStandardLibrarySymbol(bindingContext, myExpression);
     }
 }

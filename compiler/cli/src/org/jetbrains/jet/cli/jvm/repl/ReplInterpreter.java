@@ -276,7 +276,7 @@ public class ReplInterpreter {
 
         NamespaceDescriptorImpl rootNs = injector.getNamespaceFactory().createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
 
-        // map "jet" namespace into JetStandardLibrary/Classes
+        // map "jet" namespace into KotlinBuiltIns
         // @see DefaultModuleConfiguraiton#extendNamespaceScope
         injector.getNamespaceFactory().createNamespaceDescriptorPathIfNeeded(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
 

@@ -241,7 +241,7 @@ public class TopDownAnalyzer {
 
         NamespaceDescriptorImpl rootNs = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
 
-        // map "jet" namespace into JetStandardLibrary/Classes
+        // map "jet" namespace into KotlinBuiltIns
         // @see DefaultModuleConfiguraiton#extendNamespaceScope
         namespaceFactory.createNamespaceDescriptorPathIfNeeded(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
 
