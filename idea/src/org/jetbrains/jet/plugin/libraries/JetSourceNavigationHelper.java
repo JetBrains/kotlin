@@ -260,7 +260,7 @@ public class JetSourceNavigationHelper {
             //noinspection unchecked
             Descr candidateDescriptor = (Descr) resolveSession.resolveToDescriptor(candidate);
             if (receiversMatch(receiverType, candidateDescriptor.getReceiverParameter())
-                    && navigationStrategy.declarationAndDescriptorMatchByParameterTypes(decompiledDeclaration, candidateDescriptor)
+                    && valueParametersTypesMatch(navigationStrategy, decompiledDeclaration, candidateDescriptor)
                     && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {
                 return candidate;
             }
@@ -324,13 +324,14 @@ public class JetSourceNavigationHelper {
             @NotNull Collection<Decl> candidates
     ) {
         final JetTypeReference decompiledReceiver = navigationStrategy.getReceiverType(decompiledDeclaration);
+        final int decompiledParametersCount = navigationStrategy.getValueParameters(decompiledDeclaration).size();
 
         return ContainerUtil.filter(candidates, new Condition<Decl>() {
             @Override
             public boolean value(Decl candidate) {
                 boolean sameReceiverPresence = (navigationStrategy.getReceiverType(candidate) != null) ==
                                                (decompiledReceiver != null);
-                boolean sameParameterCount = navigationStrategy.declarationsMatchByParameterCount(candidate, decompiledDeclaration);
+                boolean sameParameterCount = navigationStrategy.getValueParameters(candidate).size() == decompiledParametersCount;
                 return sameReceiverPresence && sameParameterCount;
             }
         });
@@ -355,7 +356,7 @@ public class JetSourceNavigationHelper {
                     }
                 }
 
-                return navigationStrategy.declarationsMatchByParameterTypes(candidate, decompiledDeclaration);
+                return parameterShortTypesMatch(navigationStrategy, candidate, decompiledDeclaration);
             }
         });
     }
@@ -371,6 +372,66 @@ public class JetSourceNavigationHelper {
             return receiverTypeRef.getText().equals(DescriptorRenderer.TEXT.renderType(receiverParameter.getType()));
         }
         return false;
+    }
+
+    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> boolean valueParametersTypesMatch(
+            @NotNull NavigationStrategy<Decl, Descr> navigationStrategy,
+            @NotNull Decl declaration,
+            @NotNull Descr descriptor
+    ) {
+        List<JetParameter> declarationParameters = navigationStrategy.getValueParameters(declaration);
+        List<ValueParameterDescriptor> descriptorParameters = navigationStrategy.getValueParameters(descriptor);
+        if (descriptorParameters.size() != declarationParameters.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < descriptorParameters.size(); i++) {
+            ValueParameterDescriptor descriptorParameter = descriptorParameters.get(i);
+            JetParameter declarationParameter = declarationParameters.get(i);
+            JetTypeReference typeReference = declarationParameter.getTypeReference();
+            if (typeReference == null) {
+                return false;
+            }
+            JetModifierList modifierList = declarationParameter.getModifierList();
+            boolean varargInDeclaration = modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
+            boolean varargInDescriptor = descriptorParameter.getVarargElementType() != null;
+            if (varargInDeclaration != varargInDescriptor) {
+                return false;
+            }
+            String declarationTypeText = typeReference.getText();
+
+            JetType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
+            assert typeToRender != null;
+            String descriptorParameterText = DescriptorRenderer.TEXT.renderType(typeToRender);
+            if (!declarationTypeText.equals(descriptorParameterText)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static <Decl extends JetNamedDeclaration> boolean parameterShortTypesMatch(
+            @NotNull NavigationStrategy<Decl, ?> navigationStrategy,
+            @NotNull Decl a,
+            @NotNull Decl b
+    ) {
+        List<JetParameter> aParameters = navigationStrategy.getValueParameters(a);
+        List<JetParameter> bParameters = navigationStrategy.getValueParameters(b);
+        if (aParameters.size() != bParameters.size()) {
+            return false;
+        }
+        for (int i = 0; i < aParameters.size(); i++) {
+            JetTypeReference aType = aParameters.get(i).getTypeReference();
+            JetTypeReference bType = bParameters.get(i).getTypeReference();
+
+            assert aType != null;
+            assert bType != null;
+
+            if (!typesHaveSameShortName(aType, bType)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean typeParametersMatch(
@@ -448,13 +509,14 @@ public class JetSourceNavigationHelper {
         @NotNull
         Class<Decl> getDeclarationClass();
 
-        boolean declarationsMatchByParameterCount(@NotNull Decl a, @NotNull Decl b);
+        @NotNull
+        List<JetParameter> getValueParameters(@NotNull Decl declaration);
 
-        boolean declarationsMatchByParameterTypes(@NotNull Decl a, @NotNull Decl b);
+        @NotNull
+        List<ValueParameterDescriptor> getValueParameters(@NotNull Descr descriptor);
 
-        boolean declarationAndDescriptorMatchByParameterTypes(@NotNull Decl declaration, @NotNull Descr descriptor);
-
-        @Nullable JetTypeReference getReceiverType(@NotNull Decl declaration);
+        @Nullable
+        JetTypeReference getReceiverType(@NotNull Decl declaration);
 
         @NotNull
         StringStubIndexExtension<Decl> getIndexForTopLevelMembers();
@@ -467,66 +529,16 @@ public class JetSourceNavigationHelper {
             return JetNamedFunction.class;
         }
 
+        @NotNull
         @Override
-        public boolean declarationsMatchByParameterCount(@NotNull JetNamedFunction a, @NotNull JetNamedFunction b) {
-            return a.getValueParameters().size() == b.getValueParameters().size();
+        public List<JetParameter> getValueParameters(@NotNull JetNamedFunction declaration) {
+            return declaration.getValueParameters();
         }
 
+        @NotNull
         @Override
-        public boolean declarationsMatchByParameterTypes(@NotNull JetNamedFunction a, @NotNull JetNamedFunction b) {
-            List<JetParameter> aParameters = a.getValueParameters();
-            List<JetParameter> bParameters = b.getValueParameters();
-            if (aParameters.size() != bParameters.size()) {
-                return false;
-            }
-            for (int i = 0; i < aParameters.size(); i++) {
-                JetTypeReference aType = aParameters.get(i).getTypeReference();
-                JetTypeReference bType = bParameters.get(i).getTypeReference();
-
-                assert aType != null;
-                assert bType != null;
-
-                if (!typesHaveSameShortName(aType, bType)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public boolean declarationAndDescriptorMatchByParameterTypes(
-                @NotNull JetNamedFunction declaration,
-                @NotNull FunctionDescriptor descriptor
-        ) {
-            List<JetParameter> declarationParameters = declaration.getValueParameters();
-            List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
-            if (descriptorParameters.size() != declarationParameters.size()) {
-                return false;
-            }
-
-            for (int i = 0; i < descriptorParameters.size(); i++) {
-                ValueParameterDescriptor descriptorParameter = descriptorParameters.get(i);
-                JetParameter declarationParameter = declarationParameters.get(i);
-                JetTypeReference typeReference = declarationParameter.getTypeReference();
-                if (typeReference == null) {
-                    return false;
-                }
-                JetModifierList modifierList = declarationParameter.getModifierList();
-                boolean varargInDeclaration = modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
-                boolean varargInDescriptor = descriptorParameter.getVarargElementType() != null;
-                if (varargInDeclaration != varargInDescriptor) {
-                    return false;
-                }
-                String declarationTypeText = typeReference.getText();
-
-                JetType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
-                assert typeToRender != null;
-                String descriptorParameterText = DescriptorRenderer.TEXT.renderType(typeToRender);
-                if (!declarationTypeText.equals(descriptorParameterText)) {
-                    return false;
-                }
-            }
-            return true;
+        public List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor descriptor) {
+            return descriptor.getValueParameters();
         }
 
         @Nullable
@@ -549,22 +561,16 @@ public class JetSourceNavigationHelper {
             return JetProperty.class;
         }
 
+        @NotNull
         @Override
-        public boolean declarationsMatchByParameterCount(@NotNull JetProperty a, @NotNull JetProperty b) {
-            return true;
+        public List<JetParameter> getValueParameters(@NotNull JetProperty declaration) {
+            return Collections.emptyList();
         }
 
+        @NotNull
         @Override
-        public boolean declarationsMatchByParameterTypes(@NotNull JetProperty a, @NotNull JetProperty b) {
-            return true;
-        }
-
-        @Override
-        public boolean declarationAndDescriptorMatchByParameterTypes(
-                @NotNull JetProperty declaration,
-                @NotNull VariableDescriptor descriptor
-        ) {
-            return true;
+        public List<ValueParameterDescriptor> getValueParameters(@NotNull VariableDescriptor descriptor) {
+            return Collections.emptyList();
         }
 
         @Nullable
