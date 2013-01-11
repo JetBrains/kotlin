@@ -94,11 +94,10 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         if (declaration == null) {
             StandardLibraryReferenceResolver libraryReferenceResolver = project
                     .getComponent(StandardLibraryReferenceResolver.class);
-            final Collection<PsiElement> elements = libraryReferenceResolver.resolveStandardLibrarySymbol(descriptor);
-            if (elements.isEmpty()) return false;
-            declaration = elements.iterator().next();
+            Collection<PsiElement> elements = libraryReferenceResolver.resolveStandardLibrarySymbol(descriptor);
+            return !elements.isEmpty();
         }
-        if (declaration == null) return false;
+
         if (JetLanguage.INSTANCE == declaration.getLanguage()) return true;
         ClsClassImpl clsClass = PsiTreeUtil.getParentOfType(declaration, ClsClassImpl.class);
         if (clsClass == null) return false;
