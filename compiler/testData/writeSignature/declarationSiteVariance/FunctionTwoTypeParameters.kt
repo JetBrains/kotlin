@@ -4,7 +4,7 @@ class X
 
 fun f(m: M<X, X>): M<X, X> = throw Exception()
 
-// method: namespace::f
+// method: _DefaultPackage::f
 // jvm signature:     (LM;)LM;
 // generic signature: (LM<-LX;+LX;>;)LM<LX;LX;>;
 // kotlin signature:  (LM<LX;LX;>;)LM<LX;LX;>;

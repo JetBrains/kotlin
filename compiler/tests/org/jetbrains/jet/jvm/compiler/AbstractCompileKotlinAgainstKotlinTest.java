@@ -30,6 +30,8 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 
 import java.io.File;
@@ -62,7 +64,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
                 new URL[]{ aDir.toURI().toURL(), bDir.toURI().toURL() },
                 AbstractCompileKotlinAgainstKotlinTest.class.getClassLoader()
         );
-        Class<?> clazz = classLoader.loadClass("namespace");
+        Class<?> clazz = classLoader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
         Method main = clazz.getMethod("main", new Class[] {String[].class});
         main.invoke(null, new Object[] {ArrayUtil.EMPTY_STRING_ARRAY});
     }

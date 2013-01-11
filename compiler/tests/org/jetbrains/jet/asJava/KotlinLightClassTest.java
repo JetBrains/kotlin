@@ -32,8 +32,10 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.File;
 import java.util.Arrays;
@@ -126,7 +128,7 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
         }
 
         public void testPackage() throws Exception {
-            checkModifiers("test.namespace", PUBLIC, FINAL);
+            checkModifiers("test." + PackageClassUtils.getPackageClassName(new FqName("test")), PUBLIC, FINAL);
         }
     }
 

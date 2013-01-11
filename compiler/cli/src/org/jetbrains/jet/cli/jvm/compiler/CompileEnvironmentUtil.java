@@ -33,7 +33,7 @@ import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
@@ -137,7 +137,7 @@ public class CompileEnvironmentUtil {
             loader = new GeneratedClassLoader(factory, KotlinToJVMBytecodeCompiler.class.getClassLoader());
         }
         try {
-            Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
+            Class namespaceClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
             final Method method = namespaceClass.getDeclaredMethod("project");
             if (method == null) {
                 throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");

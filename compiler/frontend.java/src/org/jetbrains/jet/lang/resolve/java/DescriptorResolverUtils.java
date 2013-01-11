@@ -46,7 +46,7 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isKotlinClass(@NotNull PsiClass psiClass) {
-        return new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS);
+        return new PsiClassWrapper(psiClass).getJetClass().isDefined() || PackageClassUtils.isPackageClass(psiClass);
     }
 
     public static boolean isInnerEnum(@NotNull PsiClass innerClass, @Nullable DeclarationDescriptor owner) {

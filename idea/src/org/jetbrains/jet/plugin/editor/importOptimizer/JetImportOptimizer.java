@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
@@ -190,7 +190,7 @@ public class JetImportOptimizer implements ImportOptimizer {
         if (element instanceof JetFile) {
             return JetPsiUtil.getFQName((JetFile) element);
         }
-        
+
         if (element instanceof JetSimpleNameExpression) {
             JetNamespaceHeader namespaceHeader = PsiTreeUtil.getParentOfType(element, JetNamespaceHeader.class);
             if (namespaceHeader != null) {
@@ -221,7 +221,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                 return new FqName(qualifiedName);
             }
         }
-        
+
         if (element instanceof PsiField) {
             PsiField field = (PsiField) element;
 
@@ -260,7 +260,7 @@ public class JetImportOptimizer implements ImportOptimizer {
         if (memberName == null) {
             return null;
         }
-        if (classFQN.shortName().getName().equals(JvmAbi.PACKAGE_CLASS)) {
+        if (PackageClassUtils.isPackageClass(classFQN)) {
             return QualifiedNamesUtil.combine(classFQN.parent(), Name.identifier(memberName));
         }
         else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -55,7 +54,7 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     private KotlinLightClassForPackage(@NotNull PsiManager manager, @NotNull FqName packageFqName, @NotNull Collection<JetFile> files) {
         super(manager);
         this.packageFqName = packageFqName;
-        this.packageClassFqName = packageFqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
+        this.packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
         assert !files.isEmpty() : "No files for package " + packageFqName;
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();

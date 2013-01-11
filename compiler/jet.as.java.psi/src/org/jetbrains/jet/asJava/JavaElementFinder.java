@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -87,8 +87,9 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         findClassesAndObjects(qualifiedName, scope, answer);
 
-        if (JvmAbi.PACKAGE_CLASS.equals(qualifiedName.shortName().getName())) {
-            findPackageClass(qualifiedName.parent(), scope, answer);
+        FqName packageFQN = qualifiedName.parent();
+        if (PackageClassUtils.getPackageClassFqName(packageFQN).equals(qualifiedName)) {
+            findPackageClass(packageFQN, scope, answer);
         }
 
         return answer.toArray(new PsiClass[answer.size()]);
@@ -141,7 +142,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
         Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
 
         Set<String> answer = Sets.newHashSet();
-        answer.add(JvmAbi.PACKAGE_CLASS);
+        answer.add(PackageClassUtils.getPackageClassName(packageFQN));
 
         for (JetClassOrObject declaration : declarations) {
             String name = declaration.getName();

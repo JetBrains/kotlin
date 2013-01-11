@@ -27,7 +27,8 @@ public class AbstractCodegenTestCaseOnAndroid extends TestCase {
     protected void invokeBoxMethod(String filePath, String expectedResult) throws Exception {
         try {
             Class clazz;
-            clazz = Class.forName(filePath.replaceAll("\\\\|-|\\.|/", "_") + ".namespace");
+            String packageName = filePath.replaceAll("\\\\|-|\\.|/", "_");
+            clazz = Class.forName(packageName + "." + getPackageClassName(packageName));
             Method method;
             method = clazz.getMethod("box");
             assertEquals(expectedResult, method.invoke(null));
@@ -35,5 +36,9 @@ public class AbstractCodegenTestCaseOnAndroid extends TestCase {
         catch (Throwable e) {
             throw new RuntimeException("File: " + filePath, e);
         }
+    }
+
+    public static String getPackageClassName(String packageName) {
+        return Character.toUpperCase(packageName.charAt(0)) + packageName.substring(1, packageName.length()) + "Package";
     }
 }

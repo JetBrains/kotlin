@@ -4,7 +4,7 @@ class X
 
 fun f(p: In<Out<X>>) {}
 
-// method: namespace::f
+// method: _DefaultPackage::f
 // jvm signature:     (LIn;)V
 // generic signature: (LIn<-LOut<+LX;>;>;)V
 // kotlin signature:  (LIn<LOut<LX;>;>;)V

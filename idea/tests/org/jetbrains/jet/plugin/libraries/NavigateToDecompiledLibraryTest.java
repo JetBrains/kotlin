@@ -43,7 +43,7 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
         doTest();
     }
 
-    public void testnamespace() {
+    public void testLibrariesPackage() {
         doTest();
     }
 

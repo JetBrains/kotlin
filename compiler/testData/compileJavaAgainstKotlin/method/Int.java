@@ -1,6 +1,6 @@
 
 class Int {
     {
-        int r = namespace.lll(1);
+        int r = _DefaultPackage.lll(1);
     }
 }

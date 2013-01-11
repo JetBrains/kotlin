@@ -25,6 +25,8 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.test.Tmpdir;
@@ -101,7 +103,7 @@ public class CliTest {
                 "-output", tmpdir.getTmpDir().getPath()};
         executeCompilerCompareOutput(args);
 
-        Assert.assertTrue(new File(tmpdir.getTmpDir(), "namespace.class").isFile());
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
     }
 
     @Test

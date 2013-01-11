@@ -1,6 +1,6 @@
 
 class IntArray {
     {
-        Integer[] r = namespace.doNothing(new Integer[0], null);
+        Integer[] r = _DefaultPackage.doNothing(new Integer[0], null);
     }
 }

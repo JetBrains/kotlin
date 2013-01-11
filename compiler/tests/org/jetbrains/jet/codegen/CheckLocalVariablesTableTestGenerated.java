@@ -33,29 +33,29 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/checkLocalVariablesTable"), "kt", true);
     }
     
-    @TestMetadata("namespace$foo$1.kt")
-    public void testNamespace$foo$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/namespace$foo$1.kt");
-    }
-    
-    @TestMetadata("namespace$foo$1$1.kt")
-    public void testNamespace$foo$1$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/namespace$foo$1$1.kt");
-    }
-    
-    @TestMetadata("namespace$foo$a$1.kt")
-    public void testNamespace$foo$a$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/namespace$foo$a$1.kt");
-    }
-    
-    @TestMetadata("namespace$foo1$1.kt")
-    public void testNamespace$foo1$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/namespace$foo1$1.kt");
-    }
-    
     @TestMetadata("someClass.kt")
     public void testSomeClass() throws Exception {
         doTest("compiler/testData/checkLocalVariablesTable/someClass.kt");
+    }
+    
+    @TestMetadata("_DefaultPackage$foo$1.kt")
+    public void test_DefaultPackage$foo$1() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo$1.kt");
+    }
+    
+    @TestMetadata("_DefaultPackage$foo$1$1.kt")
+    public void test_DefaultPackage$foo$1$1() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo$1$1.kt");
+    }
+    
+    @TestMetadata("_DefaultPackage$foo$a$1.kt")
+    public void test_DefaultPackage$foo$a$1() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo$a$1.kt");
+    }
+    
+    @TestMetadata("_DefaultPackage$foo1$1.kt")
+    public void test_DefaultPackage$foo1$1() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo1$1.kt");
     }
     
 }

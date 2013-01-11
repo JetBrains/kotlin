@@ -28,6 +28,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
@@ -103,17 +105,17 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
     }
 
     public void testSimple() {
-        doTest("simple.kt", "namespace", 2);
+        doTest("simple.kt", PackageClassUtils.getPackageClassName(FqName.ROOT), 2);
     }
 
     public void testKt2489() {
-        doTest("a.kt", "namespace$a$f$1", 3);
-        doTest("main.kt", "namespace$main$f$1", 3);
+        doTest("a.kt", PackageClassUtils.getPackageClassName(FqName.ROOT) + "$a$f$1", 3);
+        doTest("main.kt", PackageClassUtils.getPackageClassName(FqName.ROOT) + "$main$f$1", 3);
     }
 
     public void testMultiSameName() {
         // The order and the exact names do matter here
-        doTest("1/foo.kt", "multiSameName.namespace$foo$f$1", 4);
-        doTest("2/foo.kt", "multiSameName.namespace$foo$f$2", 4);
+        doTest("1/foo.kt", "multiSameName." + PackageClassUtils.getPackageClassName(new FqName("multiSameName")) + "$foo$f$1", 4);
+        doTest("2/foo.kt", "multiSameName." + PackageClassUtils.getPackageClassName(new FqName("multiSameName")) + "$foo$f$2", 4);
     }
 }

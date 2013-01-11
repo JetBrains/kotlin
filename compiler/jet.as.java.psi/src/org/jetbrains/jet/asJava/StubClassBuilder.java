@@ -28,7 +28,11 @@ import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
@@ -66,13 +70,20 @@ public class StubClassBuilder extends ClassBuilder {
         v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access);
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces);
-        if (name.equals(JvmAbi.PACKAGE_CLASS) || name.endsWith("/" + JvmAbi.PACKAGE_CLASS)) {
-            isNamespace = true;
+
+        if (origin instanceof JetFile) {
+            FqName packageName = JetPsiUtil.getFQName((JetFile) origin);
+            String packageClassName = PackageClassUtils.getPackageClassName(packageName);
+
+            if (name.equals(packageClassName) || name.endsWith("/" + packageClassName)) {
+                isNamespace = true;
+            }
         }
-        else {
+
+        if (!isNamespace) {
             parentStack.push(v.getResult());
         }
-        
+
         ((StubBase) v.getResult()).putUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT, origin);
     }
 

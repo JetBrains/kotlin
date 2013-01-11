@@ -1,6 +1,6 @@
 
 class IntWithDefault {
     {
-        int r = namespace.www(1);
+        int r = _DefaultPackage.www(1);
     }
 }

@@ -1,5 +1,5 @@
 class GenericArray {
     public static void ggff() {
-        String[] s = namespace.ffgg(new String[0]);
+        String[] s = _DefaultPackage.ffgg(new String[0]);
     }
 }

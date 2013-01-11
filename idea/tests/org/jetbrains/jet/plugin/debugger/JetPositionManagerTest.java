@@ -95,7 +95,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         doTest();
     }
 
-    public void testNamespace() {
+    public void test_DefaultPackage() {
         doTest();
     }
 

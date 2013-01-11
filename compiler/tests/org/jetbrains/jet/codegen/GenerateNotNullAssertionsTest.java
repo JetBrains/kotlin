@@ -29,6 +29,8 @@ import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.File;
 
@@ -69,7 +71,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
 
         loadFiles("notNullAssertions/noAssertionsForKotlin.kt", "notNullAssertions/noAssertionsForKotlinMain.kt");
 
-        assertNoIntrinsicsMethodIsCalled("namespace");
+        assertNoIntrinsicsMethodIsCalled(PackageClassUtils.getPackageClassName(FqName.ROOT));
     }
 
     public void testNoAssertionsForKotlinFromBinary() throws Exception {
@@ -85,7 +87,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
 
         loadFile("notNullAssertions/noAssertionsForKotlinMain.kt");
 
-        assertNoIntrinsicsMethodIsCalled("namespace");
+        assertNoIntrinsicsMethodIsCalled(PackageClassUtils.getPackageClassName(FqName.ROOT));
     }
 
     public void testGenerateParamAssertions() throws Exception {

@@ -29,8 +29,8 @@ import jet.runtime.typeinfo.JetClass;
 import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -57,7 +57,8 @@ class JetFromJavaDescriptorHelper {
         /* Will iterate through short name caches
            Kotlin namespaces from jar a class files will be collected from java cache
            Kotlin namespaces classes from sources will be collected with JetShortNamesCache.getClassesByName */
-        return PsiShortNamesCache.getInstance(project).getClassesByName(JvmAbi.PACKAGE_CLASS, scope);
+        // TODO Collect all package classes
+        return PsiShortNamesCache.getInstance(project).getClassesByName("namespace", scope);
     }
 
     /**
@@ -160,7 +161,7 @@ class JetFromJavaDescriptorHelper {
 
             FqName classFQN = new FqName(qualifiedName);
 
-            if (classFQN.shortName().toString().equals(JvmAbi.PACKAGE_CLASS)) {
+            if (PackageClassUtils.isPackageClass(classFQN)) {
                 FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
                 return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
             }
@@ -183,7 +184,7 @@ class JetFromJavaDescriptorHelper {
 
             // Check this is top level function
             PsiClass containingClass = psiMethod.getContainingClass();
-            if (containingClass == null || !JvmAbi.PACKAGE_CLASS.equals(containingClass.getName())) {
+            if (containingClass == null || !PackageClassUtils.isPackageClass(containingClass)) {
                 continue;
             }
 

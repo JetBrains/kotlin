@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -255,11 +257,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
         else if (containingDeclaration instanceof NamespaceDescriptor) {
             String peek = peekFromStack(nameStack);
+            FqName qualifiedName = ((NamespaceDescriptor) containingDeclaration).getQualifiedName();
+            String packageClassName = PackageClassUtils.getPackageClassName(qualifiedName);
             if (peek.isEmpty()) {
-                peek = JvmAbi.PACKAGE_CLASS;
+                peek = packageClassName;
             }
             else {
-                peek += "/" + JvmAbi.PACKAGE_CLASS;
+                peek += "/" + packageClassName;
             }
             nameStack.push(peek + '$' + function.getName());
             super.visitNamedFunction(function);

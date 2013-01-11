@@ -33,8 +33,8 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -142,7 +142,8 @@ public class NamespaceCodegen extends MemberCodegen {
             }
 
             if (k > 0) {
-                String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(name.child(Name.identifier(JvmAbi.PACKAGE_CLASS))).getInternalName();
+                String namespaceInternalName = JvmClassName.byFqNameWithoutInnerClasses(
+                                                    PackageClassUtils.getPackageClassFqName(name)).getInternalName();
                 String className = getMultiFileNamespaceInternalName(namespaceInternalName, file);
                 ClassBuilder builder = state.getFactory().forNamespacepart(className, file);
 
@@ -271,11 +272,12 @@ public class NamespaceCodegen extends MemberCodegen {
 
     @NotNull
     public static JvmClassName getJVMClassNameForKotlinNs(@NotNull FqName fqName) {
+        String packageClassName = PackageClassUtils.getPackageClassName(fqName);
         if (fqName.isRoot()) {
-            return JvmClassName.byInternalName(JvmAbi.PACKAGE_CLASS);
+            return JvmClassName.byInternalName(packageClassName);
         }
 
-        return JvmClassName.byFqNameWithoutInnerClasses(fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS)));
+        return JvmClassName.byFqNameWithoutInnerClasses(fqName.child(Name.identifier(packageClassName)));
     }
 
     @NotNull

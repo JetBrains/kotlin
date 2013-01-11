@@ -23,7 +23,6 @@ public class JvmAbi {
     public static final String DEFAULT_PARAMS_IMPL_SUFFIX = "$default";
     public static final String GETTER_PREFIX = "get";
     public static final String SETTER_PREFIX = "set";
-    public static final String PACKAGE_CLASS = "namespace";
 
     public static final String CLASS_OBJECT_CLASS_NAME = "object";
     public static final String CLASS_OBJECT_SUFFIX = "$" + CLASS_OBJECT_CLASS_NAME;

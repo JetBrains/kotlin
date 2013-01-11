@@ -203,7 +203,6 @@ public final class JavaNamespaceResolver {
 
     @Nullable
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        return psiClassFinder.findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)),
-                                           PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        return psiClassFinder.findPsiClass(PackageClassUtils.getPackageClassFqName(packageFQN), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 }

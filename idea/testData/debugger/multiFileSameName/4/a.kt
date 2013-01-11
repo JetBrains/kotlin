@@ -1,5 +1,5 @@
 package test
 
 fun quux() {
-    "" // test/namespace$src$a$
+    "" // test/TestPackage$src$a$
 }

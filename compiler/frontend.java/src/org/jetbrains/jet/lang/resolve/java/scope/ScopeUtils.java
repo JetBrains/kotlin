@@ -53,7 +53,7 @@ public final class ScopeUtils {
         }
 
         for (PsiClass psiClass : javaSemanticServices.getPsiClassFinder().findPsiClasses(psiPackage)) {
-            if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+            if (isKotlinNamespace && PackageClassUtils.isPackageClass(psiClass)) {
                 continue;
             }
 
@@ -62,7 +62,7 @@ public final class ScopeUtils {
             }
 
             // TODO: Temp hack for collection function descriptors from java
-            if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+            if (PackageClassUtils.isPackageClass(psiClass)) {
                 continue;
             }
 

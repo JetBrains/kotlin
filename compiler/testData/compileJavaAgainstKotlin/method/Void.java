@@ -1,5 +1,5 @@
 class Void {
     {
-        namespace.f();
+        _DefaultPackage.f();
     }
 }

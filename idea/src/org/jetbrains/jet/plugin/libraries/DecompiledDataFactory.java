@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -236,7 +233,7 @@ public class DecompiledDataFactory {
     }
 
     public static boolean isKotlinNamespaceClass(@NotNull PsiClass psiClass) {
-        if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName()) && !isKotlinClass(psiClass)) {
+        if (PackageClassUtils.isPackageClass(psiClass) && !isKotlinClass(psiClass)) {
             for (PsiMethod method : psiClass.getMethods()) {
                 if (hasAnnotation(method, JET_METHOD)) {
                     return true;

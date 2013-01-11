@@ -6,6 +6,6 @@ class MapOfKString {
     public static void gfgdgfg() {
         Map<String, Integer> map = new HashMap<String, Integer>();
         
-        Map<String, Integer> r = namespace.fff(map);
+        Map<String, Integer> r = _DefaultPackage.fff(map);
     }
 }

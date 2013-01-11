@@ -1,6 +1,6 @@
 
 class Any {
     {
-        Object r = namespace.anyany(new Object(), null);
+        Object r = _DefaultPackage.anyany(new Object(), null);
     }
 }

@@ -22,6 +22,8 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.junit.Assert;
 
@@ -55,7 +57,7 @@ public class CompileEnvironmentTest extends TestCase {
                 JarInputStream is = new JarInputStream(fileInputStream);
                 try {
                     final List<String> entries = listEntries(is);
-                    assertTrue(entries.contains("Smoke/namespace.class"));
+                    assertTrue(entries.contains("Smoke/" + PackageClassUtils.getPackageClassName(new FqName("Smoke")) + ".class"));
                     assertEquals(1, entries.size());
                 }
                 finally {

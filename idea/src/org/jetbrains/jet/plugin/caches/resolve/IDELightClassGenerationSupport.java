@@ -17,14 +17,17 @@
 package org.jetbrains.jet.plugin.caches.resolve;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.stubindex.*;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -35,6 +38,10 @@ import java.util.Set;
 import static org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSources;
 
 public class IDELightClassGenerationSupport extends LightClassGenerationSupport {
+
+    public static IDELightClassGenerationSupport getInstanceForIDE(@NotNull Project project) {
+        return (IDELightClassGenerationSupport) ServiceManager.getService(project, LightClassGenerationSupport.class);
+    }
 
     private final Project project;
 
@@ -94,6 +101,22 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             }
         }
 
+        return result;
+    }
+
+    @NotNull
+    public MultiMap<String, FqName> getAllPackageClasses(@NotNull final GlobalSearchScope scope) {
+        Collection<String> packageFqNames = JetPackageDeclarationIndex.getInstance().getAllKeys(project);
+
+        MultiMap<String, FqName> result = new MultiMap<String, FqName>();
+        for (String packageFqName : packageFqNames) {
+            Collection<JetFile> files = JetPackageDeclarationIndex.getInstance().get(packageFqName, project, kotlinSources(scope));
+            if (!files.isEmpty()) {
+                FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(new FqName(packageFqName));
+                result.putValue(packageClassFqName.shortName().getName(), packageClassFqName);
+            }
+
+        }
         return result;
     }
 }

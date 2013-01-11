@@ -1,6 +1,6 @@
 fun key(): Int = throw Exception()
 
-// method: namespace::key
+// method: _DefaultPackage::key
 // jvm signature:     ()I
 // generic signature: null
 // kotlin signature:  ()I // TODO: make null

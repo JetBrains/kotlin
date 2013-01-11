@@ -5,7 +5,7 @@ class ListOfT {
 
     public static void check() {
         List<String> list = new ArrayList<String>();
-        List<String> r = namespace.listOfT(list);
+        List<String> r = _DefaultPackage.listOfT(list);
     }
 
 }

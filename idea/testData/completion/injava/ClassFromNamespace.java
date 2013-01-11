@@ -5,5 +5,5 @@ public class Testing {
 }
 
 // EXIST: ClassFromJet
-// EXIST: namespace
+// EXIST: SomePackage
 // NUMBER: 2

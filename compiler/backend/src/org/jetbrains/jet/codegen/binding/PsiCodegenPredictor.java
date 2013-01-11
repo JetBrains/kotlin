@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -144,9 +145,10 @@ public final class PsiCodegenPredictor {
 
     private static JvmClassName addPackageClass(JvmClassName packageName) {
         FqName name = packageName.getFqName();
+        String packageClassName = PackageClassUtils.getPackageClassName(name);
         return name.isRoot() ?
-               JvmClassName.byFqNameWithoutInnerClasses(JvmAbi.PACKAGE_CLASS) :
-               JvmClassName.byInternalName(packageName.getInternalName() + "/" + JvmAbi.PACKAGE_CLASS);
+               JvmClassName.byFqNameWithoutInnerClasses(packageClassName) :
+               JvmClassName.byInternalName(packageName.getInternalName() + "/" + packageClassName);
     }
 
     public static boolean checkPredictedClassNameForFun(

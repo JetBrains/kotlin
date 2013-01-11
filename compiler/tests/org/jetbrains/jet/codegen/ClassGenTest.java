@@ -17,6 +17,8 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -60,7 +62,7 @@ public class ClassGenTest extends CodegenTestCase {
         //        System.out.println(generateToText());
         final ClassFileFactory state = generateClassesInFile();
         final GeneratedClassLoader loader = createClassLoader(state);
-        final Class aClass = loader.loadClass("namespace");
+        final Class aClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
         assertEquals("OK", aClass.getMethod("box").invoke(null));
 
         final Class test = loader.loadClass("Test");

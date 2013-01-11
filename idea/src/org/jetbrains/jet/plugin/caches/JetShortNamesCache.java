@@ -28,6 +28,7 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport;
 import org.jetbrains.jet.plugin.stubindex.*;
 
 import java.util.*;
@@ -81,8 +83,12 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @Override
     public String[] getAllClassNames() {
         Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
+
         // .namespace classes can not be indexed, since they have no explicit declarations
-        classNames.add(JvmAbi.PACKAGE_CLASS);
+        IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
+        Set<String> packageClassShortNames = lightClassGenerationSupport.getAllPackageClasses(GlobalSearchScope.allScope(project)).keySet();
+        classNames.addAll(packageClassShortNames);
+
         return ArrayUtil.toStringArray(classNames);
     }
 
@@ -94,11 +100,14 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public PsiClass[] getClassesByName(@NotNull @NonNls String name, @NotNull GlobalSearchScope scope) {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
-        if (JvmAbi.PACKAGE_CLASS.equals(name)) {
-            // .namespace classes can not be indexed, since they have no explicit declarations
-            Collection<String> allPackageFqNames = JetPackageDeclarationIndex.getInstance().getAllKeys(project);
-            for (String fqName : allPackageFqNames) {
-                PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName + "." + JvmAbi.PACKAGE_CLASS, scope);
+        IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
+        MultiMap<String, FqName> packageClasses = lightClassGenerationSupport.getAllPackageClasses(scope);
+
+        // .namespace classes can not be indexed, since they have no explicit declarations
+        Collection<FqName> fqNames = packageClasses.get(name);
+        if (!fqNames.isEmpty()) {
+            for (FqName fqName : fqNames) {
+                PsiClass psiClass = JavaElementFinder.getInstance(project).findClass(fqName.getFqName(), scope);
                 if (psiClass != null) {
                     result.add(psiClass);
                 }

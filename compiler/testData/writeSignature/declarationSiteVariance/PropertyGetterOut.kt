@@ -3,7 +3,7 @@ class X
 
 val p: M<X> = throw Exception()
 
-// method: namespace::getP
+// method: _DefaultPackage::getP
 // jvm signature:     ()LM;
 // generic signature: ()LM<LX;>;
 // kotlin signature:  null

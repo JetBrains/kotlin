@@ -26,8 +26,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport;
 import org.jetbrains.jet.plugin.util.DebuggerUtils;
 
 import java.util.regex.Matcher;
@@ -55,10 +57,8 @@ public class JetExceptionFilter implements Filter {
         // fullyQualifiedName is of format "package.Class$Inner"
         String fullyQualifiedName = element.getClassName();
 
-        int lastDot = fullyQualifiedName.lastIndexOf('.');
-        String classNameWithInners = fullyQualifiedName.substring(lastDot + 1);
         // All classes except 'namespace' and its inner classes are handled correctly in the default ExceptionFilter
-        if (!classNameWithInners.equals(JvmAbi.PACKAGE_CLASS) && !classNameWithInners.startsWith(JvmAbi.PACKAGE_CLASS + "$")) {
+        if (!isPackageClassOrSubClass(fullyQualifiedName)) {
             return null;
         }
 
@@ -72,6 +72,20 @@ public class JetExceptionFilter implements Filter {
         if (virtualFile == null) return null;
 
         return new OpenFileHyperlinkInfo(project, virtualFile, element.getLineNumber() - 1);
+    }
+
+    private boolean isPackageClassOrSubClass(String fqName) {
+        if (fqName.equals(PackageClassUtils.getPackageClassName(FqName.ROOT))) {
+            return true;
+        }
+
+        int lastDot = fqName.lastIndexOf('.');
+        String classNameWithInners = fqName.substring(lastDot + 1);
+        int firstDollar = classNameWithInners.indexOf('$');
+        String className = firstDollar >= 0 ? classNameWithInners.substring(0, firstDollar) : classNameWithInners;
+
+        String packageClassName = PackageClassUtils.getPackageClassName(new FqName(fqName).parent());
+        return packageClassName.equals(className);
     }
 
     // Matches strings like "\tat test.namespace$foo$f$1.invoke(a.kt:3)\n"

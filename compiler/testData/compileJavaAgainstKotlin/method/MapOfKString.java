@@ -6,6 +6,6 @@ class MapOfKString {
     public static void gfgdgfg() {
         Map<BigDecimal, String> map = new HashMap<BigDecimal, String>();
         
-        Map<BigDecimal, String> r = namespace.fff(map);
+        Map<BigDecimal, String> r = _DefaultPackage.fff(map);
     }
 }

@@ -47,7 +47,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -166,7 +166,7 @@ public class KotlinToJVMBytecodeCompiler {
                     return null;
                 }
                 FqName fqName = JetPsiUtil.getFQName(file);
-                mainClass = fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
+                mainClass = PackageClassUtils.getPackageClassFqName(fqName);
             }
         }
         return mainClass;

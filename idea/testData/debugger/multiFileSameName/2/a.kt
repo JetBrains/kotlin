@@ -1,5 +1,5 @@
 package test
 
 fun bar() {
-    "" // test/namespace$src$a$
+    "" // test/TestPackage$src$a$
 }

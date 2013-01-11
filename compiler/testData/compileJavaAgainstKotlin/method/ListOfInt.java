@@ -5,7 +5,7 @@ class ListOfInt {
 
     public static void hhh() {
         List<Integer> list = new ArrayList<Integer>();
-        List<Integer> r = namespace.ggg(list);
+        List<Integer> r = _DefaultPackage.ggg(list);
     }
 
 }

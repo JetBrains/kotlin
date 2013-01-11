@@ -29,7 +29,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
         final String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar));
-        runJava("hello.run", "-cp", jar, "Hello.namespace");
+        runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
     @Test
@@ -37,7 +37,7 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
         final String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
 
         assertEquals("compilation failed", 0, runCompiler("Smoke.compile", "-module", "Smoke.kts", "-jar", jar));
-        runJava("Smoke.run", "-cp", jar + File.pathSeparator + getKotlinRuntimePath(), "Smoke.namespace", "1", "2", "3");
+        runJava("Smoke.run", "-cp", jar + File.pathSeparator + getKotlinRuntimePath(), "Smoke.SmokePackage", "1", "2", "3");
     }
 
     @Test

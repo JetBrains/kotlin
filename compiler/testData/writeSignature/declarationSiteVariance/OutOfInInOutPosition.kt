@@ -4,7 +4,7 @@ class X
 
 fun f(): Out<In<X>> = throw Exception()
 
-// method: namespace::f
+// method: _DefaultPackage::f
 // jvm signature:     ()LOut;
 // generic signature: ()LOut<LIn<-LX;>;>;
 // kotlin signature:  ()LOut<LIn<LX;>;>;
