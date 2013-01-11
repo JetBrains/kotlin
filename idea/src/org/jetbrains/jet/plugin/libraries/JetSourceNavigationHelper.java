@@ -106,7 +106,7 @@ public class JetSourceNavigationHelper {
         return resultScope;
     }
 
-    private static List<JetFile> getContainingFiles(@NotNull Iterable<? extends JetNamedDeclaration> declarations) {
+    private static List<JetFile> getContainingFiles(@NotNull Iterable<JetNamedDeclaration> declarations) {
         Set<JetFile> result = Sets.newHashSet();
         for (JetNamedDeclaration declaration : declarations) {
             PsiFile containingFile = declaration.getContainingFile();
@@ -150,17 +150,14 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> JetNamedDeclaration
-            getSourcePropertyOrFunction(
-            @NotNull final Decl decompiledDeclaration
-    ) {
+    private static JetNamedDeclaration getSourcePropertyOrFunction(@NotNull JetNamedDeclaration decompiledDeclaration) {
         String memberNameAsString = decompiledDeclaration.getName();
         assert memberNameAsString != null;
         Name memberName = Name.identifier(memberNameAsString);
 
         PsiElement decompiledContainer = decompiledDeclaration.getParent();
 
-        Collection<Decl> candidates;
+        Collection<JetNamedDeclaration> candidates;
         if (decompiledContainer instanceof JetFile) {
             candidates = getInitialTopLevelCandidates(decompiledDeclaration);
         }
@@ -168,9 +165,10 @@ public class JetSourceNavigationHelper {
             JetClassOrObject decompiledClassOrObject = (JetClassOrObject) decompiledContainer.getParent();
             JetClassOrObject sourceClassOrObject = getSourceClassOrObject(decompiledClassOrObject);
 
+            //noinspection unchecked
             candidates = sourceClassOrObject == null
-                         ? Collections.<Decl>emptyList()
-                         : getInitialMemberCandidates(sourceClassOrObject, memberName, (Class<Decl>) decompiledDeclaration.getClass());
+                         ? Collections.<JetNamedDeclaration>emptyList()
+                         : getInitialMemberCandidates(sourceClassOrObject, memberName, (Class<JetNamedDeclaration>) decompiledDeclaration.getClass());
 
             if (candidates.isEmpty()) {
                 if (decompiledDeclaration instanceof JetProperty && sourceClassOrObject instanceof JetClass) {
@@ -213,9 +211,9 @@ public class JetSourceNavigationHelper {
                 DefaultModuleConfiguration.createStandardConfiguration(project),
                 providerFactory);
 
-        for (Decl candidate : candidates) {
+        for (JetNamedDeclaration candidate : candidates) {
             //noinspection unchecked
-            Descr candidateDescriptor = (Descr) resolveSession.resolveToDescriptor(candidate);
+            CallableDescriptor candidateDescriptor = (CallableDescriptor) resolveSession.resolveToDescriptor(candidate);
             if (receiversMatch(decompiledDeclaration, candidateDescriptor)
                     && valueParametersTypesMatch(decompiledDeclaration, candidateDescriptor)
                     && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {
@@ -244,7 +242,7 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static <Decl extends JetNamedDeclaration> Collection<Decl> getInitialTopLevelCandidates(@NotNull Decl decompiledDeclaration) {
+    private static Collection<JetNamedDeclaration> getInitialTopLevelCandidates(@NotNull JetNamedDeclaration decompiledDeclaration) {
         FqName memberFqName = JetPsiUtil.getFQName(decompiledDeclaration);
         assert memberFqName != null;
 
@@ -252,8 +250,9 @@ public class JetSourceNavigationHelper {
         if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
             return Collections.emptyList();
         }
-        StringStubIndexExtension<Decl> index =
-                (StringStubIndexExtension<Decl>) getIndexForTopLevelPropertyOrFunction(decompiledDeclaration);
+        //noinspection unchecked
+        StringStubIndexExtension<JetNamedDeclaration> index =
+                (StringStubIndexExtension<JetNamedDeclaration>) getIndexForTopLevelPropertyOrFunction(decompiledDeclaration);
         return index.get(memberFqName.getFqName(), decompiledDeclaration.getProject(), librarySourcesScope);
     }
 
@@ -270,53 +269,53 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static <Decl extends JetNamedDeclaration> List<Decl> getInitialMemberCandidates(
+    private static List<JetNamedDeclaration> getInitialMemberCandidates(
             @NotNull JetClassOrObject sourceClassOrObject,
             @NotNull final Name name,
-            @NotNull Class<Decl> declarationClass
+            @NotNull Class<JetNamedDeclaration> declarationClass
     ) {
-        List<Decl> allByClass = ContainerUtil.findAll(sourceClassOrObject.getDeclarations(), declarationClass);
-        return ContainerUtil.filter(allByClass, new Condition<Decl>() {
+        List<JetNamedDeclaration> allByClass = ContainerUtil.findAll(sourceClassOrObject.getDeclarations(), declarationClass);
+        return ContainerUtil.filter(allByClass, new Condition<JetNamedDeclaration>() {
             @Override
-            public boolean value(Decl declaration) {
+            public boolean value(JetNamedDeclaration declaration) {
                 return name.equals(declaration.getNameAsSafeName());
             }
         });
     }
 
     @NotNull
-    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> List<Decl> filterByReceiverPresenceAndParametersCount(
-            final @NotNull Decl decompiledDeclaration,
-            @NotNull Collection<Decl> candidates
+    private static List<JetNamedDeclaration> filterByReceiverPresenceAndParametersCount(
+            final @NotNull JetNamedDeclaration decompiledDeclaration,
+            @NotNull Collection<JetNamedDeclaration> candidates
     ) {
-        return ContainerUtil.filter(candidates, new Condition<Decl>() {
+        return ContainerUtil.filter(candidates, new Condition<JetNamedDeclaration>() {
             @Override
-            public boolean value(Decl candidate) {
+            public boolean value(JetNamedDeclaration candidate) {
                 return sameReceiverPresenceAndParametersCount(candidate, decompiledDeclaration);
             }
         });
     }
 
     @NotNull
-    private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> List<Decl> filterByReceiverAndParameterTypes(
-            final @NotNull Decl decompiledDeclaration,
-            @NotNull Collection<Decl> candidates
+    private static List<JetNamedDeclaration> filterByReceiverAndParameterTypes(
+            final @NotNull JetNamedDeclaration decompiledDeclaration,
+            @NotNull Collection<JetNamedDeclaration> candidates
     ) {
-        return ContainerUtil.filter(candidates, new Condition<Decl>() {
+        return ContainerUtil.filter(candidates, new Condition<JetNamedDeclaration>() {
             @Override
-            public boolean value(Decl candidate) {
+            public boolean value(JetNamedDeclaration candidate) {
                 return receiverAndParametersShortTypesMatch(candidate, decompiledDeclaration);
             }
         });
     }
 
     @Nullable
-    public static JetNamedDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
+    public static JetNamedDeclaration getSourceProperty(@NotNull JetProperty decompiledProperty) {
         return getSourcePropertyOrFunction(decompiledProperty);
     }
 
     @Nullable
-    public static JetNamedDeclaration getSourceFunction(final @NotNull JetNamedFunction decompiledFunction) {
+    public static JetNamedDeclaration getSourceFunction(@NotNull JetNamedFunction decompiledFunction) {
         return getSourcePropertyOrFunction(decompiledFunction);
     }
 

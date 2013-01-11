@@ -102,19 +102,13 @@ public class MemberMatching {
         return getTypeShortName(a).equals(getTypeShortName(b));
     }
 
-    static <Decl extends JetNamedDeclaration> boolean sameReceiverPresenceAndParametersCount(
-            @NotNull Decl a,
-            @NotNull Decl b
-    ) {
+    static boolean sameReceiverPresenceAndParametersCount(@NotNull JetNamedDeclaration a, @NotNull JetNamedDeclaration b) {
         boolean sameReceiverPresence = (getReceiverType(a) == null) == (getReceiverType(b) == null);
         boolean sameParametersCount = getValueParameters(a).size() == getValueParameters(b).size();
         return sameReceiverPresence && sameParametersCount;
     }
 
-    static <Decl extends JetNamedDeclaration> boolean receiverAndParametersShortTypesMatch(
-            @NotNull Decl a,
-            @NotNull Decl b
-    ) {
+    static boolean receiverAndParametersShortTypesMatch(@NotNull JetNamedDeclaration a, @NotNull JetNamedDeclaration b) {
         JetTypeReference aReceiver = getReceiverType(a);
         JetTypeReference bReceiver = getReceiverType(b);
         if ((aReceiver == null) != (bReceiver == null)) {
@@ -146,10 +140,7 @@ public class MemberMatching {
 
 
     /* DECLARATION AND DESCRIPTOR STRICT MATCHING */
-    static <Decl extends JetNamedDeclaration> boolean receiversMatch(
-            @NotNull Decl declaration,
-            @NotNull CallableDescriptor descriptor
-    ) {
+    static boolean receiversMatch(@NotNull JetNamedDeclaration declaration, @NotNull CallableDescriptor descriptor) {
         JetTypeReference declarationReceiver = getReceiverType(declaration);
         ReceiverParameterDescriptor descriptorReceiver = descriptor.getReceiverParameter();
         if (declarationReceiver == null && descriptorReceiver == null) {
@@ -161,10 +152,7 @@ public class MemberMatching {
         return false;
     }
 
-    static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> boolean valueParametersTypesMatch(
-            @NotNull Decl declaration,
-            @NotNull Descr descriptor
-    ) {
+    static boolean valueParametersTypesMatch(@NotNull JetNamedDeclaration declaration, @NotNull CallableDescriptor descriptor) {
         List<JetParameter> declarationParameters = getValueParameters(declaration);
         List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
         if (descriptorParameters.size() != declarationParameters.size()) {
