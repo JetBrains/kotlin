@@ -46,8 +46,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
-import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.util.CommonSuppliers;
 
@@ -193,7 +191,7 @@ public class JetSourceNavigationHelper {
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> JetNamedDeclaration
             getSourcePropertyOrFunction(
             @NotNull final Decl decompiledDeclaration,
-            @NotNull final NavigationStrategy<Decl, Descr> navigationStrategy
+            @NotNull final MemberNavigationStrategy<Decl, Descr> navigationStrategy
     ) {
         String memberNameAsString = decompiledDeclaration.getName();
         assert memberNameAsString != null;
@@ -289,7 +287,7 @@ public class JetSourceNavigationHelper {
     @NotNull
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> Collection<Decl> getInitialTopLevelCandidates(
             @NotNull Decl decompiledDeclaration,
-            @NotNull NavigationStrategy<Decl, Descr> navigationStrategy
+            @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy
     ) {
         FqName memberFqName = JetPsiUtil.getFQName(decompiledDeclaration);
         assert memberFqName != null;
@@ -320,7 +318,7 @@ public class JetSourceNavigationHelper {
     @NotNull
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> List<Decl> filterByReceiverPresenceAndParametersCount(
             final @NotNull Decl decompiledDeclaration,
-            final @NotNull NavigationStrategy<Decl, Descr> navigationStrategy,
+            final @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Collection<Decl> candidates
     ) {
         final JetTypeReference decompiledReceiver = navigationStrategy.getReceiverType(decompiledDeclaration);
@@ -340,7 +338,7 @@ public class JetSourceNavigationHelper {
     @NotNull
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> List<Decl> filterByReceiverAndParameterTypes(
             final @NotNull Decl decompiledDeclaration,
-            final @NotNull NavigationStrategy<Decl, Descr> navigationStrategy,
+            final @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Collection<Decl> candidates
     ) {
         final JetTypeReference decompiledReceiver = navigationStrategy.getReceiverType(decompiledDeclaration);
@@ -375,7 +373,7 @@ public class JetSourceNavigationHelper {
     }
 
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> boolean valueParametersTypesMatch(
-            @NotNull NavigationStrategy<Decl, Descr> navigationStrategy,
+            @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Decl declaration,
             @NotNull Descr descriptor
     ) {
@@ -411,7 +409,7 @@ public class JetSourceNavigationHelper {
     }
 
     private static <Decl extends JetNamedDeclaration> boolean parameterShortTypesMatch(
-            @NotNull NavigationStrategy<Decl, ?> navigationStrategy,
+            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
             @NotNull Decl a,
             @NotNull Decl b
     ) {
@@ -492,97 +490,16 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static JetNamedDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
-        return getSourcePropertyOrFunction(decompiledProperty, new PropertyNavigationStrategy());
+        return getSourcePropertyOrFunction(decompiledProperty, new MemberNavigationStrategy.PropertyStrategy());
     }
 
     @Nullable
     public static JetNamedDeclaration getSourceFunction(final @NotNull JetNamedFunction decompiledFunction) {
-        return getSourcePropertyOrFunction(decompiledFunction, new FunctionNavigationStrategy());
+        return getSourcePropertyOrFunction(decompiledFunction, new MemberNavigationStrategy.FunctionStrategy());
     }
 
     @TestOnly
     static void setForceResolve(boolean forceResolve) {
         JetSourceNavigationHelper.forceResolve = forceResolve;
-    }
-
-    private interface NavigationStrategy<Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> {
-        @NotNull
-        Class<Decl> getDeclarationClass();
-
-        @NotNull
-        List<JetParameter> getValueParameters(@NotNull Decl declaration);
-
-        @NotNull
-        List<ValueParameterDescriptor> getValueParameters(@NotNull Descr descriptor);
-
-        @Nullable
-        JetTypeReference getReceiverType(@NotNull Decl declaration);
-
-        @NotNull
-        StringStubIndexExtension<Decl> getIndexForTopLevelMembers();
-    }
-
-    private static class FunctionNavigationStrategy implements NavigationStrategy<JetNamedFunction, FunctionDescriptor> {
-        @NotNull
-        @Override
-        public Class<JetNamedFunction> getDeclarationClass() {
-            return JetNamedFunction.class;
-        }
-
-        @NotNull
-        @Override
-        public List<JetParameter> getValueParameters(@NotNull JetNamedFunction declaration) {
-            return declaration.getValueParameters();
-        }
-
-        @NotNull
-        @Override
-        public List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor descriptor) {
-            return descriptor.getValueParameters();
-        }
-
-        @Nullable
-        @Override
-        public JetTypeReference getReceiverType(@NotNull JetNamedFunction declaration) {
-            return declaration.getReceiverTypeRef();
-        }
-
-        @NotNull
-        @Override
-        public StringStubIndexExtension<JetNamedFunction> getIndexForTopLevelMembers() {
-            return JetTopLevelFunctionsFqnNameIndex.getInstance();
-        }
-    }
-
-    private static class PropertyNavigationStrategy implements NavigationStrategy<JetProperty, VariableDescriptor> {
-        @NotNull
-        @Override
-        public Class<JetProperty> getDeclarationClass() {
-            return JetProperty.class;
-        }
-
-        @NotNull
-        @Override
-        public List<JetParameter> getValueParameters(@NotNull JetProperty declaration) {
-            return Collections.emptyList();
-        }
-
-        @NotNull
-        @Override
-        public List<ValueParameterDescriptor> getValueParameters(@NotNull VariableDescriptor descriptor) {
-            return Collections.emptyList();
-        }
-
-        @Nullable
-        @Override
-        public JetTypeReference getReceiverType(@NotNull JetProperty declaration) {
-            return declaration.getReceiverTypeRef();
-        }
-
-        @NotNull
-        @Override
-        public StringStubIndexExtension<JetProperty> getIndexForTopLevelMembers() {
-            return JetTopLevelPropertiesFqnNameIndex.getInstance();
-        }
     }
 }
