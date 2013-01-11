@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.testing.ConfigRuntimeUtil;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -85,7 +85,8 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         List<String> subDirs = Arrays.asList(quickFixTestsFilter != null ? dir.list(quickFixTestsFilter) : dir.list());
         Collections.sort(subDirs);
         for (String subDirName : subDirs) {
-            final TestSuite singleFileTestSuite = JetTestCaseBuilder.suiteForDirectory(getTestDataPathBase(), subDirName, true, singleFileNameFilter, singleFileNamedTestFactory);
+            final TestSuite singleFileTestSuite = JetTestCaseBuilder
+                    .suiteForDirectory(getTestDataPathBase(), subDirName, true, singleFileNameFilter, singleFileNamedTestFactory);
             if (singleFileTestSuite.countTestCases() != 0) {
                 suite.addTest(singleFileTestSuite);
             }
@@ -107,7 +108,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         boolean isWithRuntime = name.endsWith("Runtime");
 
         if (isWithRuntime) {
-            ConfigRuntimeUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+            ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
         }
 
         try {
@@ -117,7 +118,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         }
         finally {
             if (isWithRuntime) {
-                ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
+                ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
             }
         }
     }

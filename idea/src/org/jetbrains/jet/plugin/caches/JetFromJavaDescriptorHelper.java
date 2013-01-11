@@ -82,7 +82,7 @@ class JetFromJavaDescriptorHelper {
 
         Collection<PsiAnnotation> annotations = JavaAnnotationIndex.getInstance().get(JetClass.class.getSimpleName(), project, scope);
         for (PsiAnnotation annotation : annotations) {
-            PsiModifierList modifierList = (PsiModifierList)annotation.getParent();
+            PsiModifierList modifierList = (PsiModifierList) annotation.getParent();
             final PsiElement owner = modifierList.getParent();
             if (owner instanceof PsiClass) {
                 PsiClass psiClass = (PsiClass) owner;
@@ -95,7 +95,7 @@ class JetFromJavaDescriptorHelper {
 
         return jetObjectClasses;
     }
-    
+
     static Collection<String> getTopExtensionFunctionNames(Project project, GlobalSearchScope scope) {
 
         // Extension function should have an parameter of type JetValueParameter with explicit receiver parameter.
@@ -127,11 +127,12 @@ class JetFromJavaDescriptorHelper {
     static Collection<PsiMethod> getTopExtensionFunctionPrototypesByName(String name, Project project, GlobalSearchScope scope) {
         return filterJetJavaPrototypesByName(
                 name, project, scope,
-                new Predicate<JetValueParameterAnnotation>() {
+                new Predicate<PsiMethod>() {
                     @Override
-                    public boolean apply(@Nullable JetValueParameterAnnotation jetValueParameterAnnotation) {
-                        assert jetValueParameterAnnotation != null;
-                        return jetValueParameterAnnotation.receiver();
+                    public boolean apply(@Nullable PsiMethod psiMethod) {
+                        assert psiMethod != null;
+                        PsiParameter[] parameters = psiMethod.getParameterList().getParameters();
+                        return parameters.length > 0 && JetValueParameterAnnotation.get(parameters[0]).receiver();
                     }
                 });
     }
@@ -139,11 +140,12 @@ class JetFromJavaDescriptorHelper {
     static Collection<PsiMethod> getTopLevelFunctionPrototypesByName(String name, Project project, GlobalSearchScope scope) {
         return filterJetJavaPrototypesByName(
                 name, project, scope,
-                new Predicate<JetValueParameterAnnotation>() {
+                new Predicate<PsiMethod>() {
                     @Override
-                    public boolean apply(@Nullable JetValueParameterAnnotation jetValueParameterAnnotation) {
-                        assert jetValueParameterAnnotation != null;
-                        return !jetValueParameterAnnotation.receiver();
+                    public boolean apply(@Nullable PsiMethod psiMethod) {
+                        assert psiMethod != null;
+                        PsiParameter[] parameters = psiMethod.getParameterList().getParameters();
+                        return parameters.length == 0 || !JetValueParameterAnnotation.get(parameters[0]).receiver();
                     }
                 });
     }
@@ -169,7 +171,8 @@ class JetFromJavaDescriptorHelper {
 
     private static Collection<PsiMethod> filterJetJavaPrototypesByName(
             String name, Project project, GlobalSearchScope scope,
-            Predicate<JetValueParameterAnnotation> filterPredicate) {
+            Predicate<PsiMethod> filterPredicate
+    ) {
         Set<PsiMethod> selectedMethods = new HashSet<PsiMethod>();
 
         Collection<PsiMethod> psiMethods = JavaMethodNameIndex.getInstance().get(name, project, scope);
@@ -185,10 +188,8 @@ class JetFromJavaDescriptorHelper {
             }
 
             // Should be parameter with JetValueParameter.receiver == true
-            for (PsiParameter parameter : psiMethod.getParameterList().getParameters()) {
-                if (filterPredicate.apply(JetValueParameterAnnotation.get(parameter))) {
-                    selectedMethods.add(psiMethod);
-                }
+            if (filterPredicate.apply(psiMethod)) {
+                selectedMethods.add(psiMethod);
             }
         }
 

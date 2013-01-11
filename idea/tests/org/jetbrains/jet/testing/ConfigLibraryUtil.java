@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,31 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 /**
  * Helper for configuring kotlin runtime in tested project.
  */
-public class ConfigRuntimeUtil {
-    private ConfigRuntimeUtil() {
+public class ConfigLibraryUtil {
+    private ConfigLibraryUtil() {
     }
 
     public static void configureKotlinRuntime(final Module module, final Sdk sdk) {
+        configureLibrary(module, sdk, JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
+    }
+
+    public static void unConfigureKotlinRuntime(final Module module, final Sdk sdk) {
+        unConfigureLibrary(module, sdk, JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
+    }
+
+    public static void configureLibrary(
+            @NotNull final Module module,
+            @NotNull final Sdk sdk,
+            @NotNull final LightProjectDescriptor projectDescriptor
+    ) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
@@ -39,24 +54,27 @@ public class ConfigRuntimeUtil {
                 final ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
                 rootModel.setSdk(sdk);
-                JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE.configureModule(module, rootModel, null);
-
+                projectDescriptor.configureModule(module, rootModel, null);
                 rootModel.commit();
             }
         });
     }
 
-    public static void unConfigureKotlinRuntime(final Module module, final Sdk sdk) {
+    public static void unConfigureLibrary(
+            @NotNull final Module module,
+            @NotNull final Sdk sdk,
+            @NotNull final LightProjectDescriptor projectDescriptor
+    ) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-
                 final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
                 final ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
                 rootModel.setSdk(sdk);
-                JetWithJdkAndRuntimeLightProjectDescriptor.unConfigureModule(rootModel);
-
+                if (projectDescriptor instanceof JetJdkAndLibraryProjectDescriptor) {
+                    ((JetJdkAndLibraryProjectDescriptor) projectDescriptor).unConfigureModule(rootModel);
+                }
                 rootModel.commit();
             }
         });

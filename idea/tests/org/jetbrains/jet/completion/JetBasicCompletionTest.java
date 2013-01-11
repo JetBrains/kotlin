@@ -17,7 +17,9 @@
 package org.jetbrains.jet.completion;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 
@@ -242,6 +244,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testTopLevelFromStandardLibraryWithoutParam() {
+        doTest();
+    }
+
     public void testVariableClassName() {
         doTest();
     }
@@ -280,6 +286,27 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
 
     public void testObjectRedeclaration2() {
         doTest();
+    }
+
+    public void testTopLevelNonImportedFun() {
+        doTestWithJar();
+    }
+
+    public void testTopLevelNonImportedExtFun() {
+        doTestWithJar();
+    }
+
+    public void doTestWithJar() {
+        File libraryFile = new File(getTestDataPath() + "/" + getTestName(false) + ".jar");
+        JetJdkAndLibraryProjectDescriptor projectDescriptor = new JetJdkAndLibraryProjectDescriptor(libraryFile);
+
+        try {
+            ConfigLibraryUtil.configureLibrary(getModule(), getFullJavaJDK(), projectDescriptor);
+            doTest();
+        }
+        finally {
+            ConfigLibraryUtil.unConfigureLibrary(getModule(), getFullJavaJDK(), projectDescriptor);
+        }
     }
 
     @NotNull

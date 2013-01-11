@@ -68,7 +68,7 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
         public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
             super.configureModule(module, model, contentEntry);
 
-            Library library = model.getModuleLibraryTable().getLibraryByName("ktl");
+            Library library = model.getModuleLibraryTable().getLibraryByName("myLibrary");
             assert library != null;
             Library.ModifiableModel modifiableModel = library.getModifiableModel();
             modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("libraries/stdlib/src")), OrderRootType.SOURCES);

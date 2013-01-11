@@ -17,21 +17,13 @@
 package org.jetbrains.jet.search;
 
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.searches.AnnotatedMembersSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.InTextDirectivesUtils;
 
@@ -40,27 +32,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class JUnitMembersSearcherTest extends AbstractSearcherTest {
-    private static final LightProjectDescriptor junitProjectDescriptor = new LightProjectDescriptor() {
-        @Override
-        public ModuleType getModuleType() {
-            return StdModuleTypes.JAVA;
-        }
-
-        @Override
-        public Sdk getSdk() {
-            return PluginTestCaseBase.jdkFromIdeaHome();
-        }
-
-        @Override
-        public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
-            Library library = model.getModuleLibraryTable().createLibrary("junit");
-            Library.ModifiableModel modifiableModel = library.getModifiableModel();
-            modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(
-                    new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.10.jar")),
-                    OrderRootType.CLASSES);
-            modifiableModel.commit();
-        }
-    };
+    private static final LightProjectDescriptor junitProjectDescriptor =
+            new JetJdkAndLibraryProjectDescriptor(new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.10.jar"));
 
     public void testJunit3() throws IOException {
         doJUnit3test();
@@ -100,7 +73,6 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-
         return junitProjectDescriptor;
     }
 }

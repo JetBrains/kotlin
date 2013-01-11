@@ -24,7 +24,7 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer;
-import org.jetbrains.jet.testing.ConfigRuntimeUtil;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 
@@ -56,7 +56,7 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
     public void testKt1850FullQualified() throws Exception {
         doTest();
     }
-    
+
     public void testKt1850InnerClass() throws Exception {
         doTest();
     }
@@ -77,7 +77,7 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
 
     public void doTestWithKotlinRuntime() {
         try {
-            ConfigRuntimeUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+            ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
 
             configureByFile(fileName());
             invokeFormatFile();
@@ -85,7 +85,7 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
             checkResultByFile(null, checkFileName(), false);
         }
         finally {
-            ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
+            ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
         }
     }
 
@@ -114,7 +114,7 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
 
     private static void invokeFormatFile() {
         CommandProcessor.getInstance().executeCommand(
-            getProject(), new JetImportOptimizer().processFile(getFile()),
-            "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+                getProject(), new JetImportOptimizer().processFile(getFile()),
+                "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
 }

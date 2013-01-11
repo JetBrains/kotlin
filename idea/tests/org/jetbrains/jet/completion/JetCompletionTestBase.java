@@ -26,7 +26,7 @@ import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.testing.ConfigRuntimeUtil;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
@@ -51,7 +51,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
             try {
                 if (withKotlinRuntime) {
-                    ConfigRuntimeUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+                    ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
                 }
 
                 Integer completionTime = completionUtils.getExecutionTime(fileText);
@@ -82,7 +82,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
             }
             finally {
                 if (withKotlinRuntime) {
-                    ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
+                    ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
                 }
             }
         }

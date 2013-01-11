@@ -16,65 +16,12 @@
 
 package org.jetbrains.jet.plugin;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 
-public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectDescriptor {
+public class JetWithJdkAndRuntimeLightProjectDescriptor extends JetJdkAndLibraryProjectDescriptor {
     protected JetWithJdkAndRuntimeLightProjectDescriptor() {
+        super(ForTestCompileRuntime.runtimeJarForTests());
     }
 
     public static final JetWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new JetWithJdkAndRuntimeLightProjectDescriptor();
-
-    @Override
-    public ModuleType getModuleType() {
-        return StdModuleTypes.JAVA;
-    }
-
-    @Override
-    public Sdk getSdk() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
-    }
-
-    @Override
-    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
-        Library library = model.getModuleLibraryTable().createLibrary("ktl");
-        Library.ModifiableModel modifiableModel = library.getModifiableModel();
-        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(ForTestCompileRuntime.runtimeJarForTests()), OrderRootType.CLASSES);
-        modifiableModel.commit();
-    }
-
-    public static void unConfigureModule(@NotNull ModifiableRootModel model) {
-        for (OrderEntry orderEntry : model.getOrderEntries()) {
-            if (orderEntry instanceof LibraryOrderEntry) {
-                LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) orderEntry;
-
-                Library library = libraryOrderEntry.getLibrary();
-                if (library != null) {
-                    String libraryName = library.getName();
-                    if (libraryName != null && libraryName.equals("ktl")) {
-
-                        // Dispose attached roots
-                        Library.ModifiableModel modifiableModel = library.getModifiableModel();
-                        for (String rootUrl : library.getRootProvider().getUrls(OrderRootType.CLASSES)) {
-                            modifiableModel.removeRoot(rootUrl, OrderRootType.CLASSES);
-                        }
-                        modifiableModel.commit();
-
-                        model.getModuleLibraryTable().removeLibrary(library);
-
-                        break;
-                    }
-                }
-            }
-        }
-    }
 }
