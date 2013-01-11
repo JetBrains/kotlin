@@ -2401,6 +2401,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/j+k/innerNestedClassFromJava.kt");
             }
             
+            @TestMetadata("KJKInheritance.kt")
+            public void testKJKInheritance() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/KJKInheritance.kt");
+            }
+            
             @TestMetadata("kt1402.kt")
             public void testKt1402() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/kt1402.kt");

@@ -18,9 +18,11 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicates;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
@@ -33,9 +35,11 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
     protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> testFiles) {
         List<JetFile> jetFiles = getJetFiles(testFiles);
 
+        BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
+
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, Collections.<AnalyzerScriptParameter>emptyList(),
-                Predicates.<PsiFile>alwaysTrue()).getBindingContext();
+                getProject(), jetFiles, trace,
+                Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), false).getBindingContext();
 
         boolean ok = true;
 
