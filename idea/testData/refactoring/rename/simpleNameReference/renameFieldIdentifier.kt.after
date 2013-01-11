@@ -1,0 +1,6 @@
+class aClass(){
+    var anotherRenamed: Int = 0;
+        set(value){
+            $anotherRenamed =value
+        }
+}

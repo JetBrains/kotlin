@@ -33,6 +33,7 @@ import org.jetbrains.jet.plugin.JetFileType;
 import java.util.List;
 
 public class JetPsiFactory {
+
     public static ASTNode createValNode(Project project) {
         JetProperty property = createProperty(project, "val x = 1");
         return property.getValOrVarNode();
@@ -199,5 +200,14 @@ public class JetPsiFactory {
     public static PsiElement createPrimaryConstructor(Project project) {
         JetClass aClass = createClass(project, "class A()");
         return aClass.findElementAt(7).getParent();
+    }
+
+    public static JetSimpleNameExpression createClassLabel(Project project, @NotNull String labelName) {
+        JetThisExpression expression = (JetThisExpression) createExpression(project, "this@" + labelName);
+        return expression.getTargetLabel();
+    }
+
+    public static JetExpression createFieldIdentifier(Project project, @NotNull String fieldName) {
+        return createExpression(project, "$" + fieldName);
     }
 }
