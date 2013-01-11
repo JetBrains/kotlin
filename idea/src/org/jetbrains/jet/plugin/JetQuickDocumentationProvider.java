@@ -82,7 +82,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         else if (mergeKotlinAndJava) {
             final String originalInfo = new JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement);
             if (originalInfo != null) {
-                return renderedDecl + "\nOriginal: " + originalInfo;
+                return renderedDecl + "\nJava declaration:\n" + originalInfo;
             }
             return renderedDecl;
         }
