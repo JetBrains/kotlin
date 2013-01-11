@@ -25,6 +25,7 @@ import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.runtime.typeinfo.JetClass;
 import jet.runtime.typeinfo.JetMethod;
+import jet.runtime.typeinfo.JetPackageClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -43,6 +44,7 @@ import java.util.*;
 
 public class DecompiledDataFactory {
     private static final String JET_CLASS = JetClass.class.getName();
+    private static final String JET_PACKAGE_CLASS = JetPackageClass.class.getName();
     private static final String JET_METHOD = JetMethod.class.getName();
     private static final String DECOMPILED_COMMENT = "/* compiled code */";
     private static final DescriptorRenderer DESCRIPTOR_RENDERER =
@@ -233,14 +235,7 @@ public class DecompiledDataFactory {
     }
 
     public static boolean isKotlinNamespaceClass(@NotNull PsiClass psiClass) {
-        if (PackageClassUtils.isPackageClass(psiClass) && !isKotlinClass(psiClass)) {
-            for (PsiMethod method : psiClass.getMethods()) {
-                if (hasAnnotation(method, JET_METHOD)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return hasAnnotation(psiClass, JET_PACKAGE_CLASS);
     }
 
     public static boolean isCompiledFromKotlin(@NotNull PsiClass psiClass) {

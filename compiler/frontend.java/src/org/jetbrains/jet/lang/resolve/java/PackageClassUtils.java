@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -38,21 +39,7 @@ public class PackageClassUtils {
         return packageFQN.child(Name.identifier(getPackageClassName(packageFQN)));
     }
 
-    public static boolean isPackageClass(@NotNull FqName fqName) {
-        if (fqName.isRoot()) {
-            return true;
-        }
-        return getPackageClassName(fqName.parent()).equals(fqName.shortName().getName());
-    }
-
     public static boolean isPackageClass(@NotNull PsiClass psiClass) {
-        String qualifiedName = psiClass.getQualifiedName();
-        if (qualifiedName == null) {
-            return false;
-        }
-        if (DEFAULT_PACKAGE.equals(qualifiedName)) {
-            return true;
-        }
-        return getPackageClassName(new FqName(qualifiedName).parent()).equals(psiClass.getName());
+        return JetPackageClassAnnotation.get(psiClass).isDefined();
     }
 }

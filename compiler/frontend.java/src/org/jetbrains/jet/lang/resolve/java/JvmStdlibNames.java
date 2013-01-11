@@ -68,7 +68,9 @@ public class JvmStdlibNames {
 
 
     public static final JvmClassName JET_CLASS = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetClass");
-    
+
+    public static final JvmClassName JET_PACKAGE_CLASS = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetPackageClass");
+
     public static final String JET_CLASS_SIGNATURE = "signature";
 
 

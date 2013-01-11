@@ -17,13 +17,9 @@
 package org.jetbrains.jet.lang.resolve.java.wrapper;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 
 public class PsiClassWrapper {
 
@@ -44,11 +40,21 @@ public class PsiClassWrapper {
     }
     
     private JetClassAnnotation jetClass;
+    private JetPackageClassAnnotation jetPackageClass;
+
     @NotNull
     public JetClassAnnotation getJetClass() {
         if (jetClass == null) {
             jetClass = JetClassAnnotation.get(psiClass);
         }
         return jetClass;
+    }
+
+    @NotNull
+    public JetPackageClassAnnotation getJetPackageClass() {
+        if (jetPackageClass == null) {
+            jetPackageClass = JetPackageClassAnnotation.get(psiClass);
+        }
+        return jetPackageClass;
     }
 }

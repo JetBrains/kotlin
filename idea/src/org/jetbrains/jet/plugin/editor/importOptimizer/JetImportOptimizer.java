@@ -230,7 +230,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                 return null;
             }
 
-            return combineClassFqNameWithMemberName(classFQN, field.getName());
+            return combineClassFqNameWithMemberName(field.getContainingClass(), classFQN, field.getName());
         }
 
         // TODO: Still problem with kotlin global properties imported from class files
@@ -245,7 +245,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                 return classFQN;
             }
 
-            return combineClassFqNameWithMemberName(classFQN, method.getName());
+            return combineClassFqNameWithMemberName(method.getContainingClass(), classFQN, method.getName());
         }
 
         if (element instanceof PsiPackage) {
@@ -256,11 +256,11 @@ public class JetImportOptimizer implements ImportOptimizer {
     }
 
     @Nullable
-    private static FqName combineClassFqNameWithMemberName(FqName classFQN, String memberName) {
+    private static FqName combineClassFqNameWithMemberName(PsiClass containingClass, FqName classFQN, String memberName) {
         if (memberName == null) {
             return null;
         }
-        if (PackageClassUtils.isPackageClass(classFQN)) {
+        if (PackageClassUtils.isPackageClass(containingClass)) {
             return QualifiedNamesUtil.combine(classFQN.parent(), Name.identifier(memberName));
         }
         else {

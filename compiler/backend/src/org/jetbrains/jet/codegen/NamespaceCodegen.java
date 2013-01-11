@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -83,6 +84,10 @@ public class NamespaceCodegen extends MemberCodegen {
 
     public void generate(CompilationErrorHandler errorHandler) {
         boolean multiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), name);
+
+        if (shouldGenerateNSClass(files)) {
+            v.getClassBuilder().newAnnotation(JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor(), true);
+        }
 
         for (JetFile file : files) {
             VirtualFile vFile = file.getVirtualFile();

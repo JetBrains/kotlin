@@ -23,9 +23,9 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaMethodNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.runtime.typeinfo.JetClass;
+import jet.runtime.typeinfo.JetPackageClass;
 import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,12 +53,12 @@ class JetFromJavaDescriptorHelper {
     /**
      * Get java equivalents for jet top level classes.
      */
-    static PsiClass[] getClassesForJetNamespaces(Project project, GlobalSearchScope scope) {
+    static Collection<PsiClass> getClassesForJetNamespaces(Project project, GlobalSearchScope scope) {
         /* Will iterate through short name caches
            Kotlin namespaces from jar a class files will be collected from java cache
            Kotlin namespaces classes from sources will be collected with JetShortNamesCache.getClassesByName */
-        // TODO Collect all package classes
-        return PsiShortNamesCache.getInstance(project).getClassesByName("namespace", scope);
+
+        return getClassesByAnnotation(JetPackageClass.class.getSimpleName(), project, scope);
     }
 
     /**
@@ -81,16 +81,11 @@ class JetFromJavaDescriptorHelper {
     static Collection<PsiClass> getCompiledClassesForTopLevelObjects(Project project, GlobalSearchScope scope) {
         Set<PsiClass> jetObjectClasses = Sets.newHashSet();
 
-        Collection<PsiAnnotation> annotations = JavaAnnotationIndex.getInstance().get(JetClass.class.getSimpleName(), project, scope);
-        for (PsiAnnotation annotation : annotations) {
-            PsiModifierList modifierList = (PsiModifierList) annotation.getParent();
-            final PsiElement owner = modifierList.getParent();
-            if (owner instanceof PsiClass) {
-                PsiClass psiClass = (PsiClass) owner;
-                JetClassAnnotation jetAnnotation = JetClassAnnotation.get(psiClass);
-                if (psiClass.getContainingClass() == null && jetAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
-                    jetObjectClasses.add(psiClass);
-                }
+        Collection<PsiClass> classesByAnnotation = getClassesByAnnotation(JetClass.class.getSimpleName(), project, scope);
+        for (PsiClass psiClass : classesByAnnotation) {
+            JetClassAnnotation jetAnnotation = JetClassAnnotation.get(psiClass);
+            if (psiClass.getContainingClass() == null && jetAnnotation.kind() == JvmStdlibNames.FLAG_CLASS_KIND_OBJECT) {
+                jetObjectClasses.add(psiClass);
             }
         }
 
@@ -161,7 +156,7 @@ class JetFromJavaDescriptorHelper {
 
             FqName classFQN = new FqName(qualifiedName);
 
-            if (PackageClassUtils.isPackageClass(classFQN)) {
+            if (PackageClassUtils.isPackageClass(containingClass)) {
                 FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
                 return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
             }
@@ -195,5 +190,20 @@ class JetFromJavaDescriptorHelper {
         }
 
         return selectedMethods;
+    }
+
+    private static Collection<PsiClass> getClassesByAnnotation(
+            String annotationName, Project project, GlobalSearchScope scope
+    ) {
+        Collection<PsiClass> classes = Sets.newHashSet();
+        Collection<PsiAnnotation> annotations = JavaAnnotationIndex.getInstance().get(annotationName, project, scope);
+        for (PsiAnnotation annotation : annotations) {
+            PsiModifierList modifierList = (PsiModifierList) annotation.getParent();
+            final PsiElement owner = modifierList.getParent();
+            if (owner instanceof PsiClass) {
+                classes.add((PsiClass) owner);
+            }
+        }
+        return classes;
     }
 }
