@@ -23,10 +23,8 @@ import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -36,11 +34,34 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public class MemberMatching {
     /* DECLARATIONS ROUGH MATCHING */
+    @Nullable
+    private static JetTypeReference getReceiverType(@NotNull JetNamedDeclaration propertyOrFunction) {
+        if (propertyOrFunction instanceof JetNamedFunction) {
+            return ((JetNamedFunction) propertyOrFunction).getReceiverTypeRef();
+        }
+        if (propertyOrFunction instanceof JetProperty) {
+            return ((JetProperty) propertyOrFunction).getReceiverTypeRef();
+        }
+        throw new IllegalArgumentException("Neither function nor declaration: " + propertyOrFunction.getClass().getName());
+    }
+
+    @NotNull
+    private static List<JetParameter> getValueParameters(@NotNull JetNamedDeclaration propertyOrFunction) {
+        if (propertyOrFunction instanceof JetNamedFunction) {
+            return ((JetNamedFunction) propertyOrFunction).getValueParameters();
+        }
+        if (propertyOrFunction instanceof JetProperty) {
+            return Collections.emptyList();
+        }
+        throw new IllegalArgumentException("Neither function nor declaration: " + propertyOrFunction.getClass().getName());
+    }
+
     private static String getTypeShortName(@NotNull JetTypeReference typeReference) {
         JetTypeElement typeElement = typeReference.getTypeElement();
         assert typeElement != null;
@@ -86,8 +107,8 @@ public class MemberMatching {
             @NotNull Decl a,
             @NotNull Decl b
     ) {
-        boolean sameReceiverPresence = (navigationStrategy.getReceiverType(a) == null) == (navigationStrategy.getReceiverType(b) == null);
-        boolean sameParametersCount = navigationStrategy.getValueParameters(a).size() == navigationStrategy.getValueParameters(b).size();
+        boolean sameReceiverPresence = (getReceiverType(a) == null) == (getReceiverType(b) == null);
+        boolean sameParametersCount = getValueParameters(a).size() == getValueParameters(b).size();
         return sameReceiverPresence && sameParametersCount;
     }
 
@@ -96,8 +117,8 @@ public class MemberMatching {
             @NotNull Decl a,
             @NotNull Decl b
     ) {
-        JetTypeReference aReceiver = navigationStrategy.getReceiverType(a);
-        JetTypeReference bReceiver = navigationStrategy.getReceiverType(b);
+        JetTypeReference aReceiver = getReceiverType(a);
+        JetTypeReference bReceiver = getReceiverType(b);
         if ((aReceiver == null) != (bReceiver == null)) {
             return false;
         }
@@ -106,8 +127,8 @@ public class MemberMatching {
             return false;
         }
 
-        List<JetParameter> aParameters = navigationStrategy.getValueParameters(a);
-        List<JetParameter> bParameters = navigationStrategy.getValueParameters(b);
+        List<JetParameter> aParameters = getValueParameters(a);
+        List<JetParameter> bParameters = getValueParameters(b);
         if (aParameters.size() != bParameters.size()) {
             return false;
         }
@@ -132,7 +153,7 @@ public class MemberMatching {
             @NotNull Decl declaration,
             @NotNull CallableDescriptor descriptor
     ) {
-        JetTypeReference declarationReceiver = navigationStrategy.getReceiverType(declaration);
+        JetTypeReference declarationReceiver = getReceiverType(declaration);
         ReceiverParameterDescriptor descriptorReceiver = descriptor.getReceiverParameter();
         if (declarationReceiver == null && descriptorReceiver == null) {
             return true;
@@ -148,8 +169,8 @@ public class MemberMatching {
             @NotNull Decl declaration,
             @NotNull Descr descriptor
     ) {
-        List<JetParameter> declarationParameters = navigationStrategy.getValueParameters(declaration);
-        List<ValueParameterDescriptor> descriptorParameters = navigationStrategy.getValueParameters(descriptor);
+        List<JetParameter> declarationParameters = getValueParameters(declaration);
+        List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
         if (descriptorParameters.size() != declarationParameters.size()) {
             return false;
         }

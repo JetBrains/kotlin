@@ -16,66 +16,15 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 
-import java.util.Collections;
-import java.util.List;
-
 interface MemberNavigationStrategy<Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> {
-    @NotNull
-    List<JetParameter> getValueParameters(@NotNull Decl declaration);
-
-    @NotNull
-    List<ValueParameterDescriptor> getValueParameters(@NotNull Descr descriptor);
-
-    @Nullable
-    JetTypeReference getReceiverType(@NotNull Decl declaration);
-
     class FunctionStrategy implements MemberNavigationStrategy<JetNamedFunction, FunctionDescriptor> {
-
-        @NotNull
-        @Override
-        public List<JetParameter> getValueParameters(@NotNull JetNamedFunction declaration) {
-            return declaration.getValueParameters();
-        }
-
-        @NotNull
-        @Override
-        public List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor descriptor) {
-            return descriptor.getValueParameters();
-        }
-
-        @Nullable
-        @Override
-        public JetTypeReference getReceiverType(@NotNull JetNamedFunction declaration) {
-            return declaration.getReceiverTypeRef();
-        }
     }
 
     class PropertyStrategy implements MemberNavigationStrategy<JetProperty, VariableDescriptor> {
-
-        @NotNull
-        @Override
-        public List<JetParameter> getValueParameters(@NotNull JetProperty declaration) {
-            return Collections.emptyList();
-        }
-
-        @NotNull
-        @Override
-        public List<ValueParameterDescriptor> getValueParameters(@NotNull VariableDescriptor descriptor) {
-            return Collections.emptyList();
-        }
-
-        @Nullable
-        @Override
-        public JetTypeReference getReceiverType(@NotNull JetProperty declaration) {
-            return declaration.getReceiverTypeRef();
-        }
     }
 }
