@@ -23,9 +23,6 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-/**
- * @author Vladimir Rudev
- */
 public class SimpleNameReferenceRenameTest extends LightCodeInsightTestCase {
 
     @NotNull
