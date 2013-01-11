@@ -73,8 +73,8 @@ public class JetSimpleNameReference extends JetPsiReference {
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
         IElementType type = myExpression.getReferencedNameElementType();
-        final PsiElement element;
-        final Project project = myExpression.getProject();
+        PsiElement element;
+        Project project = myExpression.getProject();
         if (JetTokens.FIELD_IDENTIFIER == type) {
             element = JetPsiFactory.createFieldIdentifier(project, newElementName);
         }
