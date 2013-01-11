@@ -152,8 +152,7 @@ public class JetSourceNavigationHelper {
     @Nullable
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> JetNamedDeclaration
             getSourcePropertyOrFunction(
-            @NotNull final Decl decompiledDeclaration,
-            @NotNull final MemberNavigationStrategy<Decl, Descr> navigationStrategy
+            @NotNull final Decl decompiledDeclaration
     ) {
         String memberNameAsString = decompiledDeclaration.getName();
         assert memberNameAsString != null;
@@ -185,14 +184,14 @@ public class JetSourceNavigationHelper {
         }
 
         if (!forceResolve) {
-            candidates = filterByReceiverPresenceAndParametersCount(decompiledDeclaration, navigationStrategy, candidates);
+            candidates = filterByReceiverPresenceAndParametersCount(decompiledDeclaration, candidates);
 
             if (candidates.size() <= 1) {
                 return candidates.isEmpty() ? null : candidates.iterator().next();
             }
 
             if (!haveRenamesInImports(getContainingFiles(candidates))) {
-                candidates = filterByReceiverAndParameterTypes(decompiledDeclaration, navigationStrategy, candidates);
+                candidates = filterByReceiverAndParameterTypes(decompiledDeclaration, candidates);
 
                 if (candidates.size() <= 1) {
                     return candidates.isEmpty() ? null : candidates.iterator().next();
@@ -217,8 +216,8 @@ public class JetSourceNavigationHelper {
         for (Decl candidate : candidates) {
             //noinspection unchecked
             Descr candidateDescriptor = (Descr) resolveSession.resolveToDescriptor(candidate);
-            if (receiversMatch(navigationStrategy, decompiledDeclaration, candidateDescriptor)
-                    && valueParametersTypesMatch(navigationStrategy, decompiledDeclaration, candidateDescriptor)
+            if (receiversMatch(decompiledDeclaration, candidateDescriptor)
+                    && valueParametersTypesMatch(decompiledDeclaration, candidateDescriptor)
                     && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {
                 return candidate;
             }
@@ -288,13 +287,12 @@ public class JetSourceNavigationHelper {
     @NotNull
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> List<Decl> filterByReceiverPresenceAndParametersCount(
             final @NotNull Decl decompiledDeclaration,
-            final @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Collection<Decl> candidates
     ) {
         return ContainerUtil.filter(candidates, new Condition<Decl>() {
             @Override
             public boolean value(Decl candidate) {
-                return sameReceiverPresenceAndParametersCount(navigationStrategy, candidate, decompiledDeclaration);
+                return sameReceiverPresenceAndParametersCount(candidate, decompiledDeclaration);
             }
         });
     }
@@ -302,25 +300,24 @@ public class JetSourceNavigationHelper {
     @NotNull
     private static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> List<Decl> filterByReceiverAndParameterTypes(
             final @NotNull Decl decompiledDeclaration,
-            final @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Collection<Decl> candidates
     ) {
         return ContainerUtil.filter(candidates, new Condition<Decl>() {
             @Override
             public boolean value(Decl candidate) {
-                return receiverAndParametersShortTypesMatch(navigationStrategy, candidate, decompiledDeclaration);
+                return receiverAndParametersShortTypesMatch(candidate, decompiledDeclaration);
             }
         });
     }
 
     @Nullable
     public static JetNamedDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
-        return getSourcePropertyOrFunction(decompiledProperty, new MemberNavigationStrategy.PropertyStrategy());
+        return getSourcePropertyOrFunction(decompiledProperty);
     }
 
     @Nullable
     public static JetNamedDeclaration getSourceFunction(final @NotNull JetNamedFunction decompiledFunction) {
-        return getSourcePropertyOrFunction(decompiledFunction, new MemberNavigationStrategy.FunctionStrategy());
+        return getSourcePropertyOrFunction(decompiledFunction);
     }
 
     @TestOnly

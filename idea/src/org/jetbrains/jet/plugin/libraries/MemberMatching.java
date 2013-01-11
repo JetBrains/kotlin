@@ -103,7 +103,6 @@ public class MemberMatching {
     }
 
     static <Decl extends JetNamedDeclaration> boolean sameReceiverPresenceAndParametersCount(
-            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
             @NotNull Decl a,
             @NotNull Decl b
     ) {
@@ -113,7 +112,6 @@ public class MemberMatching {
     }
 
     static <Decl extends JetNamedDeclaration> boolean receiverAndParametersShortTypesMatch(
-            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
             @NotNull Decl a,
             @NotNull Decl b
     ) {
@@ -149,7 +147,6 @@ public class MemberMatching {
 
     /* DECLARATION AND DESCRIPTOR STRICT MATCHING */
     static <Decl extends JetNamedDeclaration> boolean receiversMatch(
-            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
             @NotNull Decl declaration,
             @NotNull CallableDescriptor descriptor
     ) {
@@ -165,7 +162,6 @@ public class MemberMatching {
     }
 
     static <Decl extends JetNamedDeclaration, Descr extends CallableDescriptor> boolean valueParametersTypesMatch(
-            @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Decl declaration,
             @NotNull Descr descriptor
     ) {
