@@ -24,11 +24,15 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiManagerImpl;
+import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
+import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.IncorrectOperationException;
@@ -114,16 +118,11 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     @Override
     public PsiClass getDelegate() {
         if (delegate == null) {
-            JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
-            assert outermostClassOrObject != null : "Attempt to build a light class for a local class: " + classOrObject.getText();
-            PsiJavaFileStub javaFileStub = CachedValuesManager.getManager(getProject()).getCachedValue(
-                    outermostClassOrObject,
-                    JAVA_API_STUB,
-                    KotlinJavaFileStubProvider.createForDeclaredTopLevelClass(outermostClassOrObject),
-                    /*trackValue = */false);
+            PsiJavaFileStub javaFileStub = getJavaFileStub();
 
             PsiClass psiClass = LightClassUtil.findClass(classFqName, javaFileStub);
             if (psiClass == null) {
+                JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
                 throw new IllegalStateException("Class was not found " + classFqName + " in " + outermostClassOrObject.getText());
             }
             delegate = psiClass;
@@ -132,7 +131,17 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         return delegate;
     }
 
-    @Nullable
+    @NotNull
+    private PsiJavaFileStub getJavaFileStub() {
+        JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
+        return CachedValuesManager.getManager(getProject()).getCachedValue(
+                outermostClassOrObject,
+                JAVA_API_STUB,
+                KotlinJavaFileStubProvider.createForDeclaredTopLevelClass(outermostClassOrObject),
+                        /*trackValue = */false);
+    }
+
+    @NotNull
     private static JetClassOrObject getOutermostClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetClassOrObject current = classOrObject;
         while (true) {
@@ -149,11 +158,38 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             }
             if (!(parent instanceof JetClassBody)) {
                 // It is a local class, no legitimate outer
-                return null;
+                throw new IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.getText());
             }
 
             current = (JetClassOrObject) parent.getParent();
         }
+    }
+
+    private final NullableLazyValue<PsiFile> _containingFile = new NullableLazyValue<PsiFile>() {
+        @Nullable
+        @Override
+        protected PsiFile compute() {
+            VirtualFile virtualFile = classOrObject.getContainingFile().getVirtualFile();
+            assert virtualFile != null : "No virtual file for " + classOrObject.getText();
+            return new ClsFileImpl((PsiManagerImpl) getManager(), new ClassFileViewProvider(getManager(), virtualFile)) {
+                @NotNull
+                @Override
+                public String getPackageName() {
+                    return JetPsiUtil.getFQName((JetFile) classOrObject.getContainingFile()).getFqName();
+                }
+
+                @NotNull
+                @Override
+                public PsiClassHolderFileStub getStub() {
+                    return getJavaFileStub();
+                }
+            };
+        }
+    };
+
+    @Override
+    public PsiFile getContainingFile() {
+        return _containingFile.getValue();
     }
 
     @NotNull
