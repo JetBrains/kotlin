@@ -206,14 +206,15 @@ public class JetPsiFactory {
     public static PsiElement createClassLabel(Project project, @NotNull String labelName) {
         final String labelTemplate = "class {0}()'{' fun aFun()'{' this@{0}'}'}";
         JetClass aClass = createClass(project, MessageFormat.format(labelTemplate, labelName));
-        final int offset = 29;    // @labelName
-        return aClass.findElementAt(offset);
+        final int offset = 18;    // @labelName
+        return aClass.getBody().findElementAt(offset);
     }
 
     public static PsiElement createFieldIdentifier(Project project, @NotNull String fieldName){
         final String labelTemplate = "class aClass()'{'var {0}:Int=0;set(value)'{'${0}'} '}";
         JetClass aClass = createClass(project, MessageFormat.format(labelTemplate, fieldName));
-        final int offset = 44;   // $fieldName
-        return aClass.findElementAt(offset);
+        final JetDeclaration declaration = aClass.getBody().getDeclarations().get(0);
+        final int offset = 11;   // $fieldName
+        return declaration.getLastChild().findElementAt(offset);
     }
 }
