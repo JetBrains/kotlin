@@ -214,11 +214,10 @@ public class JetSourceNavigationHelper {
                 DefaultModuleConfiguration.createStandardConfiguration(project),
                 providerFactory);
 
-        JetTypeReference receiverType = navigationStrategy.getReceiverType(decompiledDeclaration);
         for (Decl candidate : candidates) {
             //noinspection unchecked
             Descr candidateDescriptor = (Descr) resolveSession.resolveToDescriptor(candidate);
-            if (receiversMatch(receiverType, candidateDescriptor.getReceiverParameter())
+            if (receiversMatch(navigationStrategy, decompiledDeclaration, candidateDescriptor)
                     && valueParametersTypesMatch(navigationStrategy, decompiledDeclaration, candidateDescriptor)
                     && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {
                 return candidate;
@@ -292,16 +291,10 @@ public class JetSourceNavigationHelper {
             final @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Collection<Decl> candidates
     ) {
-        final JetTypeReference decompiledReceiver = navigationStrategy.getReceiverType(decompiledDeclaration);
-        final int decompiledParametersCount = navigationStrategy.getValueParameters(decompiledDeclaration).size();
-
         return ContainerUtil.filter(candidates, new Condition<Decl>() {
             @Override
             public boolean value(Decl candidate) {
-                boolean sameReceiverPresence = (navigationStrategy.getReceiverType(candidate) != null) ==
-                                               (decompiledReceiver != null);
-                boolean sameParameterCount = navigationStrategy.getValueParameters(candidate).size() == decompiledParametersCount;
-                return sameReceiverPresence && sameParameterCount;
+                return sameReceiverPresenceAndParametersCount(navigationStrategy, candidate, decompiledDeclaration);
             }
         });
     }
@@ -312,20 +305,10 @@ public class JetSourceNavigationHelper {
             final @NotNull MemberNavigationStrategy<Decl, Descr> navigationStrategy,
             @NotNull Collection<Decl> candidates
     ) {
-        final JetTypeReference decompiledReceiver = navigationStrategy.getReceiverType(decompiledDeclaration);
-
         return ContainerUtil.filter(candidates, new Condition<Decl>() {
             @Override
             public boolean value(Decl candidate) {
-                if (decompiledReceiver != null) {
-                    JetTypeReference candidateReceiver = navigationStrategy.getReceiverType(candidate);
-                    assert candidateReceiver != null;
-                    if (!MemberMatching.typesHaveSameShortName(decompiledReceiver, candidateReceiver)) {
-                        return false;
-                    }
-                }
-
-                return MemberMatching.parameterShortTypesMatch(navigationStrategy, candidate, decompiledDeclaration);
+                return receiverAndParametersShortTypesMatch(navigationStrategy, candidate, decompiledDeclaration);
             }
         });
     }

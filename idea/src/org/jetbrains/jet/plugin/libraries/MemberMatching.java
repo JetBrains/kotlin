@@ -23,7 +23,6 @@ import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -41,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 public class MemberMatching {
+    /* DECLARATIONS ROUGH MATCHING */
     private static String getTypeShortName(@NotNull JetTypeReference typeReference) {
         JetTypeElement typeElement = typeReference.getTypeElement();
         assert typeElement != null;
@@ -77,19 +77,68 @@ public class MemberMatching {
         }, null);
     }
 
-    static boolean typesHaveSameShortName(@NotNull JetTypeReference a, @NotNull JetTypeReference b) {
+    private static boolean typesHaveSameShortName(@NotNull JetTypeReference a, @NotNull JetTypeReference b) {
         return getTypeShortName(a).equals(getTypeShortName(b));
     }
 
-    static boolean receiversMatch(
-            @Nullable JetTypeReference receiverTypeRef,
-            @Nullable ReceiverParameterDescriptor receiverParameter
+    static <Decl extends JetNamedDeclaration> boolean sameReceiverPresenceAndParametersCount(
+            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
+            @NotNull Decl a,
+            @NotNull Decl b
     ) {
-        if (receiverTypeRef == null && receiverParameter == null) {
+        boolean sameReceiverPresence = (navigationStrategy.getReceiverType(a) == null) == (navigationStrategy.getReceiverType(b) == null);
+        boolean sameParametersCount = navigationStrategy.getValueParameters(a).size() == navigationStrategy.getValueParameters(b).size();
+        return sameReceiverPresence && sameParametersCount;
+    }
+
+    static <Decl extends JetNamedDeclaration> boolean receiverAndParametersShortTypesMatch(
+            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
+            @NotNull Decl a,
+            @NotNull Decl b
+    ) {
+        JetTypeReference aReceiver = navigationStrategy.getReceiverType(a);
+        JetTypeReference bReceiver = navigationStrategy.getReceiverType(b);
+        if ((aReceiver == null) != (bReceiver == null)) {
+            return false;
+        }
+
+        if (aReceiver != null && !typesHaveSameShortName(aReceiver, bReceiver)) {
+            return false;
+        }
+
+        List<JetParameter> aParameters = navigationStrategy.getValueParameters(a);
+        List<JetParameter> bParameters = navigationStrategy.getValueParameters(b);
+        if (aParameters.size() != bParameters.size()) {
+            return false;
+        }
+        for (int i = 0; i < aParameters.size(); i++) {
+            JetTypeReference aType = aParameters.get(i).getTypeReference();
+            JetTypeReference bType = bParameters.get(i).getTypeReference();
+
+            assert aType != null;
+            assert bType != null;
+
+            if (!typesHaveSameShortName(aType, bType)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /* DECLARATION AND DESCRIPTOR STRICT MATCHING */
+    static <Decl extends JetNamedDeclaration> boolean receiversMatch(
+            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
+            @NotNull Decl declaration,
+            @NotNull CallableDescriptor descriptor
+    ) {
+        JetTypeReference declarationReceiver = navigationStrategy.getReceiverType(declaration);
+        ReceiverParameterDescriptor descriptorReceiver = descriptor.getReceiverParameter();
+        if (declarationReceiver == null && descriptorReceiver == null) {
             return true;
         }
-        if (receiverTypeRef != null && receiverParameter != null) {
-            return receiverTypeRef.getText().equals(DescriptorRenderer.TEXT.renderType(receiverParameter.getType()));
+        if (declarationReceiver != null && descriptorReceiver != null) {
+            return declarationReceiver.getText().equals(DescriptorRenderer.TEXT.renderType(descriptorReceiver.getType()));
         }
         return false;
     }
@@ -124,30 +173,6 @@ public class MemberMatching {
             assert typeToRender != null;
             String descriptorParameterText = DescriptorRenderer.TEXT.renderType(typeToRender);
             if (!declarationTypeText.equals(descriptorParameterText)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static <Decl extends JetNamedDeclaration> boolean parameterShortTypesMatch(
-            @NotNull MemberNavigationStrategy<Decl, ?> navigationStrategy,
-            @NotNull Decl a,
-            @NotNull Decl b
-    ) {
-        List<JetParameter> aParameters = navigationStrategy.getValueParameters(a);
-        List<JetParameter> bParameters = navigationStrategy.getValueParameters(b);
-        if (aParameters.size() != bParameters.size()) {
-            return false;
-        }
-        for (int i = 0; i < aParameters.size(); i++) {
-            JetTypeReference aType = aParameters.get(i).getTypeReference();
-            JetTypeReference bType = bParameters.get(i).getTypeReference();
-
-            assert aType != null;
-            assert bType != null;
-
-            if (!typesHaveSameShortName(aType, bType)) {
                 return false;
             }
         }
