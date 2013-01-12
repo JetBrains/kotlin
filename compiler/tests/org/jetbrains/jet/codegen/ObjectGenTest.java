@@ -115,4 +115,8 @@ public class ObjectGenTest extends CodegenTestCase {
     public void testKt2822() {
         blackBoxFile("regressions/kt2822.kt");
     }
+
+    public void testKt3238() {
+        blackBoxFile("regressions/kt3238.kt");
+    }
 }
