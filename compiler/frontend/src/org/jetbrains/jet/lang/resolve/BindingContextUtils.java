@@ -73,22 +73,6 @@ public class BindingContextUtils {
         return null;
     }
 
-    @NotNull
-    public static List<PsiElement> resolveToDeclarationPsiElements(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-        if (declarationDescriptor == null) {
-            return Lists.newArrayList(bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression));
-        }
-
-        List<PsiElement> elements = descriptorToDeclarations(bindingContext, declarationDescriptor);
-        if (elements.size() > 0) {
-            return elements;
-        }
-
-        return Lists.newArrayList();
-    }
-
-
     @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable JetElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
@@ -147,21 +131,6 @@ public class BindingContextUtils {
         }
     }
 
-    @NotNull
-    public static List<PsiElement> descriptorToDeclarations(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            return callableDescriptorToDeclarations(context, (CallableMemberDescriptor) descriptor);
-        }
-        else {
-            PsiElement psiElement = descriptorToDeclaration(context, descriptor);
-            if (psiElement != null) {
-                return Lists.newArrayList(psiElement);
-            } else {
-                return Lists.newArrayList();
-            }
-        }
-    }
-
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
@@ -182,7 +151,10 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
+    public static List<PsiElement> callableDescriptorToDeclarations(
+            @NotNull BindingContext context,
+            @NotNull CallableMemberDescriptor callable
+    ) {
         if (callable.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
             return Collections.emptyList();
         }
