@@ -18,14 +18,13 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.generation.ClassMemberWithElement;
 import com.intellij.codeInsight.generation.MemberChooserObject;
+import com.intellij.codeInsight.generation.MemberChooserObjectBase;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -35,33 +34,35 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 
-public class DescriptorClassMember implements ClassMemberWithElement {
+public class DescriptorClassMember extends MemberChooserObjectBase implements ClassMemberWithElement {
 
     public static final String NO_PARENT_FOR = "No parent for ";
     @NotNull
     private final DeclarationDescriptor myDescriptor;
     @NotNull
     private final PsiElement myPsiElement;
-    @Nullable
-    private final Icon icon;
 
     public DescriptorClassMember(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
+        super(DescriptorRenderer.STARTS_FROM_NAME.render(descriptor), getIcon(element, descriptor));
         myPsiElement = element;
         myDescriptor = descriptor;
-        if (myPsiElement.isValid()) {
-            boolean isClass = myPsiElement instanceof PsiClass || myPsiElement instanceof JetClass;
+    }
+
+    public static Icon getIcon(PsiElement element, DeclarationDescriptor declarationDescriptor) {
+        if (element.isValid()) {
+            boolean isClass = element instanceof PsiClass || element instanceof JetClass;
             int flags = isClass ? 0 : Iconable.ICON_FLAG_VISIBILITY;
-            if (myPsiElement instanceof JetDeclaration) {  // kotlin declaration
+            if (element instanceof JetDeclaration) {  // kotlin declaration
                 // visibility and abstraction better detect by a descriptor
-                icon = JetDescriptorIconProvider.getIcon(myDescriptor, flags);
+                return JetDescriptorIconProvider.getIcon(declarationDescriptor, flags);
             }
             else {
                 // it is better to show java icons for java code
-                icon = myPsiElement.getIcon(flags);
+                return element.getIcon(flags);
             }
         }
         else {
-            icon = JetDescriptorIconProvider.getIcon(myDescriptor, 0);
+            return JetDescriptorIconProvider.getIcon(declarationDescriptor, 0);
         }
     }
 
@@ -80,12 +81,6 @@ public class DescriptorClassMember implements ClassMemberWithElement {
         assert parent != null : NO_PARENT_FOR + myDescriptor;
         assert declaration != null : NO_PARENT_FOR + myPsiElement;
         return new DescriptorClassMember(declaration, parent);
-    }
-
-    @Override
-    public void renderTreeNode(SimpleColoredComponent component, JTree tree) {
-        component.append(getText());
-        component.setIcon(icon);
     }
 
     @Override
@@ -118,4 +113,5 @@ public class DescriptorClassMember implements ClassMemberWithElement {
     public PsiElement getElement() {
         return myPsiElement;
     }
+
 }
