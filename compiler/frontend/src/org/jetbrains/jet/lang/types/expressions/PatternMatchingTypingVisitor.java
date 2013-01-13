@@ -274,6 +274,12 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             return noChange(context);
         }
         JetType type = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReferenceAfterIs, context.trace, true);
+        if (!subjectType.isNullable() && type.isNullable()) {
+            JetTypeElement element = typeReferenceAfterIs.getTypeElement();
+            assert element instanceof JetNullableType : "element must be instance of " + JetNullableType.class.getName();
+            JetNullableType nullableType = (JetNullableType) element;
+            context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(nullableType));
+        }
         checkTypeCompatibility(context, type, subjectType, typeReferenceAfterIs);
         if (BasicExpressionTypingVisitor.isCastErased(subjectType, type, JetTypeChecker.INSTANCE)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, type));
