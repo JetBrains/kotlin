@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.wrapper;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,21 +49,15 @@ public final class PropertyPsiData {
             }
 
             if (element.isGetter()) {
-                if (value.getter != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
+                checkDuplicatePropertyComponent(element, "getter", value.getter);
                 value.getter = element;
             }
             else if (element.isSetter()) {
-                if (value.setter != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
+                checkDuplicatePropertyComponent(element, "setter", value.setter);
                 value.setter = element;
             }
             else if (element.isField()) {
-                if (value.field != null) {
-                    throw new IllegalStateException("oops, duplicate key");
-                }
+                checkDuplicatePropertyComponent(element, "field", value.field);
                 value.field = element;
             }
             else {
@@ -71,6 +66,20 @@ public final class PropertyPsiData {
         }
 
         return map.values();
+    }
+
+    private static void checkDuplicatePropertyComponent(
+            @NotNull PropertyPsiDataElement checked,  @NotNull String componentTypeName, @Nullable PropertyPsiDataElement existent) {
+        if (existent != null) {
+            PsiClass checkedElementClass = checked.getMember().getPsiMember().getContainingClass();
+            PsiClass existentElementClass = existent.getMember().getPsiMember().getContainingClass();
+
+            throw new IllegalStateException(
+                    String.format("Psi element '%s' in class '%s' overwrites '%s' in class '%s' while generating %s component for property",
+                                  checked.getMember().getPsiMember(), checkedElementClass != null ? checkedElementClass.getQualifiedName() : "<no-class>",
+                                  existent.getMember().getPsiMember(), existentElementClass != null ? existentElementClass.getQualifiedName() : "<no-class>",
+                                  componentTypeName));
+        }
     }
 
     @NotNull
