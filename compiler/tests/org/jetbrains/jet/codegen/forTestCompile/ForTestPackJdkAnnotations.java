@@ -35,8 +35,8 @@ public class ForTestPackJdkAnnotations {
     private static File getJarFile() {
         if (jarFile == null) {
             try {
-                File tmpDir = JetTestUtils.tmpDir("runtimejar");
-                jarFile = new File(tmpDir, "runtime.jar");
+                File tmpDir = JetTestUtils.tmpDir("test_jars");
+                jarFile = new File(tmpDir, "jdk-annotations.jar");
                 FileOutputStream annotationsJar = new FileOutputStream(jarFile);
                 try {
                     JarOutputStream jarOutputStream = new JarOutputStream(new BufferedOutputStream(annotationsJar));
