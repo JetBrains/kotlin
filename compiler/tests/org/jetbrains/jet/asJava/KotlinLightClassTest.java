@@ -18,7 +18,6 @@ package org.jetbrains.jet.asJava;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
@@ -27,28 +26,26 @@ import com.intellij.psi.PsiTypeParameter;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.config.CommonConfigurationKeys;
-import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
-import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.asJava.KotlinLightClassTest.ClassProperty.*;
 
-public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
+public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
 
     public static class Declared extends KotlinLightClassTest {
-        public Declared() {
-            super(new File("compiler/testData/asJava/lightClasses/Declared.kt"));
+
+        @Override
+        protected List<File> getKotlinSourceRoots() {
+            return Collections.singletonList(
+                    new File("compiler/testData/asJava/lightClasses/Declared.kt")
+            );
         }
 
         public void testNoModifiers() {
@@ -97,8 +94,11 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
 
     public static class DeclaredWithGenerics extends KotlinLightClassTest {
 
-        public DeclaredWithGenerics() {
-            super(new File("compiler/testData/asJava/lightClasses/DeclaredWithGenerics.kt"));
+        @Override
+        protected List<File> getKotlinSourceRoots() {
+            return Collections.singletonList(
+                    new File("compiler/testData/asJava/lightClasses/DeclaredWithGenerics.kt")
+            );
         }
 
         public void testGeneric1() throws Exception {
@@ -122,52 +122,16 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
 
     public static class Package extends KotlinLightClassTest {
 
-        public Package() {
-            super(new File("compiler/testData/asJava/lightClasses/Package.kt"));
+        @Override
+        protected List<File> getKotlinSourceRoots() {
+            return Collections.singletonList(
+                    new File("compiler/testData/asJava/lightClasses/Package.kt")
+            );
         }
 
         public void testPackage() throws Exception {
             checkModifiers("test." + PackageClassUtils.getPackageClassName(new FqName("test")), PUBLIC, FINAL);
         }
-    }
-
-    private File path;
-    private JavaElementFinder finder;
-
-    protected KotlinLightClassTest(File path) {
-        this.path = path;
-    }
-
-    @Override
-    protected JetCoreEnvironment createEnvironment() {
-        CompilerConfiguration configuration = new CompilerConfiguration();
-
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, path.getPath());
-
-        return new JetCoreEnvironment(getTestRootDisposable(), configuration);
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        finder = JavaElementFinder.getInstance(getProject());
-
-        // We need to resolve all the files in order to fill in the trace that sits inside LightClassGenerationSupport
-        List<String> paths = getEnvironment().getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
-        assert paths != null;
-        List<JetFile> jetFiles = Lists.newArrayList();
-        for (String path : paths) {
-            jetFiles.add(JetTestUtils.loadJetFile(getProject(), new File(path)));
-        }
-        LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        finder = null;
-        path = null;
-        super.tearDown();
     }
 
     @NotNull
