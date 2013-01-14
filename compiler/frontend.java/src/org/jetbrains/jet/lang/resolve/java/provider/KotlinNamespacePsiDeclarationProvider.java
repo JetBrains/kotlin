@@ -24,33 +24,29 @@ import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
 
 public final class KotlinNamespacePsiDeclarationProvider extends ClassPsiDeclarationProviderImpl implements PackagePsiDeclarationProvider {
-
     @NotNull
-    private final PackagePsiDeclarationProvider packagePsiDeclarationProvider;
+    private final PsiPackage psiPackage;
 
     public KotlinNamespacePsiDeclarationProvider(
             @NotNull PsiPackage psiPackage,
             @NotNull PsiClass psiClass,
-            @NotNull PsiDeclarationProviderFactory factory,
             @NotNull PsiClassFinder psiClassFinder
     ) {
         super(psiClass, true, psiClassFinder);
-
-        // TODO: remove?
-        this.packagePsiDeclarationProvider = factory.createDeclarationProviderForNamespaceWithoutMembers(psiPackage);
+        this.psiPackage = psiPackage;
     }
 
     @NotNull
     @Override
     public PsiPackage getPsiPackage() {
-        return packagePsiDeclarationProvider.getPsiPackage();
+        return psiPackage;
     }
 
     @NotNull
     @Override
     protected MembersCache buildMembersCache() {
         MembersCache cacheWithMembers = super.buildMembersCache();
-        MembersCache.buildMembersByNameCache(cacheWithMembers, psiClassFinder, null, packagePsiDeclarationProvider.getPsiPackage(), true, getDeclarationOrigin() == KOTLIN);
+        MembersCache.buildMembersByNameCache(cacheWithMembers, psiClassFinder, null, psiPackage, true, getDeclarationOrigin() == KOTLIN);
         return cacheWithMembers;
     }
 
