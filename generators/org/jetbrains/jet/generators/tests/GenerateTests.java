@@ -214,7 +214,7 @@ public class GenerateTests {
                 testModel("idea/testData/checker", false, "kt", "doTest"),
                 testModel("idea/testData/checker/regression"),
                 testModel("idea/testData/checker/rendering"),
-                testModel("idea/testData/checker/infos")
+                testModel("idea/testData/checker/infos", false, "kt", "doTestWithInfos")
         );
 
         generateTest(

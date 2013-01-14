@@ -401,22 +401,22 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker/infos")
     public static class Infos extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInInfos() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/infos"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/infos"), "kt", false);
         }
         
         @TestMetadata("Autocasts.kt")
         public void testAutocasts() throws Exception {
-            doTest("idea/testData/checker/infos/Autocasts.kt");
+            doTestWithInfos("idea/testData/checker/infos/Autocasts.kt");
         }
         
         @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
-            doTest("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
+            doTestWithInfos("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
         }
-        
+
         @TestMetadata("WrapIntoRef.kt")
         public void testWrapIntoRef() throws Exception {
-            doTest("idea/testData/checker/infos/WrapIntoRef.kt");
+            doTestWithInfos("idea/testData/checker/infos/WrapIntoRef.kt");
         }
         
     }
