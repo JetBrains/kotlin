@@ -746,7 +746,7 @@
     </item>
     <item name='java.util.concurrent.ThreadFactory java.lang.Thread newThread(java.lang.Runnable)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun newThread(r : Runnable) : Thread?&quot;"/>
+            <val name="value" val="&quot;fun newThread(r : Runnable) : Thread&quot;"/>
         </annotation>
     </item>
     <item name='java.util.concurrent.Executor void execute(java.lang.Runnable)'>
@@ -1415,7 +1415,7 @@
     </item>
     <item name='java.util.concurrent.ExecutorService T invokeAny(java.util.Collection&lt;? extends java.util.concurrent.Callable&lt;T&gt;&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;Callable&lt;T&gt;&gt;) : T?&quot;"/>
+            <val name="value" val="&quot;fun &lt;T&gt; invokeAny(tasks : Collection&lt;Callable&lt;T&gt;&gt;) : T&quot;"/>
         </annotation>
     </item>
     <item name='java.util.concurrent.ForkJoinPool java.lang.String toString()'>
