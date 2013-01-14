@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -104,12 +106,28 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         // To report NO_CLASS_OBJECT when no namespace found
         if (classifier != null) {
-            context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
+            if (!context.namespacesAllowed) {
+                context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
+            }
             context.trace.record(REFERENCE_TARGET, expression, classifier);
-            return classifier.getDefaultType();
+            JetScope scopeForStaticMembersResolution = classifier instanceof ClassDescriptor
+                                                       ? getStaticNestedClassesScope((ClassDescriptor) classifier)
+                                                       : JetScope.EMPTY;
+            return new NamespaceType(referencedName, scopeForStaticMembersResolution);
         }
         temporaryTrace.commit();
         return result[0];
+    }
+
+    @NotNull
+    private static JetScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
+        JetScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
+        return new FilteringScope(innerClassesScope, new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+                return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
+            }
+        });
     }
 
     protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull Name referencedName, @NotNull JetType[] result, ExpressionTypingContext context) {

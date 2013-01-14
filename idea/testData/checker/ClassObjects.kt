@@ -20,7 +20,7 @@ object b {
 }
 
 val a = A.x
-val c = <error>B</error>.x
+val c = B.<error>x</error>
 val d = b.<error>x</error>
 
 val s = <error>System</error>  // error

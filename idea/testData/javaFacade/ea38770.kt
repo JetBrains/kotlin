@@ -1,3 +1,3 @@
-fun <T> foo() {
+fun <T> foo() where class object T : Any {
     T.<caret>toString()
 }

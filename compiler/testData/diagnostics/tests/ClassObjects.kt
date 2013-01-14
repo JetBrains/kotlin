@@ -21,7 +21,7 @@ object b {
 }
 
 val a = A.x
-val c = <!NO_CLASS_OBJECT!>B<!>.x
+val c = B.<!UNRESOLVED_REFERENCE!>x<!>
 val d = b.<!UNRESOLVED_REFERENCE!>x<!>
 
 val s = <!NO_CLASS_OBJECT!>System<!>  // error
