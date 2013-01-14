@@ -100,6 +100,12 @@ public class JetPsiFactory {
                                                                                 LocalTimeCounter.currentTime(), false);
     }
 
+    @NotNull
+    public static JetFile createPhysicalFile(Project project, String fileName, String text) {
+        return (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, JetFileType.INSTANCE, text,
+                                                                                LocalTimeCounter.currentTime(), true);
+    }
+
     public static JetProperty createProperty(Project project, String name, String type, boolean isVar, @Nullable String initializer) {
         String text = (isVar ? "var " : "val ") + name + (type != null ? ":" + type : "") + (initializer == null ? "" : " = " + initializer);
         return createProperty(project, text);

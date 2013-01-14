@@ -547,6 +547,6 @@ public class JetTestUtils {
 
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile);
-        return JetPsiFactory.createFile(project, text);
+        return JetPsiFactory.createPhysicalFile(project, ioFile.getName(), text);
     }
 }
