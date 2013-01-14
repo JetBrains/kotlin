@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
@@ -27,10 +28,15 @@ public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProvi
     @NotNull
     private final PsiPackage psiPackage;
 
+    @NotNull
+    private final PsiClassFinder psiClassFinder;
+
     /*package private*/ PackagePsiDeclarationProviderImpl(
-            @NotNull PsiPackage psiPackage
+            @NotNull PsiPackage psiPackage,
+            @NotNull PsiClassFinder psiClassFinder
     ) {
         this.psiPackage = psiPackage;
+        this.psiClassFinder = psiClassFinder;
     }
 
     @NotNull
@@ -42,7 +48,7 @@ public final class PackagePsiDeclarationProviderImpl extends PsiDeclarationProvi
     @NotNull
     @Override
     protected MembersCache buildMembersCache() {
-        return MembersCache.buildMembersByNameCache(new MembersCache(), null, getPsiPackage(), true, getDeclarationOrigin() == KOTLIN);
+        return MembersCache.buildMembersByNameCache(new MembersCache(), psiClassFinder, null, getPsiPackage(), true, getDeclarationOrigin() == KOTLIN);
     }
 
     @NotNull

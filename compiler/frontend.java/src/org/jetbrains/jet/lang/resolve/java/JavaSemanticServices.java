@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -37,7 +38,8 @@ public class JavaSemanticServices {
     private PsiClassFinder psiClassFinder;
     @NotNull
     private BindingTrace trace;
-
+    @NotNull
+    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
 
     @Inject
     public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
@@ -59,11 +61,14 @@ public class JavaSemanticServices {
         this.trace = trace;
     }
 
-
-
     @NotNull
     public JavaTypeTransformer getTypeTransformer() {
         return typeTransformer;
+    }
+
+    @Inject
+    public void setPsiDeclarationProviderFactory(PsiDeclarationProviderFactory psiDeclarationProviderFactory) {
+        this.psiDeclarationProviderFactory = psiDeclarationProviderFactory;
     }
 
     @NotNull
@@ -81,7 +86,10 @@ public class JavaSemanticServices {
         return psiClassFinder;
     }
 
-
+    @NotNull
+    public PsiDeclarationProviderFactory getPsiDeclarationProviderFactory() {
+        return psiDeclarationProviderFactory;
+    }
 
     @Nullable
     public ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {

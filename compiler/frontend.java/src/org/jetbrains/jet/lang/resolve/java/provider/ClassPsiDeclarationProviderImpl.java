@@ -4,6 +4,7 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.JAVA;
 import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOTLIN;
@@ -11,23 +12,26 @@ import static org.jetbrains.jet.lang.resolve.java.provider.DeclarationOrigin.KOT
 public class ClassPsiDeclarationProviderImpl extends PsiDeclarationProviderBase implements ClassPsiDeclarationProvider {
 
     @NotNull
-    private final PsiClass psiClass;
-    private final boolean staticMembers;
-    @NotNull
     protected final DeclarationOrigin declarationOrigin;
+    @NotNull
+    protected final PsiClassFinder psiClassFinder;
 
-    protected ClassPsiDeclarationProviderImpl(
-            @NotNull PsiClass psiClass, boolean staticMembers
-    ) {
+    @NotNull
+    private final PsiClass psiClass;
+
+    private final boolean staticMembers;
+
+    protected ClassPsiDeclarationProviderImpl(@NotNull PsiClass psiClass, boolean staticMembers, @NotNull PsiClassFinder psiClassFinder) {
         this.staticMembers = staticMembers;
         this.psiClass = psiClass;
+        this.psiClassFinder = psiClassFinder;
         this.declarationOrigin = determineOrigin(psiClass);
     }
 
     @Override
     @NotNull
     protected MembersCache buildMembersCache() {
-        return MembersCache.buildMembersByNameCache(new MembersCache(), psiClass, null, staticMembers, getDeclarationOrigin() == KOTLIN);
+        return MembersCache.buildMembersByNameCache(new MembersCache(), psiClassFinder, psiClass, null, staticMembers, getDeclarationOrigin() == KOTLIN);
     }
 
     @Override

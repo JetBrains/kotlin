@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,6 +34,8 @@ import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
 
 public class PsiClassFinderImpl implements PsiClassFinder {
 
@@ -122,5 +126,32 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         return javaFacade.findPackage(qualifiedName.getFqName());
     }
 
+    @NotNull
+    @Override
+    public List<PsiClass> findPsiClasses(@NotNull PsiPackage psiPackage) {
+        return filterDuplicateClasses(psiPackage.getClasses());
+    }
 
+    @NotNull
+    @Override
+    public List<PsiClass> findInnerPsiClasses(@NotNull PsiClass psiClass) {
+        return filterDuplicateClasses(psiClass.getInnerClasses());
+    }
+
+    private static List<PsiClass> filterDuplicateClasses(PsiClass[] classes) {
+        Set<String> addedQualifiedNames = Sets.newHashSet();
+        List<PsiClass> filteredClasses = Lists.newArrayList();
+
+        for (PsiClass aClass : classes) {
+            String qualifiedName = aClass.getQualifiedName();
+
+            if (qualifiedName != null) {
+                if (addedQualifiedNames.add(qualifiedName)) {
+                    filteredClasses.add(aClass);
+                }
+            }
+        }
+
+        return filteredClasses;
+    }
 }

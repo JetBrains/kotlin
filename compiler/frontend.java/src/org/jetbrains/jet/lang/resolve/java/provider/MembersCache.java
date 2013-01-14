@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.java.TypeSource;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
@@ -30,10 +31,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class MembersCache {
-
     @NotNull
     private final Map<Name, NamedMembers> namedMembersMap = new HashMap<Name, NamedMembers>();
 
@@ -59,7 +60,9 @@ public final class MembersCache {
 
     @NotNull
     public static MembersCache buildMembersByNameCache(
-            @NotNull MembersCache membersCache, @Nullable PsiClass psiClass,
+            @NotNull MembersCache membersCache,
+            @NotNull PsiClassFinder finder,
+            @Nullable PsiClass psiClass,
             @Nullable PsiPackage psiPackage,
             boolean staticMembers,
             boolean isKotlin
@@ -67,17 +70,18 @@ public final class MembersCache {
         if (psiClass != null) {
             membersCache.new ClassMemberProcessor(new PsiClassWrapper(psiClass), staticMembers, isKotlin).process();
         }
+
         //TODO:
-        PsiClass[] classes = psiPackage != null ? psiPackage.getClasses() : psiClass.getInnerClasses();
+        List<PsiClass> classes = psiPackage != null ? finder.findPsiClasses(psiPackage) : finder.findInnerPsiClasses(psiClass);
         membersCache.new ObjectClassProcessor(classes).process();
         return membersCache;
     }
 
     private class ObjectClassProcessor {
         @NotNull
-        private final PsiClass[] psiClasses;
+        private final List<PsiClass> psiClasses;
 
-        private ObjectClassProcessor(@NotNull PsiClass[] classes) {
+        private ObjectClassProcessor(@NotNull List<PsiClass> classes) {
             psiClasses = classes;
         }
 

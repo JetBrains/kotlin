@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
@@ -50,6 +51,7 @@ public class InjectorForJavaSemanticServices {
     private PsiClassFinderImpl psiClassFinder;
     private ModuleDescriptor moduleDescriptor;
     private final Project project;
+    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaClassResolver javaClassResolver;
     private JavaAnnotationResolver javaAnnotationResolver;
@@ -74,6 +76,7 @@ public class InjectorForJavaSemanticServices {
         this.psiClassFinder = new PsiClassFinderImpl();
         this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"));
         this.project = project;
+        this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(getPsiClassFinder());
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
@@ -90,6 +93,7 @@ public class InjectorForJavaSemanticServices {
 
         this.javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         this.javaSemanticServices.setPsiClassFinder(psiClassFinder);
+        this.javaSemanticServices.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
         this.javaSemanticServices.setTrace(bindingTrace);
         this.javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 

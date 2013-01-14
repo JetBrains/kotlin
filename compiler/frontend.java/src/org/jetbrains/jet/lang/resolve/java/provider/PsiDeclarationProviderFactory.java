@@ -19,36 +19,38 @@ package org.jetbrains.jet.lang.resolve.java.provider;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 
 public final class PsiDeclarationProviderFactory {
-    private PsiDeclarationProviderFactory() {
+    @NotNull private final PsiClassFinder psiClassFinder;
+
+    public PsiDeclarationProviderFactory(@NotNull PsiClassFinder psiClassFinder) {
+        this.psiClassFinder = psiClassFinder;
     }
 
     @NotNull
-    public static ClassPsiDeclarationProvider createSyntheticClassObjectClassData(@NotNull PsiClass psiClass) {
+    public ClassPsiDeclarationProvider createSyntheticClassObjectClassData(@NotNull PsiClass psiClass) {
         return createDeclarationProviderForClassStaticMembers(psiClass);
     }
 
     @NotNull
-    public static ClassPsiDeclarationProvider createBinaryClassData(@NotNull PsiClass psiClass) {
-        return new ClassPsiDeclarationProviderImpl(psiClass, false);
+    public ClassPsiDeclarationProvider createBinaryClassData(@NotNull PsiClass psiClass) {
+        return new ClassPsiDeclarationProviderImpl(psiClass, false, psiClassFinder);
     }
 
     @NotNull
-    public static KotlinNamespacePsiDeclarationProvider createDeclarationForKotlinNamespace(
-            @NotNull PsiPackage psiPackage,
-            @NotNull PsiClass psiClass
-    ) {
-        return new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass);
+    public KotlinNamespacePsiDeclarationProvider createDeclarationForKotlinNamespace(
+            @NotNull PsiPackage psiPackage, @NotNull PsiClass psiClass) {
+        return new KotlinNamespacePsiDeclarationProvider(psiPackage, psiClass, this, psiClassFinder);
     }
 
     @NotNull
-    public static PackagePsiDeclarationProvider createDeclarationProviderForNamespaceWithoutMembers(@NotNull PsiPackage psiPackage) {
-        return new PackagePsiDeclarationProviderImpl(psiPackage);
+    public PackagePsiDeclarationProvider createDeclarationProviderForNamespaceWithoutMembers(@NotNull PsiPackage psiPackage) {
+        return new PackagePsiDeclarationProviderImpl(psiPackage, psiClassFinder);
     }
 
     @NotNull
-    public static ClassPsiDeclarationProvider createDeclarationProviderForClassStaticMembers(@NotNull PsiClass psiClass) {
-        return new ClassPsiDeclarationProviderImpl(psiClass, true);
+    public ClassPsiDeclarationProvider createDeclarationProviderForClassStaticMembers(@NotNull PsiClass psiClass) {
+        return new ClassPsiDeclarationProviderImpl(psiClass, true, psiClassFinder);
     }
 }

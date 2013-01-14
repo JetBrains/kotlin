@@ -43,8 +43,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory.*;
-
 public final class JavaNamespaceResolver {
 
     @NotNull
@@ -150,13 +148,15 @@ public final class JavaNamespaceResolver {
             PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
             trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
             if (psiClass == null) {
-                return new JavaPackageScopeWithoutMembers(namespaceDescriptor,
-                                                          createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
-                                                          fqName, javaSemanticServices);
+                return new JavaPackageScopeWithoutMembers(
+                        namespaceDescriptor,
+                        javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
+                        fqName, javaSemanticServices);
             }
-            return new JavaScopeForKotlinNamespace(namespaceDescriptor,
-                                                   createDeclarationForKotlinNamespace(psiPackage, psiClass),
-                                                   fqName, javaSemanticServices);
+            return new JavaScopeForKotlinNamespace(
+                    namespaceDescriptor,
+                    javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),
+                    fqName, javaSemanticServices);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -169,9 +169,10 @@ public final class JavaNamespaceResolver {
             return null;
         }
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
-        return new JavaClassStaticMembersScope(namespaceDescriptor,
-                                               createDeclarationProviderForClassStaticMembers(psiClass),
-                                               fqName, javaSemanticServices);
+        return new JavaClassStaticMembersScope(
+                namespaceDescriptor,
+                javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForClassStaticMembers(psiClass),
+                fqName, javaSemanticServices);
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JavaBaseScope packageScope) {

@@ -52,7 +52,7 @@ public final class ScopeUtils {
             }
         }
 
-        for (PsiClass psiClass : psiPackage.getClasses()) {
+        for (PsiClass psiClass : javaSemanticServices.getPsiClassFinder().findPsiClasses(psiPackage)) {
             if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
                 continue;
             }

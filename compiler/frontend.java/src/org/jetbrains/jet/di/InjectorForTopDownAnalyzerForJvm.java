@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
@@ -95,6 +96,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private TypeHierarchyResolver typeHierarchyResolver;
     private ScriptBodyResolver scriptBodyResolver;
     private JavaSemanticServices javaSemanticServices;
+    private PsiDeclarationProviderFactory psiDeclarationProviderFactory;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaClassResolver javaClassResolver;
     private JavaAnnotationResolver javaAnnotationResolver;
@@ -144,6 +146,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaSemanticServices = new JavaSemanticServices();
+        this.psiDeclarationProviderFactory = new PsiDeclarationProviderFactory(psiClassFinder);
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
@@ -267,6 +270,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         javaSemanticServices.setPsiClassFinder(psiClassFinder);
+        javaSemanticServices.setPsiDeclarationProviderFactory(psiDeclarationProviderFactory);
         javaSemanticServices.setTrace(bindingTrace);
         javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 

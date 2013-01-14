@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.List;
+
 public interface PsiClassFinder {
     enum RuntimeClassesHandleMode {
         THROW,
@@ -30,6 +32,13 @@ public interface PsiClassFinder {
 
     @Nullable
     PsiClass findPsiClass(@NotNull FqName fqName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode);
+
     @Nullable
     PsiPackage findPsiPackage(@NotNull FqName fqName);
+
+    @NotNull
+    List<PsiClass> findPsiClasses(@NotNull PsiPackage psiPackage);
+
+    @NotNull
+    List<PsiClass> findInnerPsiClasses(@NotNull PsiClass psiClass);
 }
