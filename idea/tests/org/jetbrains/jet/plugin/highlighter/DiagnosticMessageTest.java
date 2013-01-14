@@ -102,4 +102,8 @@ public class DiagnosticMessageTest extends JetLiteFixture {
     public void testInaccessibleOuterClassExpression() throws Exception {
         doTest("inaccessibleOuterClassExpression", 1, Errors.INACCESSIBLE_OUTER_CLASS_EXPRESSION);
     }
+
+    public void testUpperBoundViolated() throws Exception {
+        doTest("upperBoundViolated", 1, Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED);
+    }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
 import org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
@@ -37,6 +38,13 @@ import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.error;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.strong;
 
 public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
+
+
+    @NotNull
+    @Override
+    public Renderer<JetType> getTypeRenderer() {
+        return IdeRenderers.HTML_RENDER_TYPE;
+    }
 
     @Override
     protected void renderText(TextRenderer textRenderer, StringBuilder result) {
@@ -107,7 +115,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
         result.append("</table>");
     }
 
-    private static void renderFunctionArguments(
+    private void renderFunctionArguments(
             @Nullable JetType receiverType,
             @NotNull List<JetType> argumentTypes,
             Predicate<ConstraintPosition> isErrorPosition,
@@ -121,7 +129,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (isErrorPosition.apply(ConstraintPosition.RECEIVER_POSITION)) {
                 error = true;
             }
-            receiver = "receiver: " + strong(IdeRenderers.HTML_RENDER_TYPE.render(receiverType), error);
+            receiver = "receiver: " + strong(getTypeRenderer().render(receiverType), error);
         }
         td(result, receiver);
         td(result, hasReceiver ? "arguments: " : "");
@@ -138,7 +146,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (isErrorPosition.apply(ConstraintPosition.getValueParameterPosition(i))) {
                 error = true;
             }
-            String renderedArgument = IdeRenderers.HTML_RENDER_TYPE.render(argumentType);
+            String renderedArgument = getTypeRenderer().render(argumentType);
 
             tdRight(result, strong(renderedArgument, error) + (iterator.hasNext() ? strong(",") : ""));
             i++;

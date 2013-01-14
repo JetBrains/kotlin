@@ -152,6 +152,11 @@ public class TabledDescriptorRenderer {
         return result.toString();
     }
 
+    @NotNull
+    public Renderer<JetType> getTypeRenderer() {
+        return Renderers.RENDER_TYPE;
+    }
+
     protected void renderText(TextRenderer textRenderer, StringBuilder result) {
         for (TextElement element : textRenderer.elements) {
             result.append(element.text);
@@ -179,7 +184,7 @@ public class TabledDescriptorRenderer {
         boolean hasReceiver = receiverType != null;
         if (hasReceiver) {
             result.append("receiver: ");
-            result.append(Renderers.RENDER_TYPE.render(receiverType));
+            result.append(getTypeRenderer().render(receiverType));
             result.append("  arguments: ");
         }
         if (argumentTypes.isEmpty()) {
@@ -190,7 +195,7 @@ public class TabledDescriptorRenderer {
         result.append("(");
         for (Iterator<JetType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             JetType argumentType = iterator.next();
-            String renderedArgument = Renderers.RENDER_TYPE.render(argumentType);
+            String renderedArgument = getTypeRenderer().render(argumentType);
 
             result.append(renderedArgument);
             if (iterator.hasNext()) {
