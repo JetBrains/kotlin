@@ -139,7 +139,15 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
 
     public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironmentManagement {
         public void testSubclassingKotlinInJava() throws Exception {
-            File dir = new File(PATH + "/subclassingKotlinInJava");
+            doTest();
+        }
+
+        public void testDeepSubclassingKotlinInJava() throws Exception {
+            doTest();
+        }
+
+        public void doTest() throws Exception {
+            File dir = new File(PATH + "/" + getTestName(true));
 
             CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                     ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, new File(dir, "java"));
