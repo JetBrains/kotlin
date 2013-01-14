@@ -127,6 +127,13 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
+                "InnerNestedGenTestGenerated",
+                AbstractCodegenTest.class,
+                testModel("compiler/testData/codegen/innerNested")
+        );
+
+        generateTest(
+                "compiler/tests/",
                 "InstructionsTestGenerated",
                 AbstractCodegenTest.class,
                 testModel("compiler/testData/codegen/instructions")
