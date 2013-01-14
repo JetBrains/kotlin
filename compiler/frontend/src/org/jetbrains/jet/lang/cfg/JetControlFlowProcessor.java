@@ -293,7 +293,6 @@ public class JetControlFlowProcessor {
             if (baseExpression == null) return;
             if (JetTokens.LABELS.contains(operationType)) {
                 String referencedName = operationSign.getReferencedName();
-                referencedName = referencedName == null ? " <?>" : referencedName;
                 visitLabeledExpression(referencedName.substring(1), baseExpression);
             }
             else {

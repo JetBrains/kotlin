@@ -72,19 +72,16 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
                     parent.getParent() instanceof JetImportDirective;
     }
 
-    @Nullable @IfNotParsed
+    @NotNull
     public String getReferencedName() {
         String text = getReferencedNameElement().getNode().getText();
-        return text != null ? JetPsiUtil.unquoteIdentifierOrFieldReference(text) : null;
+        return JetPsiUtil.unquoteIdentifierOrFieldReference(text);
     }
 
-    @Nullable
+    @NotNull
     public Name getReferencedNameAsName() {
         String name = getReferencedName();
-        if (name != null && name.length() == 0) {
-            // TODO: fix parser or do something // stepan.koltsov@
-        }
-        return name != null ? Name.identifierNoValidate(name) : null;
+        return Name.identifierNoValidate(name);
     }
 
     @NotNull

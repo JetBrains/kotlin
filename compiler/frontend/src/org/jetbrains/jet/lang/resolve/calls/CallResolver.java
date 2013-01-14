@@ -90,9 +90,6 @@ public class CallResolver {
         assert calleeExpression instanceof JetSimpleNameExpression;
         JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
         Name referencedName = nameExpression.getReferencedNameAsName();
-        if (referencedName == null) {
-            return OverloadResolutionResultsImpl.nameNotFound();
-        }
         List<CallableDescriptorCollector<? extends VariableDescriptor>> callableDescriptorCollectors = Lists.newArrayList();
         if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
             referencedName = Name.identifier(referencedName.getName().substring(1));
@@ -146,7 +143,6 @@ public class CallResolver {
             ExpressionTypingUtils.checkWrappingInRef(expression, context.trace, context.scope);
 
             Name name = expression.getReferencedNameAsName();
-            if (name == null) return checkArgumentTypesAndFail(context);
 
             prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
             ResolutionTask.DescriptorCheckStrategy abstractConstructorCheck = new ResolutionTask.DescriptorCheckStrategy() {

@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.google.common.base.Function;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
@@ -339,7 +338,7 @@ public class JetPsiUtil {
         }
 
         //noinspection ConstantConditions
-        return StringUtil.isNotEmpty(aliasName) ? Name.identifier(aliasName) : null;
+        return !aliasName.isEmpty() ? Name.identifier(aliasName) : null;
     }
 
     @Nullable

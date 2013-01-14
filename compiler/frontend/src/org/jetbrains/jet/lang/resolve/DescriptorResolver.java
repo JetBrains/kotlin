@@ -592,9 +592,6 @@ public class DescriptorResolver {
                 continue;
             }
             Name referencedName = subjectTypeParameterName.getReferencedNameAsName();
-            if (referencedName == null) {
-                continue;
-            }
             TypeParameterDescriptorImpl typeParameterDescriptor = parameterByName.get(referencedName);
             JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
             JetType bound = null;

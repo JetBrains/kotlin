@@ -78,7 +78,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         }
 
         for (JetSimpleNameExpression nameExpression : namespaceHeader.getParentNamespaceNames()) {
-            Name namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
+            Name namespaceName = Name.identifier(nameExpression.getReferencedName());
 
             NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(
                     null, currentOwner, namespaceName, nameExpression, handler);

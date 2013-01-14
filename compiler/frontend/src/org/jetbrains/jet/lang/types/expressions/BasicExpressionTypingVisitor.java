@@ -1017,7 +1017,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert JetTokens.LABELS.contains(operationSign.getReferencedNameElementType());
 
         String referencedName = operationSign.getReferencedName();
-        referencedName = referencedName == null ? " <?>" : referencedName;
         context.labelResolver.enterLabeledElement(new LabelName(referencedName.substring(1)), baseExpression);
         // TODO : Some processing for the label?
         JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
@@ -1062,11 +1061,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (operationType == JetTokens.IDENTIFIER) {
             Name referencedName = operationSign.getReferencedNameAsName();
-            if (referencedName != null) {
-                JetTypeInfo typeInfo = getTypeInfoForBinaryCall(context.scope, referencedName, context, expression);
-                result = typeInfo.getType();
-                dataFlowInfo = typeInfo.getDataFlowInfo();
-            }
+            JetTypeInfo typeInfo = getTypeInfoForBinaryCall(context.scope, referencedName, context, expression);
+            result = typeInfo.getType();
+            dataFlowInfo = typeInfo.getDataFlowInfo();
         }
         else if (OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)) {
             JetTypeInfo typeInfo = getTypeInfoForBinaryCall(context.scope, OperatorConventions.BINARY_OPERATION_NAMES.get(operationType),

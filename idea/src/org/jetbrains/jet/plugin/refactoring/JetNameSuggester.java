@@ -200,7 +200,6 @@ public class JetNameSuggester {
             @Override
             public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
                 String referenceName = expression.getReferencedName();
-                if (referenceName == null) return;
                 if (referenceName.equals(referenceName.toUpperCase())) {
                     addName(result, referenceName, validator);
                 }

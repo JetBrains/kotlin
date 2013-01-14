@@ -227,12 +227,7 @@ public class QualifiedExpressionResolver {
     @NotNull
     private LookupResult lookupSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression,
             @NotNull JetScope outerScope, boolean onlyClasses, boolean namespaceLevel) {
-
         Name referencedName = referenceExpression.getReferencedNameAsName();
-        if (referencedName == null) {
-            //to store a scope where we tried to resolve this reference
-            return new SuccessfulLookupResult(Collections.<DeclarationDescriptor>emptyList(), outerScope, namespaceLevel);
-        }
 
         Set<DeclarationDescriptor> descriptors = Sets.newHashSet();
         NamespaceDescriptor namespaceDescriptor = outerScope.getNamespace(referencedName);

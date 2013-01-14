@@ -198,7 +198,6 @@ public class JetImportOptimizer implements ImportOptimizer {
                 FqName fqName = null;
                 for (JetSimpleNameExpression nameExpression : simpleNameExpressions) {
                     Name referencedName = nameExpression.getReferencedNameAsName();
-                    assert referencedName != null;
                     if (fqName == null) {
                         fqName = new FqName(referencedName.getName());
                     } else {

@@ -86,8 +86,6 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             return Collections.emptyList();
         }
 
-        assert referenceName != null;
-
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) element.getContainingFile());
 
         List<FqName> result = Lists.newArrayList();
