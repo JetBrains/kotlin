@@ -236,6 +236,11 @@ public class JetHighlightingColors {
         CodeInsightColors.CONSTRUCTOR_CALL_ATTRIBUTES.getDefaultAttributes()
     );
 
+    public static final TextAttributesKey VARIABLE_AS_FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_VARIABLE_AS_FUNCTION",
+        new TextAttributes(null, new Color(0xdbffdb), null, null, Font.PLAIN)
+    );
+
     public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_BAD_CHARACTER",
         HighlighterColors.BAD_CHARACTER.getDefaultAttributes()

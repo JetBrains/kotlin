@@ -61,7 +61,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                "    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int) {\n" +
                "        <FUNCTION_CALL><NAMESPACE_FUNCTION_CALL>println</NAMESPACE_FUNCTION_CALL></FUNCTION_CALL>(\"length\\nis ${<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE><STRING_ESCAPE>\\e</STRING_ESCAPE></INVALID_STRING_ESCAPE>\")\n" +
                "        val <LOCAL_VARIABLE>ints</LOCAL_VARIABLE> = java.util.<CONSTRUCTOR_CALL>ArrayList</CONSTRUCTOR_CALL><Int?>(2)\n" +
-               "        <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER>f</PARAMETER>()\n" +
+               "        <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER><VARIABLE_AS_FUNCTION_CALL>f</VARIABLE_AS_FUNCTION_CALL></PARAMETER>()\n" +
                "        val <LOCAL_VARIABLE>myFun</LOCAL_VARIABLE> = <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW> <FUNCTION_LITERAL_BRACES_AND_ARROW>-></FUNCTION_LITERAL_BRACES_AND_ARROW> \"\" <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>; var <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE> = <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<FUNCTION_CALL>size</FUNCTION_CALL>()\n" +
                "        if (!<LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_PROPERTY><NAMESPACE_PROPERTY>empty</NAMESPACE_PROPERTY></EXTENSION_PROPERTY>) {\n" +
                "            <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL><NAMESPACE_FUNCTION_CALL><FUNCTION_CALL>forEach</FUNCTION_CALL></NAMESPACE_FUNCTION_CALL></EXTENSION_FUNCTION_CALL> @lit <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
@@ -154,6 +154,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.namespace.fun.call"), JetHighlightingColors.NAMESPACE_FUNCTION_CALL),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.extension.fun.call"), JetHighlightingColors.EXTENSION_FUNCTION_CALL),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.constructor.call"), JetHighlightingColors.CONSTRUCTOR_CALL),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.variable.as.function.call"), JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.bad.character"), JetHighlightingColors.BAD_CHARACTER),
 

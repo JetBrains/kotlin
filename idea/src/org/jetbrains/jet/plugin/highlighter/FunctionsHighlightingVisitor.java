@@ -72,6 +72,15 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                         JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
                     }
                 }
+                else if (calleeDescriptor instanceof VariableDescriptor) {
+                    String kind = calleeDescriptor instanceof ValueParameterDescriptor
+                                  ? "parameter"
+                                  : calleeDescriptor instanceof PropertyDescriptor
+                                    ? "property"
+                                    : "variable";
+                    holder.createInfoAnnotation(callee, "Calling " + kind + " as function").setTextAttributes(
+                            JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL);
+                }
             }
         }
 
