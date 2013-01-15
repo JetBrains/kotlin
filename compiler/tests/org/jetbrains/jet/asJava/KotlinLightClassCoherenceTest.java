@@ -176,7 +176,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
         doTest();
     }
 
-    public void testDeprectaed() throws Exception {
+    public void testDeprecated() throws Exception {
         doTest();
     }
 

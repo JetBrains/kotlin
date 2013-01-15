@@ -24,8 +24,10 @@ enum class Enum
 trait Trait
 
 // Deprecation
-deprecated class Deprecated
-[deprecated] class DeprecatedWithBrackets
+deprecated("") class Deprecated
+jet.deprecated("") class DeprecatedFQN
+[deprecated("")] class DeprecatedWithBrackets
+[jet.deprecated("")] class DeprecatedWithBracketsFQN
 
 // Generic
 class Generic1<T>
