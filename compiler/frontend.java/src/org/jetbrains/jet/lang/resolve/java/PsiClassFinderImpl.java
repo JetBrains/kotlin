@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import javax.annotation.PostConstruct;
@@ -85,8 +86,9 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
 
         if (original != null) {
-            FqName actualQualifiedName = new FqName(original.getQualifiedName());
-            if (!actualQualifiedName.equals(qualifiedName)) {
+            String classQualifiedName = original.getQualifiedName();
+            FqName actualQualifiedName = classQualifiedName != null ? new FqName(classQualifiedName) : null;
+            if (!qualifiedName.equals(actualQualifiedName)) {
                 throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
             }
         }
@@ -99,9 +101,10 @@ public class PsiClassFinderImpl implements PsiClassFinder {
             return null;
         }
 
-        if ("jet".equals(qualifiedName.parent().getFqName())) {
-            PsiAnnotation assertInvisibleAnnotation =
-                    JavaAnnotationResolver.findOwnAnnotation(original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+        if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
+            PsiAnnotation assertInvisibleAnnotation = JavaAnnotationResolver.findOwnAnnotation(
+                    original, JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+
             if (assertInvisibleAnnotation != null) {
                 if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
                     return null;
