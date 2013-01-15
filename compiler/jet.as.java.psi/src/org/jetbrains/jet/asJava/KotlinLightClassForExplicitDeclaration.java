@@ -305,12 +305,10 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             psiModifiers.add(PsiModifier.FINAL);
         }
 
-        // STATIC
-        if (nestedClass
-                //TODO: && !jetModifierList.hasModifier(INNER_KEYWORD)
-                ) {
-            psiModifiers.add(PsiModifier.STATIC);
-        }
+        // TODO: STATIC
+        //if (nestedClass && jetModifierList.hasModifier(INNER_KEYWORD)) {
+        //    psiModifiers.add(PsiModifier.STATIC);
+        //}
 
         return psiModifiers.toArray(new String[psiModifiers.size()]);
     }

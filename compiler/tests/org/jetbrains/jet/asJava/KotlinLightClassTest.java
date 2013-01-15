@@ -77,6 +77,7 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         public void testEnum() {
             checkModifiers("test.Enum", PUBLIC, FINAL, ENUM);
         }
+
         public void testTrait() {
             checkModifiers("test.Trait", PUBLIC, ABSTRACT, INTERFACE);
         }
