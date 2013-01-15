@@ -57,15 +57,15 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
 
         public void testTopLevelVisibilities() {
             checkModifiers("test.Public", PUBLIC, FINAL);
-            //checkModifiers("test.Private", PUBLIC, FINAL);
+            checkModifiers("test.Private", PUBLIC, FINAL);
             checkModifiers("test.Internal", PUBLIC, FINAL);
         }
 
         public void testNestedVisibilities() {
-            //checkModifiers("test.Outer.Public", PUBLIC, FINAL, INNER);
-            //checkModifiers("test.Outer.Protected", PROTECTED, FINAL, INNER);
-            //checkModifiers("test.Outer.Internal", PUBLIC, FINAL, INNER);
-            //checkModifiers("test.Outer.Private", PRIVATE, FINAL, INNER);
+            checkModifiers("test.Outer.Public", PUBLIC, FINAL, INNER);
+            checkModifiers("test.Outer.Protected", PROTECTED, FINAL, INNER);
+            checkModifiers("test.Outer.Internal", PUBLIC, FINAL, INNER);
+            checkModifiers("test.Outer.Private", PRIVATE, FINAL, INNER);
         }
         public void testModalities() {
             checkModifiers("test.Abstract", PUBLIC, ABSTRACT);
@@ -73,17 +73,16 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
             checkModifiers("test.Final", PUBLIC, FINAL);
         }
 
-        //public void testAnnotation() {
-        //    checkModifiers("test.Annotation", PUBLIC, FINAL, ANNOTATION, INTERFACE);
-        //}
+        public void testAnnotation() {
+            checkModifiers("test.Annotation", PUBLIC, FINAL, ANNOTATION, INTERFACE);
+        }
 
-        //public void testEnum() {
-        //    checkModifiers("test.Enum", PUBLIC, FINAL, ENUM);
-        //}
-
-        //public void testTrait() {
-        //    checkModifiers("test.Trait", PUBLIC, ABSTRACT, INTERFACE);
-        //}
+        public void testEnum() {
+            checkModifiers("test.Enum", PUBLIC, FINAL, ENUM);
+        }
+        public void testTrait() {
+            checkModifiers("test.Trait", PUBLIC, ABSTRACT, INTERFACE);
+        }
 
         public void testDeprecation() {
             checkModifiers("test.Deprecated", PUBLIC, FINAL, DEPRECATED);
@@ -96,30 +95,30 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
         }
     }
 
-    //public static class DeclaredWithGenerics extends KotlinLightClassTest {
-    //
-    //    public DeclaredWithGenerics() {
-    //        super(new File("compiler/testData/asJava/lightClasses/DeclaredWithGenerics.kt"));
-    //    }
-    //
-    //    public void testGeneric1() throws Exception {
-    //        checkGenericParameter("test.Generic1", 0, "T");
-    //    }
-    //
-    //    public void testGeneric1WithBounds() throws Exception {
-    //        checkGenericParameter("test.Generic1WithBounds", 0, "T", "test.Bound1");
-    //    }
-    //
-    //    public void testGeneric2() throws Exception {
-    //        checkGenericParameter("test.Generic2", 0, "A");
-    //        checkGenericParameter("test.Generic2", 1, "B");
-    //    }
-    //
-    //    public void testGeneric2WithBounds() throws Exception {
-    //        checkGenericParameter("test.Generic2WithBounds", 0, "A", "test.Bound1", "test.Bound2");
-    //        checkGenericParameter("test.Generic2WithBounds", 1, "B", "test.Generic1<A>");
-    //    }
-    //}
+    public static class DeclaredWithGenerics extends KotlinLightClassTest {
+
+        public DeclaredWithGenerics() {
+            super(new File("compiler/testData/asJava/lightClasses/DeclaredWithGenerics.kt"));
+        }
+
+        public void testGeneric1() throws Exception {
+            checkGenericParameter("test.Generic1", 0, "T");
+        }
+
+        public void testGeneric1WithBounds() throws Exception {
+            checkGenericParameter("test.Generic1WithBounds", 0, "T", "test.Bound1");
+        }
+
+        public void testGeneric2() throws Exception {
+            checkGenericParameter("test.Generic2", 0, "A");
+            checkGenericParameter("test.Generic2", 1, "B");
+        }
+
+        public void testGeneric2WithBounds() throws Exception {
+            checkGenericParameter("test.Generic2WithBounds", 0, "A", "test.Bound1", "test.Bound2");
+            checkGenericParameter("test.Generic2WithBounds", 1, "B", "test.Generic1<A>");
+        }
+    }
 
     public static class Package extends KotlinLightClassTest {
 
