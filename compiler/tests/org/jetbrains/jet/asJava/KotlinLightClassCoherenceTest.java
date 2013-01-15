@@ -17,9 +17,11 @@
 package org.jetbrains.jet.asJava;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.search.GlobalSearchScope;
+import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -48,42 +50,69 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
         KotlinLightClass psiClass = (KotlinLightClass) finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject()));
         assertNotNull(psiClass);
 
-        assertModifiersCoherent(psiClass);
+        Asserter asserter = new Asserter();
 
-        assertPropertyCoherent(psiClass, "isInterface");
-        assertPropertyCoherent(psiClass, "isAnnotationType");
-        assertPropertyCoherent(psiClass, "isEnum");
-        assertPropertyCoherent(psiClass, "hasTypeParameters");
-        assertPropertyCoherent(psiClass, "isDeprecated");
+        asserter.assertModifiersCoherent(psiClass);
+
+        asserter.assertPropertyCoherent(psiClass, "isInterface");
+        asserter.assertPropertyCoherent(psiClass, "isAnnotationType");
+        asserter.assertPropertyCoherent(psiClass, "isEnum");
+        asserter.assertPropertyCoherent(psiClass, "hasTypeParameters");
+        asserter.assertPropertyCoherent(psiClass, "isDeprecated");
+
+        asserter.reportFailures();
 
         return psiClass;
     }
 
-    private static void assertModifiersCoherent(KotlinLightClass lightClass) {
-        PsiClass delegate = lightClass.getDelegate();
-        for (String modifier : PsiModifier.MODIFIERS) {
-            assertEquals("Incoherent modifier: " + modifier,
-                         delegate.hasModifierProperty(modifier),
-                         lightClass.hasModifierProperty(modifier));
-        }
-    }
+    static class Asserter {
+        private final List<ComparisonFailure> failures = Lists.newArrayList();
 
-    private static void assertPropertyCoherent(KotlinLightClass lightClass, String methodName) {
-        Class<?> reflect = PsiClass.class;
-        try {
-            Method method = reflect.getMethod(methodName);
-            Object lightResult = method.invoke(lightClass);
-            Object delegateResult = method.invoke(lightClass.getDelegate());
-            assertEquals("Result of method " + methodName + "() differs in light class and its delegate", delegateResult, lightResult);
+        private void assertEquals(String message, Object expected, Object actual) {
+            if (!Comparing.equal(expected, actual)) {
+                failures.add(new ComparisonFailure(message, String.valueOf(expected), String.valueOf(actual)));
+            }
         }
-        catch (NoSuchMethodException e) {
-            throw new AssertionError(e);
+
+        public void assertModifiersCoherent(KotlinLightClass lightClass) {
+            PsiClass delegate = lightClass.getDelegate();
+            for (String modifier : PsiModifier.MODIFIERS) {
+                assertEquals("Incoherent modifier: " + modifier,
+                             delegate.hasModifierProperty(modifier),
+                             lightClass.hasModifierProperty(modifier));
+            }
         }
-        catch (InvocationTargetException e) {
-            throw new AssertionError(e);
+
+        public void assertPropertyCoherent(KotlinLightClass lightClass, String methodName) {
+            Class<?> reflect = PsiClass.class;
+            try {
+                Method method = reflect.getMethod(methodName);
+                Object lightResult = method.invoke(lightClass);
+                Object delegateResult = method.invoke(lightClass.getDelegate());
+                assertEquals("Result of method " + methodName + "() differs in light class and its delegate", delegateResult, lightResult);
+            }
+            catch (NoSuchMethodException e) {
+                throw new AssertionError(e);
+            }
+            catch (InvocationTargetException e) {
+                throw new AssertionError(e);
+            }
+            catch (IllegalAccessException e) {
+                throw new AssertionError(e);
+            }
         }
-        catch (IllegalAccessException e) {
-            throw new AssertionError(e);
+
+        public void reportFailures() {
+            if (failures.size() == 1) {
+                throw failures.get(0);
+            }
+            if (!failures.isEmpty()) {
+                StringBuilder builder = new StringBuilder("\n");
+                for (ComparisonFailure failure : failures) {
+                    builder.append(failure.getMessage()).append("\n");
+                }
+                fail(builder.toString());
+            }
         }
     }
 
