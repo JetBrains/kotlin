@@ -137,6 +137,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/InnerClassExtendInnerClass.kt");
             }
             
+            @TestMetadata("InnerGenericClass.kt")
+            public void testInnerGenericClass() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/InnerGenericClass.kt");
+            }
+            
             @TestMetadata("NamedObject.kt")
             public void testNamedObject() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/NamedObject.kt");
@@ -160,6 +165,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("NestedClass.kt")
             public void testNestedClass() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/NestedClass.kt");
+            }
+            
+            @TestMetadata("NestedClassExtendNestedClass.kt")
+            public void testNestedClassExtendNestedClass() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/NestedClassExtendNestedClass.kt");
+            }
+            
+            @TestMetadata("NestedGenericClass.kt")
+            public void testNestedGenericClass() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/class/NestedGenericClass.kt");
             }
             
             @TestMetadata("Trait.kt")
@@ -1057,6 +1072,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("MyException.kt")
         public void testMyException() throws Exception {
             doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/MyException.kt");
+        }
+        
+        @TestMetadata("NestedClass.kt")
+        public void testNestedClass() throws Exception {
+            doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/NestedClass.kt");
         }
         
         @TestMetadata("RemoveRedundantProjectionKind.kt")

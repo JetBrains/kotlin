@@ -1,0 +1,9 @@
+package test
+
+public open class NestedClass : java.lang.Object {
+    public constructor NestedClass()
+    
+    public open class Nested : java.lang.Object {
+        public constructor Nested()
+    }
+}
