@@ -71,7 +71,7 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         }
 
         public void testAnnotation() {
-            checkModifiers("test.Annotation", PUBLIC, FINAL, ANNOTATION, INTERFACE);
+            checkModifiers("test.Annotation", PUBLIC, ANNOTATION, ABSTRACT, INTERFACE);
         }
 
         public void testEnum() {

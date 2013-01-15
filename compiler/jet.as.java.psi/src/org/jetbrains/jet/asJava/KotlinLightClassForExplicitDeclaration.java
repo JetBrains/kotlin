@@ -317,8 +317,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     }
 
     private boolean isAbstract(@NotNull JetClassOrObject object) {
-        return object.hasModifier(ABSTRACT_KEYWORD) ||
-                classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
+        return object.hasModifier(ABSTRACT_KEYWORD) || isInterface();
     }
 
     @Override
@@ -357,7 +356,9 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
 
     @Override
     public boolean isInterface() {
-        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
+        if (!(classOrObject instanceof JetClass)) return false;
+        JetClass jetClass = (JetClass) classOrObject;
+        return jetClass.isTrait() || jetClass.isAnnotation();
     }
 
     @Override
