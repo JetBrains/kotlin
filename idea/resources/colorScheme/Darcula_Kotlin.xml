@@ -1,0 +1,192 @@
+<list>
+  <option name="KOTLIN_ANNOTATION">
+    <value>
+      <option name="FOREGROUND" value="bbb529" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="1" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_AUTO_CASTED_VALUE">
+    <value>
+      <option name="FOREGROUND" />
+      <option name="BACKGROUND" value="223c23" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="-1" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_BAD_CHARACTER">
+    <value>
+      <option name="FOREGROUND" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" value="ff0000" />
+      <option name="EFFECT_TYPE" value="2" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_BUILTIN_ANNOTATION">
+    <value>
+      <option name="FOREGROUND" value="cc7832" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_COMMA">
+    <value>
+      <option name="FOREGROUND" value="cc7832" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_DOC_COMMENT">
+    <value>
+      <option name="FOREGROUND" value="629755" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="2" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_INSTANCE_PROPERTY">
+    <value>
+      <option name="FOREGROUND" value="9876aa" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_INVALID_STRING_ESCAPE">
+    <value>
+      <option name="FOREGROUND" value="a5c25c" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" value="ff0000" />
+      <option name="EFFECT_TYPE" value="2" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_KEYWORD">
+    <value>
+      <option name="FOREGROUND" value="cc7832" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_LABEL">
+    <value>
+      <option name="FOREGROUND" value="467cda" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="-1" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_MUTABLE_VARIABLE">
+    <value>
+      <option name="FOREGROUND" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" value="bca5c4" />
+      <option name="EFFECT_TYPE" value="1" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_NAMESPACE_PROPERTY">
+    <value>
+      <option name="FOREGROUND" value="9876aa" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="2" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_NUMBER">
+    <value>
+      <option name="FOREGROUND" value="6897bb" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_PROPERTY_WITH_BACKING_FIELD">
+    <value>
+      <option name="FOREGROUND" />
+      <option name="BACKGROUND" value="3f3045" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="-1" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_SEMICOLON">
+    <value>
+      <option name="FOREGROUND" value="cc7832" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_STRING">
+    <value>
+      <option name="FOREGROUND" value="a5c25c" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_STRING_ESCAPE">
+    <value>
+      <option name="FOREGROUND" value="cc7832" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_VARIABLE_AS_FUNCTION">
+    <value>
+      <option name="FOREGROUND" />
+      <option name="BACKGROUND" value="223c23" />
+      <option name="FONT_TYPE" value="0" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+  <option name="KOTLIN_WRAPPED_INTO_REF">
+    <value>
+      <option name="FOREGROUND" value="b389c5" />
+      <option name="BACKGROUND" />
+      <option name="FONT_TYPE" value="1" />
+      <option name="EFFECT_COLOR" />
+      <option name="EFFECT_TYPE" value="0" />
+      <option name="ERROR_STRIPE_COLOR" />
+    </value>
+  </option>
+</list>
