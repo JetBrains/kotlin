@@ -48,7 +48,7 @@ public class ImportsResolver {
     @NotNull
     private BindingTrace trace;
     @NotNull
-    private JetPsiBuilder psiBuilder;
+    private JetImportsFactory importsFactory;
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
@@ -71,8 +71,8 @@ public class ImportsResolver {
     }
 
     @Inject
-    public void setPsiBuilder(@NotNull JetPsiBuilder psiBuilder) {
-        this.psiBuilder = psiBuilder;
+    public void setImportsFactory(@NotNull JetImportsFactory importsFactory) {
+        this.importsFactory = importsFactory;
     }
 
     public void processTypeImports(@NotNull JetScope rootScope) {
@@ -95,18 +95,18 @@ public class ImportsResolver {
     }
 
     private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
-        processImportsInFile(lookupMode, scope, directives, rootScope, configuration, trace, qualifiedExpressionResolver, psiBuilder);
+        processImportsInFile(lookupMode, scope, directives, rootScope, configuration, trace, qualifiedExpressionResolver, importsFactory);
     }
 
     public static void processImportsInFile(
-            @NotNull LookupMode lookupMode,
+            LookupMode lookupMode,
             @NotNull WritableScope namespaceScope,
             @NotNull List<JetImportDirective> importDirectives,
             @NotNull JetScope rootScope,
             @NotNull ModuleConfiguration configuration,
             @NotNull BindingTrace trace,
             @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
-            @NotNull JetPsiBuilder psiBuilder
+            @NotNull JetImportsFactory importsFactory
     ) {
 
         Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
@@ -118,7 +118,7 @@ public class ImportsResolver {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                     trace, "transient trace to resolve default imports"); //not to trace errors of default imports
 
-            JetImportDirective defaultImportDirective = psiBuilder.createImportDirective(defaultImportPath);
+            JetImportDirective defaultImportDirective = importsFactory.createImportDirective(defaultImportPath);
             qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter,
                                                                temporaryTrace, configuration, lookupMode);
         }

@@ -25,7 +25,7 @@ import org.jetbrains.jet.di.*;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiBuilder;
+import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
@@ -72,7 +72,7 @@ public class GenerateInjectors {
         generator.addPublicField(ScopeProvider.class);
         generator.addPublicField(AnnotationResolver.class);
         generator.addPublicField(QualifiedExpressionResolver.class);
-        generator.addPublicField(JetPsiBuilder.class);
+        generator.addPublicField(JetImportsFactory.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve", GenerateInjectors.class);
     }
 

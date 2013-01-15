@@ -30,7 +30,10 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class ScopeProvider {
     private final ResolveSession resolveSession;
@@ -88,10 +91,10 @@ public class ScopeProvider {
             throw new IllegalStateException("Root package not found");
         }
 
-        JetPsiBuilder jetPsiBuilder = resolveSession.getInjector().getJetPsiBuilder();
+        JetImportsFactory importsFactory = resolveSession.getInjector().getJetImportsFactory();
         List<ImportPath> defaultImports = resolveSession.getModuleConfiguration().getDefaultImports();
 
-        Collection<JetImportDirective> defaultImportDirectives = jetPsiBuilder.createImportDirectives(defaultImports);
+        Collection<JetImportDirective> defaultImportDirectives = importsFactory.createImportDirectives(defaultImports);
 
         return new LazyImportScope(
                 resolveSession,

@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
-public class JetPsiBuilder {
+public class JetImportsFactory {
     @NotNull
     private Project project;
 
