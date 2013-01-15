@@ -273,6 +273,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
 
     @NotNull
     private String[] computeModifiers() {
+        boolean nestedClass = classOrObject.getParent() != classOrObject.getContainingFile();
         Collection<String> psiModifiers = Sets.newHashSet();
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
@@ -280,7 +281,6 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
                 Pair.create(PUBLIC_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(INTERNAL_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(PROTECTED_KEYWORD, PsiModifier.PROTECTED),
-                Pair.create(PRIVATE_KEYWORD, PsiModifier.PRIVATE),
                 Pair.create(ABSTRACT_KEYWORD, PsiModifier.ABSTRACT),
                 Pair.create(FINAL_KEYWORD, PsiModifier.FINAL));
 
@@ -288,6 +288,12 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             if (classOrObject.hasModifier(tokenAndModifier.first)) {
                 psiModifiers.add(tokenAndModifier.second);
             }
+        }
+
+        if (classOrObject.hasModifier(PRIVATE_KEYWORD)) {
+            // Top-level private class has PUBLIC visibility in Java
+            // Nested private class has PRIVATE visibility
+            psiModifiers.add(nestedClass ? PsiModifier.PRIVATE : PsiModifier.PUBLIC);
         }
 
         if (!psiModifiers.contains(PsiModifier.PRIVATE) && !psiModifiers.contains(PsiModifier.PROTECTED)) {
@@ -300,7 +306,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         }
 
         // STATIC
-        if (classOrObject.getParent() != classOrObject.getContainingFile()
+        if (nestedClass
                 //TODO: && !jetModifierList.hasModifier(INNER_KEYWORD)
                 ) {
             psiModifiers.add(PsiModifier.STATIC);
