@@ -281,7 +281,6 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
                 Pair.create(PUBLIC_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(INTERNAL_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(PROTECTED_KEYWORD, PsiModifier.PROTECTED),
-                Pair.create(ABSTRACT_KEYWORD, PsiModifier.ABSTRACT),
                 Pair.create(FINAL_KEYWORD, PsiModifier.FINAL));
 
         for (Pair<JetKeywordToken, String> tokenAndModifier : jetTokenToPsiModifier) {
@@ -300,8 +299,12 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             psiModifiers.add(PsiModifier.PUBLIC); // For internal (default) visibility
         }
 
+
         // FINAL
-        if (!classOrObject.hasModifier(OPEN_KEYWORD) && !classOrObject.hasModifier(ABSTRACT_KEYWORD)) {
+        if (isAbstract(classOrObject)) {
+            psiModifiers.add(PsiModifier.ABSTRACT);
+        }
+        else if (!classOrObject.hasModifier(OPEN_KEYWORD)) {
             psiModifiers.add(PsiModifier.FINAL);
         }
 
@@ -311,6 +314,11 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         //}
 
         return psiModifiers.toArray(new String[psiModifiers.size()]);
+    }
+
+    private boolean isAbstract(@NotNull JetClassOrObject object) {
+        return object.hasModifier(ABSTRACT_KEYWORD) ||
+                classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
     }
 
     @Override

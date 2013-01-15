@@ -206,7 +206,7 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         ENUM {
             @Override
             public boolean present(@NotNull PsiClass psiClass) {
-                return psiClass.isInterface();
+                return psiClass.isEnum();
             }
         },
         ANNOTATION {
