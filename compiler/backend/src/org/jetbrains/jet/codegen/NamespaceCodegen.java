@@ -69,7 +69,7 @@ public class NamespaceCodegen extends MemberCodegen {
             @Override
             public void doSomething(@NotNull ClassBuilder v) {
                 v.defineClass(sourceFile, V1_6,
-                              ACC_PUBLIC/*|ACC_SUPER*/,
+                              ACC_PUBLIC | ACC_FINAL,
                               getJVMClassNameForKotlinNs(fqName).getInternalName(),
                               null,
                               //"jet/lang/Namespace",
@@ -153,7 +153,7 @@ public class NamespaceCodegen extends MemberCodegen {
                 ClassBuilder builder = state.getFactory().forNamespacepart(className, file);
 
                 builder.defineClass(file, V1_6,
-                                    ACC_PUBLIC/*|ACC_SUPER*/,
+                                    ACC_PUBLIC | ACC_FINAL,
                                     className,
                                     null,
                                     //"jet/lang/Namespace",
