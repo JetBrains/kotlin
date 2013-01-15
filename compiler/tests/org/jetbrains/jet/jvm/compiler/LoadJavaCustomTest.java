@@ -24,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.KotlinTestWithEnvironmentManagement;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -136,36 +137,31 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
                dir + "SubclassWithRawType.java");
     }
 
-    public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironment {
-        @Override
-        protected JetCoreEnvironment createEnvironment() {
+    public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironmentManagement {
+        public void testSubclassingKotlinInJava() throws Exception {
             File dir = new File(PATH + "/subclassingKotlinInJava");
 
             CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                     ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, new File(dir, "java"));
             configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(new File(dir, "kotlin").getAbsolutePath()));
-            return new JetCoreEnvironment(getTestRootDisposable(), configuration);
-        }
-
-        public void testSubclassingKotlinInJava() throws Exception {
-            File dir = new File(PATH + "/subclassingKotlinInJava");
+            JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
             ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<test module>"));
 
             // we need the same binding trace for resolve from Java and Kotlin
-            BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
+            BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
 
-            InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(getProject(),
+            InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(),
                                                                                                     trace,
                                                                                                     moduleDescriptor);
 
             InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
-                    getProject(),
+                    environment.getProject(),
                     new TopDownAnalysisParameters(Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
                     trace,
                     moduleDescriptor);
 
-            injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(getEnvironment().getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
+            injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
             JavaDescriptorResolver javaDescriptorResolver = injectorForJava.getJavaDescriptorResolver();
             NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(
