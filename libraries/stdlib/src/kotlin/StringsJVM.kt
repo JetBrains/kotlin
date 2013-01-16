@@ -1,6 +1,10 @@
 package kotlin
 
 import java.io.StringReader
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
+import java.util.LinkedList
 
 public inline fun String.lastIndexOf(str: String) : Int = (this as java.lang.String).lastIndexOf(str)
 
