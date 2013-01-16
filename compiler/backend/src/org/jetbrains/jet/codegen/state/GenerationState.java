@@ -74,7 +74,7 @@ public class GenerationState {
 
     public GenerationState(
             @NotNull Project project,
-            ClassBuilderFactory builderFactory,
+            @NotNull ClassBuilderFactory builderFactory,
             @NotNull Progress progress,
             @NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files,
