@@ -7,5 +7,5 @@ class Generic2<A, B>
 class Generic2WithBounds<A, B> where A: Bound1, A: Bound2, B: Generic1<A>
 
 class Bound1
-class Bound2
+trait Bound2
 
