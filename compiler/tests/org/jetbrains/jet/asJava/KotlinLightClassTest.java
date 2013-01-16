@@ -37,6 +37,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.asJava.KotlinLightClassTest.ClassProperty.*;
 
+@SuppressWarnings("JUnitTestClassNamingConvention")
 public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
 
     public static class Declared extends KotlinLightClassTest {
