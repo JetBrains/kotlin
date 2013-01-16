@@ -144,7 +144,7 @@ class StringJVMTest {
 
     test fun flatMap() {
         val data = "abcd"
-        val result = data.flatMap { Collections.singletonList(it) }
+        val result = data.flatMap { listOf(it) }
         assertEquals(data.size, result.count())
         assertEquals(data.toCharList(), result)
     }
