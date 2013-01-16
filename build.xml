@@ -9,7 +9,7 @@
     <property name="output" value="${basedir}/${output.relative}"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
-    <property name="output.name" value="kotlin-${build.number}"/>
+    <property name="output.name" value="kotlin-compiler-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
 
     <path id="classpath">
