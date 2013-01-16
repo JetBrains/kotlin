@@ -13,6 +13,6 @@ public class HelloWorldJavaTest {
 
     @Test
     public void greeting() {
-        assertEquals("Hello, World!", org.jetbrains.namespace.getGreeting());
+        assertEquals("Hello, World!", org.jetbrains.JetbrainsPackage.getGreeting());
     }
 }
