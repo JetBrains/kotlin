@@ -83,6 +83,7 @@ public class SpecialFiles {
         excludedFiles.add("simpleJavaEnumWithFunction.kt"); // Must compile Java files before
         excludedFiles.add("simpleJavaEnumWithStaticImport.kt"); // Must compile Java files before
         excludedFiles.add("removeInIterator.kt"); // Must compile Java files before
+        excludedFiles.add("kt3238.kt"); // Reflection
         excludedFiles.add("namespaceQualifiedMethod.jet"); // Cannot change package name
         excludedFiles.add("kt1482_2279.kt"); // Cannot change package name
         excludedFiles.add("kt1482.kt"); // Cannot change package name
