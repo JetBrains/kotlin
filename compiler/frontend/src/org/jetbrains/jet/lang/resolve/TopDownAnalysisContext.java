@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import javax.inject.Inject;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class TopDownAnalysisContext implements BodiesResolveContext {
@@ -37,6 +38,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
     protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
+    private List<MutableClassDescriptorLite> classesTopologicalOrder = null;
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
@@ -164,5 +166,14 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
             members.putAll(primaryConstructorParameterProperties);
         }
         return members;
+    }
+
+    @NotNull
+    public List<MutableClassDescriptorLite> getClassesTopologicalOrder() {
+        return classesTopologicalOrder;
+    }
+
+    public void setClassesTopologicalOrder(@NotNull List<MutableClassDescriptorLite> classesTopologicalOrder) {
+        this.classesTopologicalOrder = classesTopologicalOrder;
     }
 }

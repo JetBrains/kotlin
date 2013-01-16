@@ -62,9 +62,6 @@ public class TypeHierarchyResolver {
     @NotNull
     private BindingTrace trace;
 
-    // state
-    private List<MutableClassDescriptor> topologicalOrder;
-
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
@@ -138,7 +135,7 @@ public class TypeHierarchyResolver {
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
 
-        topologicalOrder = topologicallySortClassesAndObjects();
+        context.setClassesTopologicalOrder(topologicallySortClassesAndObjects());
 
         // Detect and disconnect all loops in the hierarchy
         detectAndDisconnectLoops();
@@ -245,20 +242,20 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private List<MutableClassDescriptor> topologicallySortClassesAndObjects() {
+    private List<MutableClassDescriptorLite> topologicallySortClassesAndObjects() {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
         return DFS.topologicalOrder(
-                ContainerUtil.<MutableClassDescriptor>concat(context.getClasses().values(), context.getObjects().values()),
-                new DFS.Neighbors<MutableClassDescriptor>() {
+                ContainerUtil.<MutableClassDescriptorLite>concat(context.getClasses().values(), context.getObjects().values()),
+                new DFS.Neighbors<MutableClassDescriptorLite>() {
                     @NotNull
                     @Override
-                    public Iterable<MutableClassDescriptor> getNeighbors(MutableClassDescriptor current) {
-                        List<MutableClassDescriptor> result = Lists.newArrayList();
+                    public Iterable<MutableClassDescriptorLite> getNeighbors(MutableClassDescriptorLite current) {
+                        List<MutableClassDescriptorLite> result = Lists.newArrayList();
                         for (JetType supertype : current.getSupertypes()) {
                             DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                            if (declarationDescriptor instanceof MutableClassDescriptor) {
-                                MutableClassDescriptor classDescriptor = (MutableClassDescriptor) declarationDescriptor;
+                            if (declarationDescriptor instanceof MutableClassDescriptorLite) {
+                                MutableClassDescriptorLite classDescriptor = (MutableClassDescriptorLite) declarationDescriptor;
                                 result.add(classDescriptor);
                             }
                         }
@@ -273,13 +270,13 @@ public class TypeHierarchyResolver {
         Set<ClassDescriptor> visited = Sets.newHashSet();
         Set<ClassDescriptor> beingProcessed = Sets.newHashSet();
         List<ClassDescriptor> currentPath = Lists.newArrayList();
-        for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
-            traverseTypeHierarchy(mutableClassDescriptor, visited, beingProcessed, currentPath);
+        for (MutableClassDescriptorLite klass : context.getClassesTopologicalOrder()) {
+            traverseTypeHierarchy(klass, visited, beingProcessed, currentPath);
         }
     }
 
     private void traverseTypeHierarchy(
-            MutableClassDescriptor currentClass,
+            MutableClassDescriptorLite currentClass,
             Set<ClassDescriptor> visited,
             Set<ClassDescriptor> beingProcessed,
             List<ClassDescriptor> currentPath
@@ -355,7 +352,7 @@ public class TypeHierarchyResolver {
     }
 
     private void checkSupertypesForConsistency() {
-        for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
+        for (MutableClassDescriptorLite mutableClassDescriptor : context.getClassesTopologicalOrder()) {
             Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
                     .buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
             for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {

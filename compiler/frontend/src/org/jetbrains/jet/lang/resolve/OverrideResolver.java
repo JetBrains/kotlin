@@ -86,8 +86,10 @@ public class OverrideResolver {
         
         Set<ClassifierDescriptor> processed = new HashSet<ClassifierDescriptor>();
 
-        for (MutableClassDescriptor clazz : ourClasses) {
-            generateOverridesAndDelegationInAClass(clazz, processed, ourClasses);
+        for (MutableClassDescriptorLite klass : ContainerUtil.reverse(context.getClassesTopologicalOrder())) {
+            if (klass instanceof MutableClassDescriptor && ourClasses.contains(klass)) {
+                generateOverridesAndDelegationInAClass((MutableClassDescriptor) klass, processed, ourClasses);
+            }
         }
     }
 
