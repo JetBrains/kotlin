@@ -783,6 +783,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/IsTraits.kt");
             }
             
+            @TestMetadata("kt614.kt")
+            public void testKt614() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/kt614.kt");
+            }
+            
             @TestMetadata("WhenErasedDisallowFromAny.kt")
             public void testWhenErasedDisallowFromAny() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/WhenErasedDisallowFromAny.kt");
