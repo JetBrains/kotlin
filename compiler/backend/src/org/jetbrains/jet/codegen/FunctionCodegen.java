@@ -338,50 +338,6 @@ public class FunctionCodegen extends GenerationStateAware {
         iv.areturn(asmMethod.getReturnType());
     }
 
-    private static boolean isAbstract(FunctionDescriptor functionDescriptor, OwnerKind kind) {
-        return (functionDescriptor.getModality() == Modality.ABSTRACT
-                 || isInterface(functionDescriptor.getContainingDeclaration())
-               )
-               && !isStatic(kind)
-               && kind != OwnerKind.TRAIT_IMPL;
-    }
-
-    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
-        boolean isStatic = isStatic(kind);
-        boolean isAbstract = isAbstract(functionDescriptor, kind);
-
-        int flags = getVisibilityAccessFlag(functionDescriptor);
-
-        if (!functionDescriptor.getValueParameters().isEmpty()
-            && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)
-                       .getVarargElementType() != null) {
-            flags |= ACC_VARARGS;
-        }
-
-        if (functionDescriptor.getModality() == Modality.FINAL) {
-            DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-            if (!(containingDeclaration instanceof ClassDescriptor) ||
-                ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.TRAIT) {
-                flags |= ACC_FINAL;
-            }
-        }
-
-        if (isStatic || kind == OwnerKind.TRAIT_IMPL) {
-            flags |= ACC_STATIC;
-        }
-
-        if (isAbstract) flags |= ACC_ABSTRACT;
-
-        if (KotlinBuiltIns.getInstance().isDeprecated(functionDescriptor)) {
-            flags |= ACC_DEPRECATED;
-        }
-        return flags;
-    }
-
-    private static boolean isStatic(OwnerKind kind) {
-        return kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
-    }
-
     public static void genJetAnnotations(
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor functionDescriptor,

@@ -271,6 +271,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/ConstructorCollectionParameter.kt");
             }
             
+            @TestMetadata("ConstructorVararg.kt")
+            public void testConstructorVararg() throws Exception {
+                doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/ConstructorVararg.kt");
+            }
+            
             @TestMetadata("ConstructorWithTwoDefArgs.kt")
             public void testConstructorWithTwoDefArgs() throws Exception {
                 doTestCheckingPrimaryConstructors("compiler/testData/loadKotlin/constructor/ConstructorWithTwoDefArgs.kt");

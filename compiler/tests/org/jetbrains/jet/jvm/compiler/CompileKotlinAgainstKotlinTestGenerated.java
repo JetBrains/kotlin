@@ -38,6 +38,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/ClassObjectMember.A.kt");
     }
     
+    @TestMetadata("ConstructorVararg.A.kt")
+    public void testConstructorVararg_A() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/ConstructorVararg.A.kt");
+    }
+    
     @TestMetadata("DefaultConstructor.A.kt")
     public void testDefaultConstructor_A() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/DefaultConstructor.A.kt");

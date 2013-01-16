@@ -269,6 +269,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTest("compiler/testData/loadKotlin/constructor/ConstructorCollectionParameter.kt");
         }
         
+        @TestMetadata("ConstructorVararg.kt")
+        public void testConstructorVararg() throws Exception {
+            doTest("compiler/testData/loadKotlin/constructor/ConstructorVararg.kt");
+        }
+        
         @TestMetadata("ConstructorWithTwoDefArgs.kt")
         public void testConstructorWithTwoDefArgs() throws Exception {
             doTest("compiler/testData/loadKotlin/constructor/ConstructorWithTwoDefArgs.kt");

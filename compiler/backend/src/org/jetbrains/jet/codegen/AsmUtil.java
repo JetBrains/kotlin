@@ -127,6 +127,51 @@ public class AsmUtil {
         }
     }
 
+    public static boolean isAbstract(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+        return (functionDescriptor.getModality() == Modality.ABSTRACT
+                || isInterface(functionDescriptor.getContainingDeclaration()))
+               && !isStatic(kind)
+               && kind != OwnerKind.TRAIT_IMPL;
+    }
+
+    public static boolean isStatic(OwnerKind kind) {
+        return kind == OwnerKind.NAMESPACE || kind instanceof OwnerKind.StaticDelegateKind;
+    }
+
+    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
+        boolean isStatic = isStatic(kind);
+        boolean isAbstract = isAbstract(functionDescriptor, kind);
+
+        int flags = getCommonCallableFlags(functionDescriptor);
+
+        if (functionDescriptor.getModality() == Modality.FINAL) {
+            DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+            if (!(containingDeclaration instanceof ClassDescriptor) ||
+                ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.TRAIT) {
+                flags |= ACC_FINAL;
+            }
+        }
+
+        if (isStatic || kind == OwnerKind.TRAIT_IMPL) {
+            flags |= ACC_STATIC;
+        }
+
+        if (isAbstract) flags |= ACC_ABSTRACT;
+
+        return flags;
+    }
+
+    public static int getConstructorAsmFlags(FunctionDescriptor functionDescriptor) {
+        return getCommonCallableFlags(functionDescriptor);
+    }
+
+    private static int getCommonCallableFlags(FunctionDescriptor functionDescriptor) {
+        int flags = getVisibilityAccessFlag(functionDescriptor);
+        flags |= getVarargsFlag(functionDescriptor);
+        flags |= getDeprecatedAccessFlag(functionDescriptor);
+        return flags;
+    }
+
     //TODO: move mapping logic to front-end java
     public static int getVisibilityAccessFlag(@NotNull MemberDescriptor descriptor) {
         Integer specialCase = specialCaseVisibility(descriptor);
@@ -171,6 +216,15 @@ public class AsmUtil {
         }
         else if (KotlinBuiltIns.getInstance().isDeprecated(descriptor)) {
             return ACC_DEPRECATED;
+        }
+        return 0;
+    }
+
+    private static int getVarargsFlag(FunctionDescriptor functionDescriptor) {
+        if (!functionDescriptor.getValueParameters().isEmpty()
+            && functionDescriptor.getValueParameters().get(functionDescriptor.getValueParameters().size() - 1)
+                       .getVarargElementType() != null) {
+            return ACC_VARARGS;
         }
         return 0;
     }

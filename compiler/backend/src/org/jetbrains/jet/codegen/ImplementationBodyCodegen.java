@@ -629,7 +629,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         final String desc = "()" + componentType.getDescriptor();
         MethodVisitor mv = v.newMethod(myClass,
-                                       FunctionCodegen.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
+                                       AsmUtil.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
                                        function.getName().getName(),
                                        desc,
                                        null, null);
@@ -654,7 +654,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JvmMethodSignature methodSignature = typeMapper.mapSignature(function.getName(), function);
         final String methodDesc = methodSignature.getAsmMethod().getDescriptor();
 
-        MethodVisitor mv = v.newMethod(myClass, FunctionCodegen.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
+        MethodVisitor mv = v.newMethod(myClass, AsmUtil.getMethodAsmFlags(function, OwnerKind.IMPLEMENTATION),
                                        function.getName().getName(), methodDesc,
                                        null, null);
 
@@ -931,7 +931,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final JvmMethodSignature constructorMethod = callableMethod.getSignature();
 
         assert constructorDescriptor != null;
-        int flags = getVisibilityAccessFlag(constructorDescriptor);
+        int flags = getConstructorAsmFlags(constructorDescriptor);
         final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(),
                                              constructorMethod.getGenericsSignature(), null);
         if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES) {
