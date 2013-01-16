@@ -6,7 +6,7 @@ fun foo() : Int {
     when (x) {
       is <!INCOMPATIBLE_TYPES!>String<!> -> 1
       !is Int -> 1
-      is Any? -> 1
+      is Any<!USELESS_NULLABLE_CHECK!>?<!> -> 1
       <!INCOMPATIBLE_TYPES!>s<!> -> 1
       1 -> 1
       1 + <!UNRESOLVED_REFERENCE!>a<!> -> 1

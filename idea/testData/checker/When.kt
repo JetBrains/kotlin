@@ -6,7 +6,7 @@ fun foo() : Int {
     when (x) {
       is <error>String</error> -> 1
       !is Int -> 1
-      is Any? -> 1
+      is Any<warning>?</warning> -> 1
       <error>s</error> -> 1
       1 -> 1
       1 + <error>a</error> -> 1
