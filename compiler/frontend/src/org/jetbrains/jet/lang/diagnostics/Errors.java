@@ -460,6 +460,8 @@ public interface Errors {
 
     DiagnosticFactory2<JetExpression, JetType, String> AUTOCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR);
 
+    SimpleDiagnosticFactory<JetNullableType> USELESS_NULLABLE_CHECK = SimpleDiagnosticFactory.create(WARNING, NULLABLE_TYPE);
+
     // Properties / locals
 
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER = DiagnosticFactory1.create(ERROR);
