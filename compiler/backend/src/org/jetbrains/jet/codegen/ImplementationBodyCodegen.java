@@ -127,7 +127,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int access = 0;
 
-        access |= getVisibilityAccessFlagForClass(descriptor);
+        if (state.getClassBuilderMode() == ClassBuilderMode.SIGNATURES && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            // ClassBuilderMode.SIGNATURES means we are generating light classes & looking at a nested or inner class
+            // Light class generation is implemented so that Cls-classes only read bare code of classes,
+            // without knowing whether these classes are inner or not (see ClassStubBuilder.EMPTY_STRATEGY)
+            // Thus we must write full accessibility flags on inner classes in this mode
+            access |= getVisibilityAccessFlag(descriptor);
+        }
+        else {
+            access |= getVisibilityAccessFlagForClass(descriptor);
+        }
         if (isAbstract) {
             access |= ACC_ABSTRACT;
         }
