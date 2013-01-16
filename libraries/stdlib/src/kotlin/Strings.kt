@@ -103,7 +103,7 @@ public inline fun <T: Appendable> String.filterNotTo(result: T, predicate: (Char
 }
 
 /**
-  * Returns order of characters into a string
+  * Reverses order of characters in a string
   *
   * @includeFunctionBody ../../test/StringTest.kt reverse
   */
