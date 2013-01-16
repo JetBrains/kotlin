@@ -117,7 +117,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
     }
 
     public void testPackage() throws Exception {
-        doTest("test.namespace");
+        doTest("test.TestPackage");
     }
 
     public void testNoModifiers() throws Exception {

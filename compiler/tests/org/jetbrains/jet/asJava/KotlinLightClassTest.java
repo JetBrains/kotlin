@@ -133,7 +133,7 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         }
 
         public void testPackage() throws Exception {
-            checkModifiers("test." + PackageClassUtils.getPackageClassName(new FqName("test")), PUBLIC, FINAL);
+            checkModifiers("test.TestPackage", PUBLIC, FINAL);
         }
     }
 
