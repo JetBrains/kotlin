@@ -158,18 +158,18 @@ public class OverloadingConflictResolver {
                 }
             }
 
-            // Check the non-matching parameters of one function against the vararg parameter of the other funciton
+            // Check the non-matching parameters of one function against the vararg parameter of the other function
             // Example:
-            //   f(a : A, vararg vf : T)
-            //   g(vararg vg : T)
-            // here we check that typeof(a) < typeof(vg) and elementTypeOf(vf) < elementTypeOf(vg)
+            //   f(vararg vf : T)
+            //   g(a : A, vararg vg : T)
+            // here we check that typeOf(a) < elementTypeOf(vf) and elementTypeOf(vg) < elementTypeOf(vf)
             if (fSize < gSize) {
                 ValueParameterDescriptor fParam = fParams.get(fSize - 1);
                 JetType fParamType = fParam.getVarargElementType();
                 assert fParamType != null : "fIsVararg guarantees this";
                 for (int i = fSize - 1; i < gSize; i++) {
                     ValueParameterDescriptor gParam = gParams.get(i);
-                    if (!typeMoreSpecific(fParamType, gParam.getType())) {
+                    if (!typeMoreSpecific(fParamType, getVarargElementTypeOrType(gParam))) {
                         return false;
                     }
                 }
@@ -180,7 +180,7 @@ public class OverloadingConflictResolver {
                 assert gParamType != null : "gIsVararg guarantees this";
                 for (int i = gSize - 1; i < fSize; i++) {
                     ValueParameterDescriptor fParam = fParams.get(i);
-                    if (!typeMoreSpecific(fParam.getType(), gParamType)) {
+                    if (!typeMoreSpecific(getVarargElementTypeOrType(fParam), gParamType)) {
                         return false;
                     }
                 }
@@ -188,6 +188,15 @@ public class OverloadingConflictResolver {
         }
 
         return true;
+    }
+
+    @NotNull
+    private static JetType getVarargElementTypeOrType(@NotNull ValueParameterDescriptor parameterDescriptor) {
+        JetType varargElementType = parameterDescriptor.getVarargElementType();
+        if (varargElementType != null) {
+            return varargElementType;
+        }
+        return parameterDescriptor.getType();
     }
 
     private boolean isVariableArity(List<ValueParameterDescriptor> fParams) {

@@ -4257,6 +4257,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/varargs/kt1838-val.kt");
             }
             
+            @TestMetadata("kt422.kt")
+            public void testKt422() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/varargs/kt422.kt");
+            }
+            
             @TestMetadata("MoreSpecificVarargsOfEqualLength.kt")
             public void testMoreSpecificVarargsOfEqualLength() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/varargs/MoreSpecificVarargsOfEqualLength.kt");
