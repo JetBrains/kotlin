@@ -73,7 +73,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     @Nullable
     public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
         if (isMarkersEnabled(element.getProject()) && findKotlinSignatureAnnotation(element) != null) {
-            return new MyLineMarkerInfo(element);
+            return new MyLineMarkerInfo((PsiModifierListOwner) element);
         }
         return null;
     }
@@ -92,8 +92,8 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     }
 
     private static class MyLineMarkerInfo extends LineMarkerInfo<PsiModifierListOwner> {
-        public MyLineMarkerInfo(PsiElement element) {
-            super((PsiModifierListOwner) element, element.getTextOffset(), JetIcons.SMALL_LOGO, Pass.UPDATE_ALL, TOOLTIP_PROVIDER, NAVIGATION_HANDLER);
+        public MyLineMarkerInfo(PsiModifierListOwner element) {
+            super(element, element.getTextOffset(), JetIcons.SMALL_LOGO, Pass.UPDATE_ALL, TOOLTIP_PROVIDER, NAVIGATION_HANDLER);
         }
 
         @Nullable
