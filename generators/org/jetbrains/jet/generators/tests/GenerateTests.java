@@ -22,8 +22,6 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
 import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
-import org.jetbrains.jet.codegen.AbstractIntrinsicsTestCase;
-import org.jetbrains.jet.codegen.AbstractMultiDeclTestCase;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractCodegenTest;
@@ -86,14 +84,14 @@ public class GenerateTests {
         generateTest(
                 "compiler/tests/",
                 "IntrinsicsTestGenerated",
-                AbstractIntrinsicsTestCase.class,
+                AbstractCodegenTest.class,
                 testModel("compiler/testData/codegen/intrinsics", "blackBoxFileByFullPath")
         );
 
         generateTest(
                 "compiler/tests/",
                 "MultiDeclTestGenerated",
-                AbstractMultiDeclTestCase.class,
+                AbstractCodegenTest.class,
                 testModel("compiler/testData/codegen/multiDecl", "blackBoxFileByFullPath")
         );
 
