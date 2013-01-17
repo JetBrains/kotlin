@@ -90,6 +90,16 @@ public class IdeErrorMessages {
                     }
                 }, DescriptorRenderer.HTML);
 
+        MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, "<html>Var-property type is ''{0}'', which is not a type of overridden<br/>" +
+                                                  "{1}</html>",
+                new Renderer<CallableMemberDescriptor>() {
+                    @NotNull
+                    @Override
+                    public String render(@NotNull CallableMemberDescriptor object) {
+                        return DescriptorRenderer.HTML.renderType(object.getReturnType());
+                    }
+                }, DescriptorRenderer.HTML);
+
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
                                        "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
 
