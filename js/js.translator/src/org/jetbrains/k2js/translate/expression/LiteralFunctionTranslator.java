@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TraceableThisAliasProvider;
@@ -71,7 +71,7 @@ public class LiteralFunctionTranslator {
             funContext = createThisTraceableContext(classDescriptor, fun, new JsNameRef("o", fun.getName().makeRef()));
         }
         else {
-            asInner = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+            asInner = DescriptorUtils.isTopLevelDeclaration(descriptor);
             funContext = rootContext.contextWithScope(fun);
         }
 

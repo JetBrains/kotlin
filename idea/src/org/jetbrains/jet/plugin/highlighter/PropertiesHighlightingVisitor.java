@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetThisExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 
 class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -77,7 +78,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     private void highlightProperty(@NotNull PsiElement elementToHighlight,
             @NotNull PropertyDescriptor descriptor,
             boolean withBackingField) {
-        boolean namespace = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+        boolean namespace = DescriptorUtils.isTopLevelDeclaration(descriptor);
         JetPsiChecker.highlightName(holder, elementToHighlight,
                                     namespace ? JetHighlightingColors.NAMESPACE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
         );

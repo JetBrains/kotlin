@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -96,7 +97,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private JsObjectLiteral getRootPackage(Map<NamespaceDescriptor, List<JsExpression>> descriptorToDefineInvocation,
             NamespaceDescriptor descriptor) {
         NamespaceDescriptor rootNamespace = descriptor;
-        while (rootNamespace.getContainingDeclaration() instanceof NamespaceDescriptor) {
+        while (DescriptorUtils.isTopLevelDeclaration(rootNamespace)) {
             rootNamespace = (NamespaceDescriptor) rootNamespace.getContainingDeclaration();
         }
 

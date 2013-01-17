@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     public FunctionsHighlightingVisitor(AnnotationHolder holder, BindingContext bindingContext) {
@@ -65,7 +66,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                 else if (calleeDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor fun = (FunctionDescriptor)calleeDescriptor;
                     JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
-                    if (fun.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                    if (DescriptorUtils.isTopLevelDeclaration(fun)) {
                         JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.NAMESPACE_FUNCTION_CALL);
                     }
                     if (fun.getReceiverParameter() != null) {

@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -196,8 +197,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     private String getName(ClassDescriptor classDescriptor) {
         String base = peekFromStack(nameStack);
-        return classDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor ? base.isEmpty() ? classDescriptor.getName()
-                .getName() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
+        return DescriptorUtils.isTopLevelDeclaration(classDescriptor) ? base.isEmpty() ? classDescriptor.getName()
+                        .getName() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
     }
 
     @Override

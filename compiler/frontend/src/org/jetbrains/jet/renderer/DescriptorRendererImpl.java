@@ -333,7 +333,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderModalityForCallable(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
-        if (!(callable.getContainingDeclaration() instanceof NamespaceDescriptor) || callable.getModality() != Modality.FINAL) {
+        if (!DescriptorUtils.isTopLevelDeclaration(callable) || callable.getModality() != Modality.FINAL) {
             renderModality(callable.getModality(), builder);
         }
     }

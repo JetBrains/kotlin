@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -191,7 +192,7 @@ public class AsmUtil {
         Classes in byte code should be public or package private
      */
     public static int getVisibilityAccessFlagForClass(ClassDescriptor descriptor) {
-        if (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor ||
+        if (DescriptorUtils.isTopLevelDeclaration(descriptor) ||
             descriptor.getVisibility() == Visibilities.PUBLIC ||
             descriptor.getVisibility() == Visibilities.INTERNAL) {
             return ACC_PUBLIC;
