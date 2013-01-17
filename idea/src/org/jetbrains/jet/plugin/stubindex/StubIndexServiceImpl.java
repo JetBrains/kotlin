@@ -30,8 +30,6 @@ public class StubIndexServiceImpl implements StubIndexService {
         String packageName = stub.getPackageName();
         FqName fqName = new FqName(packageName == null ? "" : packageName);
 
-        sink.occurrence(JetPackageDeclarationIndex.getInstance().getKey(), fqName.getFqName());
-
         while (true) {
             sink.occurrence(JetAllPackagesIndex.getInstance().getKey(), fqName.getFqName());
             if (fqName.isRoot()) {

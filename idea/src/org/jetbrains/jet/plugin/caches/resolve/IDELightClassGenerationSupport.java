@@ -19,7 +19,9 @@ package org.jetbrains.jet.plugin.caches.resolve;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
@@ -64,8 +66,14 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
-    public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        return JetPackageDeclarationIndex.getInstance().get(fqName.getFqName(), project, kotlinSources(searchScope));
+    public Collection<JetFile> findFilesForPackage(@NotNull final FqName fqName, @NotNull GlobalSearchScope searchScope) {
+        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqName.getFqName(), project, kotlinSources(searchScope));
+        return ContainerUtil.filter(files, new Condition<JetFile>() {
+            @Override
+            public boolean value(JetFile file) {
+                return fqName.equals(JetPsiUtil.getFQName(file));
+            }
+        });
     }
 
     @NotNull
@@ -106,11 +114,11 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     public MultiMap<String, FqName> getAllPackageClasses(@NotNull final GlobalSearchScope scope) {
-        Collection<String> packageFqNames = JetPackageDeclarationIndex.getInstance().getAllKeys(project);
+        Collection<String> packageFqNames = JetAllPackagesIndex.getInstance().getAllKeys(project);
 
         MultiMap<String, FqName> result = new MultiMap<String, FqName>();
         for (String packageFqName : packageFqNames) {
-            Collection<JetFile> files = JetPackageDeclarationIndex.getInstance().get(packageFqName, project, kotlinSources(scope));
+            Collection<JetFile> files = findFilesForPackage(new FqName(packageFqName), scope);
             if (!files.isEmpty()) {
                 FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(new FqName(packageFqName));
                 result.putValue(packageClassFqName.shortName().getName(), packageClassFqName);
