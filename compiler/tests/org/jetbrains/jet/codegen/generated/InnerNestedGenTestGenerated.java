@@ -38,6 +38,11 @@ public class InnerNestedGenTestGenerated extends AbstractCodegenTest {
         doTest("compiler/testData/codegen/innerNested/createNestedClass.kt");
     }
     
+    @TestMetadata("createdNestedInOuterMember.kt")
+    public void testCreatedNestedInOuterMember() throws Exception {
+        doTest("compiler/testData/codegen/innerNested/createdNestedInOuterMember.kt");
+    }
+    
     @TestMetadata("dataLocalVariable.kt")
     public void testDataLocalVariable() throws Exception {
         doTest("compiler/testData/codegen/innerNested/dataLocalVariable.kt");

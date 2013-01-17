@@ -32,8 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLASS_FOR_FUNCTION;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.FQN;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public abstract class CodegenContext {
@@ -265,12 +264,12 @@ public abstract class CodegenContext {
     }
 
     protected void initOuterExpression(JetTypeMapper typeMapper, ClassDescriptor classDescriptor) {
-        final ClassDescriptor enclosingClass = getEnclosingClass();
-        outerExpression = enclosingClass != null
-                          ? StackValue
-                .field(typeMapper.mapType(enclosingClass), CodegenBinding.getJvmInternalName(typeMapper.getBindingTrace(), classDescriptor),
-                       CAPTURED_THIS_FIELD,
-                       false)
+        ClassDescriptor enclosingClass = getEnclosingClass();
+        outerExpression = enclosingClass != null && canHaveOuter(typeMapper.getBindingContext(), classDescriptor)
+                          ? StackValue.field(typeMapper.mapType(enclosingClass),
+                                             CodegenBinding.getJvmInternalName(typeMapper.getBindingTrace(), classDescriptor),
+                                             CAPTURED_THIS_FIELD,
+                                             false)
                           : null;
     }
 
