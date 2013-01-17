@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.StandardGenerationStrategy;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.internal.Location;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -92,7 +91,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
                     return printStackTraceToString(exhaust.getError());
                 }
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEXT, exhaust.getBindingContext(), Collections.singletonList(jetFile));
-                KotlinCodegenFacade.compileCorrectFiles(state, StandardGenerationStrategy.INSTANCE, CompilationErrorHandler.THROW_EXCEPTION);
+                KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
             catch (ProcessCanceledException e) {
                 throw e;

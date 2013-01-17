@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStrategy;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
@@ -38,7 +37,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassName
 public class KotlinCodegenFacade {
     public static void compileCorrectFiles(
             @NotNull GenerationState state,
-            @NotNull GenerationStrategy strategy, @NotNull CompilationErrorHandler errorHandler
+            @NotNull CompilationErrorHandler errorHandler
     ) {
         for (JetFile file : state.getFiles()) {
             if (file.isScript()) {
@@ -60,8 +59,18 @@ public class KotlinCodegenFacade {
         }
 
         for (Map.Entry<FqName, Collection<JetFile>> entry : namespaceGrouping.entrySet()) {
-            strategy.generateNamespace(state, entry.getKey(), entry.getValue(), errorHandler);
+            generateNamespace(state, entry.getKey(), entry.getValue(), errorHandler);
         }
+    }
+
+    public static void generateNamespace(
+            @NotNull GenerationState state,
+            @NotNull FqName fqName,
+            @NotNull Collection<JetFile> jetFiles,
+            @NotNull CompilationErrorHandler errorHandler
+    ) {
+            NamespaceCodegen codegen = state.getFactory().forNamespace(fqName, jetFiles);
+            codegen.generate(errorHandler);
     }
 
     private KotlinCodegenFacade() {}

@@ -27,7 +27,6 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.StandardGenerationStrategy;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -251,7 +250,7 @@ public class ScriptCodegen extends MemberCodegen {
         registerClassNameForScript(state.getBindingTrace(), script, className);
 
         state.beforeCompile();
-        StandardGenerationStrategy.INSTANCE.generateNamespace(
+        KotlinCodegenFacade.generateNamespace(
                 state,
                 JetPsiUtil.getFQName((JetFile) script.getContainingFile()),
                 Collections.singleton((JetFile) script.getContainingFile()),
