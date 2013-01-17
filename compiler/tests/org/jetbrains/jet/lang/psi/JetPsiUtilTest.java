@@ -16,10 +16,16 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.psi.util.PsiTreeUtil;
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JetPsiUtilTest extends TestCase {
+public class JetPsiUtilTest extends JetLiteFixture {
     
     public void testUnquotedIdentifier() {
         Assert.assertEquals("", JetPsiUtil.unquoteIdentifier(""));
@@ -37,4 +43,37 @@ public class JetPsiUtilTest extends TestCase {
         Assert.assertEquals("$a2", JetPsiUtil.unquoteIdentifierOrFieldReference("$`a2`"));
     }
 
+    public void testConvertToImportPath() {
+        Assert.assertEquals(null, getImportPathFromParsed("import "));
+        Assert.assertEquals(null, getImportPathFromParsed("import some."));
+        Assert.assertEquals(null, getImportPathFromParsed("import *"));
+        Assert.assertEquals(null, getImportPathFromParsed("import some.test.* as SomeTest"));
+        Assert.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some?.Test"));
+
+        Assert.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some"));
+        Assert.assertEquals(new ImportPath(new FqName("some"), true), getImportPathFromParsed("import some.*"));
+        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.Test"));
+        Assert.assertEquals(new ImportPath(new FqName("some.test"), true), getImportPathFromParsed("import some.test.*"));
+        Assert.assertEquals(new ImportPath(new FqName("some.test"), false, Name.identifier("SomeTest")), getImportPathFromParsed("import some.test as SomeTest"));
+
+        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.\nTest"));
+        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some./* hello world */Test"));
+        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.    Test"));
+
+        Assert.assertNotSame(new ImportPath(new FqName("some.test"), false), getImportPathFromParsed("import some.Test"));
+    }
+
+    @Override
+    protected JetCoreEnvironment createEnvironment() {
+        return new JetCoreEnvironment(getTestRootDisposable(), new CompilerConfiguration());
+    }
+
+    private ImportPath getImportPathFromParsed(String text) {
+        JetImportDirective importDirective =
+                PsiTreeUtil.findChildOfType(JetPsiFactory.createFile(getProject(), text), JetImportDirective.class);
+
+        assertNotNull("At least one import directive is expected", importDirective);
+
+        return JetPsiUtil.getImportPath(importDirective);
+    }
 }
