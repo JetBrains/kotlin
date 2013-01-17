@@ -28,6 +28,7 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
@@ -43,21 +44,16 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
-import org.jetbrains.jet.renderer.DescriptorRendererImpl;
 
 import javax.swing.*;
 
 import static org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureUtil.*;
 
-public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements Iconable {
+public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setShortNames(true)
             .setModifiers(false)
             .setWithDefinedIn(false).build();
-
-    public AddKotlinSignatureAnnotation() {
-        setText(JetBundle.message("add.kotlin.signature.action.text"));
-    }
 
     @NotNull
     @Override
@@ -82,14 +78,32 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
             return false;
         }
 
-        return createFix(annotationOwner, "").isAvailable(project, editor, file);
+        if (!PsiUtil.isLanguageLevel5OrHigher(annotationOwner)) return false;
+
+        if (findKotlinSignatureAnnotation(annotationOwner) != null) {
+            if (isAnnotationEditable(annotationOwner)) {
+                setText(JetBundle.message("edit.kotlin.signature.action.text"));
+            }
+            else {
+                setText(JetBundle.message("view.kotlin.signature.action.text"));
+            }
+        }
+        else {
+            setText(JetBundle.message("add.kotlin.signature.action.text"));
+        }
+        return true;
     }
 
     @Override
     public void invoke(@NotNull final Project project, final Editor editor, PsiFile file) throws IncorrectOperationException {
         final PsiMember annotatedElement = findAnnotationOwner(file, editor);
 
-        assert (annotatedElement != null);
+        assert annotatedElement != null;
+
+        if (findKotlinSignatureAnnotation(annotatedElement) != null) {
+            EditSignatureAction.invokeEditSignature(annotatedElement, editor, null);
+            return;
+        }
 
         String signature = getDefaultSignature(project, (PsiMember) annotatedElement.getOriginalElement());
 
@@ -110,12 +124,10 @@ public class AddKotlinSignatureAnnotation extends BaseIntentionAction implements
                 }
             }
         });
-        createFix(annotatedElement, signature).invoke(project, editor, file);
-    }
 
-    @NotNull
-    private static AddAnnotationFix createFix(@NotNull PsiModifierListOwner annotatedElement, @NotNull String signature) {
-        return new AddAnnotationFix(KOTLIN_SIGNATURE_ANNOTATION, annotatedElement, signatureToNameValuePairs(annotatedElement.getProject(), signature));
+        AddAnnotationFix addAnnotationFix = new AddAnnotationFix(
+                KOTLIN_SIGNATURE_ANNOTATION, annotatedElement, signatureToNameValuePairs(annotatedElement.getProject(), signature));
+        addAnnotationFix.invoke(project, editor, file);
     }
 
     private static String getDefaultSignature(@NotNull PsiMethod method, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver, BindingContext context) {

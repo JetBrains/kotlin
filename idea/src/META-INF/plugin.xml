@@ -248,7 +248,7 @@
       </intentionAction>
 
       <intentionAction>
-        <className>org.jetbrains.jet.plugin.codeInsight.ktSignature.AddKotlinSignatureAnnotation</className>
+        <className>org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureAnnotationIntention</className>
         <category>Kotlin</category>
       </intentionAction>
 
