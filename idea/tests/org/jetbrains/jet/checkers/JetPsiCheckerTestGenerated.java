@@ -413,12 +413,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         public void testPropertiesWithBackingFields() throws Exception {
             doTestWithInfos("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
         }
-
+        
         @TestMetadata("VariableAsFunction.kt")
         public void testVariableAsFunction() throws Exception {
             doTestWithInfos("idea/testData/checker/infos/VariableAsFunction.kt");
         }
-
+        
         @TestMetadata("WrapIntoRef.kt")
         public void testWrapIntoRef() throws Exception {
             doTestWithInfos("idea/testData/checker/infos/WrapIntoRef.kt");
