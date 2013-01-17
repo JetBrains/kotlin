@@ -126,6 +126,9 @@ public class SpecialFiles {
         excludedFiles.add("doGenerateAssertions.kt"); // Multi-file + Java
         excludedFiles.add("doNotGenerateAssertions.kt"); // Multi-file + Java
         excludedFiles.add("doGenerateParamAssertions.kt"); // Java
+
+        excludedFiles.add("nestedInPackage.kt"); // Custom packages are not supported
+        excludedFiles.add("importNestedClass.kt"); // Won't work when moved to another package
     }
 
     private SpecialFiles() {
