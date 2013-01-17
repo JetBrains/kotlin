@@ -184,7 +184,23 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
         doTest();
     }
 
+    public void testDeprecatedFQN() throws Exception {
+        doTest();
+    }
+
+    public void testDeprecatedFQNSpaces() throws Exception {
+        doTest();
+    }
+
     public void testDeprecatedWithBrackets() throws Exception {
+        doTest();
+    }
+
+    public void testDeprecatedWithBracketsFQN() throws Exception {
+        doTest();
+    }
+
+    public void testDeprecatedWithBracketsFQNSpaces() throws Exception {
         doTest();
     }
 }

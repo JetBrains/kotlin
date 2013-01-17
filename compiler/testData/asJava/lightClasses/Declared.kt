@@ -28,8 +28,11 @@ trait Trait
 // Deprecation
 deprecated("") class Deprecated
 jet.deprecated("") class DeprecatedFQN
+jet. deprecated /**/ ("") class DeprecatedFQNSpaces
 [deprecated("")] class DeprecatedWithBrackets
 [jet.deprecated("")] class DeprecatedWithBracketsFQN
+[jet
+./**/deprecated  ("")] class DeprecatedWithBracketsFQNSpaces
 
 // Generic
 class Generic1<T>

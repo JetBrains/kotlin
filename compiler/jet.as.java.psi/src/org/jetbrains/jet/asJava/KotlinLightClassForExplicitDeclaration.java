@@ -345,15 +345,13 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             if (typeReference == null) continue;
 
             JetTypeElement typeElement = typeReference.getTypeElement();
-            if (typeElement == null) continue;
+            if (!(typeElement instanceof JetUserType)) continue; // If it's not a user type, it's definitely not a ref to deprecated
 
-            // typeElement.getText() is either
-            //   simple name => we just compare it to "deprecated"
-            //   qualified name => we compare to FqName, there may be spaces, comments etc, we do not support these cases
-            //   function type, etc => comparisons below fail
-            String text = typeElement.getText();
-            if (deprecatedFqName.getFqName().equals(text)) return true;
-            if (deprecatedName.equals(text)) return true;
+            FqName fqName = JetPsiUtil.toQualifiedName((JetUserType) typeElement);
+            if (fqName == null) continue;
+
+            if (deprecatedFqName.equals(fqName.toUnsafe())) return true;
+            if (deprecatedName.equals(fqName.getFqName())) return true;
         }
         return false;
     }
