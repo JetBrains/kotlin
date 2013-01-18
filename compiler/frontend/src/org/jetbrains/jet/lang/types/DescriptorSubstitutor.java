@@ -66,7 +66,7 @@ public class DescriptorSubstitutor {
                 return "DescriptorSubstitutor.substituteTypeParameters(" + mutableSubstitution + " / " + originalSubstitutor.getSubstitution() + ")";
             }
         });
-
+        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> substitutedMap = Maps.newHashMap();
         for (TypeParameterDescriptor descriptor : typeParameters) {
             TypeParameterDescriptorImpl substituted = TypeParameterDescriptorImpl.createForFurtherModification(
                     newContainingDeclaration,
@@ -79,11 +79,15 @@ public class DescriptorSubstitutor {
 
             mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjection(substituted.getDefaultType()));
 
+            substitutedMap.put(descriptor, substituted);
+            result.add(substituted);
+        }
+
+        for (TypeParameterDescriptor descriptor : typeParameters) {
+            TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);
             for (JetType upperBound : descriptor.getUpperBounds()) {
                 substituted.getUpperBounds().add(substitutor.substitute(upperBound, Variance.INVARIANT));
             }
-
-            result.add(substituted);
         }
 
         return substitutor;
