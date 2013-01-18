@@ -106,7 +106,7 @@
                             <phase>test</phase>
                             <configuration>
                               <target>
-                                <java fork="true" classpathref="maven.test.classpath" classname="io.kool.javafx.namespace">
+                                <java fork="true" classpathref="maven.test.classpath" classname="io.kool.javafx.JavafxPackage">
                                     <arg value="file://sample-javafx.html"/>
                                 </java>
                               </target>

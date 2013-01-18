@@ -63,7 +63,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>demo.namespace</mainClass>
+                    <mainClass>demo.DemoPackage</mainClass>
                     <classpathScope>test</classpathScope>
                     <systemProperties>
                         <systemProperty>
@@ -98,7 +98,7 @@
                             <phase>test</phase>
                             <configuration>
                               <target>
-                                <java fork="true" classpathref="maven.test.classpath" classname="demo.namespace"/>
+                                <java fork="true" classpathref="maven.test.classpath" classname="demo.DemoPackage"/>
                               </target>
                             </configuration>
                             <goals>

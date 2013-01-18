@@ -38,7 +38,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.jetbrains.kotlin.tools.namespace</mainClass>
+                    <mainClass>org.jetbrains.kotlin.tools.ToolsPackage</mainClass>
                     <classpathScope>test</classpathScope>
                 </configuration>
             </plugin>

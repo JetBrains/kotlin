@@ -171,7 +171,7 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
 class SourceInfo(val psi: JetFile, val relativePath: String, val htmlPath: String)
 
 class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs: List<File>, val sources: List<JetFile>) {
-    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
+    // TODO generates java.lang.NoSuchMethodError: kotlin.util.UtilPackage.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
 
@@ -942,7 +942,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         var useExternalLink: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
 
 
-    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
+    // TODO generates java.lang.NoSuchMethodError: kotlin.util.UtilPackage.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val classes = sortedMap<String,KClass>()
     public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
 

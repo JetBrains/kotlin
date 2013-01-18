@@ -1,7 +1,7 @@
 package test.kotlin.jtests;
 
-import static kotlin.namespace.*;
-import static kotlin.util.namespace.*;
+import static kotlin.KotlinPackage.*;
+import static kotlin.util.UtilPackage.*;
 
 import jet.Function1;
 import junit.framework.TestCase;
