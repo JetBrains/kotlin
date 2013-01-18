@@ -45,7 +45,7 @@ public interface ConstraintSystem {
      * For example, for {@code "fun <T> id(t: T) {}"} to infer <tt>T</tt> in invocation <tt>"id(1)"</tt>
      * should be generated a constraint <tt>"Int is a subtype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    void addSubtypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
+    void addSubtypeConstraint(@Nullable JetType constrainingType, @NotNull JetType subjectType, @NotNull ConstraintPosition constraintPosition);
 
     /**
      * Adds a constraint that the constraining type is a supertype of the subject type. <p/>
@@ -54,7 +54,7 @@ public interface ConstraintSystem {
      * For example, for {@code "fun <T> create() : T"} to infer <tt>T</tt> in invocation <tt>"val i: Int = create()"</tt>
      * should be generated a constraint <tt>"Int is a supertype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    void addSupertypeConstraint(@NotNull JetType subjectType, @Nullable JetType constrainingType, @NotNull ConstraintPosition constraintPosition);
+    void addSupertypeConstraint(@Nullable JetType constrainingType, @NotNull JetType subjectType, @NotNull ConstraintPosition constraintPosition);
 
     /**
      * Returns <tt>true</tt> if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).

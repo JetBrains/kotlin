@@ -250,7 +250,7 @@ public class ExpressionTypingUtils {
             }
         }
 
-        constraintSystem.addSubtypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
+        constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         return constraintSystem.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem);
     }
 

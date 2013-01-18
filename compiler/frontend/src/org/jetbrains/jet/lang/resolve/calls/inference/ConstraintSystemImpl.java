@@ -140,8 +140,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @Override
     public void addSupertypeConstraint(
-            @NotNull JetType subjectType,
             @Nullable JetType constrainingType,
+            @NotNull JetType subjectType,
             @NotNull ConstraintPosition constraintPosition
     ) {
         addConstraint(SUPER_TYPE, subjectType, constrainingType, constraintPosition);
@@ -149,8 +149,8 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     @Override
     public void addSubtypeConstraint(
-            @NotNull JetType subjectType,
             @Nullable JetType constrainingType,
+            @NotNull JetType subjectType,
             @NotNull ConstraintPosition constraintPosition
     ) {
         addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition);

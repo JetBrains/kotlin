@@ -220,7 +220,7 @@ public class CandidateResolver {
         }
 
         ConstraintSystem constraintSystemWithoutExpectedTypeConstraint = constraintSystem.copy();
-        constraintSystem.addSupertypeConstraint(descriptor.getReturnType(), context.expectedType,
+        constraintSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(),
                                                 ConstraintPosition.EXPECTED_TYPE_POSITION);
 
 
@@ -303,7 +303,7 @@ public class CandidateResolver {
                     context.candidateCall.isSafeCall()
                     ? TypeUtils.makeNotNullable(receiverArgument.getType())
                     : receiverArgument.getType();
-            constraintSystem.addSubtypeConstraint(receiverParameter.getType(), receiverType, ConstraintPosition.RECEIVER_POSITION);
+            constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         }
 
         ConstraintSystem
@@ -355,7 +355,7 @@ public class CandidateResolver {
         JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
         JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, traceForUnknown, context.scope, context.dataFlowInfo,
                                                                expectedType != null ? expectedType : NO_EXPECTED_TYPE, resolveFunctionArgumentBodies).getType();
-        constraintSystem.addSubtypeConstraint(effectiveExpectedType, type, ConstraintPosition.getValueParameterPosition(
+        constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         if (isErrorType != null) {
             isErrorType[0] = type == null || ErrorUtils.isErrorType(type);
