@@ -60,10 +60,12 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         }
 
         public void testNestedVisibilities() {
-            checkModifiers("test.Outer.Public", PUBLIC, FINAL, INNER);
-            checkModifiers("test.Outer.Protected", PROTECTED, FINAL, INNER);
-            checkModifiers("test.Outer.Internal", PUBLIC, FINAL, INNER);
-            checkModifiers("test.Outer.Private", PRIVATE, FINAL, INNER);
+            checkModifiers("test.Outer.Public", PUBLIC, STATIC, FINAL, NESTED);
+            checkModifiers("test.Outer.Protected", PROTECTED, STATIC, FINAL, NESTED);
+            checkModifiers("test.Outer.Internal", PUBLIC, STATIC, FINAL, NESTED);
+            checkModifiers("test.Outer.Private", PRIVATE, STATIC, FINAL, NESTED);
+
+            checkModifiers("test.Outer.Inner", PUBLIC, FINAL, NESTED);
         }
         public void testModalities() {
             checkModifiers("test.Abstract", PUBLIC, ABSTRACT);
@@ -224,7 +226,7 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
                 return psiClass.isDeprecated();
             }
         },
-        INNER {
+        NESTED {
             @Override
             public boolean present(@NotNull PsiClass psiClass) {
                 return psiClass.getContainingClass() != null;

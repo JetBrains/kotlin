@@ -11,6 +11,8 @@ class Outer {
     protected class Protected
     private class Private
     internal class Internal
+
+    inner class Inner
 }
 
 // Modality

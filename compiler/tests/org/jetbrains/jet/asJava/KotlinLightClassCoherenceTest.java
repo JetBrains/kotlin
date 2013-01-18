@@ -136,20 +136,24 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
         doTest();
     }
 
-    public void testInnerPublic() throws Exception {
+    public void testNestedPublic() throws Exception {
         doTest("test.Outer.Public");
     }
 
-    public void testInnerProtected() throws Exception {
+    public void testNestedProtected() throws Exception {
         doTest("test.Outer.Protected");
     }
 
-    public void testInnerInternal() throws Exception {
+    public void testNestedInternal() throws Exception {
         doTest("test.Outer.Internal");
     }
 
-    public void testInnerPrivate() throws Exception {
+    public void testNestedPrivate() throws Exception {
         doTest("test.Outer.Private");
+    }
+
+    public void testInner() throws Exception {
+        doTest("test.Outer.Inner");
     }
 
     public void testAbstract() throws Exception {

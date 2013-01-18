@@ -78,7 +78,7 @@ public abstract class ClassBuilder {
             String superName,
             String[] interfaces
     ) {
-        getVisitor().visit(version, access & ~Opcodes.ACC_STATIC, name, signature, superName, interfaces);
+        getVisitor().visit(version, access, name, signature, superName, interfaces);
     }
 
     public void visitSource(String name, @Nullable String debug) {

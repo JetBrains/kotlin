@@ -21,10 +21,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.AnnotationVisitor;
-import org.jetbrains.asm4.Label;
-import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
@@ -119,6 +116,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD) && !isAbstract) {
                 isFinal = true;
             }
+            isStatic = !jetClass.isInner();
         }
         else {
             isStatic = myClass.getParent() instanceof JetClassObject;
@@ -133,6 +131,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             // without knowing whether these classes are inner or not (see ClassStubBuilder.EMPTY_STRATEGY)
             // Thus we must write full accessibility flags on inner classes in this mode
             access |= getVisibilityAccessFlag(descriptor);
+            // Same for STATIC
+            if (isStatic) {
+                access |= ACC_STATIC;
+            }
         }
         else {
             access |= getVisibilityAccessFlagForClass(descriptor);
@@ -148,9 +150,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         if (isFinal) {
             access |= ACC_FINAL;
-        }
-        if (isStatic) {
-            access |= ACC_STATIC;
         }
         if (isAnnotation) {
             access |= ACC_ANNOTATION;
