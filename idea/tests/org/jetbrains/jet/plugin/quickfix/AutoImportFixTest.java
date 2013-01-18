@@ -67,6 +67,10 @@ public class AutoImportFixTest extends JetQuickFixMultiFileTest {
         doTest();
     }
 
+    public void testPackageClass() throws Exception {
+        doTest();
+    }
+
     @Override
     protected String getCheckFileName() {
         return getTestName(true) + ".after.kt";

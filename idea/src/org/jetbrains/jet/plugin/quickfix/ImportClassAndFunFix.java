@@ -39,10 +39,13 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
@@ -50,11 +53,13 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -173,7 +178,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         return Lists.newArrayList(possibleResolveNames);
     }
 
-    private static Collection<FqName> getClassesFromCache(@NotNull final String typeName, @NotNull JetFile file) {
+    private static Collection<FqName> getClassesFromCache(@NotNull final String typeName, @NotNull final JetFile file) {
         PsiShortNamesCache cache = getShortNamesCache(file);
 
         PsiClass[] classes = cache.getClassesByName(typeName, GlobalSearchScope.allScope(file.getProject()));
@@ -182,7 +187,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             @Override
             public boolean apply(PsiClass psiClass) {
                 assert psiClass != null;
-                return isAccessible(psiClass);
+                return isAccessible(psiClass, file);
             }
         });
 
@@ -223,8 +228,31 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         });
     }
 
-    private static boolean isAccessible(PsiMember member) {
+    private static boolean isAccessible(PsiMember member, JetFile fromFile) {
+        if (member instanceof KotlinLightClassForPackage) {
+            // Package classes are only available from Java, so they should not be visisble from Kotlin
+            return false;
+        }
+        if (member instanceof KotlinLightClassForExplicitDeclaration) {
+            KotlinLightClassForExplicitDeclaration lightClass = (KotlinLightClassForExplicitDeclaration) member;
+
+            // It is a Kotlin class already, we need to properly check visibility?
+            JetClassOrObject classOrObject = lightClass.getJetClassOrObject();
+
+            if (isTopLevelDeclaration(classOrObject) && classOrObject.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+                // The class is declared private in the targetPackage
+                // It is visible in this package and all of its subpackages
+                JetFile targetFile = (JetFile) classOrObject.getContainingFile();
+                FqName targetPackage = JetPsiUtil.getFQName(targetFile);
+                FqName fromPackage = JetPsiUtil.getFQName(fromFile);
+                return QualifiedNamesUtil.isSubpackageOf(fromPackage, targetPackage);
+            }
+        }
         return member.hasModifierProperty(PsiModifier.PUBLIC) || member.hasModifierProperty(PsiModifier.PROTECTED);
+    }
+
+    private static boolean isTopLevelDeclaration(JetClassOrObject classOrObject) {
+        return classOrObject.getContainingFile() == classOrObject.getParent();
     }
 
     @Override

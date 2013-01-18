@@ -103,6 +103,11 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     }
 
     @NotNull
+    public JetClassOrObject getJetClassOrObject() {
+        return classOrObject;
+    }
+
+    @NotNull
     @Override
     public FqName getFqName() {
         return classFqName;
