@@ -93,11 +93,6 @@
     <item name='java.util.concurrent.ConcurrentMap V replace(K, V) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;, int)'>
-        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun drainTo(c : Collection&lt;in E&gt;, maxElements : Int) : Int&quot;"/>
-        </annotation>
-    </item>
     <item name='java.util.concurrent.Semaphore java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1516,11 +1511,6 @@
     </item>
     <item name='java.util.concurrent.Executors java.util.concurrent.ScheduledExecutorService unconfigurableScheduledExecutorService(java.util.concurrent.ScheduledExecutorService) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='java.util.concurrent.BlockingQueue int drainTo(java.util.Collection&lt;? super E&gt;)'>
-        <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun drainTo(c : Collection&lt;in E&gt;) : Int&quot;"/>
-        </annotation>
     </item>
     <item name='java.util.concurrent.BlockingDeque boolean offerFirst(E, long, java.util.concurrent.TimeUnit) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
