@@ -91,10 +91,6 @@ public class SpecialFiles {
         excludedFiles.add("withtypeparams.jet"); // Cannot find usages in Codegen tests
         excludedFiles.add("kt1113.kt"); // Commented
         excludedFiles.add("kt326.jet"); // Commented
-        excludedFiles.add("kt694.jet"); // Commented
-        excludedFiles.add("kt285.jet"); // Commented
-        excludedFiles.add("kt857.jet"); // Commented
-        excludedFiles.add("kt1120.kt"); // Commented
         excludedFiles.add("kt1213.kt"); // Commented
         excludedFiles.add("kt882.jet"); // Commented
         excludedFiles.add("kt789.jet"); // Commented

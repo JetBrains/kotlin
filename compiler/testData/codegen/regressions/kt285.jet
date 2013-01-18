@@ -1,17 +1,12 @@
-class SimpleClass() : java.lang.Object() {
-    fun foo() : String = "610" + toString ()
-
-    override fun toString() : String { return foo() }
+trait Trait {
+    fun foo() = "O"
+    fun toString() = "K"
 }
 
-class ComplexClass() : SimpleClass by delegate {
-    val delegate = SimpleClass()
-    override fun toString() : String { return foo() + " complex" }
+class SimpleClass : Trait
+
+class ComplexClass : Trait by SimpleClass() {
+    override fun toString() = foo() + super.toString()
 }
 
-fun box() : String {
-  val c = SimpleClass()
-  val d = ComplexClass()
-  System.out?.println(d)
-  return c.foo()
-}
+fun box() = ComplexClass().toString()

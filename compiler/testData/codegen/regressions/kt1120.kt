@@ -1,23 +1,14 @@
-import java.util.concurrent.ConcurrentLinkedQueue
-
-public object RefreshQueue {
-    private val queue = ConcurrentLinkedQueue<List<String>>
-
-    private val workerThread = Thread(object : Runnable {
+object RefreshQueue {
+    val workerThread: Thread = Thread(object : Runnable {
         override fun run() {
-                while (!workerThread.isInterrupted()) {
-                    try {
-//                        synchronized(queue) {
-//                            queue.wait()
-//                        }
-                    } catch (e : InterruptedException) {
-                    }
-                }
+            val a = workerThread
+            val b = RefreshQueue.workerThread
+            if (a != b) throw AssertionError()
         }
     })
 }
 
 fun box() : String {
-    val t = RefreshQueue.workerThread
+    RefreshQueue.workerThread.run()
     return "OK"
 }
