@@ -46,7 +46,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -71,18 +73,9 @@ public class CallExpressionResolver {
             JetType classObjectType = classifier.getClassObjectType();
             if (classObjectType != null) {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
-                JetType result;
-                if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT && classifier instanceof ClassDescriptor) {
-                    JetScope scope = new ChainedScope(classifier, classObjectType.getMemberScope(),
-                                                      getStaticNestedClassesScope((ClassDescriptor) classifier));
-                    result = new NamespaceType(referencedName, scope);
-                }
-                else if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT || classifier.isClassObjectAValue()) {
-                    result = classObjectType;
-                }
-                else {
+                JetType result = getExtendedClassObjectType(classObjectType, referencedName, classifier, context);
+                if (result == null) {
                     context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
-                    result = null;
                 }
                 return DataFlowUtils.checkType(result, expression, context);
             }
@@ -107,6 +100,35 @@ public class CallExpressionResolver {
         }
         temporaryTrace.commit();
         return result[0];
+    }
+
+    @Nullable
+    private JetType getExtendedClassObjectType(
+            @NotNull JetType classObjectType,
+            @NotNull Name referencedName,
+            @NotNull ClassifierDescriptor classifier,
+            @NotNull ResolutionContext context
+    ) {
+        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT && classifier instanceof ClassDescriptor) {
+            List<JetScope> scopes = new ArrayList<JetScope>(3);
+
+            scopes.add(classObjectType.getMemberScope());
+            scopes.add(getStaticNestedClassesScope((ClassDescriptor) classifier));
+
+            NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
+            if (namespace != null) {
+                scopes.add(namespace.getMemberScope());
+            }
+
+            JetScope scope = new ChainedScope(classifier, scopes.toArray(new JetScope[scopes.size()]));
+            return new NamespaceType(referencedName, scope);
+        }
+        else if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT || classifier.isClassObjectAValue()) {
+            return classObjectType;
+        }
+        else {
+            return null;
+        }
     }
 
     private boolean furtherNameLookup(

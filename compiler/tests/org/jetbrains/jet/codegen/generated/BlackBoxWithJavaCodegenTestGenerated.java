@@ -63,6 +63,16 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/enum/simpleJavaInnerEnum.kt");
         }
         
+        @TestMetadata("staticField.kt")
+        public void testStaticField() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/enum/staticField.kt");
+        }
+        
+        @TestMetadata("staticMethod.kt")
+        public void testStaticMethod() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/enum/staticMethod.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithJava/functions")
