@@ -171,4 +171,8 @@ public class EnumGenTest extends CodegenTestCase {
     public void testAbstractMethodInEnum() {
         blackBoxFile("enum/abstractMethodInEnum.kt");
     }
+
+    public void testKt2673() {
+        blackBoxFile("regressions/kt2673.kt");
+    }
 }
