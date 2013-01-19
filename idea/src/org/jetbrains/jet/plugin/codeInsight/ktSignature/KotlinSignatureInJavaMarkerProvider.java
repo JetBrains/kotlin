@@ -119,7 +119,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
 
         String qualifiedName = containingClass.getQualifiedName();
-        assert qualifiedName != null : "Trying to get line markers for anonymous or local class " + containingClass.getText();
+        if (qualifiedName == null) {
+            // Trying to get line markers for anonymous or local class
+            return null;
+        }
 
         FqName classFqName = new FqName(qualifiedName);
         JetScope memberScope = getScopeForMember(javaDescriptorResolver, classFqName, member);
