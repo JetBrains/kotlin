@@ -16,7 +16,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 class JavaToKotlinAction(): AnAction() {
     public override fun actionPerformed(event : AnActionEvent?) {
         val converter = Converter()
-        val psiFile = event.getData(LangDataKeys.PSI_FILE)!!
+        val psiFile = event!!.getData(LangDataKeys.PSI_FILE)!!
         ApplicationManager.getApplication()?.runWriteAction(object : Runnable {
             public override fun run() {
                 val result = converter.fileToFile(psiFile as PsiJavaFile).toKotlin()
@@ -37,7 +37,7 @@ class JavaToKotlinAction(): AnAction() {
 
 
     public override fun update(e : AnActionEvent?) {
-        val psiFile = e.getData(LangDataKeys.PSI_FILE)
-        e!!.getPresentation().setEnabled(psiFile is PsiJavaFile)
+        val psiFile = e!!.getData(LangDataKeys.PSI_FILE)
+        e.getPresentation().setEnabled(psiFile is PsiJavaFile)
     }
 }
