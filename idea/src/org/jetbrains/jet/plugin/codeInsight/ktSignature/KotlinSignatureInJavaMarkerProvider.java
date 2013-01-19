@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -121,11 +122,29 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         assert qualifiedName != null : "Trying to get line markers for anonymous or local class " + containingClass.getText();
 
         FqName classFqName = new FqName(qualifiedName);
+        JetScope memberScope = getScopeForMember(javaDescriptorResolver, classFqName, member);
 
-        ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName);
-        assert klass != null : " Couldn't find class " + classFqName;
+        return getDescriptorForMember(member, memberScope, bindingContext);
+    }
 
-        return getDescriptorForMember(member, klass.getDefaultType().getMemberScope(), bindingContext);
+    @NotNull
+    private static JetScope getScopeForMember(
+            @NotNull JavaDescriptorResolver javaDescriptorResolver,
+            @NotNull FqName classFqName,
+            @NotNull PsiMember member
+    ) {
+        if (member.hasModifierProperty(PsiModifier.STATIC)) {
+            NamespaceDescriptor packageDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
+            assert packageDescriptor != null : "No package descriptor for Java class " + classFqName + " that has a static member " + member;
+
+            return packageDescriptor.getMemberScope();
+        }
+        else {
+            ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName);
+            assert klass != null : " Couldn't find class " + classFqName;
+
+            return klass.getDefaultType().getMemberScope();
+        }
     }
 
     @Nullable
