@@ -2,6 +2,14 @@
 <project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
+    <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml">
+      <additionalClassPath />
+      <antReference projectDefault="true" />
+      <customJdkName value="" />
+      <maximumHeapSize value="128" />
+      <maximumStackSize value="2" />
+      <properties />
+    </buildFile>
   </component>
   <component name="ArtifactManager">
     <artifact type="jar" build-on-make="true" name="j2k:plugin">
@@ -27,7 +35,11 @@
       <entry name="?*.tld" />
       <entry name="?*.ftl" />
     </wildcardResourcePatterns>
-    <annotationProcessing enabled="false" useClasspath="true" />
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+    </annotationProcessing>
   </component>
   <component name="CopyrightManager" default="">
     <module2copyright />
@@ -440,6 +452,9 @@
         <inspection_tool class="UtilityClassWithPublicConstructor" enabled="true" level="WARNING" enabled_by_default="true" />
         <inspection_tool class="UtilityClassWithoutPrivateConstructor" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="ignoreClassesWithOnlyMain" value="false" />
+          <option name="ignorableAnnotations">
+            <value />
+          </option>
         </inspection_tool>
         <inspection_tool class="VolatileLongOrDoubleField" enabled="true" level="WARNING" enabled_by_default="true" />
         <inspection_tool class="WaitNotInLoop" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -606,7 +621,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-117.418" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">
@@ -628,14 +643,256 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="guava">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/guava-12.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/guava-12.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="intellij-core">
+      <ANNOTATIONS>
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/" />
+      </ANNOTATIONS>
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib/core" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/usageView/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/xdebugger-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/bootstrap/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/platform-tests/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/testFramework/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/testFramework/bootstrap/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/testFramework/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/extensions/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/extensions/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/indexing-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/indexing-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/lvcs-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/projectModel-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/core-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/forms_rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/testRunner/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/core-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/xdebugger-impl/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/xdebugger-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/boot/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/platform-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/dvcs/testFramework" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/dvcs/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/vcs-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/platform-main/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/lvcs-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/util-rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/projectModel-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/vcs-impl/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/vcs-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/platform-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/smRunner/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/smRunner/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/annotations/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/lang-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/lang-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/lang-api/testSources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/util/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/util/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/platform/funcTests/project1/module1/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/java-i18n/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/java-i18n/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/jps-plugin/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/maven-server-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/maven2-server-impl/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/maven2-server-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/src/test/java" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/src/main/java" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/maven3-server-impl/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/maven/maven3-server-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/android/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/android/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/android/jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/android/common/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/android/rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/android/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/generate-tostring/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntelliLang/javaee-support" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntelliLang/java-support" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntelliLang/intellilang-jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntelliLang/xml-support" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntelliLang/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/svn4idea/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/svn4idea/testSource" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/svn4idea/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xpath/xpath-lang/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xpath/xpath-lang/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xpath/xpath-view/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xpath/xslt-rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/eclipse/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/eclipse/jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/eclipse/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/eclipse/testSources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/android-designer/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/cvs/smartcvs-src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/cvs/trilead-ssh2-build213/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/cvs/trilead-ssh2-build213/examples" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/cvs/cvs-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/cvs/javacvs-src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/cvs/cvs-core/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ant/jps-plugin/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ant/jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ant/tests/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ant/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xslt-debugger/engine/impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xslt-debugger/engine/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xslt-debugger/rt/impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xslt-debugger/rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/xslt-debugger/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/git4idea/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/git4idea/tests" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/git4idea/rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/git4idea/testFramework" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/git4idea/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/rearranger/test/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/rearranger/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/testng/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/testng/testSources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/groovy/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/groovy/jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/groovy/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/groovy/hotswap/agentSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/groovy/rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/groovy/rt-constants/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/groovy/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntentionPowerPak/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntentionPowerPak/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IntentionPowerPak/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/spellchecker/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/spellchecker/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/InspectionGadgets/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/InspectionGadgets/testsrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/InspectionGadgets/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/junit/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/tasks/tasks-core/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/tasks/tasks-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/tasks/jira-connector/src/atlassian/java" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/tasks/jira-connector/src/main/java" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/tasks/tasks-tests/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/tasks/tasks-time-tracking/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/tasks/tasks-java/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/properties/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/properties/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/properties/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/copyright/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/devkit/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/devkit/jps-plugin/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/devkit/jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/commander/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/junit_rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ui-designer/jps-plugin/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ui-designer/jps-plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ui-designer/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ui-designer/ui-designer-new/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/ui-designer/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/hg4idea/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/hg4idea/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/gradle/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/gradle/testSources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IdeaTestAssistant/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/IdeaTestAssistant/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/github/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/plugins/testng_rt/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/RegExpSupport/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/RegExpSupport/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/dom-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/dom-openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/impl/resources" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/tests/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/dom-tests/tests" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/relaxng/test" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/relaxng/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/xml/openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/textEditor/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/applicationConfigurable/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/comparingReferences/source" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/comparingReferences/testSource" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/toolWindow/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/conditionalOperatorConvertor/source" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/conditionalOperatorConvertor/testSource" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/vfs/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/plugin/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/samples/actions/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/tools/lexer/jflex-1.4/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/tools/lexer/jflex-1.4/examples/cup" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/tools/lexer/jflex-1.4/examples/binary" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/tools/lexer/jflex-1.4/examples/interpreter" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/tools/lexer/jflex-1.4/examples/simple" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/tools/lexer/jflex-1.4/examples/java" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/images/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/jsp-openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/jsp-spi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/jsp-base-openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/testFramework/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/java-runtime/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/java-tests/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/java-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/java-indexing-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/execution/impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/execution/openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/java-psi-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/java-psi-impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/debugger/impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/debugger/openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/compiler/forms-compiler/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/compiler/forms-compiler/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/compiler/instrumentation-util/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/compiler/impl/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/compiler/impl/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/compiler/javac2/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/compiler/openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/java-indexing-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/idea-ui/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/java/openapi/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/antLayout/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/jps-builders/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/jps-builders/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/model-api/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/model-serialization/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/model-serialization/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/standalone-builder/src" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/model-impl/testSrc" />
+        <root url="jar://$PROJECT_DIR$/lib/core/idea-sdk-sources.zip!/jps/model-impl/src" />
+      </SOURCES>
+      <jarDirectory url="file://$PROJECT_DIR$/lib/core" recursive="false" />
+    </library>
+    <library name="kotlin-compiler-jarjar">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/../kotlin/dist/kotlin-compiler-jarjar.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/backend/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/cli/cli-common/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/cli/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/frontend/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/frontend.java/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/integration-tests/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/jet.as.java.psi/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/tests" />
+        <root url="file://$PROJECT_DIR$/../kotlin/compiler/util/src" />
+        <root url="file://$PROJECT_DIR$/../kotlin/injector-generator/src" />
+      </SOURCES>
+    </library>
     <library name="KotlinRuntime">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/src" />
         <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/src" />
       </SOURCES>
     </library>
