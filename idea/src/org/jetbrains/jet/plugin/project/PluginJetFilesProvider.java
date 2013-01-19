@@ -102,7 +102,7 @@ public class PluginJetFilesProvider extends JetFilesProvider {
                new com.google.common.base.Function<VirtualFile, JetFile>() {
                    @Override
                    public JetFile apply(@Nullable VirtualFile file) {
-                       if (file == null || !ProjectFileIndex.SERVICE.getInstance(project).isInContent(file)) {
+                       if (file == null || !ProjectFileIndex.SERVICE.getInstance(project).isInSourceContent(file)) {
                            return null;
                        }
 
