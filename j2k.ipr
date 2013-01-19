@@ -869,9 +869,9 @@
       </SOURCES>
       <jarDirectory url="file://$PROJECT_DIR$/lib/core" recursive="false" />
     </library>
-    <library name="kotlin-compiler-jarjar">
+    <library name="kotlin-compiler">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../kotlin/dist/kotlin-compiler-jarjar.jar!/" />
+        <root url="jar://$KOTLINC_DIR$/lib/kotlin-compiler.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
@@ -889,11 +889,11 @@
     </library>
     <library name="KotlinRuntime">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/" />
+        <root url="jar://$KOTLINC_DIR$/lib/kotlin-runtime.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/src" />
+        <root url="jar://$KOTLINC_DIR$/lib/kotlin-runtime.jar!/src" />
       </SOURCES>
     </library>
   </component>
