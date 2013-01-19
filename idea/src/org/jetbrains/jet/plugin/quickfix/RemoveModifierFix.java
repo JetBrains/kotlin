@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
+import org.jetbrains.jet.lang.psi.JetTypeProjection;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -132,6 +133,23 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
                 if (!(elementType instanceof JetKeywordToken)) return null;
                 JetKeywordToken modifier = (JetKeywordToken) elementType;
                 return new RemoveModifierFix(modifierListOwner, modifier, isRedundant);
+            }
+        };
+    }
+
+    public static JetIntentionActionFactory createRemoveProjectionFactory() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
+                JetTypeProjection projection = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeProjection.class);
+                if (projection == null) return null;
+                ASTNode projectionAstNode = projection.getProjectionNode();
+                if (projectionAstNode == null) return null;
+                IElementType elementType = projectionAstNode.getElementType();
+                if (!(elementType instanceof JetKeywordToken)) return null;
+                JetKeywordToken variance = (JetKeywordToken) elementType;
+                return new RemoveModifierFix(projection, variance, true);
             }
         };
     }
