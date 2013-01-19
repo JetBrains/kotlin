@@ -1086,6 +1086,15 @@
       </SOURCES>
       <jarDirectory url="file://$PROJECT_DIR$/lib/core" recursive="false" />
     </library>
+    <library name="junit-4.10">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/junit-4.10.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/junit-4.10-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="kotlin-compiler">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/kotlinc/lib/kotlin-compiler.jar!/" />
