@@ -35,7 +35,7 @@
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
         <include name="compiler/util/src"/>
-        <include name="j2k/src"/>
+        <!--<include name="j2k/src"/>-->
         <include name="compiler/jet.as.java.psi/src"/>
 
         <include name="runtime/src"/>
