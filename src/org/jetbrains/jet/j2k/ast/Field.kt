@@ -3,6 +3,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.LinkedList
 import org.jetbrains.jet.j2k.Converter
+import java.util.ArrayList
 
 public open class Field(val identifier : Identifier,
                         val docComments: List<Node>,
@@ -12,7 +13,7 @@ public open class Field(val identifier : Identifier,
                         val writingAccesses : Int) : Member(modifiers) {
 
     open fun modifiersToKotlin() : String {
-        val modifierList : List<Modifier> = arrayList()
+        val modifierList = ArrayList<Modifier>()
         if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT)
         }

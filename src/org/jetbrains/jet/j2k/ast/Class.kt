@@ -60,7 +60,7 @@ public open class Class(converter : Converter,
     private fun constructorToInit(f: Function): Function {
         val modifiers = HashSet<Modifier>(f.modifiers)
         modifiers.add(Modifier.STATIC)
-        val statements : List<Element> = f.block?.statements ?: arrayList()
+        val statements = ArrayList<Element>(f.block?.statements ?: listOf())
         statements.add(ReturnStatement(Identifier("__")))
         val block = Block(statements)
         val constructorTypeParameters = ArrayList<Element>()
@@ -81,7 +81,7 @@ public open class Class(converter : Converter,
     }
 
     open fun implementTypesToKotlin() : String {
-        val allTypes : List<String> = arrayList()
+        val allTypes  = ArrayList<String>()
         allTypes.addAll(baseClassSignatureWithParams())
         allTypes.addAll(implementsTypes.map { it.toKotlin() })
         return if (allTypes.size() == 0)
@@ -91,7 +91,7 @@ public open class Class(converter : Converter,
     }
 
     open fun modifiersToKotlin() : String {
-        val modifierList : List<Modifier> = arrayList()
+        val modifierList  = ArrayList<Modifier>()
         val modifier = accessModifier()
         if (modifier != null) {
             modifierList.add(modifier)
@@ -115,7 +115,7 @@ public open class Class(converter : Converter,
     }
 
     private fun classObjectToKotlin() : String {
-        val staticMembers : List<Node> = arrayList()
+        val staticMembers = ArrayList<Node>()
         staticMembers.addAll(secondaryConstructorsAsStaticInitFunction())
         staticMembers.addAll(getStatic(membersExceptConstructors()))
         return staticMembers.toKotlin("\n", "class object {\n", "\n}")

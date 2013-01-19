@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k;
 
-import com.intellij.core.JavaCoreEnvironment;
+import com.intellij.core.JavaCoreProjectEnvironment;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
@@ -38,7 +38,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
     private final String myDataPath;
     private final String myName;
     @NotNull
-    private final static JavaCoreEnvironment myJavaCoreEnvironment = JavaToKotlinTranslator.setUpJavaCoreEnvironment();
+    private final static JavaCoreProjectEnvironment myJavaCoreEnvironment = JavaToKotlinTranslator.setUpJavaCoreEnvironment();
 
     public StandaloneJavaToKotlinConverterTest(String dataPath, String name) {
         myDataPath = dataPath;

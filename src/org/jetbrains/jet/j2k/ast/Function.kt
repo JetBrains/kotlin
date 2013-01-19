@@ -2,6 +2,7 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.LinkedList
 import org.jetbrains.jet.j2k.ast.types.Type
+import java.util.ArrayList
 
 public open class Function(val name : Identifier,
                            val docComments: List<Node>,
@@ -30,7 +31,7 @@ public open class Function(val name : Identifier,
     }
 
     open fun modifiersToKotlin() : String {
-        val modifierList: List<Modifier> = arrayList()
+        val modifierList = ArrayList<Modifier>()
         val accessModifier = accessModifier()
         if (accessModifier != null) {
             modifierList.add(accessModifier)
