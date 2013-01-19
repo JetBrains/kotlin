@@ -871,7 +871,7 @@
     </library>
     <library name="kotlin-compiler">
       <CLASSES>
-        <root url="jar://$KOTLINC_DIR$/lib/kotlin-compiler.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/kotlinc/lib/kotlin-compiler.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
@@ -887,13 +887,13 @@
         <root url="file://$PROJECT_DIR$/../kotlin/injector-generator/src" />
       </SOURCES>
     </library>
-    <library name="KotlinRuntime">
+    <library name="kotlin-runtime">
       <CLASSES>
-        <root url="jar://$KOTLINC_DIR$/lib/kotlin-runtime.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/kotlinc/lib/kotlin-runtime.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$KOTLINC_DIR$/lib/kotlin-runtime.jar!/src" />
+        <root url="jar://$PROJECT_DIR$/lib/kotlinc/lib/kotlin-runtime.jar!/src" />
       </SOURCES>
     </library>
   </component>
