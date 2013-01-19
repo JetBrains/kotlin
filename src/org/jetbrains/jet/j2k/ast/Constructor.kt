@@ -1,7 +1,5 @@
 package org.jetbrains.jet.j2k.ast
 
-import java.util.List
-import java.util.Set
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class Constructor(identifier : Identifier,

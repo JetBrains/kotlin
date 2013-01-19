@@ -21,10 +21,10 @@ import java.text.MessageFormat
 import com.intellij.psi.util.PsiUtil
 
 public open class Converter() {
-    private var classIdentifiers: Set<String> = hashSet()
+    private var classIdentifiers: MutableSet<String> = Sets.newHashSet()!!
     private val dispatcher: Dispatcher = Dispatcher(this)
     private var methodReturnType: PsiType? = null
-    private val flags: Set<J2KConverterFlags?>? = Sets.newHashSet()
+    private val flags: MutableSet<J2KConverterFlags?>? = Sets.newHashSet()
     public open fun addFlag(flag: J2KConverterFlags): Boolean {
         return flags?.add(flag)!!
     }
@@ -32,7 +32,7 @@ public open class Converter() {
         return flags?.contains(flag)!!
     }
 
-    public open fun setClassIdentifiers(identifiers: Set<String>) {
+    public open fun setClassIdentifiers(identifiers: MutableSet<String>) {
         classIdentifiers = identifiers
     }
 
@@ -74,10 +74,10 @@ public open class Converter() {
 
     private fun fileToFile(javaFile: PsiJavaFile, additionalImports: List<String>): File {
         val importList: PsiImportList? = javaFile.getImportList()
-        val imports: List<Import> = (if (importList == null)
+        val imports: MutableList<Import> = (if (importList == null)
             arrayList()
         else
-            importsToImportList(importList.getAllImportStatements()))
+            ArrayList(importsToImportList(importList.getAllImportStatements())))
         for (i : String in additionalImports)
             imports.add(Import(i))
 
@@ -97,8 +97,8 @@ public open class Converter() {
         return AnonymousClass(this, getMembers(anonymousClass))
     }
 
-    private fun getMembers(psiClass: PsiClass): List<Node> {
-        val members: List<Node> = arrayList()
+    private fun getMembers(psiClass: PsiClass): MutableList<Node> {
+        val members = ArrayList<Node>()
         val lbraceOffset = psiClass.getLBrace()?.getTextRange()?.getStartOffset() ?: 0
         for (e : PsiElement? in psiClass.getChildren()) {
             val isDocComment = e?.getTextRange()?.getStartOffset() ?: 0 < lbraceOffset
@@ -110,7 +110,7 @@ public open class Converter() {
     }
 
     private fun getDocComments(element: PsiElement): List<Node> {
-        val comments: List<Node> = arrayList()
+        val comments = ArrayList<Node>()
         val textOffset = element.getTextOffset()
         for (e : PsiElement? in element.getChildren()) {
             if (e is PsiComment && e.getTextRange()?.getStartOffset() ?: 0 < textOffset) {
@@ -136,8 +136,8 @@ public open class Converter() {
         val implementsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getImplementsListTypes())
         val extendsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
         val name: Identifier = Identifier(psiClass.getName()!!)
-        val baseClassParams: List<Expression> = arrayList()
-        val members: List<Node> = getMembers(psiClass)
+        val baseClassParams= ArrayList<Expression>()
+        val members = getMembers(psiClass)
         val docComments = getDocComments(psiClass)
         val visitor: SuperVisitor = SuperVisitor()
         psiClass.accept(visitor)
@@ -150,7 +150,7 @@ public open class Converter() {
         if (!psiClass.isEnum() && !psiClass.isInterface() && psiClass.getConstructors().size > 1 &&
         getPrimaryConstructorForThisCase(psiClass) == null) {
             val finalOrWithEmptyInitializer: List<Field> = getFinalOrWithEmptyInitializer(fields)
-            val initializers: Map<String, String> = HashMap<String, String>()
+            val initializers = HashMap<String, String>()
             for (m in members) {
                 if (m is Constructor) {
                     if (!m.isPrimary) {
@@ -158,7 +158,7 @@ public open class Converter() {
                             val init: String = getDefaultInitializer(fo)
                             initializers.put(fo.identifier.toKotlin(), init)
                         }
-                        val newStatements: List<Element> = arrayList()
+                        val newStatements = ArrayList<Element>()
                         for (s in m.block!!.statements) {
                             var isRemoved: Boolean = false
                             if (s is AssignmentExpression) {
@@ -209,7 +209,7 @@ public open class Converter() {
         return Initializer(blockToBlock(i.getBody(), true), modifiersListToModifiersSet(i.getModifierList()))
     }
 
-    private fun fieldsToFieldList(fields: Array<PsiField?>, psiClass: PsiClass): List<Field> {
+    private fun fieldsToFieldList(fields: Array<PsiField>, psiClass: PsiClass): List<Field> {
         return fields.map { fieldToField(it!!, psiClass) }
     }
 
@@ -283,7 +283,7 @@ public open class Converter() {
     }
 
     private fun createFunctionParameters(method: PsiMethod): ParameterList {
-        val result: List<Parameter> = arrayList()
+        val result = ArrayList<Parameter>()
         for (parameter : PsiParameter? in method.getParameterList().getParameters()) {
             result.add(Parameter(Identifier(parameter?.getName()!!),
                     typeToType(parameter?.getType(),
@@ -332,11 +332,11 @@ public open class Converter() {
         return blockToBlock(block, true)
     }
 
-    public open fun statementsToStatementList(statements: Array<PsiElement?>): List<Element> {
+    public open fun statementsToStatementList(statements: Array<PsiElement>): List<Element> {
         return statements.filterNot { it is PsiWhiteSpace }.map { statementToStatement(it) }
     }
 
-    public open fun statementsToStatementList(statements: List<PsiElement?>): List<Element> {
+    public open fun statementsToStatementList(statements: List<PsiElement>): List<Element> {
         return statements.filterNot { it is PsiWhiteSpace }.map { statementToStatement(it) }
     }
 
@@ -349,8 +349,8 @@ public open class Converter() {
         return statementVisitor.getResult()
     }
 
-    public open fun expressionsToExpressionList(expressions: Array<PsiExpression?>): List<Expression> {
-        val result: List<Expression> = arrayList()
+    public open fun expressionsToExpressionList(expressions: Array<PsiExpression>): List<Expression> {
+        val result = ArrayList<Expression>()
         for (e : PsiExpression? in expressions)
             result.add(expressionToExpression(e))
         return result
@@ -375,7 +375,7 @@ public open class Converter() {
     }
 
     public open fun elementsToElementList(elements: Array<out PsiElement?>): List<Element> {
-        val result: List<Element> = arrayList()
+        val result = ArrayList<Element>()
         for(element in elements) {
             result.add(elementToElement(element))
         }
@@ -398,7 +398,7 @@ public open class Converter() {
         return typeVisitor.getResult()
     }
 
-    public open fun typesToTypeList(types: Array<PsiType?>): List<Type> {
+    public open fun typesToTypeList(types: Array<PsiType>): List<Type> {
         return types.map { typeToType(it) }
     }
 
@@ -412,14 +412,14 @@ public open class Converter() {
     }
 
     private fun typesToNotNullableTypeList(types: Array<out PsiType?>): List<Type> {
-        val result: List<Type> = arrayList()
+        val result = ArrayList<Type>()
         for(aType in types) {
             result.add(typeToType(aType).convertedToNotNull())
         }
         return result
     }
 
-    public open fun parametersToParameterList(parameters: Array<PsiParameter?>): List<Parameter?> {
+    public open fun parametersToParameterList(parameters: Array<PsiParameter>): List<Parameter?> {
         return parameters.map { parameterToParameter(it!!) }
     }
 
@@ -431,13 +431,13 @@ public open class Converter() {
 
     public open fun argumentsToExpressionList(expression: PsiCallExpression): List<Expression> {
         val argumentList: PsiExpressionList? = expression.getArgumentList()
-        val arguments: Array<PsiExpression?> = (if (argumentList != null)
+        val arguments: Array<PsiExpression> = (if (argumentList != null)
             argumentList.getExpressions()
         else
             PsiExpression.EMPTY_ARRAY)
-        val result: List<Expression> = ArrayList<Expression>()
+        val result = ArrayList<Expression>()
         val resolved: PsiMethod? = expression.resolveMethod()
-        val expectedTypes: List<PsiType?> = ArrayList<PsiType?>()
+        val expectedTypes = ArrayList<PsiType?>()
         if (resolved != null) {
             for (p : PsiParameter? in resolved.getParameterList().getParameters())
                 expectedTypes.add(p?.getType())
@@ -503,7 +503,7 @@ public open class Converter() {
         }
 
         private fun getFinalOrWithEmptyInitializer(fields: List<out Field>): List<Field> {
-            val result: List<Field> = arrayList()
+            val result = ArrayList<Field>()
             for (f : Field in fields)
                 if (f.isVal() || f.initializer.toKotlin().isEmpty()) {
                     result.add(f)
@@ -517,7 +517,7 @@ public open class Converter() {
         }
 
         private fun createInitStatementsFromFields(fields: List<out Field>): List<Element> {
-            val result: List<Element> = arrayList()
+            val result = ArrayList<Element>()
             for (f : Field in fields) {
                 val identifierToKotlin: String? = f.identifier.toKotlin()
                 result.add(DummyStringExpression(identifierToKotlin + " = " + "_" + identifierToKotlin))
@@ -612,7 +612,7 @@ public open class Converter() {
         }
 
         private fun isInheritFromObject(method: PsiMethod): Boolean {
-            var superSignatures: List<HierarchicalMethodSignature?>? = method.getHierarchicalMethodSignature().getSuperSignatures()
+            var superSignatures: List<HierarchicalMethodSignature?> = method.getHierarchicalMethodSignature().getSuperSignatures()!!
             for (s : HierarchicalMethodSignature? in superSignatures) {
                 var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
                 var qualifiedName: String? = (if (containingClass != null)
@@ -644,8 +644,8 @@ public open class Converter() {
 
             return false
         }
-        private fun importsToImportList(imports: Array<PsiImportStatementBase?>): List<Import> {
-            val result: List<Import> = arrayList()
+        private fun importsToImportList(imports: Array<PsiImportStatementBase>): List<Import> {
+            val result = ArrayList<Import>()
             for (i : PsiImportStatementBase? in imports) {
                 if (i == null) continue
                 val anImport: Import = importToImport(i)
@@ -677,7 +677,7 @@ public open class Converter() {
             return Identifier(identifier.getText()!!)
         }
 
-        public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): Set<Modifier> {
+        public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): MutableSet<Modifier> {
             val modifiersSet: HashSet<Modifier> = hashSet()
             if (modifierList != null) {
                 if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT))
@@ -710,7 +710,7 @@ public open class Converter() {
                 return false
             }
 
-            val typeMap: Map<String, String> = HashMap<String, String>()
+            val typeMap = HashMap<String, String>()
             typeMap.put(JAVA_LANG_BYTE, "byte")
             typeMap.put(JAVA_LANG_SHORT, "short")
             typeMap.put(JAVA_LANG_INTEGER, "int")
@@ -727,8 +727,8 @@ public open class Converter() {
     }
 }
 
-public open fun createMainFunction(file: PsiFile): String {
-    val classNamesWithMains: List<Pair<String?, PsiMethod?>?> = arrayList()
+public fun createMainFunction(file: PsiFile): String {
+    val classNamesWithMains = ArrayList<Pair<String?, PsiMethod?>?>()
     for (c : PsiClass? in (file as PsiJavaFile).getClasses()) {
         var main: PsiMethod? = findMainMethod(c)
         if (main != null) {
@@ -747,7 +747,7 @@ public open fun createMainFunction(file: PsiFile): String {
 
 private fun findMainMethod(aClass: PsiClass?): PsiMethod? {
     if (isMainClass(aClass)) {
-        val mainMethods: Array<PsiMethod?>? = aClass?.findMethodsByName("main", false)
+        val mainMethods: Array<PsiMethod>? = aClass?.findMethodsByName("main", false)
         if (mainMethods != null) {
             return findMainMethod(mainMethods)
         }
@@ -766,11 +766,11 @@ private fun isMainClass(psiClass: PsiClass?): Boolean {
 
 }
 
-private fun findMainMethod(mainMethods: Array<PsiMethod?>): PsiMethod? {
+private fun findMainMethod(mainMethods: Array<PsiMethod>): PsiMethod? {
     return mainMethods.find { isMainMethod(it) }
 }
 
-public open fun isMainMethod(method: PsiMethod?): Boolean {
+public fun isMainMethod(method: PsiMethod?): Boolean {
     if (method == null || method.getContainingClass() == null)
         return false
 
@@ -783,7 +783,7 @@ public open fun isMainMethod(method: PsiMethod?): Boolean {
     if (!method.hasModifierProperty(PsiModifier.PUBLIC))
         return false
 
-    val parameters: Array<PsiParameter?>? = method.getParameterList().getParameters()
+    val parameters: Array<PsiParameter>? = method.getParameterList().getParameters()
     if (parameters?.size!! != 1)
         return false
 
@@ -795,12 +795,12 @@ public open fun isMainMethod(method: PsiMethod?): Boolean {
     return componentType?.equalsToText("java.lang.String")!!
 }
 
-public open fun countWritingAccesses(element: PsiElement?, container: PsiElement?): Int {
+public fun countWritingAccesses(element: PsiElement?, container: PsiElement?): Int {
     var counter: Int = 0
     if (container != null) {
         val visitor: ReferenceCollector = ReferenceCollector()
         container.accept(visitor)
-        for (e : PsiReferenceExpression? in visitor.getCollectedReferences())
+        for (e : PsiReferenceExpression in visitor.getCollectedReferences())
             if (e?.isReferenceTo(element)!! && PsiUtil.isAccessedForWriting(e)) {
                 counter++
             }
@@ -810,7 +810,7 @@ public open fun countWritingAccesses(element: PsiElement?, container: PsiElement
 }
 
 open class ReferenceCollector(): JavaRecursiveElementVisitor() {
-    private val myCollectedReferences: List<PsiReferenceExpression> = arrayList()
+    private val myCollectedReferences = ArrayList<PsiReferenceExpression>()
 
     public open fun getCollectedReferences(): List<PsiReferenceExpression> {
         return myCollectedReferences
@@ -824,14 +824,14 @@ open class ReferenceCollector(): JavaRecursiveElementVisitor() {
     }
 }
 
-public open fun isReadOnly(element: PsiElement?, container: PsiElement?): Boolean {
+public fun isReadOnly(element: PsiElement?, container: PsiElement?): Boolean {
     return countWritingAccesses(element, container) == 0
 }
 
-public open fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
+public fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
     if (modifierList != null) {
-        val annotations: Array<PsiAnnotation?>? = modifierList.getAnnotations()
-        for (a : PsiAnnotation? in annotations) {
+        val annotations: Array<PsiAnnotation> = modifierList.getAnnotations()
+        for (a : PsiAnnotation in annotations) {
             val qualifiedName: String? = a?.getQualifiedName()
             if (qualifiedName != null && Converter.NOT_NULL_ANNOTATIONS.contains(qualifiedName)) {
                 return true

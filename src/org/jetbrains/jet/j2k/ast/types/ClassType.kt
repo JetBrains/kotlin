@@ -3,12 +3,12 @@ package org.jetbrains.jet.j2k.ast.types
 import org.jetbrains.jet.j2k.ast.Element
 import org.jetbrains.jet.j2k.ast.Identifier
 import java.util.Collections
-import java.util.List
+import java.util.ArrayList
 
 public open class ClassType(val `type` : Identifier, val parameters : List<out Element>, nullable : Boolean) : Type(nullable) {
     public override fun toKotlin() : String {
         // TODO change to map() when KT-2051 is fixed
-        val parametersToKotlin: List<String> = arrayList()
+        val parametersToKotlin = ArrayList<String>()
         for(val param in parameters) {
             parametersToKotlin.add(param.toKotlin())
         }

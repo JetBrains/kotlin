@@ -15,7 +15,8 @@
  */
 package org.jetbrains.jet.j2k;
 
-import com.intellij.core.JavaCoreEnvironment;
+import com.intellij.core.JavaCoreApplicationEnvironment;
+import com.intellij.core.JavaCoreProjectEnvironment;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -45,31 +46,33 @@ public class JavaToKotlinTranslator {
 
     @Nullable
     private static PsiFile createFile(@NotNull String text) {
-        JavaCoreEnvironment javaCoreEnvironment = setUpJavaCoreEnvironment();
+        JavaCoreProjectEnvironment javaCoreEnvironment = setUpJavaCoreEnvironment();
         return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
                 "test.java", JavaLanguage.INSTANCE, text
         );
     }
 
     @Nullable
-    static PsiFile createFile(@NotNull JavaCoreEnvironment javaCoreEnvironment, @NotNull String text) {
+    static PsiFile createFile(@NotNull JavaCoreProjectEnvironment javaCoreEnvironment, @NotNull String text) {
         return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
                 "test.java", JavaLanguage.INSTANCE, text
         );
     }
 
     @NotNull
-    static JavaCoreEnvironment setUpJavaCoreEnvironment() {
-        JavaCoreEnvironment javaCoreEnvironment = new JavaCoreEnvironment(new Disposable() {
+    static JavaCoreProjectEnvironment setUpJavaCoreEnvironment() {
+        Disposable parentDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
-        });
+        };
+        JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
+        JavaCoreProjectEnvironment javaCoreEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 
-        javaCoreEnvironment.addToClasspath(findRtJar());
+        javaCoreEnvironment.addJarToClassPath(findRtJar());
         File annotations = findAnnotations();
         if (annotations != null && annotations.exists()) {
-            javaCoreEnvironment.addToClasspath(annotations);
+            javaCoreEnvironment.addJarToClassPath(annotations);
         }
         return javaCoreEnvironment;
     }

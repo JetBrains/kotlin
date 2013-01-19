@@ -1,8 +1,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
-import java.util.Set
-import java.util.List
 
 public open class EnumConstant(identifier : Identifier,
                                docComments: List<Node>,

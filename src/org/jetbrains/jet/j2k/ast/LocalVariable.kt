@@ -1,7 +1,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
-import java.util.Set
 
 public open class LocalVariable(val identifier: Identifier,
                                 val modifiersSet: Set<Modifier>,

@@ -10,7 +10,6 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import java.util.ArrayList
 import java.util.Collections
-import java.util.List
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 
@@ -160,10 +159,10 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         var classReference: PsiJavaCodeReferenceElement? = expression?.getClassOrAnonymousClassReference()
         val isNotConvertedClass: Boolean = classReference != null && !getConverter().getClassIdentifiers().contains(classReference?.getQualifiedName())
         var argumentList: PsiExpressionList? = expression?.getArgumentList()
-        var arguments: Array<PsiExpression?> = (if (argumentList != null)
+        var arguments: Array<PsiExpression> = (if (argumentList != null)
             argumentList?.getExpressions()!!
         else
-            array<PsiExpression?>())
+            array<PsiExpression>())
         if (constructor == null || Converter.isConstructorPrimary(constructor) || isNotConvertedClass)
         {
             return NewClassExpression(getConverter().elementToElement(classReference),
@@ -288,8 +287,8 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
     }
 
     public override fun visitPolyadicExpression(expression: PsiPolyadicExpression?): Unit {
-        var parameters: List<Expression> = ArrayList<Expression>()
-        for (operand : PsiExpression? in expression?.getOperands()) {
+        var parameters = ArrayList<Expression>()
+        for (operand : PsiExpression in expression?.getOperands()!!) {
             parameters.add(getConverter().expressionToExpression(operand, expression?.getType()))
         }
         myResult = PolyadicExpression(parameters, getOperatorString(expression?.getOperationTokenType()!!))

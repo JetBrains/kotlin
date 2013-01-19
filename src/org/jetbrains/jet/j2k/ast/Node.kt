@@ -1,6 +1,5 @@
 package org.jetbrains.jet.j2k.ast
 
-import java.util.Set
 
 public abstract class Node() {
     public abstract fun toKotlin(): String

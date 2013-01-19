@@ -1,5 +1,4 @@
 package org.test
-import java.util.List
 import java.util.LinkedList
 open class Member() {
 }

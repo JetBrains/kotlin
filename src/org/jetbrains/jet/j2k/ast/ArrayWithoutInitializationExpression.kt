@@ -1,7 +1,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.ArrayType
-import java.util.List
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class ArrayWithoutInitializationExpression(val `type` : Type, val expressions : List<Expression>) : Expression() {

@@ -7,7 +7,6 @@ import org.jetbrains.jet.j2k.J2KConverterFlags
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.*
 import java.util.LinkedList
-import java.util.List
 import com.intellij.openapi.util.text.StringUtil
 
 public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisitor<Type>() {
@@ -79,7 +78,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
     }
 
     private fun createRawTypesForResolvedReference(classType : PsiClassType) : List<Type> {
-        val typeParams : List<Type> = LinkedList<Type>()
+        val typeParams = LinkedList<Type>()
         if (classType is PsiClassReferenceType) {
             val reference : PsiJavaCodeReferenceElement? = (classType as PsiClassReferenceType).getReference()
             val resolve : PsiElement? = reference?.resolve()

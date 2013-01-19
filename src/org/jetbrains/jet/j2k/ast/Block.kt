@@ -1,7 +1,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.LinkedList
-import java.util.List
 
 public open class Block(val statements: List<Element>, val notEmpty: Boolean = false): Statement() {
     public override fun isEmpty(): Boolean {

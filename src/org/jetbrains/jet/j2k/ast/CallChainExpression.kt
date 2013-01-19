@@ -1,8 +1,5 @@
 package org.jetbrains.jet.j2k.ast
 
-import a.h.id
-
-
 public open class CallChainExpression(val expression : Expression, val identifier : Expression) : Expression() {
     public override fun isNullable() : Boolean {
         if (!expression.isEmpty() && expression.isNullable()) return true

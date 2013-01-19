@@ -1,6 +1,5 @@
 package org.jetbrains.jet.j2k.ast
 
-import java.util.List
 
 public abstract class Statement(): Element() {
     class object {

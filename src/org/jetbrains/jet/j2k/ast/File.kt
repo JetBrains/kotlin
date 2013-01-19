@@ -1,10 +1,8 @@
 package org.jetbrains.jet.j2k.ast
 
-import java.util.List
-
 public open class File(val packageName: String,
-                       val imports: List<Import>,
-                       val body: List<Node>,
+                       val imports: MutableList<Import>,
+                       val body: MutableList<Node>,
                        val mainFunction: String): Node() {
 
     public override fun toKotlin(): String {

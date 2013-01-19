@@ -48,10 +48,10 @@ public open class ArrayInitializerExpression(val `type` : Type, val initializers
 
     class object {
         private open fun getConversion(afterReplace : String) : String {
-            if (afterReplace.contains("double").sure())
+            if (afterReplace.contains("double")!!)
                 return "." + OperatorConventions.DOUBLE + "()"
 
-            if (afterReplace.contains("float").sure())
+            if (afterReplace.contains("float")!!)
                 return "." + OperatorConventions.FLOAT + "()"
 
             return ""

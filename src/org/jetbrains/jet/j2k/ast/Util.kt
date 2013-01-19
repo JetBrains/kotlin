@@ -1,9 +1,6 @@
 package org.jetbrains.jet.j2k.ast
 
-import java.util.List
-import java.util.Collection
-
-fun List<out Node>.toKotlin(separator: String, prefix: String = "", suffix: String = ""): String {
+fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String = ""): String {
     val result = StringBuilder()
     if (size() > 0) {
         result.append(prefix)
@@ -15,7 +12,7 @@ fun List<out Node>.toKotlin(separator: String, prefix: String = "", suffix: Stri
         }
         result.append(suffix)
     }
-    return result.toString()!!
+    return result.toString()
 }
 
 fun Collection<Modifier>.toKotlin(separator: String = " "): String {
@@ -24,7 +21,7 @@ fun Collection<Modifier>.toKotlin(separator: String = " "): String {
         result.append(x.name)
         result.append(separator)
     }
-    return result.toString()!!
+    return result.toString()
 }
 
 fun String.withPrefix(prefix: String) = if (isEmpty()) "" else prefix + this

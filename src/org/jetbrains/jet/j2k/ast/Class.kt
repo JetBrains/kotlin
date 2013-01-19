@@ -7,8 +7,6 @@ import org.jetbrains.jet.j2k.ast.types.ClassType
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.HashSet
 import java.util.LinkedList
-import java.util.List
-import java.util.Set
 import java.util.ArrayList
 
 public open class Class(converter : Converter,
@@ -60,12 +58,12 @@ public open class Class(converter : Converter,
     }
 
     private fun constructorToInit(f: Function): Function {
-        val modifiers : Set<Modifier> = HashSet<Modifier>(f.modifiers)
+        val modifiers = HashSet<Modifier>(f.modifiers)
         modifiers.add(Modifier.STATIC)
         val statements : List<Element> = f.block?.statements ?: arrayList()
         statements.add(ReturnStatement(Identifier("__")))
         val block = Block(statements)
-        val constructorTypeParameters : List<Element> = arrayList()
+        val constructorTypeParameters = ArrayList<Element>()
         constructorTypeParameters.addAll(typeParameters)
         constructorTypeParameters.addAll(f.typeParameters)
         return Function(Identifier("init"), arrayList(), modifiers, ClassType(name, constructorTypeParameters, false),

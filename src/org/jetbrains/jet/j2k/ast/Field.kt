@@ -2,8 +2,6 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.LinkedList
-import java.util.List
-import java.util.Set
 import org.jetbrains.jet.j2k.Converter
 
 public open class Field(val identifier : Identifier,
