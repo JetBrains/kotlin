@@ -145,6 +145,7 @@ public class QuickFixes {
 
         actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
 
+        factories.put(ELSE_MISPLACED_IN_WHEN, MoveWhenElseBranchFix.createFactory());
         factories.put(NO_ELSE_IN_WHEN, AddWhenElseBranchFix.createFactory());
 
         factories.put(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION, AddStarProjectionsFix.createFactoryForIsExpression());
