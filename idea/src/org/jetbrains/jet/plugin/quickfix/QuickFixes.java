@@ -149,5 +149,7 @@ public class QuickFixes {
 
         factories.put(NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION, AddStarProjectionsFix.createFactoryForIsExpression());
         factories.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, AddStarProjectionsFix.createFactoryForJavaClass());
+
+        factories.put(FINAL_SUPERTYPE, FinalSupertypeFix.createFactory());
     }
 }
