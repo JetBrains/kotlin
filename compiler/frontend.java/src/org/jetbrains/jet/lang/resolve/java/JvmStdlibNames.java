@@ -71,6 +71,8 @@ public class JvmStdlibNames {
 
     public static final JvmClassName JET_PACKAGE_CLASS = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetPackageClass");
 
+    public static final String ABI_VERSION_NAME = "abiVersion";
+
     public static final String JET_CLASS_SIGNATURE = "signature";
 
 

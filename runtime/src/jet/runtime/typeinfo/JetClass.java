@@ -31,4 +31,6 @@ public @interface JetClass {
      * @return flags for class
      */
     int flags() default 0;
+
+    int abiVersion();
 }
