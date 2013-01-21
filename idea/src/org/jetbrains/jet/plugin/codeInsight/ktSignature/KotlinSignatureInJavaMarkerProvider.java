@@ -25,6 +25,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -62,6 +63,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             }
         }
     };
+    private static final Logger LOG = Logger.getInstance(KotlinSignatureInJavaMarkerProvider.class);
 
 
     @Override
@@ -179,7 +181,8 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
         PsiModifierListOwner annotationOwner = getAnnotationOwner(member);
         DeclarationDescriptor memberDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotationOwner);
-        assert memberDescriptor != null : "Couldn't find descriptor for " + annotationOwner;
+        LOG.assertTrue(memberDescriptor != null, "Couldn't find descriptor for " + annotationOwner + "\n"
+                                                 + annotationOwner.getContainingFile().getText());
         return memberDescriptor;
     }
 
