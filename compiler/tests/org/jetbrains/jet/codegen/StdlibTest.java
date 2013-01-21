@@ -145,25 +145,13 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testKt1592 () throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         loadFile("regressions/kt1592.kt");
-        ClassFileFactory codegens = generateClassesInFile();
-        GeneratedClassLoader loader = createClassLoader(codegens);
-
-        try {
-            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
-            Class<?> namespaceClass = loader.loadClass(fqName);
-            Method method = namespaceClass.getMethod("box", Method.class);
-            method.setAccessible(true);
-            Test annotation = method.getAnnotation(Test.class);
-            assertEquals(annotation.timeout(), 0l);
-            assertEquals(annotation.expected(), Test.None.class);
-        }
-        catch (Throwable t) {
-            System.out.println(generateToText());
-            throw new RuntimeException(t);
-        }
-        finally {
-           loader.dispose();
-        }
+        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
+        Class<?> namespaceClass = generateClass(fqName);
+        Method method = namespaceClass.getMethod("box", Method.class);
+        method.setAccessible(true);
+        Test annotation = method.getAnnotation(Test.class);
+        assertEquals(annotation.timeout(), 0l);
+        assertEquals(annotation.expected(), Test.None.class);
     }
 
     public void testAnnotationClassWithClassProperty()

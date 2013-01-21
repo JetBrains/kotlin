@@ -246,22 +246,26 @@ public class KotlinToJVMBytecodeCompiler {
             return null;
         }
 
+        GeneratedClassLoader classLoader = null;
         try {
             ClassFileFactory factory = generationState.getFactory();
-            try {
-                GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
+            classLoader = new GeneratedClassLoader(factory,
+                    new URLClassLoader(new URL[] {
                         // TODO: add all classpath
                         paths.getRuntimePath().toURI().toURL()
-                },
-                        parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
-                JetFile scriptFile = environment.getSourceFiles().get(0);
-                return classLoader.loadClass(ScriptNameUtil.classNameForScript(scriptFile));
-            }
-            catch (Exception e) {
-                throw new RuntimeException("Failed to evaluate script: " + e, e);
-            }
+                    },
+                    parentLoader == null ? AllModules.class.getClassLoader() : parentLoader));
+
+            JetFile scriptFile = environment.getSourceFiles().get(0);
+            return classLoader.loadClass(ScriptNameUtil.classNameForScript(scriptFile));
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Failed to evaluate script: " + e, e);
         }
         finally {
+            if (classLoader != null) {
+                classLoader.dispose();
+            }
             generationState.destroy();
         }
     }

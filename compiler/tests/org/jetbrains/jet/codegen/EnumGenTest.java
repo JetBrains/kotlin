@@ -58,7 +58,7 @@ public class EnumGenTest extends CodegenTestCase {
 
     public void testEnumConstantConstructors() throws Exception {
         loadText("enum class Color(val rgb: Int) { RED: Color(0xFF0000); GREEN: Color(0x00FF00); }");
-        final Class colorClass = createClassLoader(generateClassesInFile()).loadClass("Color");
+        final Class colorClass = generateClass("Color");
         final Field redField = colorClass.getField("RED");
         final Object redValue = redField.get(null);
         final Method rgbMethod = colorClass.getMethod("getRgb");
