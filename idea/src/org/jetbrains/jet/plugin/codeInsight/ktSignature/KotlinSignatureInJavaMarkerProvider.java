@@ -160,7 +160,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull BindingContext bindingContext
     ) {
         String memberNameAsString = member.getName();
-        assert memberNameAsString != null;
+        assert memberNameAsString != null: "No name for member: \n" + member.getText();
 
         Name name = Name.identifier(memberNameAsString);
         if (member instanceof PsiMethod) {
