@@ -221,6 +221,21 @@ public class OverridingUtil {
     }
 
     public static boolean isReturnTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
+        JetType superReturnType = superDescriptor.getReturnType();
+        JetType subReturnType = subDescriptor.getReturnType();
+        assert superReturnType != null;
+        assert subReturnType != null;
+        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
+        assert substitutedSuperReturnType != null;
+        if (!typeChecker.isSubtypeOf(subReturnType, substitutedSuperReturnType)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static TypeSubstitutor prepareTypeSubstitutor(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
         Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMap();
@@ -231,12 +246,14 @@ public class OverridingUtil {
                     superTypeParameter.getTypeConstructor(),
                     new TypeProjection(subTypeParameter.getDefaultType()));
         }
+        return TypeSubstitutor.create(substitutionContext);
+    }
 
-        // This code compares return types, but they are not a part of the signature, so this code does not belong here
-        TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitutionContext);
+    public static boolean isPropertyTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull PropertyDescriptor superDescriptor, @NotNull PropertyDescriptor subDescriptor) {
+        TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
         JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getReturnType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
-        if (!typeChecker.isSubtypeOf(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
+        if (superDescriptor.isVar() && !typeChecker.equalTypes(subDescriptor.getReturnType(), substitutedSuperReturnType)) {
             return false;
         }
 

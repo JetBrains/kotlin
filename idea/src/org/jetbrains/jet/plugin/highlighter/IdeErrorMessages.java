@@ -79,16 +79,10 @@ public class IdeErrorMessages {
                                            "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
-                                                  "{1}</html>",
-                new Renderer<CallableMemberDescriptor>() {
-                    @NotNull
-                    @Override
-                    public String render(@NotNull CallableMemberDescriptor object) {
-                        JetType returnType = object.getReturnType();
-                        assert returnType != null;
-                        return DescriptorRenderer.HTML.renderType(returnType);
-                    }
-                }, DescriptorRenderer.HTML);
+                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+
+        MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, "<html>Var-property type is ''{0}'', which is not a type of overridden<br/>" +
+                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
                                        "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);

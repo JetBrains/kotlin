@@ -585,6 +585,8 @@ public class OverrideResolver {
 
         void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden);
 
+        void propertyTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden);
+
         void varOverriddenByVal(@NotNull CallableMemberDescriptor overridden);
 
         void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor invisibleOverridden);
@@ -637,6 +639,14 @@ public class OverrideResolver {
                 }
 
                 @Override
+                public void propertyTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden) {
+                    if (!typeMismatchError) {
+                        typeMismatchError = true;
+                        trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+                    }
+                }
+
+                @Override
                 public void varOverriddenByVal(@NotNull CallableMemberDescriptor overridden) {
                     if (!kindMismatchError) {
                         kindMismatchError = true;
@@ -674,7 +684,11 @@ public class OverrideResolver {
                     reportError.overridingFinalMember(overridden);
                 }
 
-                if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared)) {
+                if (declared instanceof PropertyDescriptor && !OverridingUtil.isPropertyTypeOkForOverride(
+                        JetTypeChecker.INSTANCE, (PropertyDescriptor) overridden, (PropertyDescriptor) declared)) {
+                    reportError.propertyTypeMismatchOnOverride(overridden);
+                }
+                else if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared)) {
                     reportError.returnTypeMismatchOnOverride(overridden);
                 }
 
@@ -719,6 +733,11 @@ public class OverrideResolver {
                     overrideConflict = true;
                     trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataAnnotation, componentFunction, overridden.getContainingDeclaration()));
                 }
+            }
+
+            @Override
+            public void propertyTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overridden) {
+                throw new IllegalStateException("Component functions are not properties");
             }
 
             @Override
