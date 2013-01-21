@@ -29,8 +29,9 @@ public class GeneratedClassLoader extends URLClassLoader {
         this.state = state;
     }
 
+    @NotNull
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
         String file = name.replace('.', '/') + ".class";
         if (state.files().contains(file)) {
             byte[] bytes = state.asBytes(file);
