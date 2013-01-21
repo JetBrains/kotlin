@@ -27,11 +27,14 @@ import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 
 public class PluginTestCaseBase {
+
+    public static final String TEST_DATA_PROJECT_RELATIVE = "/idea/testData";
+
     private PluginTestCaseBase() {
     }
 
     public static String getTestDataPathBase() {
-        return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData";
+        return JetTestCaseBuilder.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
     public static Sdk jdkFromIdeaHome() {

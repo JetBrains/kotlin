@@ -63,6 +63,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon OVERRIDING_MARK = IconLoader.getIcon("/gutter/overridingMethod.png");
     public static final Icon IMPLEMENTING_MARK = IconLoader.getIcon("/gutter/implementingMethod.png");
     protected static final Icon OVERRIDDEN_MARK = IconLoader.getIcon("/gutter/overridenMethod.png");
+    protected static final Icon IMPLEMENTED_MARK = IconLoader.getIcon("/gutter/implementedMethod.png");
 
     private static final Function<PsiElement, String> SUBCLASSED_CLASS_TOOLTIP_ADAPTER = new Function<PsiElement, String>() {
         @Override
@@ -100,8 +101,6 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement element) {
-        // TODO this is a workaround for CME in external annotations code, should be removed after updating to IDEA 122.145+ (KT-2666)
-        if (ApplicationManager.getApplication().isUnitTestMode()) return null;
 
         JetFile file = (JetFile)element.getContainingFile();
         if (file == null) return null;
@@ -235,8 +234,6 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
     @Override
     public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-        // TODO this is a workaround for CME in external annotations code, should be removed after updating to IDEA 122.145+ (KT-2666)
-        if (ApplicationManager.getApplication().isUnitTestMode()) return;
 
         if (elements.isEmpty() || DumbService.getInstance(elements.get(0).getProject()).isDumb()) {
           return;
@@ -249,7 +246,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     }
 
     private static void collectInheritingClasses(JetClass element, Collection<LineMarkerInfo> result) {
-        if (!element.hasModifier(JetTokens.OPEN_KEYWORD)) {
+        boolean isTrait = element.isTrait();
+        if (!(isTrait ||
+              element.hasModifier(JetTokens.OPEN_KEYWORD) ||
+              element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
             return;
         }
         PsiClass lightClass = LightClassUtil.createLightClass(element);
@@ -260,7 +260,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         if (inheritor != null) {
             final PsiElement nameIdentifier = element.getNameIdentifier();
             PsiElement anchor = nameIdentifier != null ? nameIdentifier : element;
-            result.add(new LineMarkerInfo<PsiElement>(anchor, anchor.getTextOffset(), OVERRIDDEN_MARK, Pass.UPDATE_OVERRIDEN_MARKERS,
+            Icon mark = isTrait ? IMPLEMENTED_MARK : OVERRIDDEN_MARK;
+            result.add(new LineMarkerInfo<PsiElement>(anchor, anchor.getTextOffset(), mark, Pass.UPDATE_OVERRIDEN_MARKERS,
                                                       SUBCLASSED_CLASS_TOOLTIP_ADAPTER, SUBCLASSED_CLASS_NAVIGATION_HANDLER));
         }
     }
