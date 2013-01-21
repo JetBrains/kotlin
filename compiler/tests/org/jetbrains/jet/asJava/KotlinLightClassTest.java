@@ -132,7 +132,7 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
         }
     }
 
-    private final File path;
+    private File path;
     private JavaElementFinder finder;
 
     protected KotlinLightClassTest(File path) {
@@ -162,6 +162,13 @@ public abstract class KotlinLightClassTest extends KotlinTestWithEnvironment {
             jetFiles.add(JetTestUtils.loadJetFile(getProject(), new File(path)));
         }
         LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        finder = null;
+        path = null;
+        super.tearDown();
     }
 
     @NotNull

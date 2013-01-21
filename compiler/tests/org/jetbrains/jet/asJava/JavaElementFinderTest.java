@@ -61,6 +61,12 @@ public class JavaElementFinderTest extends JetLiteFixture {
         finder = new JavaElementFinder(getProject(), LightClassGenerationSupport.getInstance(getProject()));
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        finder = null;
+        super.tearDown();
+    }
+
     public void testFromEnumEntry() {
         assertClass("Direction");
         assertNoClass("Direction.NORTH");

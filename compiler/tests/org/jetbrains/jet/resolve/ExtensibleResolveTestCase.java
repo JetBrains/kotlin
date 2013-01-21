@@ -39,6 +39,12 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
         expectedResolveData = getExpectedResolveData();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        expectedResolveData = null;
+        super.tearDown();
+    }
+
     protected abstract ExpectedResolveData getExpectedResolveData();
 
     protected void doTest(@NonNls String filePath) throws Exception {
