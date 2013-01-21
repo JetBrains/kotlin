@@ -1,10 +1,11 @@
 deprecated("Use A instead") trait MyTrait { }
 
 fun test() {
-   val a: <info descr="'MyTrait' is deprecated. Use A instead">MyTrait</info>? = null
-   val b: List<<info descr="'MyTrait' is deprecated. Use A instead">MyTrait</info>>? = null
+   val a: <warning descr="'MyTrait' is deprecated. Use A instead">MyTrait</warning>? = null
+   val b: List<<warning descr="'MyTrait' is deprecated. Use A instead">MyTrait</warning>>? = null
+   a == b
 }
 
-class Test(): <info descr="'MyTrait' is deprecated. Use A instead">MyTrait</info> { }
+class Test(): <warning descr="'MyTrait' is deprecated. Use A instead">MyTrait</warning> { }
 
-class Test2(param: <info descr="'MyTrait' is deprecated. Use A instead">MyTrait</info>) {}
+class Test2(param: <warning descr="'MyTrait' is deprecated. Use A instead">MyTrait</warning>) {}

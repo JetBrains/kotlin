@@ -206,11 +206,11 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
         AnnotationDescriptor deprecated = getDeprecated(descriptor);
         if (deprecated != null) {
             if (isWarning) {
-                holder.createInfoAnnotation(element, composeTooltipString(descriptor, deprecated))
+                holder.createWarningAnnotation(element, composeTooltipString(descriptor, deprecated))
                         .setTextAttributes(CodeInsightColors.WARNINGS_ATTRIBUTES);
             }
             else {
-                holder.createInfoAnnotation(element, composeTooltipString(descriptor, deprecated))
+                holder.createWarningAnnotation(element, composeTooltipString(descriptor, deprecated))
                         .setTextAttributes(CodeInsightColors.DEPRECATED_ATTRIBUTES);
             }
             return true;

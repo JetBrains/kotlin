@@ -4,6 +4,6 @@ class MyClass(): Base() {
     }
 }
 
-<info>open</info> class Base() {
+open class Base() {
     fun test1() {}
 }

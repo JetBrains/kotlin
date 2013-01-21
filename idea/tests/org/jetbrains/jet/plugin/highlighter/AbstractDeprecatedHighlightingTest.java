@@ -13,12 +13,12 @@ public abstract class AbstractDeprecatedHighlightingTest extends LightDaemonAnal
     }
 
     protected void doTest(String filePath) throws Exception {
-        doTest(getTestName(false) + ".kt", false, true);
+        doTest(filePath, true, false);
     }
 
     @NotNull
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/highlighter/deprecated/";
+        return "";
     }
 }

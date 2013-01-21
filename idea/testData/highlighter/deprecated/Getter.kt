@@ -1,19 +1,19 @@
 fun test() {
     val c = MyClass()
-    c.<info descr="'getter for test1' is deprecated. Use A instead">test1</info>
-    c.<info descr="'getter for test2' is deprecated. Use A instead">test2</info>
+    c.<warning descr="'getter for test1' is deprecated. Use A instead">test1</warning>
+    c.<warning descr="'getter for test2' is deprecated. Use A instead">test2</warning>
     c.test2 = ""
 
-    c.<info descr="'val test3' is deprecated. Use A instead">test3</info>
+    c.<warning descr="'val test3' is deprecated. Use A instead">test3</warning>
 }
 
 class MyClass() {
-    <info>public</info> val <info>test1</info>: String = ""
-      [deprecated("Use A instead")] <info>get</info>
+    public val test1: String = ""
+      [deprecated("Use A instead")] get
 
-    <info>public</info> var <info>test2</info>: String = ""
-      [deprecated("Use A instead")] <info>get</info>
+    public var test2: String = ""
+      [deprecated("Use A instead")] get
 
-    deprecated("Use A instead") <info>public</info> val <info>test3</info>: String = ""
-      [deprecated("Use A instead")] <info>get</info>
+    deprecated("Use A instead") public val test3: String = ""
+      [deprecated("Use A instead")] get
 }

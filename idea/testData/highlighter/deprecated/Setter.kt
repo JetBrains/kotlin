@@ -1,26 +1,26 @@
 fun test() {
     MyClass().test1
-    MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info> = 0
+    MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning> = 0
 
-    MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info>++
-    MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info>--
+    MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning>++
+    MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning>--
 
-    ++MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info>
-    --MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info>
+    ++MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning>
+    --MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning>
 
-    MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info> += 1
-    MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info> -= 1
-    MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info> /= 1
-    MyClass().<info descr="'setter for test1' is deprecated. Use A instead">test1</info> *= 1
+    MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning> += 1
+    MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning> -= 1
+    MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning> /= 1
+    MyClass().<warning descr="'setter for test1' is deprecated. Use A instead">test1</warning> *= 1
 
-    test2
-    <info descr="'setter for test2' is deprecated. Use A instead">test2</info> = 10
+    test2 + 1
+    <warning descr="'setter for test2' is deprecated. Use A instead">test2</warning> = 10
 }
 
 class MyClass() {
-    <info>public</info> var <info>test1</info>: Int = 0
-      [deprecated("Use A instead")] <info>set</info>
+    public var test1: Int = 0
+      [deprecated("Use A instead")] set
 }
 
-<info>public</info> var <info>test2</info>: Int = 0
-      [deprecated("Use A instead")] <info>set</info>
+public var test2: Int = 0
+      [deprecated("Use A instead")] set
