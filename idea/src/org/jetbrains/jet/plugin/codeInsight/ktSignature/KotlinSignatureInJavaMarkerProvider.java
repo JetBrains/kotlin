@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -161,7 +162,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
         Name name = Name.identifier(memberNameAsString);
         if (member instanceof PsiMethod) {
-            memberScope.getFunctions(name);
+            if (((PsiMethod) member).isConstructor()) {
+                assert memberScope instanceof JavaClassNonStaticMembersScope;
+                ((JavaClassNonStaticMembersScope) memberScope).getConstructors();
+            }
+            else {
+                memberScope.getFunctions(name);
+            }
         }
         else if (member instanceof PsiField) {
             memberScope.getProperties(name);
