@@ -27,6 +27,7 @@ import com.intellij.mock.MockProject;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
@@ -73,6 +74,10 @@ public class JetCoreEnvironment {
         this.configuration.setReadOnly(true);
 
         this.applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
+
+        // ability to get text from annotations xml files
+        applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml");
+
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kt");
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kts");
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "ktm");
