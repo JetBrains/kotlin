@@ -16,14 +16,21 @@
 
 package org.jetbrains.jet.cli.common.messages;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 
 public class MessageUtil {
-    public static CompilerMessageLocation psiElementToMessageLocation(PsiElement element) {
+    private MessageUtil() {}
+
+    @NotNull
+    public static CompilerMessageLocation psiElementToMessageLocation(@NotNull PsiElement element) {
         PsiFile file = element.getContainingFile();
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(file, element.getTextRange());
-        return CompilerMessageLocation.create(file.getVirtualFile().getPath(), lineAndColumn.getLine(), lineAndColumn.getColumn());
+        VirtualFile virtualFile = file.getVirtualFile();
+        String path = virtualFile == null ? "<no path>" : virtualFile.getPath();
+        return CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn());
     }
 }
