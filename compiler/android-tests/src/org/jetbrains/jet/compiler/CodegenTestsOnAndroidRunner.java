@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.ant.AntRunner;
 import org.jetbrains.jet.compiler.download.SDKDownloader;
@@ -53,6 +54,8 @@ public class CodegenTestsOnAndroidRunner {
         TestSuite suite = new TestSuite("MySuite");
 
         String resultOutput = runTests();
+        if (resultOutput == null) return suite;
+
         // Test name -> stackTrace
         final Map<String, String> resultMap = parseOutputForFailedTests(resultOutput);
         final Statistics statistics;
@@ -63,7 +66,7 @@ public class CodegenTestsOnAndroidRunner {
         }
         else {
             statistics = parseOutputForTestsNumberIfThereIsFailedTests(resultOutput);
-            
+
             for (final Map.Entry<String, String> entry : resultMap.entrySet()) {
 
                 suite.addTest(new TestCase("run") {
@@ -79,7 +82,7 @@ public class CodegenTestsOnAndroidRunner {
                 });
             }
         }
-        
+
         Assert.assertNotNull("Cannot parse number of failed tests from final line", statistics);
         Assert.assertEquals("Number of stackTraces != failed tests on the final line", resultMap.size(),
                             statistics.failed + statistics.errors);
@@ -119,7 +122,7 @@ public class CodegenTestsOnAndroidRunner {
     [exec] ...............
     [exec] Error in testKt529:
     */
-    private Map<String, String> parseOutputForFailedTests(String output) {
+    private Map<String, String> parseOutputForFailedTests(@NotNull String output) {
         Map<String, String> result = new HashMap<String, String>();
         StringBuilder builder = new StringBuilder();
         String failedTestNamePrefix = " Error in ";
@@ -165,6 +168,7 @@ public class CodegenTestsOnAndroidRunner {
     }
 
 
+    @Nullable
     public String runTests() {
         ApplicationManager.setApplication(null, new Disposable() {
             @Override
@@ -198,19 +202,17 @@ public class CodegenTestsOnAndroidRunner {
                 antRunner.installApplicationOnEmulator();
                 return antRunner.runTestsOnEmulator();
             }
+            catch (RuntimeException e) {
+                e.printStackTrace();
+            }
             finally {
-                try {
-                    emulator.stopEmulator();
-                }
-                catch (Throwable t) {
-                    System.err.println("Exception during stopping emulator:");
-                    t.printStackTrace();
-                }
+                emulator.stopEmulator();
             }
         }
         finally {
             emulator.finishEmulatorProcesses();
         }
+        return null;
     }
 
     private static class Statistics {

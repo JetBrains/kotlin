@@ -20,6 +20,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.jet.compiler.OutputUtils;
 import org.jetbrains.jet.compiler.PathManager;
+import org.jetbrains.jet.compiler.ThreadUtils;
 import org.jetbrains.jet.compiler.run.RunUtils;
 import org.jetbrains.jet.compiler.run.result.RunResult;
 
@@ -68,7 +69,9 @@ public class AntRunner {
             return;
         }
         else {
-            System.out.println(resultOutput);
+            if (result.getStatus()) {
+                System.out.println(resultOutput);
+            }
         }
         OutputUtils.checkResult(result);
     }
@@ -83,14 +86,9 @@ public class AntRunner {
 
     private static boolean isInstallSuccessful(String output) {
         if (output.contains("Is the system running?")) {
-            try {
-                System.out.println("Device not ready. Waiting for 20 sec.");
-                Thread.sleep(20000);
-                return false;
-            }
-            catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            System.out.println("Device not ready. Waiting for 20 sec.");
+            ThreadUtils.sleep(20);
+            return false;
         }
         return true;
     }

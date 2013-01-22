@@ -21,6 +21,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.jet.compiler.OutputUtils;
 import org.jetbrains.jet.compiler.PathManager;
+import org.jetbrains.jet.compiler.ThreadUtils;
 import org.jetbrains.jet.compiler.run.RunUtils;
 import org.jetbrains.jet.compiler.run.result.RunResult;
 
@@ -32,8 +33,7 @@ import java.util.regex.Pattern;
 public class Emulator {
 
     private final static Pattern EMULATOR_PATTERN = Pattern.compile("emulator-([0-9])*");
-    
-    
+
     private final PathManager pathManager;
 
     public Emulator(PathManager pathManager) {
@@ -119,50 +119,50 @@ public class Emulator {
     public void stopEmulator() {
         System.out.println("Stopping emulator...");
         OutputUtils.checkResult(RunUtils.execute(getStopCommand()));
-        if (SystemInfo.isUnix) {
-            finishProcess("emulator-arm");
-        }
+        finishProcess("emulator-arm");
     }
 
     //Only for Unix
     private void stopDdmsProcess() {
-        GeneralCommandLine listOfEmulatorProcess = new GeneralCommandLine();
-        listOfEmulatorProcess.setExePath("sh");
-        listOfEmulatorProcess.addParameter("-c");
-        listOfEmulatorProcess.addParameter("ps aux | grep emulator");
-        RunResult runResult = RunUtils.execute(listOfEmulatorProcess);
-        OutputUtils.checkResult(runResult);
-        String pidFromPsCommand = OutputUtils.getPidFromPsCommand(runResult.getOutput());
-        if (pidFromPsCommand != null) {
-            GeneralCommandLine killCommand = new GeneralCommandLine();
-            killCommand.setExePath("kill");
-            killCommand.addParameter(pidFromPsCommand);
-            OutputUtils.checkResult(RunUtils.execute(killCommand));
+        if (SystemInfo.isUnix) {
+            GeneralCommandLine listOfEmulatorProcess = new GeneralCommandLine();
+            listOfEmulatorProcess.setExePath("sh");
+            listOfEmulatorProcess.addParameter("-c");
+            listOfEmulatorProcess.addParameter("ps aux | grep emulator");
+            RunResult runResult = RunUtils.execute(listOfEmulatorProcess);
+            OutputUtils.checkResult(runResult);
+            String pidFromPsCommand = OutputUtils.getPidFromPsCommand(runResult.getOutput());
+            if (pidFromPsCommand != null) {
+                GeneralCommandLine killCommand = new GeneralCommandLine();
+                killCommand.setExePath("kill");
+                killCommand.addParameter(pidFromPsCommand);
+                RunUtils.execute(killCommand);
+            }
         }
     }
 
     public void finishEmulatorProcesses() {
         System.out.println("Stopping adb...");
         OutputUtils.checkResult(RunUtils.execute(getStopCommandForAdb()));
-        if (SystemInfo.isUnix) {
-            finishProcess("adb");
-            stopDdmsProcess();
-        }
+        finishProcess("adb");
+        stopDdmsProcess();
     }
 
     //Only for Unix
     private void finishProcess(String processName) {
-        GeneralCommandLine pidOfProcess = new GeneralCommandLine();
-        pidOfProcess.setExePath("pidof");
-        pidOfProcess.addParameter(processName);
-        RunResult runResult = RunUtils.execute(pidOfProcess);
-        String processIdsStr = runResult.getOutput().substring(("pidof " + processName).length());
-        List<String> processIds = StringUtil.getWordsIn(processIdsStr);
-        for (String pid : processIds) {
-            GeneralCommandLine killCommand = new GeneralCommandLine();
-            killCommand.setExePath("kill");
-            killCommand.addParameter(pid);
-            OutputUtils.checkResult(RunUtils.execute(killCommand));
+        if (SystemInfo.isUnix) {
+            GeneralCommandLine pidOfProcess = new GeneralCommandLine();
+            pidOfProcess.setExePath("pidof");
+            pidOfProcess.addParameter(processName);
+            RunResult runResult = RunUtils.execute(pidOfProcess);
+            String processIdsStr = runResult.getOutput().substring(("pidof " + processName).length());
+            List<String> processIds = StringUtil.getWordsIn(processIdsStr);
+            for (String pid : processIds) {
+                GeneralCommandLine killCommand = new GeneralCommandLine();
+                killCommand.setExePath("kill");
+                killCommand.addParameter(pid);
+                RunUtils.execute(killCommand);
+            }
         }
     }
 
@@ -203,5 +203,5 @@ public class Emulator {
         }
         OutputUtils.checkResult(RunUtils.execute(commandLineForListOfDevices));
     }
-   
+
 }

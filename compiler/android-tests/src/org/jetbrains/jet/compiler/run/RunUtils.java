@@ -26,8 +26,10 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.OutputUtils;
+import org.jetbrains.jet.compiler.ThreadUtils;
 import org.jetbrains.jet.compiler.run.result.RunResult;
 
 import java.io.Closeable;
@@ -66,18 +68,14 @@ public class RunUtils {
         t.start();
 
         if (waitForEnd) {
-            try {
-                t.wait(600000);
-                return resultRef.get();
-            }
-            catch (InterruptedException e) {
-                new RunResult(false, getStackTrace(e));
-            }
+            ThreadUtils.wait(t, 600);
+            return resultRef.get();
         }
         return new RunResult(true, "OK");
     }
 
     private static RunResult run(final GeneralCommandLine commandLine, @Nullable final String input) {
+        System.out.println("RUN COMMAND: " + commandLine.getCommandLineString());
         final StringBuilder stdOut = new StringBuilder();
         final StringBuilder stdErr = new StringBuilder();
 
@@ -96,24 +94,24 @@ public class RunUtils {
             return new RunResult(false, getStackTrace(e));
         }
 
-        final ProcessAdapter listener = new ProcessAdapter() {
+        handler.addProcessListener(new ProcessAdapter() {
             @Override
-            public void onTextAvailable(final ProcessEvent event, final Key outputType) {
+            public void onTextAvailable(ProcessEvent event, Key outputType) {
                 String str = event.getText();
                 if (outputType == ProcessOutputTypes.STDOUT || outputType == ProcessOutputTypes.SYSTEM) {
-                    stdOut.append(str);
-                    if (!commandLine.getCommandLineString().contains("install")) {
-                        System.out.print(str);
-                    }
+                    appendToContent(stdOut, str);
                 }
                 else if (outputType == ProcessOutputTypes.STDERR) {
-                    stdErr.append(str);
-                    System.err.print(str);
+                    appendToContent(stdErr, str);
                 }
             }
-        };
 
-        handler.addProcessListener(listener);
+            private synchronized void appendToContent(StringBuilder content, String line) {
+                content.append(StringUtil.trimTrailing(line));
+                content.append("\n");
+            }
+        });
+
         handler.startNotify();
 
         try {
@@ -127,8 +125,6 @@ public class RunUtils {
             return new RunResult(false, "Timeout exception: execution was terminated after 5 min.");
         }
 
-        handler.removeProcessListener(listener);
-
         int exitCode = handler.getProcess().exitValue();
 
         if (exitCode != 0) {
@@ -138,6 +134,9 @@ public class RunUtils {
             String output = builderToString(stdOut) + builderToString(stdErr);
             if (OutputUtils.isBuildFailed(output)) {
                 return new RunResult(false, output);
+            }
+            if (!commandLine.getCommandLineString().contains("install")) {
+                System.out.print(output);
             }
             return new RunResult(true, output);
         }
@@ -171,5 +170,5 @@ public class RunUtils {
         }
         return writer.toString();
     }
-    
+
 }
