@@ -18,32 +18,31 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.ConfigurationKind;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
 public class ControlStructuresTest extends CodegenTestCase {
     @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
+    @Override
     protected String getPrefix() {
         return "controlStructures";
     }
 
     public void testIf() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(15, main.invoke(null, true));
         assertEquals(20, main.invoke(null, false));
     }
 
     public void testSingleBranchIf() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(15, main.invoke(null, true));
         assertEquals(20, main.invoke(null, false));
@@ -61,43 +60,32 @@ public class ControlStructuresTest extends CodegenTestCase {
         factorialTest("controlStructures/break.kt");
     }
 
-    /*
-    public void testInRangeConditionsInWhen() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testInRangeConditionsInWhen() {
         blackBoxFile("controlStructures/inRangeConditionsInWhen.kt");
     }
-    */
 
-    private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    private void factorialTest(String name) throws Exception {
         loadFile(name);
-
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(6, main.invoke(null, 3));
         assertEquals(120, main.invoke(null, 5));
     }
 
     public void testContinue() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(3, main.invoke(null, 4));
         assertEquals(7, main.invoke(null, 5));
     }
 
     public void testIfNoElse() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, 5, true));
         assertEquals(10, main.invoke(null, 5, false));
     }
 
     public void testCondJumpOnStack() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("import java.lang.Boolean as jlBoolean; fun foo(a: String): Int = if (jlBoolean.parseBoolean(a)) 5 else 10");
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, "true"));
@@ -105,18 +93,14 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testFor() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
         loadFile();
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
         assertEquals("IntelliJ IDEA", main.invoke(null, args));
     }
 
     public void testIfBlock() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
         loadFile();
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         List<String> args = Arrays.asList("IntelliJ", " ", "IDEA");
         assertEquals("TTT", main.invoke(null, args));
@@ -125,16 +109,13 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testForInArray() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = new String[] { "IntelliJ", " ", "IDEA" };
         assertEquals("IntelliJ IDEA", main.invoke(null, new Object[] { args }));
     }
 
     public void testForInRange() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo(sb: StringBuilder) { for(x in 1..4) sb.append(x) }");
         final Method main = generateFunction();
         StringBuilder stringBuilder = new StringBuilder();
@@ -143,96 +124,66 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testThrowCheckedException() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo() { throw Exception(); }");
         final Method main = generateFunction();
-        boolean caught = false;
-        try {
-            main.invoke(null);
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException().getClass() == Exception.class) {
-                caught = true;
-            }
-        }
-        assertTrue(caught);
+        assertThrows(main, Exception.class, null);
     }
 
     public void testTryCatch() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals("no message", main.invoke(null, "0"));
         assertEquals("For input string: \"a\"", main.invoke(null, "a"));
     }
 
     public void testTryFinally() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         StringBuilder sb = new StringBuilder();
         main.invoke(null, sb, "9");
         assertEquals("foo9bar", sb.toString());
         sb = new StringBuilder();
-        boolean caught = false;
-        try {
-            main.invoke(null, sb, "x");
-        }
-        catch(InvocationTargetException e) {
-            caught = e.getTargetException() instanceof NumberFormatException;
-        }
-        assertTrue(caught);
+        assertThrows(main, NumberFormatException.class, null, sb, "x");
         assertEquals("foobar", sb.toString());
     }
 
-    public void testForUserType() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testForUserType() {
         blackBoxFile("controlStructures/forUserType.kt");
     }
 
-    public void testForLoopMemberExtensionNext() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testForLoopMemberExtensionNext() {
         blackBoxFile("controlStructures/forLoopMemberExtensionNext.kt");
     }
 
-    public void testForLoopMemberExtensionHasNext() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testForLoopMemberExtensionHasNext() {
         blackBoxFile("controlStructures/forLoopMemberExtensionHasNext.kt");
     }
 
-    public void testForLoopMemberExtensionAll() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testForLoopMemberExtensionAll() {
         blackBoxFile("controlStructures/forLoopMemberExtensionAll.kt");
     }
 
-    public void testForIntArray() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testForIntArray() {
         blackBoxFile("controlStructures/forIntArray.kt");
     }
 
-    public void testForPrimitiveIntArray() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testForPrimitiveIntArray() {
         blackBoxFile("controlStructures/forPrimitiveIntArray.kt");
     }
 
-    public void testForNullableIntArray() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testForNullableIntArray() {
         blackBoxFile("controlStructures/forNullableIntArray.kt");
     }
 
     public void testForIntRange() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/forIntRange.kt");
     }
 
-    public void testKt237() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt237() {
         blackBoxFile("regressions/kt237.kt");
     }
 
     public void testCompareToZero() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo(a: Int, b: Int): Boolean = a == 0 && b != 0 && 0 == a && 0 != b");
         String text = generateToText();
         /*
@@ -248,247 +199,171 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testCompareBoxedIntegerToZero() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/compareBoxedIntegerToZero.kt");
     }
 
     public void testCompareToNull() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
         String text = generateToText();
         assertTrue(!text.contains("java/lang/Object.equals"));
-        //System.out.println(text);
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, null, null));
     }
 
     public void testCompareToNonnullableEq() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo(a: String?, b: String): Boolean = a == b || b == a");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(false, main.invoke(null, null, "lala"));
         assertEquals(true, main.invoke(null, "papa", "papa"));
     }
 
     public void testCompareToNonnullableNotEq() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("fun foo(a: String?, b: String): Boolean = a != b");
         String text = generateToText();
-//        System.out.println(text);
         assertTrue(text.contains("IXOR"));
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, "papa", "papa"));
     }
 
-    public void testKt299() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt299() {
         blackBoxFile("regressions/kt299.kt");
     }
 
-    public void testKt416() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt416() {
         blackBoxFile("regressions/kt416.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testKt513() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt513() {
         blackBoxFile("regressions/kt513.kt");
     }
 
-    public void testKt434() throws Exception {
-        createEnvironmentWithFullJdk();
-        blackBoxFile("regressions/kt434.kt");
-    }
-
-    public void testKt769() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt769() {
         blackBoxFile("regressions/kt769.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testKt773() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt773() {
         blackBoxFile("regressions/kt773.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testKt772() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt772() {
         blackBoxFile("regressions/kt772.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testKt870() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt870() {
         blackBoxFile("regressions/kt870.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testKt958() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt958() {
         blackBoxFile("regressions/kt958.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testQuicksort() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testQuicksort() {
         blackBoxFile("controlStructures/quicksort.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testSynchronized() throws Exception {
-        createEnvironmentWithFullJdk();
-        blackBoxFile("controlStructures/sync.kt");
-//        System.out.println(generateToText());
-    }
-
-    public void testIfInWhile() throws Exception {
-        createEnvironmentWithFullJdk();
-        blackBoxFile("controlStructures/ifInWhile.kt");
-//        System.out.println(generateToText());
-    }
-
-    public void testKt1076() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
-        blackBoxFile("regressions/kt1076.kt");
-    }
-
-    public void testKt998() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt998() {
         blackBoxFile("regressions/kt998.kt");
     }
 
-    public void testContinueInFor() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
+    public void testContinueInFor() {
         blackBoxFile("controlStructures/continueInFor.kt");
     }
 
-    public void testContinueToLabelInFor() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
+    public void testContinueToLabelInFor() {
         blackBoxFile("controlStructures/continueToLabelInFor.kt");
     }
 
-    public void testKt628() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt628() {
         blackBoxFile("regressions/kt628.kt");
     }
 
-    public void testKt1441() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1441() {
         blackBoxFile("regressions/kt1441.kt");
     }
 
-    public void testKt2147() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2147() {
         blackBoxFile("regressions/kt2147.kt");
     }
 
     public void testIfDummy() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt1899.kt");
     }
 
     public void testKt1742() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt1742.kt");
     }
 
     public void testKt2062() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2062.kt");
     }
 
     public void testKt910() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt910.kt");
     }
 
     public void testKt1688() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt1688.kt");
     }
 
-    public void testKt2423() {
-        createEnvironmentWithFullJdk();
-        blackBoxFile("regressions/kt2423.kt");
-    }
-
     public void testKt2416() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2416.kt");
     }
 
     public void testKt2291() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2291.kt");
     }
 
     public void testKt2259() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2259.kt");
     }
 
     public void testKt2577() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2577.kt");
     }
 
     public void testTryCatchFinallyChain() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/tryCatchFinallyChain.kt");
     }
 
     public void testKt2597() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2597.kt");
     }
 
     public void testKt2598() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt2598.kt");
     }
 
     public void testLongRange() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/longRange.kt");
     }
 
     public void testForInSmartCastedToArray() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/forInSmartCastedToArray.kt");
     }
 
     public void testConditionOfEmptyIf() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/conditionOfEmptyIf.kt");
     }
 
     public void testFinallyOnEmptyReturn() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("controlStructures/finallyOnEmptyReturn.kt");
     }
 
     public void testKt3087() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt3087.kt");
     }
 
     public void testKt3203_1() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt3203_1.kt");
     }
 
     public void testKt3203_2() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt3203_2.kt");
     }
 
     public void testKt3273() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt3273.kt");
     }
 }

@@ -19,44 +19,41 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.ConfigurationKind;
 
 public class ClosuresGenTest extends CodegenTestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testSimplestClosure() throws Exception {
+    public void testSimplestClosure() {
         blackBoxFile("classes/simplestClosure.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testSimplestClosureAndBoxing() throws Exception {
+    public void testSimplestClosureAndBoxing() {
         blackBoxFile("classes/simplestClosureAndBoxing.kt");
     }
 
-    public void testClosureWithParameter() throws Exception {
+    public void testClosureWithParameter() {
         blackBoxFile("classes/closureWithParameter.kt");
     }
 
-    public void testClosureWithParameterAndBoxing() throws Exception {
+    public void testClosureWithParameterAndBoxing() {
         blackBoxFile("classes/closureWithParameterAndBoxing.kt");
     }
 
-    public void testExtensionClosure() throws Exception {
+    public void testExtensionClosure() {
         blackBoxFile("classes/extensionClosure.kt");
     }
 
-    public void testEnclosingLocalVariable() throws Exception {
+    public void testEnclosingLocalVariable() {
         blackBoxFile("classes/enclosingLocalVariable.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testDoubleEnclosedLocalVariable() throws Exception {
+    public void testDoubleEnclosedLocalVariable() {
         blackBoxFile("classes/doubleEnclosedLocalVariable.kt");
     }
 
-    public void testEnclosingThis() throws Exception {
+    public void testEnclosingThis() {
         blackBoxFile("classes/enclosingThis.kt");
     }
 

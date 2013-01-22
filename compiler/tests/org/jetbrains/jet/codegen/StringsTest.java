@@ -31,14 +31,12 @@ public class StringsTest extends CodegenTestCase {
 
     public void testAnyToString () throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any) = x.toString()");
-//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("something", foo.invoke(null, "something"));
     }
 
     public void testNullableAnyToString () throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any?) = x.toString()");
-//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("something", foo.invoke(null, "something"));
         assertEquals("null", foo.invoke(null, new Object[]{null}));
@@ -49,7 +47,6 @@ public class StringsTest extends CodegenTestCase {
         loadText("fun foo(x: String?, y: Any?) = x + y");
         String text = generateToText();
         assertTrue(text.contains(".stringPlus"));
-//        System.out.println(text);
         Method foo = generateFunction();
         assertEquals("something239", foo.invoke(null, "something", 239));
         assertEquals("null239", foo.invoke(null, null, 239));
@@ -62,7 +59,6 @@ public class StringsTest extends CodegenTestCase {
         loadText("fun foo(x: String, y: Any?) = x + y + 120");
         String text = generateToText();
         assertFalse(text.contains(".stringPlus"));
-//        System.out.println(text);
         Method foo = generateFunction();
         assertEquals("something239120", foo.invoke(null, "something", 239));
         assertEquals("239null120", foo.invoke(null, "239", null));

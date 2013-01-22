@@ -21,7 +21,6 @@ import org.jetbrains.jet.ConfigurationKind;
 import java.lang.reflect.Method;
 
 public class TypeInfoTest extends CodegenTestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();

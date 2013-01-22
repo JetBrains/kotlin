@@ -7,3 +7,12 @@ fun test(a : A) {
         a.method!!()
     }
 }
+
+class B : A {
+    override val method = { }
+}
+
+fun box(): String {
+    test(B())
+    return "OK"
+}

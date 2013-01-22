@@ -29,39 +29,32 @@ public class FunctionGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testKt2716() throws Exception {
+    public void testKt2716() {
         blackBoxFile("regressions/kt2716.kt");
-        //        System.out.println(generateToText());
     }
 
-    public void testDefaultArgs() throws Exception {
+    public void testDefaultArgs() {
         blackBoxFile("functions/defaultargs.kt");
-        //        System.out.println(generateToText());
     }
 
-    public void testDefaultArgs1() throws Exception {
+    public void testDefaultArgs1() {
         blackBoxFile("functions/defaultargs1.kt");
-        //        System.out.println(generateToText());
     }
 
-    public void testDefaultArgs2() throws Exception {
+    public void testDefaultArgs2() {
         blackBoxFile("functions/defaultargs2.kt");
-        //        System.out.println(generateToText());
     }
 
-    public void testDefaultArgs3() throws Exception {
+    public void testDefaultArgs3() {
         blackBoxFile("functions/defaultargs3.kt");
-        //        System.out.println(generateToText());
     }
 
-    public void testDefaultArgs4() throws Exception {
+    public void testDefaultArgs4() {
         blackBoxFile("functions/defaultargs4.kt");
-        //        System.out.println(generateToText());
     }
 
-    public void testDefaultArgs5() throws Exception {
+    public void testDefaultArgs5() {
         blackBoxFile("functions/defaultargs5.kt");
-        //        System.out.println(generateToText());
     }
 
     public void testDefaultArgs6() {
@@ -72,14 +65,12 @@ public class FunctionGenTest extends CodegenTestCase {
         blackBoxFile("functions/defaultargs7.kt");
     }
 
-    public void testNoThisNoClosure() throws Exception {
+    public void testNoThisNoClosure() {
         blackBoxFile("functions/nothisnoclosure.kt");
-        //        System.out.println(generateToText());
     }
 
     public void testAnyEqualsNullable() throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any?) = x.equals(\"lala\")");
-        //        System.out.println(generateToText());
         Method foo = generateFunction();
         assertTrue((Boolean) foo.invoke(null, "lala"));
         assertFalse((Boolean) foo.invoke(null, "mama"));
@@ -87,7 +78,6 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testNoRefToOuter() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         loadText("class A() { fun f() : ()->String { val s = \"OK\"; return { -> s } } }");
-        //        System.out.println(generateToText());
         Class foo = generateClass("A");
         final Object obj = foo.newInstance();
         final Method f = foo.getMethod("f");
@@ -100,7 +90,6 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testAnyEquals() throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any) = x.equals(\"lala\")");
-        //        System.out.println(generateToText());
         Method foo = generateFunction();
         assertTrue((Boolean) foo.invoke(null, "lala"));
         assertFalse((Boolean) foo.invoke(null, "mama"));
@@ -124,14 +113,13 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testKt1199() {
         blackBoxFile("regressions/kt1199.kt");
-        //System.out.println(generateToText());
     }
 
-    public void testFunction() throws InvocationTargetException, IllegalAccessException {
+    public void testFunction() {
         blackBoxFile("functions/functionExpression.kt");
     }
 
-    public void testLocalFunction() throws InvocationTargetException, IllegalAccessException {
+    public void testLocalFunction() {
         blackBoxFile("functions/localFunction.kt");
     }
 
@@ -160,13 +148,11 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testK1649_1() {
-        loadFile("regressions/kt1649_1.kt");
-        generateToText();
+        blackBoxFile("regressions/kt1649_1.kt");
     }
 
     public void testK1649_2() {
-        loadFile("regressions/kt1649_2.kt");
-        generateToText();
+        blackBoxFile("regressions/kt1649_2.kt");
     }
 
     public void testKt1038() {

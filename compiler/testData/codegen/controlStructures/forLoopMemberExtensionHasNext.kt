@@ -12,11 +12,13 @@ class X {
 
     fun test() {
         for (i in C()) {
-            System.out.println(i)
+            foo(i)
         }
     }
 
 }
+
+fun foo(x: Int) {}
 
 fun main(args: Array<String>) {
     X().test()

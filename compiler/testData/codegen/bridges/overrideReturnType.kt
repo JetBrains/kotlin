@@ -1,5 +1,3 @@
-import java.lang.Integer
-
 open class C {
     open fun f(): Any = "C f"
 }

@@ -1,7 +1,5 @@
-package test
-
-class List<T>(len: Int, cls : java.lang.Class) {
-  val a : Array<T?> = Array<T?>(len)
+class List<T>(len: Int) {
+  val a = Array<T?>(len) { null }
 
   fun reverse() {
     var i = 0
@@ -17,19 +15,19 @@ class List<T>(len: Int, cls : java.lang.Class) {
 fun box() : String {
   val d = List<Int>(1)
   d.a[0] = 10
-  println(d.a[0])
+  checkEquals(d.a[0], 10)
 
   val a = List<String>(1)
   a.a[0] = "1"
-  println(a.a[0])
+  checkEquals(a.a[0], "1")
 
   val b = List<Int?>(1)
   b.a[0] = 10
-  println(b.a[0])
+  checkEquals(b.a[0], 10)
 
   val c = List<Array<Int>>(1)
   c.a[0] = Array<Int>(4,{-1})
-  println(c.a[0]?.size)
+  checkEquals(c.a[0]?.size, 4)
 
   val e = List<Int>(5)
   e.a[0] = 0
@@ -38,12 +36,16 @@ fun box() : String {
   e.a[3] = 3
   e.a[4] = 4
   e.reverse()
-  for(el in e.a)
-    println(el)
+  for (i in 0..4)
+    checkEquals(e.a[i], 4-i)
 
   return "OK"
 }
 
-fun println(s : Any?) {
-  System.out?.println(s);
+fun checkEquals(a: Any?, b: Any?) {
+  if (a != b) throw AssertionError("Expected: $b, actual: $a")
+}
+
+fun main(args: Array<String>) {
+  println(box())
 }

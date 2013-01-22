@@ -33,12 +33,10 @@ public class TraitsTest extends CodegenTestCase {
 
     public void testSimple () {
         blackBoxFile("traits/simple.kt");
-//        System.out.println(generateToText());
     }
 
     public void testWithRequired () {
         blackBoxFile("traits/withRequired.kt");
-//        System.out.println(generateToText());
     }
 
     public void testMultiple () {

@@ -1,6 +1,6 @@
-import java.util.LinkedList
+import java.util.ArrayList
 
-open class BaseStringList: LinkedList<String>() {
+open class BaseStringList: ArrayList<String>() {
 }
 
 class StringList: BaseStringList() {
@@ -14,6 +14,6 @@ fun box(): String {
     myStringList.add("first element")
     if (myStringList.get(0) != "StringList.get()") return "Fail #1"
     if ((myStringList: BaseStringList).get(0) != "StringList.get()") return "Fail #2"
-    if ((myStringList: LinkedList<String>).get(0) != "StringList.get()") return "Fail #3"
+    if ((myStringList: ArrayList<String>).get(0) != "StringList.get()") return "Fail #3"
     return "OK"
 }

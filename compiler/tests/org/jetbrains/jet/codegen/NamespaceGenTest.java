@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import jet.IntRange;
-import org.jetbrains.jet.ConfigurationKind;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -34,8 +33,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testPSVM() throws Exception {
         loadFile("PSVM.kt");
-//        System.out.println(generateToText());
-
         final Method main = generateFunction();
         Object[] args = new Object[] { new String[0] };
         main.invoke(null, args);
@@ -43,8 +40,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testReturnOne() throws Exception {
         loadText("fun f() : Int { return 42; }");
-//        System.out.println(generateToText());
-
         final Method main = generateFunction();
         final Object returnValue = main.invoke(null, new Object[0]);
         assertEquals(new Integer(42), returnValue);
@@ -52,8 +47,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testReturnA() throws Exception {
         loadText("fun foo(a : Int) = a");
-//        System.out.println(generateToText());
-
         final Method main = generateFunction();
         final Object returnValue = main.invoke(null, 50);
         assertEquals(new Integer(50), returnValue);
@@ -61,8 +54,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testLocalProperty() throws Exception {
         loadFile("localProperty.kt");
-//        System.out.println(generateToText());
-
         final Method main = generateFunction();
         final Object returnValue = main.invoke(null, 76);
         assertEquals(new Integer(50), returnValue);
@@ -70,7 +61,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testCurrentTime() throws Exception {
         loadText("fun f() : Long { return System.currentTimeMillis(); }");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         final long returnValue = (Long) main.invoke(null);
         assertIsCurrentTime(returnValue);
@@ -78,7 +68,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testIdentityHashCode() throws Exception {
         loadText("fun f(o: Any) : Int { return System.identityHashCode(o); }");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         Object o = new Object();
         final int returnValue = (Integer) main.invoke(null, o);
@@ -94,16 +83,12 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testHelloWorld() throws Exception {
         loadFile("helloWorld.kt");
-
-//        System.out.println(generateToText());
-
         generateFunction();  // assert that it can be verified
     }
 
     public void testAssign() throws Exception {
         loadFile("assign.kt");
 
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(2, main.invoke(null));
     }
@@ -129,7 +114,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testBoxVariable() throws Exception {
         loadText("fun foo(): Int? { var x = 239; return x; }");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(239, main.invoke(null));
     }
@@ -186,14 +170,12 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testBottles2() throws Exception {
         loadFile("bottles2.kt");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         main.invoke(null);  // ensure no exception
     }
 
     public void testJavaConstructor() throws Exception {
         loadText("fun foo(): StringBuilder = StringBuilder()");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         final Object result = main.invoke(null);
         assertTrue(result instanceof StringBuilder);
@@ -208,7 +190,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testJavaEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 == s2");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(Boolean.TRUE, main.invoke(null, new String("jet"), new String("jet")));
         assertEquals(Boolean.FALSE, main.invoke(null, new String("jet"), new String("ceylon")));
@@ -224,7 +205,6 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testJavaEqualsNull() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 == s2");
         final Method main = generateFunction();
-//        System.out.println(generateToText());
         assertEquals(Boolean.TRUE, main.invoke(null, null, null));
         assertEquals(Boolean.FALSE, main.invoke(null, "jet", null));
         assertEquals(Boolean.FALSE, main.invoke(null, null, "jet"));
@@ -233,7 +213,6 @@ public class NamespaceGenTest extends CodegenTestCase {
     public void testEqualsNullLiteral() throws Exception {
         loadText("fun foo(s: String?) = s == null");
         final Method main = generateFunction();
-//        System.out.println(generateToText());
         assertEquals(Boolean.TRUE, main.invoke(null, new Object[] { null }));
         assertEquals(Boolean.FALSE, main.invoke(null, "jet"));
     }
@@ -258,7 +237,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testFunctionCall() throws Exception {
         loadFile("functionCall.kt");
-//        System.out.println(generateToText());
         final Method main = generateFunction("f");
         assertEquals("foo", main.invoke(null));
     }
@@ -280,14 +258,12 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testStringPlusEq() throws Exception {
         loadText("fun foo(s: String) : String { var result = s; result += s; return result; } ");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals("JarJar", main.invoke(null, "Jar"));
     }
 
     public void testStringCompare() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 < s2");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(Boolean.TRUE, main.invoke(null, "Ceylon", "Java"));
         assertEquals(Boolean.FALSE, main.invoke(null, "Jet", "Java"));
@@ -315,7 +291,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testFieldRead() throws Exception {
         loadText("import java.awt.*; fun foo(c: GridBagConstraints) = c.gridx");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 239;
@@ -332,7 +307,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testFieldIncrement() throws Exception {
         loadText("import java.awt.*; fun foo(c: GridBagConstraints) { c.gridx++; return; }");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 609;
@@ -342,7 +316,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testFieldAugAssign() throws Exception {
         loadText("import java.awt.*; fun foo(c: GridBagConstraints) { c.gridx *= 2; return; }");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 305;
@@ -371,7 +344,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testArrayAugAssign() throws Exception {
         loadText("fun foo(c: Array<Int>) { c[0] *= 2 }");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         Integer[] data = new Integer[] { 5 };
         main.invoke(null, new Object[] { data });
@@ -380,7 +352,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testArrayAugAssignLong() throws Exception {
         loadText("fun foo(c: LongArray) { c[0] *= 2.toLong() }");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         long[] data = new long[] { 5 };
         main.invoke(null, new Object[] { data });
@@ -389,7 +360,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testArrayNew() throws Exception {
         loadText("fun foo() = Array<Int>(4, { it })");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         Integer[] result = (Integer[]) main.invoke(null);
         assertEquals(4, result.length);
@@ -401,14 +371,12 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testArrayNewNullable() throws Exception {
         loadText("fun foo() = arrayOfNulls<Int>(4)");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         Integer[] result = (Integer[]) main.invoke(null);
         assertEquals(4, result.length);
     }
     public void testFloatArrayNew() throws Exception {
         loadText("fun foo() = FloatArray(4)");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         float[] result = (float[]) main.invoke(null);
         assertEquals(4, result.length);
@@ -416,7 +384,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testFloatArrayArrayNew() throws Exception {
         loadText("fun foo() = Array<FloatArray>(4, { FloatArray(5-it) })");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         float[][] result = (float[][]) main.invoke(null);
         assertEquals(4, result.length);
@@ -425,17 +392,14 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testArraySize() throws Exception {
         loadText("fun foo(a: Array<Int>) = a.size");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         Object[] args = new Object[] { new Integer[4] };
         int result = (Integer) main.invoke(null, args);
-        System.out.println(result);
         assertEquals(4, result);
     }
 
     public void testIntArraySize() throws Exception {
         loadText("fun foo(a: IntArray) = a.size");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         Object[] args = new Object[] { new int[4] };
         int result = (Integer) main.invoke(null, args);

@@ -65,11 +65,11 @@ public class EnumGenTest extends CodegenTestCase {
         assertEquals(0xFF0000, rgbMethod.invoke(redValue));
     }
 
-    public void testSimple() throws NoSuchFieldException, IllegalAccessException {
+    public void testSimple() {
         blackBoxFile("enum/simple.kt");
     }
 
-    public void testSimpleEnumInPackage() throws NoSuchFieldException, IllegalAccessException {
+    public void testSimpleEnumInPackage() {
         blackBoxFile("enum/inPackage.kt");
     }
 
@@ -89,16 +89,15 @@ public class EnumGenTest extends CodegenTestCase {
         blackBoxFile("enum/ordinal.kt");
     }
 
-    public void testValues() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testValues() {
         blackBoxFile("enum/valueof.kt");
     }
 
-    public void testInClassObj() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testInClassObj() {
         blackBoxFile("enum/inclassobj.kt");
     }
 
-    public void testAbstractMethod()
-            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testAbstractMethod() {
         blackBoxFile("enum/abstractmethod.kt");
     }
     

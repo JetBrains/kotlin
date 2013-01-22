@@ -1,7 +1,7 @@
 import java.util.*
 
 class Template() {
-    val collected = LinkedList<String>()
+    val collected = ArrayList<String>()
 
     fun String.plus() {
        collected.add(this@plus)

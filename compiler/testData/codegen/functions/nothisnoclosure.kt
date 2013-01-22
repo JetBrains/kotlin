@@ -1,7 +1,9 @@
+fun foo(x: Int) {}
+
 fun loop(var times : Int) {
    while(times > 0) {
         val u : (value : Int) -> Unit = {
-            System.out?.println(it)
+            foo(it)
         }
         u(times--)
    }

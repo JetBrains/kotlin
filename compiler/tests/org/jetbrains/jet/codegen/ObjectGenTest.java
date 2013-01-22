@@ -27,17 +27,14 @@ public class ObjectGenTest extends CodegenTestCase {
 
     public void testSimpleObject() {
         blackBoxFile("objects/simpleObject.kt");
-//        System.out.println(generateToText());
     }
 
     public void testObjectLiteral() {
         blackBoxFile("objects/objectLiteral.kt");
-//        System.out.println(generateToText());
     }
 
     public void testObjectLiteralInClosure() {
         blackBoxFile("objects/objectLiteralInClosure.kt");
-//        System.out.println(generateToText());
     }
 
     public void testMethodOnObject() {

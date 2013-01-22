@@ -21,25 +21,25 @@ import org.jetbrains.jet.ConfigurationKind;
 import java.lang.reflect.Method;
 
 public class ArrayGenTest extends CodegenTestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testKt238() throws Exception {
+    public void testKt238() {
         blackBoxFile("regressions/kt238.kt");
     }
 
-    public void testKt326() throws Exception {
-        //        blackBoxFile("regressions/kt326.kt");
-        //        System.out.println(generateToText());
+    public void testKt326() {
+        // Disabled: java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.Integer;
+        /*
+        blackBoxFile("regressions/kt326.kt");
+        */
     }
 
-    public void testKt779() throws Exception {
+    public void testKt779() {
         blackBoxFile("regressions/kt779.kt");
-        //        System.out.println(generateToText());
     }
 
     public void testCreateMultiInt() throws Exception {
@@ -69,244 +69,141 @@ public class ArrayGenTest extends CodegenTestCase {
         loadText("fun foo() = Array<Array<String>> (5, { Array<String>(0,{\"\"}) })");
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
-        System.out.println(invoke.getClass());
         assertTrue(invoke instanceof Object[]);
     }
 
     public void testCreateMultiGenerics() throws Exception {
-        //        loadText("class L<T>() { val a = Array<T?>(5) } fun foo() = L<Int>.a");
-        //        System.out.println(generateToText());
-        //        Method foo = generateFunction();
-        //        Object invoke = foo.invoke(null);
-        //        System.out.println(invoke.getClass());
-        //        assertTrue(invoke.getClass() == Object[].class);
+        // Disabled: java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.Integer;
+        /*
+        loadText("class L<T>() { val a = Array<T?>(5) { null } } fun foo() = L<Int>().a");
+        System.out.println(generateToText());
+        Method foo = generateFunction();
+        Object invoke = foo.invoke(null);
+        assertTrue(invoke.getClass() == Object[].class);
+        */
     }
 
     public void testIntGenerics() throws Exception {
         loadText("class L<T>(var a : T) {} fun foo() = L<Int>(5).a");
-        //System.out.println(generateToText());
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
-        System.out.println(invoke.getClass());
         assertTrue(invoke instanceof Integer);
     }
 
-    public void testIterator() throws Exception {
-        loadText("fun box() { val x = Array<Int>(5, { it } ).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIterator() {
+        blackBoxFile("arrays/iterator.kt");
     }
 
-    public void testPrimitiveIterator() throws Exception {
-        loadText("fun box() { val x = ByteArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.nextByte()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorLongArrayNextLong() {
+        blackBoxFile("arrays/iteratorLongArrayNextLong.kt");
     }
 
-    public void testPrimitiveIteratorByte() throws Exception {
-        loadText("fun box() { for(x in ByteArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorByteArrayNextByte() {
+        blackBoxFile("arrays/iteratorByteArrayNextByte.kt");
     }
 
-    public void testPrimitiveIteratorShort() throws Exception {
-        loadText("fun box() { for(x in ShortArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachBooleanArray() {
+        blackBoxFile("arrays/forEachBooleanArray.kt");
     }
 
-    public void testPrimitiveIteratorInt() throws Exception {
-        loadText("fun box() { for(x in IntArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachByteArray() {
+        blackBoxFile("arrays/forEachByteArray.kt");
     }
 
-    public void testPrimitiveIteratorLong() throws Exception {
-        loadText("fun box() { for(x in LongArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachCharArray() {
+        blackBoxFile("arrays/forEachCharArray.kt");
     }
 
-    public void testPrimitiveIteratorFloat() throws Exception {
-        loadText("fun box() { for(x in FloatArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachDoubleArray() {
+        blackBoxFile("arrays/forEachDoubleArray.kt");
     }
 
-    public void testPrimitiveIteratorDouble() throws Exception {
-        loadText("fun box() { for(x in DoubleArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachFloatArray() {
+        blackBoxFile("arrays/forEachFloatArray.kt");
     }
 
-    public void testPrimitiveIteratorChar() throws Exception {
-        loadText("fun box() { for(x in CharArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachIntArray() {
+        blackBoxFile("arrays/forEachIntArray.kt");
     }
 
-    public void testPrimitiveIteratorBoolean() throws Exception {
-        loadText("fun box() { for(x in BooleanArray(5)) { java.lang.System.out?.println(x) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachLongArray() {
+        blackBoxFile("arrays/forEachLongArray.kt");
     }
 
-    public void testLongIterator() throws Exception {
-        loadText("fun box() { val x = LongArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.nextLong()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testForEachShortArray() {
+        blackBoxFile("arrays/forEachShortArray.kt");
     }
 
-    public void testCharIterator() throws Exception {
-        loadText("fun box() { val x = CharArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorBooleanArray() {
+        blackBoxFile("arrays/iteratorBooleanArray.kt");
     }
 
-    public void testByteIterator() throws Exception {
-        loadText("fun box() { val x = ByteArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorByteArray() {
+        blackBoxFile("arrays/iteratorByteArray.kt");
     }
 
-    public void testShortIterator() throws Exception {
-        loadText("fun box() { val x = ShortArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorCharArray() {
+        blackBoxFile("arrays/iteratorCharArray.kt");
     }
 
-    public void testIntIterator() throws Exception {
-        loadText("fun box() { val x = IntArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorDoubleArray() {
+        blackBoxFile("arrays/iteratorDoubleArray.kt");
     }
 
-    public void testLongIterator2() throws Exception {
-        loadText("fun box() { val x = LongArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorFloatArray() {
+        blackBoxFile("arrays/iteratorFloatArray.kt");
     }
 
-    public void testFloatIterator() throws Exception {
-        loadText("fun box() { val x = FloatArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorIntArray() {
+        blackBoxFile("arrays/iteratorIntArray.kt");
     }
 
-    public void testDoubleIterator() throws Exception {
-        loadText("fun box() { val x = ShortArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorLongArray() {
+        blackBoxFile("arrays/iteratorLongArray.kt");
     }
 
-    public void testBooleanIterator() throws Exception {
-        loadText("fun box() { val x = BooleanArray(5).iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIteratorShortArray() {
+        blackBoxFile("arrays/iteratorShortArray.kt");
     }
 
-    public void testArrayIndices() throws Exception {
-        loadText(
-                "fun box() { val x = Array<Int>(5, {it}).indices.iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testArrayIndices() {
+        blackBoxFile("arrays/indices.kt");
     }
 
-    public void testCharIndices() throws Exception {
-        loadText("fun box() { val x = CharArray(5).indices.iterator(); while(x.hasNext()) { java.lang.System.out?.println(x.next()) } }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        foo.invoke(null);
+    public void testIndicesChar() {
+        blackBoxFile("arrays/indicesChar.kt");
     }
 
-    public void testCollectionPlusAssign() throws Exception {
+    public void testCollectionPlusAssign() {
         blackBoxFile("regressions/kt33.kt");
     }
 
-    public void testArrayPlusAssign() throws Exception {
-        loadText("fun box() : Int { val s = IntArray(1); s [0] = 5; s[0] += 7; return s[0] }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction();
-        assertTrue((Integer) foo.invoke(null) == 12);
+    public void testArrayPlusAssign() {
+        blackBoxFile("arrays/arrayPlusAssign.kt");
     }
 
-    public void testCollectionAssignGetMultiIndex() throws Exception {
-        loadText("import java.util.ArrayList\n" +
-                 "fun box() : String { val s = ArrayList<String>(1); s.add(\"\"); s [1, -1] = \"5\"; s[2, -2] += \"7\"; return s[2,-2] }\n" +
-                 "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2]!!\n" +
-                 "fun ArrayList<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem }\n");
-        //            System.out.println(generateToText());
-        Method foo = generateFunction("box");
-        assertTrue(foo.invoke(null).equals("57"));
+    public void testCollectionAssignGetMultiIndex() {
+        blackBoxFile("arrays/collectionAssignGetMultiIndex.kt");
     }
 
-    public void testArrayGetAssignMultiIndex() throws Exception {
-        loadText(
-                "fun box() : String? { val s = Array<String>(1,{ \"\" }); s [1, -1] = \"5\"; s[2, -2] += \"7\"; return s[-3,3] }\n" +
-                "fun Array<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
-                "fun Array<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem\n }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction("box");
-        assertTrue(foo.invoke(null).equals("57"));
+    public void testArrayGetAssignMultiIndex() {
+        blackBoxFile("arrays/arrayGetAssignMultiIndex.kt");
     }
 
-    public void testCollectionGetMultiIndex() throws Exception {
-        loadText("import java.util.ArrayList\n" +
-                 "fun box() : String { val s = ArrayList<String>(1); s.add(\"\"); s [1, -1] = \"5\"; return s[2, -2] }\n" +
-                 "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2]!!\n" +
-                 "fun ArrayList<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem }\n");
-        //            System.out.println(generateToText());
-        Method foo = generateFunction("box");
-        assertTrue(foo.invoke(null).equals("5"));
+    public void testCollectionGetMultiIndex() {
+        blackBoxFile("arrays/collectionGetMultiIndex.kt");
     }
 
-    public void testArrayGetMultiIndex() throws Exception {
-        loadText(
-                "fun box() : String? { val s = Array<String>(1,{ \"\" }); s [1, -1] = \"5\"; return s[-2, 2] }\n" +
-                "fun Array<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
-                "fun Array<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem\n }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction("box");
-        assertTrue(foo.invoke(null).equals("5"));
+    public void testArrayGetMultiIndex() {
+        blackBoxFile("arrays/arrayGetMultiIndex.kt");
     }
 
-    public void testMap() throws Exception {
-        loadText(
-                "fun box() : Int? { val s = java.util.HashMap<String,Int?>(); s[\"239\"] = 239; return s[\"239\"] }\n" +
-                "fun java.util.HashMap<String,Int?>.set(index: String, elem: Int?) { this.put(index, elem) }");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction("box");
-        assertTrue((Integer) foo.invoke(null) == 239);
+    public void testHashMap() {
+        blackBoxFile("arrays/hashMap.kt");
     }
 
-    public void testLongDouble() throws Exception {
-        loadText(
-                "fun box() : Int { var l = IntArray(1); l[0.toLong()] = 4; l[0.toLong()] += 6; return l[0.toLong()];}\n" +
-                "fun IntArray.set(index: Long, elem: Int) { this[index.toInt()] = elem }\n" +
-                "fun IntArray.get(index: Long) = this[index.toInt()]");
-        //        System.out.println(generateToText());
-        Method foo = generateFunction("box");
-        assertTrue((Integer) foo.invoke(null) == 10);
+    public void testLongAsIndex() {
+        blackBoxFile("arrays/longAsIndex.kt");
     }
 
     public void testKt503() {
@@ -315,25 +212,21 @@ public class ArrayGenTest extends CodegenTestCase {
 
     public void testKt602() {
         blackBoxFile("regressions/kt602.kt");
-        //        System.out.println(generateToText());
     }
 
     public void testKt950() {
         blackBoxFile("regressions/kt950.kt");
     }
 
-    public void testKt594() throws Exception {
-        loadFile("regressions/kt594.kt");
-        //        System.out.println(generateToText());
-        blackBox();
+    public void testKt594() {
+        blackBoxFile("regressions/kt594.kt");
     }
 
-    public void testNonNullArray() throws Exception {
-        blackBoxFile("classes/nonnullarray.kt");
-        //        System.out.println(generateToText());
+    public void testNonNullArray() {
+        blackBoxFile("arrays/nonNullArray.kt");
     }
 
-    public void testArrayCast() throws Exception {
+    public void testArrayCast() {
         blackBoxFile("regressions/kt2997.kt");
     }
 }

@@ -87,9 +87,7 @@ public class SpecialFiles {
         excludedFiles.add("namespaceQualifiedMethod.kt"); // Cannot change package name
         excludedFiles.add("kt1482_2279.kt"); // Cannot change package name
         excludedFiles.add("kt1482.kt"); // Cannot change package name
-        excludedFiles.add("importFromClassObject.kt"); // Cannot find usages in Codegen tests
         excludedFiles.add("withtypeparams.kt"); // Cannot find usages in Codegen tests
-        excludedFiles.add("kt1113.kt"); // Commented
         excludedFiles.add("kt326.kt"); // Commented
         excludedFiles.add("kt1213.kt"); // Commented
         excludedFiles.add("kt882.kt"); // Commented

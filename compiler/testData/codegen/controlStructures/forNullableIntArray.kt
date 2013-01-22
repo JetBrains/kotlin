@@ -9,7 +9,6 @@ fun box() : String {
     for (el in b) {
         sum = sum + (el ?: 0)
     }
-    System.out?.println(sum)
     if(sum != 10) return "b failed"
 
     return "OK"

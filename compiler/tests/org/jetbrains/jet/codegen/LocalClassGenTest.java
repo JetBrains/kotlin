@@ -34,7 +34,7 @@ public class LocalClassGenTest extends CodegenTestCase {
     }
 
     public void testEnum() {
-        //blackBoxFile("localcls/enum.kt");
+        blackBoxFile("localcls/enum.kt");
     }
 
     public void testObject() {

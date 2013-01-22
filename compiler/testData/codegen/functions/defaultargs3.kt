@@ -4,7 +4,6 @@ class C() {
 
     fun testReceiver() : String {
         val res : String = "mama".toMyPrefixedString("111", "222")
-        System.out?.println(res)
         return res
     }
 

@@ -22,12 +22,17 @@ import java.lang.reflect.Method;
 
 public class ExtensionFunctionsTest extends CodegenTestCase {
     @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
+    @Override
     protected String getPrefix() {
         return "extensionFunctions";
     }
 
     public void testSimple() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
         final Method foo = generateFunction("foo");
         final Character c = (Character) foo.invoke(null);
@@ -35,71 +40,52 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testWhenFail() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
-//        System.out.println(generateToText());
         Method foo = generateFunction("foo");
         assertThrows(foo, Exception.class, null, new StringBuilder());
     }
 
-    public void testVirtual() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testVirtual() {
         blackBoxFile("extensionFunctions/virtual.kt");
     }
 
-    public void testShared() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testShared() {
         blackBoxFile("extensionFunctions/shared.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testKt475() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt475() {
         blackBoxFile("regressions/kt475.kt");
     }
 
-    public void testKtNested() throws Exception {
-        createEnvironmentWithFullJdk();
-        blackBoxFile("extensionFunctions/nested.kt");
-    }
-
-    public void testKt865() throws Exception {
-        createEnvironmentWithFullJdk();
+    public void testKt865() {
         blackBoxFile("regressions/kt865.kt");
     }
 
-    public void testKtNested2() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKtNested2() {
         blackBoxFile("extensionFunctions/nested2.kt");
     }
 
-    public void testKt606() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt606() {
         blackBoxFile("regressions/kt606.kt");
     }
 
-    public void testKt1061() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1061() {
         blackBoxFile("regressions/kt1061.kt");
     }
 
-    public void testKt1249() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1249() {
         blackBoxFile("regressions/kt1249.kt");
     }
 
-    public void testKt1290() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1290() {
         blackBoxFile("regressions/kt1290.kt");
     }
 
-    public void testKt1953() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1953() {
         blackBoxFile("regressions/kt1953.kt");
     }
 
-    public void testKt1953Class() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1953Class() {
         blackBoxFile("regressions/kt1953_class.kt");
     }
 }

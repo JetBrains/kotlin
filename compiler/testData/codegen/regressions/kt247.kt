@@ -12,15 +12,14 @@ fun t2() : Boolean {
 
 fun t3() {
     val d: D = D("s")
-    System.out?.println(d?.s)
-    System.out?.println(d?.s == "s") //prints true
-    System.out?.println(d)    //ok
+    val x = d?.s
+    if (!(d?.s == "s")) throw AssertionError()
 }
 
 fun t4() {
     val e: E? = E()
-    System.out?.println(e?.bar() == e) //verify error
-    System.out?.println(e?.foo())  //verify error
+    if (!(e?.bar() == e)) throw AssertionError()
+    val x = e?.foo()
 }
 
 fun box() : String {

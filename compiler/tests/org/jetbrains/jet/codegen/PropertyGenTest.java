@@ -23,12 +23,17 @@ import java.lang.reflect.*;
 
 public class PropertyGenTest extends CodegenTestCase {
     @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
+    @Override
     protected String getPrefix() {
         return "properties";
     }
 
     public void testPrivateVal() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
         final Field[] fields = aClass.getDeclaredFields();
@@ -38,7 +43,6 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPrivateVar() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVar");
         final Object instance = aClass.newInstance();
@@ -49,7 +53,6 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPublicVar() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("class PublicVar() { public var foo : Int = 0; }");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PublicVar");
         final Object instance = aClass.newInstance();
@@ -60,7 +63,6 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsInInterface() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("class AccessorsInInterface() { public var foo : Int = 0; }");
         final Class aClass = loadClass("AccessorsInInterface", generateClassesInFile());
         assertNotNull(findMethodByName(aClass, "getFoo"));
@@ -68,7 +70,6 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPrivatePropertyInNamespace() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("private val x = 239");
         final Class nsClass = generateNamespaceClass();
         final Field[] fields = nsClass.getDeclaredFields();
@@ -81,35 +82,31 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldPropertyAccess() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile("properties/fieldPropertyAccess.kt");
-//        System.out.println(generateToText());
         final Method method = generateFunction("increment");
         assertEquals(1, method.invoke(null));
         assertEquals(2, method.invoke(null));
     }
 
     public void testFieldGetter() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("val now: Long get() = System.currentTimeMillis(); fun foo() = now");
         final Method method = generateFunction("foo");
         assertIsCurrentTime((Long) method.invoke(null));
     }
 
     public void testFieldSetter() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
         String value = (String) method.invoke(null, "IDEA");
         if (!value.equals("IntelliJ IDEA")) {
             System.out.println(generateToText());
+            throw new AssertionError(value);
         }
         assertEquals("IntelliJ IDEA", value);
     }
 
     public void testFieldSetterPlusEq() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
@@ -118,9 +115,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsWithoutBody() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("class AccessorsWithoutBody() { protected var foo: Int = 349\n get\n  private set\n fun setter() { foo = 610; } } ");
-//        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
         final Object instance = aClass.newInstance();
         final Method getFoo = findMethodByName(aClass, "getFoo");
@@ -136,7 +131,6 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testInitializersForNamespaceProperties() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("val x = System.currentTimeMillis()");
         final Method method = generateFunction("getX");
         method.setAccessible(true);
@@ -144,7 +138,6 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPropertyReceiverOnStack() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadFile();
         final Class aClass = loadImplementationClass(generateClassesInFile(), "Evaluator");
         final Constructor constructor = aClass.getConstructor(StringBuilder.class);
@@ -156,7 +149,6 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAbstractVal() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("abstract class Foo { public abstract val x: String }");
         final ClassFileFactory codegens = generateClassesInFile();
         final Class aClass = loadClass("Foo", codegens);
@@ -164,77 +156,61 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testVolatileProperty() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("abstract class Foo { public volatile var x: String = \"\"; }");
-//        System.out.println(generateToText());
         final ClassFileFactory codegens = generateClassesInFile();
         final Class aClass = loadClass("Foo", codegens);
         Field x = aClass.getDeclaredField("x");
         assertTrue((x.getModifiers() & Modifier.VOLATILE) != 0);
     }
 
-    public void testKt257 () throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt257() {
         blackBoxFile("regressions/kt257.kt");
-//        System.out.println(generateToText());
     }
 
-    public void testKt613 () throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt613() {
         blackBoxFile("regressions/kt613.kt");
     }
 
     public void testKt160() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         loadText("internal val s = java.lang.Double.toString(1.0)");
         final Method method = generateFunction("getS");
         method.setAccessible(true);
         assertEquals(method.invoke(null), "1.0");
     }
 
-    public void testKt1165() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1165() {
         blackBoxFile("regressions/kt1165.kt");
     }
 
-    public void testKt1168() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1168() {
         blackBoxFile("regressions/kt1168.kt");
     }
 
-    public void testKt1170() throws Exception {
-        createEnvironmentWithFullJdk();
+    public void testKt1170() {
         blackBoxFile("regressions/kt1170.kt");
     }
 
-    public void testKt1159() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1159() {
         blackBoxFile("regressions/kt1159.kt");
     }
 
-    public void testKt1417() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1417() {
         blackBoxFile("regressions/kt1417.kt");
     }
 
-    public void testKt1398() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1398() {
         blackBoxFile("regressions/kt1398.kt");
     }
 
-    public void testKt2331() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2331() {
         blackBoxFile("regressions/kt2331.kt");
     }
 
-    public void testKt1892() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1892() {
         blackBoxFile("regressions/kt1892.kt");
-        //System.out.println(generateToText());
     }
 
-    public void testKt1846() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1846() {
         loadFile("regressions/kt1846.kt");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "A");
         try {
@@ -254,43 +230,31 @@ public class PropertyGenTest extends CodegenTestCase {
         }
     }
 
-    public void testKt1482_2279() throws Exception {
-        createEnvironmentWithFullJdk();
+    public void testKt1482_2279() {
         blackBoxFile("regressions/kt1482_2279.kt");
     }
 
-    public void testKt1714() throws Exception {
-        createEnvironmentWithFullJdk();
+    public void testKt1714() {
         blackBoxFile("regressions/kt1714.kt");
     }
 
-    public void testKt1714_minimal() throws Exception {
-        createEnvironmentWithFullJdk();
+    public void testKt1714_minimal() {
         blackBoxFile("regressions/kt1714_minimal.kt");
     }
 
-    public void testKt2509() throws Exception {
-        createEnvironmentWithFullJdk();
-        blackBoxFile("regressions/kt2509.kt");
-    }
-
-    public void testKt2786() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2786() {
         blackBoxFile("regressions/kt2786.kt");
     }
 
-    public void testKt2655() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2655() {
         blackBoxFile("regressions/kt2655.kt");
     }
 
-    public void testKt1528() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt1528() {
         blackBoxMultiFile("regressions/kt1528_1.kt", "regressions/kt1528_3.kt");
     }
 
-    public void testKt2589() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2589() {
         loadFile("regressions/kt2589.kt");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "Foo");
         assertTrue((aClass.getModifiers() & Opcodes.ACC_FINAL) == 0);
@@ -318,8 +282,7 @@ public class PropertyGenTest extends CodegenTestCase {
         }
     }
 
-    public void testKt2677() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2677() {
         loadFile("regressions/kt2677.kt");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "DerivedWeatherReport");
         final Class bClass = aClass.getSuperclass();
@@ -358,23 +321,19 @@ public class PropertyGenTest extends CodegenTestCase {
         }
     }
 
-    public void testKt2892() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2892() {
         blackBoxFile("properties/kt2892.kt");
     }
 
-    public void testAccessToPrivateProperty() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testAccessToPrivateProperty() {
         blackBoxFile("properties/accessToPrivateProperty.kt");
     }
 
-    public void testAccessToPrivateSetter() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testAccessToPrivateSetter() {
         blackBoxFile("properties/accessToPrivateSetter.kt");
     }
 
-    public void testKt2202() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testKt2202() {
         loadFile("properties/kt2202.kt");
         String text = generateToText();
         assertFalse(text.contains("INVOKEVIRTUAL"));

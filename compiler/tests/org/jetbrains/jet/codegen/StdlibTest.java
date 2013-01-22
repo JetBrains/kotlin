@@ -96,7 +96,6 @@ public class StdlibTest extends CodegenTestCase {
     //from ClassGenTest
     public void testKt344 () throws Exception {
         loadFile("regressions/kt344.kt");
-//        System.out.println(generateToText());
         blackBox();
     }
 
@@ -339,7 +338,6 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testKt2210() throws Exception {
         blackBoxFile("regressions/kt2210.kt");
-//        System.out.println(generateToText());
     }
 
     public void testKt2593() {
@@ -368,5 +366,13 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testNoClassObjectForJavaClass() throws Exception {
         blackBoxFileWithJava("stdlib/noClassObjectForJavaClass.kt");
+    }
+
+    public void testKt1076() {
+        blackBoxFile("regressions/kt1076.kt");
+    }
+
+    public void testKt1515() {
+        blackBoxMultiFile("/multi/kt1515/thisPackage.kt", "/multi/kt1515/otherPackage.kt");
     }
 }

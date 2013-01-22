@@ -23,37 +23,35 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class VarArgTest extends CodegenTestCase {
-    public void testStringArray () throws InvocationTargetException, IllegalAccessException {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
+
+    public void testStringArray() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test(vararg ts: String) = ts");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         String[] args = {"mama", "papa"};
         assertTrue(args == main.invoke(null, new Object[]{ args } ));
     }
 
-    public void testIntArray () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testIntArray() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test(vararg ts: Int) = ts");
-//        System.out.println(generateToText());
         final Method main = generateFunction();
         int[] args = {3, 4};
         assertTrue(args == main.invoke(null, new Object[]{ args }));
     }
 
-    public void testIntArrayKotlinNoArgs () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testIntArrayKotlinNoArgs() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(); fun testf(vararg ts: Int) = ts");
-//        System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((int[])res).length == 0);
     }
 
-    public void testIntArrayKotlin () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testIntArrayKotlin() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(239, 7); fun testf(vararg ts: Int) = ts");
-//        System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((int[])res).length == 2);
@@ -61,10 +59,8 @@ public class VarArgTest extends CodegenTestCase {
         assertTrue(((int[])res)[1] == 7);
     }
 
-    public void testNullableIntArrayKotlin () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testNullableIntArrayKotlin() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(239.toByte(), 7.toByte()); fun testf(vararg ts: Byte?) = ts");
-//        System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((Byte[])res).length == 2);
@@ -72,20 +68,16 @@ public class VarArgTest extends CodegenTestCase {
         assertTrue(((Byte[])res)[1] == 7);
     }
 
-    public void testIntArrayKotlinObj () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testIntArrayKotlinObj() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = testf(\"239\"); fun testf(vararg ts: String) = ts");
-//        System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((String[])res).length == 1);
         assertTrue(((String[])res)[0].equals("239"));
     }
 
-    public void testArrayT () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testArrayT() throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = _array(2, 4); fun <T> _array(vararg elements : T) = elements");
-//        System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((Integer[])res).length == 2);
@@ -94,28 +86,22 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testKt581() {
-        createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt581.kt");
     }
 
     public void testKt797() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt796_797.kt");
     }
 
-    public void testArrayAsVararg () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testArrayAsVararg() throws InvocationTargetException, IllegalAccessException {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts: Array<String>) = asList(*ts); ");
-        //System.out.println(generateToText());
         final Method main = generateFunction("test");
         String[] args = {"mama", "papa"};
         assertTrue(args == main.invoke(null, new Object[]{ args } ));
     }
 
-    public void testArrayAsVararg2 () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    public void testArrayAsVararg2() throws InvocationTargetException, IllegalAccessException {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts1: Array<String>, ts2: String) = asList(*ts1, ts2); ");
-        //System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object invoke = main.invoke(null, new Object[] {new String[] {"mama"}, "papa" });
         assertInstanceOf(invoke, String[].class);
@@ -125,7 +111,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testKt1978() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("regressions/kt1978.kt");
     }
 }

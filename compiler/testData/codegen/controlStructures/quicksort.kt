@@ -34,9 +34,8 @@ fun box() : String {
         a[2*i+1] = -2*i-1
     }
     a.quicksort()
-    for(i in 0..9) {
-        System.out?.print(a[i])
-        System.out?.print(' ')
+    for(i in 0..a.size-2) {
+        if (a[i] > a[i+1]) return "Fail $i: ${a[i]} > ${a[i+1]}"
     }
     return "OK"
 }

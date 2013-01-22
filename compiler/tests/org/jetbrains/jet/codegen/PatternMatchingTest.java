@@ -21,7 +21,6 @@ import org.jetbrains.jet.ConfigurationKind;
 import java.lang.reflect.Method;
 
 public class PatternMatchingTest extends CodegenTestCase {
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -56,7 +55,6 @@ public class PatternMatchingTest extends CodegenTestCase {
 
     public void testInrange() throws Exception {
         loadFile();
-//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("array list", foo.invoke(null, 239));
         assertEquals("digit", foo.invoke(null, 0));
@@ -66,27 +64,24 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, 19));
     }
 
-    public void testIs() throws Exception {
-        loadFile();
-//        System.out.println(generateToText());
-        blackBox();
+    public void testIs() {
+        blackBoxFile("patternMatching/is.kt");
     }
 
-    public void testRange() throws Exception {
+    public void testRange() {
         blackBoxFile("patternMatching/range.kt");
     }
 
-    public void testLongInRange() throws Exception {
+    public void testLongInRange() {
         blackBoxFile("patternMatching/longInRange.kt");
     }
 
-    public void testWhenArgumentIsEvaluatedOnlyOnce() throws Exception {
+    public void testWhenArgumentIsEvaluatedOnlyOnce() {
         blackBoxFile("patternMatching/whenArgumentIsEvaluatedOnlyOnce.kt");
     }
 
     public void testRangeChar() throws Exception {
         loadFile();
-//        System.out.println(generateToText());
         Method foo = generateFunction();
         assertEquals("digit", foo.invoke(null, '0'));
         assertEquals("something", foo.invoke(null, 'A'));
@@ -111,7 +106,7 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, "C#"));
     }
 
-    public void testCallProperty() throws Exception {
+    public void testCallProperty() {
         blackBoxFile("patternMatching/callProperty.kt");
     }
 
@@ -123,19 +118,19 @@ public class PatternMatchingTest extends CodegenTestCase {
         assertEquals("something", foo.invoke(null, 2));
     }
 
-    public void testNullableWhen() throws Exception {  // KT-2148
+    public void testNullableWhen() {
         blackBoxFile("patternMatching/nullableWhen.kt");
     }
 
-    public void testKt2466() throws Exception {
+    public void testKt2466() {
         blackBoxFile("patternMatching/kt2466.kt");
     }
 
-    public void testMatchNotNullAgainstNullable() throws Exception {
+    public void testMatchNotNullAgainstNullable() {
         blackBoxFile("patternMatching/matchNotNullAgainstNullable.kt");
     }
 
-    public void testKt2457() throws Exception {
+    public void testKt2457() {
         blackBoxFile("regressions/kt2457.kt");
     }
 }

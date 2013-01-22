@@ -23,6 +23,5 @@ public class TupleGenTest extends CodegenTestCase {
     public void testUnitValue() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFile("/tuples/UnitValue.kt");
-//        System.out.println(generateToText());
     }
 }
