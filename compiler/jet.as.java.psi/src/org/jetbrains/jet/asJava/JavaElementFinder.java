@@ -87,9 +87,8 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
         findClassesAndObjects(qualifiedName, scope, answer);
 
-        FqName packageFQN = qualifiedName.parent();
-        if (PackageClassUtils.getPackageClassFqName(packageFQN).equals(qualifiedName)) {
-            findPackageClass(packageFQN, scope, answer);
+        if (PackageClassUtils.isPackageClass(qualifiedName)) {
+            findPackageClass(qualifiedName.parent(), scope, answer);
         }
 
         return answer.toArray(new PsiClass[answer.size()]);

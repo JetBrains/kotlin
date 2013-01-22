@@ -42,4 +42,11 @@ public class PackageClassUtils {
     public static boolean isPackageClass(@NotNull PsiClass psiClass) {
         return JetPackageClassAnnotation.get(psiClass).isDefined();
     }
+
+    public static boolean isPackageClass(@NotNull FqName fqName) {
+        if (fqName.isRoot()) {
+            return false;
+        }
+        return PackageClassUtils.getPackageClassFqName(fqName.parent()).equals(fqName);
+    }
 }
