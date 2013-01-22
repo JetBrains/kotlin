@@ -31,12 +31,12 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.kt.JetPackageClassAnnotation;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScopeWithoutMembers;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaScopeForKotlinNamespace;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -153,6 +153,8 @@ public final class JavaNamespaceResolver {
                         javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationProviderForNamespaceWithoutMembers(psiPackage),
                         fqName, javaSemanticServices);
             }
+
+            AbiVersionUtil.checkAbiVersion(psiClass, JetPackageClassAnnotation.get(psiClass), trace);
             return new JavaScopeForKotlinNamespace(
                     namespaceDescriptor,
                     javaSemanticServices.getPsiDeclarationProviderFactory().createDeclarationForKotlinNamespace(psiPackage, psiClass),

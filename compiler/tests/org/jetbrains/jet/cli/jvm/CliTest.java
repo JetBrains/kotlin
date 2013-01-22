@@ -134,6 +134,15 @@ public class CliTest {
     }
 
     @Test
+    public void wrongAbiVersion() throws Exception {
+        String[] args = {
+                "-src", "compiler/testData/cli/wrongAbiVersion.kt",
+                "-classpath", "compiler/testData/cli/wrongAbiVersionLib",
+                "-output", tmpdir.getTmpDir().getPath()};
+        executeCompilerCompareOutput(args);
+    }
+
+    @Test
     public void help() throws Exception {
         executeCompilerCompareOutput(new String[] {"-help"});
     }

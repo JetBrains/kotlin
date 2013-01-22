@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 
-public class JetClassAnnotation extends PsiAnnotationWithFlags {
+public class JetClassAnnotation extends PsiAnnotationWithAbiVersion {
     private static final JetClassAnnotation NULL_ANNOTATION = new JetClassAnnotation(null);
     static {
         NULL_ANNOTATION.checkInitialized();

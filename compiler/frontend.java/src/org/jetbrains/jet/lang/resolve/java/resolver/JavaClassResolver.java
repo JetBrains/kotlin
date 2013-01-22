@@ -217,6 +217,8 @@ public final class JavaClassResolver {
             @NotNull ClassOrNamespaceDescriptor containingDeclaration
     ) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
+        AbiVersionUtil.checkAbiVersion(psiClass, jetClassAnnotation, trace);
+
         ClassKind kind = getClassKind(psiClass, jetClassAnnotation);
         ClassPsiDeclarationProvider classData = semanticServices.getPsiDeclarationProviderFactory().createBinaryClassData(psiClass);
         ClassDescriptorFromJvmBytecode classDescriptor = new ClassDescriptorFromJvmBytecode(containingDeclaration, kind,
