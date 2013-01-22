@@ -81,9 +81,9 @@ public final class CharRange implements Range<Character>, CharIterable {
 
     public CharIterator step(int step) {
         if (step < 0)
-            return new CharIteratorImpl(getEnd(), -count, -step);
+            return new CharIteratorImpl(getEnd(), getStart(), step);
         else
-            return new CharIteratorImpl(start, count, step);
+            return new CharIteratorImpl(getStart(), getEnd(), step);
     }
 
     public char getStart() {
@@ -100,46 +100,30 @@ public final class CharRange implements Range<Character>, CharIterable {
 
     @Override
     public CharIterator iterator() {
-        return new CharIteratorImpl(start, count, 1);
+        return new CharIteratorImpl(getStart(), getEnd(), 1);
     }
 
     private static class CharIteratorImpl extends CharIterator {
-        private final int step;
-        private char cur;
-        private int count;
+        private char next;
+        private final char end;
+        private final int increment;
 
-        private final boolean reversed;
-
-        public CharIteratorImpl(char startValue, int count, int step) {
-            cur = startValue;
-            this.step = step;
-            if (count < 0) {
-                reversed = true;
-                count = -count;
-                startValue += count;
-            }
-            else {
-                reversed = false;
-            }
-            this.count = count;
+        public CharIteratorImpl(char start, char end, int increment) {
+            this.next = start;
+            this.end = end;
+            this.increment = increment;
         }
 
         @Override
         public boolean hasNext() {
-            return count > 0;
+            return increment > 0 ? next <= end : next >= end;
         }
 
         @Override
         public char nextChar() {
-            count -= step;
-            if (reversed) {
-                cur -= step;
-                return (char) (cur + step);
-            }
-            else {
-                cur += step;
-                return (char) (cur - step);
-            }
+            char value = next;
+            next += increment;
+            return value;
         }
     }
 }

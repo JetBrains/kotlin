@@ -79,9 +79,9 @@ public final class DoubleRange implements Range<Double> {
 
     public DoubleIterator step(double step) {
         if (step < 0)
-            return new DoubleIteratorImpl(getEnd(), -size, -step);
+            return new DoubleIteratorImpl(getEnd(), getStart(), step);
         else
-            return new DoubleIteratorImpl(start, size, step);
+            return new DoubleIteratorImpl(getStart(), getEnd(), step);
     }
 
     public double  getStart() {
@@ -97,44 +97,26 @@ public final class DoubleRange implements Range<Double> {
     }
 
     private static class DoubleIteratorImpl extends DoubleIterator {
-        private final double step;
+        private double next;
         private final double end;
-        private double cur;
+        private final double increment;
 
-        private final boolean reversed;
-
-        public DoubleIteratorImpl(double startValue, double size, double step) {
-            cur = startValue;
-            this.step = step;
-            if (size < 0) {
-                reversed = true;
-                end = startValue-size;
-                startValue -= size;
-            }
-            else {
-                reversed = false;
-                this.end = startValue + size;
-            }
+        public DoubleIteratorImpl(double start, double end, double increment) {
+            this.next = start;
+            this.end = end;
+            this.increment = increment;
         }
 
         @Override
         public boolean hasNext() {
-            if (reversed)
-                return cur >= end;
-            else
-                return cur <= end;
+            return increment > 0 ? next <= end : next >= end;
         }
 
         @Override
         public double nextDouble() {
-            if (reversed) {
-                cur -= step;
-                return cur + step;
-            }
-            else {
-                cur += step;
-                return cur - step;
-            }
+            double value = next;
+            next += increment;
+            return value;
         }
     }
 }

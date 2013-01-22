@@ -81,9 +81,9 @@ public final class IntRange implements Range<Integer>, IntIterable {
 
     public IntIterator step(int step) {
         if (step < 0)
-            return new IntIteratorImpl(getEnd(), -count, -step);
+            return new IntIteratorImpl(getEnd(), getStart(), step);
         else
-            return new IntIteratorImpl(start, count, step);
+            return new IntIteratorImpl(getStart(), getEnd(), step);
     }
 
     public int getStart() {
@@ -100,46 +100,30 @@ public final class IntRange implements Range<Integer>, IntIterable {
 
     @Override
     public IntIterator iterator() {
-        return new IntIteratorImpl(start, count, 1);
+        return new IntIteratorImpl(getStart(), getEnd(), 1);
     }
 
     private static class IntIteratorImpl extends IntIterator {
-        private int cur;
-        private int step;
-        private int count;
+        private int next;
+        private final int end;
+        private final int increment;
 
-        private final boolean reversed;
-
-        public IntIteratorImpl(int startValue, int count, int step) {
-            cur = startValue;
-            this.step = step;
-            if (count < 0) {
-                reversed = true;
-                count = -count;
-                startValue += count;
-            }
-            else {
-                reversed = false;
-            }
-            this.count = count;
+        public IntIteratorImpl(int start, int end, int increment) {
+            this.next = start;
+            this.end = end;
+            this.increment = increment;
         }
 
         @Override
         public boolean hasNext() {
-            return count > 0;
+            return increment > 0 ? next <= end : next >= end;
         }
 
         @Override
         public int nextInt() {
-            count -= step;
-            if (reversed) {
-                cur -= step;
-                return cur + step;
-            }
-            else {
-                cur += step;
-                return cur - step;
-            }
+            int value = next;
+            next += increment;
+            return value;
         }
     }
 }

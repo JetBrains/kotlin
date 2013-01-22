@@ -81,9 +81,9 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
 
     public ByteIterator step(int step) {
         if (step < 0)
-            return new ByteIteratorImpl(getEnd(), -count, -step);
+            return new ByteIteratorImpl(getEnd(), getStart(), step);
         else
-            return new ByteIteratorImpl(start, count, step);
+            return new ByteIteratorImpl(getStart(), getEnd(), step);
     }
 
     public byte getStart() {
@@ -100,46 +100,30 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
 
     @Override
     public ByteIterator iterator() {
-        return new ByteIteratorImpl(start, count, 1);
+        return new ByteIteratorImpl(getStart(), getEnd(), 1);
     }
 
     private static class ByteIteratorImpl extends ByteIterator {
-        private final int step;
-        private byte cur;
-        private int count;
+        private byte next;
+        private final byte end;
+        private final int increment;
 
-        private final boolean reversed;
-
-        public ByteIteratorImpl(byte startValue, int count, int step) {
-            cur = startValue;
-            this.step = step;
-            if (count < 0) {
-                reversed = true;
-                count = -count;
-                startValue += count;
-            }
-            else {
-                reversed = false;
-            }
-            this.count = count;
+        public ByteIteratorImpl(byte start, byte end, int increment) {
+            this.next = start;
+            this.end = end;
+            this.increment = increment;
         }
 
         @Override
         public boolean hasNext() {
-            return count > 0;
+            return increment > 0 ? next <= end : next >= end;
         }
 
         @Override
         public byte nextByte() {
-            count -= step;
-            if (reversed) {
-                cur -= step;
-                return (byte) (cur + step);
-            }
-            else {
-                cur += step;
-                return (byte) (cur - step);
-            }
+            byte value = next;
+            next += increment;
+            return value;
         }
     }
 }

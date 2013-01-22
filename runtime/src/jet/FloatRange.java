@@ -75,9 +75,9 @@ public final class FloatRange implements Range<Float> {
 
     public FloatIterator step(float step) {
         if (step < 0)
-            return new FloatIteratorImpl(getEnd(), -size, -step);
+            return new FloatIteratorImpl(getEnd(), getStart(), step);
         else
-            return new FloatIteratorImpl(start, size, step);
+            return new FloatIteratorImpl(getStart(), getEnd(), step);
     }
 
     public float  getStart() {
@@ -93,44 +93,26 @@ public final class FloatRange implements Range<Float> {
     }
 
     private static class FloatIteratorImpl extends FloatIterator {
-        private final float step;
+        private float next;
         private final float end;
-        private float cur;
+        private final float increment;
 
-        private final boolean reversed;
-
-        public FloatIteratorImpl(float startValue, float size, float step) {
-            cur = startValue;
-            this.step = step;
-            if (size < 0) {
-                reversed = true;
-                end = startValue-size;
-                startValue -= size;
-            }
-            else {
-                reversed = false;
-                this.end = startValue + size;
-            }
+        public FloatIteratorImpl(float start, float end, float increment) {
+            this.next = start;
+            this.end = end;
+            this.increment = increment;
         }
 
         @Override
         public boolean hasNext() {
-            if (reversed)
-                return cur >= end;
-            else
-                return cur <= end;
+            return increment > 0 ? next <= end : next >= end;
         }
 
         @Override
         public float nextFloat() {
-            if (reversed) {
-                cur -= step;
-                return cur + step;
-            }
-            else {
-                cur += step;
-                return cur - step;
-            }
+            float value = next;
+            next += increment;
+            return value;
         }
     }
 }

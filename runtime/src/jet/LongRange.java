@@ -82,9 +82,9 @@ public final class LongRange implements Range<Long>, LongIterable {
 
     public LongIterator step(long step) {
         if (step < 0)
-            return new LongIteratorImpl(getEnd(), -count, -step);
+            return new LongIteratorImpl(getEnd(), getStart(), step);
         else
-            return new LongIteratorImpl(start, count, step);
+            return new LongIteratorImpl(getStart(), getEnd(), step);
     }
 
     public long getStart() {
@@ -101,46 +101,30 @@ public final class LongRange implements Range<Long>, LongIterable {
 
     @Override
     public LongIterator iterator() {
-        return new LongIteratorImpl(start, count, 1);
+        return new LongIteratorImpl(getStart(), getEnd(), 1);
     }
 
     private static class LongIteratorImpl extends LongIterator {
-        private final long step;
-        private long cur;
-        private long count;
+        private long next;
+        private final long end;
+        private final long increment;
 
-        private final boolean reversed;
-
-        public LongIteratorImpl(long startValue, long count, long step) {
-            cur = startValue;
-            this.step = step;
-            if (count < 0) {
-                reversed = true;
-                count = -count;
-                startValue += count;
-            }
-            else {
-                reversed = false;
-            }
-            this.count = count;
+        public LongIteratorImpl(long start, long end, long increment) {
+            this.next = start;
+            this.end = end;
+            this.increment = increment;
         }
 
         @Override
         public boolean hasNext() {
-            return count > 0;
+            return increment > 0 ? next <= end : next >= end;
         }
 
         @Override
         public long nextLong() {
-            count -= step;
-            if (reversed) {
-                cur -= step;
-                return (cur + step);
-            }
-            else {
-                cur += step;
-                return (cur - step);
-            }
+            long value = next;
+            next += increment;
+            return value;
         }
     }
 }

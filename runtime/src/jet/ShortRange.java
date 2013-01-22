@@ -81,9 +81,9 @@ public final class ShortRange implements Range<Short>, ShortIterable {
 
     public ShortIterator step(int step) {
         if (step < 0)
-            return new ShortIteratorImpl(getEnd(), -count, -step);
+            return new ShortIteratorImpl(getEnd(), getStart(), step);
         else
-            return new ShortIteratorImpl(start, count, step);
+            return new ShortIteratorImpl(getStart(), getEnd(), step);
     }
 
     public short getStart() {
@@ -100,46 +100,30 @@ public final class ShortRange implements Range<Short>, ShortIterable {
 
     @Override
     public ShortIterator iterator() {
-        return new ShortIteratorImpl(start, count, 1);
+        return new ShortIteratorImpl(getStart(), getEnd(), 1);
     }
 
     private static class ShortIteratorImpl extends ShortIterator {
-        private final int step;
-        private short cur;
-        private int count;
+        private short next;
+        private final short end;
+        private final int increment;
 
-        private final boolean reversed;
-
-        public ShortIteratorImpl(short startValue, int count, int step) {
-            cur = startValue;
-            this.step = step;
-            if (count < 0) {
-                reversed = true;
-                count = -count;
-                startValue += count;
-            }
-            else {
-                reversed = false;
-            }
-            this.count = count;
+        public ShortIteratorImpl(short start, short end, int increment) {
+            this.next = start;
+            this.end = end;
+            this.increment = increment;
         }
 
         @Override
         public boolean hasNext() {
-            return count > 0;
+            return increment > 0 ? next <= end : next >= end;
         }
 
         @Override
         public short nextShort() {
-            count -= step;
-            if (reversed) {
-                cur -= step;
-                return (short) (cur + step);
-            }
-            else {
-                cur += step;
-                return (short) (cur - step);
-            }
+            short value = next;
+            next += increment;
+            return value;
         }
     }
 }
