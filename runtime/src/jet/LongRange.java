@@ -82,9 +82,9 @@ public final class LongRange implements Range<Long>, LongIterable {
 
     public LongIterator step(long step) {
         if (step < 0)
-            return new LongIteratorImpl(getEnd(), getStart(), step);
+            return new LongSequenceIterator(getEnd(), getStart(), step);
         else
-            return new LongIteratorImpl(getStart(), getEnd(), step);
+            return new LongSequenceIterator(getStart(), getEnd(), step);
     }
 
     public long getStart() {
@@ -101,30 +101,6 @@ public final class LongRange implements Range<Long>, LongIterable {
 
     @Override
     public LongIterator iterator() {
-        return new LongIteratorImpl(getStart(), getEnd(), 1);
-    }
-
-    private static class LongIteratorImpl extends LongIterator {
-        private long next;
-        private final long end;
-        private final long increment;
-
-        public LongIteratorImpl(long start, long end, long increment) {
-            this.next = start;
-            this.end = end;
-            this.increment = increment;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return increment > 0 ? next <= end : next >= end;
-        }
-
-        @Override
-        public long nextLong() {
-            long value = next;
-            next += increment;
-            return value;
-        }
+        return new LongSequenceIterator(getStart(), getEnd(), 1);
     }
 }

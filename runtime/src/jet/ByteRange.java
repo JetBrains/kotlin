@@ -81,9 +81,9 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
 
     public ByteIterator step(int step) {
         if (step < 0)
-            return new ByteIteratorImpl(getEnd(), getStart(), step);
+            return new ByteSequenceIterator(getEnd(), getStart(), step);
         else
-            return new ByteIteratorImpl(getStart(), getEnd(), step);
+            return new ByteSequenceIterator(getStart(), getEnd(), step);
     }
 
     public byte getStart() {
@@ -100,30 +100,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
 
     @Override
     public ByteIterator iterator() {
-        return new ByteIteratorImpl(getStart(), getEnd(), 1);
-    }
-
-    private static class ByteIteratorImpl extends ByteIterator {
-        private byte next;
-        private final byte end;
-        private final int increment;
-
-        public ByteIteratorImpl(byte start, byte end, int increment) {
-            this.next = start;
-            this.end = end;
-            this.increment = increment;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return increment > 0 ? next <= end : next >= end;
-        }
-
-        @Override
-        public byte nextByte() {
-            byte value = next;
-            next += increment;
-            return value;
-        }
+        return new ByteSequenceIterator(getStart(), getEnd(), 1);
     }
 }

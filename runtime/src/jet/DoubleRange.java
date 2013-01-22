@@ -79,9 +79,9 @@ public final class DoubleRange implements Range<Double> {
 
     public DoubleIterator step(double step) {
         if (step < 0)
-            return new DoubleIteratorImpl(getEnd(), getStart(), step);
+            return new DoubleSequenceIterator(getEnd(), getStart(), step);
         else
-            return new DoubleIteratorImpl(getStart(), getEnd(), step);
+            return new DoubleSequenceIterator(getStart(), getEnd(), step);
     }
 
     public double  getStart() {
@@ -94,29 +94,5 @@ public final class DoubleRange implements Range<Double> {
 
     public double getSize() {
         return size < 0 ? -size : size;
-    }
-
-    private static class DoubleIteratorImpl extends DoubleIterator {
-        private double next;
-        private final double end;
-        private final double increment;
-
-        public DoubleIteratorImpl(double start, double end, double increment) {
-            this.next = start;
-            this.end = end;
-            this.increment = increment;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return increment > 0 ? next <= end : next >= end;
-        }
-
-        @Override
-        public double nextDouble() {
-            double value = next;
-            next += increment;
-            return value;
-        }
     }
 }

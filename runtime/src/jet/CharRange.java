@@ -81,9 +81,9 @@ public final class CharRange implements Range<Character>, CharIterable {
 
     public CharIterator step(int step) {
         if (step < 0)
-            return new CharIteratorImpl(getEnd(), getStart(), step);
+            return new CharacterSequenceIterator(getEnd(), getStart(), step);
         else
-            return new CharIteratorImpl(getStart(), getEnd(), step);
+            return new CharacterSequenceIterator(getStart(), getEnd(), step);
     }
 
     public char getStart() {
@@ -100,30 +100,6 @@ public final class CharRange implements Range<Character>, CharIterable {
 
     @Override
     public CharIterator iterator() {
-        return new CharIteratorImpl(getStart(), getEnd(), 1);
-    }
-
-    private static class CharIteratorImpl extends CharIterator {
-        private char next;
-        private final char end;
-        private final int increment;
-
-        public CharIteratorImpl(char start, char end, int increment) {
-            this.next = start;
-            this.end = end;
-            this.increment = increment;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return increment > 0 ? next <= end : next >= end;
-        }
-
-        @Override
-        public char nextChar() {
-            char value = next;
-            next += increment;
-            return value;
-        }
+        return new CharacterSequenceIterator(getStart(), getEnd(), 1);
     }
 }

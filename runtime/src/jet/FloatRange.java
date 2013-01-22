@@ -75,9 +75,9 @@ public final class FloatRange implements Range<Float> {
 
     public FloatIterator step(float step) {
         if (step < 0)
-            return new FloatIteratorImpl(getEnd(), getStart(), step);
+            return new FloatSequenceIterator(getEnd(), getStart(), step);
         else
-            return new FloatIteratorImpl(getStart(), getEnd(), step);
+            return new FloatSequenceIterator(getStart(), getEnd(), step);
     }
 
     public float  getStart() {
@@ -90,29 +90,5 @@ public final class FloatRange implements Range<Float> {
 
     public float getSize() {
         return size < 0 ? -size : size;
-    }
-
-    private static class FloatIteratorImpl extends FloatIterator {
-        private float next;
-        private final float end;
-        private final float increment;
-
-        public FloatIteratorImpl(float start, float end, float increment) {
-            this.next = start;
-            this.end = end;
-            this.increment = increment;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return increment > 0 ? next <= end : next >= end;
-        }
-
-        @Override
-        public float nextFloat() {
-            float value = next;
-            next += increment;
-            return value;
-        }
     }
 }

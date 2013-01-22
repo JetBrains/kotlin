@@ -81,9 +81,9 @@ public final class IntRange implements Range<Integer>, IntIterable {
 
     public IntIterator step(int step) {
         if (step < 0)
-            return new IntIteratorImpl(getEnd(), getStart(), step);
+            return new IntSequenceIterator(getEnd(), getStart(), step);
         else
-            return new IntIteratorImpl(getStart(), getEnd(), step);
+            return new IntSequenceIterator(getStart(), getEnd(), step);
     }
 
     public int getStart() {
@@ -100,30 +100,6 @@ public final class IntRange implements Range<Integer>, IntIterable {
 
     @Override
     public IntIterator iterator() {
-        return new IntIteratorImpl(getStart(), getEnd(), 1);
-    }
-
-    private static class IntIteratorImpl extends IntIterator {
-        private int next;
-        private final int end;
-        private final int increment;
-
-        public IntIteratorImpl(int start, int end, int increment) {
-            this.next = start;
-            this.end = end;
-            this.increment = increment;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return increment > 0 ? next <= end : next >= end;
-        }
-
-        @Override
-        public int nextInt() {
-            int value = next;
-            next += increment;
-            return value;
-        }
+        return new IntSequenceIterator(getStart(), getEnd(), 1);
     }
 }
