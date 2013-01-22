@@ -82,7 +82,7 @@ public class TypeInfoTest extends CodegenTestCase {
 
     public void testIsTypeParameter() throws Exception {
 //  todo: obsolete with typeinfo removal
-//        blackBoxFile("typeInfo/isTypeParameter.jet");
+//        blackBoxFile("typeInfo/isTypeParameter.kt");
     }
 
     public void testAsSafeWithGenerics() throws Exception {
@@ -98,22 +98,22 @@ public class TypeInfoTest extends CodegenTestCase {
     }
 
     public void testPrimitiveTypeInfo() throws Exception {
-        blackBoxFile("typeInfo/primitiveTypeInfo.jet");
+        blackBoxFile("typeInfo/primitiveTypeInfo.kt");
     }
 
     public void testNullability() throws Exception {
 //  todo: obsolete with typeinfo removal
-//        blackBoxFile("typeInfo/nullability.jet");
+//        blackBoxFile("typeInfo/nullability.kt");
     }
 
     public void testGenericFunction() throws Exception {
 //  todo: obsolete with typeinfo removal
-//        blackBoxFile("typeInfo/genericFunction.jet");
+//        blackBoxFile("typeInfo/genericFunction.kt");
     }
 
     public void testForwardTypeParameter() throws Exception {
 //  todo: obsolete with typeinfo removal
-//        blackBoxFile("typeInfo/forwardTypeParameter.jet");
+//        blackBoxFile("typeInfo/forwardTypeParameter.kt");
     }
 
     public void testClassObjectInTypeInfo() throws Exception {
@@ -139,17 +139,17 @@ public class TypeInfoTest extends CodegenTestCase {
 
     public void testKt259() throws Exception {
 //  todo: obsolete with typeinfo removal
-//        blackBoxFile("regressions/kt259.jet");
+//        blackBoxFile("regressions/kt259.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt511() throws Exception {
-        blackBoxFile("regressions/kt511.jet");
+        blackBoxFile("regressions/kt511.kt");
 //        System.out.println(generateToText());
     }
 
     public void testInner() throws Exception {
-        blackBoxFile("typeInfo/inner.jet");
+        blackBoxFile("typeInfo/inner.kt");
 //        System.out.println(generateToText());
     }
 
@@ -158,7 +158,7 @@ public class TypeInfoTest extends CodegenTestCase {
     }
 
     public void testInheritance() throws Exception {
-        blackBoxFile("typeInfo/inheritance.jet");
+        blackBoxFile("typeInfo/inheritance.kt");
 //        System.out.println(generateToText());
     }
 

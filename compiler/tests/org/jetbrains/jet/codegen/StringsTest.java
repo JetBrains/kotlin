@@ -70,23 +70,23 @@ public class StringsTest extends CodegenTestCase {
     }
 
     public void testRawStrings() throws Exception {
-        blackBoxFile("rawStrings.jet");
+        blackBoxFile("rawStrings.kt");
     }
 
     public void testMultilineStringsWithTemplates() throws Exception {
-        blackBoxFile("multilineStringsWithTemplates.jet");
+        blackBoxFile("multilineStringsWithTemplates.kt");
     }
 
     public void testKt881() throws Exception {
-        blackBoxFile("regressions/kt881.jet");
+        blackBoxFile("regressions/kt881.kt");
     }
 
     public void testKt894() throws Exception {
-        blackBoxFile("regressions/kt894.jet");
+        blackBoxFile("regressions/kt894.kt");
     }
 
     public void testKt889() throws Exception {
-        blackBoxFile("regressions/kt889.jet");
+        blackBoxFile("regressions/kt889.kt");
     }
 
     public void testEa35743() {

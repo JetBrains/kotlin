@@ -34,7 +34,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testPSVMClass() {
-        loadFile("classes/simpleClass.jet");
+        loadFile("classes/simpleClass.kt");
 
         final Class aClass = loadClass("SimpleClass", generateClassesInFile());
         final Method[] methods = aClass.getDeclaredMethods();
@@ -44,7 +44,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testArrayListInheritance() throws Exception {
-        loadFile("classes/inheritingFromArrayList.jet");
+        loadFile("classes/inheritingFromArrayList.kt");
         final Class aClass = loadClass("Foo", generateClassesInFile());
         assertInstanceOf(aClass.newInstance(), List.class);
     }
@@ -84,7 +84,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testInheritanceAndDelegation_DelegatingDefaultConstructorProperties() {
-        blackBoxFile("classes/inheritance.jet");
+        blackBoxFile("classes/inheritance.kt");
     }
 
     public void testInheritanceAndDelegation2() {
@@ -120,34 +120,34 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testFunDelegation() {
-        blackBoxFile("classes/funDelegation.jet");
+        blackBoxFile("classes/funDelegation.kt");
     }
 
     public void testPropertyDelegation() {
-        blackBoxFile("classes/propertyDelegation.jet");
+        blackBoxFile("classes/propertyDelegation.kt");
     }
 
     public void testDiamondInheritance() {
-        blackBoxFile("classes/diamondInheritance.jet");
+        blackBoxFile("classes/diamondInheritance.kt");
     }
 
     public void testRightHandOverride() {
-        blackBoxFile("classes/rightHandOverride.jet");
+        blackBoxFile("classes/rightHandOverride.kt");
     }
 
     public void testNewInstanceExplicitConstructor() throws Exception {
-        loadFile("classes/newInstanceDefaultConstructor.jet");
+        loadFile("classes/newInstanceDefaultConstructor.kt");
         final Method method = generateFunction("test");
         final Integer returnValue = (Integer) method.invoke(null);
         assertEquals(610, returnValue.intValue());
     }
 
     public void testInnerClass() {
-        blackBoxFile("classes/innerClass.jet");
+        blackBoxFile("classes/innerClass.kt");
     }
 
     public void testInheritedInnerClass() {
-        blackBoxFile("classes/inheritedInnerClass.jet");
+        blackBoxFile("classes/inheritedInnerClass.kt");
     }
 
     public void testKt2532() {
@@ -155,7 +155,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testInitializerBlock() {
-        blackBoxFile("classes/initializerBlock.jet");
+        blackBoxFile("classes/initializerBlock.kt");
     }
 
     public void testAbstractMethod() throws Exception {
@@ -167,27 +167,27 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testInheritedMethod() {
-        blackBoxFile("classes/inheritedMethod.jet");
+        blackBoxFile("classes/inheritedMethod.kt");
     }
 
     public void testInitializerBlockDImpl() {
-        blackBoxFile("classes/initializerBlockDImpl.jet");
+        blackBoxFile("classes/initializerBlockDImpl.kt");
     }
 
     public void testPropertyInInitializer() {
-        blackBoxFile("classes/propertyInInitializer.jet");
+        blackBoxFile("classes/propertyInInitializer.kt");
     }
 
     public void testOuterThis() {
-        blackBoxFile("classes/outerThis.jet");
+        blackBoxFile("classes/outerThis.kt");
     }
 
     public void testExceptionConstructor() {
-        blackBoxFile("classes/exceptionConstructor.jet");
+        blackBoxFile("classes/exceptionConstructor.kt");
     }
 
     public void testSimpleBox() {
-        blackBoxFile("classes/simpleBox.jet");
+        blackBoxFile("classes/simpleBox.kt");
     }
 
     public void testAbstractClass() throws Exception {
@@ -197,45 +197,45 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testClassObject() {
-        blackBoxFile("classes/classObject.jet");
+        blackBoxFile("classes/classObject.kt");
     }
 
     public void testClassObjectInTrait() {
-        blackBoxFile("classes/classObjectInTrait.jet");
+        blackBoxFile("classes/classObjectInTrait.kt");
     }
 
     /*
     public void testClassObjectMethod() {
         // todo to be implemented after removal of type info
-        //        blackBoxFile("classes/classObjectMethod.jet");
+        //        blackBoxFile("classes/classObjectMethod.kt");
     }
     */
 
     public void testClassObjectInterface() throws Exception {
-        loadFile("classes/classObjectInterface.jet");
+        loadFile("classes/classObjectInterface.kt");
         final Method method = generateFunction();
         Object result = method.invoke(null);
         assertInstanceOf(result, Runnable.class);
     }
 
     public void testOverloadBinaryOperator() {
-        blackBoxFile("classes/overloadBinaryOperator.jet");
+        blackBoxFile("classes/overloadBinaryOperator.kt");
     }
 
     public void testOverloadUnaryOperator() {
-        blackBoxFile("classes/overloadUnaryOperator.jet");
+        blackBoxFile("classes/overloadUnaryOperator.kt");
     }
 
     public void testOverloadPlusAssign() {
-        blackBoxFile("classes/overloadPlusAssign.jet");
+        blackBoxFile("classes/overloadPlusAssign.kt");
     }
 
     public void testOverloadPlusAssignReturn() {
-        blackBoxFile("classes/overloadPlusAssignReturn.jet");
+        blackBoxFile("classes/overloadPlusAssignReturn.kt");
     }
 
     public void testOverloadPlusToPlusAssign() {
-        blackBoxFile("classes/overloadPlusToPlusAssign.jet");
+        blackBoxFile("classes/overloadPlusToPlusAssign.kt");
     }
 
     public void testEnumClass() throws Exception {
@@ -270,11 +270,11 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testKt249() {
-        blackBoxFile("regressions/kt249.jet");
+        blackBoxFile("regressions/kt249.kt");
     }
 
     public void testKt48() {
-        blackBoxFile("regressions/kt48.jet");
+        blackBoxFile("regressions/kt48.kt");
     }
 
     public void testKt309() {
@@ -284,39 +284,39 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testKt343() {
-        blackBoxFile("regressions/kt343.jet");
+        blackBoxFile("regressions/kt343.kt");
     }
 
     public void testKt508() {
-        blackBoxFile("regressions/kt508.jet");
+        blackBoxFile("regressions/kt508.kt");
     }
 
     public void testKt504() {
-        blackBoxFile("regressions/kt504.jet");
+        blackBoxFile("regressions/kt504.kt");
     }
 
     public void testKt501() {
-        blackBoxFile("regressions/kt501.jet");
+        blackBoxFile("regressions/kt501.kt");
     }
 
     public void testKt496() {
-        blackBoxFile("regressions/kt496.jet");
+        blackBoxFile("regressions/kt496.kt");
     }
 
     public void testKt500() {
-        blackBoxFile("regressions/kt500.jet");
+        blackBoxFile("regressions/kt500.kt");
     }
 
     public void testKt285() {
-        blackBoxFile("regressions/kt285.jet");
+        blackBoxFile("regressions/kt285.kt");
     }
 
     public void testKt707() {
-        blackBoxFile("regressions/kt707.jet");
+        blackBoxFile("regressions/kt707.kt");
     }
 
     public void testKt903() {
-        blackBoxFile("regressions/kt903.jet");
+        blackBoxFile("regressions/kt903.kt");
     }
 
     public void testKt940() {
@@ -378,7 +378,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testResolveOrder() {
-        blackBoxFile("classes/resolveOrder.jet");
+        blackBoxFile("classes/resolveOrder.kt");
     }
 
     public void testKt1918() {

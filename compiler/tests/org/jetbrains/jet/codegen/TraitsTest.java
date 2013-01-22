@@ -32,29 +32,29 @@ public class TraitsTest extends CodegenTestCase {
     }
 
     public void testSimple () {
-        blackBoxFile("traits/simple.jet");
+        blackBoxFile("traits/simple.kt");
 //        System.out.println(generateToText());
     }
 
     public void testWithRequired () {
-        blackBoxFile("traits/withRequired.jet");
+        blackBoxFile("traits/withRequired.kt");
 //        System.out.println(generateToText());
     }
 
     public void testMultiple () {
-        blackBoxFile("traits/multiple.jet");
+        blackBoxFile("traits/multiple.kt");
     }
 
     public void testStdlib () {
-        blackBoxFile("traits/stdlib.jet");
+        blackBoxFile("traits/stdlib.kt");
     }
 
     public void testInheritedFun() {
-        blackBoxFile("traits/inheritedFun.jet");
+        blackBoxFile("traits/inheritedFun.kt");
     }
 
     public void testInheritedVar() {
-        blackBoxFile("traits/inheritedVar.jet");
+        blackBoxFile("traits/inheritedVar.kt");
     }
     
     public void testKt2399() {
@@ -74,7 +74,7 @@ public class TraitsTest extends CodegenTestCase {
     }
 
     public void testFinalMethod() throws Exception {
-        blackBoxFile("traits/finalMethod.jet");
+        blackBoxFile("traits/finalMethod.kt");
     }
 
     public void testKt1936_1() throws Exception {

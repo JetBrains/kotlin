@@ -22,7 +22,7 @@ public class BridgeMethodGenTest extends CodegenTestCase {
 
     public void testBridgeMethod () throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("bridge.jet");
+        blackBoxFile("bridge.kt");
     }
 
     public void testKt1959() {

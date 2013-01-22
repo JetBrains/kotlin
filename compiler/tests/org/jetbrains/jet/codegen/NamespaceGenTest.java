@@ -33,7 +33,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testPSVM() throws Exception {
-        loadFile("PSVM.jet");
+        loadFile("PSVM.kt");
 //        System.out.println(generateToText());
 
         final Method main = generateFunction();
@@ -60,7 +60,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testLocalProperty() throws Exception {
-        loadFile("localProperty.jet");
+        loadFile("localProperty.kt");
 //        System.out.println(generateToText());
 
         final Method main = generateFunction();
@@ -86,14 +86,14 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testSystemOut() throws Exception {
-        loadFile("systemOut.jet");
+        loadFile("systemOut.kt");
         final Method main = generateFunction();
         final Object returnValue = main.invoke(null);
         assertEquals(returnValue, System.out);
     }
 
     public void testHelloWorld() throws Exception {
-        loadFile("helloWorld.jet");
+        loadFile("helloWorld.kt");
 
 //        System.out.println(generateToText());
 
@@ -101,7 +101,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testAssign() throws Exception {
-        loadFile("assign.jet");
+        loadFile("assign.kt");
 
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -185,7 +185,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testBottles2() throws Exception {
-        loadFile("bottles2.jet");
+        loadFile("bottles2.kt");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
         main.invoke(null);  // ensure no exception
@@ -257,7 +257,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testFunctionCall() throws Exception {
-        loadFile("functionCall.jet");
+        loadFile("functionCall.kt");
 //        System.out.println(generateToText());
         final Method main = generateFunction("f");
         assertEquals("foo", main.invoke(null));
@@ -467,15 +467,15 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testNamespaceQualifiedMethod() throws Exception {
-        blackBoxFile("namespaceQualifiedMethod.jet");
+        blackBoxFile("namespaceQualifiedMethod.kt");
     }
 
     public void testCheckCast() throws Exception {
-        blackBoxFile("checkCast.jet");
+        blackBoxFile("checkCast.kt");
     }
 
     public void testTypeCastException() throws Exception {
-        blackBoxFile("typeCastException.jet");
+        blackBoxFile("typeCastException.kt");
     }
 
     public void testPutBooleanAsVoid() throws Exception {
@@ -485,7 +485,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testIncrementProperty() throws Exception {
-        blackBoxFile("incrementProperty.jet");
+        blackBoxFile("incrementProperty.kt");
     }
 
     public void testJavaInterfaceMethod() throws Exception {

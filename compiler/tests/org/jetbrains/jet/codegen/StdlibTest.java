@@ -74,7 +74,7 @@ public class StdlibTest extends CodegenTestCase {
     }
 
     public void testKt789 () {
-        blackBoxFile("regressions/kt789.jet");
+        blackBoxFile("regressions/kt789.kt");
     }
 
     public void testKt828 () {
@@ -86,7 +86,7 @@ public class StdlibTest extends CodegenTestCase {
     }
 
     public void testKt864 () {
-        blackBoxFile("regressions/kt864.jet");
+        blackBoxFile("regressions/kt864.kt");
     }
 
     public void testKt274 () {
@@ -95,14 +95,14 @@ public class StdlibTest extends CodegenTestCase {
 
     //from ClassGenTest
     public void testKt344 () throws Exception {
-        loadFile("regressions/kt344.jet");
+        loadFile("regressions/kt344.kt");
 //        System.out.println(generateToText());
         blackBox();
     }
 
     //from ExtensionFunctionsTest
     public void testGeneric() throws Exception {
-        blackBoxFile("extensionFunctions/generic.jet");
+        blackBoxFile("extensionFunctions/generic.kt");
     }
 
     //from NamespaceGenTest

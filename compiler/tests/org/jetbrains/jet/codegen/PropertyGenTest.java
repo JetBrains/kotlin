@@ -82,7 +82,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testFieldPropertyAccess() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        loadFile("properties/fieldPropertyAccess.jet");
+        loadFile("properties/fieldPropertyAccess.kt");
 //        System.out.println(generateToText());
         final Method method = generateFunction("increment");
         assertEquals(1, method.invoke(null));
@@ -175,13 +175,13 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testKt257 () throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt257.jet");
+        blackBoxFile("regressions/kt257.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt613 () throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt613.jet");
+        blackBoxFile("regressions/kt613.kt");
     }
 
     public void testKt160() throws Exception {

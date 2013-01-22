@@ -269,7 +269,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testDecrementAsStatement() throws Exception {
-        loadFile("bottles.jet");
+        loadFile("bottles.kt");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
         main.invoke(null);  // ensure no exception
@@ -283,31 +283,31 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testEa35963() {
-        blackBoxFile("regressions/ea35963.jet");
+        blackBoxFile("regressions/ea35963.kt");
     }
 
     public void testKt242 () throws Exception {
-        blackBoxFile("regressions/kt242.jet");
+        blackBoxFile("regressions/kt242.kt");
     }
 
     public void testKt239 () throws Exception {
-        blackBoxFile("regressions/kt239.jet");
+        blackBoxFile("regressions/kt239.kt");
     }
 
     public void testKt243 () throws Exception {
-        blackBoxFile("regressions/kt243.jet");
+        blackBoxFile("regressions/kt243.kt");
     }
 
     public void testKt248 () throws Exception {
-        blackBoxFile("regressions/kt248.jet");
+        blackBoxFile("regressions/kt248.kt");
     }
 
     public void testKt446 () throws Exception {
-        blackBoxFile("regressions/kt446.jet");
+        blackBoxFile("regressions/kt446.kt");
     }
 
     public void testKt518 () throws Exception {
-        blackBoxFile("regressions/kt518.jet");
+        blackBoxFile("regressions/kt518.kt");
     }
 
     public void testKt711 () throws Exception {
@@ -357,36 +357,36 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testKt752 () {
-        blackBoxFile("regressions/kt752.jet");
+        blackBoxFile("regressions/kt752.kt");
     }
 
     public void testKt753 () {
-        blackBoxFile("regressions/kt753.jet");
+        blackBoxFile("regressions/kt753.kt");
     }
 
     public void testKt684 () {
-        blackBoxFile("regressions/kt684.jet");
+        blackBoxFile("regressions/kt684.kt");
     }
 
     public void testKt756 () {
-        blackBoxFile("regressions/kt756.jet");
+        blackBoxFile("regressions/kt756.kt");
         //System.out.println(generateToText());
     }
 
     public void testKt757 () {
-        blackBoxFile("regressions/kt757.jet");
+        blackBoxFile("regressions/kt757.kt");
     }
 
     public void testKt877 () {
-        blackBoxFile("regressions/kt877.jet");
+        blackBoxFile("regressions/kt877.kt");
     }
 
     public void testKt882 () {
-        blackBoxFile("regressions/kt882.jet");
+        blackBoxFile("regressions/kt882.kt");
     }
 
     public void testKt887 () {
-        blackBoxFile("regressions/kt887.jet");
+        blackBoxFile("regressions/kt887.kt");
     }
 
     public void testKt821 () {
@@ -406,7 +406,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testKt945 () {
-        blackBoxFile("regressions/kt945.jet");
+        blackBoxFile("regressions/kt945.kt");
     }
 
     public void testKt935 () {

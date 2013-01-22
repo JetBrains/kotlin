@@ -144,7 +144,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void loadFile() {
-        loadFile(getPrefix() + "/" + getTestName(true) + ".jet");
+        loadFile(getPrefix() + "/" + getTestName(true) + ".kt");
     }
 
     protected String getPrefix() {

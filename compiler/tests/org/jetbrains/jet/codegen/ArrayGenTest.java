@@ -29,16 +29,16 @@ public class ArrayGenTest extends CodegenTestCase {
     }
 
     public void testKt238() throws Exception {
-        blackBoxFile("regressions/kt238.jet");
+        blackBoxFile("regressions/kt238.kt");
     }
 
     public void testKt326() throws Exception {
-        //        blackBoxFile("regressions/kt326.jet");
+        //        blackBoxFile("regressions/kt326.kt");
         //        System.out.println(generateToText());
     }
 
     public void testKt779() throws Exception {
-        blackBoxFile("regressions/kt779.jet");
+        blackBoxFile("regressions/kt779.kt");
         //        System.out.println(generateToText());
     }
 
@@ -240,7 +240,7 @@ public class ArrayGenTest extends CodegenTestCase {
     }
 
     public void testCollectionPlusAssign() throws Exception {
-        blackBoxFile("regressions/kt33.jet");
+        blackBoxFile("regressions/kt33.kt");
     }
 
     public void testArrayPlusAssign() throws Exception {
@@ -310,26 +310,26 @@ public class ArrayGenTest extends CodegenTestCase {
     }
 
     public void testKt503() {
-        blackBoxFile("regressions/kt503.jet");
+        blackBoxFile("regressions/kt503.kt");
     }
 
     public void testKt602() {
-        blackBoxFile("regressions/kt602.jet");
+        blackBoxFile("regressions/kt602.kt");
         //        System.out.println(generateToText());
     }
 
     public void testKt950() {
-        blackBoxFile("regressions/kt950.jet");
+        blackBoxFile("regressions/kt950.kt");
     }
 
     public void testKt594() throws Exception {
-        loadFile("regressions/kt594.jet");
+        loadFile("regressions/kt594.kt");
         //        System.out.println(generateToText());
         blackBox();
     }
 
     public void testNonNullArray() throws Exception {
-        blackBoxFile("classes/nonnullarray.jet");
+        blackBoxFile("classes/nonnullarray.kt");
         //        System.out.println(generateToText());
     }
 

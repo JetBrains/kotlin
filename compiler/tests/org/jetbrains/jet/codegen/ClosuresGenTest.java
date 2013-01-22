@@ -27,37 +27,37 @@ public class ClosuresGenTest extends CodegenTestCase {
     }
 
     public void testSimplestClosure() throws Exception {
-        blackBoxFile("classes/simplestClosure.jet");
+        blackBoxFile("classes/simplestClosure.kt");
 //        System.out.println(generateToText());
     }
 
     public void testSimplestClosureAndBoxing() throws Exception {
-        blackBoxFile("classes/simplestClosureAndBoxing.jet");
+        blackBoxFile("classes/simplestClosureAndBoxing.kt");
     }
 
     public void testClosureWithParameter() throws Exception {
-        blackBoxFile("classes/closureWithParameter.jet");
+        blackBoxFile("classes/closureWithParameter.kt");
     }
 
     public void testClosureWithParameterAndBoxing() throws Exception {
-        blackBoxFile("classes/closureWithParameterAndBoxing.jet");
+        blackBoxFile("classes/closureWithParameterAndBoxing.kt");
     }
 
     public void testExtensionClosure() throws Exception {
-        blackBoxFile("classes/extensionClosure.jet");
+        blackBoxFile("classes/extensionClosure.kt");
     }
 
     public void testEnclosingLocalVariable() throws Exception {
-        blackBoxFile("classes/enclosingLocalVariable.jet");
+        blackBoxFile("classes/enclosingLocalVariable.kt");
 //        System.out.println(generateToText());
     }
 
     public void testDoubleEnclosedLocalVariable() throws Exception {
-        blackBoxFile("classes/doubleEnclosedLocalVariable.jet");
+        blackBoxFile("classes/doubleEnclosedLocalVariable.kt");
     }
 
     public void testEnclosingThis() throws Exception {
-        blackBoxFile("classes/enclosingThis.jet");
+        blackBoxFile("classes/enclosingThis.kt");
     }
 
     public void testKt2151() {

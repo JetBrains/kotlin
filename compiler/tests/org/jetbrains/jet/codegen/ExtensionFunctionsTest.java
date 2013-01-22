@@ -44,7 +44,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
 
     public void testVirtual() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("extensionFunctions/virtual.jet");
+        blackBoxFile("extensionFunctions/virtual.kt");
     }
 
     public void testShared() throws Exception {
@@ -55,7 +55,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
 
     public void testKt475() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt475.jet");
+        blackBoxFile("regressions/kt475.kt");
     }
 
     public void testKtNested() throws Exception {
@@ -65,7 +65,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
 
     public void testKt865() throws Exception {
         createEnvironmentWithFullJdk();
-        blackBoxFile("regressions/kt865.jet");
+        blackBoxFile("regressions/kt865.kt");
     }
 
     public void testKtNested2() throws Exception {

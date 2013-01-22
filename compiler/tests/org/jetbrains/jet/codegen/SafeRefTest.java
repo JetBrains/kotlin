@@ -26,18 +26,18 @@ public class SafeRefTest extends CodegenTestCase {
     }
 
     public void test247 () throws Exception {
-        blackBoxFile("regressions/kt247.jet");
+        blackBoxFile("regressions/kt247.kt");
     }
 
     public void test245 () throws Exception {
-        blackBoxFile("regressions/kt245.jet");
+        blackBoxFile("regressions/kt245.kt");
     }
 
     public void test232 () throws Exception {
-        blackBoxFile("regressions/kt232.jet");
+        blackBoxFile("regressions/kt232.kt");
     }
 
     public void test1572 () throws Exception {
-        blackBoxFile("regressions/kt1572.jet");
+        blackBoxFile("regressions/kt1572.kt");
     }
 }

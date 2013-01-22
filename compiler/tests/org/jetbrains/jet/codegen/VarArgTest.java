@@ -95,12 +95,12 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testKt581() {
         createEnvironmentWithFullJdk();
-        blackBoxFile("regressions/kt581.jet");
+        blackBoxFile("regressions/kt581.kt");
     }
 
     public void testKt797() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt796_797.jet");
+        blackBoxFile("regressions/kt796_797.kt");
     }
 
     public void testArrayAsVararg () throws InvocationTargetException, IllegalAccessException {

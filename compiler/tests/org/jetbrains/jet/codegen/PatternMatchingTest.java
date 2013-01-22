@@ -73,11 +73,11 @@ public class PatternMatchingTest extends CodegenTestCase {
     }
 
     public void testRange() throws Exception {
-        blackBoxFile("patternMatching/range.jet");
+        blackBoxFile("patternMatching/range.kt");
     }
 
     public void testLongInRange() throws Exception {
-        blackBoxFile("patternMatching/longInRange.jet");
+        blackBoxFile("patternMatching/longInRange.kt");
     }
 
     public void testWhenArgumentIsEvaluatedOnlyOnce() throws Exception {
@@ -112,7 +112,7 @@ public class PatternMatchingTest extends CodegenTestCase {
     }
 
     public void testCallProperty() throws Exception {
-        blackBoxFile("patternMatching/callProperty.jet");
+        blackBoxFile("patternMatching/callProperty.kt");
     }
 
     public void testMultipleConditions() throws Exception {

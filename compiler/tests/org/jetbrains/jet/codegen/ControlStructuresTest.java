@@ -50,21 +50,21 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testWhile() throws Exception {
-        factorialTest("controlStructures/while.jet");
+        factorialTest("controlStructures/while.kt");
     }
 
     public void testDoWhile() throws Exception {
-        factorialTest("controlStructures/doWhile.jet");
+        factorialTest("controlStructures/doWhile.kt");
     }
 
     public void testBreak() throws Exception {
-        factorialTest("controlStructures/break.jet");
+        factorialTest("controlStructures/break.kt");
     }
 
     /*
     public void testInRangeConditionsInWhen() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/inRangeConditionsInWhen.jet");
+        blackBoxFile("controlStructures/inRangeConditionsInWhen.kt");
     }
     */
 
@@ -188,7 +188,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testForUserType() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/forUserType.jet");
+        blackBoxFile("controlStructures/forUserType.kt");
     }
 
     public void testForLoopMemberExtensionNext() throws Exception {
@@ -208,27 +208,27 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testForIntArray() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/forIntArray.jet");
+        blackBoxFile("controlStructures/forIntArray.kt");
     }
 
     public void testForPrimitiveIntArray() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/forPrimitiveIntArray.jet");
+        blackBoxFile("controlStructures/forPrimitiveIntArray.kt");
     }
 
     public void testForNullableIntArray() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/forNullableIntArray.jet");
+        blackBoxFile("controlStructures/forNullableIntArray.kt");
     }
 
     public void testForIntRange() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/forIntRange.jet");
+        blackBoxFile("controlStructures/forIntRange.kt");
     }
 
     public void testKt237() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt237.jet");
+        blackBoxFile("regressions/kt237.kt");
     }
 
     public void testCompareToZero() throws Exception {
@@ -285,70 +285,70 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testKt299() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt299.jet");
+        blackBoxFile("regressions/kt299.kt");
     }
 
     public void testKt416() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt416.jet");
+        blackBoxFile("regressions/kt416.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt513() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt513.jet");
+        blackBoxFile("regressions/kt513.kt");
     }
 
     public void testKt434() throws Exception {
         createEnvironmentWithFullJdk();
-        blackBoxFile("regressions/kt434.jet");
+        blackBoxFile("regressions/kt434.kt");
     }
 
     public void testKt769() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt769.jet");
+        blackBoxFile("regressions/kt769.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt773() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt773.jet");
+        blackBoxFile("regressions/kt773.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt772() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt772.jet");
+        blackBoxFile("regressions/kt772.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt870() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt870.jet");
+        blackBoxFile("regressions/kt870.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt958() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("regressions/kt958.jet");
+        blackBoxFile("regressions/kt958.kt");
 //        System.out.println(generateToText());
     }
 
     public void testQuicksort() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/quicksort.jet");
+        blackBoxFile("controlStructures/quicksort.kt");
 //        System.out.println(generateToText());
     }
 
     public void testSynchronized() throws Exception {
         createEnvironmentWithFullJdk();
-        blackBoxFile("controlStructures/sync.jet");
+        blackBoxFile("controlStructures/sync.kt");
 //        System.out.println(generateToText());
     }
 
     public void testIfInWhile() throws Exception {
         createEnvironmentWithFullJdk();
-        blackBoxFile("controlStructures/ifInWhile.jet");
+        blackBoxFile("controlStructures/ifInWhile.kt");
 //        System.out.println(generateToText());
     }
 
@@ -454,7 +454,7 @@ public class ControlStructuresTest extends CodegenTestCase {
 
     public void testLongRange() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("controlStructures/longRange.jet");
+        blackBoxFile("controlStructures/longRange.kt");
     }
 
     public void testForInSmartCastedToArray() {

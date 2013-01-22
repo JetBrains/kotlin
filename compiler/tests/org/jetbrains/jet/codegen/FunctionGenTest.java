@@ -35,32 +35,32 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testDefaultArgs() throws Exception {
-        blackBoxFile("functions/defaultargs.jet");
+        blackBoxFile("functions/defaultargs.kt");
         //        System.out.println(generateToText());
     }
 
     public void testDefaultArgs1() throws Exception {
-        blackBoxFile("functions/defaultargs1.jet");
+        blackBoxFile("functions/defaultargs1.kt");
         //        System.out.println(generateToText());
     }
 
     public void testDefaultArgs2() throws Exception {
-        blackBoxFile("functions/defaultargs2.jet");
+        blackBoxFile("functions/defaultargs2.kt");
         //        System.out.println(generateToText());
     }
 
     public void testDefaultArgs3() throws Exception {
-        blackBoxFile("functions/defaultargs3.jet");
+        blackBoxFile("functions/defaultargs3.kt");
         //        System.out.println(generateToText());
     }
 
     public void testDefaultArgs4() throws Exception {
-        blackBoxFile("functions/defaultargs4.jet");
+        blackBoxFile("functions/defaultargs4.kt");
         //        System.out.println(generateToText());
     }
 
     public void testDefaultArgs5() throws Exception {
-        blackBoxFile("functions/defaultargs5.jet");
+        blackBoxFile("functions/defaultargs5.kt");
         //        System.out.println(generateToText());
     }
 
@@ -73,7 +73,7 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testNoThisNoClosure() throws Exception {
-        blackBoxFile("functions/nothisnoclosure.jet");
+        blackBoxFile("functions/nothisnoclosure.kt");
         //        System.out.println(generateToText());
     }
 
@@ -107,11 +107,11 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testKt395() {
-        blackBoxFile("regressions/kt395.jet");
+        blackBoxFile("regressions/kt395.kt");
     }
 
     public void testKt785() {
-        blackBoxFile("regressions/kt785.jet");
+        blackBoxFile("regressions/kt785.kt");
     }
 
     public void testKt873() {
@@ -128,7 +128,7 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testFunction() throws InvocationTargetException, IllegalAccessException {
-        blackBoxFile("functions/functionExpression.jet");
+        blackBoxFile("functions/functionExpression.kt");
     }
 
     public void testLocalFunction() throws InvocationTargetException, IllegalAccessException {
