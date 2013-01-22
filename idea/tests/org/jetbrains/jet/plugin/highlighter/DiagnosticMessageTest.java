@@ -98,4 +98,8 @@ public class DiagnosticMessageTest extends JetLiteFixture {
     public void testRenderCollectionOfTypes() throws Exception {
         doTest("renderCollectionOfTypes", 1, Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH);
     }
+
+    public void testInaccessibleOuterClassExpression() throws Exception {
+        doTest("inaccessibleOuterClassExpression", 1, Errors.INACCESSIBLE_OUTER_CLASS_EXPRESSION);
+    }
 }

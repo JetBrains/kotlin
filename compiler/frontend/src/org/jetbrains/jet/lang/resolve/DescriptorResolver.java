@@ -1358,28 +1358,20 @@ public class DescriptorResolver {
             @NotNull PsiElement reportErrorsOn,
             @NotNull ClassDescriptor target
     ) {
-        ClassDescriptor thisClass = getContainingClass(scope);
-        if (thisClass == null) return true;
-        if (!isAncestor(target, thisClass, true)) return true;
-
-        if (!hasOuterClassInstance(thisClass, target)) {
-            trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, thisClass));
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean hasOuterClassInstance(@NotNull ClassDescriptor thisClass, @NotNull ClassDescriptor outerClass) {
-        DeclarationDescriptor descriptor = thisClass;
-        while (true) {
-            assert descriptor != null : "outerClass must be an ancestor of thisClass: " + thisClass + " " + outerClass;
-            if (descriptor instanceof ClassDescriptor && isSubclass((ClassDescriptor) descriptor, outerClass)) {
-                return true;
-            }
-            if (isStaticNestedClass(descriptor)) {
-                return false;
+        DeclarationDescriptor descriptor = getContainingClass(scope);
+        while (descriptor != null) {
+            if (descriptor instanceof ClassDescriptor) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+                if (isSubclass(classDescriptor, target)) {
+                    return true;
+                }
+                if (isStaticNestedClass(classDescriptor)) {
+                    trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, classDescriptor));
+                    return false;
+                }
             }
             descriptor = descriptor.getContainingDeclaration();
         }
+        return true;
     }
 }

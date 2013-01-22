@@ -2481,6 +2481,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inner/outerProtectedMember.kt");
             }
             
+            @TestMetadata("outerSuperClassMember.kt")
+            public void testOuterSuperClassMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/outerSuperClassMember.kt");
+            }
+            
             @TestMetadata("traits.kt")
             public void testTraits() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inner/traits.kt");
