@@ -41,8 +41,18 @@ public class CompareTo implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
+        JetExpression argument;
         assert arguments != null;
-        JetExpression argument = arguments.get(0);
+        if (arguments.size() == 1) {
+            argument = arguments.get(0);
+        }
+        else if (arguments.size() == 2) {
+            receiver = codegen.gen(arguments.get(0));
+            argument = arguments.get(1);
+        }
+        else {
+            throw new IllegalStateException("Invalid arguments to compareTo: " + arguments);
+        }
         Type type = comparisonOperandType(receiver.type, codegen.expressionType(argument));
 
         receiver.put(type, v);

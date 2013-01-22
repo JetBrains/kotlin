@@ -199,4 +199,8 @@ public class FunctionGenTest extends CodegenTestCase {
         assertFalse(text.contains("INVOKEVIRTUAL"));
         assertTrue(text.contains("INVOKESPECIAL"));
     }
+
+    public void testEa33909() {
+        blackBoxFile("regressions/ea33909.kt");
+    }
 }
