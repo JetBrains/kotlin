@@ -97,6 +97,11 @@ public class GenerateRanges {
                 }
             }
 
+            out.println("    public static IntRange arrayIndices(int length) {");
+            out.println("        return new IntRange(0, length);");
+            out.println("    }");
+            out.println();
+
             out.println("    private Ranges() {}");
             out.println("}");
         }

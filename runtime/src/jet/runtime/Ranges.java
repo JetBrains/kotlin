@@ -342,5 +342,9 @@ public class Ranges {
         }
     }
 
+    public static IntRange arrayIndices(int length) {
+        return new IntRange(0, length);
+    }
+
     private Ranges() {}
 }

@@ -111,10 +111,6 @@ public final class IntRange implements Range<Integer>, IntIterable {
         return new IntIteratorImpl(start, count, 1);
     }
 
-    public static IntRange count(int length) {
-        return new IntRange(0, length);
-    }
-
     private static class IntIteratorImpl extends IntIterator {
         private int cur;
         private int step;

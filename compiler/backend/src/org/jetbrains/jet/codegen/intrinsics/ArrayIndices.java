@@ -41,7 +41,7 @@ public class ArrayIndices implements IntrinsicMethod {
     ) {
         receiver.put(receiver.type, v);
         v.arraylength();
-        v.invokestatic(AsmTypeConstants.JET_INT_RANGE_TYPE.getInternalName(), "count", "(I)Ljet/IntRange;");
+        v.invokestatic("jet/runtime/Ranges", "arrayIndices", "(I)Ljet/IntRange;");
         return StackValue.onStack(AsmTypeConstants.JET_INT_RANGE_TYPE);
     }
 }
