@@ -86,10 +86,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
             return new ByteIteratorImpl(start, count, step);
     }
 
-    public boolean getIsReversed() {
-        return count < 0;
-    }
-
     public byte getStart() {
         return start;
     }

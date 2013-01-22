@@ -84,10 +84,6 @@ public final class DoubleRange implements Range<Double> {
             return new DoubleIteratorImpl(start, size, step);
     }
 
-    public boolean getIsReversed() {
-        return size < 0;
-    }
-
     public double  getStart() {
         return start;
     }

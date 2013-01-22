@@ -13,8 +13,6 @@ public class IntRange(public val start : Int, public val size : Int) : Range<Int
 
     public fun step(step: Int) : IntIterator
 
-    public val isReversed : Boolean
-
     public class object {
         public val EMPTY: IntRange
     }
@@ -28,8 +26,6 @@ public class LongRange(public val start : Long, public val size : Long) : Range<
     public val end : Long
 
     public fun step(step: Long) : LongIterator
-
-    public val isReversed : Boolean
 
     public class object {
         public val EMPTY: LongRange
@@ -45,8 +41,6 @@ public class ByteRange(public val start : Byte, public val size : Int) : Range<B
 
     public fun step(step: Int) : ByteIterator
 
-    public val isReversed : Boolean
-
     public class object {
         public val EMPTY: ByteRange
     }
@@ -60,8 +54,6 @@ public class ShortRange(public val start : Short, public val size : Int) : Range
     public val end : Short
 
     public fun step(step: Int) : ShortIterator
-
-    public val isReversed : Boolean
 
     public class object {
         public val EMPTY: ShortRange
@@ -77,8 +69,6 @@ public class CharRange(public val start : Char, public val size : Int) : Range<C
 
     public fun step(step: Int) : CharIterator
 
-    public val isReversed : Boolean
-
     public class object {
         public val EMPTY: CharRange
     }
@@ -91,8 +81,6 @@ public class FloatRange(public val start : Float, public val size : Float) : Ran
 
     public fun step(step: Float) : FloatIterator
 
-    public val isReversed : Boolean
-
     public class object {
         public val EMPTY: FloatRange
     }
@@ -104,8 +92,6 @@ public class DoubleRange(public val start : Double, public val size : Double) : 
     public val end : Double
 
     public fun step(step: Double) : DoubleIterator
-
-    public val isReversed : Boolean
 
     public class object {
         public val EMPTY: DoubleRange

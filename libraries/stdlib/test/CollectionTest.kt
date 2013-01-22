@@ -383,7 +383,6 @@ class CollectionTest {
         assertEquals(0, indices.start)
         assertEquals(1, indices.end)
         assertEquals(2, indices.size)
-        assertFalse(indices.isReversed)
 
         assertEquals(indices, data.size. indices)
     }

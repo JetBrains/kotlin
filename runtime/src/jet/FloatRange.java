@@ -80,10 +80,6 @@ public final class FloatRange implements Range<Float> {
             return new FloatIteratorImpl(start, size, step);
     }
 
-    public boolean getIsReversed() {
-        return size < 0;
-    }
-
     public float  getStart() {
         return start;
     }

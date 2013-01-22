@@ -828,8 +828,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private class ForInIntRangeInstanceLoopGenerator extends AbstractForLoopGenerator {
         private int indexVar;
-        private int countVar;
-        private int deltaVar;
+        private int endVar;
 
         private ForInIntRangeInstanceLoopGenerator(
                 @NotNull JetForExpression forExpression
@@ -844,34 +843,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type asmLoopRangeType = asmType(loopRangeType);
             gen(forExpression.getLoopRange(), asmLoopRangeType);
             v.dup();
-            v.dup();
 
             indexVar = myFrameMap.enterTemp(Type.INT_TYPE);
             v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getStart", "()I");
             v.store(indexVar, Type.INT_TYPE);
 
-            countVar = myFrameMap.enterTemp(Type.INT_TYPE);
-            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getSize", "()I");
-            v.store(countVar, Type.INT_TYPE);
-
-            deltaVar = myFrameMap.enterTemp(Type.INT_TYPE);
-            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getIsReversed", "()Z");
-            Label down = new Label();
-
-            v.ifne(down);
-            v.iconst(1);
-            Label initEnd = new Label();
-            v.goTo(initEnd);
-            v.mark(down);
-            v.iconst(-1);
-            v.mark(initEnd);
-            v.store(deltaVar, Type.INT_TYPE);
+            endVar = myFrameMap.enterTemp(Type.INT_TYPE);
+            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getEnd", "()I");
+            v.store(endVar, Type.INT_TYPE);
         }
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
-            v.load(countVar, Type.INT_TYPE);
-            v.ifeq(loopExit);
+            v.load(indexVar, Type.INT_TYPE);
+            v.load(endVar, Type.INT_TYPE);
+            v.ificmpgt(loopExit);
         }
 
         @Override
@@ -883,18 +869,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         public void afterBody() {
-            v.load(indexVar, Type.INT_TYPE);
-            v.load(deltaVar, Type.INT_TYPE);
-            v.add(Type.INT_TYPE);
-            v.store(indexVar, Type.INT_TYPE);
-            v.iinc(countVar, -1);
+            v.iinc(indexVar, 1);
             super.afterBody();
         }
 
         @Override
         public void afterLoop() {
-            myFrameMap.leaveTemp(Type.INT_TYPE); // deltaVar
-            myFrameMap.leaveTemp(Type.INT_TYPE); // countVar
+            myFrameMap.leaveTemp(Type.INT_TYPE); // endVar
             myFrameMap.leaveTemp(Type.INT_TYPE); // indexVar
         }
     }

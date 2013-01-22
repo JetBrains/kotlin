@@ -86,10 +86,6 @@ public final class IntRange implements Range<Integer>, IntIterable {
             return new IntIteratorImpl(start, count, step);
     }
 
-    public boolean getIsReversed() {
-        return count < 0;
-    }
-
     public int getStart() {
         return start;
     }

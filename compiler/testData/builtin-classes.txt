@@ -150,7 +150,6 @@ public abstract class ByteIterator : jet.Iterator<jet.Byte> {
 public final class ByteRange : jet.Range<jet.Byte>, jet.ByteIterable {
     public constructor ByteRange(/*0*/ start : jet.Byte, /*1*/ size : jet.Int)
     public final val end : jet.Byte
-    public final val isReversed : jet.Boolean
     public final val size : jet.Int
     public final val start : jet.Byte
     public open override /*1*/ fun contains(/*0*/ elem : jet.Byte) : jet.Boolean
@@ -242,7 +241,6 @@ public abstract class CharIterator : jet.Iterator<jet.Char> {
 public final class CharRange : jet.Range<jet.Char>, jet.CharIterable {
     public constructor CharRange(/*0*/ start : jet.Char, /*1*/ size : jet.Int)
     public final val end : jet.Char
-    public final val isReversed : jet.Boolean
     public final val size : jet.Int
     public final val start : jet.Char
     public open override /*1*/ fun contains(/*0*/ elem : jet.Char) : jet.Boolean
@@ -365,7 +363,6 @@ public abstract class DoubleIterator : jet.Iterator<jet.Double> {
 public final class DoubleRange : jet.Range<jet.Double> {
     public constructor DoubleRange(/*0*/ start : jet.Double, /*1*/ size : jet.Double)
     public final val end : jet.Double
-    public final val isReversed : jet.Boolean
     public final val size : jet.Double
     public final val start : jet.Double
     public open override /*1*/ fun contains(/*0*/ elem : jet.Double) : jet.Boolean
@@ -587,7 +584,6 @@ public abstract class FloatIterator : jet.Iterator<jet.Float> {
 public final class FloatRange : jet.Range<jet.Float> {
     public constructor FloatRange(/*0*/ start : jet.Float, /*1*/ size : jet.Float)
     public final val end : jet.Float
-    public final val isReversed : jet.Boolean
     public final val size : jet.Float
     public final val start : jet.Float
     public open override /*1*/ fun contains(/*0*/ elem : jet.Float) : jet.Boolean
@@ -815,7 +811,6 @@ public abstract class IntIterator : jet.Iterator<jet.Int> {
 public final class IntRange : jet.Range<jet.Int>, jet.IntIterable {
     public constructor IntRange(/*0*/ start : jet.Int, /*1*/ size : jet.Int)
     public final val end : jet.Int
-    public final val isReversed : jet.Boolean
     public final val size : jet.Int
     public final val start : jet.Int
     public open override /*1*/ fun contains(/*0*/ elem : jet.Int) : jet.Boolean
@@ -960,7 +955,6 @@ public abstract class LongIterator : jet.Iterator<jet.Long> {
 public final class LongRange : jet.Range<jet.Long>, jet.LongIterable {
     public constructor LongRange(/*0*/ start : jet.Long, /*1*/ size : jet.Long)
     public final val end : jet.Long
-    public final val isReversed : jet.Boolean
     public final val size : jet.Long
     public final val start : jet.Long
     public open override /*1*/ fun contains(/*0*/ elem : jet.Long) : jet.Boolean
@@ -1222,7 +1216,6 @@ public abstract class ShortIterator : jet.Iterator<jet.Short> {
 public final class ShortRange : jet.Range<jet.Short>, jet.ShortIterable {
     public constructor ShortRange(/*0*/ start : jet.Short, /*1*/ size : jet.Int)
     public final val end : jet.Short
-    public final val isReversed : jet.Boolean
     public final val size : jet.Int
     public final val start : jet.Short
     public open override /*1*/ fun contains(/*0*/ elem : jet.Short) : jet.Boolean

@@ -87,10 +87,6 @@ public final class LongRange implements Range<Long>, LongIterable {
             return new LongIteratorImpl(start, count, step);
     }
 
-    public boolean getIsReversed() {
-        return count < 0;
-    }
-
     public long getStart() {
         return start;
     }

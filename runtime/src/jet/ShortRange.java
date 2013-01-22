@@ -86,10 +86,6 @@ public final class ShortRange implements Range<Short>, ShortIterable {
             return new ShortIteratorImpl(start, count, step);
     }
 
-    public boolean getIsReversed() {
-        return count < 0;
-    }
-
     public short getStart() {
         return start;
     }
