@@ -97,3 +97,73 @@ public class DoubleRange(public val start : Double, public val size : Double) : 
         public val EMPTY: DoubleRange
     }
 }
+
+
+public trait NumberSequence<N: Number>: Iterable<N> {
+    public val start: N
+    public val end: N
+    public val increment: Number
+}
+
+public class IntSequence(
+    public override val start: Int,
+    public override val end: Int,
+    public override val increment: Int
+): NumberSequence<Int> {
+
+    override fun iterator(): IntIterator
+}
+
+public class LongSequence(
+    public override val start: Long,
+    public override val end: Long,
+    public override val increment: Long
+): NumberSequence<Long> {
+
+    override fun iterator(): LongIterator
+}
+
+public class ByteSequence(
+    public override val start: Byte,
+    public override val end: Byte,
+    public override val increment: Int
+): NumberSequence<Byte> {
+
+    override fun iterator(): ByteIterator
+}
+
+public class ShortSequence(
+    public override val start: Short,
+    public override val end: Short,
+    public override val increment: Int
+): NumberSequence<Short> {
+
+    override fun iterator(): ShortIterator
+}
+
+public class CharacterSequence(
+    public override val start: Char,
+    public override val end: Char,
+    public override val increment: Int
+): NumberSequence<Char> {
+
+    override fun iterator(): CharIterator
+}
+
+public class FloatSequence(
+    public override val start: Float,
+    public override val end: Float,
+    public override val increment: Float
+): NumberSequence<Float> {
+
+    override fun iterator(): FloatIterator
+}
+
+public class DoubleSequence(
+    public override val start: Double,
+    public override val end: Double,
+    public override val increment: Double
+): NumberSequence<Double> {
+
+    override fun iterator(): DoubleIterator
+}
