@@ -88,4 +88,8 @@ public class StringsTest extends CodegenTestCase {
     public void testKt889() throws Exception {
         blackBoxFile("regressions/kt889.jet");
     }
+
+    public void testEa35743() {
+        blackBoxFile("regressions/ea35743.kt");
+    }
 }

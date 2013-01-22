@@ -33,10 +33,15 @@ public class IntrinsicsTestGenerated extends AbstractCodegenTest {
     public void testAllFilesPresentInIntrinsics() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/intrinsics"), "kt", true);
     }
-
+    
     @TestMetadata("compareTo.kt")
     public void testCompareTo() throws Exception {
         blackBoxFileByFullPath("compiler/testData/codegen/intrinsics/compareTo.kt");
+    }
+    
+    @TestMetadata("ea35953.kt")
+    public void testEa35953() throws Exception {
+        blackBoxFileByFullPath("compiler/testData/codegen/intrinsics/ea35953.kt");
     }
     
     @TestMetadata("longRangeWithExplicitDot.kt")
