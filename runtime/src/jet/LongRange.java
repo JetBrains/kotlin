@@ -112,10 +112,6 @@ public final class LongRange implements Range<Long>, LongIterable {
         return new LongIteratorImpl(start, count, 1);
     }
 
-    public static LongRange count(int length) {
-        return new LongRange(0, length);
-    }
-
     private static class LongIteratorImpl extends LongIterator {
         private final long step;
         private long cur;

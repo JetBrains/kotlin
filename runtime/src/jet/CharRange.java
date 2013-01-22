@@ -111,10 +111,6 @@ public final class CharRange implements Range<Character>, CharIterable {
         return new CharIteratorImpl(start, count, 1);
     }
 
-    public static CharRange count(int length) {
-        return new CharRange((char) 0, length);
-    }
-
     private static class CharIteratorImpl extends CharIterator {
         private final int step;
         private char cur;

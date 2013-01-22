@@ -100,10 +100,6 @@ public final class DoubleRange implements Range<Double> {
         return size < 0 ? -size : size;
     }
 
-    public static DoubleRange count(int length) {
-        return new DoubleRange(0, length);
-    }
-
     private static class DoubleIteratorImpl extends DoubleIterator {
         private final double step;
         private final double end;

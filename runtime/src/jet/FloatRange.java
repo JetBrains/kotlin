@@ -96,10 +96,6 @@ public final class FloatRange implements Range<Float> {
         return size < 0 ? -size : size;
     }
 
-    public static FloatRange count(int length) {
-        return new FloatRange(0, length);
-    }
-
     private static class FloatIteratorImpl extends FloatIterator {
         private final float step;
         private final float end;

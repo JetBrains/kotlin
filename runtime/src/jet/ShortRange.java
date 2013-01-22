@@ -111,10 +111,6 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         return new ShortIteratorImpl(start, count, 1);
     }
 
-    public static ShortRange count(int length) {
-        return new ShortRange((byte) 0, length);
-    }
-
     private static class ShortIteratorImpl extends ShortIterator {
         private final int step;
         private short cur;

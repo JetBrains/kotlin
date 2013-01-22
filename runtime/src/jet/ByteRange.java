@@ -111,10 +111,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         return new ByteIteratorImpl(start, count, 1);
     }
 
-    public static ByteRange count(int length) {
-        return new ByteRange((byte) 0, length);
-    }
-
     private static class ByteIteratorImpl extends ByteIterator {
         private final int step;
         private byte cur;
