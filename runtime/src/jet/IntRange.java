@@ -23,7 +23,7 @@ public final class IntRange implements Range<Integer>, IntIterable {
     private final int start;
     private final int count;
 
-    public static final IntRange EMPTY = new IntRange(0,0);
+    public static final IntRange EMPTY = new IntRange(0, 0);
 
     public IntRange(int startValue, int count) {
         this.start = startValue;
@@ -90,10 +90,6 @@ public final class IntRange implements Range<Integer>, IntIterable {
         return count < 0;
     }
 
-    public int getIteratorStart () {
-        return count == 0 ? 1 : start;
-    }
-    
     public int getStart() {
         return start;
     }

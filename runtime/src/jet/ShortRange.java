@@ -94,10 +94,6 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         return start;
     }
 
-    public int getIteratorStart () {
-        return count == 0 ? 1 : start;
-    }
-
     public short getEnd() {
         return (short) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
     }

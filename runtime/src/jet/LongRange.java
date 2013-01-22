@@ -95,10 +95,6 @@ public final class LongRange implements Range<Long>, LongIterable {
         return start;
     }
 
-    public long getIteratorStart () {
-        return count == 0 ? 1 : start;
-    }
-
     public long getEnd() {
         return count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1;
     }

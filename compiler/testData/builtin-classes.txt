@@ -151,7 +151,6 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.ByteIterable {
     public constructor ByteRange(/*0*/ start : jet.Byte, /*1*/ size : jet.Int)
     public final val end : jet.Byte
     public final val isReversed : jet.Boolean
-    public final val iteratorStart : jet.Byte
     public final val size : jet.Int
     public final val start : jet.Byte
     public open override /*1*/ fun contains(/*0*/ elem : jet.Byte) : jet.Boolean
@@ -244,7 +243,6 @@ public final class CharRange : jet.Range<jet.Char>, jet.CharIterable {
     public constructor CharRange(/*0*/ start : jet.Char, /*1*/ size : jet.Int)
     public final val end : jet.Char
     public final val isReversed : jet.Boolean
-    public final val iteratorStart : jet.Char
     public final val size : jet.Int
     public final val start : jet.Char
     public open override /*1*/ fun contains(/*0*/ elem : jet.Char) : jet.Boolean
@@ -818,7 +816,6 @@ public final class IntRange : jet.Range<jet.Int>, jet.IntIterable {
     public constructor IntRange(/*0*/ start : jet.Int, /*1*/ size : jet.Int)
     public final val end : jet.Int
     public final val isReversed : jet.Boolean
-    public final val iteratorStart : jet.Int
     public final val size : jet.Int
     public final val start : jet.Int
     public open override /*1*/ fun contains(/*0*/ elem : jet.Int) : jet.Boolean
@@ -964,7 +961,6 @@ public final class LongRange : jet.Range<jet.Long>, jet.LongIterable {
     public constructor LongRange(/*0*/ start : jet.Long, /*1*/ size : jet.Long)
     public final val end : jet.Long
     public final val isReversed : jet.Boolean
-    public final val iteratorStart : jet.Long
     public final val size : jet.Long
     public final val start : jet.Long
     public open override /*1*/ fun contains(/*0*/ elem : jet.Long) : jet.Boolean
@@ -1227,7 +1223,6 @@ public final class ShortRange : jet.Range<jet.Short>, jet.ShortIterable {
     public constructor ShortRange(/*0*/ start : jet.Short, /*1*/ size : jet.Int)
     public final val end : jet.Short
     public final val isReversed : jet.Boolean
-    public final val iteratorStart : jet.Short
     public final val size : jet.Int
     public final val start : jet.Short
     public open override /*1*/ fun contains(/*0*/ elem : jet.Short) : jet.Boolean

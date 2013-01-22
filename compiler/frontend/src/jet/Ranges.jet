@@ -11,8 +11,6 @@ public class IntRange(public val start : Int, public val size : Int) : Range<Int
 
     public val end : Int
 
-    public val iteratorStart : Int
-
     public fun step(step: Int) : IntIterator
 
     public val isReversed : Boolean
@@ -26,8 +24,6 @@ public class LongRange(public val start : Long, public val size : Long) : Range<
     public override fun iterator () : LongIterator
 
     public override fun contains (elem: Long) : Boolean
-
-    public val iteratorStart : Long
 
     public val end : Long
 
@@ -47,8 +43,6 @@ public class ByteRange(public val start : Byte, public val size : Int) : Range<B
 
     public val end : Byte
 
-    public val iteratorStart : Byte
-
     public fun step(step: Int) : ByteIterator
 
     public val isReversed : Boolean
@@ -62,8 +56,6 @@ public class ShortRange(public val start : Short, public val size : Int) : Range
     public override fun iterator () : ShortIterator
 
     public override fun contains (elem: Short) : Boolean
-
-    public val iteratorStart : Short
 
     public val end : Short
 
@@ -80,8 +72,6 @@ public class CharRange(public val start : Char, public val size : Int) : Range<C
     public override fun iterator () : CharIterator
 
     public override fun contains (elem: Char) : Boolean
-
-    public val iteratorStart : Char
 
     public val end : Char
 

@@ -87,10 +87,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         return start;
     }
 
-    public byte getIteratorStart () {
-        return count == 0 ? 1 : start;
-    }
-
     public byte getEnd() {
         return (byte) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
     }
