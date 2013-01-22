@@ -43,13 +43,6 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         }
     }
 
-    public ShortIterator step(int step) {
-        if (step < 0)
-            return new ShortIteratorImpl(getEnd(), -count, -step);
-        else
-            return new ShortIteratorImpl(start, count, step);
-    }
-
     @Override
     public boolean contains(Short item) {
         if (item == null) return false;
@@ -84,6 +77,13 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         int result = (int) start;
         result = 31 * result + count;
         return result;
+    }
+
+    public ShortIterator step(int step) {
+        if (step < 0)
+            return new ShortIteratorImpl(getEnd(), -count, -step);
+        else
+            return new ShortIteratorImpl(start, count, step);
     }
 
     public boolean getIsReversed() {

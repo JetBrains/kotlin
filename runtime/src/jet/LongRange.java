@@ -44,13 +44,6 @@ public final class LongRange implements Range<Long>, LongIterable {
     }
 
 
-    public LongIterator step(long step) {
-        if (step < 0)
-            return new LongIteratorImpl(getEnd(), -count, -step);
-        else
-            return new LongIteratorImpl(start, count, step);
-    }
-
     @Override
     public boolean contains(Long item) {
         if (item == null) return false;
@@ -85,6 +78,13 @@ public final class LongRange implements Range<Long>, LongIterable {
         int result = (int) (start ^ (start >>> 32));
         result = 31 * result + (int) (count ^ (count >>> 32));
         return result;
+    }
+
+    public LongIterator step(long step) {
+        if (step < 0)
+            return new LongIteratorImpl(getEnd(), -count, -step);
+        else
+            return new LongIteratorImpl(start, count, step);
     }
 
     public boolean getIsReversed() {

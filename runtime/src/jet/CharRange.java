@@ -79,6 +79,13 @@ public final class CharRange implements Range<Character>, CharIterable {
         return result;
     }
 
+    public CharIterator step(int step) {
+        if (step < 0)
+            return new CharIteratorImpl(getEnd(), -count, -step);
+        else
+            return new CharIteratorImpl(start, count, step);
+    }
+
     public boolean getIsReversed() {
         return count < 0;
     }
@@ -93,13 +100,6 @@ public final class CharRange implements Range<Character>, CharIterable {
 
     public int getSize() {
         return count < 0 ? -count : count;
-    }
-
-    public CharIterator step(int step) {
-        if (step < 0)
-            return new CharIteratorImpl(getEnd(), -count, -step);
-        else
-            return new CharIteratorImpl(start, count, step);
     }
 
     @Override
