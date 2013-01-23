@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.lazy.LazyValue;
+import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -215,7 +215,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @Override
     public JetType getDefaultType() {
         if (defaultType == null) {
-            defaultType = new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new LazyValue<JetScope>() {
+            defaultType = new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
                 @Override
                 protected JetScope compute() {
                     return getUpperBoundsAsType().getMemberScope();

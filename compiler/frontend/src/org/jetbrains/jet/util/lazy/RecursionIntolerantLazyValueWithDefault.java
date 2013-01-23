@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.util.lazy;
 
-public abstract class LazyValueWithDefault<T> extends LazyValue<T> {
+public abstract class RecursionIntolerantLazyValueWithDefault<T> extends RecursionIntolerantLazyValue<T> {
     private final T defaultValue;
 
-    protected LazyValueWithDefault(T defaultValue) {
+    protected RecursionIntolerantLazyValueWithDefault(T defaultValue) {
         this.defaultValue = defaultValue;
     }
 

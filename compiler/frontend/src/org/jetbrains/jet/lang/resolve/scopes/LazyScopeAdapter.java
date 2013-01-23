@@ -18,13 +18,13 @@ package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
-import org.jetbrains.jet.util.lazy.LazyValue;
+import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
 
 public class LazyScopeAdapter extends AbstractScopeAdapter {
 
-    private final LazyValue<JetScope> scope;
+    private final RecursionIntolerantLazyValue<JetScope> scope;
 
-    public LazyScopeAdapter(LazyValue<JetScope> scope) {
+    public LazyScopeAdapter(RecursionIntolerantLazyValue<JetScope> scope) {
         this.scope = scope;
     }
 

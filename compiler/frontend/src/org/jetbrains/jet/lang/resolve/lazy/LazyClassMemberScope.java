@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.lazy.LazyValue;
+import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
 
 import java.util.*;
 
@@ -358,7 +358,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
-        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new LazyValue<JetType>() {
+        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), new RecursionIntolerantLazyValue<JetType>() {
             @Override
             protected JetType compute() {
                 return thisDescriptor.getDefaultType();

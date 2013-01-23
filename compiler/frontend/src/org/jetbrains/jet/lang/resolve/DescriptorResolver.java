@@ -39,8 +39,8 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.lazy.LazyValue;
-import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
+import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
+import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValueWithDefault;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -289,7 +289,7 @@ public class DescriptorResolver {
             final JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {
                 returnType =
-                        DeferredType.create(trace, new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
+                        DeferredType.create(trace, new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                             @Override
                             protected JetType compute() {
                                 //JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
@@ -990,7 +990,7 @@ public class DescriptorResolver {
                 return ErrorUtils.createErrorType("No type, no body");
             }
             else {
-                LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
+                RecursionIntolerantLazyValue<JetType> lazyValue = new RecursionIntolerantLazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
                         return expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace);
@@ -1271,7 +1271,7 @@ public class DescriptorResolver {
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
                                                  VALUES_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
-        JetType type = DeferredType.create(trace, new LazyValue<JetType>() {
+        JetType type = DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
             @Override
             protected JetType compute() {
                 return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
@@ -1295,7 +1295,7 @@ public class DescriptorResolver {
                 new SimpleFunctionDescriptorImpl(classObjectDescriptor, annotations,
                                                  VALUE_OF_METHOD_NAME,
                                                  CallableMemberDescriptor.Kind.DECLARATION);
-        JetType type = DeferredType.create(trace, new LazyValue<JetType>() {
+        JetType type = DeferredType.create(trace, new RecursionIntolerantLazyValue<JetType>() {
             @Override
             protected JetType compute() {
                 return enumClassDescriptor.getDefaultType();

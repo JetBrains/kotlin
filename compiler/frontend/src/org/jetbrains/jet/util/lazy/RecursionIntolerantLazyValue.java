@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.util.lazy;
 
-public abstract class LazyValue<T> {
+public abstract class RecursionIntolerantLazyValue<T> {
 
     private enum State {
         NOT_COMPUTED,

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.lazy.LazyValue;
+import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -267,7 +267,7 @@ public class TypeResolver {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
         else {
-            return new LazyScopeAdapter(new LazyValue<JetScope>() {
+            return new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
                 @Override
                 protected JetScope compute() {
                     return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
