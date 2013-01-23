@@ -32,15 +32,7 @@ public final class FloatRange implements Range<Float> {
 
     @Override
     public String toString() {
-        if (size == 0.0) {
-            return "<empty range>";
-        }
-        else if (size > 0) {
-            return getStart() + ".rangeTo(" + getEnd() + ")";
-        }
-        else {
-            return getStart() + ".downTo(" + getEnd() + ")";
-        }
+        return getStart() + ".." + getEnd();
     }
 
     @Override
