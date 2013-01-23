@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class CharRange implements Range<Character>, CharIterable {
+public final class CharRange implements Range<Character>, NumberSequence<Character>, CharIterable {
     private final char start;
     private final char end;
 
@@ -72,6 +72,11 @@ public final class CharRange implements Range<Character>, CharIterable {
     @Override
     public Character getEnd() {
         return end;
+    }
+
+    @Override
+    public Integer getIncrement() {
+        return 1;
     }
 
     @Override

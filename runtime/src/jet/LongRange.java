@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class LongRange implements Range<Long>, LongIterable {
+public final class LongRange implements Range<Long>, NumberSequence<Long>, LongIterable {
     private final long start;
     private final long end;
 
@@ -72,6 +72,11 @@ public final class LongRange implements Range<Long>, LongIterable {
     @Override
     public Long getEnd() {
         return end;
+    }
+
+    @Override
+    public Long getIncrement() {
+        return 1L;
     }
 
     @Override

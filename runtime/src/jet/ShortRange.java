@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class ShortRange implements Range<Short>, ShortIterable {
+public final class ShortRange implements Range<Short>, NumberSequence<Short>, ShortIterable {
     private final short start;
     private final short end;
 
@@ -72,6 +72,11 @@ public final class ShortRange implements Range<Short>, ShortIterable {
     @Override
     public Short getEnd() {
         return end;
+    }
+
+    @Override
+    public Integer getIncrement() {
+        return 1;
     }
 
     @Override
