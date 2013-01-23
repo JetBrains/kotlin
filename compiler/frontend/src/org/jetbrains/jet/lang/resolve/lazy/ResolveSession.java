@@ -47,6 +47,8 @@ public class ResolveSession {
         }
     };
 
+    private final StorageManager storageManager;
+
     private final ModuleDescriptor module;
     private final LazyPackageDescriptor rootPackage;
 
@@ -98,6 +100,7 @@ public class ResolveSession {
             @NotNull Predicate<FqNameUnsafe> specialClasses,
             @NotNull BindingTrace delegationTrace
     ) {
+        this.storageManager = new LockBasedStorageManager();
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
         this.trace = new ObservableBindingTrace(delegationTrace);
@@ -119,6 +122,11 @@ public class ResolveSession {
 
     /*package*/ boolean isClassSpecial(@NotNull FqNameUnsafe fqName) {
         return specialClasses.apply(fqName);
+    }
+
+    @NotNull
+    /*package*/ StorageManager getStorageManager() {
+        return storageManager;
     }
 
     @NotNull
