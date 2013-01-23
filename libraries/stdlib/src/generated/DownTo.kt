@@ -6,198 +6,198 @@ package kotlin
 //
 
 
-public inline fun Byte.downTo(to: Byte): ByteRange {
-    return if (this >= to) ByteRange(this, to - this - 1) else ByteRange.EMPTY
+public inline fun Byte.downTo(to: Byte): ByteSequence {
+    return ByteSequence(this, to, -1)
 }
 
-public inline fun Byte.downTo(to: Char): CharRange {
-    return if (this >= to) CharRange(this.toChar(), to - this - 1) else CharRange.EMPTY
+public inline fun Byte.downTo(to: Char): CharacterSequence {
+    return CharacterSequence(this.toChar(), to, -1)
 }
 
-public inline fun Byte.downTo(to: Short): ShortRange {
-    return if (this >= to) ShortRange(this.toShort(), to - this - 1) else ShortRange.EMPTY
+public inline fun Byte.downTo(to: Short): ShortSequence {
+    return ShortSequence(this.toShort(), to, -1)
 }
 
-public inline fun Byte.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange.EMPTY
+public inline fun Byte.downTo(to: Int): IntSequence {
+    return IntSequence(this.toInt(), to, -1)
 }
 
-public inline fun Byte.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
+public inline fun Byte.downTo(to: Long): LongSequence {
+    return LongSequence(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Byte.downTo(to: Float): FloatRange {
-    return FloatRange(this.toFloat(), to - this)
+public inline fun Byte.downTo(to: Float): FloatSequence {
+    return FloatSequence(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Byte.downTo(to: Double): DoubleRange {
-    return DoubleRange(this.toDouble(), to - this)
+public inline fun Byte.downTo(to: Double): DoubleSequence {
+    return DoubleSequence(this.toDouble(), to, -1.0)
 }
 
-public inline fun Char.downTo(to: Byte): CharRange {
-    return if (this >= to) CharRange(this, to - this - 1) else CharRange.EMPTY
+public inline fun Char.downTo(to: Byte): CharacterSequence {
+    return CharacterSequence(this, to.toChar(), -1)
 }
 
-public inline fun Char.downTo(to: Char): CharRange {
-    return if (this >= to) CharRange(this, to - this - 1) else CharRange.EMPTY
+public inline fun Char.downTo(to: Char): CharacterSequence {
+    return CharacterSequence(this, to, -1)
 }
 
-public inline fun Char.downTo(to: Short): ShortRange {
-    return if (this >= to) ShortRange(this.toShort(), to - this - 1) else ShortRange.EMPTY
+public inline fun Char.downTo(to: Short): ShortSequence {
+    return ShortSequence(this.toShort(), to, -1)
 }
 
-public inline fun Char.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange.EMPTY
+public inline fun Char.downTo(to: Int): IntSequence {
+    return IntSequence(this.toInt(), to, -1)
 }
 
-public inline fun Char.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
+public inline fun Char.downTo(to: Long): LongSequence {
+    return LongSequence(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Char.downTo(to: Float): FloatRange {
-    return FloatRange(this.toFloat(), to - this)
+public inline fun Char.downTo(to: Float): FloatSequence {
+    return FloatSequence(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Char.downTo(to: Double): DoubleRange {
-    return DoubleRange(this.toDouble(), to - this)
+public inline fun Char.downTo(to: Double): DoubleSequence {
+    return DoubleSequence(this.toDouble(), to, -1.0)
 }
 
-public inline fun Short.downTo(to: Byte): ShortRange {
-    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange.EMPTY
+public inline fun Short.downTo(to: Byte): ShortSequence {
+    return ShortSequence(this, to.toShort(), -1)
 }
 
-public inline fun Short.downTo(to: Char): ShortRange {
-    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange.EMPTY
+public inline fun Short.downTo(to: Char): ShortSequence {
+    return ShortSequence(this, to.toShort(), -1)
 }
 
-public inline fun Short.downTo(to: Short): ShortRange {
-    return if (this >= to) ShortRange(this, to - this - 1) else ShortRange.EMPTY
+public inline fun Short.downTo(to: Short): ShortSequence {
+    return ShortSequence(this, to, -1)
 }
 
-public inline fun Short.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this.toInt(), to - this - 1) else IntRange.EMPTY
+public inline fun Short.downTo(to: Int): IntSequence {
+    return IntSequence(this.toInt(), to, -1)
 }
 
-public inline fun Short.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
+public inline fun Short.downTo(to: Long): LongSequence {
+    return LongSequence(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Short.downTo(to: Float): FloatRange {
-    return FloatRange(this.toFloat(), to - this)
+public inline fun Short.downTo(to: Float): FloatSequence {
+    return FloatSequence(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Short.downTo(to: Double): DoubleRange {
-    return DoubleRange(this.toDouble(), to - this)
+public inline fun Short.downTo(to: Double): DoubleSequence {
+    return DoubleSequence(this.toDouble(), to, -1.0)
 }
 
-public inline fun Int.downTo(to: Byte): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
+public inline fun Int.downTo(to: Byte): IntSequence {
+    return IntSequence(this, to.toInt(), -1)
 }
 
-public inline fun Int.downTo(to: Char): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
+public inline fun Int.downTo(to: Char): IntSequence {
+    return IntSequence(this, to.toInt(), -1)
 }
 
-public inline fun Int.downTo(to: Short): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
+public inline fun Int.downTo(to: Short): IntSequence {
+    return IntSequence(this, to.toInt(), -1)
 }
 
-public inline fun Int.downTo(to: Int): IntRange {
-    return if (this >= to) IntRange(this, to - this - 1) else IntRange.EMPTY
+public inline fun Int.downTo(to: Int): IntSequence {
+    return IntSequence(this, to, -1)
 }
 
-public inline fun Int.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this.toLong(), to - this - 1) else LongRange.EMPTY
+public inline fun Int.downTo(to: Long): LongSequence {
+    return LongSequence(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Int.downTo(to: Float): FloatRange {
-    return FloatRange(this.toFloat(), to - this)
+public inline fun Int.downTo(to: Float): FloatSequence {
+    return FloatSequence(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Int.downTo(to: Double): DoubleRange {
-    return DoubleRange(this.toDouble(), to - this)
+public inline fun Int.downTo(to: Double): DoubleSequence {
+    return DoubleSequence(this.toDouble(), to, -1.0)
 }
 
-public inline fun Long.downTo(to: Byte): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
+public inline fun Long.downTo(to: Byte): LongSequence {
+    return LongSequence(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Char): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
+public inline fun Long.downTo(to: Char): LongSequence {
+    return LongSequence(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Short): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
+public inline fun Long.downTo(to: Short): LongSequence {
+    return LongSequence(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Int): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
+public inline fun Long.downTo(to: Int): LongSequence {
+    return LongSequence(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Long): LongRange {
-    return if (this >= to) LongRange(this, to - this - 1) else LongRange.EMPTY
+public inline fun Long.downTo(to: Long): LongSequence {
+    return LongSequence(this, to, -1.toLong())
 }
 
-public inline fun Long.downTo(to: Float): FloatRange {
-    return FloatRange(this.toFloat(), to - this)
+public inline fun Long.downTo(to: Float): FloatSequence {
+    return FloatSequence(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Long.downTo(to: Double): DoubleRange {
-    return DoubleRange(this.toDouble(), to - this)
+public inline fun Long.downTo(to: Double): DoubleSequence {
+    return DoubleSequence(this.toDouble(), to, -1.0)
 }
 
-public inline fun Float.downTo(to: Byte): FloatRange {
-    return FloatRange(this, to - this)
+public inline fun Float.downTo(to: Byte): FloatSequence {
+    return FloatSequence(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Char): FloatRange {
-    return FloatRange(this, to - this)
+public inline fun Float.downTo(to: Char): FloatSequence {
+    return FloatSequence(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Short): FloatRange {
-    return FloatRange(this, to - this)
+public inline fun Float.downTo(to: Short): FloatSequence {
+    return FloatSequence(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Int): FloatRange {
-    return FloatRange(this, to - this)
+public inline fun Float.downTo(to: Int): FloatSequence {
+    return FloatSequence(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Long): FloatRange {
-    return FloatRange(this, to - this)
+public inline fun Float.downTo(to: Long): FloatSequence {
+    return FloatSequence(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Float): FloatRange {
-    return FloatRange(this, to - this)
+public inline fun Float.downTo(to: Float): FloatSequence {
+    return FloatSequence(this, to, -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Double): DoubleRange {
-    return DoubleRange(this.toDouble(), to - this)
+public inline fun Float.downTo(to: Double): DoubleSequence {
+    return DoubleSequence(this.toDouble(), to, -1.0)
 }
 
-public inline fun Double.downTo(to: Byte): DoubleRange {
-    return DoubleRange(this, to - this)
+public inline fun Double.downTo(to: Byte): DoubleSequence {
+    return DoubleSequence(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Char): DoubleRange {
-    return DoubleRange(this, to - this)
+public inline fun Double.downTo(to: Char): DoubleSequence {
+    return DoubleSequence(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Short): DoubleRange {
-    return DoubleRange(this, to - this)
+public inline fun Double.downTo(to: Short): DoubleSequence {
+    return DoubleSequence(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Int): DoubleRange {
-    return DoubleRange(this, to - this)
+public inline fun Double.downTo(to: Int): DoubleSequence {
+    return DoubleSequence(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Long): DoubleRange {
-    return DoubleRange(this, to - this)
+public inline fun Double.downTo(to: Long): DoubleSequence {
+    return DoubleSequence(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Float): DoubleRange {
-    return DoubleRange(this, to - this)
+public inline fun Double.downTo(to: Float): DoubleSequence {
+    return DoubleSequence(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Double): DoubleRange {
-    return DoubleRange(this, to - this)
+public inline fun Double.downTo(to: Double): DoubleSequence {
+    return DoubleSequence(this, to, -1.0)
 }
