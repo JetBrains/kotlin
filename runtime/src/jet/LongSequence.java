@@ -52,4 +52,36 @@ public class LongSequence implements NumberSequence<Long> {
     public LongIterator iterator() {
         return new LongSequenceIterator(start, end, increment);
     }
+
+    @Override
+    public String toString() {
+        if (increment > 0) {
+            return start + ".." + end + " step " + increment;
+        }
+        else {
+            return start + " downTo " + end + " step " + -increment;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LongSequence longs = (LongSequence) o;
+
+        if (end != longs.end) return false;
+        if (increment != longs.increment) return false;
+        if (start != longs.start) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (start ^ (start >>> 32));
+        result = 31 * result + (int) (end ^ (end >>> 32));
+        result = 31 * result + (int) (increment ^ (increment >>> 32));
+        return result;
+    }
 }

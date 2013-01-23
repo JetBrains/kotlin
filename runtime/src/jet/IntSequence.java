@@ -52,4 +52,36 @@ public class IntSequence implements NumberSequence<Integer> {
     public IntIterator iterator() {
         return new IntSequenceIterator(start, end, increment);
     }
+
+    @Override
+    public String toString() {
+        if (increment > 0) {
+            return start + ".." + end + " step " + increment;
+        }
+        else {
+            return start + " downTo " + end + " step " + -increment;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IntSequence sequence = (IntSequence) o;
+
+        if (end != sequence.end) return false;
+        if (increment != sequence.increment) return false;
+        if (start != sequence.start) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = start;
+        result = 31 * result + end;
+        result = 31 * result + increment;
+        return result;
+    }
 }

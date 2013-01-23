@@ -52,4 +52,36 @@ public class CharacterSequence implements NumberSequence<Character> {
     public CharIterator iterator() {
         return new CharacterSequenceIterator(start, end, increment);
     }
+
+    @Override
+    public String toString() {
+        if (increment > 0) {
+            return start + ".." + end + " step " + increment;
+        }
+        else {
+            return start + " downTo " + end + " step " + -increment;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CharacterSequence that = (CharacterSequence) o;
+
+        if (end != that.end) return false;
+        if (increment != that.increment) return false;
+        if (start != that.start) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) start;
+        result = 31 * result + (int) end;
+        result = 31 * result + increment;
+        return result;
+    }
 }

@@ -52,4 +52,41 @@ public class DoubleSequence implements NumberSequence<Double> {
     public DoubleIterator iterator() {
         return new DoubleSequenceIterator(start, end, increment);
     }
+
+    @Override
+    public String toString() {
+        if (increment > 0) {
+            return start + ".." + end + " step " + increment;
+        }
+        else {
+            return start + " downTo " + end + " step " + -increment;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DoubleSequence doubles = (DoubleSequence) o;
+
+        if (Double.compare(doubles.end, end) != 0) return false;
+        if (Double.compare(doubles.increment, increment) != 0) return false;
+        if (Double.compare(doubles.start, start) != 0) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = start != +0.0d ? Double.doubleToLongBits(start) : 0L;
+        result = (int) (temp ^ (temp >>> 32));
+        temp = end != +0.0d ? Double.doubleToLongBits(end) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = increment != +0.0d ? Double.doubleToLongBits(increment) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }

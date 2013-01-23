@@ -52,4 +52,36 @@ public class ShortSequence implements NumberSequence<Short> {
     public ShortIterator iterator() {
         return new ShortSequenceIterator(start, end, increment);
     }
+
+    @Override
+    public String toString() {
+        if (increment > 0) {
+            return start + ".." + end + " step " + increment;
+        }
+        else {
+            return start + " downTo " + end + " step " + -increment;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ShortSequence shorts = (ShortSequence) o;
+
+        if (end != shorts.end) return false;
+        if (increment != shorts.increment) return false;
+        if (start != shorts.start) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) start;
+        result = 31 * result + (int) end;
+        result = 31 * result + increment;
+        return result;
+    }
 }

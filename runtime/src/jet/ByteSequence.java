@@ -52,4 +52,36 @@ public class ByteSequence implements NumberSequence<Byte> {
     public ByteIterator iterator() {
         return new ByteSequenceIterator(start, end, increment);
     }
+
+    @Override
+    public String toString() {
+        if (increment > 0) {
+            return start + ".." + end + " step " + increment;
+        }
+        else {
+            return start + " downTo " + end + " step " + -increment;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ByteSequence bytes = (ByteSequence) o;
+
+        if (end != bytes.end) return false;
+        if (increment != bytes.increment) return false;
+        if (start != bytes.start) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) start;
+        result = 31 * result + (int) end;
+        result = 31 * result + increment;
+        return result;
+    }
 }

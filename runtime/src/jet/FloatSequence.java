@@ -52,4 +52,36 @@ public class FloatSequence implements NumberSequence<Float> {
     public FloatIterator iterator() {
         return new FloatSequenceIterator(start, end, increment);
     }
+
+    @Override
+    public String toString() {
+        if (increment > 0) {
+            return start + ".." + end + " step " + increment;
+        }
+        else {
+            return start + " downTo " + end + " step " + -increment;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FloatSequence floats = (FloatSequence) o;
+
+        if (Float.compare(floats.end, end) != 0) return false;
+        if (Float.compare(floats.increment, increment) != 0) return false;
+        if (Float.compare(floats.start, start) != 0) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (start != +0.0f ? Float.floatToIntBits(start) : 0);
+        result = 31 * result + (end != +0.0f ? Float.floatToIntBits(end) : 0);
+        result = 31 * result + (increment != +0.0f ? Float.floatToIntBits(increment) : 0);
+        return result;
+    }
 }
