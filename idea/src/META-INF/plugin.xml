@@ -9,6 +9,7 @@
   <idea-version since-build="123.4" until-build="124.9999" />
 
   <depends optional="true">JUnit</depends>
+  <depends optional="true" config-file="kotlin-copyright.xml">com.intellij.copyright</depends>
 
   <project-components>
       <component>
@@ -254,4 +255,8 @@
       <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>
+
+  <extensionPoints>
+    <extensionPoint name="updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
+  </extensionPoints>
 </idea-plugin>
