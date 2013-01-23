@@ -56,12 +56,12 @@ public final class LongRange implements Range<Long>, NumberSequence<Long>, LongI
 
     @Override
     public LongIterator iterator() {
-        return new LongSequenceIterator(getStart(), getEnd(), 1);
+        return new LongSequenceIterator(start, end, 1);
     }
 
     @Override
     public String toString() {
-        return getStart() + ".." + getEnd();
+        return start + ".." + end;
     }
 
     @Override

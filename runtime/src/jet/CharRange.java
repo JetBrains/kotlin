@@ -56,12 +56,12 @@ public final class CharRange implements Range<Character>, NumberSequence<Charact
 
     @Override
     public CharIterator iterator() {
-        return new CharacterSequenceIterator(getStart(), getEnd(), 1);
+        return new CharacterSequenceIterator(start, end, 1);
     }
 
     @Override
     public String toString() {
-        return getStart() + ".." + getEnd();
+        return start + ".." + end;
     }
 
     @Override

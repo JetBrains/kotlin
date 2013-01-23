@@ -56,12 +56,12 @@ public final class IntRange implements Range<Integer>, NumberSequence<Integer>, 
 
     @Override
     public IntIterator iterator() {
-        return new IntSequenceIterator(getStart(), getEnd(), 1);
+        return new IntSequenceIterator(start, end, 1);
     }
 
     @Override
     public String toString() {
-        return getStart() + ".." + getEnd();
+        return start + ".." + end;
     }
 
     @Override

@@ -52,12 +52,12 @@ public final class DoubleRange implements Range<Double>, NumberSequence<Double>,
 
     @Override
     public DoubleIterator iterator() {
-        return new DoubleSequenceIterator(getStart(), getEnd(), 1);
+        return new DoubleSequenceIterator(start, end, 1.0);
     }
 
     @Override
     public String toString() {
-        return getStart() + ".." + getEnd();
+        return start + ".." + end;
     }
 
     @Override

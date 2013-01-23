@@ -56,12 +56,12 @@ public final class ByteRange implements Range<Byte>, NumberSequence<Byte>, ByteI
 
     @Override
     public ByteIterator iterator() {
-        return new ByteSequenceIterator(getStart(), getEnd(), 1);
+        return new ByteSequenceIterator(start, end, 1);
     }
 
     @Override
     public String toString() {
-        return getStart() + ".." + getEnd();
+        return start + ".." + end;
     }
 
     @Override

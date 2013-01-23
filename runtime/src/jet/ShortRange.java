@@ -56,12 +56,12 @@ public final class ShortRange implements Range<Short>, NumberSequence<Short>, Sh
 
     @Override
     public ShortIterator iterator() {
-        return new ShortSequenceIterator(getStart(), getEnd(), 1);
+        return new ShortSequenceIterator(start, end, 1);
     }
 
     @Override
     public String toString() {
-        return getStart() + ".." + getEnd();
+        return start + ".." + end;
     }
 
     @Override

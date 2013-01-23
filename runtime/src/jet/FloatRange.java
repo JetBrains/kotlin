@@ -52,12 +52,12 @@ public final class FloatRange implements Range<Float>, NumberSequence<Float>, Fl
 
     @Override
     public FloatIterator iterator() {
-        return new FloatSequenceIterator(getStart(), getEnd(), 1);
+        return new FloatSequenceIterator(start, end, 1);
     }
 
     @Override
     public String toString() {
-        return getStart() + ".." + getEnd();
+        return start + ".." + end;
     }
 
     @Override
