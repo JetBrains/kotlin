@@ -61,11 +61,13 @@ public final class FloatRange implements Range<Float> {
         return result;
     }
 
-    public float getStart() {
+    @Override
+    public Float getStart() {
         return start;
     }
 
-    public float getEnd() {
+    @Override
+    public Float getEnd() {
         return end;
     }
 }

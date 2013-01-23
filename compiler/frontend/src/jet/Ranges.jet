@@ -1,10 +1,12 @@
 package jet
 
 public trait Range<in T : Comparable<T>> {
-  public fun contains(item : T) : Boolean
+    public val start: T
+    public val end: T
+    public fun contains(item : T) : Boolean
 }
 
-public class IntRange(public val start : Int, public val end : Int) : Range<Int>, IntIterable {
+public class IntRange(public override val start : Int, public override val end : Int) : Range<Int>, IntIterable {
     public override fun iterator () : IntIterator
 
     public override fun contains (elem: Int) : Boolean
@@ -14,7 +16,7 @@ public class IntRange(public val start : Int, public val end : Int) : Range<Int>
     }
 }
 
-public class LongRange(public val start : Long, public val end : Long) : Range<Long>, LongIterable {
+public class LongRange(public override val start : Long, public override val end : Long) : Range<Long>, LongIterable {
     public override fun iterator () : LongIterator
 
     public override fun contains (elem: Long) : Boolean
@@ -24,7 +26,7 @@ public class LongRange(public val start : Long, public val end : Long) : Range<L
     }
 }
 
-public class ByteRange(public val start : Byte, public val end : Byte) : Range<Byte>, ByteIterable {
+public class ByteRange(public override val start : Byte, public override val end : Byte) : Range<Byte>, ByteIterable {
     public override fun iterator () : ByteIterator
 
     public override fun contains (elem: Byte) : Boolean
@@ -34,7 +36,7 @@ public class ByteRange(public val start : Byte, public val end : Byte) : Range<B
     }
 }
 
-public class ShortRange(public val start : Short, public val end : Short) : Range<Short>, ShortIterable {
+public class ShortRange(public override val start : Short, public override val end : Short) : Range<Short>, ShortIterable {
     public override fun iterator () : ShortIterator
 
     public override fun contains (elem: Short) : Boolean
@@ -44,7 +46,7 @@ public class ShortRange(public val start : Short, public val end : Short) : Rang
     }
 }
 
-public class CharRange(public val start : Char, public val end : Char) : Range<Char>, CharIterable {
+public class CharRange(public override val start : Char, public override val end : Char) : Range<Char>, CharIterable {
     public override fun iterator () : CharIterator
 
     public override fun contains (elem: Char) : Boolean
@@ -54,7 +56,7 @@ public class CharRange(public val start : Char, public val end : Char) : Range<C
     }
 }
 
-public class FloatRange(public val start : Float, public val end : Float) : Range<Float> {
+public class FloatRange(public override val start : Float, public override val end : Float) : Range<Float> {
     public override fun contains (elem: Float) : Boolean
 
     public class object {
@@ -62,7 +64,7 @@ public class FloatRange(public val start : Float, public val end : Float) : Rang
     }
 }
 
-public class DoubleRange(public val start : Double, public val end : Double) : Range<Double> {
+public class DoubleRange(public override val start : Double, public override val end : Double) : Range<Double> {
     public override fun contains (elem: Double) : Boolean
 
     public class object {

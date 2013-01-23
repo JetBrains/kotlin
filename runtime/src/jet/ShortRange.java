@@ -64,11 +64,13 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         return result;
     }
 
-    public short getStart() {
+    @Override
+    public Short getStart() {
         return start;
     }
 
-    public short getEnd() {
+    @Override
+    public Short getEnd() {
         return end;
     }
 

@@ -1,4 +1,8 @@
 class MyRange1() : Range<Int> {
+    override val start: Int
+        get() = 0
+    override val end: Int
+        get() = 0
     override fun contains(item: Int) = true
 }
 

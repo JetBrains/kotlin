@@ -64,11 +64,13 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         return result;
     }
 
-    public byte getStart() {
+    @Override
+    public Byte getStart() {
         return start;
     }
 
-    public byte getEnd() {
+    @Override
+    public Byte getEnd() {
         return end;
     }
 

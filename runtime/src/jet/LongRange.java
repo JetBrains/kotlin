@@ -64,11 +64,13 @@ public final class LongRange implements Range<Long>, LongIterable {
         return result;
     }
 
-    public long getStart() {
+    @Override
+    public Long getStart() {
         return start;
     }
 
-    public long getEnd() {
+    @Override
+    public Long getEnd() {
         return end;
     }
 

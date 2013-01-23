@@ -65,11 +65,13 @@ public final class DoubleRange implements Range<Double> {
         return result;
     }
 
-    public double getStart() {
+    @Override
+    public Double getStart() {
         return start;
     }
 
-    public double  getEnd() {
+    @Override
+    public Double getEnd() {
         return end;
     }
 }

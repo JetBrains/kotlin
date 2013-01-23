@@ -64,11 +64,13 @@ public final class IntRange implements Range<Integer>, IntIterable {
         return result;
     }
 
-    public int getStart() {
+    @Override
+    public Integer getStart() {
         return start;
     }
 
-    public int getEnd() {
+    @Override
+    public Integer getEnd() {
         return end;
     }
 

@@ -64,11 +64,13 @@ public final class CharRange implements Range<Character>, CharIterable {
         return result;
     }
 
-    public char getStart() {
+    @Override
+    public Character getStart() {
         return start;
     }
 
-    public char getEnd() {
+    @Override
+    public Character getEnd() {
         return end;
     }
 
