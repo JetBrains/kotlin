@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -845,11 +846,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.dup();
 
             indexVar = myFrameMap.enterTemp(Type.INT_TYPE);
-            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getStart", "()I");
+            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getStart", "()Ljava/lang/Integer;");
+            StackValue.coerce(Type.getType("Ljava/lang/Integer;"), Type.INT_TYPE, v);
             v.store(indexVar, Type.INT_TYPE);
 
             endVar = myFrameMap.enterTemp(Type.INT_TYPE);
-            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getEnd", "()I");
+            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getEnd", "()Ljava/lang/Integer;");
+            StackValue.coerce(Type.getType("Ljava/lang/Integer;"), Type.INT_TYPE, v);
             v.store(endVar, Type.INT_TYPE);
         }
 

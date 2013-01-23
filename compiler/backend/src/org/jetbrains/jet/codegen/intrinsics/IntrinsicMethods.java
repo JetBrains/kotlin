@@ -156,7 +156,20 @@ public class IntrinsicMethods {
                     Name.identifier("EMPTY"), -1, new EmptyRange(type));
         }
 
+        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
+            registerRangeOrSequenceProperty(type.getRangeClassName(), Name.identifier("start"));
+            registerRangeOrSequenceProperty(type.getRangeClassName(), Name.identifier("end"));
+
+            registerRangeOrSequenceProperty(type.getSequenceClassName(), Name.identifier("start"));
+            registerRangeOrSequenceProperty(type.getSequenceClassName(), Name.identifier("end"));
+            registerRangeOrSequenceProperty(type.getSequenceClassName(), Name.identifier("increment"));
+        }
+
         declareArrayMethods();
+    }
+
+    private void registerRangeOrSequenceProperty(@NotNull FqName ownerClass, @NotNull Name propertyName) {
+        intrinsicsMap.registerIntrinsic(ownerClass, propertyName, -1, new PropertyOfSequenceOrRange(ownerClass, propertyName));
     }
 
     @NotNull

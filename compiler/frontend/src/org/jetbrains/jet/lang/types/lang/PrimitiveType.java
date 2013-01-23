@@ -41,6 +41,7 @@ public enum PrimitiveType {
     private final FqName className;
     private final FqName arrayClassName;
     private final FqName rangeClassName;
+    private final FqName sequenceClassName;
 
     private PrimitiveType(String typeName) {
         this.typeName = Name.identifier(typeName);
@@ -50,6 +51,8 @@ public enum PrimitiveType {
         this.className = builtInsPackageFqName.child(this.typeName);
         this.arrayClassName = builtInsPackageFqName.child(this.arrayTypeName);
         this.rangeClassName = builtInsPackageFqName.child(this.rangeTypeName);
+        this.sequenceClassName = builtInsPackageFqName.child(
+                Name.identifier((typeName == "Char") ? "CharacterSequence" : typeName + "Sequence"));
     }
 
     @NotNull
@@ -80,5 +83,10 @@ public enum PrimitiveType {
     @NotNull
     public FqName getRangeClassName() {
         return rangeClassName;
+    }
+
+    @NotNull
+    public FqName getSequenceClassName() {
+        return sequenceClassName;
     }
 }
