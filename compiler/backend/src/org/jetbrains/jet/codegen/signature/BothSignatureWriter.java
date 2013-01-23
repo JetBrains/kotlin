@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.signature;
 
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
@@ -34,7 +35,6 @@ import org.jetbrains.jet.rt.signature.JetSignatureWriter;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.intellij.util.containers.Stack;
 
 
 public class BothSignatureWriter {
@@ -511,7 +511,7 @@ public class BothSignatureWriter {
         return kotlinClassParameters;
     }
 
-    @Nullable
+    @NotNull
     public String makeKotlinClassSignature() {
         checkState(State.CLASS_END);
         if (kotlinClassParameters == null) {

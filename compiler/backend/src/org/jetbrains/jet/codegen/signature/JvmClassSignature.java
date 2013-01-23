@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.signature;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class JvmClassSignature {
 
     public JvmClassSignature(
             String name, String superclassName, List<String> interfaces,
-            @Nullable String javaGenericSignature, @Nullable String kotlinGenericSignature
+            @Nullable String javaGenericSignature, @NotNull String kotlinGenericSignature
     ) {
         this.name = name;
         this.superclassName = superclassName;
@@ -54,6 +55,7 @@ public class JvmClassSignature {
         return javaGenericSignature;
     }
 
+    @NotNull
     public String getKotlinGenericSignature() {
         return kotlinGenericSignature;
     }
