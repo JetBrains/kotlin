@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -43,7 +42,7 @@ import java.util.Set;
 public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyDescriptor {
     private final ResolveSession resolveSession;
 
-    private final SmartPsiElementPointer<JetTypeParameter> jetTypeParameterSmartPsiElementPointer;
+    private final JetTypeParameter jetTypeParameter;
     private final Variance variance;
     private final int index;
     private final LazyClassDescriptor containingDeclaration;
@@ -66,7 +65,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
             int index) {
         this.resolveSession = resolveSession;
         // TODO: different smart pointer implementations in IDE and compiler
-        this.jetTypeParameterSmartPsiElementPointer = new IdentitySmartPointer<JetTypeParameter>(jetTypeParameter);
+        this.jetTypeParameter = jetTypeParameter;
         this.variance = jetTypeParameter.getVariance();
         this.containingDeclaration = containingDeclaration;
         this.index = index;
@@ -90,7 +89,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
         if (upperBounds == null) {
             upperBounds = Sets.newLinkedHashSet();
 
-            JetTypeParameter jetTypeParameter = getElement();
+            JetTypeParameter jetTypeParameter = this.jetTypeParameter;
 
             resolveUpperBoundsFromWhereClause(upperBounds, false);
 
@@ -107,7 +106,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     }
 
     private void resolveUpperBoundsFromWhereClause(Set<JetType> upperBounds, boolean forClassObject) {
-        JetTypeParameter jetTypeParameter = getElement();
+        JetTypeParameter jetTypeParameter = this.jetTypeParameter;
 
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(jetTypeParameter, JetClassOrObject.class);
         if (classOrObject instanceof JetClass) {
@@ -128,14 +127,6 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
             }
         }
 
-    }
-
-    private JetTypeParameter getElement() {
-        JetTypeParameter jetTypeParameter = jetTypeParameterSmartPsiElementPointer.getElement();
-        if (jetTypeParameter == null) {
-            throw new IllegalStateException("Psi element not found for type parameter: " + this);
-        }
-        return jetTypeParameter;
     }
 
     private JetType resolveBoundType(@NotNull JetTypeReference boundTypeReference) {
@@ -241,6 +232,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
         return this;
     }
 
+    @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
         return containingDeclaration;
