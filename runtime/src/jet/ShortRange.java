@@ -20,19 +20,14 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
 public final class ShortRange implements Range<Short>, NumberSequence<Short>, ShortIterable {
+    public static final ShortRange EMPTY = new ShortRange((short) 1, (short) 0);
+
     private final short start;
     private final short end;
-
-    public static final ShortRange EMPTY = new ShortRange((short) 1, (short) 0);
 
     public ShortRange(short start, short end) {
         this.start = start;
         this.end = end;
-    }
-
-    @Override
-    public String toString() {
-        return getStart() + ".." + getEnd();
     }
 
     @Override
@@ -42,26 +37,6 @@ public final class ShortRange implements Range<Short>, NumberSequence<Short>, Sh
 
     public boolean contains(short item) {
         return start <= item && item <= end;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        ShortRange range = (ShortRange) o;
-        return end == range.end && start == range.start;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) start;
-        result = 31 * result + end;
-        return result;
     }
 
     @Override
@@ -82,5 +57,30 @@ public final class ShortRange implements Range<Short>, NumberSequence<Short>, Sh
     @Override
     public ShortIterator iterator() {
         return new ShortSequenceIterator(getStart(), getEnd(), 1);
+    }
+
+    @Override
+    public String toString() {
+        return getStart() + ".." + getEnd();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ShortRange range = (ShortRange) o;
+        return end == range.end && start == range.start;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) start;
+        result = 31 * result + end;
+        return result;
     }
 }

@@ -20,10 +20,10 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
 public final class FloatRange implements Range<Float>, NumberSequence<Float>, FloatIterable {
+    public static final FloatRange EMPTY = new FloatRange(1, 0);
+
     private final float start;
     private final float end;
-
-    public static final FloatRange EMPTY = new FloatRange(1, 0);
 
     public FloatRange(float start, float end) {
         this.start = start;
@@ -31,13 +31,33 @@ public final class FloatRange implements Range<Float>, NumberSequence<Float>, Fl
     }
 
     @Override
-    public String toString() {
-        return getStart() + ".." + getEnd();
+    public boolean contains(Float item) {
+        return start <= item && item <= end;
     }
 
     @Override
-    public boolean contains(Float item) {
-        return start <= item && item <= end;
+    public Float getStart() {
+        return start;
+    }
+
+    @Override
+    public Float getEnd() {
+        return end;
+    }
+
+    @Override
+    public Float getIncrement() {
+        return 1.0f;
+    }
+
+    @Override
+    public FloatIterator iterator() {
+        return new FloatSequenceIterator(getStart(), getEnd(), 1);
+    }
+
+    @Override
+    public String toString() {
+        return getStart() + ".." + getEnd();
     }
 
     @Override
@@ -59,25 +79,5 @@ public final class FloatRange implements Range<Float>, NumberSequence<Float>, Fl
         int result = (start != +0.0f ? Float.floatToIntBits(start) : 0);
         result = 31 * result + (end != +0.0f ? Float.floatToIntBits(end) : 0);
         return result;
-    }
-
-    @Override
-    public Float getStart() {
-        return start;
-    }
-
-    @Override
-    public Float getEnd() {
-        return end;
-    }
-
-    @Override
-    public Float getIncrement() {
-        return 1.0f;
-    }
-
-    @Override
-    public FloatIterator iterator() {
-        return new FloatSequenceIterator(getStart(), getEnd(), 1);
     }
 }

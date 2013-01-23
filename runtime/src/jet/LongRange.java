@@ -20,19 +20,14 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
 public final class LongRange implements Range<Long>, NumberSequence<Long>, LongIterable {
+    public static final LongRange EMPTY = new LongRange(1, 0);
+
     private final long start;
     private final long end;
-
-    public static final LongRange EMPTY = new LongRange(1, 0);
 
     public LongRange(long start, long end) {
         this.start = start;
         this.end = end;
-    }
-
-    @Override
-    public String toString() {
-        return getStart() + ".." + getEnd();
     }
 
     @Override
@@ -42,26 +37,6 @@ public final class LongRange implements Range<Long>, NumberSequence<Long>, LongI
 
     public boolean contains(long item) {
         return start <= item && item <= end;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        LongRange range = (LongRange) o;
-        return end == range.end && start == range.start;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (start ^ (start >>> 32));
-        result = 31 * result + (int) (end ^ (end >>> 32));
-        return result;
     }
 
     @Override
@@ -82,5 +57,30 @@ public final class LongRange implements Range<Long>, NumberSequence<Long>, LongI
     @Override
     public LongIterator iterator() {
         return new LongSequenceIterator(getStart(), getEnd(), 1);
+    }
+
+    @Override
+    public String toString() {
+        return getStart() + ".." + getEnd();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        LongRange range = (LongRange) o;
+        return end == range.end && start == range.start;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (start ^ (start >>> 32));
+        result = 31 * result + (int) (end ^ (end >>> 32));
+        return result;
     }
 }

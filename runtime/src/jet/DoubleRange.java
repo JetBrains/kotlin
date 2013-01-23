@@ -20,10 +20,10 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
 public final class DoubleRange implements Range<Double>, NumberSequence<Double>, DoubleIterable {
+    public static final DoubleRange EMPTY = new DoubleRange(1, 0);
+
     private final double start;
     private final double end;
-
-    public static final DoubleRange EMPTY = new DoubleRange(1, 0);
 
     public DoubleRange(double start, double end) {
         this.start = start;
@@ -31,13 +31,33 @@ public final class DoubleRange implements Range<Double>, NumberSequence<Double>,
     }
 
     @Override
-    public String toString() {
-        return getStart() + ".." + getEnd();
+    public boolean contains(Double item) {
+        return start <= item && item <= end;
     }
 
     @Override
-    public boolean contains(Double item) {
-        return start <= item && item <= end;
+    public Double getStart() {
+        return start;
+    }
+
+    @Override
+    public Double getEnd() {
+        return end;
+    }
+
+    @Override
+    public Double getIncrement() {
+        return 1.0;
+    }
+
+    @Override
+    public DoubleIterator iterator() {
+        return new DoubleSequenceIterator(getStart(), getEnd(), 1);
+    }
+
+    @Override
+    public String toString() {
+        return getStart() + ".." + getEnd();
     }
 
     @Override
@@ -63,25 +83,5 @@ public final class DoubleRange implements Range<Double>, NumberSequence<Double>,
         temp = end != +0.0d ? Double.doubleToLongBits(end) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
-    }
-
-    @Override
-    public Double getStart() {
-        return start;
-    }
-
-    @Override
-    public Double getEnd() {
-        return end;
-    }
-
-    @Override
-    public Double getIncrement() {
-        return 1.0;
-    }
-
-    @Override
-    public DoubleIterator iterator() {
-        return new DoubleSequenceIterator(getStart(), getEnd(), 1);
     }
 }

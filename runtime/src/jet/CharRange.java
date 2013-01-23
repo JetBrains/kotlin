@@ -20,19 +20,14 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
 public final class CharRange implements Range<Character>, NumberSequence<Character>, CharIterable {
+    public static final CharRange EMPTY = new CharRange((char) 1, (char) 0);
+
     private final char start;
     private final char end;
-
-    public static final CharRange EMPTY = new CharRange((char) 1, (char) 0);
 
     public CharRange(char start, char end) {
         this.start = start;
         this.end = end;
-    }
-
-    @Override
-    public String toString() {
-        return getStart() + ".." + getEnd();
     }
 
     @Override
@@ -42,26 +37,6 @@ public final class CharRange implements Range<Character>, NumberSequence<Charact
 
     public boolean contains(char item) {
         return start <= item && item <= end;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        CharRange range = (CharRange) o;
-        return end == range.end && start == range.start;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) start;
-        result = 31 * result + end;
-        return result;
     }
 
     @Override
@@ -82,5 +57,30 @@ public final class CharRange implements Range<Character>, NumberSequence<Charact
     @Override
     public CharIterator iterator() {
         return new CharacterSequenceIterator(getStart(), getEnd(), 1);
+    }
+
+    @Override
+    public String toString() {
+        return getStart() + ".." + getEnd();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        CharRange range = (CharRange) o;
+        return end == range.end && start == range.start;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) start;
+        result = 31 * result + end;
+        return result;
     }
 }

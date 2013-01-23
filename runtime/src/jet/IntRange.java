@@ -20,19 +20,14 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
 public final class IntRange implements Range<Integer>, NumberSequence<Integer>, IntIterable {
+    public static final IntRange EMPTY = new IntRange(1, 0);
+
     private final int start;
     private final int end;
-
-    public static final IntRange EMPTY = new IntRange(1, 0);
 
     public IntRange(int start, int end) {
         this.start = start;
         this.end = end;
-    }
-
-    @Override
-    public String toString() {
-        return getStart() + ".." + getEnd();
     }
 
     @Override
@@ -42,26 +37,6 @@ public final class IntRange implements Range<Integer>, NumberSequence<Integer>, 
 
     public boolean contains(int item) {
         return start <= item && item <= end;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        IntRange range = (IntRange) o;
-        return end == range.end && start == range.start;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = start;
-        result = 31 * result + end;
-        return result;
     }
 
     @Override
@@ -82,5 +57,30 @@ public final class IntRange implements Range<Integer>, NumberSequence<Integer>, 
     @Override
     public IntIterator iterator() {
         return new IntSequenceIterator(getStart(), getEnd(), 1);
+    }
+
+    @Override
+    public String toString() {
+        return getStart() + ".." + getEnd();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        IntRange range = (IntRange) o;
+        return end == range.end && start == range.start;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = start;
+        result = 31 * result + end;
+        return result;
     }
 }
