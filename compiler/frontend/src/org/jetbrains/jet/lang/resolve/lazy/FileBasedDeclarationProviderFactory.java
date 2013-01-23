@@ -36,7 +36,6 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
     private final Set<FqName> declaredPackages = Sets.newHashSet();
     private final Map<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders = Maps.newHashMap();
-    //private final Map<JetClassOrObject, ClassMemberDeclarationProvider> classMemberDeclarationProviders = Maps.newHashMap();
 
     private final Predicate<FqName> isPackageDeclaredExternally;
 
@@ -120,23 +119,10 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
         createIndex();
 
-        //JetClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
-        //if (classOrObject != null) {
-        //    ClassMemberDeclarationProvider declarationProvider = classMemberDeclarationProviders.get(classOrObject);
-        //    if (declarationProvider != null) {
-        //        return declarationProvider;
-        //    }
-        //}
-
         if (!filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
             throw new IllegalStateException("This factory doesn't know about this class: " + classLikeInfo);
         }
 
-        ClassMemberDeclarationProvider provider = new PsiBasedClassMemberDeclarationProvider(classLikeInfo);
-        //if (classOrObject != null) {
-        //    classMemberDeclarationProviders.put(classOrObject, provider);
-        //}
-
-        return provider;
+        return new PsiBasedClassMemberDeclarationProvider(classLikeInfo);
     }
 }
