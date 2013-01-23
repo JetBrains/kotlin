@@ -39,7 +39,6 @@ public class ClassGenTest extends CodegenTestCase {
         final Class aClass = loadClass("SimpleClass", generateClassesInFile());
         final Method[] methods = aClass.getDeclaredMethods();
         // public int SimpleClass.foo()
-        // public jet.TypeInfo SimpleClass.getTypeInfo()
         assertEquals(1, methods.length);
     }
 
@@ -203,13 +202,6 @@ public class ClassGenTest extends CodegenTestCase {
     public void testClassObjectInTrait() {
         blackBoxFile("classes/classObjectInTrait.kt");
     }
-
-    /*
-    public void testClassObjectMethod() {
-        // todo to be implemented after removal of type info
-        //        blackBoxFile("classes/classObjectMethod.kt");
-    }
-    */
 
     public void testClassObjectInterface() throws Exception {
         loadFile("classes/classObjectInterface.kt");

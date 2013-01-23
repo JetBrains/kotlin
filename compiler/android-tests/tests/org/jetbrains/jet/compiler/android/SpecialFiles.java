@@ -87,18 +87,12 @@ public class SpecialFiles {
         excludedFiles.add("namespaceQualifiedMethod.kt"); // Cannot change package name
         excludedFiles.add("kt1482_2279.kt"); // Cannot change package name
         excludedFiles.add("kt1482.kt"); // Cannot change package name
-        excludedFiles.add("withtypeparams.kt"); // Cannot find usages in Codegen tests
         excludedFiles.add("kt326.kt"); // Commented
         excludedFiles.add("kt1213.kt"); // Commented
         excludedFiles.add("kt882.kt"); // Commented
         excludedFiles.add("kt789.kt"); // Commented
         excludedFiles.add("enum.kt"); // Commented
         excludedFiles.add("withclosure.kt"); // Commented
-        excludedFiles.add("isTypeParameter.kt"); // Commented
-        excludedFiles.add("nullability.kt"); // Commented
-        excludedFiles.add("genericFunction.kt"); // Commented
-        excludedFiles.add("forwardTypeParameter.kt"); // Commented
-        excludedFiles.add("classObjectMethod.kt"); // Commented
 
         excludedFiles.add("inRangeConditionsInWhen.kt"); // Commented
         excludedFiles.add("kt1592.kt"); // Codegen don't execute blackBoxFile() on it
