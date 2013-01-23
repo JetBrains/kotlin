@@ -56,7 +56,9 @@ public class CharRange(public override val start : Char, public override val end
     }
 }
 
-public class FloatRange(public override val start : Float, public override val end : Float) : Range<Float> {
+public class FloatRange(public override val start : Float, public override val end : Float) : Range<Float>, FloatIterable {
+    public override fun iterator () : FloatIterator
+
     public override fun contains (elem: Float) : Boolean
 
     public class object {
@@ -64,7 +66,9 @@ public class FloatRange(public override val start : Float, public override val e
     }
 }
 
-public class DoubleRange(public override val start : Double, public override val end : Double) : Range<Double> {
+public class DoubleRange(public override val start : Double, public override val end : Double) : Range<Double>, DoubleIterable {
+    public override fun iterator () : DoubleIterator
+
     public override fun contains (elem: Double) : Boolean
 
     public class object {
