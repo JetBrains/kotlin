@@ -73,13 +73,6 @@ public final class FloatRange implements Range<Float> {
         return result;
     }
 
-    public FloatIterator step(float step) {
-        if (step < 0)
-            return new FloatSequenceIterator(getEnd(), getStart(), step);
-        else
-            return new FloatSequenceIterator(getStart(), getEnd(), step);
-    }
-
     public float  getStart() {
         return start;
     }

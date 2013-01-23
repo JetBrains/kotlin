@@ -79,13 +79,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         return result;
     }
 
-    public ByteIterator step(int step) {
-        if (step < 0)
-            return new ByteSequenceIterator(getEnd(), getStart(), step);
-        else
-            return new ByteSequenceIterator(getStart(), getEnd(), step);
-    }
-
     public byte getStart() {
         return start;
     }

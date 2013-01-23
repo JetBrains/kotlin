@@ -79,13 +79,6 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         return result;
     }
 
-    public ShortIterator step(int step) {
-        if (step < 0)
-            return new ShortSequenceIterator(getEnd(), getStart(), step);
-        else
-            return new ShortSequenceIterator(getStart(), getEnd(), step);
-    }
-
     public short getStart() {
         return start;
     }

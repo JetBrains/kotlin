@@ -79,13 +79,6 @@ public final class CharRange implements Range<Character>, CharIterable {
         return result;
     }
 
-    public CharIterator step(int step) {
-        if (step < 0)
-            return new CharacterSequenceIterator(getEnd(), getStart(), step);
-        else
-            return new CharacterSequenceIterator(getStart(), getEnd(), step);
-    }
-
     public char getStart() {
         return start;
     }

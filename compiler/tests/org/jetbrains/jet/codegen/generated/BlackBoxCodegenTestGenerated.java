@@ -2837,11 +2837,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt757.kt");
         }
         
-        @TestMetadata("kt765.kt")
-        public void testKt765() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt765.kt");
-        }
-        
         @TestMetadata("kt821.kt")
         public void testKt821() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt821.kt");
@@ -2865,11 +2860,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt887.kt")
         public void testKt887() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt887.kt");
-        }
-        
-        @TestMetadata("kt925.kt")
-        public void testKt925() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt925.kt");
         }
         
         @TestMetadata("kt935.kt")

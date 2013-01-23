@@ -80,13 +80,6 @@ public final class LongRange implements Range<Long>, LongIterable {
         return result;
     }
 
-    public LongIterator step(long step) {
-        if (step < 0)
-            return new LongSequenceIterator(getEnd(), getStart(), step);
-        else
-            return new LongSequenceIterator(getStart(), getEnd(), step);
-    }
-
     public long getStart() {
         return start;
     }

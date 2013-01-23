@@ -79,13 +79,6 @@ public final class IntRange implements Range<Integer>, IntIterable {
         return result;
     }
 
-    public IntIterator step(int step) {
-        if (step < 0)
-            return new IntSequenceIterator(getEnd(), getStart(), step);
-        else
-            return new IntSequenceIterator(getStart(), getEnd(), step);
-    }
-
     public int getStart() {
         return start;
     }

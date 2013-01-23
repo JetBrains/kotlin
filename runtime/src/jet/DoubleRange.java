@@ -77,13 +77,6 @@ public final class DoubleRange implements Range<Double> {
         return result;
     }
 
-    public DoubleIterator step(double step) {
-        if (step < 0)
-            return new DoubleSequenceIterator(getEnd(), getStart(), step);
-        else
-            return new DoubleSequenceIterator(getStart(), getEnd(), step);
-    }
-
     public double  getStart() {
         return start;
     }
