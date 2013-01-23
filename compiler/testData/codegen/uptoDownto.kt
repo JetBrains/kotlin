@@ -16,7 +16,7 @@ fun box(): String {
     }
     sb.append(";")
 
-    for (i in IntRange(0, 1)) {
+    for (i in IntRange(0, 0)) {
         ap(i)
     }
     sb.append(";")

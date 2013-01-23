@@ -21,13 +21,13 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 @AssertInvisibleInResolver
 public final class DoubleRange implements Range<Double> {
     private final double start;
-    private final double size;
+    private final double end;
 
-    public static final DoubleRange EMPTY = new DoubleRange(0, 0);
+    public static final DoubleRange EMPTY = new DoubleRange(1, 0);
 
-    public DoubleRange(double startValue, double size) {
-        this.start = startValue;
-        this.size = size;
+    public DoubleRange(double start, double end) {
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -37,11 +37,7 @@ public final class DoubleRange implements Range<Double> {
 
     @Override
     public boolean contains(Double item) {
-        if (item == null) return false;
-        if (size >= 0) {
-            return item >= start && item < start + size;
-        }
-        return item <= start && item > start + size;
+        return start <= item && item <= end;
     }
 
     @Override
@@ -55,7 +51,7 @@ public final class DoubleRange implements Range<Double> {
 
         DoubleRange range = (DoubleRange) o;
 
-        return Double.compare(range.size, size) == 0 && Double.compare(range.start, start) == 0;
+        return Double.compare(range.end, end) == 0 && Double.compare(range.start, start) == 0;
     }
 
     @Override
@@ -64,20 +60,16 @@ public final class DoubleRange implements Range<Double> {
         long temp;
         temp = start != +0.0d ? Double.doubleToLongBits(start) : 0L;
         result = (int) (temp ^ (temp >>> 32));
-        temp = size != +0.0d ? Double.doubleToLongBits(size) : 0L;
+        temp = end != +0.0d ? Double.doubleToLongBits(end) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
-    public double  getStart() {
+    public double getStart() {
         return start;
     }
 
     public double  getEnd() {
-        return size < 0 ? start + size: start + size;
-    }
-
-    public double getSize() {
-        return size < 0 ? -size : size;
+        return end;
     }
 }

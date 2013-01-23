@@ -21,13 +21,13 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 @AssertInvisibleInResolver
 public final class CharRange implements Range<Character>, CharIterable {
     private final char start;
-    private final int count;
+    private final char end;
 
-    public static final CharRange EMPTY = new CharRange((char) 0,0);
+    public static final CharRange EMPTY = new CharRange((char) 1, (char) 0);
 
-    public CharRange(char startValue, int count) {
-        this.start = startValue;
-        this.count = count;
+    public CharRange(char start, char end) {
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -37,18 +37,11 @@ public final class CharRange implements Range<Character>, CharIterable {
 
     @Override
     public boolean contains(Character item) {
-        if (item == null) return false;
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     public boolean contains(char item) {
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     @Override
@@ -61,13 +54,13 @@ public final class CharRange implements Range<Character>, CharIterable {
         }
 
         CharRange range = (CharRange) o;
-        return count == range.count && start == range.start;
+        return end == range.end && start == range.start;
     }
 
     @Override
     public int hashCode() {
         int result = (int) start;
-        result = 31 * result + count;
+        result = 31 * result + end;
         return result;
     }
 
@@ -76,11 +69,7 @@ public final class CharRange implements Range<Character>, CharIterable {
     }
 
     public char getEnd() {
-        return (char) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
-    }
-
-    public int getSize() {
-        return count < 0 ? -count : count;
+        return end;
     }
 
     @Override

@@ -21,13 +21,13 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 @AssertInvisibleInResolver
 public final class LongRange implements Range<Long>, LongIterable {
     private final long start;
-    private final long count;
+    private final long end;
 
-    public static final LongRange EMPTY = new LongRange(0L,0L);
+    public static final LongRange EMPTY = new LongRange(1, 0);
 
-    public LongRange(long startValue, long count) {
-        this.start = startValue;
-        this.count = count;
+    public LongRange(long start, long end) {
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -35,21 +35,13 @@ public final class LongRange implements Range<Long>, LongIterable {
         return getStart() + ".." + getEnd();
     }
 
-
     @Override
     public boolean contains(Long item) {
-        if (item == null) return false;
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     public boolean contains(long item) {
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     @Override
@@ -62,13 +54,13 @@ public final class LongRange implements Range<Long>, LongIterable {
         }
 
         LongRange range = (LongRange) o;
-        return count == range.count && start == range.start;
+        return end == range.end && start == range.start;
     }
 
     @Override
     public int hashCode() {
         int result = (int) (start ^ (start >>> 32));
-        result = 31 * result + (int) (count ^ (count >>> 32));
+        result = 31 * result + (int) (end ^ (end >>> 32));
         return result;
     }
 
@@ -77,11 +69,7 @@ public final class LongRange implements Range<Long>, LongIterable {
     }
 
     public long getEnd() {
-        return count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1;
-    }
-
-    public long getSize() {
-        return count < 0 ? -count : count;
+        return end;
     }
 
     @Override

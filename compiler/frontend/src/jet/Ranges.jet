@@ -4,80 +4,66 @@ public trait Range<in T : Comparable<T>> {
   public fun contains(item : T) : Boolean
 }
 
-public class IntRange(public val start : Int, public val size : Int) : Range<Int>, IntIterable {
+public class IntRange(public val start : Int, public val end : Int) : Range<Int>, IntIterable {
     public override fun iterator () : IntIterator
 
     public override fun contains (elem: Int) : Boolean
-
-    public val end : Int
 
     public class object {
         public val EMPTY: IntRange
     }
 }
 
-public class LongRange(public val start : Long, public val size : Long) : Range<Long>, LongIterable {
+public class LongRange(public val start : Long, public val end : Long) : Range<Long>, LongIterable {
     public override fun iterator () : LongIterator
 
     public override fun contains (elem: Long) : Boolean
-
-    public val end : Long
 
     public class object {
         public val EMPTY: LongRange
     }
 }
 
-public class ByteRange(public val start : Byte, public val size : Int) : Range<Byte>, ByteIterable {
+public class ByteRange(public val start : Byte, public val end : Byte) : Range<Byte>, ByteIterable {
     public override fun iterator () : ByteIterator
 
     public override fun contains (elem: Byte) : Boolean
-
-    public val end : Byte
 
     public class object {
         public val EMPTY: ByteRange
     }
 }
 
-public class ShortRange(public val start : Short, public val size : Int) : Range<Short>, ShortIterable {
+public class ShortRange(public val start : Short, public val end : Short) : Range<Short>, ShortIterable {
     public override fun iterator () : ShortIterator
 
     public override fun contains (elem: Short) : Boolean
-
-    public val end : Short
 
     public class object {
         public val EMPTY: ShortRange
     }
 }
 
-public class CharRange(public val start : Char, public val size : Int) : Range<Char>, CharIterable {
+public class CharRange(public val start : Char, public val end : Char) : Range<Char>, CharIterable {
     public override fun iterator () : CharIterator
 
     public override fun contains (elem: Char) : Boolean
-
-    public val end : Char
 
     public class object {
         public val EMPTY: CharRange
     }
 }
 
-public class FloatRange(public val start : Float, public val size : Float) : Range<Float> {
+public class FloatRange(public val start : Float, public val end : Float) : Range<Float> {
     public override fun contains (elem: Float) : Boolean
-
-    public val end : Float
 
     public class object {
         public val EMPTY: FloatRange
     }
 }
 
-public class DoubleRange(public val start : Double, public val size : Double) : Range<Double> {
+public class DoubleRange(public val start : Double, public val end : Double) : Range<Double> {
     public override fun contains (elem: Double) : Boolean
-
-    public val end : Double
 
     public class object {
         public val EMPTY: DoubleRange

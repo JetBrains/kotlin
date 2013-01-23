@@ -21,13 +21,13 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 @AssertInvisibleInResolver
 public final class IntRange implements Range<Integer>, IntIterable {
     private final int start;
-    private final int count;
+    private final int end;
 
-    public static final IntRange EMPTY = new IntRange(0, 0);
+    public static final IntRange EMPTY = new IntRange(1, 0);
 
-    public IntRange(int startValue, int count) {
-        this.start = startValue;
-        this.count = count;
+    public IntRange(int start, int end) {
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -37,18 +37,11 @@ public final class IntRange implements Range<Integer>, IntIterable {
 
     @Override
     public boolean contains(Integer item) {
-        if (item == null) return false;
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     public boolean contains(int item) {
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     @Override
@@ -61,13 +54,13 @@ public final class IntRange implements Range<Integer>, IntIterable {
         }
 
         IntRange range = (IntRange) o;
-        return count == range.count && start == range.start;
+        return end == range.end && start == range.start;
     }
 
     @Override
     public int hashCode() {
         int result = start;
-        result = 31 * result + count;
+        result = 31 * result + end;
         return result;
     }
 
@@ -76,11 +69,7 @@ public final class IntRange implements Range<Integer>, IntIterable {
     }
 
     public int getEnd() {
-        return count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1;
-    }
-
-    public int getSize() {
-        return count < 0 ? -count : count;
+        return end;
     }
 
     @Override

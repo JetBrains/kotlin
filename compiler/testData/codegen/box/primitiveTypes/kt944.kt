@@ -5,4 +5,4 @@ fun box() : String {
   return "OK"
 }
 
-val String?.indices : IntRange get() = IntRange(0, this!!.length)
+val String?.indices : IntRange get() = 0..(this!!.length - 1)

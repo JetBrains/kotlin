@@ -21,13 +21,13 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 @AssertInvisibleInResolver
 public final class FloatRange implements Range<Float> {
     private final float start;
-    private final float size;
+    private final float end;
 
-    public static final FloatRange EMPTY = new FloatRange(0, 0);
+    public static final FloatRange EMPTY = new FloatRange(1, 0);
 
-    public FloatRange(float startValue, float size) {
-        this.start = startValue;
-        this.size = size;
+    public FloatRange(float start, float end) {
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -37,11 +37,7 @@ public final class FloatRange implements Range<Float> {
 
     @Override
     public boolean contains(Float item) {
-        if (item == null) return false;
-        if (size >= 0) {
-            return item >= start && item < start + size;
-        }
-        return item <= start && item > start + size;
+        return start <= item && item <= end;
     }
 
     @Override
@@ -55,25 +51,21 @@ public final class FloatRange implements Range<Float> {
 
         FloatRange range = (FloatRange) o;
 
-        return Float.compare(range.size, size) == 0 && Float.compare(range.start, start) == 0;
+        return Float.compare(range.end, end) == 0 && Float.compare(range.start, start) == 0;
     }
 
     @Override
     public int hashCode() {
         int result = (start != +0.0f ? Float.floatToIntBits(start) : 0);
-        result = 31 * result + (size != +0.0f ? Float.floatToIntBits(size) : 0);
+        result = 31 * result + (end != +0.0f ? Float.floatToIntBits(end) : 0);
         return result;
     }
 
-    public float  getStart() {
+    public float getStart() {
         return start;
     }
 
-    public float  getEnd() {
-        return size < 0 ? start + size: start + size;
-    }
-
-    public float getSize() {
-        return size < 0 ? -size : size;
+    public float getEnd() {
+        return end;
     }
 }

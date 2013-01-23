@@ -21,13 +21,13 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 @AssertInvisibleInResolver
 public final class ByteRange implements Range<Byte>, ByteIterable {
     private final byte start;
-    private final int count;
+    private final byte end;
 
-    public static final ByteRange EMPTY = new ByteRange((byte) 0,0);
+    public static final ByteRange EMPTY = new ByteRange((byte) 1, (byte) 0);
 
-    public ByteRange(byte startValue, int count) {
-        this.start = startValue;
-        this.count = count;
+    public ByteRange(byte start, byte end) {
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -37,18 +37,11 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
 
     @Override
     public boolean contains(Byte item) {
-        if (item == null) return false;
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     public boolean contains(byte item) {
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     @Override
@@ -61,13 +54,13 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
         }
 
         ByteRange range = (ByteRange) o;
-        return count == range.count && start == range.start;
+        return end == range.end && start == range.start;
     }
 
     @Override
     public int hashCode() {
         int result = (int) start;
-        result = 31 * result + count;
+        result = 31 * result + end;
         return result;
     }
 
@@ -76,11 +69,7 @@ public final class ByteRange implements Range<Byte>, ByteIterable {
     }
 
     public byte getEnd() {
-        return (byte) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
-    }
-
-    public int getSize() {
-        return count < 0 ? -count : count;
+        return end;
     }
 
     @Override

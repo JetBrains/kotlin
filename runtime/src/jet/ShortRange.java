@@ -21,13 +21,13 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 @AssertInvisibleInResolver
 public final class ShortRange implements Range<Short>, ShortIterable {
     private final short start;
-    private final int count;
+    private final short end;
 
-    public static final ShortRange EMPTY = new ShortRange((short) 0,0);
+    public static final ShortRange EMPTY = new ShortRange((short) 1, (short) 0);
 
-    public ShortRange(short startValue, int count) {
-        this.start = startValue;
-        this.count = count;
+    public ShortRange(short start, short end) {
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -37,18 +37,11 @@ public final class ShortRange implements Range<Short>, ShortIterable {
 
     @Override
     public boolean contains(Short item) {
-        if (item == null) return false;
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     public boolean contains(short item) {
-        if (count >= 0) {
-            return item >= start && item < start + count;
-        }
-        return item <= start && item > start + count;
+        return start <= item && item <= end;
     }
 
     @Override
@@ -61,13 +54,13 @@ public final class ShortRange implements Range<Short>, ShortIterable {
         }
 
         ShortRange range = (ShortRange) o;
-        return count == range.count && start == range.start;
+        return end == range.end && start == range.start;
     }
 
     @Override
     public int hashCode() {
         int result = (int) start;
-        result = 31 * result + count;
+        result = 31 * result + end;
         return result;
     }
 
@@ -76,11 +69,7 @@ public final class ShortRange implements Range<Short>, ShortIterable {
     }
 
     public short getEnd() {
-        return (short) (count < 0 ? start + count + 1: count == 0 ? 0 : start+count-1);
-    }
-
-    public int getSize() {
-        return count < 0 ? -count : count;
+        return end;
     }
 
     @Override

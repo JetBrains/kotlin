@@ -26,6 +26,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GenerateRanges {
+    private static String castIfNecessary(String what, String thisType, String otherType) {
+        if (thisType.equals("byte") && otherType.equals("char") || thisType.equals("char") && otherType.equals("short")) {
+            return "(" + otherType + ") " + what;
+        }
+        return what;
+    }
+
     public static void main(String[] args) throws IOException {
         PrintStream out = new PrintStream(new FileOutputStream("runtime/src/jet/runtime/Ranges.java"));
         try {
@@ -68,37 +75,17 @@ public class GenerateRanges {
                         resType = "ByteRange";
                     }
 
-                    if (resType.equals("FloatRange") || resType.equals("DoubleRange")) {
-                        out.println("    public static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {");
-                        out.println("        return new " + resType + "(from, to - from);");
-                        out.println("    }");
-                        out.println();
-                    }
-                    else {
-                        String castIfNecessary;
-                        if (t1.equals("byte") && t2.equals("char") || t1.equals("char") && t2.equals("short")) {
-                            castIfNecessary = "(" + t2 + ") ";
-                        }
-                        else {
-                            castIfNecessary = "";
-                        }
-
-
-                        out.println("    public static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {");
-                        out.println("        if (from > to) {");
-                        out.println("            return " + resType + ".EMPTY;");
-                        out.println("        }");
-                        out.println("        else {");
-                        out.println("            return new " + resType + "(" + castIfNecessary + "from, to - from + 1);");
-                        out.println("        }");
-                        out.println("    }");
-                        out.println();
-                    }
+                    out.println("    public static " + resType + " rangeTo(" + t1 + " from, " + t2 + " to) {");
+                    out.println("        return new " + resType + "("
+                                + castIfNecessary("from", t1, t2) + ", "
+                                + castIfNecessary("to", t2, t1) + ");");
+                    out.println("    }");
+                    out.println();
                 }
             }
 
             out.println("    public static IntRange arrayIndices(int length) {");
-            out.println("        return new IntRange(0, length);");
+            out.println("        return new IntRange(0, length - 1);");
             out.println("    }");
             out.println();
 
