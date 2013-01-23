@@ -26,20 +26,20 @@ class RangeTest {
 
     test fun reversedRanges() {
         val intRange = 0..9
-        val reversedIntRange = intRange.reversed
+        val reversedIntRange = intRange.reversed()
         assertEquals(10, reversedIntRange.size)
         assertEquals(9, reversedIntRange.start)
         assertEquals(0, reversedIntRange.end)
-        assertEquals(intRange, reversedIntRange.reversed)
+        assertEquals(intRange, reversedIntRange.reversed())
 
         val doubleRange = 0.0..9.0
-        val reversedDoubleRange = doubleRange.reversed
+        val reversedDoubleRange = doubleRange.reversed()
         assertEquals(9.0, reversedDoubleRange.size)
         assertEquals(9.0, reversedDoubleRange.start)
         assertEquals(0.0, reversedDoubleRange.end)
-        assertEquals(doubleRange, reversedDoubleRange.reversed)
+        assertEquals(doubleRange, reversedDoubleRange.reversed())
 
-        assertEquals(IntRange.EMPTY, IntRange.EMPTY.reversed)
-        assertEquals(FloatRange.EMPTY, FloatRange.EMPTY.reversed)
+        assertEquals(IntRange.EMPTY, IntRange.EMPTY.reversed())
+        assertEquals(FloatRange.EMPTY, FloatRange.EMPTY.reversed())
     }
 }

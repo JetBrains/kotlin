@@ -1,23 +1,59 @@
 package kotlin
 
-public val CharRange.reversed: CharRange
-    get() = CharRange(end, if (start < end) -size else size)
+public fun CharacterSequence.reversed(): CharacterSequence {
+    return CharacterSequence(end, start, -increment)
+}
 
-public val ByteRange.reversed: ByteRange
-    get() = ByteRange(end, if (start < end) -size else size)
+public fun ByteSequence.reversed(): ByteSequence {
+    return ByteSequence(end, start, -increment)
+}
 
-public val ShortRange.reversed: ShortRange
-    get() = ShortRange(end, if (start < end) -size else size)
+public fun ShortSequence.reversed(): ShortSequence {
+    return ShortSequence(end, start, -increment)
+}
 
-public val IntRange.reversed: IntRange
-    get() = IntRange(end, if (start < end) -size else size)
+public fun IntSequence.reversed(): IntSequence {
+    return IntSequence(end, start, -increment)
+}
 
-public val FloatRange.reversed: FloatRange
-    get() = FloatRange(end, if (start < end) -size else size)
+public fun FloatSequence.reversed(): FloatSequence {
+    return FloatSequence(end, start, -increment)
+}
 
-public val LongRange.reversed: LongRange
-    get() = LongRange(end, if (start < end) -size else size)
+public fun LongSequence.reversed(): LongSequence {
+    return LongSequence(end, start, -increment)
+}
+    
+public fun DoubleSequence.reversed(): DoubleSequence {
+    return DoubleSequence(end, start, -increment)
+}
 
-public val DoubleRange.reversed: DoubleRange
-    get() = DoubleRange(end, if (start < end) -size else size)
+
+public fun CharRange.reversed(): CharacterSequence {
+    return CharacterSequence(end, start, -1)
+}
+
+public fun ByteRange.reversed(): ByteSequence {
+    return ByteSequence(end, start, -1)
+}
+
+public fun ShortRange.reversed(): ShortSequence {
+    return ShortSequence(end, start, -1)
+}
+
+public fun IntRange.reversed(): IntSequence {
+    return IntSequence(end, start, -1)
+}
+
+public fun FloatRange.reversed(): FloatSequence {
+    return FloatSequence(end, start, -1.0.toFloat())
+}
+
+public fun LongRange.reversed(): LongSequence {
+    return LongSequence(end, start, -1.toLong())
+}
+    
+public fun DoubleRange.reversed(): DoubleSequence {
+    return DoubleSequence(end, start, -1.0)
+}
 

@@ -4,7 +4,7 @@ fun box() : String {
     cnt++
  }
 
- for (n in (1..5).reversed)
+ for (n in (1..5).reversed())
     cnt++
 
  return if(cnt == 9) "OK" else cnt.toString()
