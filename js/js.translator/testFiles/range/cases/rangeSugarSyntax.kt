@@ -15,7 +15,6 @@ fun box() : Boolean {
     if (!oneToFive.contains(3)) return false;
     if (!oneToFive.contains(4)) return false;
     if (!(oneToFive.start == 1)) return false;
-    if (!(oneToFive.size == 5)) return false;
     if (!(oneToFive.end == 5)) return false;
 
     var sum = 0;
