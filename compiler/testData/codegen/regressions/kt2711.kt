@@ -7,8 +7,9 @@ class C() {
 }
 
 
-fun main(args: Array<String>) {
+fun box(): String {
     if (2 in C()..2) {
-        System.out?.println(2)
+        2 == 2
     }
+    return "OK"
 }

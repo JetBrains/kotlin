@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.ConfigurationKind;
+
 public abstract class AbstractDataClassCodegenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithFullJdk();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 }

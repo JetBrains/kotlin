@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.IntRange;
+import org.jetbrains.jet.ConfigurationKind;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +29,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 
     public void testPSVM() throws Exception {

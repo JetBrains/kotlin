@@ -33,13 +33,13 @@ public class EnumGenTest extends CodegenTestCase {
 
     public void testSuperclassIsEnum() throws NoSuchFieldException, IllegalAccessException {
         loadFile("enum/simple.kt");
-        Class season = loadImplementationClass(generateClassesInFile(), "Season");
+        Class season = loadClass("Season", generateClassesInFile());
         assertEquals("java.lang.Enum", season.getSuperclass().getName());
     }
 
     public void testEnumClassModifiers() throws NoSuchFieldException, IllegalAccessException {
         loadFile("enum/simple.kt");
-        Class season = loadImplementationClass(generateClassesInFile(), "Season");
+        Class season = loadClass("Season", generateClassesInFile());
         int modifiers = season.getModifiers();
         assertTrue((modifiers & 0x4000) != 0); // ACC_ENUM
         assertTrue((modifiers & Modifier.FINAL) != 0);
@@ -47,7 +47,7 @@ public class EnumGenTest extends CodegenTestCase {
 
     public void testEnumFieldModifiers() throws NoSuchFieldException, IllegalAccessException {
         loadFile("enum/simple.kt");
-        Class season = loadImplementationClass(generateClassesInFile(), "Season");
+        Class season = loadClass("Season", generateClassesInFile());
         Field summer = season.getField("SUMMER");
         int modifiers = summer.getModifiers();
         assertTrue((modifiers & 0x4000) != 0); // ACC_ENUM
@@ -120,7 +120,7 @@ public class EnumGenTest extends CodegenTestCase {
     public void testNoClassForSimpleEnum()
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         loadFile("enum/name.kt");
-        Class cls = loadImplementationClass(generateClassesInFile(), "State");
+        Class cls = loadClass("State", generateClassesInFile());
         Field field = cls.getField("O");
         assertEquals("State", field.get(null).getClass().getName());
     }
@@ -128,7 +128,7 @@ public class EnumGenTest extends CodegenTestCase {
     public void testYesClassForComplexEnum()
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         loadFile("enum/abstractmethod.kt");
-        Class cls = loadImplementationClass(generateClassesInFile(), "IssueState");
+        Class cls = loadClass("IssueState", generateClassesInFile());
         Field field = cls.getField("DEFAULT");
         assertEquals("IssueState", field.get(null).getClass().getName());
         field = cls.getField("FIXED");

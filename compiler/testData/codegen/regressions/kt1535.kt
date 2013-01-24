@@ -9,10 +9,12 @@ class Broken() : jet.Function0<String>() {
     }
 }
 
-fun main(args: Array<String>) {
+fun box(): String {
   val works1: ()->Object = Works();
   works1()
 
   val broken1: ()->String = Broken();
   broken1()
+
+  return "OK"
 }

@@ -1,4 +1,4 @@
-fun main(args: Array<String>) {
+fun box(): String {
     9 in 0..9
     val intRange = 0..9
     9 in intRange
@@ -10,4 +10,6 @@ fun main(args: Array<String>) {
     9.toLong() in longRange
     val shortRange = 0.toShort()..9.toShort()
     9.toShort() in shortRange
+
+    return "OK"
 }

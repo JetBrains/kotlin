@@ -82,10 +82,6 @@ public class CodegenTestFiles {
         return psiFiles;
     }
 
-    public boolean isScript() {
-        return psiFiles.size() == 1 && psiFiles.get(0).isScript();
-    }
-
     public static CodegenTestFiles create(Project project, String[] names) {
         ArrayList<JetFile> files = new ArrayList<JetFile>();
         for (String name : names) {

@@ -20,6 +20,7 @@ class X {
 
 fun foo(x: Int) {}
 
-fun main(args: Array<String>) {
+fun box(): String {
     X().test()
+    return "OK"
 }

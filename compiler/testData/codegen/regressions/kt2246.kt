@@ -1,3 +1,4 @@
-fun main(args: Array<String>) {
+fun box(): String {
   kotlin.assert(true)
+  return "OK"
 }

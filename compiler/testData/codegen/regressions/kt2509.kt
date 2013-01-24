@@ -1,5 +1,6 @@
-fun main(args: Array<String>) {
+fun box(): String {
         A()
+        return "OK"
 }
 
 class A: B() {

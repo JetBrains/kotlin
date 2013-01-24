@@ -16,11 +16,13 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.JetTestUtils;
+
 public class FullJdkCodegenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithFullJdk();
+        myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
     }
 
     public void testKt434() {
