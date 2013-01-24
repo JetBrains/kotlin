@@ -1,5 +1,24 @@
 package kotlin
 
+public data class ComparableRange<T: Comparable<T>> (
+        public override val start: T,
+        public override val end: T
+): Range<T> {
+    public override fun contains(item: T): Boolean {
+        return start <= item && item <= end
+    }
+
+    public fun toString(): String {
+        return "$start..$end"
+    }
+}
+
+public fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {
+    return ComparableRange(this, that)
+}
+
+
+
 public fun CharacterSequence.reversed(): CharacterSequence {
     return CharacterSequence(end, start, -increment)
 }

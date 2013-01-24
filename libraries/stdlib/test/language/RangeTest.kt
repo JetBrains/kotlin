@@ -35,4 +35,17 @@ class RangeTest {
         assertEquals(0.0, reversedDoubleRange.end)
         assertEquals(doubleRange.toList(), reversedDoubleRange.reversed().toList())
     }
+
+    test fun comparableRange() {
+        val range1 = "island".."isle"
+        assertTrue("island" in range1)
+        assertTrue("isle" in range1)
+        assertTrue("islandic" in range1)
+
+        assertFalse("apple" in range1)
+        assertFalse("icicle" in range1)
+
+        assertFalse("item" in range1)
+        assertFalse("trail" in range1)
+    }
 }
