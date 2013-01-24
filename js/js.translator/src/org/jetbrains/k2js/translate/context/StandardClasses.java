@@ -101,7 +101,10 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("jet.Iterator").kotlinClass("Iterator").methods("next").properties("hasNext");
 
         standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
-                .methods("iterator", "contains").properties("start", "size", "end", "reversed");
+                .methods("iterator", "contains").properties("start", "end", "increment");
+
+        standardClasses.declare().forFQ("jet.IntSequence").kotlinClass("NumberSequence")
+                .methods("iterator", "contains").properties("start", "end", "increment");
 
         standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
 

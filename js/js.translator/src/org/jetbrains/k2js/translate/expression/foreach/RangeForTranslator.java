@@ -54,28 +54,24 @@ public final class RangeForTranslator extends ForTranslator {
     @NotNull
     private final TemporaryVariable rangeExpression;
     @NotNull
-    private final TemporaryVariable incrVar;
-    @NotNull
     private final TemporaryVariable start;
     @NotNull
     private final TemporaryVariable end;
+    @NotNull
+    private final TemporaryVariable increment;
 
     private RangeForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         rangeExpression = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        JsExpression isReversed = callFunction("get_reversed");
-        JsConditional incrVarValue = new JsConditional(isReversed,
-                                                       program().getNumberLiteral(-1),
-                                                       program().getNumberLiteral(1));
-        incrVar = context().declareTemporary(incrVarValue);
         start = context().declareTemporary(callFunction("get_start"));
-        end = context().declareTemporary(sum(callFunction("get_end"), incrVar.reference()));
+        end = context().declareTemporary(callFunction("get_end"));
+        increment = context().declareTemporary(callFunction("get_increment"));
     }
 
     @NotNull
     private JsBlock translate() {
         List<JsStatement> blockStatements = Lists.newArrayList();
-        blockStatements.add(temporariesInitialization(rangeExpression, incrVar, start, end).makeStmt());
+        blockStatements.add(temporariesInitialization(rangeExpression, start, end, increment).makeStmt());
         blockStatements.add(generateForExpression());
         return new JsBlock(blockStatements);
     }
@@ -94,12 +90,12 @@ public final class RangeForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getCondition() {
-        return inequality(parameterName.makeRef(), end.reference());
+        return lessThanEq(parameterName.makeRef(), end.reference());
     }
 
     @NotNull
     private JsExpression getIncrExpression() {
-        return addAssign(parameterName.makeRef(), incrVar.reference());
+        return addAssign(parameterName.makeRef(), increment.reference());
     }
 
     @NotNull

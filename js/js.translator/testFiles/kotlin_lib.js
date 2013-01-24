@@ -63,12 +63,12 @@ var kotlin = {set:function (receiver, key, value) {
         return args === null || args === undefined ? [] : args.slice();
     };
 
-    Kotlin.intUpto = function (from, limit) {
-        return Kotlin.$new(Kotlin.NumberRange)(from, limit - from + 1, false);
+    Kotlin.intUpto = function (from, to) {
+        return Kotlin.$new(Kotlin.NumberRange)(from, to);
     };
 
-    Kotlin.intDownto = function (from, limit) {
-        return Kotlin.$new(Kotlin.NumberRange)(from, from - limit + 1, true);
+    Kotlin.intDownto = function (from, to) {
+        return Kotlin.$new(Kotlin.NumberSequence)(from, to, -1);
     };
 
     Kotlin.modules = {};
@@ -344,23 +344,17 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.RangeIterator = Kotlin.$createClass(Kotlin.Iterator, {
-        initialize: function (start, count, reversed) {
+        initialize: function (start, end, increment) {
             this.$start = start;
-            this.$count = count;
-            this.$reversed = reversed;
-            this.$i = this.get_start();
+            this.$end = end;
+            this.$increment = increment;
+            this.$i = start;
         },
         get_start: function () {
             return this.$start;
         },
-        get_count: function () {
-            return this.$count;
-        },
-        set_count: function (tmp$0) {
-            this.$count = tmp$0;
-        },
-        get_reversed: function () {
-            return this.$reversed;
+        get_end: function () {
+            return this.$end;
         },
         get_i: function () {
             return this.$i;
@@ -369,49 +363,54 @@ var kotlin = {set:function (receiver, key, value) {
             this.$i = tmp$0;
         },
         next: function () {
-            this.set_count(this.get_count() - 1);
-            if (this.get_reversed()) {
-                this.set_i(this.get_i() - 1);
-                return this.get_i() + 1;
-            }
-            else {
-                this.set_i(this.get_i() + 1);
-                return this.get_i() - 1;
-            }
+            var value = this.$i;
+            this.set_i(this.$i + this.$increment)
+            return value;
         },
         get_hasNext: function () {
-            return this.get_count() > 0;
+            return this.$increment > 0 ? this.$next <= this.$end : this.$next >= this.$end;
         }
     });
 
     Kotlin.NumberRange = Kotlin.$createClass({
-        initialize: function (start, size, reversed) {
+        initialize: function (start, end) {
             this.$start = start;
-            this.$size = size;
-            this.$reversed = reversed;
+            this.$end = end;
         },
         get_start: function () {
             return this.$start;
         },
-        get_size: function () {
-            return this.$size;
-        },
-        get_reversed: function () {
-            return this.$reversed;
-        },
         get_end: function () {
-            return this.get_reversed() ? this.get_start() - this.get_size() + 1 : this.get_start() + this.get_size() - 1;
+            return this.$end;
+        },
+        get_increment: function () {
+            return 1;
         },
         contains: function (number) {
-            if (this.get_reversed()) {
-                return number <= this.get_start() && number > this.get_start() - this.get_size();
-            }
-            else {
-                return number >= this.get_start() && number < this.get_start() + this.get_size();
-            }
+            return this.$start <= number && number <= this.$end;
         },
         iterator: function () {
-            return Kotlin.$new(Kotlin.RangeIterator)(this.get_start(), this.get_size(), this.get_reversed());
+            return Kotlin.$new(Kotlin.RangeIterator)(this.get_start(), this.get_end());
+        }
+    });
+
+    Kotlin.NumberSequence = Kotlin.$createClass({
+        initialize: function (start, end, increment) {
+            this.$start = start;
+            this.$end = end;
+            this.$increment = increment;
+        },
+        get_start: function () {
+            return this.$start;
+        },
+        get_end: function () {
+            return this.$end;
+        },
+        get_increment: function () {
+            return this.$increment;
+        },
+        iterator: function () {
+            return Kotlin.$new(Kotlin.RangeIterator)(this.get_start(), this.get_end(), this.get_increment());
         }
     });
 
@@ -483,7 +482,7 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.arrayIndices = function (arr) {
-        return Kotlin.$new(Kotlin.NumberRange)(0, arr.length);
+        return Kotlin.$new(Kotlin.NumberRange)(0, arr.length - 1);
     };
 
     Kotlin.arrayIterator = function (array) {

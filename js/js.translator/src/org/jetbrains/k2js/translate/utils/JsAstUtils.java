@@ -116,6 +116,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsBinaryOperation lessThanEq(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.LTE, arg1, arg2);
+    }
+
+    @NotNull
     public static JsExpression assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
     }
