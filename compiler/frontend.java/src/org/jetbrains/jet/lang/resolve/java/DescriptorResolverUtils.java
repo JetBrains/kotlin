@@ -118,6 +118,14 @@ public final class DescriptorResolverUtils {
         return null;
     }
 
+    public static Visibility getConstructorVisibility(ClassDescriptor classDescriptor) {
+        Visibility containingClassVisibility = classDescriptor.getVisibility();
+        if (containingClassVisibility == JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY) {
+            return Visibilities.PROTECTED;
+        }
+        return containingClassVisibility;
+    }
+
     public static void checkPsiClassIsNotJet(@Nullable PsiClass psiClass) {
         if (psiClass instanceof JetJavaMirrorMarker) {
             throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass.getQualifiedName());

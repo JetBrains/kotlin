@@ -94,6 +94,12 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         doSimpleTest();
     }
 
+    public void testProtectedStaticVisibility() throws Exception {
+        String dir = PATH + "/protectedStaticVisibility/constructor/";
+        doTest(dir + "ConstructorInProtectedStaticNestedClass.txt",
+               dir + "ConstructorInProtectedStaticNestedClass.java");
+    }
+
     public void testStaticFinal() throws Exception {
         String dir = "/staticFinal/";
         doTest(PATH + dir + "expected.txt",

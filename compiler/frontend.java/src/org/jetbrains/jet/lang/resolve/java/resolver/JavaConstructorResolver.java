@@ -85,6 +85,7 @@ public final class JavaConstructorResolver {
                 constructors.add(trace.get(BindingContext.CONSTRUCTOR, psiClass));
             }
             else {
+                Visibility constructorVisibility = DescriptorResolverUtils.getConstructorVisibility(containingClass);
                 // We need to create default constructors for classes and abstract classes.
                 // Example:
                 // class Kotlin() : Java() {}
@@ -94,8 +95,7 @@ public final class JavaConstructorResolver {
                             containingClass,
                             Collections.<AnnotationDescriptor>emptyList(),
                             true);
-                    constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), containingClass
-                            .getVisibility(), isStatic);
+                    constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), constructorVisibility, isStatic);
                     constructors.add(constructorDescriptor);
                     trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
                 }
@@ -137,7 +137,7 @@ public final class JavaConstructorResolver {
                         }
                     }
 
-                    constructorDescriptor.initialize(typeParameters, valueParameters, containingClass.getVisibility(), isStatic);
+                    constructorDescriptor.initialize(typeParameters, valueParameters, constructorVisibility, isStatic);
                     constructors.add(constructorDescriptor);
                     trace.record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
                 }
