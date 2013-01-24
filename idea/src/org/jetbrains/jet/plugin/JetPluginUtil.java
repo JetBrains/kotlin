@@ -17,6 +17,9 @@
 package org.jetbrains.jet.plugin;
 
 import com.google.common.collect.Lists;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -71,5 +74,12 @@ public class JetPluginUtil {
             assert declaration != null;
         }
         return libraryScope == ((NamespaceDescriptor) declaration).getMemberScope();
+    }
+
+    @NotNull
+    public static String getPluginVersion() {
+        IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"));
+        assert plugin != null : "How can it be? Kotlin plugin is available, but its component is running. Complete nonsense.";
+        return plugin.getVersion();
     }
 }

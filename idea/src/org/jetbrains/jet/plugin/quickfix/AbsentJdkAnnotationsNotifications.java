@@ -52,7 +52,7 @@ public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provi
 
         GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
         if (JavaPsiFacade.getInstance(project).findClass("jet.JetObject", scope) == null) return null;
-        if (ConfigureKotlinLibraryNotificationProvider.jdkAnnotationsArePresent(module)) return null;
+        if (KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(module)) return null;
 
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         if (sdk == null) return null;
@@ -62,7 +62,7 @@ public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provi
         panel.createActionLabel("Set up Kotlin JDK annotations", new Runnable() {
             @Override
             public void run() {
-                ConfigureKotlinLibraryNotificationProvider.addJdkAnnotations(module);
+                KotlinRuntimeLibraryUtil.addJdkAnnotations(module);
             }
         });
 
