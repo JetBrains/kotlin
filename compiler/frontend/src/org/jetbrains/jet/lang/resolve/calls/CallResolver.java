@@ -516,13 +516,7 @@ public class CallResolver {
                     task.getResolvedCalls().add(call);
                 }
 
-                context.candidateCall.getTrace().addAllMyDataTo(traceForResolutionCache, new TraceEntryFilter() {
-                    @Override
-                    public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
-                        return slice == BindingContext.RESOLUTION_RESULTS_FOR_FUNCTION || slice == BindingContext.RESOLUTION_RESULTS_FOR_PROPERTY ||
-                               slice == BindingContext.TRACE_DELTAS_CACHE;
-                    }
-                }, false);
+                BindingContextUtils.commitResolutionCacheData(context.candidateCall.getTrace(), traceForResolutionCache);
             }
         }
 

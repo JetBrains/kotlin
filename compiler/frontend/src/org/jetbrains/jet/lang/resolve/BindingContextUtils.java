@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
@@ -264,5 +265,16 @@ public class BindingContextUtils {
             trace.record(AMBIGUOUS_LABEL_TARGET, targetLabel, targets);
         }
         trace.report(AMBIGUOUS_LABEL.on(targetLabel));
+    }
+
+    public static void commitResolutionCacheData(@NotNull DelegatingBindingTrace trace, @NotNull BindingTrace traceForResolutionCache) {
+        trace.addAllMyDataTo(traceForResolutionCache, new TraceEntryFilter() {
+            @Override
+            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
+                return slice == BindingContext.RESOLUTION_RESULTS_FOR_FUNCTION ||
+                       slice == BindingContext.RESOLUTION_RESULTS_FOR_PROPERTY ||
+                       slice == BindingContext.TRACE_DELTAS_CACHE;
+            }
+        }, false);
     }
 }
