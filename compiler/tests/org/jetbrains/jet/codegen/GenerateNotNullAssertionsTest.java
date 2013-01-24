@@ -78,7 +78,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
         JetCoreEnvironment tmpEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
-        GenerationState state = generateCommon(ClassBuilderFactories.TEST, tmpEnvironment,
+        GenerationState state = generateCommon(tmpEnvironment,
                 CodegenTestFiles.create(tmpEnvironment.getProject(), new String[] {"notNullAssertions/noAssertionsForKotlin.kt"}));
         File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
         CompileEnvironmentUtil.writeToOutputDirectory(state.getFactory(), compiledDirectory);

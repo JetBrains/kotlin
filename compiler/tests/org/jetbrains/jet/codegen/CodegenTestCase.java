@@ -230,17 +230,14 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected String generateToText() {
-        if (alreadyGenerated == null)
-            alreadyGenerated = generateCommon(ClassBuilderFactories.TEST, myEnvironment, myFiles);
+        if (alreadyGenerated == null) {
+            alreadyGenerated = generateCommon(myEnvironment, myFiles);
+        }
         return alreadyGenerated.getFactory().createText();
     }
 
     @NotNull
-    protected static GenerationState generateCommon(
-            @NotNull ClassBuilderFactory classBuilderFactory,
-            @NotNull JetCoreEnvironment environment,
-            @NotNull CodegenTestFiles files
-    ) {
+    protected static GenerationState generateCommon(@NotNull JetCoreEnvironment environment, @NotNull CodegenTestFiles files) {
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 environment.getProject(),
                 files.getPsiFiles(),
@@ -250,7 +247,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState state = new GenerationState(
-                environment.getProject(), classBuilderFactory, Progress.DEAF, analyzeExhaust.getBindingContext(), files.getPsiFiles(),
+                environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF, analyzeExhaust.getBindingContext(), files.getPsiFiles(),
                 configuration.get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true),
@@ -291,25 +288,25 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
-        GenerationState generationState = generateClassesInFileGetState();
-        return generationState.getFactory();
+        return generateClassesInFileGetState().getFactory();
     }
 
     @NotNull
     protected GenerationState generateClassesInFileGetState() {
-        GenerationState generationState;
         try {
-            generationState = generateCommon(ClassBuilderFactories.TEST, myEnvironment, myFiles);
-
-            if (DxChecker.RUN_DX_CHECKER) {
-                DxChecker.check(generationState.getFactory());
+            if (alreadyGenerated == null) {
+                alreadyGenerated = generateCommon(myEnvironment, myFiles);
             }
 
+            if (DxChecker.RUN_DX_CHECKER) {
+                DxChecker.check(alreadyGenerated.getFactory());
+            }
+
+            return alreadyGenerated;
         } catch (Throwable e) {
             System.out.println(generateToText());
             throw ExceptionUtils.rethrow(e);
         }
-        return generationState;
     }
 
     protected Method generateFunction() {
