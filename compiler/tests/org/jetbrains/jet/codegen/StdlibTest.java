@@ -146,7 +146,7 @@ public class StdlibTest extends CodegenTestCase {
         loadFile("regressions/kt1592.kt");
         String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
         Class<?> namespaceClass = generateClass(fqName);
-        Method method = namespaceClass.getMethod("box", Method.class);
+        Method method = namespaceClass.getMethod("foo", Method.class);
         method.setAccessible(true);
         Test annotation = method.getAnnotation(Test.class);
         assertEquals(annotation.timeout(), 0l);

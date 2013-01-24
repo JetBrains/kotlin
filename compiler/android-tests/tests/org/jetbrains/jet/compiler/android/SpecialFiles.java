@@ -77,13 +77,6 @@ public class SpecialFiles {
         excludedFiles.add("kt1482.kt"); // Cannot change package name
         excludedFiles.add("kt326.kt"); // Commented
         excludedFiles.add("kt1213.kt"); // Commented
-        excludedFiles.add("kt882.kt"); // Commented
-        excludedFiles.add("kt789.kt"); // Commented
-        excludedFiles.add("enum.kt"); // Commented
-        excludedFiles.add("withclosure.kt"); // Commented
-
-        excludedFiles.add("inRangeConditionsInWhen.kt"); // Commented
-        excludedFiles.add("kt1592.kt"); // Codegen don't execute blackBoxFile() on it
 
         excludedFiles.add("box.kt");      // MultiFileTest not supported yet
         excludedFiles.add("kt2060_1.kt"); // MultiFileTest not supported yet
@@ -93,7 +86,6 @@ public class SpecialFiles {
 
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 
-        excludedFiles.add("kt344.kt"); // Bug KT-2251
         excludedFiles.add("kt529.kt");  // Bug
 
         excludedFiles.add("noClassObjectForJavaClass.kt");
