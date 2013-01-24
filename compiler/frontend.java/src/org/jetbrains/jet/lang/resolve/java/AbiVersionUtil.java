@@ -27,6 +27,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 public class AbiVersionUtil {
     public static final WritableSlice<PsiClass, Integer> ABI_VERSION_ERRORS =
             new BasicWritableSlice<PsiClass, Integer>(Slices.ONLY_REWRITE_TO_EQUAL, true);
+    public static final int INVALID_VERSION = -1;
 
     public static boolean isAbiVersionCompatible(int abiVersion) {
         return abiVersion == JvmAbi.VERSION;
