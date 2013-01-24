@@ -93,10 +93,8 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("regressions/kt274.kt");
     }
 
-    //from ClassGenTest
-    public void testKt344 () throws Exception {
-        loadFile("regressions/kt344.kt");
-        blackBox();
+    public void testKt344 () {
+        blackBoxFile("regressions/kt344.kt");
     }
 
     //from ExtensionFunctionsTest

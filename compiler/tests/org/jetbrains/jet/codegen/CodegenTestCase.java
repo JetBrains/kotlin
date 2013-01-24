@@ -158,24 +158,19 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         blackBoxFile(filename, false);
     }
 
-    protected void blackBoxFile(String filename, boolean classPathInTheSameClassLoader) {
+    private void blackBoxFile(String filename, boolean classPathInTheSameClassLoader) {
         loadFile(filename);
         blackBox(classPathInTheSameClassLoader);
     }
 
     protected void blackBoxFileByFullPath(String filename) {
         loadFileByFullPath(filename);
-        blackBox();
+        blackBox(false);
     }
 
     protected void blackBoxMultiFile(String... filenames) {
         loadFiles(filenames);
-        blackBox();
-    }
-
-    protected void blackBoxMultiFile(boolean classPathInTheSameClassLoader, String... filenames) {
-        loadFiles(filenames);
-        blackBox(classPathInTheSameClassLoader);
+        blackBox(false);
     }
 
     @NotNull
@@ -217,11 +212,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         }
     }
 
-    protected void blackBox() {
-        blackBox(false);
-    }
-
-    protected void blackBox(boolean classPathInTheSameClassLoader) {
+    private void blackBox(boolean classPathInTheSameClassLoader) {
         GenerationState state = generateClassesInFileGetState();
 
         GeneratedClassLoader loader = createClassLoader(state.getFactory(), classPathInTheSameClassLoader);
@@ -280,15 +271,15 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         }
     }
 
-    protected void blackBoxFileWithJavaByFullPath(@NotNull String ktFile) throws Exception {
+    protected void blackBoxFileWithJavaByFullPath(@NotNull String ktFile) {
         blackBoxFileWithJava(ktFile.substring("compiler/testData/codegen/".length()), false);
     }
 
-    protected void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
+    protected void blackBoxFileWithJava(@NotNull String ktFile) {
         blackBoxFileWithJava(ktFile, false);
     }
 
-    protected void blackBoxFileWithJava(@NotNull String ktFile, boolean classPathInTheSameClassLoader) throws Exception {
+    protected void blackBoxFileWithJava(@NotNull String ktFile, boolean classPathInTheSameClassLoader) {
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
@@ -297,19 +288,24 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         blackBoxFile(ktFile, classPathInTheSameClassLoader);
     }
 
-    protected File compileJava(@NotNull String filename) throws IOException {
-        File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
-        JetTestUtils.mkdirs(javaClassesTempDirectory);
-        String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
-        List<String> options = Arrays.asList(
-                "-classpath", classPath,
-                "-d", javaClassesTempDirectory.getPath()
-        );
+    protected File compileJava(@NotNull String filename) {
+        try {
+            File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
+            JetTestUtils.mkdirs(javaClassesTempDirectory);
+            String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
+            List<String> options = Arrays.asList(
+                    "-classpath", classPath,
+                    "-d", javaClassesTempDirectory.getPath()
+            );
 
-        File javaFile = new File("compiler/testData/codegen/" + filename);
-        JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
+            File javaFile = new File("compiler/testData/codegen/" + filename);
+            JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
 
-        return javaClassesTempDirectory;
+            return javaClassesTempDirectory;
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {

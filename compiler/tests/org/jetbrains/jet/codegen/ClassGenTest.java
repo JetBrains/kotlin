@@ -248,9 +248,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testClassObjFields() {
-        loadText("class A() { class object { val value = 10 } }\n" +
-                 "fun box() = if(A.value == 10) \"OK\" else \"fail\"");
-        blackBox();
+        blackBoxFile("classes/classObjectField.kt");
     }
 
     public void testPrivateOuterProperty() {
@@ -434,15 +432,15 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testKt2395() {
-        blackBoxMultiFile("regressions/kt2395.kt");
+        blackBoxFile("regressions/kt2395.kt");
     }
 
     public void testKt2566() {
-        blackBoxMultiFile("regressions/kt2566.kt");
+        blackBoxFile("regressions/kt2566.kt");
     }
 
     public void testKt2566_2() {
-        blackBoxMultiFile("regressions/kt2566_2.kt");
+        blackBoxFile("regressions/kt2566_2.kt");
     }
 
     public void testKt2477() {
@@ -450,11 +448,11 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testKt2485() {
-        blackBoxMultiFile("regressions/kt2485.kt");
+        blackBoxFile("regressions/kt2485.kt");
     }
 
     public void testKt2482() {
-        blackBoxMultiFile("regressions/kt2482.kt");
+        blackBoxFile("regressions/kt2482.kt");
     }
 
     public void testKt2288() {

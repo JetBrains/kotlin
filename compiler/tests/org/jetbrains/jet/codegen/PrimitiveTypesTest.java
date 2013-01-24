@@ -300,9 +300,8 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         blackBoxFile("regressions/kt518.kt");
     }
 
-    public void testKt711 () throws Exception {
-        loadText("fun box() = if ((1 ?: 0) == 1) \"OK\" else \"fail\"");
-        blackBox();
+    public void testKt711() {
+        blackBoxFile("primitiveTypes/kt711.kt");
     }
 
     public void testSureNonnull () throws Exception {
@@ -325,25 +324,12 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         assertTrue(generateToText().contains("IFNULL"));
     }
 
-    public void testKt737() throws Exception {
-        loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.toByte().compareTo(10.toLong()) >= 0) \"fail\" else \"OK\"");
-        blackBox();
+    public void testKt737() {
+        blackBoxFile("primitiveTypes/kt737.kt");
     }
 
-    public void testKt665() throws Exception {
-        loadText("fun f(x: Long, zzz: Long = 1): Long\n" +
-                 "{\n" +
-                 "    return if (x <= 1) zzz\n" +
-                 "    else f(x-1, x*zzz)\n" +
-                 "}\n" +
-                 "\n" +
-                 "fun box() : String\n" +
-                 "{\n" +
-                 "    val six: Long = 6;\n" +
-                 "    System.out?.println(f(six))\n" +
-                 "    return \"OK\"" +
-                 "}");
-        blackBox();
+    public void testKt665() {
+        blackBoxFile("primitiveTypes/kt665.kt");
     }
 
     public void testKt752 () {
