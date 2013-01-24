@@ -23,17 +23,13 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -444,4 +440,32 @@ public class DescriptorUtils {
         DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
         return getParentOfType(containingDeclaration, ClassDescriptor.class, false);
     }
+
+    @Nullable
+    public static ClassDescriptor getClassForCorrespondingJavaNamespace(@NotNull NamespaceDescriptor correspondingNamespace) {
+        NamespaceDescriptorParent containingDeclaration = correspondingNamespace.getContainingDeclaration();
+        if (!(containingDeclaration instanceof NamespaceDescriptor)) {
+            return null;
+        }
+
+        NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
+
+        ClassifierDescriptor classDescriptor = namespaceDescriptor.getMemberScope().getClassifier(correspondingNamespace.getName());
+        if (classDescriptor != null && classDescriptor instanceof ClassDescriptor) {
+            return (ClassDescriptor) classDescriptor;
+        }
+
+        ClassDescriptor classDescriptorForOuterClass = getClassForCorrespondingJavaNamespace(namespaceDescriptor);
+        if (classDescriptorForOuterClass == null) {
+            return null;
+        }
+
+        ClassifierDescriptor innerClassDescriptor =
+                classDescriptorForOuterClass.getUnsubstitutedInnerClassesScope().getClassifier(correspondingNamespace.getName());
+        if (innerClassDescriptor instanceof ClassDescriptor) {
+            return (ClassDescriptor) innerClassDescriptor;
+        }
+        return null;
+    }
+
 }

@@ -97,6 +97,13 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
+                "VisibilityGenWithJavaTestGenerated",
+                AbstractCodegenTest.class,
+                testModel("compiler/testData/codegen/visibility/withJava/protected_static", "blackBoxFileWithJavaByFullPath")
+        );
+
+        generateTest(
+                "compiler/tests/",
                 "WriteFlagsTestGenerated",
                 AbstractWriteFlagsTest.class,
                 testModel("compiler/testData/writeFlags")

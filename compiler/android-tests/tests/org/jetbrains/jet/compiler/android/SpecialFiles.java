@@ -102,7 +102,7 @@ public class SpecialFiles {
         excludedFiles.add("forwardTypeParameter.jet"); // Commented
         excludedFiles.add("kt259.jet"); // Commented
         excludedFiles.add("classObjectMethod.jet"); // Commented
-        
+
         excludedFiles.add("inRangeConditionsInWhen.jet"); // Commented
         excludedFiles.add("kt1592.kt"); // Codegen don't execute blackBoxFile() on it
 
@@ -115,7 +115,6 @@ public class SpecialFiles {
         excludedFiles.add("kt684.jet"); // StackOverflow with StringBuilder (escape())
 
         excludedFiles.add("kt344.jet"); // Bug KT-2251
-        excludedFiles.add("kt529.kt");  // Bug
 
         excludedFiles.add("noClassObjectForJavaClass.kt");
 
@@ -125,6 +124,20 @@ public class SpecialFiles {
 
         excludedFiles.add("nestedInPackage.kt"); // Custom packages are not supported
         excludedFiles.add("importNestedClass.kt"); // Won't work when moved to another package
+
+        excludedFiles.add("protectedStaticClass.kt");                       // Java
+        excludedFiles.add("protectedStaticClass2.kt");                      // Java
+        excludedFiles.add("protectedStaticFun.kt");                         // Java
+        excludedFiles.add("protectedStaticFunCallInConstructor.kt");        // Java
+        excludedFiles.add("protectedStaticFunClassObject.kt");              // Java
+        excludedFiles.add("protectedStaticFunGenericClass.kt");             // Java
+        excludedFiles.add("protectedStaticFunNestedStaticClass.kt");        // Java
+        excludedFiles.add("protectedStaticFunNestedStaticClass2.kt");       // Java
+        excludedFiles.add("protectedStaticFunNestedStaticGenericClass.kt"); // Java
+        excludedFiles.add("protectedStaticFunNotDirectSuperClass.kt");      // Java
+        excludedFiles.add("protectedStaticFunObject.kt");                   // Java
+        excludedFiles.add("protectedStaticProperty.kt");                    // Java
+
     }
 
     private SpecialFiles() {

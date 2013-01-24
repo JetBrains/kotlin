@@ -55,6 +55,35 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         }
     };
 
+    public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", false) {
+        @Override
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
+            if (fromClass == null) return false;
+
+            ClassDescriptor whatClass;
+            // protected static class
+            if (what instanceof ClassDescriptor) {
+                DeclarationDescriptor containingDeclaration = what.getContainingDeclaration();
+                assert containingDeclaration instanceof ClassDescriptor : "Only static nested classes can have protected_static visibility";
+                whatClass = (ClassDescriptor) containingDeclaration;
+            }
+            // protected static function or property
+            else {
+                DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
+                assert whatDeclarationDescriptor instanceof NamespaceDescriptor : "Only static declarations can have protected_static visibility";
+                whatClass = DescriptorUtils.getClassForCorrespondingJavaNamespace((NamespaceDescriptor) whatDeclarationDescriptor);
+            }
+
+            assert whatClass != null : "Couldn't find ClassDescriptor for protected static member " + what;
+
+            if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
+                return true;
+            }
+            return isVisible(what, fromClass.getContainingDeclaration());
+        }
+    };
+
     private JavaPropertyResolver propertiesResolver;
     private JavaClassResolver classResolver;
     private JavaConstructorResolver constructorResolver;

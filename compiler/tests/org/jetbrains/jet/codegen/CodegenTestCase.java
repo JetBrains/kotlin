@@ -285,6 +285,10 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         }
     }
 
+    protected void blackBoxFileWithJavaByFullPath(@NotNull String ktFile) throws Exception {
+        blackBoxFileWithJava(ktFile.substring("compiler/testData/codegen/".length()), false);
+    }
+
     protected void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
         blackBoxFileWithJava(ktFile, false);
     }
