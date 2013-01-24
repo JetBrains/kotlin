@@ -449,4 +449,12 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     public void testKt3078() {
         blackBoxFile("regressions/kt3078.kt");
     }
+
+    public void testIntLiteralIsNotNull() {
+        blackBoxFile("primitiveTypes/intLiteralIsNotNull.kt");
+    }
+
+    public void testNullAsNullableIntIsNull() {
+        blackBoxFile("primitiveTypes/nullAsNullableIntIsNull.kt");
+    }
 }
