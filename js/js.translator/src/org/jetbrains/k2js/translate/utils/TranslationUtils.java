@@ -34,7 +34,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
 public final class TranslationUtils {
     private TranslationUtils() {
@@ -123,17 +122,9 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
-            @NotNull DeclarationDescriptor descriptor) {
-        JsName name = context.getNameForDescriptor(descriptor);
-        JsNameRef reference = name.makeRef();
-        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
-        if (qualifier != null) {
-            setQualifier(reference, qualifier);
-        }
-        return reference;
+    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
+        return new JsNameRef(context.getNameForDescriptor(descriptor), context.getQualifierForDescriptor(descriptor));
     }
-
 
     @NotNull
     public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
