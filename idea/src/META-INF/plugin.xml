@@ -24,7 +24,7 @@
           <implementation-class>org.jetbrains.jet.plugin.highlighter.DeclarationHintSupport</implementation-class>
       </component>
       <component>
-        <implementation-class>org.jetbrains.jet.plugin.OutdatedKotlinRuntimeNotification</implementation-class>
+        <implementation-class>org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification</implementation-class>
       </component>
       <component>
         <implementation-class>org.jetbrains.jet.plugin.codeInsight.ktSignature.KotlinSignatureInJavaMarkerUpdater</implementation-class>
