@@ -87,6 +87,7 @@ public class SpecialFiles {
         excludedFiles.add("kt684.kt"); // StackOverflow with StringBuilder (escape())
 
         excludedFiles.add("kt529.kt");  // Bug
+        excludedFiles.add("kt344.kt");  // Bug
 
         excludedFiles.add("noClassObjectForJavaClass.kt");
 
