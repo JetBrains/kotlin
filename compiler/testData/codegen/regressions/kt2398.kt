@@ -12,4 +12,7 @@ class C {
     }
 }
 
-fun box() = C().Obj.o + C().Obj.InnerObj.k()  + C().Obj.D().ko
+fun box(): String {
+    val res = C().Obj.o + C().Obj.InnerObj.k()  + C().Obj.D().ko
+    return if (res == "OKKO") "OK" else "Fail: $res"
+}

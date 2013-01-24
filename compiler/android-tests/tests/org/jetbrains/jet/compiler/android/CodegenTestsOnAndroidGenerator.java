@@ -36,7 +36,6 @@ import org.jetbrains.jet.utils.Printer;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -132,7 +131,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         Set<String> excludedFiles = SpecialFiles.getExcludedFiles();
         Set<String> filesCompiledWithoutStdLib = SpecialFiles.getFilesCompiledWithoutStdLib();
         Set<String> filesCompiledWithJUnit = SpecialFiles.getFilesCompiledWithJUnit();
-        Map<String, String> filesWithSpecialResult = SpecialFiles.getFilesWithSpecialResult();
         for (File file : files) {
             if (excludedFiles.contains(file.getName())) {
                 continue;
@@ -158,14 +156,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                         factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdk);
                     }
 
-                    String specialResult = filesWithSpecialResult.get(file.getName());
-                    if (specialResult != null) {
-                        generateTestMethodWithExpectedResult(p, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()),
-                                                             specialResult);
-                    }
-                    else {
-                        generateTestMethod(p, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
-                    }
+                    generateTestMethod(p, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
                     File outputDir = new File(pathManager.getOutputForCompiledFiles());
                     if (!outputDir.exists()) {
                         outputDir.mkdirs();
@@ -204,17 +195,13 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
     }
 
-    private static void generateTestMethodWithExpectedResult(Printer p, String testName, String namespace, String expectedResult) {
+    private static void generateTestMethod(Printer p, String testName, String namespace) {
         p.println("public void test" + testName + "() throws Exception {");
         p.pushIndent();
-        p.println("invokeBoxMethod(\"" + namespace + "\", \"" + expectedResult + "\");");
+        p.println("invokeBoxMethod(\"" + namespace + "\", \"OK\");");
         p.popIndent();
         p.println("}");
         p.println();
-    }
-
-    private static void generateTestMethod(Printer p, String testName, String namespace) {
-        generateTestMethodWithExpectedResult(p, testName, namespace, "OK");
     }
 
     private String generateTestName(String fileName) {

@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.compiler.android;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import java.util.Map;
 import java.util.Set;
 
 
@@ -27,13 +25,11 @@ public class SpecialFiles {
     private static final Set<String> excludedFiles = Sets.newHashSet();
     private static final Set<String> filesCompiledWithoutStdLib = Sets.newHashSet();
     private static final Set<String> filesCompiledWithJUnit = Sets.newHashSet();
-    private static final Map<String, String> filesWithSpecialResult = Maps.newHashMap();
 
     static {
         fillExcludedFiles();
         fillFilesCompiledWithoutStdLib();
         fillFilesCompiledWithJUnit();
-        fillFilesWithSpecialResult();
     }
 
 
@@ -47,14 +43,6 @@ public class SpecialFiles {
 
     public static Set<String> getFilesCompiledWithoutStdLib() {
         return filesCompiledWithoutStdLib;
-    }
-
-    public static Map<String, String> getFilesWithSpecialResult() {
-        return filesWithSpecialResult;
-    }
-
-    private static void fillFilesWithSpecialResult() {
-        filesWithSpecialResult.put("kt2398.kt", "OKKO");
     }
 
     private static void fillFilesCompiledWithJUnit() {

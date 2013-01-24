@@ -33,6 +33,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -40,11 +41,13 @@ import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.utils.ExceptionUtils;
-import org.jetbrains.jet.codegen.state.Progress;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -152,16 +155,12 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFile(String filename) {
-        blackBoxFile(filename, "OK");
+        blackBoxFile(filename, false);
     }
 
-    protected void blackBoxFile(String filename, String expected) {
-        blackBoxFile(filename, expected, false);
-    }
-
-    protected void blackBoxFile(String filename, String expected, boolean classPathInTheSameClassLoader) {
+    protected void blackBoxFile(String filename, boolean classPathInTheSameClassLoader) {
         loadFile(filename);
-        blackBox(expected, classPathInTheSameClassLoader);
+        blackBox(classPathInTheSameClassLoader);
     }
 
     protected void blackBoxFileByFullPath(String filename) {
@@ -174,9 +173,9 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         blackBox();
     }
 
-    protected void blackBoxMultiFile(String expected, boolean classPathInTheSameClassLoader, String... filenames) {
+    protected void blackBoxMultiFile(boolean classPathInTheSameClassLoader, String... filenames) {
         loadFiles(filenames);
-        blackBox(expected, classPathInTheSameClassLoader);
+        blackBox(classPathInTheSameClassLoader);
     }
 
     @NotNull
@@ -219,14 +218,10 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBox() {
-        blackBox("OK");
+        blackBox(false);
     }
 
-    protected void blackBox(String expected) {
-        blackBox(expected, false);
-    }
-
-    protected void blackBox(String expected, boolean classPathInTheSameClassLoader) {
+    protected void blackBox(boolean classPathInTheSameClassLoader) {
         GenerationState state = generateClassesInFileGetState();
 
         GeneratedClassLoader loader = createClassLoader(state.getFactory(), classPathInTheSameClassLoader);
@@ -269,7 +264,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 try {
                     Method method = namespaceClass.getMethod("box");
                     r = (String) method.invoke(null);
-                    assertEquals(expected, r);
+                    assertEquals("OK", r);
                 }
                 catch (NoSuchMethodException e) {
                     Method method = namespaceClass.getMethod("main",String[].class);
@@ -299,7 +294,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
-        blackBoxFile(ktFile, "OK", classPathInTheSameClassLoader);
+        blackBoxFile(ktFile, classPathInTheSameClassLoader);
     }
 
     protected File compileJava(@NotNull String filename) throws IOException {

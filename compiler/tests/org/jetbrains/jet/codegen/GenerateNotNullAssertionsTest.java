@@ -55,7 +55,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
 
         setUpEnvironment(generateAssertions, false, javaClassesTempDirectory);
 
-        blackBoxMultiFile("OK", false, "notNullAssertions/AssertionChecker.kt", ktFile);
+        blackBoxMultiFile(false, "notNullAssertions/AssertionChecker.kt", ktFile);
     }
 
     public void testGenerateAssertions() throws Exception {
