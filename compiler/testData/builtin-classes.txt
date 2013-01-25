@@ -1119,7 +1119,7 @@ public abstract class Number : jet.Hashable {
     public abstract fun toShort() : jet.Short
 }
 
-public trait NumberSequence</*0*/ N : jet.Number> : jet.Iterable<N> {
+public trait NumberSequence</*0*/ N : jet.Any> : jet.Iterable<N> {
     public abstract val end : N
     public abstract val increment : jet.Number
     public abstract val start : N

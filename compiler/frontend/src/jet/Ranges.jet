@@ -119,7 +119,7 @@ public class DoubleRange(
 }
 
 
-public trait NumberSequence<N: Number>: Iterable<N> {
+public trait NumberSequence<N: Any>: Iterable<N> {
     public val start: N
     public val end: N
     public val increment: Number
