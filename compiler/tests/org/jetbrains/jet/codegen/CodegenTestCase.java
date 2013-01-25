@@ -58,7 +58,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected CodegenTestFiles myFiles;
 
     private GenerationState alreadyGenerated;
-    private GeneratedClassLoader initializedClassLoader;
+    protected GeneratedClassLoader initializedClassLoader;
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind) {
         if (myEnvironment != null) {
@@ -124,27 +124,22 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFile(String filename) {
-        blackBoxFile(filename, false);
-    }
-
-    private void blackBoxFile(String filename, boolean classPathInTheSameClassLoader) {
-        loadFile(filename);
-        blackBox(classPathInTheSameClassLoader);
+        blackBoxMultiFile(filename);
     }
 
     protected void blackBoxFileByFullPath(String filename) {
         loadFileByFullPath(filename);
-        blackBox(false);
+        blackBox();
     }
 
     protected void blackBoxMultiFile(String... filenames) {
         loadFiles(filenames);
-        blackBox(false);
+        blackBox();
     }
 
-    private void blackBox(boolean classPathInTheSameClassLoader) {
+    private void blackBox() {
         ClassFileFactory factory = generateClassesInFile();
-        GeneratedClassLoader loader = createClassLoader(factory, classPathInTheSameClassLoader);
+        GeneratedClassLoader loader = createClassLoader(factory);
 
         JetFile firstFile = myFiles.getPsiFiles().get(0);
         String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(firstFile)).getFqName().getFqName();
@@ -162,20 +157,16 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFileWithJavaByFullPath(@NotNull String ktFile) {
-        blackBoxFileWithJava(ktFile.substring("compiler/testData/codegen/".length()), false);
+        blackBoxFileWithJava(ktFile.substring("compiler/testData/codegen/".length()));
     }
 
     protected void blackBoxFileWithJava(@NotNull String ktFile) {
-        blackBoxFileWithJava(ktFile, false);
-    }
-
-    protected void blackBoxFileWithJava(@NotNull String ktFile, boolean classPathInTheSameClassLoader) {
         File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
-        blackBoxFile(ktFile, classPathInTheSameClassLoader);
+        blackBoxFile(ktFile);
     }
 
     protected File compileJava(@NotNull String filename) {
@@ -198,15 +189,17 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         }
     }
 
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
-        return createClassLoader(codegens, false);
-    }
-
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens, boolean classPathInTheSameClassLoader) {
+    protected GeneratedClassLoader createClassLoader(ClassFileFactory factory) {
         if (initializedClassLoader != null) {
             fail("Double initialization of class loader in same test");
         }
 
+        ClassLoader parentClassLoader = new URLClassLoader(getClassPathURLs(), CodegenTestCase.class.getClassLoader());
+        initializedClassLoader = new GeneratedClassLoader(factory, parentClassLoader);
+        return initializedClassLoader;
+    }
+
+    protected URL[] getClassPathURLs() {
         List<URL> urls = Lists.newArrayList();
         for (File file : myEnvironment.getConfiguration().getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
             try {
@@ -216,17 +209,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             }
         }
 
-        final URL[] urlsArray = urls.toArray(new URL[urls.size()]);
-
-        if (!classPathInTheSameClassLoader) {
-            ClassLoader parentClassLoader = new URLClassLoader(urlsArray, CodegenTestCase.class.getClassLoader());
-            initializedClassLoader = new GeneratedClassLoader(codegens, parentClassLoader);
-        }
-        else {
-            initializedClassLoader = new GeneratedClassLoader(codegens, CodegenTestCase.class.getClassLoader(), urlsArray);
-        }
-
-        return initializedClassLoader;
+        return urls.toArray(new URL[urls.size()]);
     }
 
     protected String generateToText() {
@@ -258,55 +241,34 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected Class generateNamespaceClass() {
-        ClassFileFactory state = generateClassesInFile();
-        return loadRootNamespaceClass(state);
+        String name = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
+        return generateClass(name);
     }
 
     protected Class generateClass(String name) {
-        ClassFileFactory state = generateClassesInFile();
-        return loadClass(name, state);
-    }
-
-    protected Class loadRootNamespaceClass(@NotNull ClassFileFactory state) {
-        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
         try {
-            return createClassLoader(state).loadClass(fqName);
+            return createClassLoader(generateClassesInFile()).loadClass(name);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected Class loadClass(String fqName, @NotNull ClassFileFactory state) {
-        try {
-            return createClassLoader(state).loadClass(fqName);
-        } catch (ClassNotFoundException e) {
-            fail("No classfile was generated for: " + fqName);
+            fail("No class file was generated for: " + name);
             return null;
         }
     }
 
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
-        return generateClassesInFileGetState().getFactory();
-    }
-
-    @NotNull
-    protected GenerationState generateClassesInFileGetState() {
-        try {
-            if (alreadyGenerated == null) {
+        if (alreadyGenerated == null) {
+            try {
                 alreadyGenerated = generateCommon(myEnvironment, myFiles);
-            }
 
-            if (DxChecker.RUN_DX_CHECKER) {
-                DxChecker.check(alreadyGenerated.getFactory());
+                if (DxChecker.RUN_DX_CHECKER) {
+                    DxChecker.check(alreadyGenerated.getFactory());
+                }
+            } catch (Throwable e) {
+                System.out.println(generateToText());
+                throw ExceptionUtils.rethrow(e);
             }
-
-            return alreadyGenerated;
-        } catch (Throwable e) {
-            System.out.println(generateToText());
-            throw ExceptionUtils.rethrow(e);
         }
+        return alreadyGenerated.getFactory();
     }
 
     protected Method generateFunction() {

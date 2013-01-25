@@ -36,7 +36,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testPSVMClass() {
         loadFile("classes/simpleClass.kt");
 
-        final Class aClass = loadClass("SimpleClass", generateClassesInFile());
+        final Class aClass = generateClass("SimpleClass");
         final Method[] methods = aClass.getDeclaredMethods();
         // public int SimpleClass.foo()
         assertEquals(1, methods.length);
@@ -44,7 +44,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testArrayListInheritance() throws Exception {
         loadFile("classes/inheritingFromArrayList.kt");
-        final Class aClass = loadClass("Foo", generateClassesInFile());
+        final Class aClass = generateClass("Foo");
         assertInstanceOf(aClass.newInstance(), List.class);
     }
 
@@ -159,8 +159,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testAbstractMethod() throws Exception {
         loadText("abstract class Foo { abstract fun x(): String; fun y(): Int = 0 }");
-        final ClassFileFactory codegens = generateClassesInFile();
-        final Class aClass = loadClass("Foo", codegens);
+        final Class aClass = generateClass("Foo");
         assertNotNull(aClass.getMethod("x"));
         assertNotNull(findMethodByName(aClass, "y"));
     }
@@ -491,11 +490,11 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt2626.kt");
     }
 
-    public void testKt2781() throws Exception {
-        blackBoxFileWithJava("regressions/kt2781.kt", true);
-    }
-
     public void testKt2607() {
         blackBoxFile("regressions/kt2607.kt");
+    }
+
+    public void testNoClassObjectForJavaClass() {
+        blackBoxFileWithJava("stdlib/noClassObjectForJavaClass.kt");
     }
 }

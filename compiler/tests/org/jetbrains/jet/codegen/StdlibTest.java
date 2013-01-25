@@ -362,10 +362,6 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("jdk-annotations/collections.kt");
     }
 
-    public void testNoClassObjectForJavaClass() throws Exception {
-        blackBoxFileWithJava("stdlib/noClassObjectForJavaClass.kt");
-    }
-
     public void testKt1076() {
         blackBoxFile("regressions/kt1076.kt");
     }

@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen.defaultConstructor;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 
 import java.io.File;
@@ -38,13 +37,12 @@ public abstract class AbstractDefaultConstructorCodegenTest extends CodegenTestC
 
     protected void doTest(String path) throws IOException {
         loadFileByFullPath(path);
-        ClassFileFactory codegens = generateClassesInFile();
 
         String fileText = FileUtil.loadFile(new File(path));
         String className = loadInstructionValue(fileText, "CLASS");
         boolean hasDefaultConstructor = loadInstructionValue(fileText, "HAS_DEFAULT_CONSTRUCTOR").equals("true");
 
-        Class aClass = loadClass(className, codegens);
+        Class aClass = generateClass(className);
         assertNotNull("Cannot find class with name " + className, aClass);
         try {
             Constructor constructor = aClass.getDeclaredConstructor();
