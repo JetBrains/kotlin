@@ -222,8 +222,7 @@ public class KotlinRuntimeLibraryUtil {
 
     public static void updateRuntime(
             @NotNull final Project project,
-            @NotNull final Runnable jarNotFoundHandler,
-            @Nullable final Runnable continuation
+            @NotNull final Runnable jarNotFoundHandler
     ) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
@@ -242,7 +241,7 @@ public class KotlinRuntimeLibraryUtil {
                 catch (IOException e) {
                     throw new AssertionError(e);
                 }
-                runtimeJar.refresh(true, true, continuation);
+                runtimeJar.refresh(true, true);
             }
         });
     }

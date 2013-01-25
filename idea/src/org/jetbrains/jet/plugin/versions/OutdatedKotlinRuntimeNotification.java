@@ -66,14 +66,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
             public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     if ("update".equals(event.getDescription())) {
-                        KotlinRuntimeLibraryUtil.updateRuntime(myProject, new Runnable() {
-                            @Override
-                            public void run() {
-                                Messages.showErrorDialog(myProject,
-                                                         "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
-                                                         "No Runtime Found");
-                            }
-                        }, null);
+                        KotlinRuntimeLibraryUtil.updateRuntime(myProject, showRuntimeJarNotFoundDialog(myProject));
                     }
                     else if ("ignore".equals(event.getDescription())) {
                         PropertiesComponent.getInstance(myProject).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion);
@@ -85,5 +78,17 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                 }
             }
         }), myProject);
+    }
+
+    @NotNull
+    public static Runnable showRuntimeJarNotFoundDialog(@NotNull final Project project) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                Messages.showErrorDialog(project,
+                                         "kotlin-runtime.jar is not found. Make sure plugin is properly installed.",
+                                         "No Runtime Found");
+            }
+        };
     }
 }
