@@ -4,25 +4,26 @@ import js.*
 
 fun box() : Boolean {
 
-    var oneToFive = IntRange(1, 4)
+    var twoToFive = IntRange(2, 5)
 
-    if (oneToFive.contains(5)) return false;
-    if (oneToFive.contains(0)) return false;
-    if (oneToFive.contains(-100)) return false;
-    if (oneToFive.contains(10)) return false;
-    if (!oneToFive.contains(1)) return false;
-    if (!oneToFive.contains(2)) return false;
-    if (!oneToFive.contains(3)) return false;
-    if (!oneToFive.contains(4)) return false;
-    if (!(oneToFive.start == 1)) return false;
-    if (!(oneToFive.end == 4)) return false;
+    if (twoToFive.contains(6)) return false;
+    if (twoToFive.contains(1)) return false;
+    if (twoToFive.contains(0)) return false;
+    if (twoToFive.contains(-100)) return false;
+    if (twoToFive.contains(10)) return false;
+    if (!twoToFive.contains(2)) return false;
+    if (!twoToFive.contains(3)) return false;
+    if (!twoToFive.contains(4)) return false;
+    if (!twoToFive.contains(5)) return false;
+    if (!(twoToFive.start == 2)) return false;
+    if (!(twoToFive.end == 5)) return false;
 
     var sum = 0;
-    for (i in oneToFive) {
+    for (i in twoToFive) {
         sum += i;
     }
 
-    if (sum != 10) return false;
+    if (sum != 14) return false;
 
     return true;
 
