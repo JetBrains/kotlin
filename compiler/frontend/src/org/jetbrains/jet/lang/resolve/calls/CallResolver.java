@@ -122,9 +122,9 @@ public class CallResolver {
             @NotNull JetScope scope,
             @NotNull Call call,
             @NotNull JetType expectedType,
-            @NotNull DataFlowInfo dataFlowInfo) {
-
-        return resolveFunctionCall(BasicResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo));
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        return resolveFunctionCall(BasicResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, false));
     }
 
     @NotNull
@@ -480,7 +480,7 @@ public class CallResolver {
                             public List<JetExpression> getFunctionLiteralArguments() {
                                 return Collections.emptyList();
                             }
-                        }, task.expectedType, task.dataFlowInfo);
+                        }, task.expectedType, task.dataFlowInfo, task.namespacesAllowed);
             OverloadResolutionResultsImpl<F> resultsWithFunctionLiteralsStripped = performResolution(newTask, callTransformer, traceForResolutionCache);
             if (resultsWithFunctionLiteralsStripped.isSuccess() || resultsWithFunctionLiteralsStripped.isAmbiguity()) {
                 task.tracing.danglingFunctionLiteralArgumentSuspected(task.trace, task.call.getFunctionLiteralArguments());

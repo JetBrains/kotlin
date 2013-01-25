@@ -25,16 +25,23 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public class BasicResolutionContext extends ResolutionContext {
     @NotNull
-    public static BasicResolutionContext create(@NotNull BindingTrace trace, @NotNull JetScope scope, @NotNull Call call, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
-        return new BasicResolutionContext(trace, scope, call, expectedType, dataFlowInfo);
+    public static BasicResolutionContext create(
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull Call call,
+            @NotNull JetType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            boolean namespacesAllowed
+    ) {
+        return new BasicResolutionContext(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 
-    private BasicResolutionContext(BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo) {
-        super(trace, scope, call, expectedType, dataFlowInfo);
+    private BasicResolutionContext(BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, boolean namespacesAllowed) {
+        super(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 
     @NotNull
     public BasicResolutionContext replaceTrace(@NotNull BindingTrace trace) {
-        return create(trace, scope, call, expectedType, dataFlowInfo);
+        return create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 }

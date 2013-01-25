@@ -30,29 +30,41 @@ public final class CallResolutionContext<D extends CallableDescriptor, F extends
     /*package*/ final TracingStrategy tracing;
     /*package*/ ReceiverValue receiverForVariableAsFunctionSecondCall = ReceiverValue.NO_RECEIVER;
 
-    private CallResolutionContext(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {
-        super(trace, task.scope, call, task.expectedType, task.dataFlowInfo);
+    private CallResolutionContext(
+            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
+            @NotNull TracingStrategy tracing, @NotNull Call call, boolean namespacesAllowed
+    ) {
+        super(trace, task.scope, call, task.expectedType, task.dataFlowInfo, namespacesAllowed);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
     }
 
-    private CallResolutionContext(@NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing, @NotNull ResolvedCallImpl<D> candidateCall) {
-        super(context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo);
+    private CallResolutionContext(
+            @NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing,
+            @NotNull ResolvedCallImpl<D> candidateCall
+    ) {
+        super(context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo, context.namespacesAllowed);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {
-        return new CallResolutionContext<D, F>(candidateCall, task, trace, tracing, call);
+    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(
+            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
+            @NotNull TracingStrategy tracing, @NotNull Call call) {
+        return new CallResolutionContext<D, F>(candidateCall, task, trace, tracing, call, task.namespacesAllowed);
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing) {
+    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(
+            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
+            @NotNull TracingStrategy tracing) {
         return create(candidateCall, task, trace, tracing, task.call);
     }
 
-    public static <D extends CallableDescriptor> CallResolutionContext<D, D> create(@NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing, @NotNull ResolvedCallImpl<D> candidateCall) {
+    public static <D extends CallableDescriptor> CallResolutionContext<D, D> create(
+            @NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing,
+            @NotNull ResolvedCallImpl<D> candidateCall) {
         return new CallResolutionContext<D, D>(context, tracing, candidateCall);
     }
 }

@@ -28,16 +28,18 @@ public abstract class ResolutionContext {
     public final Call call;
     public final JetType expectedType;
     public final DataFlowInfo dataFlowInfo;
+    public final boolean namespacesAllowed;
 
-    protected ResolutionContext(BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo) {
+    protected ResolutionContext(BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, boolean namespacesAllowed) {
         this.trace = trace;
         this.scope = scope;
         this.call = call;
         this.expectedType = expectedType;
         this.dataFlowInfo = dataFlowInfo;
+        this.namespacesAllowed = namespacesAllowed;
     }
 
     public BasicResolutionContext toBasic() {
-        return BasicResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo);
+        return BasicResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 }

@@ -190,7 +190,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             Call functionCall = createFunctionCall(context, task, returnType);
 
             final DelegatingBindingTrace variableCallTrace = context.candidateCall.getTrace();
-            BasicResolutionContext basicResolutionContext = BasicResolutionContext.create(variableCallTrace, context.scope, functionCall, context.expectedType, context.dataFlowInfo);
+            BasicResolutionContext basicResolutionContext = BasicResolutionContext.create(
+                    variableCallTrace, context.scope, functionCall, context.expectedType, context.dataFlowInfo, context.namespacesAllowed);
 
             // 'invoke' call resolve
             OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenName(basicResolutionContext, task.reference, Name.identifier("invoke"));

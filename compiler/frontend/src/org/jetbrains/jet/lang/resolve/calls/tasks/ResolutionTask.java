@@ -58,15 +58,16 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
     public final JetReferenceExpression reference;
     private DescriptorCheckStrategy checkingStrategy;
 
-    public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference,
-                          BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo) {
-        super(trace, scope, call, expectedType, dataFlowInfo);
+    public ResolutionTask(
+            @NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference,
+            BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, boolean namespacesAllowed) {
+        super(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
         this.candidates = candidates;
         this.reference = reference;
     }
 
     public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicResolutionContext context) {
-        this(candidates, reference, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo);
+        this(candidates, reference, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo, context.namespacesAllowed);
     }
 
     @NotNull
@@ -91,7 +92,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
     }
 
     public ResolutionTask<D, F> withTrace(BindingTrace newTrace) {
-        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, newTrace, scope, call, expectedType, dataFlowInfo);
+        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, newTrace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
     }
