@@ -31,6 +31,7 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 
 public class AbsentJdkAnnotationsNotifications extends EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("add.kotlin.jdk.annotations");

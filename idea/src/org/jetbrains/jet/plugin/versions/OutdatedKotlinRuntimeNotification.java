@@ -26,7 +26,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.quickfix.KotlinRuntimeLibraryUtil;
 
 import javax.swing.event.HyperlinkEvent;
 

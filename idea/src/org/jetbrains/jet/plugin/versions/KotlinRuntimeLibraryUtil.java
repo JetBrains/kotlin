@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix;
+package org.jetbrains.jet.plugin.versions;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -47,15 +47,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 import java.util.Collection;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 

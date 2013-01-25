@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix;
+package org.jetbrains.jet.plugin.versions;
 
 import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
@@ -52,7 +52,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification;
+import org.jetbrains.jet.plugin.quickfix.JsModuleSetUp;
 
 import javax.swing.*;
 import java.awt.*;
