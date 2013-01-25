@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -128,8 +129,8 @@ public class KotlinRuntimeLibraryUtil {
 
     @Nullable
     static Library findOrCreateRuntimeLibrary(@NotNull Project project, @NotNull FindRuntimeLibraryHandler handler) {
-        LibraryTable table = ProjectLibraryTable.getInstance(project);
-        Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
+        final LibraryTable table = ProjectLibraryTable.getInstance(project);
+        final Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
         if (kotlinRuntime != null) {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
                 if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
@@ -158,22 +159,20 @@ public class KotlinRuntimeLibraryUtil {
             return null;
         }
 
-        if (kotlinRuntime == null) {
-            kotlinRuntime = table.createLibrary("KotlinRuntime");
-        }
-
-        final Library finalKotlinRuntime = kotlinRuntime;
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        return ApplicationManager.getApplication().runWriteAction(new Computable<Library>() {
             @Override
-            public void run() {
-                Library.ModifiableModel model = finalKotlinRuntime.getModifiableModel();
+            public Library compute() {
+                Library result = kotlinRuntime == null
+                                 ? table.createLibrary("KotlinRuntime")
+                                 : kotlinRuntime;
+
+                Library.ModifiableModel model = result.getModifiableModel();
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(targetJar), OrderRootType.CLASSES);
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(targetJar) + "src", OrderRootType.SOURCES);
                 model.commit();
+                return result;
             }
         });
-
-        return kotlinRuntime;
     }
 
     public static void updateRuntime(
