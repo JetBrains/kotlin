@@ -16,15 +16,15 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.roots.AnnotationOrderRootType;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -38,16 +38,24 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.impl.elements.ManifestFileUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.ProjectScope;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.plugin.versions.KotlinAbiVersionIndex;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.Collection;
+import java.util.Set;
 
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsModule;
 
@@ -57,6 +65,43 @@ public class KotlinRuntimeLibraryUtil {
     public static final String UNKNOWN_VERSION = "UNKNOWN";
 
     private KotlinRuntimeLibraryUtil() {}
+
+    @NotNull
+    public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleKotlinClasses(@NotNull Project project) {
+        ID<Integer,Void> id = KotlinAbiVersionIndex.INSTANCE.getName();
+        Collection<Integer> abiVersions = FileBasedIndex.getInstance().getAllKeys(id, project);
+        Set<Integer> badAbiVersions = Sets.newHashSet(Collections2.filter(abiVersions, new Predicate<Integer>() {
+            @Override
+            public boolean apply(Integer abiVersion) {
+                return !AbiVersionUtil.isAbiVersionCompatible(abiVersion);
+            }
+        }));
+        final Collection<VirtualFile> badRoots = Sets.newHashSet();
+        final ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+        FileBasedIndex.getInstance().getFilesWithKey(
+                id,
+                badAbiVersions,
+                new Processor<VirtualFile>() {
+                    @Override
+                    public boolean process(VirtualFile file) {
+                        assert file != null;
+                        if (!file.isValid()) return true;
+                        VirtualFile root = fileIndex.getClassRootForFile(file);
+                        if (root != null) {
+                            VirtualFile jarFile = JarFileSystem.getInstance().getVirtualFileForJar(root);
+                            badRoots.add(jarFile != null ? jarFile : root);
+                        }
+                        else {
+                            badRoots.add(file);
+                        }
+                        return true;
+                    }
+                },
+                ProjectScope.getLibrariesScope(project)
+        );
+
+        return badRoots;
+    }
 
     public static void addJdkAnnotations(@NotNull Module module) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
@@ -135,7 +180,7 @@ public class KotlinRuntimeLibraryUtil {
             for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
                 if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
                     return kotlinRuntime;
-    }
+                }
             }
         }
 
