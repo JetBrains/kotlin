@@ -59,22 +59,6 @@ abstract open public class BooleanIterator() : Iterator<Boolean> {
 
 public fun <T> Iterator<T>.iterator() : Iterator<T>
 
-public fun ByteIterator.iterator() : ByteIterator
-
-public fun ShortIterator.iterator() : ShortIterator
-
-public fun CharIterator.iterator() : CharIterator
-
-public fun IntIterator.iterator() : IntIterator
-
-public fun BooleanIterator.iterator() : BooleanIterator
-
-public fun DoubleIterator.iterator() : DoubleIterator
-
-public fun FloatIterator.iterator() : FloatIterator
-
-public fun LongIterator.iterator() : LongIterator
-
 public trait ListIterator<out T> : Iterator<T> {
     // Query Operations
     override fun hasNext() : Boolean
