@@ -77,7 +77,17 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
             @Override
             public void rootsChanged(ModuleRootEvent event) {
-                DumbService.getInstance(myProject).runWhenSmart(updateNotifications);
+                updateNotifications();
+            }
+        });
+
+        connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+            @Override
+            public void enteredDumbMode() {}
+
+            @Override
+            public void exitDumbMode() {
+                updateNotifications();
             }
         });
     }
