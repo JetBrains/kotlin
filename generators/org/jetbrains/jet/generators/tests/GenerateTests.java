@@ -83,20 +83,6 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
-                "IntrinsicsTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/intrinsics", "blackBoxFileByFullPath")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "MultiDeclTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/multiDecl", "blackBoxFileByFullPath")
-        );
-
-        generateTest(
-                "compiler/tests/",
                 "VisibilityGenWithJavaTestGenerated",
                 AbstractCodegenTest.class,
                 testModel("compiler/testData/codegen/visibility/withJava/protected_static", "blackBoxFileWithJavaByFullPath")
@@ -116,47 +102,6 @@ public class GenerateTests {
                 testModel("compiler/testData/codegen/defaultArguments/reflection")
         );
 
-        generateTest(
-                "compiler/tests/",
-                "DefaultArgumentsBlackBoxTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/defaultArguments/blackBox")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "LabelGenTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/label")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "InnerNestedGenTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/innerNested")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "InstructionsTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/instructions")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "OperatorConventionsTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/operatorConventions")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "ExtensionPropertiesTestGenerated",
-                AbstractCodegenTest.class,
-                testModel("compiler/testData/codegen/extensionProperties")
-        );
 
         generateTest(
                 "compiler/tests/",
@@ -164,7 +109,6 @@ public class GenerateTests {
                 AbstractLoadCompiledKotlinTest.class,
                 testModel("compiler/testData/loadKotlin")
         );
-
 
         generateTest(
                 "compiler/tests/",
