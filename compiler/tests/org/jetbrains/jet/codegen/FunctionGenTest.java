@@ -29,46 +29,6 @@ public class FunctionGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testKt2716() {
-        blackBoxFile("regressions/kt2716.kt");
-    }
-
-    public void testDefaultArgs() {
-        blackBoxFile("functions/defaultargs.kt");
-    }
-
-    public void testDefaultArgs1() {
-        blackBoxFile("functions/defaultargs1.kt");
-    }
-
-    public void testDefaultArgs2() {
-        blackBoxFile("functions/defaultargs2.kt");
-    }
-
-    public void testDefaultArgs3() {
-        blackBoxFile("functions/defaultargs3.kt");
-    }
-
-    public void testDefaultArgs4() {
-        blackBoxFile("functions/defaultargs4.kt");
-    }
-
-    public void testDefaultArgs5() {
-        blackBoxFile("functions/defaultargs5.kt");
-    }
-
-    public void testDefaultArgs6() {
-        blackBoxFile("functions/defaultargs6.kt");
-    }
-
-    public void testDefaultArgs7() {
-        blackBoxFile("functions/defaultargs7.kt");
-    }
-
-    public void testNoThisNoClosure() {
-        blackBoxFile("functions/nothisnoclosure.kt");
-    }
-
     public void testAnyEqualsNullable() throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any?) = x.equals(\"lala\")");
         Method foo = generateFunction();
@@ -95,74 +55,6 @@ public class FunctionGenTest extends CodegenTestCase {
         assertFalse((Boolean) foo.invoke(null, "mama"));
     }
 
-    public void testKt395() {
-        blackBoxFile("regressions/kt395.kt");
-    }
-
-    public void testKt785() {
-        blackBoxFile("regressions/kt785.kt");
-    }
-
-    public void testKt873() {
-        blackBoxFile("regressions/kt873.kt");
-    }
-
-    public void testKt1413() {
-        blackBoxFile("regressions/kt1413.kt");
-    }
-
-    public void testKt1199() {
-        blackBoxFile("regressions/kt1199.kt");
-    }
-
-    public void testFunction() {
-        blackBoxFile("functions/functionExpression.kt");
-    }
-
-    public void testLocalFunction() {
-        blackBoxFile("functions/localFunction.kt");
-    }
-
-    public void testInvoke() {
-        blackBoxFile("functions/invoke.kt");
-    }
-
-    public void testKt2481() {
-        blackBoxFile("regressions/kt2481.kt");
-    }
-
-    public void testKt2280() {
-        blackBoxFile("regressions/kt2280.kt");
-    }
-
-    public void testKt1739() {
-        blackBoxFile("regressions/kt1739.kt");
-    }
-
-    public void testKt2271() {
-        blackBoxFile("regressions/kt2271.kt");
-    }
-
-    public void testKt2270() {
-        blackBoxFile("regressions/kt2270.kt");
-    }
-
-    public void testK1649_1() {
-        blackBoxFile("regressions/kt1649_1.kt");
-    }
-
-    public void testK1649_2() {
-        blackBoxFile("regressions/kt1649_2.kt");
-    }
-
-    public void testKt1038() {
-        blackBoxFile("regressions/kt1038.kt");
-    }
-
-    public void testKt2739() {
-        blackBoxFile("regressions/kt2739.kt");
-    }
-
     public void testReferencesStaticInnerClassMethod() throws Exception {
         blackBoxFileWithJava("functions/referencesStaticInnerClassMethod.kt");
     }
@@ -175,18 +67,10 @@ public class FunctionGenTest extends CodegenTestCase {
         blackBoxFileWithJava("functions/removeInIterator.kt");
     }
 
-    public void testKt2929() {
-        blackBoxFile("regressions/kt2929.kt");
-    }
-
     public void testPrivateDefaultArgs() throws Exception {
         loadFile("functions/privateDefaultArgs.kt");
         String text = generateToText();
         assertFalse(text.contains("INVOKEVIRTUAL"));
         assertTrue(text.contains("INVOKESPECIAL"));
-    }
-
-    public void testEa33909() {
-        blackBoxFile("regressions/ea33909.kt");
     }
 }

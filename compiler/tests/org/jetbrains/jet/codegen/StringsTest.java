@@ -64,28 +64,4 @@ public class StringsTest extends CodegenTestCase {
         assertEquals("239null120", foo.invoke(null, "239", null));
 
     }
-
-    public void testRawStrings() throws Exception {
-        blackBoxFile("rawStrings.kt");
-    }
-
-    public void testMultilineStringsWithTemplates() throws Exception {
-        blackBoxFile("multilineStringsWithTemplates.kt");
-    }
-
-    public void testKt881() throws Exception {
-        blackBoxFile("regressions/kt881.kt");
-    }
-
-    public void testKt894() throws Exception {
-        blackBoxFile("regressions/kt894.kt");
-    }
-
-    public void testKt889() throws Exception {
-        blackBoxFile("regressions/kt889.kt");
-    }
-
-    public void testEa35743() {
-        blackBoxFile("regressions/ea35743.kt");
-    }
 }

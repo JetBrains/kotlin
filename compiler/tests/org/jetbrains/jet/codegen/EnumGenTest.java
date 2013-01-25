@@ -64,42 +64,6 @@ public class EnumGenTest extends CodegenTestCase {
         final Method rgbMethod = colorClass.getMethod("getRgb");
         assertEquals(0xFF0000, rgbMethod.invoke(redValue));
     }
-
-    public void testSimple() {
-        blackBoxFile("enum/simple.kt");
-    }
-
-    public void testSimpleEnumInPackage() {
-        blackBoxFile("enum/inPackage.kt");
-    }
-
-    public void testAsReturnExpression() {
-        blackBoxFile("enum/asReturnExpression.kt");
-    }
-
-    public void testToString() {
-        blackBoxFile("enum/toString.kt");
-    }
-
-    public void testName() {
-        blackBoxFile("enum/name.kt");
-    }
-
-    public void testOrdinal() {
-        blackBoxFile("enum/ordinal.kt");
-    }
-
-    public void testValues() {
-        blackBoxFile("enum/valueof.kt");
-    }
-
-    public void testInClassObj() {
-        blackBoxFile("enum/inclassobj.kt");
-    }
-
-    public void testAbstractMethod() {
-        blackBoxFile("enum/abstractmethod.kt");
-    }
     
     public void testSimpleJavaEnum() throws Exception {
         blackBoxFileWithJava("enum/simpleJavaEnum.kt");
@@ -141,37 +105,5 @@ public class EnumGenTest extends CodegenTestCase {
         }
         catch (ClassNotFoundException e) {
         }
-    }
-
-    public void testKt1119() {
-        blackBoxFile("regressions/kt1119.kt");
-    }
-
-    public void testKt2350() {
-        blackBoxFile("regressions/kt2350.kt");
-    }
-
-    public void testEntryWithInner() {
-        blackBoxFile("enum/entrywithinner.kt");
-    }
-
-    public void testInner() {
-        blackBoxFile("enum/inner.kt");
-    }
-
-    public void testInFunction() {
-        blackBoxFile("enum/inFunction.kt");
-    }
-
-    public void testInnerWithExistingClassObject() {
-        blackBoxFile("enum/innerWithExistingClassObject.kt");
-    }
-
-    public void testAbstractMethodInEnum() {
-        blackBoxFile("enum/abstractMethodInEnum.kt");
-    }
-
-    public void testKt2673() {
-        blackBoxFile("regressions/kt2673.kt");
     }
 }

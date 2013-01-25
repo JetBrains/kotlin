@@ -166,51 +166,11 @@ public class PropertyGenTest extends CodegenTestCase {
         assertTrue((x.getModifiers() & Modifier.VOLATILE) != 0);
     }
 
-    public void testKt257() {
-        blackBoxFile("regressions/kt257.kt");
-    }
-
-    public void testKt613() {
-        blackBoxFile("regressions/kt613.kt");
-    }
-
     public void testKt160() throws Exception {
         loadText("internal val s = java.lang.Double.toString(1.0)");
         final Method method = generateFunction("getS");
         method.setAccessible(true);
         assertEquals(method.invoke(null), "1.0");
-    }
-
-    public void testKt1165() {
-        blackBoxFile("regressions/kt1165.kt");
-    }
-
-    public void testKt1168() {
-        blackBoxFile("regressions/kt1168.kt");
-    }
-
-    public void testKt1170() {
-        blackBoxFile("regressions/kt1170.kt");
-    }
-
-    public void testKt1159() {
-        blackBoxFile("regressions/kt1159.kt");
-    }
-
-    public void testKt1417() {
-        blackBoxFile("regressions/kt1417.kt");
-    }
-
-    public void testKt1398() {
-        blackBoxFile("regressions/kt1398.kt");
-    }
-
-    public void testKt2331() {
-        blackBoxFile("regressions/kt2331.kt");
-    }
-
-    public void testKt1892() {
-        blackBoxFile("regressions/kt1892.kt");
     }
 
     public void testKt1846() {
@@ -231,26 +191,6 @@ public class PropertyGenTest extends CodegenTestCase {
                 //
             }
         }
-    }
-
-    public void testKt1482_2279() {
-        blackBoxFile("regressions/kt1482_2279.kt");
-    }
-
-    public void testKt1714() {
-        blackBoxFile("regressions/kt1714.kt");
-    }
-
-    public void testKt1714_minimal() {
-        blackBoxFile("regressions/kt1714_minimal.kt");
-    }
-
-    public void testKt2786() {
-        blackBoxFile("regressions/kt2786.kt");
-    }
-
-    public void testKt2655() {
-        blackBoxFile("regressions/kt2655.kt");
     }
 
     public void testKt1528() {
@@ -322,18 +262,6 @@ public class PropertyGenTest extends CodegenTestCase {
             System.out.println(generateToText());
             throw new RuntimeException(e);
         }
-    }
-
-    public void testKt2892() {
-        blackBoxFile("properties/kt2892.kt");
-    }
-
-    public void testAccessToPrivateProperty() {
-        blackBoxFile("properties/accessToPrivateProperty.kt");
-    }
-
-    public void testAccessToPrivateSetter() {
-        blackBoxFile("properties/accessToPrivateSetter.kt");
     }
 
     public void testKt2202() {

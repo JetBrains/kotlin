@@ -85,14 +85,6 @@ public class VarArgTest extends CodegenTestCase {
         assertTrue(((Integer[])res)[1].equals(4));
     }
 
-    public void testKt581() {
-        blackBoxFile("regressions/kt581.kt");
-    }
-
-    public void testKt797() {
-        blackBoxFile("regressions/kt796_797.kt");
-    }
-
     public void testArrayAsVararg() throws InvocationTargetException, IllegalAccessException {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts: Array<String>) = asList(*ts); ");
         final Method main = generateFunction("test");
@@ -108,9 +100,5 @@ public class VarArgTest extends CodegenTestCase {
         assertEquals(2, Array.getLength(invoke));
         assertEquals("mama", Array.get(invoke, 0));
         assertEquals("papa", Array.get(invoke, 1));
-    }
-
-    public void testKt1978() {
-        blackBoxFile("regressions/kt1978.kt");
     }
 }

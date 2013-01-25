@@ -48,48 +48,4 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
         Method foo = generateFunction("foo");
         assertThrows(foo, Exception.class, null, new StringBuilder());
     }
-
-    public void testVirtual() {
-        blackBoxFile("extensionFunctions/virtual.kt");
-    }
-
-    public void testShared() {
-        blackBoxFile("extensionFunctions/shared.kt");
-    }
-
-    public void testKt475() {
-        blackBoxFile("regressions/kt475.kt");
-    }
-
-    public void testKt865() {
-        blackBoxFile("regressions/kt865.kt");
-    }
-
-    public void testKtNested2() {
-        blackBoxFile("extensionFunctions/nested2.kt");
-    }
-
-    public void testKt606() {
-        blackBoxFile("regressions/kt606.kt");
-    }
-
-    public void testKt1061() {
-        blackBoxFile("regressions/kt1061.kt");
-    }
-
-    public void testKt1249() {
-        blackBoxFile("regressions/kt1249.kt");
-    }
-
-    public void testKt1290() {
-        blackBoxFile("regressions/kt1290.kt");
-    }
-
-    public void testKt1953() {
-        blackBoxFile("regressions/kt1953.kt");
-    }
-
-    public void testKt1953Class() {
-        blackBoxFile("regressions/kt1953_class.kt");
-    }
 }

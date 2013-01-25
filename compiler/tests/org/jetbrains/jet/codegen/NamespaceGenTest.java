@@ -435,22 +435,10 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals('x', ((Character) main.invoke(null, sb)).charValue());
     }
 
-    public void testNamespaceQualifiedMethod() throws Exception {
-        blackBoxFile("namespaceQualifiedMethod.kt");
-    }
-
-    public void testCheckCast() throws Exception {
-        blackBoxFile("checkCast.kt");
-    }
-
     public void testPutBooleanAsVoid() throws Exception {
         loadText("class C(val x: Int) { { x > 0 } } fun box() { val c = C(0) } ");
         final Method main = generateFunction();
         main.invoke(null);  // must not fail
-    }
-
-    public void testIncrementProperty() throws Exception {
-        blackBoxFile("incrementProperty.kt");
     }
 
     public void testJavaInterfaceMethod() throws Exception {
@@ -506,13 +494,5 @@ public class NamespaceGenTest extends CodegenTestCase {
         final String[] args = new String[] { "foo", "bar" };
         //noinspection ImplicitArrayToString
         assertEquals("s" + args.toString(), main.invoke(null, "s", args));
-    }
-
-    public void testPrivateTopLevelPropAndVarInInner() {
-        blackBoxFile("privateTopLevelPropAndVarInInner.kt");
-    }
-
-    public void testInvokeSpecial() {
-        blackBoxFile("invokespecial.kt");
     }
 }

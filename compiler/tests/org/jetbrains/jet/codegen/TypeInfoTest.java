@@ -66,31 +66,11 @@ public class TypeInfoTest extends CodegenTestCase {
         assertFalse((Boolean) foo.invoke(null, newRunnable()));
     }
 
-    public void testAsInLoop() {
-        blackBoxFile("typeInfo/asInLoop.kt");
-    }
-
-    public void testPrimitiveTypeInfo() {
-        blackBoxFile("typeInfo/primitiveTypeInfo.kt");
-    }
-
     private Runnable newRunnable() {
         return new Runnable() {
             @Override
             public void run() {
             }
         };
-    }
-
-    public void testKt511() {
-        blackBoxFile("regressions/kt511.kt");
-    }
-
-    public void testKt2811() {
-        blackBoxFile("typeInfo/kt2811.kt");
-    }
-
-    public void testInheritance() {
-        blackBoxFile("typeInfo/inheritance.kt");
     }
 }

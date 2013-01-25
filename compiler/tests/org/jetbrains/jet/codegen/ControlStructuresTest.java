@@ -64,10 +64,6 @@ public class ControlStructuresTest extends CodegenTestCase {
         factorialTest("controlStructures/break.kt");
     }
 
-    public void testInRangeConditionsInWhen() {
-        blackBoxFile("controlStructures/inRangeConditionsInWhen.kt");
-    }
-
     private void factorialTest(String name) throws Exception {
         loadFile(name);
         final Method main = generateFunction();
@@ -151,42 +147,6 @@ public class ControlStructuresTest extends CodegenTestCase {
         assertEquals("foobar", sb.toString());
     }
 
-    public void testForUserType() {
-        blackBoxFile("controlStructures/forUserType.kt");
-    }
-
-    public void testForLoopMemberExtensionNext() {
-        blackBoxFile("controlStructures/forLoopMemberExtensionNext.kt");
-    }
-
-    public void testForLoopMemberExtensionHasNext() {
-        blackBoxFile("controlStructures/forLoopMemberExtensionHasNext.kt");
-    }
-
-    public void testForLoopMemberExtensionAll() {
-        blackBoxFile("controlStructures/forLoopMemberExtensionAll.kt");
-    }
-
-    public void testForIntArray() {
-        blackBoxFile("controlStructures/forIntArray.kt");
-    }
-
-    public void testForPrimitiveIntArray() {
-        blackBoxFile("controlStructures/forPrimitiveIntArray.kt");
-    }
-
-    public void testForNullableIntArray() {
-        blackBoxFile("controlStructures/forNullableIntArray.kt");
-    }
-
-    public void testForIntRange() {
-        blackBoxFile("controlStructures/forIntRange.kt");
-    }
-
-    public void testKt237() {
-        blackBoxFile("regressions/kt237.kt");
-    }
-
     public void testCompareToZero() throws Exception {
         loadText("fun foo(a: Int, b: Int): Boolean = a == 0 && b != 0 && 0 == a && 0 != b");
         String text = generateToText();
@@ -200,10 +160,6 @@ public class ControlStructuresTest extends CodegenTestCase {
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, 0, 1));
         assertEquals(false, main.invoke(null, 1, 0));
-    }
-
-    public void testCompareBoxedIntegerToZero() {
-        blackBoxFile("controlStructures/compareBoxedIntegerToZero.kt");
     }
 
     public void testCompareToNull() throws Exception {
@@ -229,145 +185,5 @@ public class ControlStructuresTest extends CodegenTestCase {
         final Method main = generateFunction();
         assertEquals(true, main.invoke(null, null, "lala"));
         assertEquals(false, main.invoke(null, "papa", "papa"));
-    }
-
-    public void testKt299() {
-        blackBoxFile("regressions/kt299.kt");
-    }
-
-    public void testKt416() {
-        blackBoxFile("regressions/kt416.kt");
-    }
-
-    public void testKt513() {
-        blackBoxFile("regressions/kt513.kt");
-    }
-
-    public void testKt769() {
-        blackBoxFile("regressions/kt769.kt");
-    }
-
-    public void testKt773() {
-        blackBoxFile("regressions/kt773.kt");
-    }
-
-    public void testKt772() {
-        blackBoxFile("regressions/kt772.kt");
-    }
-
-    public void testKt870() {
-        blackBoxFile("regressions/kt870.kt");
-    }
-
-    public void testKt958() {
-        blackBoxFile("regressions/kt958.kt");
-    }
-
-    public void testQuicksort() {
-        blackBoxFile("controlStructures/quicksort.kt");
-    }
-
-    public void testKt998() {
-        blackBoxFile("regressions/kt998.kt");
-    }
-
-    public void testContinueInFor() {
-        blackBoxFile("controlStructures/continueInFor.kt");
-    }
-
-    public void testContinueToLabelInFor() {
-        blackBoxFile("controlStructures/continueToLabelInFor.kt");
-    }
-
-    public void testKt628() {
-        blackBoxFile("regressions/kt628.kt");
-    }
-
-    public void testKt1441() {
-        blackBoxFile("regressions/kt1441.kt");
-    }
-
-    public void testKt2147() {
-        blackBoxFile("regressions/kt2147.kt");
-    }
-
-    public void testIfDummy() {
-        blackBoxFile("regressions/kt1899.kt");
-    }
-
-    public void testKt1742() {
-        blackBoxFile("regressions/kt1742.kt");
-    }
-
-    public void testKt2062() {
-        blackBoxFile("regressions/kt2062.kt");
-    }
-
-    public void testKt910() {
-        blackBoxFile("regressions/kt910.kt");
-    }
-
-    public void testKt1688() {
-        blackBoxFile("regressions/kt1688.kt");
-    }
-
-    public void testKt2416() {
-        blackBoxFile("regressions/kt2416.kt");
-    }
-
-    public void testKt2291() {
-        blackBoxFile("regressions/kt2291.kt");
-    }
-
-    public void testKt2259() {
-        blackBoxFile("regressions/kt2259.kt");
-    }
-
-    public void testKt2577() {
-        blackBoxFile("regressions/kt2577.kt");
-    }
-
-    public void testTryCatchFinallyChain() {
-        blackBoxFile("controlStructures/tryCatchFinallyChain.kt");
-    }
-
-    public void testKt2597() {
-        blackBoxFile("regressions/kt2597.kt");
-    }
-
-    public void testKt2598() {
-        blackBoxFile("regressions/kt2598.kt");
-    }
-
-    public void testLongRange() {
-        blackBoxFile("controlStructures/longRange.kt");
-    }
-
-    public void testForInSmartCastedToArray() {
-        blackBoxFile("controlStructures/forInSmartCastedToArray.kt");
-    }
-
-    public void testConditionOfEmptyIf() {
-        blackBoxFile("controlStructures/conditionOfEmptyIf.kt");
-    }
-
-    public void testFinallyOnEmptyReturn() {
-        blackBoxFile("controlStructures/finallyOnEmptyReturn.kt");
-    }
-
-    public void testKt3087() {
-        blackBoxFile("regressions/kt3087.kt");
-    }
-
-    public void testKt3203_1() {
-        blackBoxFile("regressions/kt3203_1.kt");
-    }
-
-    public void testKt3203_2() {
-        blackBoxFile("regressions/kt3203_2.kt");
-    }
-
-    public void testKt3273() {
-        blackBoxFile("regressions/kt3273.kt");
     }
 }

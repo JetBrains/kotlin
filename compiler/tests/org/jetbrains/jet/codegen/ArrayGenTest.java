@@ -27,19 +27,11 @@ public class ArrayGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testKt238() {
-        blackBoxFile("regressions/kt238.kt");
-    }
-
     public void testKt326() {
         // Disabled: java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.Integer;
         /*
         blackBoxFile("regressions/kt326.kt");
         */
-    }
-
-    public void testKt779() {
-        blackBoxFile("regressions/kt779.kt");
     }
 
     public void testCreateMultiInt() throws Exception {
@@ -88,145 +80,5 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
         assertTrue(invoke instanceof Integer);
-    }
-
-    public void testIterator() {
-        blackBoxFile("arrays/iterator.kt");
-    }
-
-    public void testIteratorLongArrayNextLong() {
-        blackBoxFile("arrays/iteratorLongArrayNextLong.kt");
-    }
-
-    public void testIteratorByteArrayNextByte() {
-        blackBoxFile("arrays/iteratorByteArrayNextByte.kt");
-    }
-
-    public void testForEachBooleanArray() {
-        blackBoxFile("arrays/forEachBooleanArray.kt");
-    }
-
-    public void testForEachByteArray() {
-        blackBoxFile("arrays/forEachByteArray.kt");
-    }
-
-    public void testForEachCharArray() {
-        blackBoxFile("arrays/forEachCharArray.kt");
-    }
-
-    public void testForEachDoubleArray() {
-        blackBoxFile("arrays/forEachDoubleArray.kt");
-    }
-
-    public void testForEachFloatArray() {
-        blackBoxFile("arrays/forEachFloatArray.kt");
-    }
-
-    public void testForEachIntArray() {
-        blackBoxFile("arrays/forEachIntArray.kt");
-    }
-
-    public void testForEachLongArray() {
-        blackBoxFile("arrays/forEachLongArray.kt");
-    }
-
-    public void testForEachShortArray() {
-        blackBoxFile("arrays/forEachShortArray.kt");
-    }
-
-    public void testIteratorBooleanArray() {
-        blackBoxFile("arrays/iteratorBooleanArray.kt");
-    }
-
-    public void testIteratorByteArray() {
-        blackBoxFile("arrays/iteratorByteArray.kt");
-    }
-
-    public void testIteratorCharArray() {
-        blackBoxFile("arrays/iteratorCharArray.kt");
-    }
-
-    public void testIteratorDoubleArray() {
-        blackBoxFile("arrays/iteratorDoubleArray.kt");
-    }
-
-    public void testIteratorFloatArray() {
-        blackBoxFile("arrays/iteratorFloatArray.kt");
-    }
-
-    public void testIteratorIntArray() {
-        blackBoxFile("arrays/iteratorIntArray.kt");
-    }
-
-    public void testIteratorLongArray() {
-        blackBoxFile("arrays/iteratorLongArray.kt");
-    }
-
-    public void testIteratorShortArray() {
-        blackBoxFile("arrays/iteratorShortArray.kt");
-    }
-
-    public void testArrayIndices() {
-        blackBoxFile("arrays/indices.kt");
-    }
-
-    public void testIndicesChar() {
-        blackBoxFile("arrays/indicesChar.kt");
-    }
-
-    public void testCollectionPlusAssign() {
-        blackBoxFile("regressions/kt33.kt");
-    }
-
-    public void testArrayPlusAssign() {
-        blackBoxFile("arrays/arrayPlusAssign.kt");
-    }
-
-    public void testCollectionAssignGetMultiIndex() {
-        blackBoxFile("arrays/collectionAssignGetMultiIndex.kt");
-    }
-
-    public void testArrayGetAssignMultiIndex() {
-        blackBoxFile("arrays/arrayGetAssignMultiIndex.kt");
-    }
-
-    public void testCollectionGetMultiIndex() {
-        blackBoxFile("arrays/collectionGetMultiIndex.kt");
-    }
-
-    public void testArrayGetMultiIndex() {
-        blackBoxFile("arrays/arrayGetMultiIndex.kt");
-    }
-
-    public void testHashMap() {
-        blackBoxFile("arrays/hashMap.kt");
-    }
-
-    public void testLongAsIndex() {
-        blackBoxFile("arrays/longAsIndex.kt");
-    }
-
-    public void testKt503() {
-        blackBoxFile("regressions/kt503.kt");
-    }
-
-    public void testKt602() {
-        blackBoxFile("regressions/kt602.kt");
-    }
-
-    public void testKt950() {
-        blackBoxFile("regressions/kt950.kt");
-    }
-
-    public void testKt594() {
-        blackBoxFile("regressions/kt594.kt");
-    }
-
-    public void testNonNullArray() {
-        blackBoxFile("arrays/nonNullArray.kt");
-    }
-
-    public void testArrayCast() {
-        blackBoxFile("regressions/kt2997.kt");
     }
 }

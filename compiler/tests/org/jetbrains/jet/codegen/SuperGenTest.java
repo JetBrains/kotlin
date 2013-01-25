@@ -27,42 +27,6 @@ public class SuperGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testBasicProperty () {
-        blackBoxFile("/super/basicproperty.kt");
-    }
-
-    public void testTraitProperty () {
-        blackBoxFile("/super/traitproperty.kt");
-    }
-
-    public void testBasicMethodSuperTrait () {
-        blackBoxFile("/super/basicmethodSuperTrait.kt");
-    }
-
-    public void testBasicMethodSuperClass () {
-        blackBoxFile("/super/basicmethodSuperClass.kt");
-    }
-
-    public void testInnerClassLabeledSuper() {
-        blackBoxFile("super/innerClassLabeledSuper.kt");
-    }
-
-    public void testInnerClassLabeledSuperProperty() {
-        blackBoxFile("super/innerClassLabeledSuperProperty.kt");
-    }
-
-    public void testMultipleSuperTraits() {
-        blackBoxFile("super/multipleSuperTraits.kt");
-    }
-
-    public void testEnclosedFun () {
-        blackBoxFile("/super/enclosedFun.kt");
-    }
-
-    public void testEnclosedVar () {
-        blackBoxFile("/super/enclosedVar.kt");
-    }
-
     public void testKt2887() {
         loadFile("super/kt2887.kt");
         String text = generateToText();
