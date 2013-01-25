@@ -66,6 +66,7 @@ public class LibrarySourcesConfig extends Config {
         String moduleName = UNKNOWN_EXTERNAL_MODULE_NAME;
         for (String path : files) {
             File file = new File(path);
+            if (!file.exists()) continue; // The path here may be copying from a library root configuration, i.e. may be absent
             try {
                 String name = file.getName();
                 if (path.charAt(0) == '@') {
@@ -83,7 +84,7 @@ public class LibrarySourcesConfig extends Config {
                 }
             }
             catch (IOException e) {
-                LOG.error(e);
+                LOG.error("While processing " + file, e);
             }
         }
 
