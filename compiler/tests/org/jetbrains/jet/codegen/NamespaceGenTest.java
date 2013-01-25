@@ -23,6 +23,7 @@ import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.assertIsCurrentTime;
 
@@ -31,7 +32,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
     public void testPSVM() throws Exception {
@@ -286,10 +287,11 @@ public class NamespaceGenTest extends CodegenTestCase {
         assertEquals(239, main.invoke(null, new Object[]{null}));
     }
 
-    public void _testVarargs() throws Exception {
+    public void testVarargs() throws Exception {
         loadText("fun foo() = java.util.Arrays.asList(\"IntelliJ\", \"IDEA\")");
         final Method main = generateFunction();
-        ArrayList arrayList = (ArrayList) main.invoke(null);
+        java.util.List<?> list = (java.util.List<?>) main.invoke(null);
+        assertEquals(Arrays.asList("IntelliJ", "IDEA"), list);
     }
 
     public void testFieldRead() throws Exception {
@@ -439,10 +441,6 @@ public class NamespaceGenTest extends CodegenTestCase {
 
     public void testCheckCast() throws Exception {
         blackBoxFile("checkCast.kt");
-    }
-
-    public void testTypeCastException() throws Exception {
-        blackBoxFile("typeCastException.kt");
     }
 
     public void testPutBooleanAsVoid() throws Exception {

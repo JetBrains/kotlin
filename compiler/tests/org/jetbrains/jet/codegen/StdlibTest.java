@@ -371,4 +371,8 @@ public class StdlibTest extends CodegenTestCase {
     public void testKt1515() {
         blackBoxMultiFile("/multi/kt1515/thisPackage.kt", "/multi/kt1515/otherPackage.kt");
     }
+
+    public void testTypeCastException() {
+        blackBoxFile("typeCastException.kt");
+    }
 }
