@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -260,7 +259,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         for (FqName affectedPackage : affectedPackages) {
             NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(affectedPackage);
-            assert packageDescriptor != null : "There's a function in stub index with invalid package";
+            assert packageDescriptor != null : "There's a function in stub index with invalid package: " + affectedPackage;
             JetScope memberScope = packageDescriptor.getMemberScope();
             result.addAll(memberScope.getFunctions(referenceName));
         }
