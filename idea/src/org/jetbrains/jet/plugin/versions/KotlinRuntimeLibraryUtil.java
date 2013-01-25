@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.versions;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -37,6 +38,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.impl.elements.ManifestFileUtil;
 import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.Processor;
@@ -46,13 +48,14 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
@@ -142,7 +145,30 @@ public class KotlinRuntimeLibraryUtil {
     private static boolean isWithJavaModule(Module module) {
         // Can find a reference to kotlin class in module scope
         GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-        return (JavaPsiFacade.getInstance(module.getProject()).findClass(JvmStdlibNames.JET_OBJECT.getFqName().getFqName(), scope) != null);
+
+        return getKotlinRuntimeMarkerClass(scope) != null;
+    }
+
+    @Nullable
+    private static PsiClass getKotlinRuntimeMarkerClass(@NotNull GlobalSearchScope scope) {
+        FqName kotlinPackageFqName = FqName.topLevel(Name.identifier("kotlin"));
+        String kotlinPackageClassFqName = PackageClassUtils.getPackageClassFqName(kotlinPackageFqName).getFqName();
+
+        ImmutableList<String> candidateClassNames = ImmutableList.of(
+                kotlinPackageClassFqName,
+                // For older versions
+                "kotlin.namespace",
+                // For really old versions
+                "jet.JetObject"
+        );
+
+        for (String className : candidateClassNames) {
+            PsiClass psiClass = JavaPsiFacade.getInstance(scope.getProject()).findClass(className, scope);
+            if (psiClass != null) {
+                return psiClass;
+            }
+        }
+        return null;
     }
 
     static void setUpKotlinRuntimeLibrary(
@@ -261,16 +287,15 @@ public class KotlinRuntimeLibraryUtil {
 
     @Nullable
     private static VirtualFile getKotlinRuntimeJar(@NotNull Project project) {
-        LibraryTable table = ProjectLibraryTable.getInstance(project);
-        Library kotlinRuntime = table.getLibraryByName(LIBRARY_NAME);
-        if (kotlinRuntime != null) {
-            for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
-                if (root.getName().equals(KOTLIN_RUNTIME_JAR)) {
-                    return root;
-                }
-            }
-        }
-        return null;
+        PsiClass markerClass = getKotlinRuntimeMarkerClass(ProjectScope.getAllScope(project));
+        if (markerClass == null) return null;
+
+        VirtualFile virtualFile = markerClass.getContainingFile().getVirtualFile();
+        if (virtualFile == null) return null;
+
+
+        ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+        return projectFileIndex.getClassRootForFile(virtualFile);
     }
 
     @Nullable
