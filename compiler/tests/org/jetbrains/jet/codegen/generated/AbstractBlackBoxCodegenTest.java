@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,10 @@ package org.jetbrains.jet.codegen.generated;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 
-import java.io.IOException;
-
-public abstract class AbstractCodegenTest extends CodegenTestCase {
-
+public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-    }
-
-    protected void doTest(String path) throws IOException {
-        blackBoxFileByFullPath(path);
     }
 }

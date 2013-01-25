@@ -24,12 +24,8 @@ import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
 import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
-import org.jetbrains.jet.codegen.generated.AbstractCodegenTest;
-import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest;
-import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest;
-import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstCustomJavaTest;
-import org.jetbrains.jet.jvm.compiler.AbstractLoadCompiledKotlinTest;
-import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest;
+import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
+import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
@@ -69,6 +65,13 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
+                "BlackBoxCodegenTestGenerated",
+                AbstractBlackBoxCodegenTest.class,
+                testModel("compiler/testData/codegen/box", "blackBoxFileByFullPath")
+        );
+
+        generateTest(
+                "compiler/tests/",
                 "DataClassCodegenTestGenerated",
                 AbstractDataClassCodegenTest.class,
                 testModel("compiler/testData/codegen/dataClasses", "blackBoxFileByFullPath")
@@ -84,7 +87,7 @@ public class GenerateTests {
         generateTest(
                 "compiler/tests/",
                 "VisibilityGenWithJavaTestGenerated",
-                AbstractCodegenTest.class,
+                AbstractBlackBoxCodegenTest.class,
                 testModel("compiler/testData/codegen/visibility/withJava/protected_static", "blackBoxFileWithJavaByFullPath")
         );
 
