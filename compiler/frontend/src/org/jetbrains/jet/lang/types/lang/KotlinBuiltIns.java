@@ -71,7 +71,6 @@ public class KotlinBuiltIns {
             BUILT_INS_DIR + "/Library.jet",
             BUILT_INS_DIR + "/Numbers.jet",
             BUILT_INS_DIR + "/Ranges.jet",
-            BUILT_INS_DIR + "/Iterables.jet",
             BUILT_INS_DIR + "/Iterators.jet",
             BUILT_INS_DIR + "/Arrays.jet",
             BUILT_INS_DIR + "/Enum.jet",

@@ -9,7 +9,7 @@ public trait Range<in T: Comparable<T>> {
 public class IntRange(
     public override val start: Int,
     public override val end : Int
-) : Range<Int>, NumberSequence<Int>, IntIterable {
+) : Range<Int>, NumberSequence<Int> {
 
     public override fun iterator() : IntIterator
 
@@ -25,7 +25,7 @@ public class IntRange(
 public class LongRange(
     public override val start: Long,
     public override val end: Long
-) : Range<Long>, NumberSequence<Long>, LongIterable {
+) : Range<Long>, NumberSequence<Long> {
 
     public override fun iterator(): LongIterator
 
@@ -41,7 +41,7 @@ public class LongRange(
 public class ByteRange(
     public override val start: Byte,
     public override val end : Byte
-): Range<Byte>, NumberSequence<Byte>, ByteIterable {
+): Range<Byte>, NumberSequence<Byte> {
 
     public override fun iterator(): ByteIterator
 
@@ -57,7 +57,7 @@ public class ByteRange(
 public class ShortRange(
     public override val start: Short,
     public override val end: Short
-) : Range<Short>, NumberSequence<Short>, ShortIterable {
+) : Range<Short>, NumberSequence<Short> {
 
     public override fun iterator(): ShortIterator
 
@@ -73,7 +73,7 @@ public class ShortRange(
 public class CharRange(
     public override val start: Char,
     public override val end: Char
-) : Range<Char>, NumberSequence<Char>, CharIterable {
+) : Range<Char>, NumberSequence<Char> {
 
     public override fun iterator(): CharIterator
 
@@ -89,7 +89,7 @@ public class CharRange(
 public class FloatRange(
     public override val start: Float,
     public override val end: Float
-) : Range<Float>, NumberSequence<Float>, FloatIterable {
+) : Range<Float>, NumberSequence<Float> {
 
     public override fun iterator(): FloatIterator
 
@@ -105,7 +105,7 @@ public class FloatRange(
 public class DoubleRange(
     public override val start: Double,
     public override val end: Double
-) : Range<Double>, NumberSequence<Double>, DoubleIterable {
+) : Range<Double>, NumberSequence<Double> {
 
     public override fun iterator() : DoubleIterator
 

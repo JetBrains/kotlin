@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class CharRange implements Range<Character>, NumberSequence<Character>, CharIterable {
+public final class CharRange implements Range<Character>, NumberSequence<Character> {
     public static final CharRange EMPTY = new CharRange((char) 1, (char) 0);
 
     private final char start;

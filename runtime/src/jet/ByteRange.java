@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class ByteRange implements Range<Byte>, NumberSequence<Byte>, ByteIterable {
+public final class ByteRange implements Range<Byte>, NumberSequence<Byte> {
     public static final ByteRange EMPTY = new ByteRange((byte) 1, (byte) 0);
 
     private final byte start;

@@ -1,5 +1,13 @@
 package jet
 
+public trait Iterable<out T> {
+  public fun iterator() : Iterator<T>
+}
+
+public trait MutableIterable<out T> : Iterable<T> {
+  override fun iterator() : MutableIterator<T>
+}
+
 public trait Collection<out E> : Iterable<E>, Hashable {
     // Query Operations
     public fun size() : Int

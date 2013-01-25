@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class LongRange implements Range<Long>, NumberSequence<Long>, LongIterable {
+public final class LongRange implements Range<Long>, NumberSequence<Long> {
     public static final LongRange EMPTY = new LongRange(1, 0);
 
     private final long start;
