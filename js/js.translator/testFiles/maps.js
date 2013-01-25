@@ -404,7 +404,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
         next: function () {
             return this.map[this.keys[this.index++]];
         },
-        get_hasNext: function () {
+        hasNext: function () {
             return this.index < this.size;
         }
     });
@@ -589,8 +589,8 @@ Kotlin.PrimitiveHashSet = Kotlin.$createClass(Kotlin.AbstractCollection, {
                 var iter1 = this.iterator();
                 var iter2 = o.iterator();
                 while (true) {
-                    var hn1 = iter1.get_hasNext();
-                    var hn2 = iter2.get_hasNext();
+                    var hn1 = iter1.hasNext();
+                    var hn2 = iter2.hasNext();
                     if (hn1 != hn2) return false;
                     if (!hn2)
                         return true;
@@ -608,7 +608,7 @@ Kotlin.PrimitiveHashSet = Kotlin.$createClass(Kotlin.AbstractCollection, {
             var builder = "[";
             var iter = this.iterator();
             var first = true;
-            while (iter.get_hasNext()) {
+            while (iter.hasNext()) {
                 if (first)
                     first = false;
                 else
