@@ -18,6 +18,7 @@ package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -29,16 +30,12 @@ import java.util.List;
 class InnerFunctionTranslator extends InnerDeclarationTranslator {
     private final FunctionDescriptor descriptor;
 
-    public InnerFunctionTranslator(@NotNull JetElement declaration,
+    public InnerFunctionTranslator(@NotNull JetElement element,
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context,
             @NotNull JsFunction fun) {
-        super(declaration, descriptor, context, fun);
+        super(element, descriptor, context, fun);
         this.descriptor = descriptor;
-    }
-
-    public boolean isLocalVariablesAffected() {
-        return closureContext.isLocalVariablesAffected();
     }
 
     @Override
@@ -46,21 +43,18 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
         return descriptor.getValueParameters();
     }
 
-    @Override
-    @NotNull
-    public JsExpression translate(@NotNull JsNameRef nameRef) {
-        JsExpression result = translate(nameRef, getThis());
-        FunctionTranslator.addParameters(fun.getParameters(), descriptor, context);
-        return result;
+    @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
+    public JsExpression translate(@NotNull JsNameRef nameRef, @NotNull TranslationContext outerContext) {
+        return translate(nameRef, getThis(outerContext));
     }
 
     @Override
-    protected JsExpression createExpression(JsNameRef nameRef, JsExpression self) {
+    protected JsExpression createExpression(@NotNull JsNameRef nameRef, JsExpression self) {
         return nameRef;
     }
 
     @Override
-    protected JsInvocation createInvocation(JsNameRef nameRef, JsExpression self) {
+    protected JsInvocation createInvocation(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         JsInvocation bind = new JsInvocation(context.namer().kotlin(getBindMethodName()));
         bind.getArguments().add(nameRef);
         bind.getArguments().add(self);
@@ -68,10 +62,10 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
     }
 
     @NotNull
-    private JsExpression getThis() {
+    private JsExpression getThis(TranslationContext outerContext) {
         ClassDescriptor outerClassDescriptor = closureContext.outerClassDescriptor;
         if (outerClassDescriptor != null && descriptor.getReceiverParameter() == null) {
-            return JsLiteral.THIS;
+            return outerContext.getThisObject(outerClassDescriptor);
         }
 
         return JsLiteral.NULL;
@@ -80,16 +74,20 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
     @NotNull
     private String getBindMethodName() {
         if (closureContext.getDescriptors().isEmpty()) {
-            return getValueParameters().isEmpty() ? "b3" : "b4";
+            return !hasArguments() ? "b3" : "b4";
         }
         else {
-            return getValueParameters().isEmpty() ? (closureContext.getDescriptors().size() == 1 ? "b0" : "b1") : "b2";
+            return !hasArguments() ? (closureContext.getDescriptors().size() == 1 ? "b0" : "b1") : "b2";
         }
+    }
+
+    private boolean hasArguments() {
+        return !getValueParameters().isEmpty() || descriptor.getReceiverParameter() != null;
     }
 
     @Override
     protected List<JsExpression> getCapturedValueParametersList(JsInvocation invocation) {
-        if (closureContext.getDescriptors().size() > 1 || !getValueParameters().isEmpty()) {
+        if (closureContext.getDescriptors().size() > 1 || hasArguments()) {
             JsArrayLiteral values = new JsArrayLiteral();
             invocation.getArguments().add(values);
             return values.getExpressions();

@@ -18,12 +18,14 @@ package org.jetbrains.k2js.translate.utils.closure;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
     @NotNull
@@ -60,8 +62,8 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
 
         DeclarationDescriptor descriptor = BindingUtils.getNullableDescriptorForReferenceExpression(bindingContext, expression);
         if (!(descriptor instanceof VariableDescriptor)) {
-            if (descriptor instanceof SimpleFunctionDescriptor && !descriptor.getName().isSpecial()) {
-                checkOuterClassDescriptor(descriptor, context);
+            if (descriptor instanceof SimpleFunctionDescriptor) {
+                checkSimpleFunction(context, (SimpleFunctionDescriptor) descriptor);
             }
             return null;
         }
@@ -74,13 +76,26 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
         return null;
     }
 
+    private void checkSimpleFunction(ClosureContext context, @Nullable SimpleFunctionDescriptor descriptor) {
+        if (descriptor == null || descriptor.getName().isSpecial()) {
+            return;
+        }
+
+        checkOuterClassDescriptor(descriptor, context);
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        // local named function
+        if (!JsDescriptorUtils.isExtension(descriptor) && !(containingDeclaration instanceof ClassOrNamespaceDescriptor) && !isAncestor(functionDescriptor, descriptor)) {
+            context.put(descriptor);
+        }
+    }
+
     private boolean captured(VariableDescriptor descriptor, ClosureContext context) {
         if (descriptor instanceof PropertyDescriptor) {
             checkOuterClassDescriptor(descriptor, context);
             return false;
         }
 
-        // is not working, try test life - init is captured, but this method returns false
+        // is not working, try test life — init is captured, but this method returns false
         //if (bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, descriptor) != Boolean.TRUE) {
         //    return false;
         //}
@@ -89,9 +104,7 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
             return false;
         }
 
-        if (descriptor instanceof LocalVariableDescriptor && descriptor.isVar()) {
-            // todo modification of outer local variable
-            context.setHasLocalVariables();
+        if (descriptor instanceof LocalVariableDescriptor || descriptor instanceof ValueParameterDescriptor) {
             return true;
         }
 
@@ -101,8 +114,7 @@ class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
             return false;
         }
 
-        return descriptor instanceof ValueParameterDescriptor ||
-               (!descriptor.isVar() && variableDeclaration instanceof JetProperty) ||
+        return (!descriptor.isVar() && variableDeclaration instanceof JetProperty) ||
                variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
     }
 

@@ -80,14 +80,11 @@ public final class CallTranslator extends AbstractTranslator {
         if (isConstructor()) {
             return constructorCall();
         }
-        if (isNativeExtensionFunctionCall()) {
-            return nativeExtensionCall();
-        }
-        if (isExtensionFunctionLiteral()) {
-            return extensionFunctionLiteralCall();
-        }
-        if (isExtensionFunction()) {
-            return extensionFunctionCall();
+        if (resolvedCall.getReceiverArgument().exists()) {
+            if (AnnotationsUtils.isNativeObject(descriptor)) {
+                return methodCall(callParameters.getReceiver());
+            }
+            return extensionFunctionCall(!(descriptor instanceof ExpressionAsFunctionDescriptor) && !descriptor.getName().getName().equals("invoke"));
         }
         if (isExpressionAsFunction()) {
             return expressionAsFunctionCall();
@@ -191,63 +188,20 @@ public final class CallTranslator extends AbstractTranslator {
         return ReferenceTranslator.translateAsFQReference(descriptor, context());
     }
 
-    private boolean isNativeExtensionFunctionCall() {
-        return AnnotationsUtils.isNativeObject(descriptor) && isExtensionFunction();
-    }
-
     @NotNull
-    private JsExpression nativeExtensionCall() {
-        return methodCall(callParameters.getReceiver());
-    }
-
-    private boolean isExtensionFunctionLiteral() {
-        boolean isLiteral = isInvoke()
-                            || descriptor instanceof ExpressionAsFunctionDescriptor;
-        return isExtensionFunction() && isLiteral;
-    }
-
-    @NotNull
-    private JsExpression extensionFunctionLiteralCall() {
+    private JsExpression extensionFunctionCall(final boolean useThis) {
         return callType.constructCall(callParameters.getReceiver(), new CallType.CallConstructor() {
             @NotNull
             @Override
             public JsExpression construct(@Nullable JsExpression receiver) {
                 assert receiver != null : "Could not be null for extensions";
-                return constructExtensionLiteralCall(receiver);
+                JsExpression functionReference = callParameters.getFunctionReference();
+                if (useThis) {
+                    setQualifier(functionReference, getThisObjectOrQualifier());
+                }
+                return new JsInvocation(functionReference, generateExtensionCallArgumentList(receiver));
             }
         }, context());
-    }
-
-    @NotNull
-    private JsExpression constructExtensionLiteralCall(@NotNull JsExpression realReceiver) {
-        List<JsExpression> callArguments = generateExtensionCallArgumentList(realReceiver);
-        return new JsInvocation(new JsNameRef("call", callParameters.getFunctionReference()), callArguments);
-    }
-
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    private boolean isExtensionFunction() {
-        boolean hasReceiver = resolvedCall.getReceiverArgument().exists();
-        return hasReceiver;
-    }
-
-    @NotNull
-    private JsExpression extensionFunctionCall() {
-        return callType.constructCall(callParameters.getReceiver(), new CallType.CallConstructor() {
-            @NotNull
-            @Override
-            public JsExpression construct(@Nullable JsExpression receiver) {
-                assert receiver != null : "Could not be null for extensions";
-                return constructExtensionFunctionCall(receiver);
-            }
-        }, context());
-    }
-
-    @NotNull
-    private JsExpression constructExtensionFunctionCall(@NotNull JsExpression receiver) {
-        List<JsExpression> argumentList = generateExtensionCallArgumentList(receiver);
-        JsExpression functionReference = callParameters.getFunctionReference();
-        setQualifier(functionReference, getThisObjectOrQualifier());
-        return new JsInvocation(functionReference, argumentList);
     }
 
     @NotNull
