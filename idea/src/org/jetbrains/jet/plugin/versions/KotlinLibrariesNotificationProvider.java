@@ -61,7 +61,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
 
-public class ConfigureKotlinLibraryNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
+public class KotlinLibrariesNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
     private final Project myProject;
     private final Runnable updateNotifications = new Runnable() {
@@ -71,7 +71,7 @@ public class ConfigureKotlinLibraryNotificationProvider extends EditorNotificati
         }
     };
 
-    public ConfigureKotlinLibraryNotificationProvider(Project project) {
+    public KotlinLibrariesNotificationProvider(Project project) {
         myProject = project;
         MessageBusConnection connection = myProject.getMessageBus().connect();
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
