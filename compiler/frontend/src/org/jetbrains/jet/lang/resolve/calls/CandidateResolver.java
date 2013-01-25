@@ -62,7 +62,7 @@ public class CandidateResolver {
     }
 
     public <D extends CallableDescriptor, F extends D> void performResolutionForCandidateCall(
-            @NotNull CallResolutionContext<D, F> context,
+            @NotNull CallCandidateResolutionContext<D, F> context,
             @NotNull ResolutionTask<D, F> task) {
 
         ProgressIndicatorProvider.checkCanceled();
@@ -163,7 +163,7 @@ public class CandidateResolver {
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
     }
 
-    private static boolean checkOuterClassMemberIsAccessible(@NotNull CallResolutionContext<?, ?> context) {
+    private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?, ?> context) {
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
         if (context.call.getExplicitReceiver().exists()) return true;
 
@@ -182,7 +182,7 @@ public class CandidateResolver {
     }
 
     public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
-            CallResolutionContext<D, D> context
+            CallCandidateResolutionContext<D, D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         assert resolvedCall.hasUnknownTypeParameters();
@@ -257,7 +257,7 @@ public class CandidateResolver {
         }
     }
 
-    private <D extends CallableDescriptor, F extends D> ResolutionStatus inferTypeArguments(CallResolutionContext<D, F> context) {
+    private <D extends CallableDescriptor, F extends D> ResolutionStatus inferTypeArguments(CallCandidateResolutionContext<D, F> context) {
         ResolvedCallImpl<D> candidateCall = context.candidateCall;
         final D candidate = candidateCall.getCandidateDescriptor();
 
@@ -372,7 +372,7 @@ public class CandidateResolver {
     }
 
     private <D extends CallableDescriptor, F extends D> ValueArgumentsCheckingResult checkAllValueArguments(
-            @NotNull CallResolutionContext<D, F> context,
+            @NotNull CallCandidateResolutionContext<D, F> context,
             @NotNull ResolveMode resolveFunctionArgumentBodies) {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall,
                                                                               context.candidateCall.getTrace(), resolveFunctionArgumentBodies);
@@ -462,7 +462,7 @@ public class CandidateResolver {
         return null;
     }
 
-    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ResolvedCall<D> candidateCall,
+    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallCandidateResolutionContext<D, F> context, ResolvedCall<D> candidateCall,
             ReceiverParameterDescriptor receiverParameter, ReceiverValue receiverArgument,
             boolean isExplicitReceiver, boolean implicitInvokeCheck) {
 

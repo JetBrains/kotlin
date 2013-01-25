@@ -321,7 +321,7 @@ public class CallResolver {
         ResolvedCallWithTrace<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(incompleteCalls, false);
         if (maximallySpecific != null) {
             candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(
-                CallResolutionContext.create(context, tracing, (ResolvedCallImpl<D>) maximallySpecific));
+                CallCandidateResolutionContext.create(context, tracing, (ResolvedCallImpl<D>) maximallySpecific));
             for (ResolvedCallWithTrace<D> callWithUnknownTypeParameters : incompleteCalls) {
                 if (callWithUnknownTypeParameters != maximallySpecific) {
                     ((ResolvedCallImpl<D>) callWithUnknownTypeParameters).addStatus(ResolutionStatus.OTHER_ERROR);
@@ -499,8 +499,8 @@ public class CallResolver {
         for (ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
             TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(
                     task.trace, "trace to resolve candidate");
-            Collection<CallResolutionContext<D, F>> contexts = callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace);
-            for (CallResolutionContext<D, F> context : contexts) {
+            Collection<CallCandidateResolutionContext<D, F>> contexts = callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace);
+            for (CallCandidateResolutionContext<D, F> context : contexts) {
 
                 candidateResolver.performResolutionForCandidateCall(context, task);
 

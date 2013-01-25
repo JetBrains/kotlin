@@ -62,24 +62,24 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
      * Returns two contexts for 'variable as function' case (in FUNCTION_CALL_TRANSFORMER), one context otherwise
      */
     @NotNull
-    public Collection<CallResolutionContext<D, F>> createCallContexts(@NotNull ResolutionCandidate<D> candidate,
+    public Collection<CallCandidateResolutionContext<D, F>> createCallContexts(@NotNull ResolutionCandidate<D> candidate,
             @NotNull ResolutionTask<D, F> task,
             @NotNull TemporaryBindingTrace candidateTrace) {
 
         ResolvedCallImpl<D> candidateCall = ResolvedCallImpl.create(candidate, candidateTrace);
-        return Collections.singleton(CallResolutionContext.create(candidateCall, task, candidateTrace, task.tracing));
+        return Collections.singleton(CallCandidateResolutionContext.create(candidateCall, task, candidateTrace, task.tracing));
     }
 
     /**
      * Returns collection of resolved calls for 'invoke' for 'variable as function' case (in FUNCTION_CALL_TRANSFORMER),
-     * the resolved call from callResolutionContext otherwise
+     * the resolved call from callCandidateResolutionContext otherwise
      */
     @NotNull
-    public Collection<ResolvedCallWithTrace<F>> transformCall(@NotNull CallResolutionContext<D, F> callResolutionContext,
+    public Collection<ResolvedCallWithTrace<F>> transformCall(@NotNull CallCandidateResolutionContext<D, F> callCandidateResolutionContext,
             @NotNull CallResolver callResolver,
             @NotNull ResolutionTask<D, F> task) {
 
-        return Collections.singleton((ResolvedCallWithTrace<F>)callResolutionContext.candidateCall);
+        return Collections.singleton((ResolvedCallWithTrace<F>) callCandidateResolutionContext.candidateCall);
     }
 
 
@@ -88,7 +88,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
     public static CallTransformer<CallableDescriptor, FunctionDescriptor> FUNCTION_CALL_TRANSFORMER = new CallTransformer<CallableDescriptor, FunctionDescriptor>() {
         @NotNull
         @Override
-        public Collection<CallResolutionContext<CallableDescriptor, FunctionDescriptor>> createCallContexts(@NotNull ResolutionCandidate<CallableDescriptor> candidate,
+        public Collection<CallCandidateResolutionContext<CallableDescriptor, FunctionDescriptor>> createCallContexts(@NotNull ResolutionCandidate<CallableDescriptor> candidate,
                 @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task, @NotNull TemporaryBindingTrace candidateTrace) {
 
             if (candidate.getDescriptor() instanceof FunctionDescriptor) {
@@ -100,18 +100,18 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             boolean hasReceiver = candidate.getReceiverArgument().exists();
             Call variableCall = stripCallArguments(task);
             if (!hasReceiver) {
-                CallResolutionContext<CallableDescriptor, FunctionDescriptor> context = CallResolutionContext.create(
+                CallCandidateResolutionContext<CallableDescriptor, FunctionDescriptor> context = CallCandidateResolutionContext.create(
                         ResolvedCallImpl.create(candidate, candidateTrace), task, candidateTrace, task.tracing, variableCall);
                 return Collections.singleton(context);
             }
             Call variableCallWithoutReceiver = stripReceiver(variableCall);
-            CallResolutionContext<CallableDescriptor, FunctionDescriptor> contextWithReceiver = createContextWithChainedTrace(
+            CallCandidateResolutionContext<CallableDescriptor, FunctionDescriptor> contextWithReceiver = createContextWithChainedTrace(
                     candidate, variableCall, candidateTrace, task);
 
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
                     candidate.getDescriptor(), candidate.getThisObject(), ReceiverValue.NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
 
-            CallResolutionContext<CallableDescriptor, FunctionDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
+            CallCandidateResolutionContext<CallableDescriptor, FunctionDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
                     candidateWithoutReceiver, variableCallWithoutReceiver, candidateTrace, task);
 
             contextWithoutReceiver.receiverForVariableAsFunctionSecondCall = variableCall.getExplicitReceiver();
@@ -119,12 +119,12 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             return Lists.newArrayList(contextWithReceiver, contextWithoutReceiver);
         }
 
-        private CallResolutionContext<CallableDescriptor, FunctionDescriptor> createContextWithChainedTrace(ResolutionCandidate<CallableDescriptor> candidate,
+        private CallCandidateResolutionContext<CallableDescriptor, FunctionDescriptor> createContextWithChainedTrace(ResolutionCandidate<CallableDescriptor> candidate,
                 Call call, TemporaryBindingTrace temporaryTrace, ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
 
             ChainedTemporaryBindingTrace chainedTrace = ChainedTemporaryBindingTrace.create(temporaryTrace, "chained trace to resolve candidate", candidate);
             ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace);
-            return CallResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call);
+            return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call);
         }
 
         private Call stripCallArguments(@NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
@@ -171,7 +171,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public Collection<ResolvedCallWithTrace<FunctionDescriptor>> transformCall(@NotNull final CallResolutionContext<CallableDescriptor, FunctionDescriptor> context,
+        public Collection<ResolvedCallWithTrace<FunctionDescriptor>> transformCall(@NotNull final CallCandidateResolutionContext<CallableDescriptor, FunctionDescriptor> context,
                 @NotNull CallResolver callResolver, @NotNull final ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
 
             final CallableDescriptor descriptor = context.candidateCall.getCandidateDescriptor();
@@ -205,7 +205,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             });
         }
 
-        private Call createFunctionCall(final CallResolutionContext<CallableDescriptor, FunctionDescriptor> context,
+        private Call createFunctionCall(final CallCandidateResolutionContext<CallableDescriptor, FunctionDescriptor> context,
                 final ResolutionTask<CallableDescriptor, FunctionDescriptor> task, JetType returnType) {
 
             final ExpressionReceiver receiverFromVariable = new ExpressionReceiver(task.reference, returnType);

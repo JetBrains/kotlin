@@ -25,12 +25,12 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
-public final class CallResolutionContext<D extends CallableDescriptor, F extends D> extends ResolutionContext {
+public final class CallCandidateResolutionContext<D extends CallableDescriptor, F extends D> extends ResolutionContext {
     /*package*/ final ResolvedCallImpl<D> candidateCall;
     /*package*/ final TracingStrategy tracing;
     /*package*/ ReceiverValue receiverForVariableAsFunctionSecondCall = ReceiverValue.NO_RECEIVER;
 
-    private CallResolutionContext(
+    private CallCandidateResolutionContext(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call, boolean namespacesAllowed
     ) {
@@ -40,7 +40,7 @@ public final class CallResolutionContext<D extends CallableDescriptor, F extends
         this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
     }
 
-    private CallResolutionContext(
+    private CallCandidateResolutionContext(
             @NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing,
             @NotNull ResolvedCallImpl<D> candidateCall
     ) {
@@ -50,21 +50,21 @@ public final class CallResolutionContext<D extends CallableDescriptor, F extends
         this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(
+    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D, F> create(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call) {
-        return new CallResolutionContext<D, F>(candidateCall, task, trace, tracing, call, task.namespacesAllowed);
+        return new CallCandidateResolutionContext<D, F>(candidateCall, task, trace, tracing, call, task.namespacesAllowed);
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(
+    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D, F> create(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing) {
         return create(candidateCall, task, trace, tracing, task.call);
     }
 
-    public static <D extends CallableDescriptor> CallResolutionContext<D, D> create(
+    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D, D> create(
             @NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing,
             @NotNull ResolvedCallImpl<D> candidateCall) {
-        return new CallResolutionContext<D, D>(context, tracing, candidateCall);
+        return new CallCandidateResolutionContext<D, D>(context, tracing, candidateCall);
     }
 }
