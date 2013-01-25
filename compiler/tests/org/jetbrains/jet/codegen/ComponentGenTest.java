@@ -25,7 +25,7 @@ import org.jetbrains.jet.ConfigurationKind;
 public class ComponentGenTest extends CodegenTestCase {
     public void testComponent() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("/multiDecl/component.kt");
+        blackBoxFile("componentEvaluatesOnlyOnce.kt");
 
         String asm = generateToText();
         //System.out.println(asm);
