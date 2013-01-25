@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,28 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class ResolutionContext {
-    public final BindingTrace trace;
-    public final JetScope scope;
-    public final JetType expectedType;
-    public final DataFlowInfo dataFlowInfo;
-    public final boolean namespacesAllowed;
+public abstract class CallResolutionContext extends ResolutionContext {
+    public final Call call;
 
-    protected ResolutionContext(
+    protected CallResolutionContext(
             BindingTrace trace,
             JetScope scope,
+            Call call,
             JetType expectedType,
             DataFlowInfo dataFlowInfo,
             boolean namespacesAllowed
     ) {
-        this.trace = trace;
-        this.scope = scope;
-        this.expectedType = expectedType;
-        this.dataFlowInfo = dataFlowInfo;
-        this.namespacesAllowed = namespacesAllowed;
+        super(trace, scope, expectedType, dataFlowInfo, namespacesAllowed);
+        this.call = call;
+    }
+
+    public BasicResolutionContext toBasic() {
+        return BasicResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 }

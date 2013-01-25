@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class BasicResolutionContext extends ResolutionContext {
+public class BasicResolutionContext extends CallResolutionContext {
     @NotNull
     public static BasicResolutionContext create(
             @NotNull BindingTrace trace,

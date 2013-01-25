@@ -352,7 +352,7 @@ public class CandidateResolver {
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull TypeSubstitutor substitutor,
             @NotNull ConstraintSystem constraintSystem,
-            @NotNull ResolutionContext context,
+            @NotNull CallResolutionContext context,
             @Nullable boolean[] isErrorType,
             @NotNull ResolveMode resolveFunctionArgumentBodies) {
 
@@ -395,7 +395,7 @@ public class CandidateResolver {
     }
 
     private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkValueArgumentTypes(
-            @NotNull ResolutionContext context,
+            @NotNull CallResolutionContext context,
             @NotNull ResolvedCallImpl<D> candidateCall,
             @NotNull BindingTrace trace,
             @NotNull ResolveMode resolveFunctionArgumentBodies) {

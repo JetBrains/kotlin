@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
-public final class CallCandidateResolutionContext<D extends CallableDescriptor, F extends D> extends ResolutionContext {
+public final class CallCandidateResolutionContext<D extends CallableDescriptor, F extends D> extends CallResolutionContext {
     /*package*/ final ResolvedCallImpl<D> candidateCall;
     /*package*/ final TracingStrategy tracing;
     /*package*/ ReceiverValue receiverForVariableAsFunctionSecondCall = ReceiverValue.NO_RECEIVER;

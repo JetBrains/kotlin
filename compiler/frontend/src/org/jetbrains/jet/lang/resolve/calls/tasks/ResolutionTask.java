@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
@@ -52,7 +52,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 /**
  * Stores candidates for call resolution.
  */
-public class ResolutionTask<D extends CallableDescriptor, F extends D> extends ResolutionContext {
+public class ResolutionTask<D extends CallableDescriptor, F extends D> extends CallResolutionContext {
     private final Collection<ResolutionCandidate<D>> candidates;
     private final Set<ResolvedCallWithTrace<F>> resolvedCalls = Sets.newLinkedHashSet();
     public final JetReferenceExpression reference;
