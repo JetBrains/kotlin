@@ -159,6 +159,10 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull JetScope memberScope,
             @NotNull BindingContext bindingContext
     ) {
+        if (!(member instanceof PsiMethod) && !(member instanceof PsiField)) {
+            return null;
+        }
+
         String memberNameAsString = member.getName();
         assert memberNameAsString != null: "No name for member: \n" + member.getText();
 
@@ -172,11 +176,8 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
                 memberScope.getFunctions(name);
             }
         }
-        else if (member instanceof PsiField) {
-            memberScope.getProperties(name);
-        }
         else {
-            return null;
+            memberScope.getProperties(name);
         }
 
         PsiModifierListOwner annotationOwner = getAnnotationOwner(member);
