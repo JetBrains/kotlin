@@ -232,12 +232,8 @@ public class KotlinRuntimeLibraryUtil {
                     jarNotFoundHandler.run();
                     return;
                 }
-                VirtualFile runtimeJar = getKotlinRuntimeJar(project);
+                VirtualFile runtimeJar = getLocalKotlinRuntimeJar(project);
                 assert runtimeJar != null;
-                VirtualFile jarFile = JarFileSystem.getInstance().getVirtualFileForJar(runtimeJar);
-                if (jarFile != null) {
-                    runtimeJar = jarFile;
-                }
 
                 try {
                     FileUtil.copy(runtimePath, new File(runtimeJar.getPath()));
@@ -276,6 +272,18 @@ public class KotlinRuntimeLibraryUtil {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static VirtualFile getLocalKotlinRuntimeJar(@NotNull Project project) {
+        VirtualFile kotlinRuntimeJar = getKotlinRuntimeJar(project);
+        if (kotlinRuntimeJar == null) return null;
+
+        VirtualFile localJarFile = JarFileSystem.getInstance().getVirtualFileForJar(kotlinRuntimeJar);
+        if (localJarFile != null) {
+            return localJarFile;
+        }
+        return kotlinRuntimeJar;
     }
 
     public static abstract class FindRuntimeLibraryHandler {
