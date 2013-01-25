@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
@@ -49,8 +50,9 @@ public class StdlibTest extends CodegenTestCase {
                 ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
     }
 
+    @NotNull
     @Override
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) {
+    protected GeneratedClassLoader createClassLoader(@NotNull ClassFileFactory codegens) {
         try {
             return new GeneratedClassLoader(
                     codegens,

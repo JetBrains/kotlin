@@ -24,6 +24,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import static org.jetbrains.jet.codegen.CodegenTestUtil.assertIsCurrentTime;
+
 public class NamespaceGenTest extends CodegenTestCase {
 
     @Override

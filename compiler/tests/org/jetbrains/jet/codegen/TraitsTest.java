@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 
 public class TraitsTest extends CodegenTestCase {
@@ -26,6 +27,7 @@ public class TraitsTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @NotNull
     @Override
     protected String getPrefix() {
         return "traits";

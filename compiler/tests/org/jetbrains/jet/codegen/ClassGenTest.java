@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.CodegenTestUtil.findDeclaredMethodByName;
+
 public class ClassGenTest extends CodegenTestCase {
 
     @Override
@@ -161,7 +163,7 @@ public class ClassGenTest extends CodegenTestCase {
         loadText("abstract class Foo { abstract fun x(): String; fun y(): Int = 0 }");
         final Class aClass = generateClass("Foo");
         assertNotNull(aClass.getMethod("x"));
-        assertNotNull(findMethodByName(aClass, "y"));
+        assertNotNull(findDeclaredMethodByName(aClass, "y"));
     }
 
     public void testInheritedMethod() {

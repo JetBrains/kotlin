@@ -16,11 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.CodegenTestUtil.assertThrows;
 
 public class ControlStructuresTest extends CodegenTestCase {
     @Override
@@ -29,6 +32,7 @@ public class ControlStructuresTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @NotNull
     @Override
     protected String getPrefix() {
         return "controlStructures";

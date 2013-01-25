@@ -16,40 +16,30 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.Progress;
-import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.codegen.CodegenTestUtil.*;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
 
@@ -57,7 +47,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected JetCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
 
-    private GenerationState alreadyGenerated;
+    private ClassFileFactory classFileFactory;
     protected GeneratedClassLoader initializedClassLoader;
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull ConfigurationKind configurationKind) {
@@ -67,22 +57,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), configurationKind);
     }
 
-    protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
-        boolean caught = false;
-        try {
-            foo.invoke(instance, args);
-        }
-        catch(InvocationTargetException ex) {
-            caught = exceptionClass.isInstance(ex.getTargetException());
-        }
-        assertTrue(caught);
-    }
-
     @Override
     protected void tearDown() throws Exception {
         myFiles = null;
         myEnvironment = null;
-        alreadyGenerated = null;
+        classFileFactory = null;
 
         if (initializedClassLoader != null) {
             initializedClassLoader.dispose();
@@ -92,15 +71,17 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         super.tearDown();
     }
 
-    protected void loadText(final String text) {
+    protected void loadText(@NotNull String text) {
         myFiles = CodegenTestFiles.create("a.kt", text, myEnvironment.getProject());
     }
 
-    protected String loadFile(final String name) {
+    @NotNull
+    protected String loadFile(@NotNull String name) {
         return loadFileByFullPath(JetParsingTest.getTestDataDir() + "/codegen/" + name);
     }
 
-    protected String loadFileByFullPath(final String fullPath) {
+    @NotNull
+    protected String loadFileByFullPath(@NotNull String fullPath) {
         try {
             File file = new File(fullPath);
             final String content = FileUtil.loadFile(file, true);
@@ -111,7 +92,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         }
     }
 
-    protected void loadFiles(final String... names) {
+    protected void loadFiles(@NotNull String... names) {
         myFiles = CodegenTestFiles.create(myEnvironment.getProject(), names);
     }
 
@@ -119,20 +100,21 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         loadFile(getPrefix() + "/" + getTestName(true) + ".kt");
     }
 
+    @NotNull
     protected String getPrefix() {
         throw new UnsupportedOperationException();
     }
 
-    protected void blackBoxFile(String filename) {
+    protected void blackBoxFile(@NotNull String filename) {
         blackBoxMultiFile(filename);
     }
 
-    protected void blackBoxFileByFullPath(String filename) {
+    protected void blackBoxFileByFullPath(@NotNull String filename) {
         loadFileByFullPath(filename);
         blackBox();
     }
 
-    protected void blackBoxMultiFile(String... filenames) {
+    protected void blackBoxMultiFile(@NotNull String... filenames) {
         loadFiles(filenames);
         blackBox();
     }
@@ -161,7 +143,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void blackBoxFileWithJava(@NotNull String ktFile) {
-        File javaClassesTempDirectory = compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
+        File javaClassesTempDirectory = CodegenTestUtil.compileJava(ktFile.replaceFirst("\\.kt$", ".java"));
 
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
@@ -169,27 +151,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         blackBoxFile(ktFile);
     }
 
-    protected File compileJava(@NotNull String filename) {
-        try {
-            File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
-            JetTestUtils.mkdirs(javaClassesTempDirectory);
-            String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
-            List<String> options = Arrays.asList(
-                    "-classpath", classPath,
-                    "-d", javaClassesTempDirectory.getPath()
-            );
-
-            File javaFile = new File("compiler/testData/codegen/" + filename);
-            JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
-
-            return javaClassesTempDirectory;
-        }
-        catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
-        }
-    }
-
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory factory) {
+    @NotNull
+    protected GeneratedClassLoader createClassLoader(@NotNull ClassFileFactory factory) {
         if (initializedClassLoader != null) {
             fail("Double initialization of class loader in same test");
         }
@@ -199,6 +162,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         return initializedClassLoader;
     }
 
+    @NotNull
     protected URL[] getClassPathURLs() {
         List<URL> urls = Lists.newArrayList();
         for (File file : myEnvironment.getConfiguration().getList(JVMConfigurationKeys.CLASSPATH_KEY)) {
@@ -212,40 +176,22 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         return urls.toArray(new URL[urls.size()]);
     }
 
+    @NotNull
     protected String generateToText() {
-        if (alreadyGenerated == null) {
-            alreadyGenerated = generateCommon(myEnvironment, myFiles);
+        if (classFileFactory == null) {
+            classFileFactory = generateFiles(myEnvironment, myFiles);
         }
-        return alreadyGenerated.getFactory().createText();
+        return classFileFactory.createText();
     }
 
     @NotNull
-    protected static GenerationState generateCommon(@NotNull JetCoreEnvironment environment, @NotNull CodegenTestFiles files) {
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                environment.getProject(),
-                files.getPsiFiles(),
-                files.getScriptParameterTypes(),
-                Predicates.<PsiFile>alwaysTrue());
-        analyzeExhaust.throwIfError();
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        CompilerConfiguration configuration = environment.getConfiguration();
-        GenerationState state = new GenerationState(
-                environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF, analyzeExhaust.getBindingContext(), files.getPsiFiles(),
-                configuration.get(JVMConfigurationKeys.BUILTIN_TO_JAVA_TYPES_MAPPING_KEY, BuiltinToJavaTypesMapping.ENABLED),
-                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
-                configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true),
-                /*generateDeclaredClasses = */true
-        );
-        KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
-        return state;
+    protected Class<?> generateNamespaceClass() {
+        JvmClassName name = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile()));
+        return generateClass(name.getFqName().getFqName());
     }
 
-    protected Class generateNamespaceClass() {
-        String name = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
-        return generateClass(name);
-    }
-
-    protected Class generateClass(String name) {
+    @NotNull
+    protected Class generateClass(@NotNull String name) {
         try {
             return createClassLoader(generateClassesInFile()).loadClass(name);
         } catch (ClassNotFoundException e) {
@@ -256,70 +202,39 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
-        if (alreadyGenerated == null) {
+        if (classFileFactory == null) {
             try {
-                alreadyGenerated = generateCommon(myEnvironment, myFiles);
+                classFileFactory = generateFiles(myEnvironment, myFiles);
 
                 if (DxChecker.RUN_DX_CHECKER) {
-                    DxChecker.check(alreadyGenerated.getFactory());
+                    DxChecker.check(classFileFactory);
                 }
             } catch (Throwable e) {
                 System.out.println(generateToText());
                 throw ExceptionUtils.rethrow(e);
             }
         }
-        return alreadyGenerated.getFactory();
+        return classFileFactory;
     }
 
+    @NotNull
     protected Method generateFunction() {
-        Class aClass = generateNamespaceClass();
+        Class<?> aClass = generateNamespaceClass();
         try {
-            Method r = null;
-            for (Method method : aClass.getMethods()) {
-                if (method.getDeclaringClass().equals(Object.class)) {
-                    continue;
-                }
-
-                if (r != null) {
-                    throw new AssertionError("more then one public method in class " + aClass);
-                }
-
-                r = method;
-            }
-            if (r == null) {
-                throw new AssertionError();
-            }
-            return r;
+            return findTheOnlyMethod(aClass);
         } catch (Error e) {
             System.out.println(generateToText());
             throw e;
         }
     }
 
-    protected Method generateFunction(String name) {
-        Class aClass = generateNamespaceClass();
-        final Method method = findMethodByName(aClass, name);
+    @NotNull
+    protected Method generateFunction(@NotNull String name) {
+        Class<?> aClass = generateNamespaceClass();
+        Method method = findDeclaredMethodByName(aClass, name);
         if (method == null) {
-            throw new IllegalArgumentException("couldn't find method " + name);
+            throw new IllegalArgumentException("Couldn't find method " + name + " in class " + aClass);
         }
         return method;
-    }
-
-    @Nullable
-    protected static Method findMethodByName(Class aClass, String name) {
-        for (Method method : aClass.getDeclaredMethods()) {
-            if (method.getName().equals(name)) {
-                return method;
-            }
-        }
-        return null;
-    }
-
-    protected static void assertIsCurrentTime(long returnValue) {
-        long currentTime = System.currentTimeMillis();
-        long diff = Math.abs(returnValue - currentTime);
-        long toleratedDifference = SystemInfo.isWindows ? 15 : 1;
-        assertTrue("Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)",
-                   diff <= toleratedDifference);
     }
 }

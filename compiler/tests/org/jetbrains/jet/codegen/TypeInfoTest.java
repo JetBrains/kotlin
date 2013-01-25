@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.Method;
+
+import static org.jetbrains.jet.codegen.CodegenTestUtil.assertThrows;
 
 public class TypeInfoTest extends CodegenTestCase {
     @Override
@@ -27,6 +30,7 @@ public class TypeInfoTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @NotNull
     @Override
     protected String getPrefix() {
         return "typeInfo";

@@ -16,10 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.*;
+
+import static org.jetbrains.jet.codegen.CodegenTestUtil.assertIsCurrentTime;
+import static org.jetbrains.jet.codegen.CodegenTestUtil.findDeclaredMethodByName;
 
 public class PropertyGenTest extends CodegenTestCase {
     @Override
@@ -28,6 +32,7 @@ public class PropertyGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    @NotNull
     @Override
     protected String getPrefix() {
         return "properties";
@@ -46,9 +51,9 @@ public class PropertyGenTest extends CodegenTestCase {
         loadFile();
         final Class aClass = generateClass("PrivateVar");
         final Object instance = aClass.newInstance();
-        Method setter = findMethodByName(aClass, "setValueOfX");
+        Method setter = findDeclaredMethodByName(aClass, "setValueOfX");
         setter.invoke(instance, 239);
-        Method getter = findMethodByName(aClass, "getValueOfX");
+        Method getter = findDeclaredMethodByName(aClass, "getValueOfX");
         assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
     }
 
@@ -56,17 +61,17 @@ public class PropertyGenTest extends CodegenTestCase {
         loadText("class PublicVar() { public var foo : Int = 0; }");
         final Class aClass = generateClass("PublicVar");
         final Object instance = aClass.newInstance();
-        Method setter = findMethodByName(aClass, "setFoo");
+        Method setter = findDeclaredMethodByName(aClass, "setFoo");
         setter.invoke(instance, 239);
-        Method getter = findMethodByName(aClass, "getFoo");
+        Method getter = findDeclaredMethodByName(aClass, "getFoo");
         assertEquals(239, ((Integer) getter.invoke(instance)).intValue());
     }
 
     public void testAccessorsInInterface() {
         loadText("class AccessorsInInterface() { public var foo : Int = 0; }");
         final Class aClass = generateClass("AccessorsInInterface");
-        assertNotNull(findMethodByName(aClass, "getFoo"));
-        assertNotNull(findMethodByName(aClass, "setFoo"));
+        assertNotNull(findDeclaredMethodByName(aClass, "getFoo"));
+        assertNotNull(findDeclaredMethodByName(aClass, "setFoo"));
     }
 
     public void testPrivatePropertyInNamespace() throws Exception {
@@ -118,14 +123,14 @@ public class PropertyGenTest extends CodegenTestCase {
         loadText("class AccessorsWithoutBody() { protected var foo: Int = 349\n get\n  private set\n fun setter() { foo = 610; } } ");
         final Class aClass = generateClass("AccessorsWithoutBody");
         final Object instance = aClass.newInstance();
-        final Method getFoo = findMethodByName(aClass, "getFoo");
+        final Method getFoo = findDeclaredMethodByName(aClass, "getFoo");
         getFoo.setAccessible(true);
         assertTrue((getFoo.getModifiers() & Modifier.PROTECTED) != 0);
         assertEquals(349, getFoo.invoke(instance));
-        final Method setFoo = findMethodByName(aClass, "setFoo");
+        final Method setFoo = findDeclaredMethodByName(aClass, "setFoo");
         setFoo.setAccessible(true);
         assertTrue((setFoo.getModifiers() & Modifier.PRIVATE) != 0);
-        final Method setter = findMethodByName(aClass,  "setter");
+        final Method setter = findDeclaredMethodByName(aClass, "setter");
         setter.invoke(instance);
         assertEquals(610, getFoo.invoke(instance));
     }

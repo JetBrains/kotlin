@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ClassPathInTheSameClassLoaderTest extends CodegenTestCase {
+    @NotNull
     @Override
-    protected GeneratedClassLoader createClassLoader(ClassFileFactory factory) {
+    protected GeneratedClassLoader createClassLoader(@NotNull ClassFileFactory factory) {
         initializedClassLoader = new GeneratedClassLoader(factory, CodegenTestCase.class.getClassLoader(), getClassPathURLs());
         return initializedClassLoader;
     }
