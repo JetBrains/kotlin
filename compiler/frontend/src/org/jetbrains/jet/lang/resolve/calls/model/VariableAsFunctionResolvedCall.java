@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -94,6 +95,12 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     @Override
     public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
         return functionCall.getTypeArguments();
+    }
+
+    @NotNull
+    @Override
+    public DataFlowInfo getDataFlowInfo() {
+        return functionCall.getDataFlowInfo();
     }
 
     @NotNull

@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -79,7 +80,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
+    private static JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
         Name referencedName = expression.getReferencedNameAsName();
         ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
         if (classifier != null) {
@@ -135,7 +136,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         });
     }
 
-    private boolean furtherNameLookup(
+    private static boolean furtherNameLookup(
             @NotNull JetSimpleNameExpression expression,
             @NotNull JetType[] result,
             @NotNull ExpressionTypingContext context
@@ -154,7 +155,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
+    private static NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
         Name name = expression.getReferencedNameAsName();
         NamespaceDescriptor namespace = context.scope.getNamespace(name);
         if (namespace == null) {
@@ -755,8 +756,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private FunctionDescriptor getFunctionDescriptor(@NotNull Call call, @NotNull JetExpression callExpression, @NotNull ReceiverValue receiver,
-            @NotNull ExpressionTypingContext context, @NotNull boolean[] result) {
+    public static ResolvedCall<FunctionDescriptor> getResolvedCallForFunction(
+            @NotNull Call call, @NotNull JetExpression callExpression, @NotNull ReceiverValue receiver,
+            @NotNull ExpressionTypingContext context, @NotNull boolean[] result
+    ) {
 
         OverloadResolutionResults<FunctionDescriptor> results = context.resolveFunctionCall(call);
         if (!results.isNothing()) {
@@ -765,14 +768,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (results.isIncomplete()) {
                 return null;
             }
-            return results.isSingleResult() ? results.getResultingDescriptor() : null;
+            return results.isSingleResult() ? results.getResultingCall() : null;
         }
         result[0] = false;
         return null;
     }
 
     @Nullable
-    private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+    public static JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result) {
 
         TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
@@ -832,7 +835,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+    private static JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
 
         boolean[] result = new boolean[1];
@@ -849,8 +852,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
         TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", nameExpression);
-        FunctionDescriptor functionDescriptor = getFunctionDescriptor(call, nameExpression, receiver, context, result);
+        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(call, nameExpression, receiver, context, result);
         if (result[0]) {
+            FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             traceForFunction.commit();
             boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
             context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
@@ -863,16 +867,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+    private static JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
 
         boolean[] result = new boolean[1];
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
 
         TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call", callExpression);
-        FunctionDescriptor functionDescriptor = getFunctionDescriptor(call, callExpression, receiver,
-                                                                      context.replaceBindingTrace(traceForFunction), result);
+        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(call, callExpression, receiver,
+                                                                                   context.replaceBindingTrace(traceForFunction), result);
         if (result[0]) {
+            FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             traceForFunction.commit();
             if (callExpression.getValueArgumentList() == null && callExpression.getFunctionLiteralArguments().isEmpty()) {
                 // there are only type arguments
@@ -884,18 +889,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
             JetType type = functionDescriptor.getReturnType();
 
-            DataFlowInfo dataFlowInfo = context.dataFlowInfo;
-            JetValueArgumentList argumentList = callExpression.getValueArgumentList();
-            if (argumentList != null) {
-                for (JetValueArgument argument : argumentList.getArguments()) {
-                    JetExpression expression = argument.getArgumentExpression();
-                    if (expression != null) {
-                        dataFlowInfo = dataFlowInfo.and(facade.getTypeInfo(expression, context.replaceExpectedType(NO_EXPECTED_TYPE).
-                                replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo());
-                    }
-                }
-            }
-            return JetTypeInfo.create(type, dataFlowInfo);
+            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfo());
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();

@@ -34,12 +34,14 @@ public final class CallResolutionContext<D extends CallableDescriptor, F extends
         super(trace, task.scope, call, task.expectedType, task.dataFlowInfo);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
+        this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
     }
 
     private CallResolutionContext(@NotNull BasicResolutionContext context, @NotNull TracingStrategy tracing, @NotNull ResolvedCallImpl<D> candidateCall) {
         super(context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
+        this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
     }
 
     public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {

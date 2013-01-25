@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
@@ -73,6 +74,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
+    private DataFlowInfo dataFlowInfo;
 
     private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
         this.candidateDescriptor = candidate.getDescriptor();
@@ -222,5 +224,21 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     public boolean isSafeCall() {
         return isSafeCall;
+    }
+
+    @NotNull
+    @Override
+    public DataFlowInfo getDataFlowInfo() {
+        return dataFlowInfo;
+    }
+
+    public void setInitialDataFlowInfo(@NotNull DataFlowInfo info) {
+        assert dataFlowInfo == null;
+        dataFlowInfo = info;
+    }
+
+    public void addDataFlowInfo(@NotNull DataFlowInfo info) {
+        assert dataFlowInfo != null;
+        dataFlowInfo = dataFlowInfo.and(info);
     }
 }

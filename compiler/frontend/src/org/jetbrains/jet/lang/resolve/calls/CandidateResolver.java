@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -401,7 +400,6 @@ public class CandidateResolver {
             @NotNull BindingTrace trace,
             @NotNull ResolveMode resolveFunctionArgumentBodies) {
         ResolutionStatus resultStatus = SUCCESS;
-        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         List<JetType> argumentTypes = Lists.newArrayList();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
@@ -416,10 +414,10 @@ public class CandidateResolver {
                 if (TypeUtils.dependsOnTypeParameters(expectedType, candidateCall.getCandidateDescriptor().getTypeParameters())) {
                     expectedType = NO_EXPECTED_TYPE;
                 }
-                JetTypeInfo typeInfo = argumentTypeResolver.getArgumentTypeInfo(expression, trace, context.scope, dataFlowInfo,
+                JetTypeInfo typeInfo = argumentTypeResolver.getArgumentTypeInfo(expression, trace, context.scope, candidateCall.getDataFlowInfo(),
                                                                                 expectedType, resolveFunctionArgumentBodies);
                 JetType type = typeInfo.getType();
-                dataFlowInfo = dataFlowInfo.and(typeInfo.getDataFlowInfo());
+                candidateCall.addDataFlowInfo(typeInfo.getDataFlowInfo());
 
                 if (type == null || (ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE)) {
                     candidateCall.argumentHasNoType();
@@ -431,7 +429,7 @@ public class CandidateResolver {
                         resultingType = type;
                     }
                     else {
-                        resultingType = autocastValueArgumentTypeIfPossible(expression, expectedType, type, trace, dataFlowInfo);
+                        resultingType = autocastValueArgumentTypeIfPossible(expression, expectedType, type, trace, candidateCall.getDataFlowInfo());
                         if (resultingType == null) {
                             resultingType = type;
                             resultStatus = OTHER_ERROR;
