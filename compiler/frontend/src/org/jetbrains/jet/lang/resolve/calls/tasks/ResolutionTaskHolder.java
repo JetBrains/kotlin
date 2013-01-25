@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.calls.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 
 import java.util.Collection;
 import java.util.List;

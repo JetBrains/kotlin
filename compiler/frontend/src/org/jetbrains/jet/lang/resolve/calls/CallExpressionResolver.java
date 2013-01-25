@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -170,7 +171,8 @@ public class CallExpressionResolver {
                 context.trace, "trace to resolve as local variable or property", nameExpression);
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
-        OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(context.replaceBindingTrace(traceForVariable).toCallResolutionContext(call));
+        OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(
+                context.replaceBindingTrace(traceForVariable).toCallResolutionContext(call));
         if (!resolutionResult.isNothing()) {
             traceForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);
