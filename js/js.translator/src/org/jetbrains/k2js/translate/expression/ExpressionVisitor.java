@@ -314,6 +314,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression,
             @NotNull TranslationContext context) {
+        // KT-2670
         // we actually do not care for types in js
         return Translation.translateExpression(expression.getLeft(), context);
     }

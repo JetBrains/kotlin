@@ -156,8 +156,8 @@ public final class Namer {
     }
 
     @NotNull
-    public JsExpression throwNPEFunctionCall() {
-        return new JsInvocation(new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject()));
+    public JsExpression throwNPEFunctionRef() {
+        return new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject());
     }
 
     @NotNull

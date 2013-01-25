@@ -67,6 +67,11 @@ public final class TranslationUtils {
     }
 
     @NotNull
+    public static JsBinaryOperation isNotNullCheck(@NotNull JsExpression expressionToCheck) {
+        return nullCheck(expressionToCheck, true);
+    }
+
+    @NotNull
     public static JsBinaryOperation notNullConditionalTestExpression(@NotNull TemporaryVariable cachedValue) {
         return and(inequality(cachedValue.assignmentExpression(), JsLiteral.NULL),
                    inequality(cachedValue.reference(), JsLiteral.UNDEFINED));
@@ -78,6 +83,27 @@ public final class TranslationUtils {
         return new JsBinaryOperation(isNegated ? JsBinaryOperator.AND : JsBinaryOperator.OR,
                                      new JsBinaryOperation(operator, expressionToCheck, JsLiteral.NULL),
                                      new JsBinaryOperation(operator, expressionToCheck, JsLiteral.UNDEFINED));
+    }
+
+    @NotNull
+    public static JsConditional notNullConditional(
+            @NotNull JsExpression expression,
+            @NotNull JsExpression elseExpression,
+            @NotNull TranslationContext context
+    ) {
+        JsExpression testExpression;
+        JsExpression thenExpression;
+        if (isCacheNeeded(expression)) {
+            TemporaryVariable cachedValue = context.declareTemporary(expression);
+            testExpression = notNullConditionalTestExpression(cachedValue);
+            thenExpression = cachedValue.reference();
+        }
+        else {
+            testExpression = isNotNullCheck(expression);
+            thenExpression = expression;
+        }
+
+        return new JsConditional(testExpression, thenExpression, elseExpression);
     }
 
     @NotNull
@@ -190,5 +216,10 @@ public final class TranslationUtils {
         else {
             return new Pair<JsVars.JsVar, JsExpression>(null, expression);
         }
+    }
+
+    @NotNull
+    public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        return notNullConditional(expression, new JsInvocation(context.namer().throwNPEFunctionRef()), context);
     }
 }
