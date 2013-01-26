@@ -107,8 +107,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
                                                         getJetFiles("jet", Predicates.not(jetFilesIndependentOfUnit)));
 
-        AnalyzingUtils.throwExceptionOnErrors(context.getBindingContext());
-
         bindingContext = context.getBindingContext();
     }
 
