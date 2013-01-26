@@ -132,7 +132,7 @@ public class CompileTimeConstantResolver {
         }
         else if (JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getFloatType(), expectedType)) {
             try {
-                return new DoubleValue(Float.parseFloat(text));
+                return new FloatValue(Float.parseFloat(text));
             }
             catch (NumberFormatException e) {
                 return OUT_OF_RANGE;
