@@ -35,6 +35,10 @@ public final class FloatRange implements Range<Float>, NumberSequence<Float> {
         return start <= item && item <= end;
     }
 
+    public boolean contains(float item) {
+        return start <= item && item <= end;
+    }
+
     @Override
     public Float getStart() {
         return start;

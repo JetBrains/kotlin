@@ -35,6 +35,10 @@ public final class DoubleRange implements Range<Double>, NumberSequence<Double> 
         return start <= item && item <= end;
     }
 
+    public boolean contains(double item) {
+        return start <= item && item <= end;
+    }
+
     @Override
     public Double getStart() {
         return start;
