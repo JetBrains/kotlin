@@ -1,6 +1,4 @@
-import java.lang.String;
-
-public class protectedStaticClass2 {
+public class simpleClass2 {
     public static class A {
         protected static class B {
             public B() {

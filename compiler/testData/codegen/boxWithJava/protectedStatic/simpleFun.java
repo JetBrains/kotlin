@@ -1,4 +1,4 @@
-public class protectedStaticFunNotDirectSuperClass {
+public class simpleFun {
     protected static String protectedFun() {
         return "OK";
     }

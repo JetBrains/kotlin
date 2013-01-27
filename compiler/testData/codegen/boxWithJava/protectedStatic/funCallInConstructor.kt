@@ -1,4 +1,4 @@
-class A: protectedStaticFunCallInConstructor(protectedStaticFunCallInConstructor.protectedFun()) {
+class A: funCallInConstructor(funCallInConstructor.protectedFun()) {
   fun test(): String {
     return protectedProperty!!
   }

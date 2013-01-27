@@ -1,10 +1,8 @@
-import java.lang.String;
-
-public class protectedStaticFunCallInConstructor {
+public class funCallInConstructor {
 
     protected final String protectedProperty;
 
-    public protectedStaticFunCallInConstructor(String str) {
+    public funCallInConstructor(String str) {
         protectedProperty = str;
     }
 

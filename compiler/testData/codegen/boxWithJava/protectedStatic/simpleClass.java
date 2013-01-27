@@ -1,6 +1,4 @@
-import java.lang.String;
-
-public class protectedStaticClass {
+public class simpleClass {
     protected static class Inner {
         public Inner() {}
         public String foo() {

@@ -1,5 +1,4 @@
-public class protectedStaticFunClassObject {
-
+public class funGenericClass<T> {
     protected static String protectedFun() {
         return "OK";
     }
