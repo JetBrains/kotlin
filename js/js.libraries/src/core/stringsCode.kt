@@ -11,27 +11,6 @@ public inline fun String.matches(regex : String) : Boolean {
     return result != null && result.size > 0
 }
 
-public inline fun String.length(): Int = length
-
-inline val String.size : Int
-get() = length
-
-public inline fun String.startsWith(ch: Char): Boolean {
-    return if (size > 0) charAt(0) == ch else false
-}
-
-public inline fun String.endsWith(ch: Char): Boolean {
-    val s = size
-    return if (s > 0) charAt(s - 1) == ch else false
-}
-
-native
-fun String.startsWith(s:String):Boolean = noImpl
-native
-fun String.endsWith(s:String):Boolean = noImpl
-native
-fun String.contains(s:String):Boolean = noImpl
-
 /**
  * Returns a copy of this string capitalised if it is not empty or already starting with an uppper case letter, otherwise returns this
  *

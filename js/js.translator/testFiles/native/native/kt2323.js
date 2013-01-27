@@ -13,14 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
-
-import com.google.common.base.Predicate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-
-public interface DescriptorPredicate extends Predicate<FunctionDescriptor> {
-    @Override
-    boolean apply(@NotNull FunctionDescriptor descriptor);
-}
+var classes = {"answer": 42}, classesMutable = {};

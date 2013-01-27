@@ -1,5 +1,13 @@
 package js
 
+public fun String.startsWith(s: String): Boolean = noImpl
+public fun String.endsWith(s: String): Boolean = noImpl
+public fun String.contains(s: String): Boolean = noImpl
+
+public fun String.startsWith(char: Char): Boolean = noImpl
+public fun String.endsWith(char: Char): Boolean = noImpl
+public fun String.contains(char: Char): Boolean = noImpl
+
 native public fun String.toUpperCase() : String = js.noImpl
 
 native public fun String.toLowerCase() : String = js.noImpl
@@ -10,8 +18,7 @@ native public fun String.indexOf(str : String, fromIndex : Int) : Int = js.noImp
 native public fun String.lastIndexOf(str: String) : Int = js.noImpl
 native public fun String.lastIndexOf(str : String, fromIndex : Int) : Int = js.noImpl
 
-// Defined in javalang.kt
-//native public fun String.split(regex : String) : Array<String> = js.noImpl
+native public fun String.split(regex: String): Array<String> = js.noImpl
 
 native public fun String.substring(beginIndex : Int) : String = js.noImpl
 native public fun String.substring(beginIndex : Int, endIndex : Int) : String = js.noImpl
@@ -24,9 +31,10 @@ native public fun String.match(regex : String) : Array<String> = js.noImpl
 
 native public fun String.trim() : String = js.noImpl
 
-native public val String.length : Int
-    get() = js.noImpl
+public val String.size: Int
+    get() = noImpl
 
+public fun String.length(): Int = length
 
 /*
 

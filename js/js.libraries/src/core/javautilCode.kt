@@ -5,6 +5,7 @@ import java.lang.*
 /** Provides [] access to maps */
 native
 public fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit = noImpl
+public fun <K, V> MutableMap<K, V>.get(key: K): V? = noImpl
 
 public object Collections {
     library("collectionsMax")

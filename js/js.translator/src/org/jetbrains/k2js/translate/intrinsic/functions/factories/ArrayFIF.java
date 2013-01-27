@@ -68,7 +68,7 @@ public final class ArrayFIF extends CompositeFIF {
     };
 
     @NotNull
-    private static final FunctionIntrinsic GET_INTRINSIC = new FunctionIntrinsic() {
+    public static final FunctionIntrinsic GET_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override
         public JsExpression apply(@Nullable JsExpression receiver,
@@ -82,7 +82,7 @@ public final class ArrayFIF extends CompositeFIF {
     };
 
     @NotNull
-    private static final FunctionIntrinsic SET_INTRINSIC = new FunctionIntrinsic() {
+    public static final FunctionIntrinsic SET_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
         @Override
         public JsExpression apply(@Nullable JsExpression receiver,

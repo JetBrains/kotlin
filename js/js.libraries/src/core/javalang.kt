@@ -6,9 +6,6 @@ import js.library
 library
 open public class Exception(message: String? = null) : Throwable() {}
 
-native
-public fun String.split(regex: String): Array<String> = js.noImpl
-
 library
 public class IllegalArgumentException(message: String? = null) : Exception() {}
 
