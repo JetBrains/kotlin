@@ -17,6 +17,8 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -29,6 +31,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
@@ -54,13 +57,18 @@ public final class TranslationUtils {
     @NotNull
     private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsFunction function,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
-        JsObjectLiteral meta = JsAstUtils.createDataDescriptor(function, descriptor.getModality().isOverridable());
+        JsObjectLiteral meta = createDataDescriptor(function, descriptor.getModality().isOverridable());
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
     }
 
     @NotNull
     public static JsBinaryOperation isNullCheck(@NotNull JsExpression expressionToCheck) {
         return nullCheck(expressionToCheck, false);
+    }
+
+    @NotNull
+    public static JsBinaryOperation isNotNullCheck(@NotNull JsExpression expressionToCheck) {
+        return nullCheck(expressionToCheck, true);
     }
 
     @NotNull
@@ -78,9 +86,34 @@ public final class TranslationUtils {
     }
 
     @NotNull
+    public static JsConditional notNullConditional(
+            @NotNull JsExpression expression,
+            @NotNull JsExpression elseExpression,
+            @NotNull TranslationContext context
+    ) {
+        JsExpression testExpression;
+        JsExpression thenExpression;
+        if (isCacheNeeded(expression)) {
+            TemporaryVariable cachedValue = context.declareTemporary(expression);
+            testExpression = notNullConditionalTestExpression(cachedValue);
+            thenExpression = cachedValue.reference();
+        }
+        else {
+            testExpression = isNotNullCheck(expression);
+            thenExpression = expression;
+        }
+
+        return new JsConditional(testExpression, thenExpression, elseExpression);
+    }
+
+    @NotNull
     public static List<JsExpression> translateArgumentList(@NotNull TranslationContext context,
             @NotNull List<? extends ValueArgument> jetArguments) {
-        List<JsExpression> jsArguments = new ArrayList<JsExpression>();
+        if (jetArguments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<JsExpression> jsArguments = new SmartList<JsExpression>();
         for (ValueArgument argument : jetArguments) {
             jsArguments.add(translateArgument(context, argument));
         }
@@ -121,17 +154,9 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context,
-            @NotNull DeclarationDescriptor descriptor) {
-        JsName name = context.getNameForDescriptor(descriptor);
-        JsNameRef reference = name.makeRef();
-        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
-        if (qualifier != null) {
-            setQualifier(reference, qualifier);
-        }
-        return reference;
+    public static JsNameRef getQualifiedReference(@NotNull TranslationContext context, @NotNull DeclarationDescriptor descriptor) {
+        return new JsNameRef(context.getNameForDescriptor(descriptor), context.getQualifierForDescriptor(descriptor));
     }
-
 
     @NotNull
     public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
@@ -172,5 +197,55 @@ public final class TranslationUtils {
         if (context.intrinsics().getFunctionIntrinsics().getIntrinsic(operationDescriptor).exists()) return true;
 
         return false;
+    }
+
+    @NotNull
+    public static List<JsExpression> generateInvocationArguments(@NotNull JsExpression receiver, @NotNull List<JsExpression> arguments) {
+        if (arguments.isEmpty()) {
+            return Collections.singletonList(receiver);
+        }
+
+        List<JsExpression> argumentList = new ArrayList<JsExpression>(1 + arguments.size());
+        argumentList.add(receiver);
+        argumentList.addAll(arguments);
+        return argumentList;
+    }
+
+    public static boolean isCacheNeeded(@NotNull JsExpression expression) {
+        return !(expression instanceof JsLiteral) &&
+               (!(expression instanceof JsNameRef) || ((JsNameRef) expression).getQualifier() != null);
+    }
+
+    @NotNull
+    public static Pair<JsVars.JsVar, JsExpression> createTemporaryIfNeed(
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        // don't create temp variable for simple expression
+        if (isCacheNeeded(expression)) {
+            return context.dynamicContext().createTemporary(expression);
+        }
+        else {
+            return new Pair<JsVars.JsVar, JsExpression>(null, expression);
+        }
+    }
+
+    @NotNull
+    public static JsConditional sure(@NotNull JsExpression expression, @NotNull TranslationContext context) {
+        return notNullConditional(expression, new JsInvocation(context.namer().throwNPEFunctionRef()), context);
+    }
+
+    @NotNull
+    public static Pair<JsExpression, JsExpression> wrapAsTemporaryIfNeed(
+            @NotNull JsExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        if (isCacheNeeded(expression)) {
+            TemporaryVariable cachedValue = context.declareTemporary(expression);
+            return new Pair<JsExpression, JsExpression>(cachedValue.assignmentExpression(), cachedValue.reference());
+        }
+        else {
+            return Pair.create(expression, expression);
+        }
     }
 }

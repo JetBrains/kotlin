@@ -31,14 +31,11 @@ import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.declaration.ClassAliasingMap;
-import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
 import org.jetbrains.k2js.translate.expression.WhenTranslator;
-import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
@@ -73,13 +70,6 @@ public final class Translation {
     @NotNull
     private static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
         return NamespaceDeclarationTranslator.translateFiles(files, context);
-    }
-
-    @NotNull
-    public static JsExpression translateClassDeclaration(@NotNull JetClass classDeclaration,
-            @NotNull ClassAliasingMap classAliasingMap,
-            @NotNull TranslationContext context) {
-        return ClassTranslator.generateClassCreation(classDeclaration, classAliasingMap, context);
     }
 
     @NotNull
@@ -124,14 +114,6 @@ public final class Translation {
         return WhenTranslator.translate(expression, context);
     }
 
-    //TODO: see if generate*Initializer methods fit somewhere else
-    @NotNull
-    public static JsFunction generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
-            @NotNull TranslationContext context) {
-        final ClassInitializerTranslator classInitializerTranslator = new ClassInitializerTranslator(classDeclaration, context);
-        return classInitializerTranslator.generateInitializeMethod();
-    }
-
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
             @NotNull Collection<JetFile> files, @NotNull MainCallParameters mainCallParameters,
@@ -162,7 +144,7 @@ public final class Translation {
         List<JsStatement> statements = rootBlock.getStatements();
         statements.add(program.getStringLiteral("use strict").makeStmt());
 
-        TranslationContext context = TranslationContext.rootContext(staticContext);
+        TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
         staticContext.getLiteralFunctionTranslator().setRootContext(context);
         statements.addAll(translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());

@@ -64,18 +64,4 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
         InitializerUtils.generate(declaration, result, null, context);
         return null;
     }
-
-    @NotNull
-    private List<JsStatement> generateInitializerStatements(@NotNull List<JetDeclaration> declarations,
-            @NotNull TranslationContext context) {
-        for (JetDeclaration declaration : declarations) {
-            declaration.accept(this, context);
-        }
-        return result;
-    }
-
-    @NotNull
-    public final List<JsStatement> traverseClass(@NotNull JetClassOrObject expression, @NotNull TranslationContext context) {
-        return generateInitializerStatements(expression.getDeclarations(), context);
-    }
 }

@@ -16,17 +16,18 @@
 
 package org.jetbrains.k2js.translate.utils.dangerous;
 
-import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNode;
+import com.google.dart.compiler.backend.js.ast.JsVars;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,13 +56,15 @@ public final class DangerousTranslator extends AbstractTranslator {
 
     @NotNull
     private Map<JetExpression, JsName> translateAllExpressionsAndCreateAliasesForThem(@NotNull List<JetExpression> expressions) {
-        Map<JetExpression, JsName> aliasesForExpressions = Maps.newHashMap();
+        Map<JetExpression, JsName> aliasesForExpressions = new THashMap<JetExpression, JsName>(expressions.size());
+        List<JsVars.JsVar> vars = new ArrayList<JsVars.JsVar>(expressions.size());
         for (JetExpression expression : expressions) {
             JsExpression translatedExpression = Translation.translateAsExpression(expression, context());
-            TemporaryVariable aliasForExpression = context().declareTemporary(translatedExpression);
-            context().addStatementToCurrentBlock(aliasForExpression.assignmentExpression().makeStmt());
-            aliasesForExpressions.put(expression, aliasForExpression.name());
+            JsVars.JsVar aliasForExpression = context().dynamicContext().createTemporaryVar(translatedExpression);
+            vars.add(aliasForExpression);
+            aliasesForExpressions.put(expression, aliasForExpression.getName());
         }
+        context().addStatementToCurrentBlock(new JsVars(vars, true));
         return aliasesForExpressions;
     }
 }

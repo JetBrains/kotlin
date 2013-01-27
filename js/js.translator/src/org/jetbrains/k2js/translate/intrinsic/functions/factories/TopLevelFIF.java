@@ -16,45 +16,253 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
+import org.jetbrains.k2js.translate.reference.CallTranslator;
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.generateInvocationArguments;
 
 public final class TopLevelFIF extends CompositeFIF {
     @NotNull
     public static final CallStandardMethodIntrinsic EQUALS = new CallStandardMethodIntrinsic(new JsNameRef("equals", "Kotlin"), true, 1);
-    @NotNull
-    public static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
+
+    private static final FunctionIntrinsic NATIVE_MAP_GET = new NativeMapGetSet() {
         @NotNull
         @Override
-        public JsExpression apply(
-                @Nullable JsExpression receiver,
+        protected String operation() {
+            return "get";
+        }
+
+        @Nullable
+        @Override
+        protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+            ReceiverValue result = resolvedCall.getThisObject();
+            return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
+        }
+
+        @Override
+        protected JsExpression asArrayAccess(
+                @NotNull JsExpression receiver,
                 @NotNull List<JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            assert receiver != null;
-            return receiver;
+            return ArrayFIF.GET_INTRINSIC.apply(receiver, arguments, context);
         }
     };
+
+    private static final FunctionIntrinsic NATIVE_MAP_SET = new NativeMapGetSet() {
+        @NotNull
+        @Override
+        protected String operation() {
+            return "put";
+        }
+
+        @Nullable
+        @Override
+        protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
+            ReceiverValue result = resolvedCall.getReceiverArgument();
+            return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
+        }
+
+        @Override
+        protected JsExpression asArrayAccess(
+                @NotNull JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            return ArrayFIF.SET_INTRINSIC.apply(receiver, arguments, context);
+        }
+    };
+
+    private static FunctionIntrinsicFactory INSTANCE;
+
     @NotNull
-    public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
+    public static FunctionIntrinsicFactory getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TopLevelFIF();
+        }
+        return INSTANCE;
+    }
 
     private TopLevelFIF() {
-        add(pattern("toString"), new BuiltInFunctionIntrinsic("toString"));
-        add(pattern("equals"), EQUALS);
+        add(pattern("jet", "toString").receiverExists(), new KotlinFunctionIntrinsic("stringify"));
+        add(pattern("jet", "equals").receiverExists(), EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
-        add(pattern("arrayOfNulls"), new CallStandardMethodIntrinsic(new JsNameRef("nullArray", "Kotlin"), false, 1));
-        add(pattern("iterator"), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("arrayOfNulls"));
+        add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
+        add(new DescriptorPredicate() {
+                @Override
+                public boolean apply(@NotNull FunctionDescriptor descriptor) {
+                    if (!descriptor.getName().getName().equals("invoke")) {
+                        return false;
+                    }
+                    int parameterCount = descriptor.getValueParameters().size();
+                    DeclarationDescriptor fun = descriptor.getContainingDeclaration();
+                    return fun == (descriptor.getReceiverParameter() == null
+                                   ? KotlinBuiltIns.getInstance().getFunction(parameterCount)
+                                   : KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount));
+                }
+            }, new CallParametersAwareFunctionIntrinsic() {
+                @NotNull
+                @Override
+                public JsExpression apply(
+                        @NotNull CallTranslator callTranslator,
+                        @NotNull List<JsExpression> arguments,
+                        @NotNull TranslationContext context
+                ) {
+                    JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
+                    if (thisExpression == null) {
+                        return new JsInvocation(callTranslator.getCallParameters().getFunctionReference(), arguments);
+                    }
+                    else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
+                        return callTranslator.extensionFunctionCall(false);
+                    }
+                    else {
+                        return new JsInvocation(new JsNameRef("call", callTranslator.getCallParameters().getFunctionReference()),
+                                                generateInvocationArguments(thisExpression, arguments));
+                    }
+                }
+            }
+        );
+
+        String[] javaUtil = {"java", "util"};
+
+        add(pattern("jet", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
+        add(pattern(new String[] {"js"}, "set").receiverExists(), NATIVE_MAP_SET);
+
+        add(pattern("js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
+        add(pattern("js", "Json", "set"), ArrayFIF.SET_INTRINSIC);
+
+        add(pattern(javaUtil, "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
+        add(pattern(javaUtil, "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
+
+        add(pattern(javaUtil, "StringBuilder", "<init>"), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                return JsAstUtils.wrapValue("s", context.program().getStringLiteral(""));
+            }
+        });
+        add(pattern(new String[] {"java", "lang", "Appendable"}, "append").checkOverridden(), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                assert arguments.size() == 1;
+                return new JsBinaryOperation(JsBinaryOperator.ASG_ADD, new JsNameRef("s", receiver), arguments.get(0));
+            }
+        });
+        add(pattern(javaUtil, "StringBuilder", "toString"), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                return new JsNameRef("s", receiver);
+            }
+        });
+    }
+
+    private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
+        @NotNull
+        protected abstract String operation();
+
+        @Nullable
+        protected abstract ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall);
+
+        protected abstract JsExpression asArrayAccess(
+                @NotNull JsExpression receiver,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        );
+
+        @NotNull
+        @Override
+        public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
+            ExpressionReceiver expressionReceiver = getExpressionReceiver(callTranslator.getResolvedCall());
+            JsExpression thisOrReceiver = callTranslator.getCallParameters().getThisOrReceiverOrNull();
+            assert thisOrReceiver != null;
+            if (expressionReceiver != null) {
+                JetExpression expression = expressionReceiver.getExpression();
+                JetReferenceExpression referenceExpression = null;
+                if (expression instanceof JetReferenceExpression) {
+                    referenceExpression = (JetReferenceExpression) expression;
+                }
+                else if (expression instanceof JetQualifiedExpression) {
+                    JetExpression candidate = ((JetQualifiedExpression) expression).getReceiverExpression();
+                    if (candidate instanceof JetReferenceExpression) {
+                        referenceExpression = (JetReferenceExpression) candidate;
+                    }
+                }
+
+                if (referenceExpression != null) {
+                    DeclarationDescriptor candidate = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(),
+                                                                                                       referenceExpression);
+                    if (candidate instanceof PropertyDescriptor && AnnotationsUtils.isNativeObject(candidate)) {
+                        return asArrayAccess(thisOrReceiver, arguments, context);
+                    }
+                }
+            }
+
+            return new JsInvocation(new JsNameRef(operation(), thisOrReceiver), arguments);
+        }
+    }
+
+    private static class MapSelectImplementationIntrinsic extends CallParametersAwareFunctionIntrinsic {
+        private final boolean isSet;
+
+        private MapSelectImplementationIntrinsic(boolean isSet) {
+            this.isSet = isSet;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @NotNull CallTranslator callTranslator,
+                @NotNull List<JsExpression> arguments,
+                @NotNull TranslationContext context
+        ) {
+            JetType keyType = callTranslator.getResolvedCall().getTypeArguments().values().iterator().next();
+            Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
+            String collectionClassName;
+            if (keyTypeName != null && (NamePredicate.PRIMITIVE_NUMBERS.apply(keyTypeName) || keyTypeName.getName().equals("String"))) {
+                collectionClassName = isSet ? "PrimitiveHashSet" : "PrimitiveHashMap";
+            }
+            else {
+                collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
+            }
+
+            return callTranslator.createConstructorCallExpression(context.namer().kotlin(collectionClassName));
+        }
     }
 }

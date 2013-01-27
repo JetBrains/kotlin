@@ -100,10 +100,10 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
 
     @NotNull
     private TranslationContext createContextWithAliasesForParameters(@NotNull TranslationContext contextForInlining) {
-        Map<DeclarationDescriptor, JsName> aliases = Maps.newHashMap();
+        Map<DeclarationDescriptor, JsExpression> aliases = Maps.newHashMap();
         for (ValueParameterDescriptor parameterDescriptor : resolvedCall.getResultingDescriptor().getValueParameters()) {
             TemporaryVariable aliasForArgument = createAliasForArgument(parameterDescriptor);
-            aliases.put(parameterDescriptor, aliasForArgument.name());
+            aliases.put(parameterDescriptor, aliasForArgument.name().makeRef());
         }
         return contextForInlining.innerContextWithDescriptorsAliased(aliases);
     }
@@ -129,11 +129,10 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     @NotNull
     private TranslationContext contextWithAlias(@NotNull TranslationContext contextWithAliasForThisExpression,
                                                 @NotNull JsExpression aliasExpression, @Nullable DeclarationDescriptor descriptorToAlias) {
-        TranslationContext newContext = contextWithAliasForThisExpression;
         TemporaryVariable aliasForReceiver = context().declareTemporary(aliasExpression);
         assert descriptorToAlias != null;
-        newContext =
-            newContext.innerContextWithThisAliased(descriptorToAlias, aliasForReceiver.name());
+        TranslationContext newContext =
+                contextWithAliasForThisExpression.innerContextWithThisAliased(descriptorToAlias, aliasForReceiver.reference());
         newContext.addStatementToCurrentBlock(aliasForReceiver.assignmentExpression().makeStmt());
         return newContext;
     }

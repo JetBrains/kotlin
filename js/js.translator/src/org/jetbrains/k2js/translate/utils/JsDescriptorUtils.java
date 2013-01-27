@@ -177,18 +177,4 @@ public final class JsDescriptorUtils {
 
         return null;
     }
-
-    @NotNull
-    public static DeclarationDescriptor getDeclarationDescriptorForExtensionCallReceiver(
-            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall
-    ) {
-        ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
-        if (receiverArgument instanceof ExtensionReceiver) {
-            return ((ExtensionReceiver) receiverArgument).getDeclarationDescriptor();
-        }
-        if (receiverArgument instanceof ClassReceiver) {
-            return ((ClassReceiver) receiverArgument).getDeclarationDescriptor();
-        }
-        throw new IllegalStateException("Unexpected receiver of type " + receiverArgument.getClass());
-    }
 }

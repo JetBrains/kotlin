@@ -103,8 +103,6 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "size", "end", "reversed");
 
-        standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
-
         standardClasses.declare().forFQ("java.util.Collections.<no name provided>.max").kotlinFunction("collectionsMax");
     }
 

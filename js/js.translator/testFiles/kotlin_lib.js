@@ -16,40 +16,14 @@
 
 "use strict";
 
-// todo inlined
-String.prototype.startsWith = function (s) {
-  return this.indexOf(s) === 0;
-};
-
-String.prototype.endsWith = function (s) {
-  return this.indexOf(s, this.length - s.length) !== -1;
-};
-
-String.prototype.contains = function (s) {
-  return this.indexOf(s) !== -1;
-};
-
-// todo org.jetbrains.k2js.test.semantics.WebDemoExamples2Test#testBuilder
-var kotlin = {set:function (receiver, key, value) {
-    return receiver.put(key, value);
-}};
-
 (function () {
     Kotlin.equals = function (obj1, obj2) {
         if (obj1 === null || obj1 === undefined) {
-            return obj2 === null;
+            return obj2 === null || obj2 === undefined;
         }
 
-        if (obj1 instanceof Array) {
-            if (!(obj2 instanceof Array) || obj1.length != obj2.length) {
-                return false;
-            }
-            for (var i = 0; i < obj1.length; i++) {
-                if (!Kotlin.equals(obj1[i], obj2[i])) {
-                    return false;
-                }
-            }
-            return true;
+        if (Array.isArray(obj1)) {
+            return Kotlin.arrayEquals(obj1, obj2);
         }
 
         if (typeof obj1 == "object" && obj1.equals !== undefined) {
@@ -58,9 +32,19 @@ var kotlin = {set:function (receiver, key, value) {
 
         return obj1 === obj2;
     };
-
-    Kotlin.array = function (args) {
-        return args === null || args === undefined ? [] : args.slice();
+    Kotlin.stringify = function (o) {
+        if (o === null || o === undefined) {
+            return "null";
+        }
+        else if (Array.isArray(o)) {
+            return Kotlin.arrayToString(o);
+        }
+        else {
+            return o.toString();
+        }
+    };
+    Kotlin.arrayToString = function(a) {
+        return "[" + a.join(", ") + "]";
     };
 
     Kotlin.intUpto = function (from, limit) {
@@ -73,16 +57,13 @@ var kotlin = {set:function (receiver, key, value) {
 
     Kotlin.modules = {};
 
-    Kotlin.Exception = Kotlin.$createClass();
-    Kotlin.RuntimeException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IndexOutOfBounds = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.NullPointerException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.NoSuchElementException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IllegalArgumentException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IllegalStateException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IndexOutOfBoundsException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.UnsupportedOperationException = Kotlin.$createClass(Kotlin.Exception);
-    Kotlin.IOException = Kotlin.$createClass(Kotlin.Exception);
+    Kotlin.RuntimeException = Kotlin.$createClass();
+    Kotlin.NullPointerException = Kotlin.$createClass();
+    Kotlin.NoSuchElementException = Kotlin.$createClass();
+    Kotlin.IllegalArgumentException = Kotlin.$createClass();
+    Kotlin.IllegalStateException = Kotlin.$createClass();
+    Kotlin.UnsupportedOperationException = Kotlin.$createClass();
+    Kotlin.IOException = Kotlin.$createClass();
 
     Kotlin.throwNPE = function () {
         throw Kotlin.$new(Kotlin.NullPointerException)();
@@ -116,58 +97,35 @@ var kotlin = {set:function (receiver, key, value) {
         next: function () {
             return this.array[this.index++];
         },
-        get_hasNext: function () {
-            return this.index < this.size;
-        },
         hasNext: function () {
-            return this.index < this.size;
-        }
-    });
-
-    var ListIterator = Kotlin.$createClass(ArrayIterator, {
-        initialize: function (list) {
-            this.list = list;
-            this.size = list.size();
-            this.index = 0;
-        },
-        next: function () {
-            return this.list.get(this.index++);
-        },
-        get_hasNext: function () {
             return this.index < this.size;
         }
     });
 
     Kotlin.Collection = Kotlin.$createClass();
 
-    Kotlin.AbstractList = Kotlin.$createClass(Kotlin.Collection, {
-        iterator: function () {
-            return Kotlin.$new(ListIterator)(this);
-        },
-        isEmpty: function () {
-            return this.size() === 0;
+    Kotlin.AbstractCollection = Kotlin.$createClass(Kotlin.Collection, {
+        size: function () {
+            return this.$size;
         },
         addAll: function (collection) {
             var it = collection.iterator();
-            var i = this.$size;
+            var i = this.size();
             while (i-- > 0) {
                 this.add(it.next());
             }
         },
-        remove: function (o) {
-            var index = this.indexOf(o);
-            if (index !== -1) {
-                this.removeAt(index);
-            }
+        isEmpty: function () {
+            return this.size() === 0;
         },
-        contains: function (o) {
-            return this.indexOf(o) !== -1;
+        iterator: function () {
+            return Kotlin.$new(ArrayIterator)(this.toArray());
         },
         equals: function (o) {
-            if (this.$size === o.$size) {
+            if (this.size() === o.size()) {
                 var iterator1 = this.iterator();
                 var iterator2 = o.iterator();
-                var i = this.$size;
+                var i = this.size();
                 while (i-- > 0) {
                     if (!Kotlin.equals(iterator1.next(), iterator2.next())) {
                         return false;
@@ -198,71 +156,6 @@ var kotlin = {set:function (receiver, key, value) {
         }
     });
 
-    Kotlin.ArrayList = Kotlin.$createClass(Kotlin.AbstractList, {
-        initialize: function () {
-            this.array = [];
-            this.$size = 0;
-        },
-        get: function (index) {
-            if (index < 0 || index >= this.$size) {
-                throw Kotlin.IndexOutOfBounds;
-            }
-            return this.array[index];
-        },
-        set: function (index, value) {
-            if (index < 0 || index >= this.$size) {
-                throw Kotlin.IndexOutOfBounds;
-            }
-            this.array[index] = value;
-        },
-        toArray: function () {
-            return this.array.slice(0, this.$size);
-        },
-        size: function () {
-            return this.$size;
-        },
-        iterator: function () {
-            return Kotlin.arrayIterator(this.array);
-        },
-        add: function (element) {
-            this.array[this.$size++] = element;
-        },
-        addAt: function (index, element) {
-            this.array.splice(index, 0, element);
-            this.$size++;
-        },
-        addAll: function (collection) {
-            var it = collection.iterator();
-            for (var i = this.$size, n = collection.size(); n-- > 0;) {
-                this.array[i++] = it.next();
-            }
-
-            this.$size += collection.size();
-        },
-        removeAt: function (index) {
-            this.array.splice(index, 1);
-            this.$size--;
-        },
-        clear: function () {
-            this.array.length = 0;
-            this.$size = 0;
-        },
-        indexOf: function (o) {
-            for (var i = 0, n = this.$size; i < n; ++i) {
-                if (Kotlin.equals(this.array[i], o)) {
-                    return i;
-                }
-            }
-            return -1;
-        },
-        toString: function () {
-            return "[" + this.array.join(", ") + "]";
-        },
-        toJSON: function () {
-            return this.array;
-        }
-    });
-
     Kotlin.Runnable = Kotlin.$createClass({
         initialize: function () {
         },
@@ -275,21 +168,11 @@ var kotlin = {set:function (receiver, key, value) {
         compareTo: throwAbstractFunctionInvocationError("Comparable#compareTo")
     });
 
-    Kotlin.Appendable = Kotlin.$createClass({
-        initialize: function () {
-        },
-        append: throwAbstractFunctionInvocationError("Appendable#append")
-    });
-
     Kotlin.Closeable = Kotlin.$createClass({
         initialize: function () {
         },
         close: throwAbstractFunctionInvocationError("Closeable#close")
     });
-
-    Kotlin.parseInt = function (str) {
-        return parseInt(str, 10);
-    };
 
     Kotlin.safeParseInt = function(str) {
         var r = parseInt(str, 10);
@@ -299,6 +182,130 @@ var kotlin = {set:function (receiver, key, value) {
     Kotlin.safeParseDouble = function(str) {
         var r = parseFloat(str);
         return isNaN(r) ? null : r;
+    };
+
+    function rangeCheck(index, n) {
+        if (index < 0 || index >= n) {
+            throw new RangeError("Index: " + index + ", Size: " + n);
+        }
+    }
+
+    Kotlin.collectionAdd = function (c, o) {
+        return Array.isArray(c) ? c.push(o) : c.add(o);
+    };
+    Kotlin.collectionAddAll = function (c, collection) {
+        if (Array.isArray(c)) {
+            return Kotlin.arrayAddAll(c, collection);
+        }
+
+        return c.addAll(collection);
+    };
+    Kotlin.collectionRemove = function (c, o) {
+        return Array.isArray(c) ? Kotlin.arrayRemove(c, o) : c.remove(o);
+    };
+    Kotlin.collectionClear = function (c) {
+        if (Array.isArray(c)) {
+            c.length = 0;
+        }
+        else {
+            c.clear();
+        }
+    };
+    Kotlin.collectionIterator = function (c) {
+        return Array.isArray(c) ? Kotlin.arrayIterator(c) : c.iterator();
+    };
+    Kotlin.collectionSize = function (c) {
+        return Array.isArray(c) ? c.length : c.size();
+    };
+    Kotlin.collectionIsEmpty = function (c) {
+        return Array.isArray(c) ? c.length === 0 : c.isEmpty();
+    };
+    Kotlin.collectionContains = function (c, o) {
+        return Array.isArray(c) ? Kotlin.arrayIndexOf(c, o) !== -1 : c.contains(o);
+    };
+
+    Kotlin.arrayIndexOf = function (a, o) {
+        for (var i = 0, n = a.length; i < n; i++) {
+            if (Kotlin.equals(a[i], o)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    Kotlin.arrayLastIndexOf = function (a, o) {
+        for (var i = a.length - 1; i > -1; i--) {
+            if (Kotlin.equals(a[i], o)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    Kotlin.arrayLastIndexOf = function (a, o) {
+        for (var i = a.length - 1; i > -1; i--) {
+            if (Kotlin.equals(a[i], o)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    Kotlin.arrayAddAll = function (a, collection) {
+        var i, n;
+        if (Array.isArray(collection)) {
+            var j = 0;
+            for (i = a.length, n = collection.length; n-- > 0;) {
+                a[i++] = collection[j++];
+            }
+            return j > 0;
+        }
+
+        var it = collection.iterator();
+        // http://jsperf.com/arrays-push-vs-index
+        for (i = a.length, n = collection.size(); n-- > 0;) {
+            a[i++] = it.next();
+        }
+        return collection.size() != 0
+    };
+    Kotlin.arrayAddAt = function (a, index, o) {
+        if (index > a.length || index < 0) {
+            throw new RangeError("Index: " + index + ", Size: " + a.length);
+        }
+        return a.splice(index, 0, o);
+    };
+    Kotlin.arrayGet = function (a, index) {
+        rangeCheck(index, a.length);
+        return a[index];
+    };
+    Kotlin.arraySet = function (a, index, o) {
+        rangeCheck(index, a.length);
+        a[index] = o;
+        return true;
+    };
+    Kotlin.arrayRemoveAt = function (a, index) {
+        rangeCheck(index, a.length);
+        return a.splice(index, 1)[0];
+    };
+    Kotlin.arrayRemove = function (a, o) {
+        var index = Kotlin.arrayIndexOf(a, o);
+        if (index !== -1) {
+            a.splice(index, 1);
+            return true;
+        }
+        return false;
+    };
+    Kotlin.arrayEquals = function (a, b) {
+        if (a === b) {
+            return true;
+        }
+        if (!Array.isArray(b) || a.length !== b.length) {
+            return false;
+        }
+
+        for (var i = 0, n = a.length; i < n; i++) {
+            if (!Kotlin.equals(a[i], b[i])) {
+                return false;
+            }
+        }
+        return true;
     };
 
     Kotlin.System = function () {
@@ -379,7 +386,7 @@ var kotlin = {set:function (receiver, key, value) {
                 return this.get_i() - 1;
             }
         },
-        get_hasNext: function () {
+        hasNext: function () {
             return this.get_count() > 0;
         }
     });
@@ -431,14 +438,15 @@ var kotlin = {set:function (receiver, key, value) {
         return Kotlin.$new(ComparatorImpl)(f);
     };
 
-    Kotlin.collectionsMax = function (col, comp) {
-        var it = col.iterator();
-        if (col.isEmpty()) {
+    Kotlin.collectionsMax = function (c, comp) {
+        if (Kotlin.collectionIsEmpty(c)) {
             //TODO: which exception?
-            throw Kotlin.Exception();
+            throw new Error();
         }
+
+        var it = Kotlin.collectionIterator(c);
         var max = it.next();
-        while (it.get_hasNext()) {
+        while (it.hasNext()) {
             var el = it.next();
             if (comp.compare(max, el) < 0) {
                 max = el;
@@ -447,31 +455,12 @@ var kotlin = {set:function (receiver, key, value) {
         return max;
     };
 
-    Kotlin.StringBuilder = Kotlin.$createClass(
-            {
-                initialize:function () {
-                    this.string = "";
-                },
-                append:function (obj) {
-                    this.string = this.string + obj.toString();
-                },
-                toString:function () {
-                    return this.string;
-                }
-            }
-    );
+    function nullFun(i) {
+        return null;
+    }
 
-    Kotlin.splitString = function (str, regex) {
-        return str.split(regex);
-    };
-
-    Kotlin.nullArray = function (size) {
-        var res = [];
-        var i = size;
-        while (i > 0) {
-            res[--i] = null;
-        }
-        return res;
+    Kotlin.arrayOfNulls = function (size) {
+        return Kotlin.arrayFromFun(size, nullFun);
     };
 
     Kotlin.arrayFromFun = function (size, initFun) {
@@ -482,16 +471,12 @@ var kotlin = {set:function (receiver, key, value) {
         return result;
     };
 
-    Kotlin.arrayIndices = function (arr) {
-        return Kotlin.$new(Kotlin.NumberRange)(0, arr.length);
+    Kotlin.arrayIndices = function (array) {
+        return Kotlin.$new(Kotlin.NumberRange)(0, array.length);
     };
 
     Kotlin.arrayIterator = function (array) {
         return Kotlin.$new(ArrayIterator)(array);
-    };
-
-    Kotlin.toString = function (obj) {
-        return obj.toString();
     };
 
     Kotlin.jsonFromTuples = function (pairArr) {
@@ -504,16 +489,6 @@ var kotlin = {set:function (receiver, key, value) {
         return res;
     };
 
-    //TODO: use intrinsic
-    Kotlin.jsonSet = function (obj, attrName, value) {
-        obj[attrName] = value;
-    };
-
-    Kotlin.jsonGet = function (obj, attrName) {
-        return obj[attrName];
-    };
-
-
     Kotlin.jsonAddProperties = function (obj1, obj2) {
         for (var p in obj2) {
             if (obj2.hasOwnProperty(p)) {
@@ -522,57 +497,9 @@ var kotlin = {set:function (receiver, key, value) {
         }
         return obj1;
     };
-
-    //TODO: use intrinsic
-    Kotlin.sure = function (obj) {
-        return obj;
-    };
-
-    // native concat doesn't work for arguments
-    Kotlin.concat = function (a, b) {
-        var r = new Array(a.length + b.length);
-        var i = 0;
-        var n = a.length;
-        for (; i < n; i++) {
-            r[i] = a[i];
-        }
-        n = b.length;
-        for (var j = 0; j < n;) {
-            r[i++] = b[j++];
-        }
-        return r;
-    }
 })();
 
 Kotlin.assignOwner = function(f, o) {
   f.o = o;
   return f;
-};
-
-// we cannot use Function.bind, because if we bind with null self, but call with not null — fun must receive passed not null self
-// test case: WebDemoExamples2Test.testBuilder
-Kotlin.b0 = function (f, self, value) {
-    return function () {
-        return f.call(self !== null ? self : this, value);
-    }
-};
-Kotlin.b1 = function (f, self, values) {
-    return function () {
-        return f.apply(self !== null ? self : this, values);
-    }
-};
-Kotlin.b2 = function (f, self, values) {
-    return function () {
-        return f.apply(self !== null ? self : this, Kotlin.concat(values, arguments));
-    }
-};
-Kotlin.b3 = function (f, self) {
-    return function () {
-        return f.call(self)
-    }
-};
-Kotlin.b4 = function (f, self) {
-    return function () {
-        return f.apply(self, Kotlin.argumentsToArrayLike(arguments));
-    }
 };

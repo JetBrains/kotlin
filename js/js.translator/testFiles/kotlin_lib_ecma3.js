@@ -12,6 +12,36 @@ var Kotlin = {};
     var emptyFunction = function () {
     };
 
+    if (!Array.isArray) {
+        Array.isArray = function (vArg) {
+            return Object.prototype.toString.call(vArg) === "[object Array]";
+        };
+    }
+    if (!Function.prototype.bind) {
+        Function.prototype.bind = function (oThis) {
+            if (typeof this !== "function") {
+                // closest thing possible to the ECMAScript 5 internal IsCallable function
+                throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+            }
+
+            var aArgs = Array.prototype.slice.call(arguments, 1),
+                fToBind = this,
+                fNOP = function () {
+                },
+                fBound = function () {
+                    return fToBind.apply(this instanceof fNOP && oThis
+                                             ? this
+                                             : oThis,
+                                         aArgs.concat(Array.prototype.slice.call(arguments)));
+                };
+
+            fNOP.prototype = this.prototype;
+            fBound.prototype = new fNOP();
+
+            return fBound;
+        };
+    }
+
     Kotlin.keys = Object.keys || function (o) {
         var result = [];
         var i = 0;
@@ -19,15 +49,6 @@ var Kotlin = {};
             if (o.hasOwnProperty(p)) {
                 result[i++] = p;
             }
-        }
-        return result;
-    };
-
-    Kotlin.argumentsToArrayLike = function (args) {
-        var n = args.length;
-        var result = new Array(n);
-        while (n--) {
-            result[n] = args[n];
         }
         return result;
     };
@@ -55,15 +76,13 @@ var Kotlin = {};
         return true;
     };
 
-    Kotlin.createTrait = (function () {
-        return function () {
-            var result = arguments[0];
-            for (var i = 1, n = arguments.length; i < n; i++) {
-                copyProperties(result, arguments[i]);
-            }
-            return result;
+    Kotlin.createTrait = function () {
+        var result = arguments[0];
+        for (var i = 1, n = arguments.length; i < n; i++) {
+            copyProperties(result, arguments[i]);
         }
-    })();
+        return result;
+    };
 
     Kotlin.definePackage = function (members) {
         return members === null ? {} : members;
@@ -73,10 +92,11 @@ var Kotlin = {};
         function subclass() {
         }
 
-        function create() {
-            var parent = null, properties = Kotlin.argumentsToArrayLike(arguments);
-            if (typeof (properties[0]) == "function") {
-                parent = properties.shift();
+        function create(parent, properties, staticProperties) {
+            var traits = null;
+            if (parent instanceof Array) {
+                traits = parent;
+                parent = parent[0];
             }
 
             function klass() {
@@ -87,13 +107,19 @@ var Kotlin = {};
             }
 
             klass.addMethods = addMethods;
-            klass.superclass = parent;
+            klass.superclass = parent || null;
             klass.subclasses = [];
 
             if (parent) {
-                subclass.prototype = parent.prototype;
-                klass.prototype = new subclass();
-                parent.subclasses.push(klass);
+                if (typeof (parent) == "function") {
+                    subclass.prototype = parent.prototype;
+                    klass.prototype = new subclass();
+                    parent.subclasses.push(klass);
+                }
+                else {
+                    // trait
+                    klass.addMethods(parent);
+                }
             }
 
             klass.addMethods({get_class: function () {
@@ -107,8 +133,13 @@ var Kotlin = {};
                 }});
             }
 
-            for (var i = 0, length = properties.length; i < length; i++) {
-                klass.addMethods(properties[i]);
+            if (traits !== null) {
+                for (var i = 1, n = traits.length; i < n; i++) {
+                    klass.addMethods(traits[i]);
+                }
+            }
+            if (properties !== null && properties !== undefined) {
+                klass.addMethods(properties);
             }
 
             if (!klass.prototype.initialize) {
@@ -116,6 +147,9 @@ var Kotlin = {};
             }
 
             klass.prototype.constructor = klass;
+            if (staticProperties !== null && staticProperties !== undefined) {
+                copyProperties(klass, staticProperties);
+            }
             return klass;
         }
 
@@ -127,7 +161,13 @@ var Kotlin = {};
         return create;
     })();
 
-    Kotlin.$createClass = Kotlin.createClass;
+    Kotlin.$createClass = function (parent, properties) {
+        if (parent !== null && typeof (parent) != "function") {
+            properties = parent;
+            parent = null;
+        }
+        return Kotlin.createClass(parent, properties, null);
+    };
 
     Kotlin.$new = function (f) {
         var o = {'__proto__': f.prototype};

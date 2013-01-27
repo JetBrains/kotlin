@@ -98,17 +98,13 @@ public final class BindingUtils {
     }
 
     public static boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        Boolean isStatement = context.get(BindingContext.STATEMENT, expression);
-        assert isStatement != null : message(expression, "Invalid behaviour of get(BindingContext.STATEMENT) at");
-        return isStatement;
+        return BindingContextUtils.getNotNull(context, BindingContext.STATEMENT, expression);
     }
 
     @NotNull
     public static JetType getTypeByReference(@NotNull BindingContext context,
             @NotNull JetTypeReference typeReference) {
-        JetType result = context.get(BindingContext.TYPE, typeReference);
-        assert result != null : message(typeReference, "TypeReference should reference a type");
-        return result;
+        return BindingContextUtils.getNotNull(context, BindingContext.TYPE, typeReference);
     }
 
     @NotNull
@@ -126,10 +122,7 @@ public final class BindingUtils {
     @NotNull
     public static DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
             @NotNull JetReferenceExpression reference) {
-        DeclarationDescriptor referencedDescriptor = getNullableDescriptorForReferenceExpression(context, reference);
-        assert referencedDescriptor != null
-                : message(reference, "Reference expression must reference a descriptor for reference " + reference.getText());
-        return referencedDescriptor;
+        return BindingContextUtils.getNotNull(context, BindingContext.REFERENCE_TARGET, reference);
     }
 
     @Nullable
@@ -165,11 +158,8 @@ public final class BindingUtils {
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
-        Boolean result = context.get(BindingContext.VARIABLE_REASSIGNMENT, expression);
-        assert result != null : message(expression);
-        return result;
+        return BindingContextUtils.getNotNull(context, BindingContext.VARIABLE_REASSIGNMENT, expression);
     }
-
 
     @Nullable
     public static FunctionDescriptor getFunctionDescriptorForOperationExpression(@NotNull BindingContext context,
@@ -187,10 +177,7 @@ public final class BindingUtils {
     @NotNull
     public static DeclarationDescriptor getDescriptorForElement(@NotNull BindingContext context,
             @NotNull PsiElement element) {
-        DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-
-        assert descriptor != null : message(element, element + " doesn't have a descriptor");
-        return descriptor;
+        return BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, element);
     }
 
     @Nullable
@@ -227,55 +214,38 @@ public final class BindingUtils {
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getIteratorFunction(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
-        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, rangeExpression);
-        assert resolvedCall != null :
-                message(rangeExpression, "Range expression must have a descriptor for iterator function");
-        return resolvedCall;
+        return BindingContextUtils.getNotNull(context, BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, rangeExpression);
     }
 
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getNextFunction(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
-        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, rangeExpression);
-        assert resolvedCall != null : ErrorReportingUtils
-                .message(rangeExpression, "Range expression must have a descriptor for next function");
-        return resolvedCall;
+        return BindingContextUtils.getNotNull(context, BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, rangeExpression);
     }
 
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getHasNextCallable(@NotNull BindingContext context,
             @NotNull JetExpression rangeExpression) {
-        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, rangeExpression);
-        assert resolvedCall != null
-                : message(rangeExpression, "Range expression must have a descriptor for hasNext function or property");
-        return resolvedCall;
+        return BindingContextUtils.getNotNull(context, BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, rangeExpression);
     }
 
     @NotNull
     public static PropertyDescriptor getPropertyDescriptorForObjectDeclaration(@NotNull BindingContext context,
             @NotNull JetObjectDeclarationName name) {
-        PropertyDescriptor propertyDescriptor = context.get(BindingContext.OBJECT_DECLARATION, name);
-        assert propertyDescriptor != null : message(name);
-        return propertyDescriptor;
+        return BindingContextUtils.getNotNull(context, BindingContext.OBJECT_DECLARATION, name);
     }
 
     @NotNull
     public static JetType getTypeForExpression(@NotNull BindingContext context,
             @NotNull JetExpression expression) {
-        JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
-        assert type != null : message(expression);
-        return type;
+        return BindingContextUtils.getNotNull(context, BindingContext.EXPRESSION_TYPE, expression);
     }
 
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getResolvedCallForArrayAccess(@NotNull BindingContext context,
             @NotNull JetArrayAccessExpression arrayAccessExpression,
             boolean isGet) {
-        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(isGet
-                                                                    ? INDEXED_LVALUE_GET
-                                                                    : INDEXED_LVALUE_SET, arrayAccessExpression);
-        assert resolvedCall != null : message(arrayAccessExpression);
-        return resolvedCall;
+        return BindingContextUtils.getNotNull(context, isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression);
     }
 
     public static ConstructorDescriptor getConstructor(@NotNull BindingContext bindingContext,

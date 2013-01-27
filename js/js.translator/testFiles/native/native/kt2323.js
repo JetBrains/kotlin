@@ -13,13 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-var foo = Kotlin.definePackage({initialize: function () {
-}, box: function () {
-    return !false;
-}
-                                 });
-
-function test() {
-    return foo.box()
-}
+var classes = {"answer": 42}, classesMutable = {};

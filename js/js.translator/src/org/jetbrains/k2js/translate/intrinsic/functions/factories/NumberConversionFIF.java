@@ -24,7 +24,6 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
@@ -50,11 +49,10 @@ public final class NumberConversionFIF extends CompositeFIF {
     }
 
     @NotNull
-    private static final NamePredicate FLOATING_POINT_CONVERSIONS = new NamePredicate(OperatorConventions.FLOAT, OperatorConventions.DOUBLE);
+    private static final NamePredicate FLOATING_POINT_CONVERSIONS = new NamePredicate(FLOAT, DOUBLE);
 
     @NotNull
-    private static final NamePredicate INTEGER_CONVERSIONS = new NamePredicate(OperatorConventions.INT, OperatorConventions.SHORT,
-                                                                           OperatorConventions.BYTE);
+    private static final NamePredicate INTEGER_CONVERSIONS = new NamePredicate(INT, SHORT, BYTE);
 
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER = new FunctionIntrinsic() {

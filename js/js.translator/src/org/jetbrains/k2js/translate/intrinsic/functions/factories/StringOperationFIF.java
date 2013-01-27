@@ -16,49 +16,66 @@
 
 package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInPropertyIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.basic.BuiltInFunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
 public final class StringOperationFIF extends CompositeFIF {
-
-    @NotNull
-    private static final DescriptorPredicate GET_PATTERN = pattern("String.get");
-
-    @NotNull
-    private static final FunctionIntrinsic GET_INTRINSIC = new FunctionIntrinsic() {
-        @NotNull
-        @Override
-        public JsExpression apply(@Nullable JsExpression receiver,
-                @NotNull List<JsExpression> arguments,
-                @NotNull TranslationContext context) {
-            assert receiver != null;
-            assert arguments.size() == 1 : "String#get expression must have 1 argument.";
-            //TODO: provide better way
-            JsNameRef charAtReference = AstUtil.newQualifiedNameRef("charAt");
-            setQualifier(charAtReference, receiver);
-            return new JsInvocation(charAtReference, arguments);
-        }
-    };
-
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new StringOperationFIF();
 
     private StringOperationFIF() {
-        add(GET_PATTERN, GET_INTRINSIC);
-        add(pattern("String.<get-length>"), new BuiltInPropertyIntrinsic("length"));
-        add(pattern("CharSequence.<get-length>"), new BuiltInPropertyIntrinsic("length"));
+        add(pattern("jet", "String", "get"), new BuiltInFunctionIntrinsic("charAt"));
+
+        add(pattern("jet", "String", "<get-length>"), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern("js", "<get-size>").receiverExists(), LENGTH_PROPERTY_INTRINSIC);
+        add(pattern("js", "length").receiverExists(), LENGTH_PROPERTY_INTRINSIC);
+
+        add(pattern("jet", "String", "toString"), RETURN_RECEIVER_INTRINSIC);
+
+        add(pattern("js", "startsWith").receiverExists(), new ContainsFunctionIntrinsic(false));
+        add(pattern("js", "contains").receiverExists(), new ContainsFunctionIntrinsic(true));
+        add(pattern("js", "endsWith").receiverExists(), new FunctionIntrinsic() {
+            @NotNull
+            @Override
+            public JsExpression apply(
+                    @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+            ) {
+                assert receiver != null;
+                Pair<JsExpression, JsExpression> a = TranslationUtils.wrapAsTemporaryIfNeed(receiver, context);
+                Pair<JsExpression, JsExpression> b = TranslationUtils.wrapAsTemporaryIfNeed(arguments.get(0), context);
+                return JsAstUtils.inequality(new JsInvocation(new JsNameRef("indexOf", a.first), Arrays.asList(b.first, JsAstUtils.subtract(new JsNameRef("length", a.second), new JsNameRef("length", b.second)))), context.program().getNumberLiteral(-1));
+            }
+        });
+        add(pattern("js", "isEmpty").receiverExists(), IS_EMPTY_INTRINSIC);
+    }
+
+    private static class ContainsFunctionIntrinsic extends FunctionIntrinsic {
+        private final boolean contains;
+
+        private ContainsFunctionIntrinsic(boolean contains) {
+            this.contains = contains;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            return new JsBinaryOperation(contains ? JsBinaryOperator.REF_NEQ : JsBinaryOperator.REF_EQ,
+                                         new JsInvocation(new JsNameRef("indexOf", receiver), arguments),
+                                         context.program().getNumberLiteral(contains ? -1 : 0));
+        }
     }
 }

@@ -37,6 +37,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
+import java.util.Collection;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
@@ -202,6 +203,22 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     JsScope scope = getEnclosingScope(descriptor);
+                    DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+                    if (descriptor instanceof FunctionDescriptor && declaration instanceof ClassDescriptor) {
+                        ClassDescriptor classDescriptor = (ClassDescriptor) declaration;
+                        Collection<FunctionDescriptor> functions =
+                                classDescriptor.getDefaultType().getMemberScope().getFunctions(descriptor.getName());
+                        String name = descriptor.getName().getName();
+                        int counter = -1;
+                        for (FunctionDescriptor function : functions) {
+                            if (function == descriptor) {
+                                break;
+                            }
+                            counter++;
+                        }
+
+                        return scope.declareName(counter == -1 ? name : name + '_' + counter);
+                    }
                     return scope.declareFreshName(descriptor.getName().getName());
                 }
             };
@@ -440,10 +457,6 @@ public final class StaticContext {
                         }
                         else if (moduleName != null) {
                             qualifier.setQualifier(new JsArrayAccess(namer.kotlin("modules"), program.getStringLiteral(moduleName)));
-                        }
-                        else if (result == qualifier && result.getIdent().equals("kotlin")) {
-                            // todo WebDemoExamples2Test#testBuilder, package "kotlin" from kotlin/js/js.libraries/src/stdlib/JUMaps.kt must be inlined
-                          //  return qualifier;
                         }
                     }
 

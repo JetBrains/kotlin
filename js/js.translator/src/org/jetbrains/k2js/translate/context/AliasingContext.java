@@ -16,48 +16,21 @@
 
 package org.jetbrains.k2js.translate.context;
 
-import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsLiteral;
 import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 
+import java.util.Collections;
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForReceiver;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
-
 public class AliasingContext {
-    private static final ThisAliasProvider EMPTY_THIS_ALIAS_PROVIDER = new ThisAliasProvider() {
-        @Nullable
+    private static final AliasingContext ROOT = new AliasingContext(null) {
         @Override
-        public JsNameRef get(@NotNull DeclarationDescriptor descriptor) {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public JsExpression get(@NotNull ResolvedCall<?> call) {
-            ReceiverValue callThisObject = call.getThisObject();
-            return callThisObject.exists() && (callThisObject instanceof ClassReceiver || callThisObject instanceof ExtensionReceiver)
-                   ? JsLiteral.THIS
-                   : null;
-        }
-    };
-
-    private static final AliasingContext ROOT = new AliasingContext(null, EMPTY_THIS_ALIAS_PROVIDER) {
-        @Override
-        public JsName getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor, boolean fromChild) {
             return null;
         }
 
@@ -65,117 +38,100 @@ public class AliasingContext {
         public JsName getAliasForExpression(@NotNull JetExpression element) {
             return null;
         }
+
+        @Override
+        public void registerAlias(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
+            throw new IllegalStateException();
+        }
     };
 
     public static AliasingContext getCleanContext() {
-        return new AliasingContext(ROOT, ROOT.thisAliasProvider);
+        return new AliasingContext(ROOT);
     }
 
-    @NotNull
-    private final Map<DeclarationDescriptor, JsName> aliasesForDescriptors = Maps.newHashMap();
+    @Nullable
+    private Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors;
 
-    @NotNull
-    final ThisAliasProvider thisAliasProvider;
-    @NotNull
-    private final Map<JetExpression, JsName> aliasesForExpressions = Maps.newHashMap();
+    @Nullable
+    private final Map<JetExpression, JsName> aliasesForExpressions;
 
     @Nullable
     private final AliasingContext parent;
 
-    private AliasingContext(@Nullable AliasingContext parent, @NotNull ThisAliasProvider thisAliasProvider) {
+    AliasingContext(@Nullable AliasingContext parent) {
+        this(parent, null, null);
+    }
+
+    private AliasingContext(
+            @Nullable AliasingContext parent,
+            @Nullable Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors,
+            @Nullable Map<JetExpression, JsName> aliasesForExpressions
+    ) {
         this.parent = parent;
-        this.thisAliasProvider = thisAliasProvider;
-    }
-
-    public interface ThisAliasProvider {
-        @Nullable
-        JsNameRef get(@NotNull DeclarationDescriptor descriptor);
-        @Nullable
-        JsExpression get(@NotNull ResolvedCall<?> call);
-    }
-
-    public abstract static class AbstractThisAliasProvider implements ThisAliasProvider {
-        @NotNull
-        protected static DeclarationDescriptor normalize(@NotNull DeclarationDescriptor descriptor) {
-            if (descriptor instanceof ClassOrNamespaceDescriptor) {
-                return descriptor;
-            }
-            else if (descriptor instanceof CallableDescriptor) {
-                DeclarationDescriptor receiverDescriptor = getExpectedReceiverDescriptor((CallableDescriptor) descriptor);
-                assert receiverDescriptor != null;
-                return receiverDescriptor;
-            }
-
-            return descriptor;
-        }
-
-        @Nullable
-        @Override
-        public JsExpression get(@NotNull ResolvedCall<?> call) {
-            ReceiverValue thisObject = call.getThisObject();
-            if (!thisObject.exists()) {
-                return null;
-            }
-
-            if (thisObject instanceof ExtensionReceiver || thisObject instanceof ClassReceiver) {
-                JsNameRef ref = get(((ThisReceiver) thisObject).getDeclarationDescriptor());
-                if (ref != null) {
-                    return ref;
-                }
-            }
-
-            JsNameRef ref = get(getDeclarationDescriptorForReceiver(thisObject));
-            return ref == null ? JsLiteral.THIS : ref;
-        }
+        this.aliasesForDescriptors = aliasesForDescriptors;
+        this.aliasesForExpressions = aliasesForExpressions;
     }
 
     @NotNull
-    public AliasingContext inner(@NotNull ThisAliasProvider thisAliasProvider) {
-        return new AliasingContext(this, thisAliasProvider);
+    public AliasingContext inner(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
+        return new AliasingContext(this, Collections.singletonMap(descriptor, alias), null);
     }
 
     @NotNull
-    public AliasingContext inner(@NotNull final DeclarationDescriptor correspondingDescriptor, @NotNull final JsName alias) {
-        return inner(new AbstractThisAliasProvider() {
+    public AliasingContext notShareableThisAliased(@NotNull final DeclarationDescriptor thisDescriptor, @NotNull final JsExpression alias) {
+        return new AliasingContext(this) {
             @Nullable
             @Override
-            public JsNameRef get(@NotNull DeclarationDescriptor descriptor) {
-                return correspondingDescriptor == normalize(descriptor) ? alias.makeRef() : null;
+            JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor, boolean fromChild) {
+                if (!fromChild && thisDescriptor == descriptor) {
+                    return alias;
+                }
+                return super.getAliasForDescriptor(descriptor, fromChild);
             }
-        });
+        };
     }
 
     @NotNull
-    public AliasingContext withAliasesForExpressions(@NotNull Map<JetExpression, JsName> aliasesForExpressions) {
-        AliasingContext newContext = new AliasingContext(this, thisAliasProvider);
-        newContext.aliasesForExpressions.putAll(aliasesForExpressions);
-        return newContext;
+    public AliasingContext withExpressionsAliased(@NotNull Map<JetExpression, JsName> aliasesForExpressions) {
+        return new AliasingContext(this, null, aliasesForExpressions);
     }
 
     @NotNull
-    public AliasingContext withDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsName> aliases) {
-        AliasingContext newContext = new AliasingContext(this, thisAliasProvider);
-        newContext.aliasesForDescriptors.putAll(aliases);
-        return newContext;
+    public AliasingContext withDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsExpression> aliases) {
+        return new AliasingContext(this, aliases, null);
     }
 
     @Nullable
-    public JsName getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        JsName alias = aliasesForDescriptors.get(descriptor.getOriginal());
-        if (alias != null) {
-            return alias;
-        }
-        assert parent != null;
-        return parent.getAliasForDescriptor(descriptor);
+    JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor, boolean fromChild) {
+        JsExpression alias = aliasesForDescriptors == null ? null : aliasesForDescriptors.get(descriptor.getOriginal());
+        return alias != null || parent == null ? alias : parent.getAliasForDescriptor(descriptor, true);
     }
 
     @Nullable
     public JsName getAliasForExpression(@NotNull JetExpression element) {
-        JsName alias = aliasesForExpressions.get(element);
-        if (alias != null) {
-            return alias;
+        JsName alias = aliasesForExpressions == null ? null : aliasesForExpressions.get(element);
+        return alias != null || parent == null ? alias : parent.getAliasForExpression(element);
+    }
+
+    /**
+     * Usages:
+     * 1) Local variable captured in closure. If captured in closure, any modification in closure should affect captured variable.
+     * So, "var count = n" wrapped as "var count = {v: n}". descriptor wil be property descriptor, alias will be JsObjectLiteral
+     *
+     * 2) Local named function.
+     */
+    public void registerAlias(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
+        if (aliasesForDescriptors == null) {
+            aliasesForDescriptors = Collections.singletonMap(descriptor, alias);
         }
-        assert parent != null;
-        return parent.getAliasForExpression(element);
+        else {
+            if (aliasesForDescriptors.size() == 1) {
+                Map<DeclarationDescriptor, JsExpression> singletonMap = aliasesForDescriptors;
+                aliasesForDescriptors = new THashMap<DeclarationDescriptor, JsExpression>();
+                aliasesForDescriptors.put(singletonMap.keySet().iterator().next(), singletonMap.values().iterator().next());
+            }
+            JsExpression prev = aliasesForDescriptors.put(descriptor, alias);
+            assert prev == null;
+        }
     }
 }

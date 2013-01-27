@@ -5,11 +5,6 @@ var Kotlin = Object.create(null);
 (function () {
     "use strict";
 
-    // ecma5 is still sucks — concat doesn't accept arguments, but apply does, so, we just return arguments
-    Kotlin.argumentsToArrayLike = function (args) {
-      return args;
-    };
-
     Kotlin.keys = Object.keys;
 
     Kotlin.isType = function (object, type) {
@@ -66,18 +61,18 @@ var Kotlin = Object.create(null);
         return proto;
     }
 
-    Kotlin.createTrait = function (bases, properties) {
-        return createClass(bases, null, properties, false);
+    Kotlin.createTrait = function (bases, properties, staticProperties) {
+        return createClass(bases, null, properties, staticProperties, false);
     };
 
-    Kotlin.createClass = function (bases, initializer, properties) {
+    Kotlin.createClass = function (bases, initializer, properties, staticProperties) {
         // proto must be created for class even if it is not needed (requires for is operator)
-        return createClass(bases, initializer === null ? function () {} : initializer, properties, true);
+        return createClass(bases, initializer === null ? function () {} : initializer, properties, staticProperties, true);
     };
 
     function computeProto2(bases, properties) {
         if (bases === null) {
-            return null;
+            return Object.prototype;
         }
         return Array.isArray(bases) ? computeProto(bases, properties) : bases.proto;
     }
@@ -94,7 +89,7 @@ var Kotlin = Object.create(null);
         return o;
     };
 
-    function createClass(bases, initializer, properties, isClass) {
+    function createClass(bases, initializer, properties, staticProperties, isClass) {
         var proto;
         var baseInitializer;
         if (bases === null) {
@@ -123,6 +118,10 @@ var Kotlin = Object.create(null);
 
             Object.defineProperty(initializer, "baseInitializer", {value: baseInitializer});
             Object.freeze(initializer);
+        }
+
+        if (staticProperties !== null && staticProperties !== undefined) {
+            Object.defineProperties(constructor, staticProperties);
         }
 
         Object.freeze(constructor);
@@ -175,12 +174,9 @@ var Kotlin = Object.create(null);
                     initializer = value;
                 }
                 else if (name.indexOf("get_") === 0) {
-                    // our std lib contains collision: hasNext property vs hasNext as function, we prefer function (actually, it does work)
-                    var getterName = name.substring(4);
-                    if (!descriptors.hasOwnProperty(getterName)) {
-                        descriptors[getterName] = {get: value};
-                        descriptors[name] = {value: value};
-                    }
+                    descriptors[name.substring(4)] = {get: value};
+                    // std lib code can refers to
+                    descriptors[name] = {value: value};
                 }
                 else if (name.indexOf("set_") === 0) {
                     descriptors[name.substring(4)] = {set: value};

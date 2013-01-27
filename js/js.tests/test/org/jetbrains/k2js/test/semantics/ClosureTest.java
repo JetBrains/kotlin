@@ -35,4 +35,13 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testClosureReferencingMember() throws Exception {
         fooBoxTest();
     }
+
+    // also test ObjectAsConstructorParameter
+    public void testLocalParameterInLocalNamedFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testWrappedVariableInExtensionFun() throws Exception {
+        fooBoxTest();
+    }
 }

@@ -276,4 +276,14 @@ public final class JsAstUtils {
         to.add(new JsInvocation(EMPTY_REF, new JsInvocation(packageBlockFunction)).makeStmt());
         return packageBlockFunction;
     }
+
+    @NotNull
+    public static JsObjectLiteral wrapValue(@NotNull String label, @NotNull JsExpression value) {
+        return wrapValue(new JsNameRef(label), value);
+    }
+
+    @NotNull
+    public static JsObjectLiteral wrapValue(@NotNull JsExpression label, @NotNull JsExpression value) {
+        return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(label, value)));
+    }
 }
