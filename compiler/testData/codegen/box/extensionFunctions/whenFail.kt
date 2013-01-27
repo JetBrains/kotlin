@@ -12,3 +12,13 @@ fun foo(expr: StringBuilder): Int {
     else -> throw Exception("nonzero" + c)
   }
 }
+
+fun box(): String {
+  try {
+    foo(StringBuilder())
+    return "Fail"
+  }
+  catch (e: Exception) {
+    return "OK"
+  }
+}
