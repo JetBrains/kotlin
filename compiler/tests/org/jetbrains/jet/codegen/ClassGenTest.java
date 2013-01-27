@@ -147,8 +147,4 @@ public class ClassGenTest extends CodegenTestCase {
     public void testKt1845() {
         blackBoxMultiFile("regressions/kt1845_1.kt", "regressions/kt1845_2.kt");
     }
-
-    public void testNoClassObjectForJavaClass() {
-        blackBoxFileWithJava("stdlib/noClassObjectForJavaClass.kt");
-    }
 }

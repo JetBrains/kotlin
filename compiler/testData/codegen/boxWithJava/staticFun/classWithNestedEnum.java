@@ -1,6 +1,6 @@
 package test;
 
-public class noClassObjectForJavaClass {
+public class classWithNestedEnum {
     public enum E { ENTRY }
     
     public static String foo() { return "OK"; }

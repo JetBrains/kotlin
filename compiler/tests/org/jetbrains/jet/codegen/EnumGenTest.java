@@ -64,22 +64,6 @@ public class EnumGenTest extends CodegenTestCase {
         final Method rgbMethod = colorClass.getMethod("getRgb");
         assertEquals(0xFF0000, rgbMethod.invoke(redValue));
     }
-    
-    public void testSimpleJavaEnum() throws Exception {
-        blackBoxFileWithJava("enum/simpleJavaEnum.kt");
-    }
-
-    public void testSimpleJavaInnerEnum() throws Exception {
-        blackBoxFileWithJava("enum/simpleJavaInnerEnum.kt");
-    }
-    
-    public void testSimpleJavaEnumWithStaticImport() throws Exception {
-        blackBoxFileWithJava("enum/simpleJavaEnumWithStaticImport.kt");
-    } 
-    
-    public void testSimpleJavaEnumWithFunction() throws Exception {
-        blackBoxFileWithJava("enum/simpleJavaEnumWithFunction.kt");
-    }
 
     public void testNoClassForSimpleEnum()
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {

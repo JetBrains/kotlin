@@ -55,18 +55,6 @@ public class FunctionGenTest extends CodegenTestCase {
         assertFalse((Boolean) foo.invoke(null, "mama"));
     }
 
-    public void testReferencesStaticInnerClassMethod() throws Exception {
-        blackBoxFileWithJava("functions/referencesStaticInnerClassMethod.kt");
-    }
-
-    public void testReferencesStaticInnerClassMethodTwoLevels() throws Exception {
-        blackBoxFileWithJava("functions/referencesStaticInnerClassMethodL2.kt");
-    }
-
-    public void testRemoveInIterator() throws Exception {
-        blackBoxFileWithJava("functions/removeInIterator.kt");
-    }
-
     public void testPrivateDefaultArgs() throws Exception {
         loadFile("functions/privateDefaultArgs.kt");
         String text = generateToText();
