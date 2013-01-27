@@ -72,6 +72,13 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
+                "BlackBoxWithJavaCodegenTestGenerated",
+                AbstractBlackBoxCodegenTest.class,
+                testModel("compiler/testData/codegen/boxWithJava", "blackBoxFileWithJavaByFullPath")
+        );
+
+        generateTest(
+                "compiler/tests/",
                 "DataClassCodegenTestGenerated",
                 AbstractDataClassCodegenTest.class,
                 testModel("compiler/testData/codegen/dataClasses", "blackBoxFileByFullPath")
