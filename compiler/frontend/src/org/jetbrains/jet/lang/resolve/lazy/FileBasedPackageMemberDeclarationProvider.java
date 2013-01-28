@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -28,24 +29,32 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
     private final FqName fqName;
     private final FileBasedDeclarationProviderFactory factory;
     private final Collection<JetFile> allFiles;
-    private Collection<FqName> allDeclaredPackages;
+    private final LazyValue<Collection<FqName>> allDeclaredPackages;
 
 
     /*package*/ FileBasedPackageMemberDeclarationProvider(
-            @NotNull FqName fqName,
-            @NotNull FileBasedDeclarationProviderFactory factory,
+            @NotNull StorageManager storageManager,
+            @NotNull FqName _fqName,
+            @NotNull FileBasedDeclarationProviderFactory _factory,
             @NotNull Collection<JetFile> allFiles
     ) {
-        this.fqName = fqName;
-        this.factory = factory;
+        super(storageManager);
+        this.fqName = _fqName;
+        this.factory = _factory;
         this.allFiles = allFiles;
+        this.allDeclaredPackages = storageManager.createLazyValue(new Computable<Collection<FqName>>() {
+            @Override
+            public Collection<FqName> compute() {
+                return factory.getAllDeclaredSubPackagesOf(fqName);
+            }
+        });
     }
 
     @Override
-    protected void doCreateIndex() {
+    protected void doCreateIndex(@NotNull Index index) {
         for (JetFile file : allFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
-                putToIndex(declaration);
+                index.putToIndex(declaration);
             }
         }
     }
@@ -57,10 +66,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
 
     @Override
     public Collection<FqName> getAllDeclaredPackages() {
-        if (allDeclaredPackages == null) {
-            allDeclaredPackages = factory.getAllDeclaredSubPackagesOf(fqName);
-        }
-        return allDeclaredPackages;
+        return allDeclaredPackages.get();
     }
 
     @Override

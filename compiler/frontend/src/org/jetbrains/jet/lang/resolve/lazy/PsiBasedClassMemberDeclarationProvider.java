@@ -24,7 +24,8 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
 
     private final JetClassLikeInfo classInfo;
 
-    public PsiBasedClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classInfo) {
+    public PsiBasedClassMemberDeclarationProvider(@NotNull StorageManager storageManager, @NotNull JetClassLikeInfo classInfo) {
+        super(storageManager);
         this.classInfo = classInfo;
     }
 
@@ -35,19 +36,19 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
     }
 
     @Override
-    protected void doCreateIndex() {
+    protected void doCreateIndex(@NotNull Index index) {
         for (JetDeclaration declaration : classInfo.getDeclarations()) {
             if (declaration instanceof JetClassObject) {
                 // Do nothing, class object will be taken directly from the classInfo
             }
             else {
-                putToIndex(declaration);
+                index.putToIndex(declaration);
             }
         }
 
         for (JetParameter parameter : classInfo.getPrimaryConstructorParameters()) {
             if (parameter.getValOrVarNode() != null) {
-                putToIndex(parameter);
+                index.putToIndex(parameter);
             }
         }
     }

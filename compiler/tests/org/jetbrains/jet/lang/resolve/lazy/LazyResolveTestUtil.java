@@ -92,7 +92,8 @@ public class LazyResolveTestUtil {
         final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
 
-        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(files, new Predicate<FqName>() {
+        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
                 return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
@@ -134,7 +135,7 @@ public class LazyResolveTestUtil {
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
         ResolveSession
-                session = new ResolveSession(project, lazyModule, moduleConfiguration, declarationProviderFactory);
+                session = new ResolveSession(project, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory);
         return lazyModule;
     }
 

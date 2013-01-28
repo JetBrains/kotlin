@@ -20,6 +20,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -30,71 +31,76 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
 public abstract class AbstractPsiBasedDeclarationProvider implements DeclarationProvider {
-    private final List<JetDeclaration> allDeclarations = Lists.newArrayList();
-    private final Multimap<Name, JetNamedFunction> functions = HashMultimap.create();
-    private final Multimap<Name, JetProperty> properties = HashMultimap.create();
-    private final Multimap<Name, JetClassOrObject> classesAndObjects = ArrayListMultimap.create(); // order matters here
 
-    private boolean indexCreated = false;
+    protected static class Index {
+        // This mutable state is only modified under inside the computable
+        private final List<JetDeclaration> allDeclarations = Lists.newArrayList();
+        private final Multimap<Name, JetNamedFunction> functions = HashMultimap.create();
+        private final Multimap<Name, JetProperty> properties = HashMultimap.create();
+        private final Multimap<Name, JetClassOrObject> classesAndObjects = ArrayListMultimap.create(); // order matters here
 
-    protected final void createIndex() {
-        if (indexCreated) return;
-        indexCreated = true;
+        public void putToIndex(@NotNull JetDeclaration declaration) {
+            if (declaration instanceof JetClassInitializer) {
+                return;
+            }
+            allDeclarations.add(declaration);
+            if (declaration instanceof JetNamedFunction) {
+                JetNamedFunction namedFunction = (JetNamedFunction) declaration;
+                functions.put(safeNameForLazyResolve(namedFunction), namedFunction);
+            }
+            else if (declaration instanceof JetProperty) {
+                JetProperty property = (JetProperty) declaration;
+                properties.put(safeNameForLazyResolve(property), property);
+            }
+            else if (declaration instanceof JetClassOrObject) {
+                JetClassOrObject classOrObject = (JetClassOrObject) declaration;
+                classesAndObjects.put(safeNameForLazyResolve(classOrObject.getNameAsName()), classOrObject);
+            }
+            else if (declaration instanceof JetParameter || declaration instanceof JetTypedef || declaration instanceof JetMultiDeclaration) {
+                // Do nothing, just put it into allDeclarations is enough
+            }
+            else {
+                throw new IllegalArgumentException("Unknown declaration: " + declaration);
+            }
+        }
 
-        doCreateIndex();
     }
 
-    protected abstract void doCreateIndex();
+    private final LazyValue<Index> index;
 
-    protected void putToIndex(JetDeclaration declaration) {
-        if (declaration instanceof JetClassInitializer) {
-            return;
-        }
-        allDeclarations.add(declaration);
-        if (declaration instanceof JetNamedFunction) {
-            JetNamedFunction namedFunction = (JetNamedFunction) declaration;
-            functions.put(safeNameForLazyResolve(namedFunction), namedFunction);
-        }
-        else if (declaration instanceof JetProperty) {
-            JetProperty property = (JetProperty) declaration;
-            properties.put(safeNameForLazyResolve(property), property);
-        }
-        else if (declaration instanceof JetClassOrObject) {
-            JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-            classesAndObjects.put(safeNameForLazyResolve(classOrObject.getNameAsName()), classOrObject);
-        }
-        else if (declaration instanceof JetParameter || declaration instanceof JetTypedef || declaration instanceof JetMultiDeclaration) {
-            // Do nothing, just put it into allDeclarations is enough
-        }
-        else {
-            throw new IllegalArgumentException("Unknown declaration: " + declaration);
-        }
+    public AbstractPsiBasedDeclarationProvider(@NotNull StorageManager storageManager) {
+        index = storageManager.createLazyValue(new Computable<Index>() {
+            @Override
+            public Index compute() {
+                Index index = new Index();
+                doCreateIndex(index);
+                return index;
+            }
+        });
     }
+
+    protected abstract void doCreateIndex(@NotNull Index index);
 
     @Override
     public List<JetDeclaration> getAllDeclarations() {
-        createIndex();
-        return allDeclarations;
+        return index.get().allDeclarations;
     }
 
     @NotNull
     @Override
     public List<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
-        createIndex();
-        return Lists.newArrayList(functions.get(name));
+        return Lists.newArrayList(index.get().functions.get(name));
     }
 
     @NotNull
     @Override
     public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-        createIndex();
-        return Lists.newArrayList(properties.get(name));
+        return Lists.newArrayList(index.get().properties.get(name));
     }
 
     @NotNull
     @Override
     public Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name) {
-        createIndex();
-        return classesAndObjects.get(name);
+        return index.get().classesAndObjects.get(name);
     }
 }

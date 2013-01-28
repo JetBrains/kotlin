@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -90,7 +91,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         final PsiClassFinder psiClassFinder = injector.getPsiClassFinder();
 
         // TODO: Replace with stub declaration provider
-        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(files, new Predicate<FqName>() {
+        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        final FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
                 return psiClassFinder.findPsiPackage(fqName) != null || new FqName("jet").equals(fqName);
@@ -136,7 +138,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
 
-        return new ResolveSession(fileProject, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
+        return new ResolveSession(fileProject, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, javaResolverTrace);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(

@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -198,7 +199,8 @@ public class JetSourceNavigationHelper {
         }
 
         Project project = decompiledDeclaration.getProject();
-        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(getContainingFiles(candidates),
+        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(storageManager, getContainingFiles(candidates),
                 new Predicate<FqName>() {
                     @Override
                     public boolean apply(@Nullable FqName fqName) {
@@ -207,6 +209,7 @@ public class JetSourceNavigationHelper {
                 });
         ResolveSession resolveSession = new ResolveSession(
                 project,
+                storageManager,
                 new ModuleDescriptor(Name.special("<library module>")),
                 DefaultModuleConfiguration.createStandardConfiguration(project),
                 providerFactory);

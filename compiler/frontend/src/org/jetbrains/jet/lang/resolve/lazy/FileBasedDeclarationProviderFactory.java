@@ -18,7 +18,11 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
@@ -26,56 +30,68 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 public class FileBasedDeclarationProviderFactory implements DeclarationProviderFactory {
 
-    private final Collection<JetFile> allFiles;
-
-    private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
-    private final Set<FqName> declaredPackages = Sets.newHashSet();
-    private final Map<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders = Maps.newHashMap();
+    private static class Index {
+        private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
+        private final Set<FqName> declaredPackages = Sets.newHashSet();
+    }
 
     private final Predicate<FqName> isPackageDeclaredExternally;
 
-    private boolean indexed = false;
+    private final StorageManager storageManager;
+    private final LazyValue<Index> index;
 
-    public FileBasedDeclarationProviderFactory(@NotNull Collection<JetFile> files) {
-        this(files, Predicates.<FqName>alwaysFalse());
+    private final ConcurrentMap<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders;
+
+    public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull Collection<JetFile> files) {
+        this(storageManager, files, Predicates.<FqName>alwaysFalse());
     }
 
-    public FileBasedDeclarationProviderFactory(@NotNull Collection<JetFile> files, Predicate<FqName> isPackageDeclaredExternally) {
-        this.allFiles = files;
+    public FileBasedDeclarationProviderFactory(
+            @NotNull StorageManager storageManager,
+            @NotNull final Collection<JetFile> files,
+            @NotNull Predicate<FqName> isPackageDeclaredExternally
+    ) {
+        this.storageManager = storageManager;
         this.isPackageDeclaredExternally = isPackageDeclaredExternally;
+        this.index = storageManager.createLazyValue(new Computable<Index>() {
+            @Override
+            public Index compute() {
+                return computeFilesByPackage(files);
+            }
+        });
+        this.packageDeclarationProviders = storageManager.createConcurrentMap();
     }
 
-    private void createIndex() {
-        if (indexed) return;
-        indexed = true;
-
-        for (JetFile file : allFiles) {
+    @NotNull
+    private static Index computeFilesByPackage(@NotNull Collection<JetFile> files) {
+        Index index = new Index();
+        for (JetFile file : files) {
             JetNamespaceHeader header = file.getNamespaceHeader();
             if (header == null) {
                 throw new IllegalArgumentException("Scripts are not supported");
             }
 
             FqName packageFqName = new FqName(header.getQualifiedName());
-            addMeAndParentPackages(packageFqName);
-            filesByPackage.put(packageFqName, file);
+            addMeAndParentPackages(index, packageFqName);
+            index.filesByPackage.put(packageFqName, file);
         }
+        return index;
     }
 
-    private void addMeAndParentPackages(@NotNull FqName name) {
-        declaredPackages.add(name);
+    private static void addMeAndParentPackages(@NotNull Index index, @NotNull FqName name) {
+        index.declaredPackages.add(name);
         if (!name.isRoot()) {
-            addMeAndParentPackages(name.parent());
+            addMeAndParentPackages(index, name.parent());
         }
     }
 
     /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
-        createIndex();
-        return declaredPackages.contains(packageFqName);
+        return index.get().declaredPackages.contains(packageFqName);
     }
 
     /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
@@ -83,7 +99,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     }
 
     /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
-        return Collections2.filter(declaredPackages, new Predicate<FqName>() {
+        return Collections2.filter(index.get().declaredPackages, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
                 return !fqName.isRoot() && fqName.parent().equals(parent);
@@ -93,8 +109,6 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     @Override
     public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-        createIndex();
-
         PackageMemberDeclarationProvider declarationProvider = packageDeclarationProviders.get(packageFqName);
         if (declarationProvider != null) {
             return declarationProvider;
@@ -108,21 +122,18 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
         }
 
         FileBasedPackageMemberDeclarationProvider provider =
-                new FileBasedPackageMemberDeclarationProvider(packageFqName, this, filesByPackage.get(packageFqName));
-        packageDeclarationProviders.put(packageFqName, provider);
+                new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.get().filesByPackage.get(packageFqName));
 
-        return provider;
+        return packageDeclarationProviders.putIfAbsent(packageFqName, provider);
     }
 
     @NotNull
     @Override
     public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
-        createIndex();
-
-        if (!filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
+        if (!index.get().filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
             throw new IllegalStateException("This factory doesn't know about this class: " + classLikeInfo);
         }
 
-        return new PsiBasedClassMemberDeclarationProvider(classLikeInfo);
+        return new PsiBasedClassMemberDeclarationProvider(storageManager, classLikeInfo);
     }
 }
