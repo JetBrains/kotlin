@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.versions;
 
 import com.google.common.collect.Maps;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,12 +32,14 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 
+import java.lang.Throwable;
 import java.util.Map;
 
 /**
  * Important! This is not a stub-based index. And it has its own version
  */
 public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
+    private static final Logger LOG = Logger.getInstance(KotlinAbiVersionIndex.class);
 
     public static final KotlinAbiVersionIndex INSTANCE = new KotlinAbiVersionIndex();
 
@@ -58,32 +61,37 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
             final Map<Integer, Void> result = Maps.newHashMap();
             final Ref<Boolean> annotationPresent = new Ref<Boolean>(false);
 
-            ClassReader classReader = new ClassReader(inputData.getContent());
-            classReader.accept(new ClassVisitor(Opcodes.ASM4) {
-                @Override
-                public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                    if (!JvmStdlibNames.JET_CLASS.getDescriptor().equals(desc) &&
-                        !JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor().equals(desc)) {
-                        return null;
-                    }
-                    annotationPresent.set(true);
-                    return new AnnotationVisitor(Opcodes.ASM4) {
-                        @Override
-                        public void visit(String name, Object value) {
-                            if (JvmStdlibNames.ABI_VERSION_NAME.equals(name)) {
-                                if (value instanceof Integer) {
-                                    Integer abiVersion = (Integer) value;
-                                    result.put(abiVersion, null);
-                                }
-                                else {
-                                    // Version is set to something weird
-                                    result.put(AbiVersionUtil.INVALID_VERSION, null);
+            try {
+                ClassReader classReader = new ClassReader(inputData.getContent());
+                classReader.accept(new ClassVisitor(Opcodes.ASM4) {
+                    @Override
+                    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                        if (!JvmStdlibNames.JET_CLASS.getDescriptor().equals(desc) &&
+                            !JvmStdlibNames.JET_PACKAGE_CLASS.getDescriptor().equals(desc)) {
+                            return null;
+                        }
+                        annotationPresent.set(true);
+                        return new AnnotationVisitor(Opcodes.ASM4) {
+                            @Override
+                            public void visit(String name, Object value) {
+                                if (JvmStdlibNames.ABI_VERSION_NAME.equals(name)) {
+                                    if (value instanceof Integer) {
+                                        Integer abiVersion = (Integer) value;
+                                        result.put(abiVersion, null);
+                                    }
+                                    else {
+                                        // Version is set to something weird
+                                        result.put(AbiVersionUtil.INVALID_VERSION, null);
+                                    }
                                 }
                             }
-                        }
-                    };
-                }
-            }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                        };
+                    }
+                }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+            }
+            catch (Throwable e) {
+                LOG.warn("Indexing ABI version for file " + inputData.getFile(), e);
+            }
 
             if (annotationPresent.get() && result.isEmpty()) {
                 // No version at all: the class is too old
