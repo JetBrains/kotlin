@@ -25,14 +25,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.BasicCallResolutionContext;
 
 import java.util.Collection;
 import java.util.List;
 
 public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private final JetReferenceExpression reference;
-    private final BasicResolutionContext basicResolutionContext;
+    private final BasicCallResolutionContext basicCallResolutionContext;
     private final Predicate<ResolutionCandidate<D>> visibleStrategy;
     private final boolean isSafeCall;
 
@@ -43,12 +43,12 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private List<ResolutionTask<D, F>> tasks = null;
 
     public ResolutionTaskHolder(@NotNull JetReferenceExpression reference,
-            @NotNull BasicResolutionContext basicResolutionContext,
+            @NotNull BasicCallResolutionContext basicCallResolutionContext,
             @NotNull Predicate<ResolutionCandidate<D>> visibleStrategy) {
         this.reference = reference;
-        this.basicResolutionContext = basicResolutionContext;
+        this.basicCallResolutionContext = basicCallResolutionContext;
         this.visibleStrategy = visibleStrategy;
-        this.isSafeCall = JetPsiUtil.isSafeCall(basicResolutionContext.call);
+        this.isSafeCall = JetPsiUtil.isSafeCall(basicCallResolutionContext.call);
     }
 
     public Collection<ResolutionCandidate<D>> setIsSafeCall(@NotNull Collection<ResolutionCandidate<D>> candidates) {
@@ -83,7 +83,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
             // If the call is of the form super.foo(), it can actually be only a member
             // But  if there's no appropriate member, we would like to report that super cannot be a receiver for an extension
             // Thus, put members first
-            if (TaskPrioritizer.getReceiverSuper(basicResolutionContext.call.getExplicitReceiver()) != null) {
+            if (TaskPrioritizer.getReceiverSuper(basicCallResolutionContext.call.getExplicitReceiver()) != null) {
                 candidateList.addAll(members);
                 candidateList.addAll(localExtensions);
             }
@@ -97,7 +97,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
                 for (Collection<ResolutionCandidate<D>> candidates : candidateList) {
                     Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, visibilityStrategy);
                     if (!filteredCandidates.isEmpty()) {
-                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicResolutionContext));
+                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicCallResolutionContext));
                     }
                 }
             }

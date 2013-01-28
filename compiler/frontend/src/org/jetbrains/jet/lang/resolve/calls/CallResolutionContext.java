@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
         this.call = call;
     }
 
-    public BasicResolutionContext toBasic() {
-        return BasicResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+    public BasicCallResolutionContext toBasic() {
+        return BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 }

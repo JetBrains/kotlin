@@ -23,9 +23,9 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class BasicResolutionContext extends CallResolutionContext<BasicResolutionContext> {
+public class BasicCallResolutionContext extends CallResolutionContext<BasicCallResolutionContext> {
     @NotNull
-    public static BasicResolutionContext create(
+    public static BasicCallResolutionContext create(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull Call call,
@@ -33,20 +33,17 @@ public class BasicResolutionContext extends CallResolutionContext<BasicResolutio
             @NotNull DataFlowInfo dataFlowInfo,
             boolean namespacesAllowed
     ) {
-        return new BasicResolutionContext(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 
-    private BasicResolutionContext(BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, boolean namespacesAllowed) {
+    private BasicCallResolutionContext(
+            BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, boolean namespacesAllowed
+    ) {
         super(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
     }
 
-    @NotNull
-    public BasicResolutionContext replaceTrace(@NotNull BindingTrace trace) {
-        return create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
-    }
-
     @Override
-    protected BasicResolutionContext replace(
+    protected BasicCallResolutionContext replace(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -57,7 +54,7 @@ public class BasicResolutionContext extends CallResolutionContext<BasicResolutio
     }
 
     @Override
-    protected BasicResolutionContext self() {
+    protected BasicCallResolutionContext self() {
         return this;
     }
 }

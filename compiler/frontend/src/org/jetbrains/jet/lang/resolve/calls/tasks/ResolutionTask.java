@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -66,7 +66,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         this.reference = reference;
     }
 
-    public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicResolutionContext context) {
+    public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicCallResolutionContext context) {
         this(candidates, reference, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo, context.namespacesAllowed);
     }
 

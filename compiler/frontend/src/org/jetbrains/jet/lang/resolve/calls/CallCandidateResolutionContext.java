@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
@@ -63,7 +62,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor, 
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D, D> create(
-            @NotNull CallResolutionContext context, @NotNull TracingStrategy tracing,
+            @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing,
             @NotNull ResolvedCallImpl<D> candidateCall) {
         return new CallCandidateResolutionContext<D, D>(candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo, context.namespacesAllowed);
     }

@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -75,7 +75,7 @@ public abstract class TaskPrioritizer {
     }
 
     @NotNull
-    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(@NotNull BasicResolutionContext context, @NotNull Name name,
+    public static <D extends CallableDescriptor, F extends D> List<ResolutionTask<D, F>> computePrioritizedTasks(@NotNull BasicCallResolutionContext context, @NotNull Name name,
                                                            @NotNull JetReferenceExpression functionReference, @NotNull List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors) {
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
         final JetScope scope;
@@ -106,7 +106,7 @@ public abstract class TaskPrioritizer {
 
     private static <D extends CallableDescriptor, F extends D> void doComputeTasks(@NotNull JetScope scope, @NotNull ReceiverValue receiver,
             @NotNull Name name, @NotNull ResolutionTaskHolder<D, F> result,
-            @NotNull BasicResolutionContext context, @NotNull CallableDescriptorCollector<? extends D> callableDescriptorCollector) {
+            @NotNull BasicCallResolutionContext context, @NotNull CallableDescriptorCollector<? extends D> callableDescriptorCollector) {
 
         ProgressIndicatorProvider.checkCanceled();
 
