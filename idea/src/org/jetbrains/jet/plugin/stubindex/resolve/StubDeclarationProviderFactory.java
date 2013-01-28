@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.lazy.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.PackageMemberDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.lazy.PsiBasedClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -38,8 +39,7 @@ public class StubDeclarationProviderFactory implements DeclarationProviderFactor
     @NotNull
     @Override
     public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
-        // TODO:
-        return null;
+        return new PsiBasedClassMemberDeclarationProvider(classLikeInfo);
     }
 
     @Override
