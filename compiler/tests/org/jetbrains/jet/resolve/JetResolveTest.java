@@ -55,11 +55,13 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.resolveFakeCall;
 
+@SuppressWarnings("JUnitTestCaseWithNoTests")
 public class JetResolveTest extends ExtensibleResolveTestCase {
 
     private final String path;
     private final String name;
 
+    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
     public JetResolveTest(String path, String name) {
         this.path = path;
         this.name = name;
@@ -160,7 +162,10 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     private static String getHomeDirectory() {
-        return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
+        String resourceRoot = PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class");
+        assertNotNull(resourceRoot);
+
+        return new File(resourceRoot).getParentFile().getParentFile().getParent();
     }
 
     @Override
