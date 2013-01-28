@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.stubs.resolve;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -36,7 +37,7 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
                                   "package test.testing\n" +
                                   "fun some() {}");
         StubPackageMemberDeclarationProvider provider =
-                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject());
+                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
 
         List<JetNamedFunction> some = Lists.newArrayList(provider.getFunctionDeclarations(Name.identifier("some")));
 
@@ -51,7 +52,7 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
                                   "fun other(v : String) {}");
 
         StubPackageMemberDeclarationProvider provider =
-                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject());
+                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
 
         List<JetNamedFunction> other = Lists.newArrayList(provider.getFunctionDeclarations(Name.identifier("other")));
         Collection<String> functionTexts = Collections2.transform(other, new Function<JetNamedFunction, String>() {
@@ -72,7 +73,7 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
                                   "val test = 12\n");
 
         StubPackageMemberDeclarationProvider provider =
-                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject());
+                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
 
         List<JetProperty> testProperties = Lists.newArrayList(provider.getPropertyDeclarations(Name.identifier("test")));
 
