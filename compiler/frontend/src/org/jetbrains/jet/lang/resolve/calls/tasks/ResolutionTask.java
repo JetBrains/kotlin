@@ -52,7 +52,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 /**
  * Stores candidates for call resolution.
  */
-public class ResolutionTask<D extends CallableDescriptor, F extends D> extends CallResolutionContext {
+public class ResolutionTask<D extends CallableDescriptor, F extends D> extends CallResolutionContext<ResolutionTask<D, F>> {
     private final Collection<ResolutionCandidate<D>> candidates;
     private final Set<ResolvedCallWithTrace<F>> resolvedCalls = Sets.newLinkedHashSet();
     public final JetReferenceExpression reference;
@@ -95,6 +95,24 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, newTrace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
+    }
+
+    @Override
+    protected ResolutionTask<D, F> replace(
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull JetType expectedType,
+            boolean namespacesAllowed
+    ) {
+        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+        newTask.setCheckingStrategy(checkingStrategy);
+        return newTask;
+    }
+
+    @Override
+    protected ResolutionTask<D, F> self() {
+        return this;
     }
 
     public interface DescriptorCheckStrategy {

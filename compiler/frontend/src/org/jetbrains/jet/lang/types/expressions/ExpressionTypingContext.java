@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -40,7 +41,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.List;
 
-public class ExpressionTypingContext {
+public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingContext> {
 
     @NotNull
     public static ExpressionTypingContext newContext(
@@ -67,16 +68,8 @@ public class ExpressionTypingContext {
     }
 
     public final ExpressionTypingServices expressionTypingServices;
-    public final BindingTrace trace;
-    public final JetScope scope;
-
-    public final DataFlowInfo dataFlowInfo;
-    public final JetType expectedType;
 
     public final LabelResolver labelResolver;
-
-    // true for positions on the lhs of a '.', i.e. allows namespace results and 'super'
-    public final boolean namespacesAllowed;
 
     private CompileTimeConstantResolver compileTimeConstantResolver;
 
@@ -88,49 +81,25 @@ public class ExpressionTypingContext {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             boolean namespacesAllowed) {
+        super(trace, scope, expectedType, dataFlowInfo, namespacesAllowed);
         this.expressionTypingServices = expressionTypingServices;
-        this.trace = trace;
         this.labelResolver = labelResolver;
-        this.scope = scope;
-        this.dataFlowInfo = dataFlowInfo;
-        this.expectedType = expectedType;
-        this.namespacesAllowed = namespacesAllowed;
     }
 
-    @NotNull
-    public ExpressionTypingContext replaceNamespacesAllowed(boolean namespacesAllowed) {
-        if (namespacesAllowed == this.namespacesAllowed) return this;
-        return newContext(expressionTypingServices, labelResolver,
-                          trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+    @Override
+    protected ExpressionTypingContext replace(
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull JetType expectedType,
+            boolean namespacesAllowed
+    ) {
+        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
-    @NotNull
-    public ExpressionTypingContext replaceDataFlowInfo(DataFlowInfo newDataFlowInfo) {
-        if (newDataFlowInfo == dataFlowInfo) return this;
-        return newContext(expressionTypingServices, labelResolver,
-                          trace, scope, newDataFlowInfo, expectedType, namespacesAllowed);
-    }
-
-    @NotNull
-    public ExpressionTypingContext replaceExpectedType(@Nullable JetType newExpectedType) {
-        if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
-        if (expectedType == newExpectedType) return this;
-        return newContext(expressionTypingServices, labelResolver,
-                          trace, scope, dataFlowInfo, newExpectedType, namespacesAllowed);
-    }
-
-    @NotNull
-    public ExpressionTypingContext replaceBindingTrace(@NotNull BindingTrace newTrace) {
-        if (newTrace == trace) return this;
-        return newContext(expressionTypingServices, labelResolver,
-                          newTrace, scope, dataFlowInfo, expectedType, namespacesAllowed);
-    }
-
-    @NotNull
-    public ExpressionTypingContext replaceScope(@NotNull JetScope newScope) {
-        if (newScope == scope) return this;
-        return newContext(expressionTypingServices, labelResolver,
-                          trace, newScope, dataFlowInfo, expectedType, namespacesAllowed);
+    @Override
+    protected ExpressionTypingContext self() {
+        return this;
     }
 
 ///////////// LAZY ACCESSORS

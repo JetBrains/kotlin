@@ -390,7 +390,7 @@ public class CallResolver {
         OverloadResolutionResultsImpl<F> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D, F> task : prioritizedTasks) {
             TemporaryBindingTrace taskTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.reference);
-            OverloadResolutionResultsImpl<F> results = performResolutionGuardedForExtraFunctionLiteralArguments(task.withTrace(taskTrace),
+            OverloadResolutionResultsImpl<F> results = performResolutionGuardedForExtraFunctionLiteralArguments(task.replaceBindingTrace(taskTrace),
                                                                                                                 callTransformer, context.trace);
             if (results.isSuccess() || results.isAmbiguity()) {
                 taskTrace.commit();

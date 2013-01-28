@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class BasicResolutionContext extends CallResolutionContext {
+public class BasicResolutionContext extends CallResolutionContext<BasicResolutionContext> {
     @NotNull
     public static BasicResolutionContext create(
             @NotNull BindingTrace trace,
@@ -43,5 +43,21 @@ public class BasicResolutionContext extends CallResolutionContext {
     @NotNull
     public BasicResolutionContext replaceTrace(@NotNull BindingTrace trace) {
         return create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+    }
+
+    @Override
+    protected BasicResolutionContext replace(
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull JetType expectedType,
+            boolean namespacesAllowed
+    ) {
+        return create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+    }
+
+    @Override
+    protected BasicResolutionContext self() {
+        return this;
     }
 }

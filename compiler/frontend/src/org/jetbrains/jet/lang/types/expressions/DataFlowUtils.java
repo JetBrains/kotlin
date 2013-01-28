@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
@@ -129,12 +130,12 @@ public class DataFlowUtils {
     }
 
     @NotNull
-    public static JetTypeInfo checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull DataFlowInfo dataFlowInfo) {
+    public static JetTypeInfo checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context, @NotNull DataFlowInfo dataFlowInfo) {
         return JetTypeInfo.create(checkType(expressionType, expression, context), dataFlowInfo);
     }
 
     @Nullable
-    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
+    public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ResolutionContext context) {
         if (expressionType == null || context.expectedType == null || context.expectedType == TypeUtils.NO_EXPECTED_TYPE ||
             JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, context.expectedType)) {
             return expressionType;
@@ -157,12 +158,12 @@ public class DataFlowUtils {
     }
 
     @NotNull
-    public static JetTypeInfo checkStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context, @NotNull DataFlowInfo dataFlowInfo) {
+    public static JetTypeInfo checkStatementType(@NotNull JetExpression expression, @NotNull ResolutionContext context, @NotNull DataFlowInfo dataFlowInfo) {
         return JetTypeInfo.create(checkStatementType(expression, context), dataFlowInfo);
     }
 
     @Nullable
-    public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
+    public static JetType checkStatementType(@NotNull JetExpression expression, @NotNull ResolutionContext context) {
         if (context.expectedType != TypeUtils.NO_EXPECTED_TYPE && !KotlinBuiltIns.getInstance().isUnit(context.expectedType) && !ErrorUtils.isErrorType(context.expectedType)) {
             context.trace.report(EXPECTED_TYPE_MISMATCH.on(expression, context.expectedType));
             return null;
