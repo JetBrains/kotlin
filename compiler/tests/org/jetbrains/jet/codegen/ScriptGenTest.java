@@ -46,6 +46,7 @@ public class ScriptGenTest extends CodegenTestCase {
     @Override
     protected void tearDown() throws Exception {
         scriptInstance = null;
+        super.tearDown();
     }
 
     private void blackBoxScript(String filename) {
