@@ -25,22 +25,27 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.List;
 
-public class FilteringScope extends JetScopeAdapter {
-    private final Predicate<DeclarationDescriptor> predicate;
+public class FilteringScope implements JetScope {
+    @NotNull private final JetScope workerScope;
+    @NotNull private final Predicate<DeclarationDescriptor> predicate;
 
-    public FilteringScope(
-            @NotNull JetScope workerScope,
-            @NotNull Predicate<DeclarationDescriptor> predicate
-    ) {
-        super(workerScope);
+    public FilteringScope(@NotNull JetScope workerScope, @NotNull Predicate<DeclarationDescriptor> predicate) {
+        this.workerScope = workerScope;
         this.predicate = predicate;
     }
 
     @NotNull
     @Override
     public Collection<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        return Collections2.filter(super.getFunctions(name), predicate);
+        return Collections2.filter(workerScope.getFunctions(name), predicate);
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return workerScope.getContainingDeclaration();
     }
 
     @Nullable
@@ -50,56 +55,62 @@ public class FilteringScope extends JetScopeAdapter {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return filterDescriptor(super.getNamespace(name));
+        return filterDescriptor(workerScope.getNamespace(name));
     }
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return filterDescriptor(super.getClassifier(name));
+        return filterDescriptor(workerScope.getClassifier(name));
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return filterDescriptor(super.getObjectDescriptor(name));
+        return filterDescriptor(workerScope.getObjectDescriptor(name));
     }
 
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        return Collections2.filter(super.getObjectDescriptors(), predicate);
+        return Collections2.filter(workerScope.getObjectDescriptors(), predicate);
     }
 
     @NotNull
     @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
-        return Collections2.filter(super.getProperties(name), predicate);
+        return Collections2.filter(workerScope.getProperties(name), predicate);
     }
 
     @Override
     public VariableDescriptor getLocalVariable(@NotNull Name name) {
-        return filterDescriptor(super.getLocalVariable(name));
+        return filterDescriptor(workerScope.getLocalVariable(name));
     }
 
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return Collections2.filter(super.getAllDescriptors(), predicate);
+        return Collections2.filter(workerScope.getAllDescriptors(), predicate);
     }
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
-        return Collections2.filter(super.getDeclarationsByLabel(labelName), predicate);
+    public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
+        return workerScope.getImplicitReceiversHierarchy();
+    }
+
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
+        return Collections2.filter(workerScope.getDeclarationsByLabel(labelName), predicate);
     }
 
     @Override
     public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
-        return filterDescriptor(super.getPropertyByFieldReference(fieldName));
+        return filterDescriptor(workerScope.getPropertyByFieldReference(fieldName));
     }
 
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
-        return Collections2.filter(super.getOwnDeclaredDescriptors(), predicate);
+        return Collections2.filter(workerScope.getOwnDeclaredDescriptors(), predicate);
     }
 }
