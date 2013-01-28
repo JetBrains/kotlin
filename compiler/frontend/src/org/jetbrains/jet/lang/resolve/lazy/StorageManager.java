@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 
 import java.util.concurrent.ConcurrentMap;
 
@@ -27,4 +28,7 @@ public interface StorageManager {
 
     @NotNull
     <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable);
+
+    @NotNull
+    BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);
 }

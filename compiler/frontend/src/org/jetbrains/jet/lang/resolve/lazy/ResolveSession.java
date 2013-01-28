@@ -107,7 +107,7 @@ public class ResolveSession {
         this.storageManager = storageManager;
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
-        this.trace = new ObservableBindingTrace(delegationTrace);
+        this.trace = storageManager.createSafeTrace(delegationTrace);
         this.injector = new InjectorForLazyResolve(project, this, trace, moduleConfiguration);
         this.module = rootDescriptor;
         this.moduleConfiguration = moduleConfiguration;

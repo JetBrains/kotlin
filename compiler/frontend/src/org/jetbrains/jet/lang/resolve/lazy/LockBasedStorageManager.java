@@ -19,7 +19,13 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -42,6 +48,14 @@ public class LockBasedStorageManager implements StorageManager {
     @Override
     public <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable) {
         return new LockBasedLazyValue<T>(lock, computable);
+    }
+
+    @NotNull
+    @Override
+    public BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace) {
+        // It seems safe to have a separate lock for traces:
+        // no other locks will be acquired inside the trace operations
+        return new LockProtectedTrace(lock, originalTrace);
     }
 
     private static class LockBasedLazyValue<T> implements LazyValue<T> {
@@ -71,6 +85,60 @@ public class LockBasedStorageManager implements StorageManager {
                     _value = value;
                 }
                 return _value;
+            }
+        }
+    }
+
+    private static class LockProtectedTrace implements BindingTrace {
+        private final Object lock;
+        private final BindingTrace trace;
+
+        public LockProtectedTrace(@NotNull Object lock, @NotNull BindingTrace trace) {
+            this.lock = lock;
+            this.trace = trace;
+        }
+
+        @Override
+        public BindingContext getBindingContext() {
+            synchronized (lock) {
+                return trace.getBindingContext();
+            }
+        }
+
+        @Override
+        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+            synchronized (lock) {
+                trace.record(slice, key, value);
+            }
+        }
+
+        @Override
+        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
+            synchronized (lock) {
+                trace.record(slice, key);
+            }
+        }
+
+        @Override
+        @Nullable
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            synchronized (lock) {
+                return trace.get(slice, key);
+            }
+        }
+
+        @Override
+        @NotNull
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            synchronized (lock) {
+                return trace.getKeys(slice);
+            }
+        }
+
+        @Override
+        public void report(@NotNull Diagnostic diagnostic) {
+            synchronized (lock) {
+                trace.report(diagnostic);
             }
         }
     }
