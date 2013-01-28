@@ -45,10 +45,6 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
         return actualScope;
     }
 
-    private boolean isClass(DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isObject();
-    }
-
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassifierDescriptor classifier = actualScope.getClassifier(name);
@@ -89,5 +85,9 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     @Override
     public String toString() {
         return "Classes from " + actualScope;
+    }
+
+    private static boolean isClass(DeclarationDescriptor descriptor) {
+        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isObject();
     }
 }
