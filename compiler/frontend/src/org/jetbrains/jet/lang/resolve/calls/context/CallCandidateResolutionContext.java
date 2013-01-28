@@ -41,18 +41,22 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor, 
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            boolean namespacesAllowed
+            boolean namespacesAllowed,
+            boolean initialize
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
-        this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
+        if (initialize) {
+            this.candidateCall.setInitialDataFlowInfo(dataFlowInfo);
+        }
     }
 
     public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D, F> create(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call) {
-        return new CallCandidateResolutionContext<D, F>(candidateCall, tracing, trace, task.scope, call, task.expectedType, task.dataFlowInfo, task.namespacesAllowed);
+        return new CallCandidateResolutionContext<D, F>(candidateCall, tracing, trace, task.scope, call, task.expectedType,
+                                                        task.dataFlowInfo, task.namespacesAllowed, true);
     }
 
     public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D, F> create(
@@ -64,7 +68,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor, 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D, D> create(
             @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing,
             @NotNull ResolvedCallImpl<D> candidateCall) {
-        return new CallCandidateResolutionContext<D, D>(candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo, context.namespacesAllowed);
+        return new CallCandidateResolutionContext<D, D>(candidateCall, tracing, context.trace, context.scope, context.call,
+                                                        context.expectedType, context.dataFlowInfo, context.namespacesAllowed, true);
     }
 
     @Override
@@ -75,7 +80,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor, 
             @NotNull JetType expectedType,
             boolean namespacesAllowed
     ) {
-        return new CallCandidateResolutionContext<D, F>(candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+        return new CallCandidateResolutionContext<D, F>(candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo,
+                                                        namespacesAllowed, false);
     }
 
     @Override
