@@ -233,6 +233,13 @@ public class CallExpressionResolver {
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context) {
+        JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
+        return DataFlowUtils.checkType(typeInfo.getType(), callExpression, context, typeInfo.getDataFlowInfo());
+    }
+
+    @NotNull
+    private JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context) {
 
         boolean[] result = new boolean[1];
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
@@ -295,7 +302,8 @@ public class CallExpressionResolver {
             @NotNull ResolutionContext context
     ) {
         if (selectorExpression instanceof JetCallExpression) {
-            return getCallExpressionTypeInfo((JetCallExpression) selectorExpression, receiver, callOperationNode, context);
+            return getCallExpressionTypeInfoWithoutFinalTypeCheck(
+                    (JetCallExpression) selectorExpression, receiver, callOperationNode, context);
         }
         else if (selectorExpression instanceof JetSimpleNameExpression) {
             return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);

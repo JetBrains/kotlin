@@ -597,8 +597,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
         CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
-        JetTypeInfo expressionTypeInfo = callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
-        return DataFlowUtils.checkType(expressionTypeInfo.getType(), expression, context, expressionTypeInfo.getDataFlowInfo());
+        return callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
     }
 
     @Override

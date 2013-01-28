@@ -23,6 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -276,5 +280,20 @@ public class BindingContextUtils {
                        slice == BindingContext.TRACE_DELTAS_CACHE;
             }
         }, false);
+    }
+
+    public static JetTypeInfo recordExpressionType(@NotNull JetExpression expression, @NotNull ResolutionContext context, @NotNull JetTypeInfo result) {
+        JetType type = result.getType();
+        if (type != null) {
+            context.trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
+        }
+        context.trace.record(BindingContext.PROCESSED, expression);
+        if (result.getDataFlowInfo() != DataFlowInfo.EMPTY) {
+            context.trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
+        }
+        if (!(expression instanceof JetReferenceExpression)) {
+            context.trace.record(BindingContext.RESOLUTION_SCOPE, expression, context.scope);
+        }
+        return result;
     }
 }

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -349,12 +350,12 @@ public class CandidateResolver {
         return OTHER_ERROR.combine(argumentsStatus);
     }
 
-    private void addConstraintForValueArgument(
+    private <C extends CallResolutionContext<C>> void addConstraintForValueArgument(
             @NotNull ValueArgument valueArgument,
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull TypeSubstitutor substitutor,
             @NotNull ConstraintSystem constraintSystem,
-            @NotNull CallResolutionContext context,
+            @NotNull CallResolutionContext<C> context,
             @Nullable boolean[] isErrorType,
             @NotNull ResolveMode resolveFunctionArgumentBodies) {
 
@@ -363,8 +364,9 @@ public class CandidateResolver {
         TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(
                 context.trace, "transient trace to resolve argument", argumentExpression);
         JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
-        JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, traceForUnknown, context.scope, context.dataFlowInfo,
-                                                               expectedType != null ? expectedType : NO_EXPECTED_TYPE, resolveFunctionArgumentBodies).getType();
+        CallResolutionContext newContext =
+                context.replaceBindingTrace(traceForUnknown).replaceExpectedType(expectedType != null ? expectedType : NO_EXPECTED_TYPE);
+        JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, resolveFunctionArgumentBodies).getType();
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
         BindingContextUtils.commitResolutionCacheData(traceForUnknown, context.trace);
@@ -396,8 +398,8 @@ public class CandidateResolver {
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
-    private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkValueArgumentTypes(
-            @NotNull CallResolutionContext context,
+    private <D extends CallableDescriptor, C extends CallResolutionContext<C>> ValueArgumentsCheckingResult checkValueArgumentTypes(
+            @NotNull CallResolutionContext<C> context,
             @NotNull ResolvedCallImpl<D> candidateCall,
             @NotNull BindingTrace trace,
             @NotNull ResolveMode resolveFunctionArgumentBodies) {
@@ -416,8 +418,10 @@ public class CandidateResolver {
                 if (TypeUtils.dependsOnTypeParameters(expectedType, candidateCall.getCandidateDescriptor().getTypeParameters())) {
                     expectedType = NO_EXPECTED_TYPE;
                 }
-                JetTypeInfo typeInfo = argumentTypeResolver.getArgumentTypeInfo(expression, trace, context.scope, candidateCall.getDataFlowInfo(),
-                                                                                expectedType, resolveFunctionArgumentBodies);
+                CallResolutionContext newContext = context.replaceDataFlowInfo(candidateCall.getDataFlowInfo()).replaceBindingTrace(trace)
+                        .replaceExpectedType(expectedType);
+                JetTypeInfo typeInfo = argumentTypeResolver.getArgumentTypeInfo(
+                        expression, newContext, resolveFunctionArgumentBodies);
                 JetType type = typeInfo.getType();
                 candidateCall.addDataFlowInfo(typeInfo.getDataFlowInfo());
 
