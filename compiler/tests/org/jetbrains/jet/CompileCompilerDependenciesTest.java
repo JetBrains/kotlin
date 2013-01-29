@@ -16,18 +16,11 @@
 
 package org.jetbrains.jet;
 
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileBuiltins;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.junit.Test;
 
 public class CompileCompilerDependenciesTest {
-
-    @Test
-    public void compileBuiltins() {
-        ForTestCompileBuiltins.builtinsJarForTests();
-    }
-
     @Test
     public void packJdkAnnotations() {
         ForTestPackJdkAnnotations.jdkAnnotationsForTests();
