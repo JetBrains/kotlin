@@ -3,15 +3,16 @@ package kotlin.test
 import java.util.ServiceLoader
 
 /** Asserts that a block fails with a specific exception being thrown */
-public fun <T: Throwable> failsWith(block: ()-> Any): T {
+public fun <T: Throwable> failsWith(exceptionClass: Class<T>, block: ()-> Any): T {
     try {
         block()
         asserter.fail("Expected an exception to be thrown")
         throw IllegalStateException("Should have failed")
     } catch (e: T) {
-        //println("Caught expected exception: $e")
-        // OK
-        return e
+        if (exceptionClass.isInstance(e)) {
+            return e
+        }
+        throw e
     }
 }
 
