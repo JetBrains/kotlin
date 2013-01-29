@@ -471,30 +471,8 @@
         </jar>
     </target>
 
-    <target name="lang">
-        <cleandir dir="${output}/classes/lang"/>
-        <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true">
-            <classpath>
-                <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
-            </classpath>
-            <arg value="-src"/>
-            <arg value="${basedir}/compiler/frontend/src"/>
-            <arg value="-output"/>
-            <arg value="${output}/classes/lang"/>
-            <arg value="-noStdlib"/>
-            <arg value="-builtins"/>
-        </java>
-
-        <!-- Not used yet -->
-        <!--
-        <jar destfile="${kotlin-home}/lib/lang.jar">
-            <fileset dir="${output}/classes/lang"/>
-        </jar>
-        -->
-    </target>
-
     <target name="dist"
-            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,runtime,lang,jslib"/>
+            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,runtime,jslib"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
