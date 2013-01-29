@@ -179,7 +179,7 @@ class StringJVMTest {
         // get the smallest character(by char value)
         assertEquals('a', "bacfd".reduce { v, c -> if (v > c) c else v })
 
-        failsWith<UnsupportedOperationException> {
+        failsWith(javaClass<UnsupportedOperationException>()) {
             "".reduce { a, b -> '\n' }
         }
     }
@@ -188,7 +188,7 @@ class StringJVMTest {
         // get the smallest character(by char value)
         assertEquals('a', "bacfd".reduceRight { c, v -> if (v > c) c else v })
 
-        failsWith<UnsupportedOperationException> {
+        failsWith(javaClass<UnsupportedOperationException>()) {
             "".reduceRight { a, b -> '\n' }
         }
     }

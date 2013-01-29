@@ -38,7 +38,7 @@ class ArraysJVMTest {
         expect(0.toByte()) { byteArray(3, 2, 1) reduce { a, b -> (a - b).toByte() } }
         expect(0.toShort()) { shortArray(3, 2, 1) reduce { a, b -> (a - b).toShort() } }
 
-        failsWith<UnsupportedOperationException> {
+        failsWith (javaClass<UnsupportedOperationException>()) {
             intArray().reduce { a, b -> a + b}
         }
     }
@@ -54,7 +54,7 @@ class ArraysJVMTest {
         expect(2.toByte()) { byteArray(1, 2, 3) reduceRight { a, b -> (a - b).toByte() } }
         expect(2.toShort()) { shortArray(1, 2, 3) reduceRight { a, b -> (a - b).toShort() } }
 
-        failsWith<UnsupportedOperationException> {
+        failsWith (javaClass<UnsupportedOperationException>()) {
             intArray().reduceRight { a, b -> a + b}
         }
     }

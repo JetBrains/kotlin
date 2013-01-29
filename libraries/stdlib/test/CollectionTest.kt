@@ -189,7 +189,7 @@ class CollectionTest {
             list.reduce { a, b -> a + b }
         }
 
-        failsWith<UnsupportedOperationException> {
+        failsWith(javaClass<UnsupportedOperationException>()) {
             arrayList<Int>().reduce { a, b -> a + b}
         }
     }
@@ -200,7 +200,7 @@ class CollectionTest {
             list.reduceRight { a, b -> a + b }
         }
 
-        failsWith<UnsupportedOperationException> {
+        failsWith(javaClass<UnsupportedOperationException>()) {
             arrayList<Int>().reduceRight { a, b -> a + b}
         }
     }
@@ -271,7 +271,7 @@ class CollectionTest {
         assertEquals(arrayList("foo", "bar"), notNull)
 
         val hasNulls = arrayList("foo", null, "bar")
-        failsWith<IllegalArgumentException> {
+        failsWith(javaClass<IllegalArgumentException>()) {
             // should throw an exception as we have a null
             hasNulls.requireNoNulls()
         }

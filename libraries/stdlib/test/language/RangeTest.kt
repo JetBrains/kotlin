@@ -145,44 +145,44 @@ public class RangeTest {
 
     test fun illegalSequenceCreation() {
         // create sequence explicitly with increment = 0
-        failsWith<IllegalArgumentException> { IntSequence(0, 5, 0) }
-        failsWith<IllegalArgumentException> { ByteSequence(0, 5, 0) }
-        failsWith<IllegalArgumentException> { ShortSequence(0, 5, 0) }
-        failsWith<IllegalArgumentException> { LongSequence(0, 5, 0) }
-        failsWith<IllegalArgumentException> { CharacterSequence('a', 'z', 0) }
-        failsWith<IllegalArgumentException> { DoubleSequence(0.0, 5.0, 0.0) }
-        failsWith<IllegalArgumentException> { FloatSequence(0.0.toFloat(), 5.0.toFloat(), 0.0.toFloat()) }
+        failsWith(javaClass<IllegalArgumentException>()) { IntSequence(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { ByteSequence(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { ShortSequence(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { LongSequence(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { CharacterSequence('a', 'z', 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { DoubleSequence(0.0, 5.0, 0.0) }
+        failsWith(javaClass<IllegalArgumentException>()) { FloatSequence(0.0.toFloat(), 5.0.toFloat(), 0.0.toFloat()) }
 
-        failsWith<IllegalArgumentException> { 0..5 step 0 }
-        failsWith<IllegalArgumentException> { 0.toByte()..5.toByte() step 0 }
-        failsWith<IllegalArgumentException> { 0.toShort()..5.toShort() step 0  }
-        failsWith<IllegalArgumentException> { 0.toLong()..5.toLong() step 0.toLong() }
-        failsWith<IllegalArgumentException> { 'a'..'z' step 0 }
-        failsWith<IllegalArgumentException> { 0.0..5.0 step 0.0 }
-        failsWith<IllegalArgumentException> { 0.0.toFloat()..5.0.toFloat() step 0.0.toFloat() }
+        failsWith(javaClass<IllegalArgumentException>()) { 0..5 step 0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toByte()..5.toByte() step 0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toShort()..5.toShort() step 0  }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toLong()..5.toLong() step 0.toLong() }
+        failsWith(javaClass<IllegalArgumentException>()) { 'a'..'z' step 0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0..5.0 step 0.0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0.toFloat()..5.0.toFloat() step 0.0.toFloat() }
 
-        failsWith<IllegalArgumentException> { 0 downTo -5 step 0 }
-        failsWith<IllegalArgumentException> { 0.toByte() downTo -5.toByte() step 0 }
-        failsWith<IllegalArgumentException> { 0.toShort() downTo -5.toShort() step 0  }
-        failsWith<IllegalArgumentException> { 0.toLong() downTo -5.toLong() step 0.toLong() }
-        failsWith<IllegalArgumentException> { 'z' downTo 'a' step 0 }
-        failsWith<IllegalArgumentException> { 0.0 downTo -5.0 step 0.0 }
-        failsWith<IllegalArgumentException> { 0.0.toFloat() downTo -5.0.toFloat() step 0.0.toFloat() }
+        failsWith(javaClass<IllegalArgumentException>()) { 0 downTo -5 step 0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toByte() downTo -5.toByte() step 0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toShort() downTo -5.toShort() step 0  }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toLong() downTo -5.toLong() step 0.toLong() }
+        failsWith(javaClass<IllegalArgumentException>()) { 'z' downTo 'a' step 0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0 downTo -5.0 step 0.0 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0.toFloat() downTo -5.0.toFloat() step 0.0.toFloat() }
 
-        failsWith<IllegalArgumentException> { 0..5 step -2 }
-        failsWith<IllegalArgumentException> { 0.toByte()..5.toByte() step -2 }
-        failsWith<IllegalArgumentException> { 0.toShort()..5.toShort() step -2  }
-        failsWith<IllegalArgumentException> { 0.toLong()..5.toLong() step -2.toLong() }
-        failsWith<IllegalArgumentException> { 'a'..'z' step -2 }
-        failsWith<IllegalArgumentException> { 0.0..5.0 step -0.5 }
-        failsWith<IllegalArgumentException> { 0.0.toFloat()..5.0.toFloat() step -0.5.toFloat() }
+        failsWith(javaClass<IllegalArgumentException>()) { 0..5 step -2 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toByte()..5.toByte() step -2 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toShort()..5.toShort() step -2  }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toLong()..5.toLong() step -2.toLong() }
+        failsWith(javaClass<IllegalArgumentException>()) { 'a'..'z' step -2 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0..5.0 step -0.5 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0.toFloat()..5.0.toFloat() step -0.5.toFloat() }
 
-        failsWith<IllegalArgumentException> { 0 downTo -5 step -2 }
-        failsWith<IllegalArgumentException> { 0.toByte() downTo -5.toByte() step -2 }
-        failsWith<IllegalArgumentException> { 0.toShort() downTo -5.toShort() step -2  }
-        failsWith<IllegalArgumentException> { 0.toLong() downTo -5.toLong() step -2.toLong() }
-        failsWith<IllegalArgumentException> { 'z' downTo 'a' step -2 }
-        failsWith<IllegalArgumentException> { 0.0 downTo -5.0 step -0.5 }
-        failsWith<IllegalArgumentException> { 0.0.toFloat() downTo -5.0.toFloat() step -0.5.toFloat() }
+        failsWith(javaClass<IllegalArgumentException>()) { 0 downTo -5 step -2 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toByte() downTo -5.toByte() step -2 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toShort() downTo -5.toShort() step -2  }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.toLong() downTo -5.toLong() step -2.toLong() }
+        failsWith(javaClass<IllegalArgumentException>()) { 'z' downTo 'a' step -2 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0 downTo -5.0 step -0.5 }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0.toFloat() downTo -5.0.toFloat() step -0.5.toFloat() }
     }
 }

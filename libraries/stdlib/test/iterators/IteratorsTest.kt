@@ -2,7 +2,7 @@ package iterators
 
 import kotlin.test.assertEquals
 import org.junit.Test as test
-import kotlin.test.failsWith
+import kotlin.test.fails
 
 fun fibonacci(): Iterator<Int> {
     // fibonacci terms
@@ -66,7 +66,7 @@ class IteratorsTest {
 
         val iterWithNulls = arrayList("foo", null, "bar").iterator()
         val notNull2 = iterWithNulls.requireNoNulls()
-        failsWith<IllegalArgumentException> {
+        fails {
             // should throw an exception as we have a null
             notNull2.toList()
         }

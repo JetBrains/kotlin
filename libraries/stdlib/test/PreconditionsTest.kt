@@ -14,7 +14,7 @@ class PreconditionsTest() {
     }
 
     test fun failingRequire() {
-        val error = failsWith<IllegalArgumentException> {
+        val error = failsWith(javaClass<IllegalArgumentException>()) {
             require(false)
         }
         assertNotNull(error.getMessage())
@@ -25,14 +25,14 @@ class PreconditionsTest() {
     }
 
     test fun failingRequireWithMessage() {
-        val error = failsWith<IllegalArgumentException> {
+        val error = failsWith(javaClass<IllegalArgumentException>()) {
             require(false, "Hello")
         }
         assertEquals("Hello", error.getMessage())
     }
 
     test fun failingRequireWithLazyMessage() {
-        val error = failsWith<IllegalArgumentException> {
+        val error = failsWith(javaClass<IllegalArgumentException>()) {
             require(false) {"Hello"}
         }
         assertEquals("Hello", error.getMessage())
@@ -47,7 +47,7 @@ class PreconditionsTest() {
     }
 
     test fun failingCheck() {
-        val error = failsWith<IllegalStateException> {
+        val error = failsWith(javaClass<IllegalStateException>()) {
             check(false)
         }
         assertNotNull(error.getMessage())
@@ -58,14 +58,14 @@ class PreconditionsTest() {
     }
 
     test fun failingCheckWithMessage() {
-        val error = failsWith<IllegalStateException> {
+        val error = failsWith(javaClass<IllegalStateException>()) {
             check(false, "Hello")
         }
         assertEquals("Hello", error.getMessage())
     }
 
     test fun failingCheckWithLazyMessage() {
-        val error = failsWith<IllegalStateException> {
+        val error = failsWith(javaClass<IllegalStateException>()) {
             check(false) {"Hello"}
         }
         assertEquals("Hello", error.getMessage())
@@ -78,7 +78,7 @@ class PreconditionsTest() {
     }
 
     test fun requireNotNullFails() {
-        failsWith<IllegalArgumentException> {
+        failsWith(javaClass<IllegalArgumentException>()) {
             val s2: String? = null
             requireNotNull(s2)
         }
@@ -91,7 +91,7 @@ class PreconditionsTest() {
     }
 
     test fun checkNotNullFails() {
-        failsWith<IllegalStateException> {
+        failsWith(javaClass<IllegalStateException>()) {
             val s2: String? = null
             checkNotNull(s2)
         }

@@ -48,7 +48,7 @@ class ArraysTest {
         //  Fails in JS: expect(0.toByte()) { byteArray(3, 2, 1) reduce { a, b -> (a - b).toByte() } }
         //  Fails in JS: expect(0.toShort()) { shortArray(3, 2, 1) reduce { a, b -> (a - b).toShort() } }
 
-        failsWith<UnsupportedOperationException> {
+        failsWith(javaClass<UnsupportedOperationException>()) {
             intArray().reduce { a, b -> a + b}
         }
     }
@@ -64,7 +64,7 @@ class ArraysTest {
         //  Fails in JS: expect(2.toByte()) { byteArray(1, 2, 3) reduceRight { a, b -> (a - b).toByte() } }
         //  Fails in JS: expect(2.toShort()) { shortArray(1, 2, 3) reduceRight { a, b -> (a - b).toShort() } }
 
-        failsWith<UnsupportedOperationException> {
+        failsWith(javaClass<UnsupportedOperationException>()) {
             intArray().reduceRight { a, b -> a + b}
         }
     }
