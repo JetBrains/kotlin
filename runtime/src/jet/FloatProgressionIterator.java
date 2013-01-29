@@ -16,12 +16,12 @@
 
 package jet;
 
-class FloatSequenceIterator extends FloatIterator {
+class FloatProgressionIterator extends FloatIterator {
     private float next;
     private final float end;
     private final float increment;
 
-    public FloatSequenceIterator(float start, float end, float increment) {
+    public FloatProgressionIterator(float start, float end, float increment) {
         this.next = start;
         this.end = end;
         this.increment = increment;

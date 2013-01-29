@@ -19,12 +19,12 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class ByteSequence implements NumberSequence<Byte> {
+public class ByteProgression implements Progression<Byte> {
     private final byte start;
     private final byte end;
     private final int increment;
 
-    public ByteSequence(byte start, byte end, int increment) {
+    public ByteProgression(byte start, byte end, int increment) {
         if (increment == 0) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }
@@ -50,7 +50,7 @@ public class ByteSequence implements NumberSequence<Byte> {
 
     @Override
     public ByteIterator iterator() {
-        return new ByteSequenceIterator(start, end, increment);
+        return new ByteProgressionIterator(start, end, increment);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ByteSequence implements NumberSequence<Byte> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ByteSequence bytes = (ByteSequence) o;
+        ByteProgression bytes = (ByteProgression) o;
 
         if (end != bytes.end) return false;
         if (increment != bytes.increment) return false;

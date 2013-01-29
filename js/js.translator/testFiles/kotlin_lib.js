@@ -68,7 +68,7 @@ var kotlin = {set:function (receiver, key, value) {
     };
 
     Kotlin.intDownto = function (from, to) {
-        return Kotlin.$new(Kotlin.NumberSequence)(from, to, -1);
+        return Kotlin.$new(Kotlin.Progression)(from, to, -1);
     };
 
     Kotlin.modules = {};
@@ -394,7 +394,7 @@ var kotlin = {set:function (receiver, key, value) {
         }
     });
 
-    Kotlin.NumberSequence = Kotlin.$createClass({
+    Kotlin.Progression = Kotlin.$createClass({
         initialize: function (start, end, increment) {
             this.$start = start;
             this.$end = end;

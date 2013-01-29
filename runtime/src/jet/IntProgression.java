@@ -19,12 +19,12 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class ShortSequence implements NumberSequence<Short> {
-    private final short start;
-    private final short end;
+public class IntProgression implements Progression<Integer> {
+    private final int start;
+    private final int end;
     private final int increment;
 
-    public ShortSequence(short start, short end, int increment) {
+    public IntProgression(int start, int end, int increment) {
         if (increment == 0) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }
@@ -34,12 +34,12 @@ public class ShortSequence implements NumberSequence<Short> {
     }
 
     @Override
-    public Short getStart() {
+    public Integer getStart() {
         return start;
     }
 
     @Override
-    public Short getEnd() {
+    public Integer getEnd() {
         return end;
     }
 
@@ -49,8 +49,8 @@ public class ShortSequence implements NumberSequence<Short> {
     }
 
     @Override
-    public ShortIterator iterator() {
-        return new ShortSequenceIterator(start, end, increment);
+    public IntIterator iterator() {
+        return new IntProgressionIterator(start, end, increment);
     }
 
     @Override
@@ -68,19 +68,19 @@ public class ShortSequence implements NumberSequence<Short> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ShortSequence shorts = (ShortSequence) o;
+        IntProgression sequence = (IntProgression) o;
 
-        if (end != shorts.end) return false;
-        if (increment != shorts.increment) return false;
-        if (start != shorts.start) return false;
+        if (end != sequence.end) return false;
+        if (increment != sequence.increment) return false;
+        if (start != sequence.start) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) start;
-        result = 31 * result + (int) end;
+        int result = start;
+        result = 31 * result + end;
         result = 31 * result + increment;
         return result;
     }

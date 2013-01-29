@@ -16,12 +16,12 @@
 
 package jet;
 
-class LongSequenceIterator extends LongIterator {
-    private long next;
-    private final long end;
-    private final long increment;
+class ByteProgressionIterator extends ByteIterator {
+    private byte next;
+    private final byte end;
+    private final int increment;
 
-    public LongSequenceIterator(long start, long end, long increment) {
+    public ByteProgressionIterator(byte start, byte end, int increment) {
         this.next = start;
         this.end = end;
         this.increment = increment;
@@ -33,8 +33,8 @@ class LongSequenceIterator extends LongIterator {
     }
 
     @Override
-    public long nextLong() {
-        long value = next;
+    public byte nextByte() {
+        byte value = next;
         next += increment;
         return value;
     }

@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class DoubleRange implements Range<Double>, NumberSequence<Double> {
+public final class DoubleRange implements Range<Double>, Progression<Double> {
     public static final DoubleRange EMPTY = new DoubleRange(1, 0);
 
     private final double start;
@@ -56,7 +56,7 @@ public final class DoubleRange implements Range<Double>, NumberSequence<Double> 
 
     @Override
     public DoubleIterator iterator() {
-        return new DoubleSequenceIterator(start, end, 1.0);
+        return new DoubleProgressionIterator(start, end, 1.0);
     }
 
     @Override

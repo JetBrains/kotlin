@@ -19,12 +19,12 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class CharacterSequence implements NumberSequence<Character> {
-    private final char start;
-    private final char end;
-    private final int increment;
+public class LongProgression implements Progression<Long> {
+    private final long start;
+    private final long end;
+    private final long increment;
 
-    public CharacterSequence(char start, char end, int increment) {
+    public LongProgression(long start, long end, long increment) {
         if (increment == 0) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }
@@ -34,23 +34,23 @@ public class CharacterSequence implements NumberSequence<Character> {
     }
 
     @Override
-    public Character getStart() {
+    public Long getStart() {
         return start;
     }
 
     @Override
-    public Character getEnd() {
+    public Long getEnd() {
         return end;
     }
 
     @Override
-    public Integer getIncrement() {
+    public Long getIncrement() {
         return increment;
     }
 
     @Override
-    public CharIterator iterator() {
-        return new CharacterSequenceIterator(start, end, increment);
+    public LongIterator iterator() {
+        return new LongProgressionIterator(start, end, increment);
     }
 
     @Override
@@ -68,20 +68,20 @@ public class CharacterSequence implements NumberSequence<Character> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        CharacterSequence that = (CharacterSequence) o;
+        LongProgression longs = (LongProgression) o;
 
-        if (end != that.end) return false;
-        if (increment != that.increment) return false;
-        if (start != that.start) return false;
+        if (end != longs.end) return false;
+        if (increment != longs.increment) return false;
+        if (start != longs.start) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) start;
-        result = 31 * result + (int) end;
-        result = 31 * result + increment;
+        int result = (int) (start ^ (start >>> 32));
+        result = 31 * result + (int) (end ^ (end >>> 32));
+        result = 31 * result + (int) (increment ^ (increment >>> 32));
         return result;
     }
 }

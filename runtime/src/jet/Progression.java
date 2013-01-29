@@ -16,26 +16,11 @@
 
 package jet;
 
-class ByteSequenceIterator extends ByteIterator {
-    private byte next;
-    private final byte end;
-    private final int increment;
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
-    public ByteSequenceIterator(byte start, byte end, int increment) {
-        this.next = start;
-        this.end = end;
-        this.increment = increment;
-    }
-
-    @Override
-    public boolean hasNext() {
-        return increment > 0 ? next <= end : next >= end;
-    }
-
-    @Override
-    public byte nextByte() {
-        byte value = next;
-        next += increment;
-        return value;
-    }
+@AssertInvisibleInResolver
+public interface Progression<N> extends Iterable<N> {
+    N getStart();
+    N getEnd();
+    Number getIncrement();
 }

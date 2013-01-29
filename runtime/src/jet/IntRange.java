@@ -19,7 +19,7 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public final class IntRange implements Range<Integer>, NumberSequence<Integer> {
+public final class IntRange implements Range<Integer>, Progression<Integer> {
     public static final IntRange EMPTY = new IntRange(1, 0);
 
     private final int start;
@@ -56,7 +56,7 @@ public final class IntRange implements Range<Integer>, NumberSequence<Integer> {
 
     @Override
     public IntIterator iterator() {
-        return new IntSequenceIterator(start, end, 1);
+        return new IntProgressionIterator(start, end, 1);
     }
 
     @Override

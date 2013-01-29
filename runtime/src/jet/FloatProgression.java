@@ -19,13 +19,13 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class IntSequence implements NumberSequence<Integer> {
-    private final int start;
-    private final int end;
-    private final int increment;
+public class FloatProgression implements Progression<Float> {
+    private final float start;
+    private final float end;
+    private final float increment;
 
-    public IntSequence(int start, int end, int increment) {
-        if (increment == 0) {
+    public FloatProgression(float start, float end, float increment) {
+        if (increment == 0.0f || increment == -0.0f) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }
         this.start = start;
@@ -34,23 +34,23 @@ public class IntSequence implements NumberSequence<Integer> {
     }
 
     @Override
-    public Integer getStart() {
+    public Float getStart() {
         return start;
     }
 
     @Override
-    public Integer getEnd() {
+    public Float getEnd() {
         return end;
     }
 
     @Override
-    public Integer getIncrement() {
+    public Float getIncrement() {
         return increment;
     }
 
     @Override
-    public IntIterator iterator() {
-        return new IntSequenceIterator(start, end, increment);
+    public FloatIterator iterator() {
+        return new FloatProgressionIterator(start, end, increment);
     }
 
     @Override
@@ -68,20 +68,20 @@ public class IntSequence implements NumberSequence<Integer> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        IntSequence sequence = (IntSequence) o;
+        FloatProgression floats = (FloatProgression) o;
 
-        if (end != sequence.end) return false;
-        if (increment != sequence.increment) return false;
-        if (start != sequence.start) return false;
+        if (Float.compare(floats.end, end) != 0) return false;
+        if (Float.compare(floats.increment, increment) != 0) return false;
+        if (Float.compare(floats.start, start) != 0) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = start;
-        result = 31 * result + end;
-        result = 31 * result + increment;
+        int result = (start != +0.0f ? Float.floatToIntBits(start) : 0);
+        result = 31 * result + (end != +0.0f ? Float.floatToIntBits(end) : 0);
+        result = 31 * result + (increment != +0.0f ? Float.floatToIntBits(increment) : 0);
         return result;
     }
 }

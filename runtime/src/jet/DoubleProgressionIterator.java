@@ -16,11 +16,26 @@
 
 package jet;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+class DoubleProgressionIterator extends DoubleIterator {
+    private double next;
+    private final double end;
+    private final double increment;
 
-@AssertInvisibleInResolver
-public interface NumberSequence<N> extends Iterable<N> {
-    N getStart();
-    N getEnd();
-    Number getIncrement();
+    public DoubleProgressionIterator(double start, double end, double increment) {
+        this.next = start;
+        this.end = end;
+        this.increment = increment;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return increment > 0 ? next <= end : next >= end;
+    }
+
+    @Override
+    public double nextDouble() {
+        double value = next;
+        next += increment;
+        return value;
+    }
 }

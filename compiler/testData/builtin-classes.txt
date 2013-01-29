@@ -131,7 +131,15 @@ public abstract class ByteIterator : jet.Iterator<jet.Byte> {
     public abstract fun nextByte() : jet.Byte
 }
 
-public final class ByteRange : jet.Range<jet.Byte>, jet.NumberSequence<jet.Byte> {
+public final class ByteProgression : jet.Progression<jet.Byte> {
+    public constructor ByteProgression(/*0*/ start : jet.Byte, /*1*/ end : jet.Byte, /*2*/ increment : jet.Int)
+    public open override /*1*/ val end : jet.Byte
+    public open override /*1*/ val increment : jet.Int
+    public open override /*1*/ val start : jet.Byte
+    public open override /*1*/ fun iterator() : jet.ByteIterator
+}
+
+public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
     public constructor ByteRange(/*0*/ start : jet.Byte, /*1*/ end : jet.Byte)
     public open override /*2*/ val end : jet.Byte
     public open override /*1*/ val increment : jet.Int
@@ -143,14 +151,6 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.NumberSequence<jet.Byte>
         private constructor <class-object-for-ByteRange>()
         public final val EMPTY : jet.ByteRange
     }
-}
-
-public final class ByteSequence : jet.NumberSequence<jet.Byte> {
-    public constructor ByteSequence(/*0*/ start : jet.Byte, /*1*/ end : jet.Byte, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Byte
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Byte
-    public open override /*1*/ fun iterator() : jet.ByteIterator
 }
 
 public final class Char : jet.Number, jet.Comparable<jet.Char> {
@@ -225,7 +225,15 @@ public abstract class CharIterator : jet.Iterator<jet.Char> {
     public abstract fun nextChar() : jet.Char
 }
 
-public final class CharRange : jet.Range<jet.Char>, jet.NumberSequence<jet.Char> {
+public final class CharProgression : jet.Progression<jet.Char> {
+    public constructor CharProgression(/*0*/ start : jet.Char, /*1*/ end : jet.Char, /*2*/ increment : jet.Int)
+    public open override /*1*/ val end : jet.Char
+    public open override /*1*/ val increment : jet.Int
+    public open override /*1*/ val start : jet.Char
+    public open override /*1*/ fun iterator() : jet.CharIterator
+}
+
+public final class CharRange : jet.Range<jet.Char>, jet.Progression<jet.Char> {
     public constructor CharRange(/*0*/ start : jet.Char, /*1*/ end : jet.Char)
     public open override /*2*/ val end : jet.Char
     public open override /*1*/ val increment : jet.Int
@@ -243,14 +251,6 @@ public trait CharSequence {
     public abstract val length : jet.Int
     public abstract fun get(/*0*/ index : jet.Int) : jet.Char
     public abstract fun toString() : jet.String
-}
-
-public final class CharacterSequence : jet.NumberSequence<jet.Char> {
-    public constructor CharacterSequence(/*0*/ start : jet.Char, /*1*/ end : jet.Char, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Char
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Char
-    public open override /*1*/ fun iterator() : jet.CharIterator
 }
 
 public trait Collection</*0*/ out E> : jet.Iterable<E>, jet.Hashable {
@@ -350,7 +350,15 @@ public abstract class DoubleIterator : jet.Iterator<jet.Double> {
     public abstract fun nextDouble() : jet.Double
 }
 
-public final class DoubleRange : jet.Range<jet.Double>, jet.NumberSequence<jet.Double> {
+public final class DoubleProgression : jet.Progression<jet.Double> {
+    public constructor DoubleProgression(/*0*/ start : jet.Double, /*1*/ end : jet.Double, /*2*/ increment : jet.Double)
+    public open override /*1*/ val end : jet.Double
+    public open override /*1*/ val increment : jet.Double
+    public open override /*1*/ val start : jet.Double
+    public open override /*1*/ fun iterator() : jet.DoubleIterator
+}
+
+public final class DoubleRange : jet.Range<jet.Double>, jet.Progression<jet.Double> {
     public constructor DoubleRange(/*0*/ start : jet.Double, /*1*/ end : jet.Double)
     public open override /*2*/ val end : jet.Double
     public open override /*1*/ val increment : jet.Double
@@ -362,14 +370,6 @@ public final class DoubleRange : jet.Range<jet.Double>, jet.NumberSequence<jet.D
         private constructor <class-object-for-DoubleRange>()
         public final val EMPTY : jet.DoubleRange
     }
-}
-
-public final class DoubleSequence : jet.NumberSequence<jet.Double> {
-    public constructor DoubleSequence(/*0*/ start : jet.Double, /*1*/ end : jet.Double, /*2*/ increment : jet.Double)
-    public open override /*1*/ val end : jet.Double
-    public open override /*1*/ val increment : jet.Double
-    public open override /*1*/ val start : jet.Double
-    public open override /*1*/ fun iterator() : jet.DoubleIterator
 }
 
 public abstract class Enum</*0*/ E : jet.Enum<E>> {
@@ -575,7 +575,15 @@ public abstract class FloatIterator : jet.Iterator<jet.Float> {
     public abstract fun nextFloat() : jet.Float
 }
 
-public final class FloatRange : jet.Range<jet.Float>, jet.NumberSequence<jet.Float> {
+public final class FloatProgression : jet.Progression<jet.Float> {
+    public constructor FloatProgression(/*0*/ start : jet.Float, /*1*/ end : jet.Float, /*2*/ increment : jet.Float)
+    public open override /*1*/ val end : jet.Float
+    public open override /*1*/ val increment : jet.Float
+    public open override /*1*/ val start : jet.Float
+    public open override /*1*/ fun iterator() : jet.FloatIterator
+}
+
+public final class FloatRange : jet.Range<jet.Float>, jet.Progression<jet.Float> {
     public constructor FloatRange(/*0*/ start : jet.Float, /*1*/ end : jet.Float)
     public open override /*2*/ val end : jet.Float
     public open override /*1*/ val increment : jet.Float
@@ -587,14 +595,6 @@ public final class FloatRange : jet.Range<jet.Float>, jet.NumberSequence<jet.Flo
         private constructor <class-object-for-FloatRange>()
         public final val EMPTY : jet.FloatRange
     }
-}
-
-public final class FloatSequence : jet.NumberSequence<jet.Float> {
-    public constructor FloatSequence(/*0*/ start : jet.Float, /*1*/ end : jet.Float, /*2*/ increment : jet.Float)
-    public open override /*1*/ val end : jet.Float
-    public open override /*1*/ val increment : jet.Float
-    public open override /*1*/ val start : jet.Float
-    public open override /*1*/ fun iterator() : jet.FloatIterator
 }
 
 public abstract class Function0</*0*/ out R> {
@@ -806,7 +806,15 @@ public abstract class IntIterator : jet.Iterator<jet.Int> {
     public abstract fun nextInt() : jet.Int
 }
 
-public final class IntRange : jet.Range<jet.Int>, jet.NumberSequence<jet.Int> {
+public final class IntProgression : jet.Progression<jet.Int> {
+    public constructor IntProgression(/*0*/ start : jet.Int, /*1*/ end : jet.Int, /*2*/ increment : jet.Int)
+    public open override /*1*/ val end : jet.Int
+    public open override /*1*/ val increment : jet.Int
+    public open override /*1*/ val start : jet.Int
+    public open override /*1*/ fun iterator() : jet.IntIterator
+}
+
+public final class IntRange : jet.Range<jet.Int>, jet.Progression<jet.Int> {
     public constructor IntRange(/*0*/ start : jet.Int, /*1*/ end : jet.Int)
     public open override /*2*/ val end : jet.Int
     public open override /*1*/ val increment : jet.Int
@@ -818,14 +826,6 @@ public final class IntRange : jet.Range<jet.Int>, jet.NumberSequence<jet.Int> {
         private constructor <class-object-for-IntRange>()
         public final val EMPTY : jet.IntRange
     }
-}
-
-public final class IntSequence : jet.NumberSequence<jet.Int> {
-    public constructor IntSequence(/*0*/ start : jet.Int, /*1*/ end : jet.Int, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Int
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Int
-    public open override /*1*/ fun iterator() : jet.IntIterator
 }
 
 public trait Iterable</*0*/ out T> {
@@ -953,7 +953,15 @@ public abstract class LongIterator : jet.Iterator<jet.Long> {
     public abstract fun nextLong() : jet.Long
 }
 
-public final class LongRange : jet.Range<jet.Long>, jet.NumberSequence<jet.Long> {
+public final class LongProgression : jet.Progression<jet.Long> {
+    public constructor LongProgression(/*0*/ start : jet.Long, /*1*/ end : jet.Long, /*2*/ increment : jet.Long)
+    public open override /*1*/ val end : jet.Long
+    public open override /*1*/ val increment : jet.Long
+    public open override /*1*/ val start : jet.Long
+    public open override /*1*/ fun iterator() : jet.LongIterator
+}
+
+public final class LongRange : jet.Range<jet.Long>, jet.Progression<jet.Long> {
     public constructor LongRange(/*0*/ start : jet.Long, /*1*/ end : jet.Long)
     public open override /*2*/ val end : jet.Long
     public open override /*1*/ val increment : jet.Long
@@ -965,14 +973,6 @@ public final class LongRange : jet.Range<jet.Long>, jet.NumberSequence<jet.Long>
         private constructor <class-object-for-LongRange>()
         public final val EMPTY : jet.LongRange
     }
-}
-
-public final class LongSequence : jet.NumberSequence<jet.Long> {
-    public constructor LongSequence(/*0*/ start : jet.Long, /*1*/ end : jet.Long, /*2*/ increment : jet.Long)
-    public open override /*1*/ val end : jet.Long
-    public open override /*1*/ val increment : jet.Long
-    public open override /*1*/ val start : jet.Long
-    public open override /*1*/ fun iterator() : jet.LongIterator
 }
 
 public trait Map</*0*/ K, /*1*/ out V> {
@@ -1119,7 +1119,7 @@ public abstract class Number : jet.Hashable {
     public abstract fun toShort() : jet.Short
 }
 
-public trait NumberSequence</*0*/ N : jet.Any> : jet.Iterable<N> {
+public trait Progression</*0*/ N : jet.Any> : jet.Iterable<N> {
     public abstract val end : N
     public abstract val increment : jet.Number
     public abstract val start : N
@@ -1226,7 +1226,15 @@ public abstract class ShortIterator : jet.Iterator<jet.Short> {
     public abstract fun nextShort() : jet.Short
 }
 
-public final class ShortRange : jet.Range<jet.Short>, jet.NumberSequence<jet.Short> {
+public final class ShortProgression : jet.Progression<jet.Short> {
+    public constructor ShortProgression(/*0*/ start : jet.Short, /*1*/ end : jet.Short, /*2*/ increment : jet.Int)
+    public open override /*1*/ val end : jet.Short
+    public open override /*1*/ val increment : jet.Int
+    public open override /*1*/ val start : jet.Short
+    public open override /*1*/ fun iterator() : jet.ShortIterator
+}
+
+public final class ShortRange : jet.Range<jet.Short>, jet.Progression<jet.Short> {
     public constructor ShortRange(/*0*/ start : jet.Short, /*1*/ end : jet.Short)
     public open override /*2*/ val end : jet.Short
     public open override /*1*/ val increment : jet.Int
@@ -1238,14 +1246,6 @@ public final class ShortRange : jet.Range<jet.Short>, jet.NumberSequence<jet.Sho
         private constructor <class-object-for-ShortRange>()
         public final val EMPTY : jet.ShortRange
     }
-}
-
-public final class ShortSequence : jet.NumberSequence<jet.Short> {
-    public constructor ShortSequence(/*0*/ start : jet.Short, /*1*/ end : jet.Short, /*2*/ increment : jet.Int)
-    public open override /*1*/ val end : jet.Short
-    public open override /*1*/ val increment : jet.Int
-    public open override /*1*/ val start : jet.Short
-    public open override /*1*/ fun iterator() : jet.ShortIterator
 }
 
 public final class String : jet.Comparable<jet.String>, jet.CharSequence {

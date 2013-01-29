@@ -16,12 +16,12 @@
 
 package jet;
 
-class CharacterSequenceIterator extends CharIterator {
-    private char next;
-    private final char end;
+class ShortProgressionIterator extends ShortIterator {
+    private short next;
+    private final short end;
     private final int increment;
 
-    public CharacterSequenceIterator(char start, char end, int increment) {
+    public ShortProgressionIterator(short start, short end, int increment) {
         this.next = start;
         this.end = end;
         this.increment = increment;
@@ -33,8 +33,8 @@ class CharacterSequenceIterator extends CharIterator {
     }
 
     @Override
-    public char nextChar() {
-        char value = next;
+    public short nextShort() {
+        short value = next;
         next += increment;
         return value;
     }

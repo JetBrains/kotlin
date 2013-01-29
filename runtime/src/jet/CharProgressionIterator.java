@@ -16,12 +16,12 @@
 
 package jet;
 
-class DoubleSequenceIterator extends DoubleIterator {
-    private double next;
-    private final double end;
-    private final double increment;
+class CharProgressionIterator extends CharIterator {
+    private char next;
+    private final char end;
+    private final int increment;
 
-    public DoubleSequenceIterator(double start, double end, double increment) {
+    public CharProgressionIterator(char start, char end, int increment) {
         this.next = start;
         this.end = end;
         this.increment = increment;
@@ -33,8 +33,8 @@ class DoubleSequenceIterator extends DoubleIterator {
     }
 
     @Override
-    public double nextDouble() {
-        double value = next;
+    public char nextChar() {
+        char value = next;
         next += increment;
         return value;
     }

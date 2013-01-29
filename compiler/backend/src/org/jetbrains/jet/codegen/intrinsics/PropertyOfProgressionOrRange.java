@@ -33,11 +33,11 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
-public class PropertyOfSequenceOrRange implements IntrinsicMethod {
+public class PropertyOfProgressionOrRange implements IntrinsicMethod {
     private final FqName ownerClass;
     private final Name propertyName;
 
-    public PropertyOfSequenceOrRange(@NotNull FqName ownerClass, @NotNull Name propertyName) {
+    public PropertyOfProgressionOrRange(@NotNull FqName ownerClass, @NotNull Name propertyName) {
         this.ownerClass = ownerClass;
         this.propertyName = propertyName;
     }

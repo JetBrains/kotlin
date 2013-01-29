@@ -5,7 +5,7 @@ import org.junit.Test as test
 
 public class RangeIterationTest {
     private fun <N> doTest(
-            sequence: NumberSequence<N>,
+            sequence: Progression<N>,
             expectedStart: N,
             expectedEnd: N,
             expectedIncrement: Number,

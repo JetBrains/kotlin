@@ -16,12 +16,12 @@
 
 package jet;
 
-class ShortSequenceIterator extends ShortIterator {
-    private short next;
-    private final short end;
-    private final int increment;
+class LongProgressionIterator extends LongIterator {
+    private long next;
+    private final long end;
+    private final long increment;
 
-    public ShortSequenceIterator(short start, short end, int increment) {
+    public LongProgressionIterator(long start, long end, long increment) {
         this.next = start;
         this.end = end;
         this.increment = increment;
@@ -33,8 +33,8 @@ class ShortSequenceIterator extends ShortIterator {
     }
 
     @Override
-    public short nextShort() {
-        short value = next;
+    public long nextLong() {
+        long value = next;
         next += increment;
         return value;
     }

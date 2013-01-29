@@ -9,7 +9,7 @@ public trait Range<in T: Comparable<T>> {
 public class IntRange(
     public override val start: Int,
     public override val end : Int
-) : Range<Int>, NumberSequence<Int> {
+) : Range<Int>, Progression<Int> {
 
     public override fun iterator() : IntIterator
 
@@ -25,7 +25,7 @@ public class IntRange(
 public class LongRange(
     public override val start: Long,
     public override val end: Long
-) : Range<Long>, NumberSequence<Long> {
+) : Range<Long>, Progression<Long> {
 
     public override fun iterator(): LongIterator
 
@@ -41,7 +41,7 @@ public class LongRange(
 public class ByteRange(
     public override val start: Byte,
     public override val end : Byte
-): Range<Byte>, NumberSequence<Byte> {
+): Range<Byte>, Progression<Byte> {
 
     public override fun iterator(): ByteIterator
 
@@ -57,7 +57,7 @@ public class ByteRange(
 public class ShortRange(
     public override val start: Short,
     public override val end: Short
-) : Range<Short>, NumberSequence<Short> {
+) : Range<Short>, Progression<Short> {
 
     public override fun iterator(): ShortIterator
 
@@ -73,7 +73,7 @@ public class ShortRange(
 public class CharRange(
     public override val start: Char,
     public override val end: Char
-) : Range<Char>, NumberSequence<Char> {
+) : Range<Char>, Progression<Char> {
 
     public override fun iterator(): CharIterator
 
@@ -89,7 +89,7 @@ public class CharRange(
 public class FloatRange(
     public override val start: Float,
     public override val end: Float
-) : Range<Float>, NumberSequence<Float> {
+) : Range<Float>, Progression<Float> {
 
     public override fun iterator(): FloatIterator
 
@@ -105,7 +105,7 @@ public class FloatRange(
 public class DoubleRange(
     public override val start: Double,
     public override val end: Double
-) : Range<Double>, NumberSequence<Double> {
+) : Range<Double>, Progression<Double> {
 
     public override fun iterator() : DoubleIterator
 
@@ -119,71 +119,71 @@ public class DoubleRange(
 }
 
 
-public trait NumberSequence<N: Any>: Iterable<N> {
+public trait Progression<N: Any>: Iterable<N> {
     public val start: N
     public val end: N
     public val increment: Number
 }
 
-public class IntSequence(
+public class IntProgression(
     public override val start: Int,
     public override val end: Int,
     public override val increment: Int
-): NumberSequence<Int> {
+): Progression<Int> {
 
     override fun iterator(): IntIterator
 }
 
-public class LongSequence(
+public class LongProgression(
     public override val start: Long,
     public override val end: Long,
     public override val increment: Long
-): NumberSequence<Long> {
+): Progression<Long> {
 
     override fun iterator(): LongIterator
 }
 
-public class ByteSequence(
+public class ByteProgression(
     public override val start: Byte,
     public override val end: Byte,
     public override val increment: Int
-): NumberSequence<Byte> {
+): Progression<Byte> {
 
     override fun iterator(): ByteIterator
 }
 
-public class ShortSequence(
+public class ShortProgression(
     public override val start: Short,
     public override val end: Short,
     public override val increment: Int
-): NumberSequence<Short> {
+): Progression<Short> {
 
     override fun iterator(): ShortIterator
 }
 
-public class CharacterSequence(
+public class CharProgression(
     public override val start: Char,
     public override val end: Char,
     public override val increment: Int
-): NumberSequence<Char> {
+): Progression<Char> {
 
     override fun iterator(): CharIterator
 }
 
-public class FloatSequence(
+public class FloatProgression(
     public override val start: Float,
     public override val end: Float,
     public override val increment: Float
-): NumberSequence<Float> {
+): Progression<Float> {
 
     override fun iterator(): FloatIterator
 }
 
-public class DoubleSequence(
+public class DoubleProgression(
     public override val start: Double,
     public override val end: Double,
     public override val increment: Double
-): NumberSequence<Double> {
+): Progression<Double> {
 
     override fun iterator(): DoubleIterator
 }

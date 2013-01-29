@@ -19,12 +19,12 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class LongSequence implements NumberSequence<Long> {
-    private final long start;
-    private final long end;
-    private final long increment;
+public class CharProgression implements Progression<Character> {
+    private final char start;
+    private final char end;
+    private final int increment;
 
-    public LongSequence(long start, long end, long increment) {
+    public CharProgression(char start, char end, int increment) {
         if (increment == 0) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }
@@ -34,23 +34,23 @@ public class LongSequence implements NumberSequence<Long> {
     }
 
     @Override
-    public Long getStart() {
+    public Character getStart() {
         return start;
     }
 
     @Override
-    public Long getEnd() {
+    public Character getEnd() {
         return end;
     }
 
     @Override
-    public Long getIncrement() {
+    public Integer getIncrement() {
         return increment;
     }
 
     @Override
-    public LongIterator iterator() {
-        return new LongSequenceIterator(start, end, increment);
+    public CharIterator iterator() {
+        return new CharProgressionIterator(start, end, increment);
     }
 
     @Override
@@ -68,20 +68,20 @@ public class LongSequence implements NumberSequence<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        LongSequence longs = (LongSequence) o;
+        CharProgression that = (CharProgression) o;
 
-        if (end != longs.end) return false;
-        if (increment != longs.increment) return false;
-        if (start != longs.start) return false;
+        if (end != that.end) return false;
+        if (increment != that.increment) return false;
+        if (start != that.start) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (start ^ (start >>> 32));
-        result = 31 * result + (int) (end ^ (end >>> 32));
-        result = 31 * result + (int) (increment ^ (increment >>> 32));
+        int result = (int) start;
+        result = 31 * result + (int) end;
+        result = 31 * result + increment;
         return result;
     }
 }

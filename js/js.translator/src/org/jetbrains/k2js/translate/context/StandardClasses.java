@@ -103,7 +103,7 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
-        standardClasses.declare().forFQ("jet.IntSequence").kotlinClass("NumberSequence")
+        standardClasses.declare().forFQ("jet.IntProgression").kotlinClass("NumberProgression")
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
         standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");

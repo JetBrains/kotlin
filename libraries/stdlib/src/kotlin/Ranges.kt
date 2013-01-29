@@ -19,133 +19,133 @@ public fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {
 
 
 
-public fun CharacterSequence.reversed(): CharacterSequence {
-    return CharacterSequence(end, start, -increment)
+public fun CharProgression.reversed(): CharProgression {
+    return CharProgression(end, start, -increment)
 }
 
-public fun ByteSequence.reversed(): ByteSequence {
-    return ByteSequence(end, start, -increment)
+public fun ByteProgression.reversed(): ByteProgression {
+    return ByteProgression(end, start, -increment)
 }
 
-public fun ShortSequence.reversed(): ShortSequence {
-    return ShortSequence(end, start, -increment)
+public fun ShortProgression.reversed(): ShortProgression {
+    return ShortProgression(end, start, -increment)
 }
 
-public fun IntSequence.reversed(): IntSequence {
-    return IntSequence(end, start, -increment)
+public fun IntProgression.reversed(): IntProgression {
+    return IntProgression(end, start, -increment)
 }
 
-public fun FloatSequence.reversed(): FloatSequence {
-    return FloatSequence(end, start, -increment)
+public fun FloatProgression.reversed(): FloatProgression {
+    return FloatProgression(end, start, -increment)
 }
 
-public fun LongSequence.reversed(): LongSequence {
-    return LongSequence(end, start, -increment)
+public fun LongProgression.reversed(): LongProgression {
+    return LongProgression(end, start, -increment)
 }
 
-public fun DoubleSequence.reversed(): DoubleSequence {
-    return DoubleSequence(end, start, -increment)
+public fun DoubleProgression.reversed(): DoubleProgression {
+    return DoubleProgression(end, start, -increment)
 }
 
 
-public fun CharRange.reversed(): CharacterSequence {
-    return CharacterSequence(end, start, -1)
+public fun CharRange.reversed(): CharProgression {
+    return CharProgression(end, start, -1)
 }
 
-public fun ByteRange.reversed(): ByteSequence {
-    return ByteSequence(end, start, -1)
+public fun ByteRange.reversed(): ByteProgression {
+    return ByteProgression(end, start, -1)
 }
 
-public fun ShortRange.reversed(): ShortSequence {
-    return ShortSequence(end, start, -1)
+public fun ShortRange.reversed(): ShortProgression {
+    return ShortProgression(end, start, -1)
 }
 
-public fun IntRange.reversed(): IntSequence {
-    return IntSequence(end, start, -1)
+public fun IntRange.reversed(): IntProgression {
+    return IntProgression(end, start, -1)
 }
 
-public fun FloatRange.reversed(): FloatSequence {
-    return FloatSequence(end, start, -1.0.toFloat())
+public fun FloatRange.reversed(): FloatProgression {
+    return FloatProgression(end, start, -1.0.toFloat())
 }
 
-public fun LongRange.reversed(): LongSequence {
-    return LongSequence(end, start, -1.toLong())
+public fun LongRange.reversed(): LongProgression {
+    return LongProgression(end, start, -1.toLong())
 }
     
-public fun DoubleRange.reversed(): DoubleSequence {
-    return DoubleSequence(end, start, -1.0)
+public fun DoubleRange.reversed(): DoubleProgression {
+    return DoubleProgression(end, start, -1.0)
 }
 
 
-public fun IntSequence.step(step: Int): IntSequence {
+public fun IntProgression.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
-    return IntSequence(start, end, if (increment > 0) step else -step)
+    return IntProgression(start, end, if (increment > 0) step else -step)
 }
 
-public fun CharacterSequence.step(step: Int): CharacterSequence {
+public fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
-    return CharacterSequence(start, end, if (increment > 0) step else -step)
+    return CharProgression(start, end, if (increment > 0) step else -step)
 }
 
-public fun ByteSequence.step(step: Int): ByteSequence {
+public fun ByteProgression.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
-    return ByteSequence(start, end, if (increment > 0) step else -step)
+    return ByteProgression(start, end, if (increment > 0) step else -step)
 }
 
-public fun ShortSequence.step(step: Int): ShortSequence {
+public fun ShortProgression.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
-    return ShortSequence(start, end, if (increment > 0) step else -step)
+    return ShortProgression(start, end, if (increment > 0) step else -step)
 }
 
-public fun LongSequence.step(step: Long): LongSequence {
+public fun LongProgression.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
-    return LongSequence(start, end, if (increment > 0) step else -step)
+    return LongProgression(start, end, if (increment > 0) step else -step)
 }
 
-public fun FloatSequence.step(step: Float): FloatSequence {
+public fun FloatProgression.step(step: Float): FloatProgression {
     checkStepIsPositive(step > 0, step)
-    return FloatSequence(start, end, if (increment > 0) step else -step)
+    return FloatProgression(start, end, if (increment > 0) step else -step)
 }
 
-public fun DoubleSequence.step(step: Double): DoubleSequence {
+public fun DoubleProgression.step(step: Double): DoubleProgression {
     checkStepIsPositive(step > 0, step)
-    return DoubleSequence(start, end, if (increment > 0) step else -step)
+    return DoubleProgression(start, end, if (increment > 0) step else -step)
 }
 
 
-public fun IntRange.step(step: Int): IntSequence {
+public fun IntRange.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
-    return IntSequence(start, end, step)
+    return IntProgression(start, end, step)
 }
 
-public fun CharRange.step(step: Int): CharacterSequence {
+public fun CharRange.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
-    return CharacterSequence(start, end, step)
+    return CharProgression(start, end, step)
 }
 
-public fun ByteRange.step(step: Int): ByteSequence {
+public fun ByteRange.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
-    return ByteSequence(start, end, step)
+    return ByteProgression(start, end, step)
 }
 
-public fun ShortRange.step(step: Int): ShortSequence {
+public fun ShortRange.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
-    return ShortSequence(start, end, step)
+    return ShortProgression(start, end, step)
 }
 
-public fun LongRange.step(step: Long): LongSequence {
+public fun LongRange.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
-    return LongSequence(start, end, step)
+    return LongProgression(start, end, step)
 }
 
-public fun FloatRange.step(step: Float): FloatSequence {
+public fun FloatRange.step(step: Float): FloatProgression {
     checkStepIsPositive(step > 0, step)
-    return FloatSequence(start, end, step)
+    return FloatProgression(start, end, step)
 }
 
-public fun DoubleRange.step(step: Double): DoubleSequence {
+public fun DoubleRange.step(step: Double): DoubleProgression {
     checkStepIsPositive(step > 0, step)
-    return DoubleSequence(start, end, step)
+    return DoubleProgression(start, end, step)
 }
 
 

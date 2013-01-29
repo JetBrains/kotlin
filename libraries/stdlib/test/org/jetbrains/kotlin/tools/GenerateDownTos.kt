@@ -20,7 +20,7 @@ private fun generateDownTos(outputFile: File, header: String) {
 
     fun generateDownTo(writer: PrintWriter, fromType: String, toType: String) {
         val elementType = getMaxType(fromType, toType)
-        val rangeType = if (elementType == "Char") "CharacterSequence" else elementType + "Sequence"
+        val progressionType = elementType + "Progression"
 
         val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
         val toExpr = if (elementType == toType) "to" else "to.to$elementType()"
@@ -32,8 +32,8 @@ private fun generateDownTos(outputFile: File, header: String) {
         }
 
         writer.println("""
-public inline fun $fromType.downTo(to: $toType): $rangeType {
-    return $rangeType($fromExpr, $toExpr, $incrementExpr)
+public inline fun $fromType.downTo(to: $toType): $progressionType {
+    return $progressionType($fromExpr, $toExpr, $incrementExpr)
 }""")
     }
 

@@ -143,15 +143,15 @@ public class RangeTest {
         assertFalse("trail" in range)
     }
 
-    test fun illegalSequenceCreation() {
-        // create sequence explicitly with increment = 0
-        failsWith(javaClass<IllegalArgumentException>()) { IntSequence(0, 5, 0) }
-        failsWith(javaClass<IllegalArgumentException>()) { ByteSequence(0, 5, 0) }
-        failsWith(javaClass<IllegalArgumentException>()) { ShortSequence(0, 5, 0) }
-        failsWith(javaClass<IllegalArgumentException>()) { LongSequence(0, 5, 0) }
-        failsWith(javaClass<IllegalArgumentException>()) { CharacterSequence('a', 'z', 0) }
-        failsWith(javaClass<IllegalArgumentException>()) { DoubleSequence(0.0, 5.0, 0.0) }
-        failsWith(javaClass<IllegalArgumentException>()) { FloatSequence(0.0.toFloat(), 5.0.toFloat(), 0.0.toFloat()) }
+    test fun illegalProgressionCreation() {
+        // create Progression explicitly with increment = 0
+        failsWith(javaClass<IllegalArgumentException>()) { IntProgression(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { ByteProgression(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { ShortProgression(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { LongProgression(0, 5, 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { CharProgression('a', 'z', 0) }
+        failsWith(javaClass<IllegalArgumentException>()) { DoubleProgression(0.0, 5.0, 0.0) }
+        failsWith(javaClass<IllegalArgumentException>()) { FloatProgression(0.0.toFloat(), 5.0.toFloat(), 0.0.toFloat()) }
 
         failsWith(javaClass<IllegalArgumentException>()) { 0..5 step 0 }
         failsWith(javaClass<IllegalArgumentException>()) { 0.toByte()..5.toByte() step 0 }

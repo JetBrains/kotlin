@@ -16,12 +16,12 @@
 
 package jet;
 
-class IntSequenceIterator extends IntIterator {
+class IntProgressionIterator extends IntIterator {
     private int next;
     private final int end;
     private final int increment;
 
-    public IntSequenceIterator(int start, int end, int increment) {
+    public IntProgressionIterator(int start, int end, int increment) {
         this.next = start;
         this.end = end;
         this.increment = increment;

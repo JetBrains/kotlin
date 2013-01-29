@@ -19,13 +19,13 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class FloatSequence implements NumberSequence<Float> {
-    private final float start;
-    private final float end;
-    private final float increment;
+public class DoubleProgression implements Progression<Double> {
+    private final double start;
+    private final double end;
+    private final double increment;
 
-    public FloatSequence(float start, float end, float increment) {
-        if (increment == 0.0f || increment == -0.0f) {
+    public DoubleProgression(double start, double end, double increment) {
+        if (increment == 0.0 || increment == -0.0) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }
         this.start = start;
@@ -34,23 +34,23 @@ public class FloatSequence implements NumberSequence<Float> {
     }
 
     @Override
-    public Float getStart() {
+    public Double getStart() {
         return start;
     }
 
     @Override
-    public Float getEnd() {
+    public Double getEnd() {
         return end;
     }
 
     @Override
-    public Float getIncrement() {
+    public Double getIncrement() {
         return increment;
     }
 
     @Override
-    public FloatIterator iterator() {
-        return new FloatSequenceIterator(start, end, increment);
+    public DoubleIterator iterator() {
+        return new DoubleProgressionIterator(start, end, increment);
     }
 
     @Override
@@ -68,20 +68,25 @@ public class FloatSequence implements NumberSequence<Float> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FloatSequence floats = (FloatSequence) o;
+        DoubleProgression doubles = (DoubleProgression) o;
 
-        if (Float.compare(floats.end, end) != 0) return false;
-        if (Float.compare(floats.increment, increment) != 0) return false;
-        if (Float.compare(floats.start, start) != 0) return false;
+        if (Double.compare(doubles.end, end) != 0) return false;
+        if (Double.compare(doubles.increment, increment) != 0) return false;
+        if (Double.compare(doubles.start, start) != 0) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (start != +0.0f ? Float.floatToIntBits(start) : 0);
-        result = 31 * result + (end != +0.0f ? Float.floatToIntBits(end) : 0);
-        result = 31 * result + (increment != +0.0f ? Float.floatToIntBits(increment) : 0);
+        int result;
+        long temp;
+        temp = start != +0.0d ? Double.doubleToLongBits(start) : 0L;
+        result = (int) (temp ^ (temp >>> 32));
+        temp = end != +0.0d ? Double.doubleToLongBits(end) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = increment != +0.0d ? Double.doubleToLongBits(increment) : 0L;
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 }

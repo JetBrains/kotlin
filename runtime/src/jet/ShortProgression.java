@@ -19,13 +19,13 @@ package jet;
 import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 @AssertInvisibleInResolver
-public class DoubleSequence implements NumberSequence<Double> {
-    private final double start;
-    private final double end;
-    private final double increment;
+public class ShortProgression implements Progression<Short> {
+    private final short start;
+    private final short end;
+    private final int increment;
 
-    public DoubleSequence(double start, double end, double increment) {
-        if (increment == 0.0 || increment == -0.0) {
+    public ShortProgression(short start, short end, int increment) {
+        if (increment == 0) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }
         this.start = start;
@@ -34,23 +34,23 @@ public class DoubleSequence implements NumberSequence<Double> {
     }
 
     @Override
-    public Double getStart() {
+    public Short getStart() {
         return start;
     }
 
     @Override
-    public Double getEnd() {
+    public Short getEnd() {
         return end;
     }
 
     @Override
-    public Double getIncrement() {
+    public Integer getIncrement() {
         return increment;
     }
 
     @Override
-    public DoubleIterator iterator() {
-        return new DoubleSequenceIterator(start, end, increment);
+    public ShortIterator iterator() {
+        return new ShortProgressionIterator(start, end, increment);
     }
 
     @Override
@@ -68,25 +68,20 @@ public class DoubleSequence implements NumberSequence<Double> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DoubleSequence doubles = (DoubleSequence) o;
+        ShortProgression shorts = (ShortProgression) o;
 
-        if (Double.compare(doubles.end, end) != 0) return false;
-        if (Double.compare(doubles.increment, increment) != 0) return false;
-        if (Double.compare(doubles.start, start) != 0) return false;
+        if (end != shorts.end) return false;
+        if (increment != shorts.increment) return false;
+        if (start != shorts.start) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        temp = start != +0.0d ? Double.doubleToLongBits(start) : 0L;
-        result = (int) (temp ^ (temp >>> 32));
-        temp = end != +0.0d ? Double.doubleToLongBits(end) : 0L;
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = increment != +0.0d ? Double.doubleToLongBits(increment) : 0L;
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = (int) start;
+        result = 31 * result + (int) end;
+        result = 31 * result + increment;
         return result;
     }
 }
