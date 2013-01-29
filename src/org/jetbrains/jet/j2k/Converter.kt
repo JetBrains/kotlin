@@ -19,12 +19,35 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.util.Pair
 import java.text.MessageFormat
 import com.intellij.psi.util.PsiUtil
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.internal.com.intellij.openapi.project.Project
+import org.jetbrains.jet.config.CompilerConfiguration
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
+import org.jetbrains.jet.internal.com.intellij.openapi.Disposable
+import org.jetbrains.jet.lang.resolve.name.FqName
 
 public open class Converter() {
     private var classIdentifiers: MutableSet<String> = Sets.newHashSet()!!
     private val dispatcher: Dispatcher = Dispatcher(this)
     private var methodReturnType: PsiType? = null
     private val flags: MutableSet<J2KConverterFlags?>? = Sets.newHashSet()
+    private val jetCoreEnvironment: JetCoreEnvironment
+    {
+        val disposable = (object : Disposable {
+            public override fun dispose() {}
+        })
+        jetCoreEnvironment = JetCoreEnvironment(disposable, CompilerConfiguration())
+    }
+    private val project: Project
+    {
+        project = jetCoreEnvironment.getProject()
+        KotlinBuiltIns.initialize(project)
+    }
+    private val javaToKotlinClassMap: JavaToKotlinClassMap
+    {
+        javaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
+    }
     public open fun addFlag(flag: J2KConverterFlags): Boolean {
         return flags?.add(flag)!!
     }
@@ -77,7 +100,16 @@ public open class Converter() {
         val imports: MutableList<Import> = (if (importList == null)
             arrayList()
         else
-            ArrayList(importsToImportList(importList.getAllImportStatements())))
+            ArrayList(importsToImportList(importList.getAllImportStatements()) filter {
+                // If name is invalid, like with star imports, don't try to filter
+                if (!FqName.isValid(it.name))
+                    true
+                else {
+                    // If imported class has a kotlin analog, drop the import
+                    val kotlinAnalogsForClass = javaToKotlinClassMap.mapPlatformClass(FqName(it.name))
+                    kotlinAnalogsForClass.isEmpty()
+                }
+            }))
         for (i : String in additionalImports)
             imports.add(Import(i))
 
