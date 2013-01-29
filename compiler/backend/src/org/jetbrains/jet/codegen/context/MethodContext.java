@@ -41,7 +41,7 @@ public class MethodContext extends CodegenContext {
     @Override
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
         if (getContextDescriptor() == d) {
-            return StackValue.local(0, AsmTypeConstants.OBJECT_TYPE);
+            return result != null ? result : StackValue.local(0, AsmTypeConstants.OBJECT_TYPE);
         }
 
         //noinspection ConstantConditions
