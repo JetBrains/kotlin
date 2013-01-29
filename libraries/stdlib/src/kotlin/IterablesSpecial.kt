@@ -77,7 +77,7 @@ public fun <T> Iterable<T>.last() : T {
  * If collection implements [[java.util.AbstractCollection]] an overridden implementation of the contains
  * method will be used.
  */
-public fun <T> Iterable<T>.contains(item : T) : Boolean {
+public fun <T> Iterable<T>.containsItem(item : T) : Boolean {
   if (this is java.util.AbstractCollection<T>) {
     return this.contains(item);
   }
