@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;

@@ -144,7 +144,7 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
     public open override /*2*/ val end : jet.Byte
     public open override /*1*/ val increment : jet.Int
     public open override /*2*/ val start : jet.Byte
-    public open override /*1*/ fun contains(/*0*/ elem : jet.Byte) : jet.Boolean
+    public open override /*1*/ fun contains(/*0*/ item : jet.Byte) : jet.Boolean
     public open override /*1*/ fun iterator() : jet.ByteIterator
     
     public class object <class-object-for-ByteRange> {
@@ -238,7 +238,7 @@ public final class CharRange : jet.Range<jet.Char>, jet.Progression<jet.Char> {
     public open override /*2*/ val end : jet.Char
     public open override /*1*/ val increment : jet.Int
     public open override /*2*/ val start : jet.Char
-    public open override /*1*/ fun contains(/*0*/ elem : jet.Char) : jet.Boolean
+    public open override /*1*/ fun contains(/*0*/ item : jet.Char) : jet.Boolean
     public open override /*1*/ fun iterator() : jet.CharIterator
     
     public class object <class-object-for-CharRange> {
@@ -363,7 +363,7 @@ public final class DoubleRange : jet.Range<jet.Double>, jet.Progression<jet.Doub
     public open override /*2*/ val end : jet.Double
     public open override /*1*/ val increment : jet.Double
     public open override /*2*/ val start : jet.Double
-    public open override /*1*/ fun contains(/*0*/ elem : jet.Double) : jet.Boolean
+    public open override /*1*/ fun contains(/*0*/ item : jet.Double) : jet.Boolean
     public open override /*1*/ fun iterator() : jet.DoubleIterator
     
     public class object <class-object-for-DoubleRange> {
@@ -588,7 +588,7 @@ public final class FloatRange : jet.Range<jet.Float>, jet.Progression<jet.Float>
     public open override /*2*/ val end : jet.Float
     public open override /*1*/ val increment : jet.Float
     public open override /*2*/ val start : jet.Float
-    public open override /*1*/ fun contains(/*0*/ elem : jet.Float) : jet.Boolean
+    public open override /*1*/ fun contains(/*0*/ item : jet.Float) : jet.Boolean
     public open override /*1*/ fun iterator() : jet.FloatIterator
     
     public class object <class-object-for-FloatRange> {
@@ -819,7 +819,7 @@ public final class IntRange : jet.Range<jet.Int>, jet.Progression<jet.Int> {
     public open override /*2*/ val end : jet.Int
     public open override /*1*/ val increment : jet.Int
     public open override /*2*/ val start : jet.Int
-    public open override /*1*/ fun contains(/*0*/ elem : jet.Int) : jet.Boolean
+    public open override /*1*/ fun contains(/*0*/ item : jet.Int) : jet.Boolean
     public open override /*1*/ fun iterator() : jet.IntIterator
     
     public class object <class-object-for-IntRange> {
@@ -966,7 +966,7 @@ public final class LongRange : jet.Range<jet.Long>, jet.Progression<jet.Long> {
     public open override /*2*/ val end : jet.Long
     public open override /*1*/ val increment : jet.Long
     public open override /*2*/ val start : jet.Long
-    public open override /*1*/ fun contains(/*0*/ elem : jet.Long) : jet.Boolean
+    public open override /*1*/ fun contains(/*0*/ item : jet.Long) : jet.Boolean
     public open override /*1*/ fun iterator() : jet.LongIterator
     
     public class object <class-object-for-LongRange> {
@@ -1239,7 +1239,7 @@ public final class ShortRange : jet.Range<jet.Short>, jet.Progression<jet.Short>
     public open override /*2*/ val end : jet.Short
     public open override /*1*/ val increment : jet.Int
     public open override /*2*/ val start : jet.Short
-    public open override /*1*/ fun contains(/*0*/ elem : jet.Short) : jet.Boolean
+    public open override /*1*/ fun contains(/*0*/ item : jet.Short) : jet.Boolean
     public open override /*1*/ fun iterator() : jet.ShortIterator
     
     public class object <class-object-for-ShortRange> {
