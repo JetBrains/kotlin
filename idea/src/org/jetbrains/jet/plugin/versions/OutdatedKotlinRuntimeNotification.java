@@ -24,6 +24,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,44 +42,51 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
     @Override
     public void projectOpened() {
         if (ApplicationManager.getApplication().isInternal()) return;
-        String runtimeVersion = KotlinRuntimeLibraryUtil.getRuntimeVersion(myProject);
-        final String pluginVersion = JetPluginUtil.getPluginVersion();
-        if (runtimeVersion == null) return; // runtime is not present in project
-        if ("@snapshot@".equals(pluginVersion)) return; // plugin is run from sources, can't compare versions
-
-        // user already clicked suppress
-        if (pluginVersion.equals(PropertiesComponent.getInstance(myProject).getValue(SUPPRESSED_PROPERTY_NAME))) return;
-
-        boolean isRuntimeOutdated = "snapshot".equals(runtimeVersion)
-                                    || KotlinRuntimeLibraryUtil.UNKNOWN_VERSION.equals(runtimeVersion)
-                                    || runtimeVersion.startsWith("internal-") != pluginVersion.startsWith("internal-")
-                                    || VersionComparatorUtil.compare(pluginVersion, runtimeVersion) > 0;
-
-        if (!isRuntimeOutdated) return;
-
-        String message = String.format("<p>Your version of Kotlin runtime library is %s, while plugin version is %s." +
-                                       " Runtime library should be updated to avoid compatibility problems.</p>" +
-                                       "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>",
-                                       KotlinRuntimeLibraryUtil.UNKNOWN_VERSION.equals(runtimeVersion) ? "older than 0.1.2296" : runtimeVersion, pluginVersion);
-        Notifications.Bus.notify(new Notification("Outdated Kotlin Runtime", "Outdated Kotlin Runtime",
-                                                  message,
-                                                  NotificationType.WARNING, new NotificationListener() {
+        StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
             @Override
-            public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    if ("update".equals(event.getDescription())) {
-                        KotlinRuntimeLibraryUtil.updateRuntime(myProject, showRuntimeJarNotFoundDialog(myProject));
+            public void run() {
+                String runtimeVersion = KotlinRuntimeLibraryUtil.getRuntimeVersion(myProject);
+                final String pluginVersion = JetPluginUtil.getPluginVersion();
+                if (runtimeVersion == null) return; // runtime is not present in project
+                if ("@snapshot@".equals(pluginVersion)) return; // plugin is run from sources, can't compare versions
+
+                // user already clicked suppress
+                if (pluginVersion.equals(PropertiesComponent.getInstance(myProject).getValue(SUPPRESSED_PROPERTY_NAME))) return;
+
+                boolean isRuntimeOutdated = "snapshot".equals(runtimeVersion)
+                                            || KotlinRuntimeLibraryUtil.UNKNOWN_VERSION.equals(runtimeVersion)
+                                            || runtimeVersion.startsWith("internal-") != pluginVersion.startsWith("internal-")
+                                            || VersionComparatorUtil.compare(pluginVersion, runtimeVersion) > 0;
+
+                if (!isRuntimeOutdated) return;
+
+                String message = String.format("<p>Your version of Kotlin runtime library is %s, while plugin version is %s." +
+                                               " Runtime library should be updated to avoid compatibility problems.</p>" +
+                                               "<p><a href=\"update\">Update Runtime</a> <a href=\"ignore\">Ignore</a></p>",
+                                               KotlinRuntimeLibraryUtil.UNKNOWN_VERSION.equals(runtimeVersion)
+                                               ? "older than 0.1.2296"
+                                               : runtimeVersion, pluginVersion);
+                Notifications.Bus.notify(new Notification("Outdated Kotlin Runtime", "Outdated Kotlin Runtime",
+                                                          message,
+                                                          NotificationType.WARNING, new NotificationListener() {
+                    @Override
+                    public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+                        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                            if ("update".equals(event.getDescription())) {
+                                KotlinRuntimeLibraryUtil.updateRuntime(myProject, showRuntimeJarNotFoundDialog(myProject));
+                            }
+                            else if ("ignore".equals(event.getDescription())) {
+                                PropertiesComponent.getInstance(myProject).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion);
+                            }
+                            else {
+                                throw new AssertionError();
+                            }
+                            notification.expire();
+                        }
                     }
-                    else if ("ignore".equals(event.getDescription())) {
-                        PropertiesComponent.getInstance(myProject).setValue(SUPPRESSED_PROPERTY_NAME, pluginVersion);
-                    }
-                    else {
-                        throw new AssertionError();
-                    }
-                    notification.expire();
-                }
+                }), myProject);
             }
-        }), myProject);
+        });
     }
 
     @NotNull
