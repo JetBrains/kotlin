@@ -25,6 +25,7 @@ import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
+import org.jetbrains.jet.codegen.generated.AbstractRangesCodegenTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -68,6 +69,15 @@ public class GenerateTests {
                 "BlackBoxCodegenTestGenerated",
                 AbstractBlackBoxCodegenTest.class,
                 testModel("compiler/testData/codegen/box", "blackBoxFileByFullPath")
+        );
+
+        GenerateRangesCodegenTestData.main(args);
+
+        generateTest(
+                "compiler/tests/",
+                "RangesCodegenTestGenerated",
+                AbstractRangesCodegenTest.class,
+                testModel("compiler/testData/codegen/ranges", "blackBoxFileByFullPath")
         );
 
         generateTest(
