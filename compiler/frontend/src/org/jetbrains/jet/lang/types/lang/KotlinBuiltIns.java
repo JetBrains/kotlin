@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,7 +228,7 @@ public class KotlinBuiltIns {
                 project,
                 storageManager,
                 builtInsModule,
-                new SpecialModuleConfiguration(project),
+                new SpecialModuleConfiguration(),
                 new FileBasedDeclarationProviderFactory(storageManager, files),
                 new Function<FqName, Name>() {
                     @Override
@@ -263,17 +263,12 @@ public class KotlinBuiltIns {
 
     private static class SpecialModuleConfiguration implements ModuleConfiguration {
 
-        private final Project project;
-
-        private SpecialModuleConfiguration(@NotNull Project project) {
-            this.project = project;
+        private SpecialModuleConfiguration() {
         }
 
         @Override
-        public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-            for (ImportPath defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
-                directives.add(JetPsiFactory.createImportDirective(project, defaultJetImport));
-            }
+        public List<ImportPath> getDefaultImports() {
+            return DefaultModuleConfiguration.DEFAULT_JET_IMPORTS;
         }
 
         @Override

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -33,8 +34,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.LockBasedStorageManager;
@@ -45,9 +44,9 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
@@ -103,13 +102,10 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
             @Override
-            public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-                final Collection<ImportPath> defaultImports = Lists.newArrayList(JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS);
-                defaultImports.addAll(Arrays.asList(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS));
-
-                for (ImportPath defaultJetImport : defaultImports) {
-                    directives.add(JetPsiFactory.createImportDirective(fileProject, defaultJetImport));
-                }
+            public List<ImportPath> getDefaultImports() {
+                LinkedHashSet<ImportPath> imports = Sets.newLinkedHashSet(JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS);
+                imports.addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
+                return Lists.newArrayList(imports);
             }
 
             @Override

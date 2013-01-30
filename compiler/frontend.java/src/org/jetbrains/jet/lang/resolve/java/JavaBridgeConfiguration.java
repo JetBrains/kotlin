@@ -16,14 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.project.Project;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -31,21 +31,15 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class JavaBridgeConfiguration implements ModuleConfiguration {
 
-    public static final ImportPath[] DEFAULT_JAVA_IMPORTS = new ImportPath[] { new ImportPath("java.lang.*") };
+    public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = ImmutableList.of(new ImportPath("java.lang.*"));
 
-
-    private Project project;
     private JavaSemanticServices javaSemanticServices;
     private ModuleConfiguration delegateConfiguration;
-
-    @Inject
-    public void setProject(@NotNull Project project) {
-        this.project = project;
-    }
 
     @Inject
     public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
@@ -54,17 +48,15 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @PostConstruct
     public void init() {
-        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project);
+        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration();
     }
 
-
-
     @Override
-    public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-        for (ImportPath importPath : DEFAULT_JAVA_IMPORTS) {
-            directives.add(JetPsiFactory.createImportDirective(project, importPath));
-        }
-        delegateConfiguration.addDefaultImports(directives);
+    public List<ImportPath> getDefaultImports() {
+        Set<ImportPath> imports = Sets.newLinkedHashSet(DEFAULT_JAVA_IMPORTS);
+        imports.addAll(delegateConfiguration.getDefaultImports());
+
+        return Lists.newArrayList(imports);
     }
 
     @Override

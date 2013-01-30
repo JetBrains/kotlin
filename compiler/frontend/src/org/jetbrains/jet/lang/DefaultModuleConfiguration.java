@@ -16,38 +16,33 @@
 
 package org.jetbrains.jet.lang;
 
-import com.intellij.openapi.project.Project;
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Collection;
+import java.util.List;
 
 public class DefaultModuleConfiguration implements ModuleConfiguration {
-    public static final ImportPath[] DEFAULT_JET_IMPORTS = new ImportPath[] {
-            new ImportPath("kotlin.*"), new ImportPath("kotlin.io.*"), new ImportPath("jet.*"), };
+    public static final List<ImportPath> DEFAULT_JET_IMPORTS = ImmutableList.of(
+            new ImportPath("kotlin.*"),
+            new ImportPath("kotlin.io.*"),
+            new ImportPath("jet.*"));
 
-    private final Project project;
-
-    public static DefaultModuleConfiguration createStandardConfiguration(Project project) {
-        return new DefaultModuleConfiguration(project);
+    public static DefaultModuleConfiguration createStandardConfiguration() {
+        return new DefaultModuleConfiguration();
     }
 
-    private DefaultModuleConfiguration(@NotNull Project project) {
-        this.project = project;
+    private DefaultModuleConfiguration() {
     }
 
     @Override
-    public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-        for (ImportPath defaultJetImport : DEFAULT_JET_IMPORTS) {
-            directives.add(JetPsiFactory.createImportDirective(project, defaultJetImport));
-        }
+    public List<ImportPath> getDefaultImports() {
+        return DEFAULT_JET_IMPORTS;
     }
 
     @Override

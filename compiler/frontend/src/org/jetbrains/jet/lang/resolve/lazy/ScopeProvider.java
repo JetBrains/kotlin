@@ -81,7 +81,8 @@ public class ScopeProvider {
         ImportsResolver.processImportsInFile(true, fileScope, Lists.newArrayList(file.getImportDirectives()),
                                              rootPackageDescriptor.getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
-                                             resolveSession.getInjector().getQualifiedExpressionResolver());
+                                             resolveSession.getInjector().getQualifiedExpressionResolver(),
+                                             resolveSession.getInjector().getJetPsiBuilder());
 
         fileScope.changeLockLevel(WritableScope.LockLevel.READING);
 
@@ -121,7 +122,8 @@ public class ScopeProvider {
         ImportsResolver.processImportsInFile(false, fileMemberScope, Lists.newArrayList(file.getImportDirectives()),
                                              rootPackageDescriptor.getMemberScope(),
                                              resolveSession.getModuleConfiguration(), resolveSession.getTrace(),
-                                             resolveSession.getInjector().getQualifiedExpressionResolver());
+                                             resolveSession.getInjector().getQualifiedExpressionResolver(),
+                                             resolveSession.getInjector().getJetPsiBuilder());
 
         fileMemberScope.changeLockLevel(WritableScope.LockLevel.READING);
 

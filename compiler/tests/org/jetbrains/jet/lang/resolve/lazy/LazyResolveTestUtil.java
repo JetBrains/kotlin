@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -33,7 +34,10 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
@@ -44,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -102,11 +105,10 @@ public class LazyResolveTestUtil {
 
         ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
             @Override
-            public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-                directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("java.lang.*")));
-                for (ImportPath defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
-                    directives.add(JetPsiFactory.createImportDirective(project, defaultJetImport));
-                }
+            public List<ImportPath> getDefaultImports() {
+                List<ImportPath> imports = Lists.newArrayList(new ImportPath("java.lang.*"));
+                imports.addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
+                return imports;
             }
 
             @Override

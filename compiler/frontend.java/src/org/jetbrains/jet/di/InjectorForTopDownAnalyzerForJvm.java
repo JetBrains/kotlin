@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
+import org.jetbrains.jet.lang.psi.JetPsiBuilder;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
@@ -89,6 +90,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private CandidateResolver candidateResolver;
     private ImportsResolver importsResolver;
+    private JetPsiBuilder jetPsiBuilder;
     private ScriptHeaderResolver scriptHeaderResolver;
     private OverloadResolver overloadResolver;
     private OverrideResolver overrideResolver;
@@ -139,6 +141,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.candidateResolver = new CandidateResolver();
         this.importsResolver = new ImportsResolver();
+        this.jetPsiBuilder = new JetPsiBuilder();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
@@ -193,7 +196,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver.setTypeResolver(typeResolver);
 
         this.moduleConfiguration.setJavaSemanticServices(javaSemanticServices);
-        this.moduleConfiguration.setProject(project);
 
         javaDescriptorResolver.setClassResolver(javaClassResolver);
         javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
@@ -240,8 +242,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         importsResolver.setConfiguration(moduleConfiguration);
         importsResolver.setContext(topDownAnalysisContext);
+        importsResolver.setPsiBuilder(jetPsiBuilder);
         importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         importsResolver.setTrace(bindingTrace);
+
+        jetPsiBuilder.setProject(project);
 
         scriptHeaderResolver.setContext(topDownAnalysisContext);
         scriptHeaderResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);

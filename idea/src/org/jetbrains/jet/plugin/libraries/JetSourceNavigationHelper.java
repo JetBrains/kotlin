@@ -211,7 +211,7 @@ public class JetSourceNavigationHelper {
                 project,
                 storageManager,
                 new ModuleDescriptor(Name.special("<library module>")),
-                DefaultModuleConfiguration.createStandardConfiguration(project),
+                DefaultModuleConfiguration.createStandardConfiguration(),
                 providerFactory);
 
         for (JetNamedDeclaration candidate : candidates) {

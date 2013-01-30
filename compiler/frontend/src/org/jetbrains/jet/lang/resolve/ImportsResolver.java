@@ -19,9 +19,12 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -32,9 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN;
-import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_HIDDEN_IMPORT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_SIMPLE_IMPORT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 public class ImportsResolver {
     @NotNull
@@ -45,6 +46,8 @@ public class ImportsResolver {
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     @NotNull
     private BindingTrace trace;
+    @NotNull
+    private JetPsiBuilder psiBuilder;
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
@@ -64,6 +67,11 @@ public class ImportsResolver {
     @Inject
     public void setQualifiedExpressionResolver(@NotNull QualifiedExpressionResolver qualifiedExpressionResolver) {
         this.qualifiedExpressionResolver = qualifiedExpressionResolver;
+    }
+
+    @Inject
+    public void setPsiBuilder(@NotNull JetPsiBuilder psiBuilder) {
+        this.psiBuilder = psiBuilder;
     }
 
     public void processTypeImports(@NotNull JetScope rootScope) {
@@ -86,7 +94,7 @@ public class ImportsResolver {
     }
 
     private void processImportsInFile(boolean classes, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
-        processImportsInFile(classes, scope, directives, rootScope, configuration, trace, qualifiedExpressionResolver);
+        processImportsInFile(classes, scope, directives, rootScope, configuration, trace, qualifiedExpressionResolver, psiBuilder);
     }
 
     public static void processImportsInFile(
@@ -96,22 +104,25 @@ public class ImportsResolver {
             @NotNull JetScope rootScope,
             @NotNull ModuleConfiguration configuration,
             @NotNull BindingTrace trace,
-            @NotNull QualifiedExpressionResolver qualifiedExpressionResolver
+            @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
+            @NotNull JetPsiBuilder psiBuilder
     ) {
 
         Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
         if (!onlyClasses) {
             namespaceScope.clearImports();
         }
-        Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
-        Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
-        configuration.addDefaultImports(defaultImportDirectives);
-        for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
+
+        for (ImportPath defaultImportPath : configuration.getDefaultImports()) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                     trace, "transient trace to resolve default imports"); //not to trace errors of default imports
+
+            JetImportDirective defaultImportDirective = psiBuilder.createImportDirective(defaultImportPath);
             qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter,
                                                                temporaryTrace, configuration, onlyClasses);
         }
+
+        Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
 
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
