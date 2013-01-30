@@ -316,22 +316,6 @@ public class StdlibTest extends CodegenTestCase {
         blackBoxFile("regressions/kt2334.kt");
     }
 
-    public void testUptoDownto() {
-        blackBoxFile("uptoDownto.kt");
-    }
-
-    public void testKt765 () {
-        blackBoxFile("regressions/kt765.kt");
-    }
-
-    public void testKt925 () {
-        blackBoxFile("regressions/kt925.kt");
-    }
-
-    public void testKt930 () {
-        blackBoxFile("regressions/kt930.kt");
-    }
-
     public void test1733() {
         blackBoxFile("regressions/kt1733.kt");
     }
@@ -362,10 +346,6 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testCollections() {
         blackBoxFile("jdk-annotations/collections.kt");
-    }
-
-    public void testKt1076() {
-        blackBoxFile("regressions/kt1076.kt");
     }
 
     public void testKt1515() {
