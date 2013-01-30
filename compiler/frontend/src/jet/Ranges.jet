@@ -13,7 +13,7 @@ public class IntRange(
 
     public override fun iterator() : IntIterator
 
-    public override fun contains(elem: Int): Boolean
+    public override fun contains(item: Int): Boolean
 
     public override val increment: Int
 
@@ -29,7 +29,7 @@ public class LongRange(
 
     public override fun iterator(): LongIterator
 
-    public override fun contains(elem: Long): Boolean
+    public override fun contains(item: Long): Boolean
 
     public override val increment: Long
 
@@ -45,7 +45,7 @@ public class ByteRange(
 
     public override fun iterator(): ByteIterator
 
-    public override fun contains(elem: Byte): Boolean
+    public override fun contains(item: Byte): Boolean
 
     public override val increment: Int
 
@@ -61,7 +61,7 @@ public class ShortRange(
 
     public override fun iterator(): ShortIterator
 
-    public override fun contains(elem: Short): Boolean
+    public override fun contains(item: Short): Boolean
 
     public override val increment: Int
 
@@ -77,7 +77,7 @@ public class CharRange(
 
     public override fun iterator(): CharIterator
 
-    public override fun contains(elem: Char) : Boolean
+    public override fun contains(item: Char) : Boolean
 
     public override val increment: Int
 
@@ -93,7 +93,7 @@ public class FloatRange(
 
     public override fun iterator(): FloatIterator
 
-    public override fun contains(elem: Float): Boolean
+    public override fun contains(item: Float): Boolean
 
     public override val increment: Float
 
@@ -109,7 +109,7 @@ public class DoubleRange(
 
     public override fun iterator() : DoubleIterator
 
-    public override fun contains(elem: Double): Boolean
+    public override fun contains(item: Double): Boolean
 
     public override val increment: Double
 
