@@ -95,9 +95,9 @@ public final class JetDescriptorIconProvider {
                 case TRAIT:
                     return JetIcons.TRAIT;
                 case ENUM_CLASS:
-                    return PlatformIcons.ENUM_ICON;
+                    return JetIcons.ENUM;
                 case ENUM_ENTRY:
-                    return PlatformIcons.ENUM_ICON;
+                    return JetIcons.ENUM;
                 case ANNOTATION_CLASS:
                     return PlatformIcons.ANNOTATION_TYPE_ICON;
                 case OBJECT:
