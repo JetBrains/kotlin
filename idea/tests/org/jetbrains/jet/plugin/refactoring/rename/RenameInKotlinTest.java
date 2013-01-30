@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.testing.LocalFileSystemUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -47,17 +48,9 @@ public class RenameInKotlinTest extends MultiFileTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        refreshPath(getTestDataPath() + getTestRoot());
-        refreshPath(getTestDataPath() + getTestRoot() + getTestName(true) + File.separator + "before");
-        refreshPath(getTestDataPath() + getTestRoot() + getTestName(true) + File.separator + "after");
-    }
-
-    public static void refreshPath(String path) {
-        VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
-        if (virtualFile != null) {
-            virtualFile.getChildren();
-            virtualFile.refresh(false, true);
-        }
+        LocalFileSystemUtils.refreshPath(getTestDataPath() + getTestRoot());
+        LocalFileSystemUtils.refreshPath(getTestDataPath() + getTestRoot() + getTestName(true) + File.separator + "before");
+        LocalFileSystemUtils.refreshPath(getTestDataPath() + getTestRoot() + getTestName(true) + File.separator + "after");
     }
 
     public void testRenameKotlinClass() throws Exception {
