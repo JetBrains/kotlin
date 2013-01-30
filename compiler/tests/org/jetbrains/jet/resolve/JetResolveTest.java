@@ -159,13 +159,6 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         return getHomeDirectory() + "/compiler/testData";
     }
 
-/*
-    @Override
-    protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
-    }
-*/
-
     private static String getHomeDirectory() {
         return new File(PathManager.getResourceRoot(JetParsingTest.class, "/org/jetbrains/jet/parsing/JetParsingTest.class")).getParentFile().getParentFile().getParent();
     }
@@ -181,15 +174,14 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     }
 
     public static Test suite() {
-//        TestSuite suite = new TestSuite();
-//        suite.addTest(new JetResolveTest("/resolve/Basic.jet", "basic"));
-//        return suite;
-        return JetTestCaseBuilder.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/", true, new JetTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetResolveTest(dataPath + "/" + name + ".jet", name);
-            }
-        });
+        return JetTestCaseBuilder.suiteForDirectory(getHomeDirectory() + "/compiler/testData/", "/resolve/",
+                                                    true, JetTestCaseBuilder.filterByExtension("resolve"),
+                                                    new JetTestCaseBuilder.NamedTestFactory() {
+                                                        @NotNull
+                                                        @Override
+                                                        public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
+                                                            return new JetResolveTest(dataPath + "/" + name + ".resolve", name);
+                                                        }
+                                                    });
     }
 }
