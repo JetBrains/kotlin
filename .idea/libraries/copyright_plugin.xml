@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="copyright-plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/copyright/lib/copyright.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/copyright/src" />
+    </SOURCES>
+  </library>
+</component>
