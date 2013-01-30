@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
@@ -66,246 +67,295 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             return this;
         }
     }
-
     public static <D extends CallableDescriptor> Status mapValueArgumentsToParameters(
             @NotNull Call call,
             @NotNull TracingStrategy tracing,
             @NotNull ResolvedCallImpl<D> candidateCall,
             @NotNull Set<ValueArgument> unmappedArguments
     ) {
-        Map<ValueParameterDescriptor, VarargValueArgument> varargs = Maps.newHashMap();
-        Set<ValueParameterDescriptor> usedParameters = Sets.newHashSet();
-
-        Status status = processArgumentsInParens(call, candidateCall, unmappedArguments, varargs, usedParameters);
-
-        status = processFunctionLiteralArguments(call, candidateCall, varargs, usedParameters, status);
-
-        status = reportUnusedParameters(tracing, candidateCall, usedParameters, status);
-
-        status = checkReceiverArgument(call, tracing, candidateCall, status);
-
-        assert (candidateCall.getThisObject().exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
-                : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
-
-        return status;
+        //return new ValueArgumentsToParametersMapper().process(call, tracing, candidateCall, unmappedArguments);
+        Processor<D> processor = new Processor<D>(call, candidateCall, tracing);
+        processor.process();
+        unmappedArguments.addAll(processor.unmappedArguments);
+        return processor.status;
     }
 
-    private static <D extends CallableDescriptor> Status processArgumentsInParens(
-            Call call,
-            ResolvedCallImpl<D> candidateCall,
-            Set<ValueArgument> unmappedArguments,
-            Map<ValueParameterDescriptor, VarargValueArgument> varargs,
-            Set<ValueParameterDescriptor> usedParameters
-    ) {
-        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
-        D candidate = candidateCall.getCandidateDescriptor();
-        List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
+    private static class Processor<D extends CallableDescriptor> {
+        private final Call call;
+        private final TracingStrategy tracing;
+        private final ResolvedCallImpl<D> candidateCall;
 
-        Map<Name, ValueParameterDescriptor> parameterByName = Maps.newHashMap();
-        for (ValueParameterDescriptor valueParameter : valueParameters) {
-            parameterByName.put(valueParameter.getName(), valueParameter);
+        private final Map<Name,ValueParameterDescriptor> parameterByName;
+
+        private final Set<ValueArgument> unmappedArguments = Sets.newHashSet();
+        private final Map<ValueParameterDescriptor, VarargValueArgument> varargs = Maps.newHashMap();
+        private final Set<ValueParameterDescriptor> usedParameters = Sets.newHashSet();
+        private Status status = OK;
+
+        private Processor(@NotNull Call call, @NotNull ResolvedCallImpl<D> candidateCall, @NotNull TracingStrategy tracing) {
+            this.call = call;
+            this.tracing = tracing;
+            this.candidateCall = candidateCall;
+
+            this.parameterByName = Maps.newHashMap();
+            for (ValueParameterDescriptor valueParameter : candidateCall.getCandidateDescriptor().getValueParameters()) {
+                parameterByName.put(valueParameter.getName(), valueParameter);
+            }
         }
 
-        List<? extends ValueArgument> valueArguments = call.getValueArguments();
+        private final ProcessorState initial = new ProcessorState() {
 
-        Status status = OK;
-        boolean someNamed = false;
-        boolean somePositioned = false;
-        for (int i = 0; i < valueArguments.size(); i++) {
-            ValueArgument valueArgument = valueArguments.get(i);
-            if (valueArgument.isNamed()) {
-                someNamed = true;
-                JetSimpleNameExpression nameReference = valueArgument.getArgumentName().getReferenceExpression();
+            @Override
+            public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
+                return namedOnly.processNamedArgument(argument);
+            }
+
+            @Override
+            public ProcessorState processPositionedArgument(
+                    @NotNull ValueArgument argument, int index
+            ) {
+                return positionedOnly.processPositionedArgument(argument, index);
+            }
+        };
+
+        private final ProcessorState positionedOnly = new ProcessorState() {
+            @Override
+            public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
+                return error.processNamedArgument(argument);
+            }
+
+            @Override
+            public ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index) {
+                BindingTrace traceForCall = candidateCall.getTrace();
+                D candidate = candidateCall.getCandidateDescriptor();
+
+                List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
+
+                int parameterCount = valueParameters.size();
+                if (index < parameterCount) {
+                    ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(index);
+                    usedParameters.add(valueParameterDescriptor);
+                    putVararg(valueParameterDescriptor, argument);
+                }
+                else if (!valueParameters.isEmpty()) {
+                    ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
+                    if (valueParameterDescriptor.getVarargElementType() != null) {
+                        putVararg(valueParameterDescriptor, argument);
+                        usedParameters.add(valueParameterDescriptor);
+                    }
+                    else {
+                        traceForCall.report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
+                        unmappedArguments.add(argument);
+                        setStatus(WEAK_ERROR);
+                    }
+                }
+                else {
+                    traceForCall.report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
+                    unmappedArguments.add(argument);
+                    setStatus(ERROR);
+                }
+
+                return positionedOnly;
+            }
+        };
+
+        private final ProcessorState namedOnly = new ProcessorState() {
+            @Override
+            public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
+                assert argument.isNamed();
+                DelegatingBindingTrace traceForCall = candidateCall.getTrace();
+
+                JetSimpleNameExpression nameReference = argument.getArgumentName().getReferenceExpression();
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedNameAsName());
                 if (valueParameterDescriptor == null) {
                     traceForCall.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
-                    unmappedArguments.add(valueArgument);
-                    status = WEAK_ERROR;
+                    unmappedArguments.add(argument);
+                    setStatus(WEAK_ERROR);
                 }
                 else {
                     traceForCall.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
                     if (!usedParameters.add(valueParameterDescriptor)) {
                         traceForCall.report(ARGUMENT_PASSED_TWICE.on(nameReference));
-                        unmappedArguments.add(valueArgument);
-                        status = WEAK_ERROR;
+                        unmappedArguments.add(argument);
+                        setStatus(WEAK_ERROR);
                     }
                     else {
-                        status = status.compose(put(candidateCall, valueParameterDescriptor, valueArgument, varargs));
+                        putVararg(valueParameterDescriptor, argument);
                     }
                 }
-                if (somePositioned) {
-                    traceForCall.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(nameReference));
-                    status = WEAK_ERROR;
-                }
+
+                return namedOnly;
             }
-            else {
-                somePositioned = true;
-                if (someNamed) {
-                    traceForCall.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(valueArgument.asElement()));
-                    status = WEAK_ERROR;
+
+            @Override
+            public ProcessorState processPositionedArgument(
+                    @NotNull ValueArgument argument, int index
+            ) {
+                return error.processPositionedArgument(argument, index);
+            }
+        };
+
+        private final ProcessorState error = new ProcessorState() {
+            @Override
+            public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
+                namedOnly.processNamedArgument(argument);
+
+                candidateCall.getTrace().report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.getArgumentName()));
+                setStatus(WEAK_ERROR);
+                return error;
+            }
+
+            @Override
+            public ProcessorState processPositionedArgument(
+                    @NotNull ValueArgument argument, int index
+            ) {
+                candidateCall.getTrace().report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
+                setStatus(WEAK_ERROR);
+                return error;
+            }
+        };
+
+        public void process() {
+            ProcessorState state = initial;
+            List<? extends ValueArgument> arguments = call.getValueArguments();
+            for (int i = 0; i < arguments.size(); i++) {
+                ValueArgument valueArgument = arguments.get(i);
+                if (valueArgument.isNamed()) {
+                    state = state.processNamedArgument(valueArgument);
                 }
                 else {
-                    int parameterCount = valueParameters.size();
-                    if (i < parameterCount) {
-                        ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(i);
-                        usedParameters.add(valueParameterDescriptor);
-                        status = status.compose(put(candidateCall, valueParameterDescriptor, valueArgument, varargs));
+                    state = state.processPositionedArgument(valueArgument, i);
+                }
+            }
+
+            processFunctionLiteralArguments();
+            reportUnmappedParameters();
+            checkReceiverArgument();
+
+            assert (candidateCall.getThisObject().exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
+                    : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+        }
+
+        private void processFunctionLiteralArguments() {
+            D candidate = candidateCall.getCandidateDescriptor();
+            DelegatingBindingTrace traceForCall = candidateCall.getTrace();
+            List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
+
+            List<JetExpression> functionLiteralArguments = call.getFunctionLiteralArguments();
+            if (!functionLiteralArguments.isEmpty()) {
+                JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
+
+                if (valueParameters.isEmpty()) {
+                    traceForCall.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
+                    setStatus(ERROR);
+                }
+                else {
+                    JetFunctionLiteralExpression functionLiteral;
+                    if (possiblyLabeledFunctionLiteral instanceof JetLabelQualifiedExpression) {
+                        JetLabelQualifiedExpression labeledFunctionLiteral = (JetLabelQualifiedExpression) possiblyLabeledFunctionLiteral;
+                        functionLiteral = (JetFunctionLiteralExpression) labeledFunctionLiteral.getLabeledExpression();
                     }
-                    else if (!valueParameters.isEmpty()) {
-                        ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                        if (valueParameterDescriptor.getVarargElementType() != null) {
-                            status = status.compose(put(candidateCall, valueParameterDescriptor, valueArgument, varargs));
-                            usedParameters.add(valueParameterDescriptor);
+                    else {
+                        functionLiteral = (JetFunctionLiteralExpression) possiblyLabeledFunctionLiteral;
+                    }
+
+                    ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
+                    if (valueParameterDescriptor.getVarargElementType() != null) {
+                        traceForCall.report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
+                        setStatus(ERROR);
+                    }
+                    else {
+                        if (!usedParameters.add(valueParameterDescriptor)) {
+                            traceForCall.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
+                            setStatus(WEAK_ERROR);
                         }
                         else {
-                            traceForCall.report(TOO_MANY_ARGUMENTS.on(valueArgument.asElement(), candidate));
-                            unmappedArguments.add(valueArgument);
-                            status = WEAK_ERROR;
+                            putVararg(valueParameterDescriptor, CallMaker.makeValueArgument(functionLiteral));
                         }
                     }
-                    else {
-                        traceForCall.report(TOO_MANY_ARGUMENTS.on(valueArgument.asElement(), candidate));
-                        unmappedArguments.add(valueArgument);
-                        status = ERROR;
-                    }
+                }
+
+                for (int i = 1; i < functionLiteralArguments.size(); i++) {
+                    JetExpression argument = functionLiteralArguments.get(i);
+                    traceForCall.report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
+                    setStatus(WEAK_ERROR);
                 }
             }
         }
-        return status;
-    }
 
-    private static <D extends CallableDescriptor> Status processFunctionLiteralArguments(
-            Call call,
-            ResolvedCallImpl<D> candidateCall,
-            Map<ValueParameterDescriptor, VarargValueArgument> varargs,
-            Set<ValueParameterDescriptor> usedParameters,
-            Status status
-    ) {
-        D candidate = candidateCall.getCandidateDescriptor();
-        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
-        List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
+        private void reportUnmappedParameters() {
+            DelegatingBindingTrace traceForCall = candidateCall.getTrace();
 
-        List<JetExpression> functionLiteralArguments = call.getFunctionLiteralArguments();
-        if (!functionLiteralArguments.isEmpty()) {
-            JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
-
-            if (valueParameters.isEmpty()) {
-                traceForCall.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
-                status = ERROR;
-            }
-            else {
-                JetFunctionLiteralExpression functionLiteral;
-                if (possiblyLabeledFunctionLiteral instanceof JetLabelQualifiedExpression) {
-                    JetLabelQualifiedExpression labeledFunctionLiteral = (JetLabelQualifiedExpression) possiblyLabeledFunctionLiteral;
-                    functionLiteral = (JetFunctionLiteralExpression) labeledFunctionLiteral.getLabeledExpression();
-                }
-                else {
-                    functionLiteral = (JetFunctionLiteralExpression) possiblyLabeledFunctionLiteral;
-                }
-
-                ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                if (valueParameterDescriptor.getVarargElementType() != null) {
-                    traceForCall.report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
-                    status = ERROR;
-                }
-                else {
-                    if (!usedParameters.add(valueParameterDescriptor)) {
-                        traceForCall.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
-                        status = WEAK_ERROR;
+            List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
+            for (ValueParameterDescriptor valueParameter : valueParameters) {
+                if (!usedParameters.contains(valueParameter)) {
+                    if (valueParameter.hasDefaultValue()) {
+                        candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
+                    }
+                    else if (valueParameter.getVarargElementType() != null) {
+                        candidateCall.recordValueArgument(valueParameter, new VarargValueArgument());
                     }
                     else {
-                        status = status.compose(put(candidateCall, valueParameterDescriptor, CallMaker.makeValueArgument(functionLiteral), varargs));
+                        tracing.noValueForParameter(traceForCall, valueParameter);
+                        setStatus(ERROR);
                     }
                 }
             }
-
-            for (int i = 1; i < functionLiteralArguments.size(); i++) {
-                JetExpression argument = functionLiteralArguments.get(i);
-                traceForCall.report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
-                status = WEAK_ERROR;
-            }
         }
-        return status;
-    }
 
-    private static <D extends CallableDescriptor> Status reportUnusedParameters(
-            TracingStrategy tracing,
-            ResolvedCallImpl<D> candidateCall,
-            Set<ValueParameterDescriptor> usedParameters,
-            Status status
-    ) {
-        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
+        private void checkReceiverArgument() {
+            DelegatingBindingTrace traceForCall = candidateCall.getTrace();
+            D candidate = candidateCall.getCandidateDescriptor();
 
-        List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
-        for (ValueParameterDescriptor valueParameter : valueParameters) {
-            if (!usedParameters.contains(valueParameter)) {
-                if (valueParameter.hasDefaultValue()) {
-                    candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
-                }
-                else if (valueParameter.getVarargElementType() != null) {
-                    candidateCall.recordValueArgument(valueParameter, new VarargValueArgument());
+            ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
+            ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
+            if (receiverParameter != null &&!receiverArgument.exists()) {
+                tracing.missingReceiver(traceForCall, receiverParameter);
+                setStatus(ERROR);
+            }
+            if (receiverParameter == null && receiverArgument.exists()) {
+                tracing.noReceiverAllowed(traceForCall);
+                if (call.getCalleeExpression() instanceof JetSimpleNameExpression) {
+                    setStatus(STRONG_ERROR);
                 }
                 else {
-                    tracing.noValueForParameter(traceForCall, valueParameter);
-                    status = ERROR;
+                    setStatus(ERROR);
                 }
             }
         }
-        return status;
-    }
 
-    private static <D extends CallableDescriptor> Status checkReceiverArgument(
-            Call call,
-            TracingStrategy tracing,
-            ResolvedCallImpl<D> candidateCall,
-            Status status
-    ) {
-        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
-        D candidate = candidateCall.getCandidateDescriptor();
-
-        ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
-        ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
-        if (receiverParameter != null &&!receiverArgument.exists()) {
-            tracing.missingReceiver(traceForCall, receiverParameter);
-            status = ERROR;
-        }
-        if (receiverParameter == null && receiverArgument.exists()) {
-            tracing.noReceiverAllowed(traceForCall);
-            if (call.getCalleeExpression() instanceof JetSimpleNameExpression) {
-                status = STRONG_ERROR;
+        private void putVararg(
+                ValueParameterDescriptor valueParameterDescriptor,
+                ValueArgument valueArgument
+        ) {
+            if (valueParameterDescriptor.getVarargElementType() != null) {
+                VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
+                if (vararg == null) {
+                    vararg = new VarargValueArgument();
+                    varargs.put(valueParameterDescriptor, vararg);
+                    candidateCall.recordValueArgument(valueParameterDescriptor, vararg);
+                }
+                vararg.addArgument(valueArgument);
             }
             else {
-                status = ERROR;
+                LeafPsiElement spread = valueArgument.getSpreadElement();
+                if (spread != null) {
+                    candidateCall.getTrace().report(NON_VARARG_SPREAD.on(spread));
+                    setStatus(WEAK_ERROR);
+                }
+                ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument);
+                candidateCall.recordValueArgument(valueParameterDescriptor, argument);
             }
         }
-        return status;
-    }
 
-    private static <D extends CallableDescriptor> Status put(
-            ResolvedCallImpl<D> candidateCall,
-            ValueParameterDescriptor valueParameterDescriptor,
-            ValueArgument valueArgument,
-            Map<ValueParameterDescriptor, VarargValueArgument> varargs
-    ) {
-        Status error = OK;
-        if (valueParameterDescriptor.getVarargElementType() != null) {
-            VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
-            if (vararg == null) {
-                vararg = new VarargValueArgument();
-                varargs.put(valueParameterDescriptor, vararg);
-                candidateCall.recordValueArgument(valueParameterDescriptor, vararg);
-            }
-            vararg.addArgument(valueArgument);
+        private void setStatus(@NotNull Status newStatus) {
+            status = status.compose(newStatus);
         }
-        else {
-            LeafPsiElement spread = valueArgument.getSpreadElement();
-            if (spread != null) {
-                candidateCall.getTrace().report(NON_VARARG_SPREAD.on(spread));
-                error = WEAK_ERROR;
-            }
-            ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument);
-            candidateCall.recordValueArgument(valueParameterDescriptor, argument);
+
+        private interface ProcessorState {
+            ProcessorState processNamedArgument(@NotNull ValueArgument argument);
+            ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index);
         }
-        return error;
+
     }
 }
