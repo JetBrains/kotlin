@@ -17,10 +17,10 @@
 package org.jetbrains.jet;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 
 import java.io.File;
@@ -31,12 +31,21 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class JetTestCaseBuilder {
-    public static FilenameFilter emptyFilter = new FilenameFilter() {
-        @Override
-        public boolean accept(File file, String name) {
-            return true;
-        }
-    };
+
+    public static final FilenameFilter KOTLIN_FILTER = filterByExtension("kt", "jet", JetParserDefinition.KTSCRIPT_FILE_SUFFIX);
+
+    @NotNull
+    public static FilenameFilter filterByExtension(@NotNull final String... extensions) {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                for (String extension : extensions) {
+                    if (name.endsWith("." + extension)) return true;
+                }
+                return false;
+            }
+        };
+    }
 
     public static String getTestDataPathBase() {
         return getHomeDirectory() + "/compiler/testData";
@@ -45,16 +54,15 @@ public abstract class JetTestCaseBuilder {
     public static String getHomeDirectory() {
        return new File(PathManager.getResourceRoot(JetTestCaseBuilder.class, "/org/jetbrains/jet/JetTestCaseBuilder.class")).getParentFile().getParentFile().getParent();
     }
-
     public interface NamedTestFactory {
         @NotNull Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file);
     }
 
     @NotNull
     public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
-        return suiteForDirectory(baseDataDir, dataPath, recursive, kotlinFilter, factory);
-    }    
-    
+        return suiteForDirectory(baseDataDir, dataPath, recursive, KOTLIN_FILTER, factory);
+    }
+
     @NotNull
     public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive,
             @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
@@ -62,13 +70,6 @@ public abstract class JetTestCaseBuilder {
         appendTestsInDirectory(baseDataDir, dataPath, recursive, filter, factory, suite);
         return suite;
     }
-
-    public static FilenameFilter kotlinFilter = new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.endsWith(".kt") || name.endsWith(".jet") || name.endsWith("." + JetParserDefinition.KTSCRIPT_FILE_SUFFIX);
-        }
-    };
 
     @NotNull
     public static FilenameFilter and(@NotNull final FilenameFilter a, @NotNull final FilenameFilter b) {
@@ -81,8 +82,6 @@ public abstract class JetTestCaseBuilder {
     }
 
     public static void appendTestsInDirectory(String baseDataDir, String dataPath, boolean recursive, @NotNull FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
-        final String extensionJet = ".jet";
-        final String extensionKt = ".kt";
         File dir = new File(baseDataDir + dataPath);
         FileFilter dirFilter = new FileFilter() {
             @Override
@@ -103,10 +102,7 @@ public abstract class JetTestCaseBuilder {
         Collections.sort(files);
         for (File file : files) {
             String fileName = file.getName();
-            String testName =
-                    fileName.endsWith(extensionJet) ? fileName.substring(0, fileName.length() - extensionJet.length()) :
-                    fileName.endsWith(extensionKt) ? fileName.substring(0, fileName.length() - extensionKt.length()) :
-                    fileName;
+            String testName = FileUtil.getNameWithoutExtension(file);
             suite.addTest(factory.createTest(dataPath, testName, file));
         }
     }
