@@ -103,25 +103,11 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             }
         }
 
-        private final ProcessorState initial = new ProcessorState() {
-
-            @Override
-            public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
-                return namedOnly.processNamedArgument(argument);
-            }
-
-            @Override
-            public ProcessorState processPositionedArgument(
-                    @NotNull ValueArgument argument, int index
-            ) {
-                return positionedOnly.processPositionedArgument(argument, index);
-            }
-        };
-
+        // We saw only positioned arguments so far
         private final ProcessorState positionedOnly = new ProcessorState() {
             @Override
             public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
-                return error.processNamedArgument(argument);
+                return positionedThenNamed.processNamedArgument(argument);
             }
 
             @Override
@@ -159,7 +145,8 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             }
         };
 
-        private final ProcessorState namedOnly = new ProcessorState() {
+        // We saw zero or more positioned arguments and then a named one
+        private final ProcessorState positionedThenNamed = new ProcessorState() {
             @Override
             public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
                 assert argument.isNamed();
@@ -184,25 +171,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                     }
                 }
 
-                return namedOnly;
-            }
-
-            @Override
-            public ProcessorState processPositionedArgument(
-                    @NotNull ValueArgument argument, int index
-            ) {
-                return error.processPositionedArgument(argument, index);
-            }
-        };
-
-        private final ProcessorState error = new ProcessorState() {
-            @Override
-            public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
-                namedOnly.processNamedArgument(argument);
-
-                candidateCall.getTrace().report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.getArgumentName()));
-                setStatus(WEAK_ERROR);
-                return error;
+                return positionedThenNamed;
             }
 
             @Override
@@ -211,12 +180,13 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             ) {
                 candidateCall.getTrace().report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
                 setStatus(WEAK_ERROR);
-                return error;
+
+                return positionedThenNamed;
             }
         };
 
         public void process() {
-            ProcessorState state = initial;
+            ProcessorState state = positionedOnly;
             List<? extends ValueArgument> arguments = call.getValueArguments();
             for (int i = 0; i < arguments.size(); i++) {
                 ValueArgument valueArgument = arguments.get(i);
