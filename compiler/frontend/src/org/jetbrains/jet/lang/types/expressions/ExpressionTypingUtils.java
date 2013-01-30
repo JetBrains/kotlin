@@ -22,11 +22,14 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -385,5 +388,24 @@ public class ExpressionTypingUtils {
         else {
             return TypeUtils.NO_EXPECTED_TYPE;
         }
+    }
+
+    public static ObservableBindingTrace makeTraceInterceptingTypeMismatch(@NotNull BindingTrace trace, @NotNull final JetElement expressionToWatch, @NotNull final boolean[] mismatchFound) {
+        return new ObservableBindingTrace(trace) {
+
+            @Override
+            public void report(@NotNull Diagnostic diagnostic) {
+                AbstractDiagnosticFactory factory = diagnostic.getFactory();
+                if ((factory == TYPE_MISMATCH || factory == ERROR_COMPILE_TIME_VALUE)
+                        && diagnostic.getPsiElement() == expressionToWatch) {
+                    mismatchFound[0] = true;
+                }
+                if (TYPE_INFERENCE_ERRORS.contains(factory) &&
+                    PsiTreeUtil.isAncestor(expressionToWatch, diagnostic.getPsiElement(), false)) {
+                    mismatchFound[0] = true;
+                }
+                super.report(diagnostic);
+            }
+        };
     }
 }
