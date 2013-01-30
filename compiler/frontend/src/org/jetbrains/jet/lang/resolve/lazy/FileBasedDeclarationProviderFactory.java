@@ -109,9 +109,9 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     @Override
     public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-        PackageMemberDeclarationProvider declarationProvider = packageDeclarationProviders.get(packageFqName);
-        if (declarationProvider != null) {
-            return declarationProvider;
+        PackageMemberDeclarationProvider cached = packageDeclarationProviders.get(packageFqName);
+        if (cached != null) {
+            return cached;
         }
 
         if (!isPackageDeclaredExplicitly(packageFqName)) {
@@ -124,7 +124,12 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
         FileBasedPackageMemberDeclarationProvider provider =
                 new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.get().filesByPackage.get(packageFqName));
 
-        return packageDeclarationProviders.putIfAbsent(packageFqName, provider);
+        PackageMemberDeclarationProvider oldValue = packageDeclarationProviders.putIfAbsent(packageFqName, provider);
+        if (oldValue != null) {
+            return oldValue;
+        }
+
+        return provider;
     }
 
     @NotNull
