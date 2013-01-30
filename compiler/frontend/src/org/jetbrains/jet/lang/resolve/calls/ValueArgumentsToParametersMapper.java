@@ -73,12 +73,32 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             @NotNull ResolvedCallImpl<D> candidateCall,
             @NotNull Set<ValueArgument> unmappedArguments
     ) {
-        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
         Map<ValueParameterDescriptor, VarargValueArgument> varargs = Maps.newHashMap();
         Set<ValueParameterDescriptor> usedParameters = Sets.newHashSet();
 
-        D candidate = candidateCall.getCandidateDescriptor();
+        Status status = processArgumentsInParens(call, candidateCall, unmappedArguments, varargs, usedParameters);
 
+        status = processFunctionLiteralArguments(call, candidateCall, varargs, usedParameters, status);
+
+        status = reportUnusedParameters(tracing, candidateCall, usedParameters, status);
+
+        status = checkReceiverArgument(call, tracing, candidateCall, status);
+
+        assert (candidateCall.getThisObject().exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null))
+                : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+
+        return status;
+    }
+
+    private static <D extends CallableDescriptor> Status processArgumentsInParens(
+            Call call,
+            ResolvedCallImpl<D> candidateCall,
+            Set<ValueArgument> unmappedArguments,
+            Map<ValueParameterDescriptor, VarargValueArgument> varargs,
+            Set<ValueParameterDescriptor> usedParameters
+    ) {
+        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
+        D candidate = candidateCall.getCandidateDescriptor();
         List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
         Map<Name, ValueParameterDescriptor> parameterByName = Maps.newHashMap();
@@ -151,6 +171,19 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 }
             }
         }
+        return status;
+    }
+
+    private static <D extends CallableDescriptor> Status processFunctionLiteralArguments(
+            Call call,
+            ResolvedCallImpl<D> candidateCall,
+            Map<ValueParameterDescriptor, VarargValueArgument> varargs,
+            Set<ValueParameterDescriptor> usedParameters,
+            Status status
+    ) {
+        D candidate = candidateCall.getCandidateDescriptor();
+        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
+        List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
         List<JetExpression> functionLiteralArguments = call.getFunctionLiteralArguments();
         if (!functionLiteralArguments.isEmpty()) {
@@ -192,8 +225,18 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 status = WEAK_ERROR;
             }
         }
+        return status;
+    }
 
+    private static <D extends CallableDescriptor> Status reportUnusedParameters(
+            TracingStrategy tracing,
+            ResolvedCallImpl<D> candidateCall,
+            Set<ValueParameterDescriptor> usedParameters,
+            Status status
+    ) {
+        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
 
+        List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             if (!usedParameters.contains(valueParameter)) {
                 if (valueParameter.hasDefaultValue()) {
@@ -208,6 +251,17 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 }
             }
         }
+        return status;
+    }
+
+    private static <D extends CallableDescriptor> Status checkReceiverArgument(
+            Call call,
+            TracingStrategy tracing,
+            ResolvedCallImpl<D> candidateCall,
+            Status status
+    ) {
+        DelegatingBindingTrace traceForCall = candidateCall.getTrace();
+        D candidate = candidateCall.getCandidateDescriptor();
 
         ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
         ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
@@ -224,13 +278,15 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 status = ERROR;
             }
         }
-
-        assert (candidateCall.getThisObject().exists() == (candidateCall.getResultingDescriptor().getExpectedThisObject() != null)) : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
-
         return status;
     }
 
-    private static <D extends CallableDescriptor> Status put(ResolvedCallImpl<D> candidateCall, ValueParameterDescriptor valueParameterDescriptor, ValueArgument valueArgument, Map<ValueParameterDescriptor, VarargValueArgument> varargs) {
+    private static <D extends CallableDescriptor> Status put(
+            ResolvedCallImpl<D> candidateCall,
+            ValueParameterDescriptor valueParameterDescriptor,
+            ValueArgument valueArgument,
+            Map<ValueParameterDescriptor, VarargValueArgument> varargs
+    ) {
         Status error = OK;
         if (valueParameterDescriptor.getVarargElementType() != null) {
             VarargValueArgument vararg = varargs.get(valueParameterDescriptor);
