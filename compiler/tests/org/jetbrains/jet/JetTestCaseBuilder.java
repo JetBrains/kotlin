@@ -95,7 +95,10 @@ public abstract class JetTestCaseBuilder {
             List<File> subdirs = Arrays.asList(files);
             Collections.sort(subdirs);
             for (File subdir : subdirs) {
-                suite.addTest(suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, filter, factory));
+                Test suiteForDir = suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, filter, factory);
+                if (suiteForDir.countTestCases() != 0) {
+                    suite.addTest(suiteForDir);
+                }
             }
         }
         List<File> files = Arrays.asList(dir.listFiles(filter));
