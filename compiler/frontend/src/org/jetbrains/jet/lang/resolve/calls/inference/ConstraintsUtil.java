@@ -33,6 +33,12 @@ public class ConstraintsUtil {
     public static Set<JetType> getValues(@Nullable TypeConstraints typeConstraints) {
         Set<JetType> values = Sets.newLinkedHashSet();
         if (typeConstraints != null && !typeConstraints.isEmpty()) {
+            if (typeConstraints.getExactBounds().size() == 1) {
+                if (verifyOneExactBound(typeConstraints)) {
+                    JetType exactBound = typeConstraints.getExactBounds().iterator().next();
+                    return Collections.singleton(exactBound);
+                }
+            }
             values.addAll(typeConstraints.getExactBounds());
             if (!typeConstraints.getLowerBounds().isEmpty()) {
                 JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(typeConstraints.getLowerBounds());
@@ -61,6 +67,21 @@ public class ConstraintsUtil {
             }
         }
         return values;
+    }
+
+    private static boolean verifyOneExactBound(@NotNull TypeConstraints typeConstraints) {
+        JetType exactBound = typeConstraints.getExactBounds().iterator().next();
+        for (JetType lowerBound : typeConstraints.getLowerBounds()) {
+            if (!JetTypeChecker.INSTANCE.isSubtypeOf(lowerBound, exactBound)) {
+                return false;
+            }
+        }
+        for (JetType upperBound : typeConstraints.getUpperBounds()) {
+            if (!JetTypeChecker.INSTANCE.isSubtypeOf(exactBound, upperBound)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Nullable
