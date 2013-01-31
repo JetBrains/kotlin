@@ -185,7 +185,7 @@ public class CandidateResolver {
         return descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
     }
 
-    public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
+    public <D extends CallableDescriptor> void completeTypeInferenceDependentOnFunctionLiteralsForCall(
             CallCandidateResolutionContext<D, D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
@@ -206,6 +206,16 @@ public class CandidateResolver {
                 addConstraintForFunctionLiteral(valueArgument, valueParameterDescriptor, constraintSystem, context);
             }
         }
+    }
+
+    public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
+            CallCandidateResolutionContext<D, D> context
+    ) {
+        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
+        assert resolvedCall.hasUnknownTypeParameters();
+        D descriptor = resolvedCall.getCandidateDescriptor();
+        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
+        assert constraintSystem != null;
 
         ConstraintSystem constraintSystemWithoutExpectedTypeConstraint = constraintSystem.copy();
         constraintSystem.addSupertypeConstraint(context.expectedType, descriptor.getReturnType(),

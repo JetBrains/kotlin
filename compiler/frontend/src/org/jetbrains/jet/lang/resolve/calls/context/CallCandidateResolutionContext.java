@@ -65,11 +65,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor, 
         return create(candidateCall, task, trace, tracing, task.call);
     }
 
-    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D, D> create(
-            @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing,
-            @NotNull ResolvedCallImpl<D> candidateCall) {
+    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D, D> createForCallBeingAnalyzed(
+            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
+    ) {
         return new CallCandidateResolutionContext<D, D>(candidateCall, tracing, context.trace, context.scope, context.call,
-                                                        context.expectedType, context.dataFlowInfo, context.namespacesAllowed, true);
+                                                        context.expectedType, context.dataFlowInfo, context.namespacesAllowed, false);
     }
 
     @Override

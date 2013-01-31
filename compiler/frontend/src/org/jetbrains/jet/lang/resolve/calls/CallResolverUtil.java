@@ -76,6 +76,7 @@ public class CallResolverUtil {
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
             copy.recordValueArgument(entry.getKey(), entry.getValue());
         }
+        copy.setInitialDataFlowInfo(call.getDataFlowInfo());
         return copy;
     }
 
