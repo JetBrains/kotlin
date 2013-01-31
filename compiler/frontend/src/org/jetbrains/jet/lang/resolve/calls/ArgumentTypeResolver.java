@@ -45,8 +45,8 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordExpressionType;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode.SKIP_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
@@ -86,7 +86,7 @@ public class ArgumentTypeResolver {
         checkTypesWithNoCallee(context, SKIP_FUNCTION_ARGUMENTS);
     }
 
-    public void checkTypesWithNoCallee(@NotNull CallResolutionContext context, @NotNull ResolveMode resolveFunctionArgumentBodies) {
+    public void checkTypesWithNoCallee(@NotNull CallResolutionContext context, @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && !(argumentExpression instanceof JetFunctionLiteralExpression)) {
@@ -158,7 +158,7 @@ public class ArgumentTypeResolver {
     public TypeInfoForCall getArgumentTypeInfo(
             @Nullable JetExpression expression,
             @NotNull CallResolutionContext context,
-            @NotNull ResolveMode resolveFunctionArgumentBodies
+            @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies
     ) {
         if (expression == null) {
             return TypeInfoForCall.create(null, context.dataFlowInfo);

@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -35,15 +34,13 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-
 public class CallResolverUtil {
 
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
     public static final JetType CANT_INFER = ErrorUtils.createErrorTypeWithCustomDebugName("CANT_INFER");
     public static final JetType PLACEHOLDER_FUNCTION_TYPE = ErrorUtils.createErrorTypeWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE");
 
-    public enum ResolveMode {
+    public static enum ResolveArgumentsMode {
         RESOLVE_FUNCTION_ARGUMENTS,
         SKIP_FUNCTION_ARGUMENTS
     }

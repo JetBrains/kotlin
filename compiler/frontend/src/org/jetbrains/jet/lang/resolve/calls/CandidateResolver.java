@@ -51,9 +51,8 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.DONT_CARE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.PLACEHOLDER_FUNCTION_TYPE;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode.RESOLVE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveMode.SKIP_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -400,7 +399,7 @@ public class CandidateResolver {
             @NotNull ConstraintSystem constraintSystem,
             @NotNull CallResolutionContext<C> context,
             @Nullable boolean[] isErrorType,
-            @NotNull ResolveMode resolveFunctionArgumentBodies) {
+            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
 
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
@@ -421,7 +420,7 @@ public class CandidateResolver {
 
     private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(
             @NotNull CallCandidateResolutionContext<D> context,
-            @NotNull ResolveMode resolveFunctionArgumentBodies) {
+            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall,
                                                                               context.candidateCall.getTrace(), resolveFunctionArgumentBodies);
         ResolutionStatus resultStatus = checkingResult.status;
@@ -446,7 +445,7 @@ public class CandidateResolver {
             @NotNull CallResolutionContext<C> context,
             @NotNull ResolvedCallImpl<D> candidateCall,
             @NotNull BindingTrace trace,
-            @NotNull ResolveMode resolveFunctionArgumentBodies) {
+            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
         ResolutionStatus resultStatus = SUCCESS;
         List<JetType> argumentTypes = Lists.newArrayList();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
