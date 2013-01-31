@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -31,9 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
@@ -102,6 +101,26 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
         // We saw only positioned arguments so far
         private final ProcessorState positionedOnly = new ProcessorState() {
+
+            private Queue<ValueParameterDescriptor> valueParameterQueue;
+
+            @Nullable
+            public ValueParameterDescriptor nextValueParameter() {
+                if (valueParameterQueue == null) {
+                    valueParameterQueue = new LinkedList<ValueParameterDescriptor>(candidateCall.getCandidateDescriptor().getValueParameters());
+                }
+
+                ValueParameterDescriptor head = valueParameterQueue.peek();
+                if (head == null) return null;
+
+                // If we found a vararg parameter, we are stuck with it forever
+                if (head.getVarargElementType() == null) {
+                    valueParameterQueue.remove();
+                }
+
+                return head;
+            }
+
             @Override
             public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
                 return positionedThenNamed.processNamedArgument(argument);
@@ -109,32 +128,16 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
             @Override
             public ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index) {
-                D candidate = candidateCall.getCandidateDescriptor();
+                ValueParameterDescriptor valueParameterDescriptor = nextValueParameter();
 
-                List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
-
-                int parameterCount = valueParameters.size();
-                if (index < parameterCount) {
-                    ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(index);
+                if (valueParameterDescriptor != null) {
                     usedParameters.add(valueParameterDescriptor);
                     putVararg(valueParameterDescriptor, argument);
                 }
-                else if (!valueParameters.isEmpty()) {
-                    ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
-                    if (valueParameterDescriptor.getVarargElementType() != null) {
-                        putVararg(valueParameterDescriptor, argument);
-                        usedParameters.add(valueParameterDescriptor);
-                    }
-                    else {
-                        report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
-                        unmappedArguments.add(argument);
-                        setStatus(WEAK_ERROR);
-                    }
-                }
                 else {
-                    report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
+                    report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidateCall.getCandidateDescriptor()));
                     unmappedArguments.add(argument);
-                    setStatus(ERROR);
+                    setStatus(WEAK_ERROR);
                 }
 
                 return positionedOnly;

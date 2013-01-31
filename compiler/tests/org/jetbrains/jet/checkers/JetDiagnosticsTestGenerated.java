@@ -4261,6 +4261,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/varargs/UnaryVsVararg.kt");
             }
             
+            @TestMetadata("varargsAndFunctionLiterals.kt")
+            public void testVarargsAndFunctionLiterals() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/varargs/varargsAndFunctionLiterals.kt");
+            }
+            
         }
         
         public static Test innerSuite() {
