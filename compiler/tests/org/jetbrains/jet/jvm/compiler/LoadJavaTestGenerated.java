@@ -493,6 +493,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind2.java");
                 }
                 
+                @TestMetadata("DeeplySubstitutedClassParameter.java")
+                public void testDeeplySubstitutedClassParameter() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter.java");
+                }
+                
+                @TestMetadata("DeeplySubstitutedClassParameter2.java")
+                public void testDeeplySubstitutedClassParameter2() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter2.java");
+                }
+                
                 @TestMetadata("InheritMutability.java")
                 public void testInheritMutability() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritMutability.java");
@@ -553,6 +563,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.java");
                 }
                 
+                @TestMetadata("Kt3302.java")
+                public void testKt3302() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/Kt3302.java");
+                }
+                
                 @TestMetadata("MutableToReadOnly.java")
                 public void testMutableToReadOnly() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/MutableToReadOnly.java");
@@ -576,6 +591,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("ReadOnlyToMutable.java")
                 public void testReadOnlyToMutable() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.java");
+                }
+                
+                @TestMetadata("SubclassFromGenericAndNot.java")
+                public void testSubclassFromGenericAndNot() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/SubclassFromGenericAndNot.java");
+                }
+                
+                @TestMetadata("SubstitutedClassParameter.java")
+                public void testSubstitutedClassParameter() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameter.java");
+                }
+                
+                @TestMetadata("SubstitutedClassParameters.java")
+                public void testSubstitutedClassParameters() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameters.java");
                 }
                 
             }
@@ -619,6 +649,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("CantMakeImmutableInSubclass.java")
                 public void testCantMakeImmutableInSubclass() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.java");
+                }
+                
+                @TestMetadata("DeeplySubstitutedClassParameter.java")
+                public void testDeeplySubstitutedClassParameter() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter.java");
+                }
+                
+                @TestMetadata("DeeplySubstitutedClassParameter2.java")
+                public void testDeeplySubstitutedClassParameter2() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter2.java");
                 }
                 
                 @TestMetadata("HalfSubstitutedTypeParameters.java")
@@ -671,6 +711,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SameProjectionKind.java");
                 }
                 
+                @TestMetadata("SubclassFromGenericAndNot.java")
+                public void testSubclassFromGenericAndNot() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassFromGenericAndNot.java");
+                }
+                
                 @TestMetadata("SubclassOfCollection.java")
                 public void testSubclassOfCollection() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfCollection.java");
@@ -679,6 +724,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("SubclassOfMapEntry.java")
                 public void testSubclassOfMapEntry() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfMapEntry.java");
+                }
+                
+                @TestMetadata("SubstitutedClassParameter.java")
+                public void testSubstitutedClassParameter() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SubstitutedClassParameter.java");
+                }
+                
+                @TestMetadata("SubstitutedClassParameters.java")
+                public void testSubstitutedClassParameters() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/SubstitutedClassParameters.java");
                 }
                 
                 @TestMetadata("TwoSuperclassesConflictingProjectionKinds.java")

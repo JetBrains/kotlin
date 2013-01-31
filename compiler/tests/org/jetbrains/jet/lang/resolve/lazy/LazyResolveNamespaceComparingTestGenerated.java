@@ -1428,6 +1428,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind2.kt");
                     }
                     
+                    @TestMetadata("DeeplySubstitutedClassParameter.kt")
+                    public void testDeeplySubstitutedClassParameter() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter.kt");
+                    }
+                    
+                    @TestMetadata("DeeplySubstitutedClassParameter2.kt")
+                    public void testDeeplySubstitutedClassParameter2() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter2.kt");
+                    }
+                    
                     @TestMetadata("InheritMutability.kt")
                     public void testInheritMutability() throws Exception {
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritMutability.kt");
@@ -1488,6 +1498,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.kt");
                     }
                     
+                    @TestMetadata("Kt3302.kt")
+                    public void testKt3302() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/Kt3302.kt");
+                    }
+                    
                     @TestMetadata("MutableToReadOnly.kt")
                     public void testMutableToReadOnly() throws Exception {
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/MutableToReadOnly.kt");
@@ -1511,6 +1526,21 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     @TestMetadata("ReadOnlyToMutable.kt")
                     public void testReadOnlyToMutable() throws Exception {
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.kt");
+                    }
+                    
+                    @TestMetadata("SubclassFromGenericAndNot.kt")
+                    public void testSubclassFromGenericAndNot() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/SubclassFromGenericAndNot.kt");
+                    }
+                    
+                    @TestMetadata("SubstitutedClassParameter.kt")
+                    public void testSubstitutedClassParameter() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameter.kt");
+                    }
+                    
+                    @TestMetadata("SubstitutedClassParameters.kt")
+                    public void testSubstitutedClassParameters() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameters.kt");
                     }
                     
                 }
@@ -1554,6 +1584,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     @TestMetadata("CantMakeImmutableInSubclass.kt")
                     public void testCantMakeImmutableInSubclass() throws Exception {
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.kt");
+                    }
+                    
+                    @TestMetadata("DeeplySubstitutedClassParameter.kt")
+                    public void testDeeplySubstitutedClassParameter() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter.kt");
+                    }
+                    
+                    @TestMetadata("DeeplySubstitutedClassParameter2.kt")
+                    public void testDeeplySubstitutedClassParameter2() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter2.kt");
                     }
                     
                     @TestMetadata("HalfSubstitutedTypeParameters.kt")
@@ -1606,6 +1646,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/SameProjectionKind.kt");
                     }
                     
+                    @TestMetadata("SubclassFromGenericAndNot.kt")
+                    public void testSubclassFromGenericAndNot() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassFromGenericAndNot.kt");
+                    }
+                    
                     @TestMetadata("SubclassOfCollection.kt")
                     public void testSubclassOfCollection() throws Exception {
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfCollection.kt");
@@ -1614,6 +1659,16 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     @TestMetadata("SubclassOfMapEntry.kt")
                     public void testSubclassOfMapEntry() throws Exception {
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/SubclassOfMapEntry.kt");
+                    }
+                    
+                    @TestMetadata("SubstitutedClassParameter.kt")
+                    public void testSubstitutedClassParameter() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/SubstitutedClassParameter.kt");
+                    }
+                    
+                    @TestMetadata("SubstitutedClassParameters.kt")
+                    public void testSubstitutedClassParameters() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/return/SubstitutedClassParameters.kt");
                     }
                     
                     @TestMetadata("TwoSuperclassesConflictingProjectionKinds.kt")

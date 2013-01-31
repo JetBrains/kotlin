@@ -1,0 +1,18 @@
+package test;
+
+import org.jetbrains.annotations.NotNull;
+import jet.runtime.typeinfo.KotlinSignature;
+
+import java.lang.String;
+
+public interface SubstitutedClassParameter {
+
+    public interface Super<T> {
+        @KotlinSignature("fun foo(): T")
+        T foo();
+    }
+
+    public interface Sub extends Super<String> {
+        String foo();
+    }
+}
