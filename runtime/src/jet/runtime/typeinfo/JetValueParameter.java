@@ -35,20 +35,9 @@ public @interface JetValueParameter {
     String name ();
 
     /**
-     * @return type projections or empty
-     */
-    JetTypeProjection[] typeProjections() default {};
-
-    /**
-     * @deprecated info contained in type field
-     * @return is this type nullable
-     */
-    boolean nullable () default false;
-
-    /**
      * @return if this parameter has default value
      */
-    boolean hasDefaultValue () default false;
+    boolean hasDefaultValue() default false;
 
     /**
      * @return if this parameter is receiver
