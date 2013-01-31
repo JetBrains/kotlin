@@ -57,6 +57,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERROR;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.WARNING;
+
 public class JetCoreEnvironment {
 
     private final JavaCoreApplicationEnvironment applicationEnvironment;
@@ -169,11 +172,11 @@ public class JetCoreEnvironment {
 
         VirtualFile vFile = applicationEnvironment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
-            reportError("Source file or directory not found: " + path);
+            report(ERROR, "Source file or directory not found: " + path);
             return;
         }
         if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
-            reportError("Source entry is not a Kotlin file: " + path);
+            report(ERROR, "Source entry is not a Kotlin file: " + path);
             return;
         }
 
@@ -187,7 +190,7 @@ public class JetCoreEnvironment {
         if (path.isFile()) {
             VirtualFile jarFile = applicationEnvironment.getJarFileSystem().findFileByPath(path + "!/");
             if (jarFile == null) {
-                reportError("Classpath entry points to a file that is not a JAR archive: " + path);
+                report(WARNING, "Classpath entry points to a file that is not a JAR archive: " + path);
                 return;
             }
             projectEnvironment.addJarToClassPath(path);
@@ -195,7 +198,7 @@ public class JetCoreEnvironment {
         else {
             final VirtualFile root = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath());
             if (root == null) {
-                reportError("Classpath entry points to a non-existent location: " + path);
+                report(WARNING, "Classpath entry points to a non-existent location: " + path);
                 return;
             }
             projectEnvironment.addSourcesToClasspath(root);
@@ -206,10 +209,10 @@ public class JetCoreEnvironment {
         return sourceFiles;
     }
 
-    private void reportError(@NotNull String message) {
+    private void report(@NotNull CompilerMessageSeverity severity, @NotNull String message) {
         MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
         if (messageCollector != null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION);
         }
         else {
             throw new CompileEnvironmentException(message);
