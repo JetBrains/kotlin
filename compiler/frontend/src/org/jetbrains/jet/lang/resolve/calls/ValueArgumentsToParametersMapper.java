@@ -23,9 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -39,8 +38,6 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.*;
-import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.ERROR;
-import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.STRONG_ERROR;
 
 /*package*/ class ValueArgumentsToParametersMapper {
 
@@ -112,7 +109,6 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
             @Override
             public ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index) {
-                BindingTrace traceForCall = candidateCall.getTrace();
                 D candidate = candidateCall.getCandidateDescriptor();
 
                 List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
@@ -130,13 +126,13 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                         usedParameters.add(valueParameterDescriptor);
                     }
                     else {
-                        traceForCall.report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
+                        report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
                         unmappedArguments.add(argument);
                         setStatus(WEAK_ERROR);
                     }
                 }
                 else {
-                    traceForCall.report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
+                    report(TOO_MANY_ARGUMENTS.on(argument.asElement(), candidate));
                     unmappedArguments.add(argument);
                     setStatus(ERROR);
                 }
@@ -150,19 +146,18 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             @Override
             public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
                 assert argument.isNamed();
-                DelegatingBindingTrace traceForCall = candidateCall.getTrace();
 
                 JetSimpleNameExpression nameReference = argument.getArgumentName().getReferenceExpression();
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedNameAsName());
                 if (valueParameterDescriptor == null) {
-                    traceForCall.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
+                    report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
                     unmappedArguments.add(argument);
                     setStatus(WEAK_ERROR);
                 }
                 else {
-                    traceForCall.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
+                    candidateCall.getTrace().record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
                     if (!usedParameters.add(valueParameterDescriptor)) {
-                        traceForCall.report(ARGUMENT_PASSED_TWICE.on(nameReference));
+                        report(ARGUMENT_PASSED_TWICE.on(nameReference));
                         unmappedArguments.add(argument);
                         setStatus(WEAK_ERROR);
                     }
@@ -178,7 +173,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             public ProcessorState processPositionedArgument(
                     @NotNull ValueArgument argument, int index
             ) {
-                candidateCall.getTrace().report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
+                report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
                 setStatus(WEAK_ERROR);
 
                 return positionedThenNamed;
@@ -208,7 +203,6 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
         private void processFunctionLiteralArguments() {
             D candidate = candidateCall.getCandidateDescriptor();
-            DelegatingBindingTrace traceForCall = candidateCall.getTrace();
             List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
             List<JetExpression> functionLiteralArguments = call.getFunctionLiteralArguments();
@@ -216,7 +210,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
 
                 if (valueParameters.isEmpty()) {
-                    traceForCall.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
+                    report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
                     setStatus(ERROR);
                 }
                 else {
@@ -231,12 +225,12 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
                     ValueParameterDescriptor valueParameterDescriptor = valueParameters.get(valueParameters.size() - 1);
                     if (valueParameterDescriptor.getVarargElementType() != null) {
-                        traceForCall.report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
+                        report(VARARG_OUTSIDE_PARENTHESES.on(possiblyLabeledFunctionLiteral));
                         setStatus(ERROR);
                     }
                     else {
                         if (!usedParameters.add(valueParameterDescriptor)) {
-                            traceForCall.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
+                            report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
                             setStatus(WEAK_ERROR);
                         }
                         else {
@@ -247,14 +241,13 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
                 for (int i = 1; i < functionLiteralArguments.size(); i++) {
                     JetExpression argument = functionLiteralArguments.get(i);
-                    traceForCall.report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
+                    report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
                     setStatus(WEAK_ERROR);
                 }
             }
         }
 
         private void reportUnmappedParameters() {
-            DelegatingBindingTrace traceForCall = candidateCall.getTrace();
 
             List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
             for (ValueParameterDescriptor valueParameter : valueParameters) {
@@ -266,7 +259,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                         candidateCall.recordValueArgument(valueParameter, new VarargValueArgument());
                     }
                     else {
-                        tracing.noValueForParameter(traceForCall, valueParameter);
+                        tracing.noValueForParameter(candidateCall.getTrace(), valueParameter);
                         setStatus(ERROR);
                     }
                 }
@@ -274,17 +267,16 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
         }
 
         private void checkReceiverArgument() {
-            DelegatingBindingTrace traceForCall = candidateCall.getTrace();
             D candidate = candidateCall.getCandidateDescriptor();
 
             ReceiverParameterDescriptor receiverParameter = candidate.getReceiverParameter();
             ReceiverValue receiverArgument = candidateCall.getReceiverArgument();
             if (receiverParameter != null &&!receiverArgument.exists()) {
-                tracing.missingReceiver(traceForCall, receiverParameter);
+                tracing.missingReceiver(candidateCall.getTrace(), receiverParameter);
                 setStatus(ERROR);
             }
             if (receiverParameter == null && receiverArgument.exists()) {
-                tracing.noReceiverAllowed(traceForCall);
+                tracing.noReceiverAllowed(candidateCall.getTrace());
                 if (call.getCalleeExpression() instanceof JetSimpleNameExpression) {
                     setStatus(STRONG_ERROR);
                 }
@@ -322,10 +314,16 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             status = status.compose(newStatus);
         }
 
+        private void report(Diagnostic diagnostic) {
+            candidateCall.getTrace().report(diagnostic);
+        }
+
         private interface ProcessorState {
             ProcessorState processNamedArgument(@NotNull ValueArgument argument);
             ProcessorState processPositionedArgument(@NotNull ValueArgument argument, int index);
         }
 
     }
+
+    private ValueArgumentsToParametersMapper() {}
 }
