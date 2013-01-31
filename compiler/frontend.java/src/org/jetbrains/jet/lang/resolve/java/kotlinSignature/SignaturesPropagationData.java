@@ -216,24 +216,13 @@ public class SignaturesPropagationData {
 
             PsiElement superDeclaration = superMethod instanceof JetClsMethod ? ((JetClsMethod) superMethod).getOrigin() : superMethod;
             DeclarationDescriptor superFun = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, superDeclaration);
-            if (superFun instanceof FunctionDescriptor) {
-                superFunctions.add(((FunctionDescriptor) superFun));
+            if (superFun == null) {
+                reportCantFindSuperFunction(method);
+                continue;
             }
-            else {
-                String errorMessage = "Can't find super function for " + method.getPsiMethod() +
-                                      " defined in " + method.getPsiMethod().getContainingClass();
-                if (ApplicationManager.getApplication().isUnitTestMode()) {
-                    throw new IllegalStateException(errorMessage);
-                }
-                else {
-                    if (SystemInfo.isMac) {
-                        LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
-                    }
-                    else {
-                        LOG.error(errorMessage);
-                    }
-                }
-            }
+
+            assert superFun instanceof FunctionDescriptor : superFun.getClass().getName();
+            superFunctions.add((FunctionDescriptor) superFun);
         }
 
         // sorting for diagnostic stability
@@ -574,6 +563,22 @@ public class SignaturesPropagationData {
     private static boolean isArrayType(@NotNull JetType type) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         return builtIns.isArray(type) || builtIns.isPrimitiveArray(type);
+    }
+
+    private static void reportCantFindSuperFunction(PsiMethodWrapper method) {
+        String errorMessage = "Can't find super function for " + method.getPsiMethod() +
+                              " defined in " + method.getPsiMethod().getContainingClass();
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            throw new IllegalStateException(errorMessage);
+        }
+        else {
+            if (SystemInfo.isMac) {
+                LOG.error("Remove duplicates from your JDK definition\n" + errorMessage);
+            }
+            else {
+                LOG.error(errorMessage);
+            }
+        }
     }
 
     private static class VarargCheckResult {
