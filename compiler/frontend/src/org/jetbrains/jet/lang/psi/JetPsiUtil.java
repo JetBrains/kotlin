@@ -362,8 +362,7 @@ public class JetPsiUtil {
             aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
         }
 
-        //noinspection ConstantConditions
-        return !aliasName.isEmpty() ? Name.identifier(aliasName) : null;
+        return aliasName != null && !aliasName.isEmpty() ? Name.identifier(aliasName) : null;
     }
 
     @Nullable
