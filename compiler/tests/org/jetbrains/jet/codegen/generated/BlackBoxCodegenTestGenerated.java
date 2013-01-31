@@ -1794,6 +1794,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/innerSimple.kt");
         }
         
+        @TestMetadata("kt3132.kt")
+        public void testKt3132() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/kt3132.kt");
+        }
+        
         @TestMetadata("nestedClassObject.kt")
         public void testNestedClassObject() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/nestedClassObject.kt");
