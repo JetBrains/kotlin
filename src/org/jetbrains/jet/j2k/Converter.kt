@@ -60,7 +60,7 @@ public open class Converter() {
     }
 
     public open fun getClassIdentifiers(): Set<String> {
-        return Collections.unmodifiableSet(classIdentifiers)!!
+        return Collections.unmodifiableSet(classIdentifiers)
     }
 
     public open fun getMethodReturnType(): PsiType? {
@@ -88,11 +88,11 @@ public open class Converter() {
     }
 
     public open fun fileToFile(javaFile: PsiJavaFile): File {
-        return fileToFile(javaFile, Collections.emptyList<String>()!!)
+        return fileToFile(javaFile, Collections.emptyList<String>())
     }
 
     public open fun fileToFileWithCompatibilityImport(javaFile: PsiJavaFile): File {
-        return fileToFile(javaFile, Collections.singletonList("kotlin.compatibility.*")!!)
+        return fileToFile(javaFile, Collections.singletonList("kotlin.compatibility.*"))
     }
 
     private fun fileToFile(javaFile: PsiJavaFile, additionalImports: List<String>): File {
@@ -218,20 +218,20 @@ public open class Converter() {
                     }
                 }
             }
-            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayList(), Collections.emptySet<Modifier>()!!,
-                    ClassType(name, Collections.emptyList<Element>()!!, false),
-                    Collections.emptyList<Element>()!!,
+            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayList(), Collections.emptySet<Modifier>(),
+                    ClassType(name, Collections.emptyList<Element>(), false),
+                    Collections.emptyList<Element>(),
                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
                     Block(createInitStatementsFromFields(finalOrWithEmptyInitializer)),
                     true))
         }
 
         if (psiClass.isInterface()) {
-            return Trait(this, name, docComments, modifiers, typeParameters, extendsTypes, Collections.emptyList<Expression>()!!, implementsTypes, members)
+            return Trait(this, name, docComments, modifiers, typeParameters, extendsTypes, Collections.emptyList<Expression>(), implementsTypes, members)
         }
 
         if (psiClass.isEnum()) {
-            return Enum(this, name, docComments, modifiers, typeParameters, Collections.emptyList<Type>()!!, Collections.emptyList<Expression>()!!, implementsTypes, members)
+            return Enum(this, name, docComments, modifiers, typeParameters, Collections.emptyList<Type>(), Collections.emptyList<Expression>(), implementsTypes, members)
         }
 
         return Class(this, name, docComments, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members)
@@ -242,7 +242,7 @@ public open class Converter() {
     }
 
     private fun fieldsToFieldList(fields: Array<PsiField>, psiClass: PsiClass): List<Field> {
-        return fields.map { fieldToField(it!!, psiClass) }
+        return fields.map { fieldToField(it, psiClass) }
     }
 
     private fun fieldToField(field: PsiField, psiClass: PsiClass?): Field {
@@ -452,7 +452,7 @@ public open class Converter() {
     }
 
     public open fun parametersToParameterList(parameters: Array<PsiParameter>): List<Parameter?> {
-        return parameters.map { parameterToParameter(it!!) }
+        return parameters.map { parameterToParameter(it) }
     }
 
     public open fun parameterToParameter(parameter: PsiParameter, forceNotNull: Boolean = false): Parameter {
@@ -534,7 +534,7 @@ public open class Converter() {
             return packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
         }
 
-        private fun getFinalOrWithEmptyInitializer(fields: List<out Field>): List<Field> {
+        private fun getFinalOrWithEmptyInitializer(fields: List<Field>): List<Field> {
             val result = ArrayList<Field>()
             for (f : Field in fields)
                 if (f.isVal() || f.initializer.toKotlin().isEmpty()) {
@@ -548,7 +548,7 @@ public open class Converter() {
             return fields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, true) }
         }
 
-        private fun createInitStatementsFromFields(fields: List<out Field>): List<Element> {
+        private fun createInitStatementsFromFields(fields: List<Field>): List<Element> {
             val result = ArrayList<Element>()
             for (f : Field in fields) {
                 val identifierToKotlin: String? = f.identifier.toKotlin()
@@ -644,7 +644,7 @@ public open class Converter() {
         }
 
         private fun isInheritFromObject(method: PsiMethod): Boolean {
-            var superSignatures: List<HierarchicalMethodSignature?> = method.getHierarchicalMethodSignature().getSuperSignatures()!!
+            var superSignatures: List<HierarchicalMethodSignature?> = method.getHierarchicalMethodSignature().getSuperSignatures()
             for (s : HierarchicalMethodSignature? in superSignatures) {
                 var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
                 var qualifiedName: String? = (if (containingClass != null)
@@ -819,7 +819,7 @@ public fun isMainMethod(method: PsiMethod?): Boolean {
     if (parameters?.size!! != 1)
         return false
 
-    val `type`: PsiType? = parameters!![0]?.getType()
+    val `type`: PsiType? = parameters!![0].getType()
     if (`type` !is PsiArrayType)
         return false
 
@@ -833,7 +833,7 @@ public fun countWritingAccesses(element: PsiElement?, container: PsiElement?): I
         val visitor: ReferenceCollector = ReferenceCollector()
         container.accept(visitor)
         for (e : PsiReferenceExpression in visitor.getCollectedReferences())
-            if (e?.isReferenceTo(element)!! && PsiUtil.isAccessedForWriting(e)) {
+            if (e.isReferenceTo(element) && PsiUtil.isAccessedForWriting(e)) {
                 counter++
             }
     }
@@ -864,7 +864,7 @@ public fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
     if (modifierList != null) {
         val annotations: Array<PsiAnnotation> = modifierList.getAnnotations()
         for (a : PsiAnnotation in annotations) {
-            val qualifiedName: String? = a?.getQualifiedName()
+            val qualifiedName: String? = a.getQualifiedName()
             if (qualifiedName != null && Converter.NOT_NULL_ANNOTATIONS.contains(qualifiedName)) {
                 return true
             }

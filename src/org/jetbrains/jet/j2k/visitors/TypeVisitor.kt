@@ -86,8 +86,8 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
                 for (p : PsiTypeParameter? in (resolve as PsiClass).getTypeParameters()) {
                     val superTypes = p!!.getSuperTypes()
                     val boundType : Type = (if (superTypes.size > 0)
-                        ClassType(Identifier(getClassTypeName(superTypes[0]!!)),
-                                  myConverter.typesToTypeList(superTypes[0]!!.getParameters()),
+                        ClassType(Identifier(getClassTypeName(superTypes[0])),
+                                  myConverter.typesToTypeList(superTypes[0].getParameters()),
                                   true)
                     else
                         StarProjectionType())
@@ -101,11 +101,11 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
 
     public override fun visitWildcardType(wildcardType : PsiWildcardType?) : Type {
         if (wildcardType!!.isExtends()) {
-            myResult = OutProjectionType(myConverter.typeToType(wildcardType!!.getExtendsBound()))
+            myResult = OutProjectionType(myConverter.typeToType(wildcardType.getExtendsBound()))
         }
         else
-            if (wildcardType!!.isSuper()) {
-                myResult = InProjectionType(myConverter.typeToType(wildcardType?.getSuperBound()))
+            if (wildcardType.isSuper()) {
+                myResult = InProjectionType(myConverter.typeToType(wildcardType.getSuperBound()))
             }
             else {
                 myResult = StarProjectionType()

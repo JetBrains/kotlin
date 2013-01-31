@@ -7,11 +7,11 @@ public open class NewClassExpression(val name: Element,
                                      val qualifier: Expression = Expression.EMPTY_EXPRESSION,
                                      val anonymousClass: AnonymousClass? = null): Expression() {
     public override fun toKotlin(): String {
-        val callOperator: String? = (if (qualifier.isNullable()!!)
+        val callOperator: String? = (if (qualifier.isNullable())
             "?."
         else
             ".")
-        val qualifier: String? = (if (qualifier.isEmpty()!!)
+        val qualifier: String? = (if (qualifier.isEmpty())
             ""
         else
             qualifier.toKotlin() + callOperator)

@@ -8,10 +8,10 @@ public open class AnonymousClass(converter : Converter, members : List<Node>)
                                  : Class(converter,
                                          Identifier("anonClass"),
                                          arrayList(),
-                                         Collections.emptySet<Modifier>()!!,
-                                         Collections.emptyList<Element>()!!,
-                                         Collections.emptyList<Type>()!!,
-                                         Collections.emptyList<Expression>()!!,
-                                         Collections.emptyList<Type>()!!, members) {
+                                         Collections.emptySet<Modifier>(),
+                                         Collections.emptyList<Element>(),
+                                         Collections.emptyList<Type>(),
+                                         Collections.emptyList<Expression>(),
+                                         Collections.emptyList<Type>(), members) {
     public override fun toKotlin() = bodyToKotlin()
 }

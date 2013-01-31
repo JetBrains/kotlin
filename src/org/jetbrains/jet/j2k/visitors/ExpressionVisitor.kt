@@ -167,7 +167,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         {
             return NewClassExpression(getConverter().elementToElement(classReference),
                                       getConverter().argumentsToExpressionList(expression!!),
-                                      getConverter().expressionToExpression(expression?.getQualifier()),
+                                      getConverter().expressionToExpression(expression.getQualifier()),
                                       (if (anonymousClass != null)
                                            getConverter().anonymousClassToAnonymousClass(anonymousClass)
                                        else
@@ -178,7 +178,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         val typeParameters: List<Type> = (if (reference != null)
             getConverter().typesToTypeList(reference.getTypeParameters())
         else
-            Collections.emptyList<Type>()!!)
+            Collections.emptyList<Type>())
         return CallChainExpression(Identifier(constructor.getName(), false),
                 MethodCallExpression(Identifier("init"), getConverter().expressionsToExpressionList(arguments), typeParameters, false))
     }
@@ -199,7 +199,7 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
 
     public override fun visitPostfixExpression(expression: PsiPostfixExpression?): Unit {
         myResult = PostfixOperator(getOperatorString(expression!!.getOperationSign().getTokenType()!!),
-                getConverter().expressionToExpression(expression?.getOperand()))
+                getConverter().expressionToExpression(expression.getOperand()))
     }
 
     public override fun visitPrefixExpression(expression: PsiPrefixExpression?): Unit {
@@ -214,16 +214,16 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
     }
 
     public override fun visitReferenceExpression(expression: PsiReferenceExpression?): Unit {
-        val isFieldReference: Boolean = isFieldReference(expression!!, getContainingClass(expression!!))
-        val insideSecondaryConstructor: Boolean = isInsideSecondaryConstructor(expression!!)
+        val isFieldReference: Boolean = isFieldReference(expression!!, getContainingClass(expression))
+        val insideSecondaryConstructor: Boolean = isInsideSecondaryConstructor(expression)
         val hasReceiver: Boolean = isFieldReference && insideSecondaryConstructor
-        val isThis: Boolean = isThisExpression(expression!!)
-        val isNullable: Boolean = getConverter().typeToType(expression?.getType()).nullable
-        val className: String = getClassNameWithConstructor(expression!!)
-        val referencedName = expression?.getReferenceName()!!
+        val isThis: Boolean = isThisExpression(expression)
+        val isNullable: Boolean = getConverter().typeToType(expression.getType()).nullable
+        val className: String = getClassNameWithConstructor(expression)
+        val referencedName = expression.getReferenceName()!!
         var identifier: Expression = Identifier(referencedName, isNullable)
         val __: String = "__"
-        val qualifier = expression?.getQualifierExpression()
+        val qualifier = expression.getQualifierExpression()
         if (hasReceiver){
             identifier = CallChainExpression(Identifier(__, false), Identifier(referencedName, isNullable))
         }
@@ -234,11 +234,11 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
             identifier = Identifier("size", isNullable)
         }
         else if (qualifier == null) {
-            val resolved = expression?.getReference()?.resolve()
+            val resolved = expression.getReference()?.resolve()
             if (resolved is PsiMember && resolved.hasModifierProperty(PsiModifier.STATIC) &&
                 resolved.getContainingClass() != null &&
                  PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass() &&
-                 !isStaticallyImported(resolved, expression!!)) {
+                 !isStaticallyImported(resolved, expression)) {
                 var member = resolved as PsiMember
                 var result = Identifier(referencedName).toKotlin()
                 while(member.getContainingClass() != null) {

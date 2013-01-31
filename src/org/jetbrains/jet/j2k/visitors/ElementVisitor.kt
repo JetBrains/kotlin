@@ -41,7 +41,7 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
             myResult = ReferenceElement(Identifier(theReference.getReferenceName()!!), types)
         }
         else {
-            var result : String = Identifier(reference?.getReferenceName()!!).toKotlin()
+            var result : String = Identifier(reference.getReferenceName()!!).toKotlin()
             var qualifier : PsiElement? = theReference.getQualifier()
             while (qualifier != null)
             {
@@ -59,7 +59,7 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
 
     public override fun visitTypeParameter(classParameter : PsiTypeParameter?) : Unit {
         myResult = TypeParameter(Identifier(classParameter!!.getName()!!),
-                                 classParameter!!.getExtendsListTypes().map { myConverter.typeToType(it) } )
+                                 classParameter.getExtendsListTypes().map { myConverter.typeToType(it) } )
     }
 
     public override fun visitParameterList(list : PsiParameterList?) : Unit {
