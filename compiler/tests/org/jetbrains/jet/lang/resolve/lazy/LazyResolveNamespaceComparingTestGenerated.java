@@ -1343,6 +1343,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/WrongMethodName.kt");
                 }
                 
+                @TestMetadata("WrongProjectionKind.kt")
+                public void testWrongProjectionKind() throws Exception {
+                    doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/WrongProjectionKind.kt");
+                }
+                
                 @TestMetadata("WrongReturnTypeStructure.kt")
                 public void testWrongReturnTypeStructure() throws Exception {
                     doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/WrongReturnTypeStructure.kt");
@@ -1376,11 +1381,6 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("WrongTypeParametersCount.kt")
                 public void testWrongTypeParametersCount() throws Exception {
                     doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/WrongTypeParametersCount.kt");
-                }
-                
-                @TestMetadata("WrongTypeVariance.kt")
-                public void testWrongTypeVariance() throws Exception {
-                    doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/WrongTypeVariance.kt");
                 }
                 
                 @TestMetadata("WrongValueParameterStructure1.kt")

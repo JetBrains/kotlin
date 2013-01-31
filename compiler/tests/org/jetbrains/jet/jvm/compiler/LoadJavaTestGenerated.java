@@ -408,6 +408,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongMethodName.java");
             }
             
+            @TestMetadata("WrongProjectionKind.java")
+            public void testWrongProjectionKind() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/WrongProjectionKind.java");
+            }
+            
             @TestMetadata("WrongReturnTypeStructure.java")
             public void testWrongReturnTypeStructure() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongReturnTypeStructure.java");
@@ -441,11 +446,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("WrongTypeParametersCount.java")
             public void testWrongTypeParametersCount() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/WrongTypeParametersCount.java");
-            }
-            
-            @TestMetadata("WrongTypeVariance.java")
-            public void testWrongTypeVariance() throws Exception {
-                doTest("compiler/testData/loadJava/kotlinSignature/error/WrongTypeVariance.java");
             }
             
             @TestMetadata("WrongValueParameterStructure1.java")

@@ -157,7 +157,7 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                         altProjectionKind = Variance.INVARIANT;
                 }
                 if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
-                    throw new AlternativeSignatureMismatchException("Variance mismatch, actual: %s, in alternative signature: %s",
+                    throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
                                                                     projectionKind, altProjectionKind);
                 }
             }

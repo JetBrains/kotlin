@@ -13,7 +13,7 @@ public interface ChangeProjectionKind1 {
     }
 
     public interface Sub extends Super {
-        @ExpectLoadError("Variance mismatch, actual: in, in alternative signature: ")
+        @ExpectLoadError("Projection kind mismatch, actual: in, in alternative signature: ")
         @KotlinSignature("fun foo(p: MutableList<String>)")
         void foo(List<String> p);
     }

@@ -1,6 +1,6 @@
 package test
 
-public open class WrongTypeVariance : java.lang.Object {
-    public constructor WrongTypeVariance()
+public open class WrongProjectionKind : java.lang.Object {
+    public constructor WrongProjectionKind()
     public open fun copy(/*0*/ p0 : jet.Array<out jet.Number>?, /*1*/ p1 : jet.Array<out jet.Number>?) : jet.MutableList<jet.Number>?
 }
