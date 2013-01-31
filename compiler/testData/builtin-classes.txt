@@ -1070,7 +1070,7 @@ public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
     public abstract override /*1*/ /*fake_override*/ fun isEmpty() : jet.Boolean
     public abstract override /*1*/ fun keySet() : jet.MutableSet<K>
     public abstract fun put(/*0*/ key : K, /*1*/ value : V) : V?
-    public abstract fun putAll(/*0*/ m : jet.Map<out K, out V>) : Unit
+    public abstract fun putAll(/*0*/ m : jet.Map<out K, V>) : Unit
     public abstract fun remove(/*0*/ key : jet.Any?) : V?
     public abstract override /*1*/ /*fake_override*/ fun size() : jet.Int
     public abstract override /*1*/ fun values() : jet.MutableCollection<V>

@@ -141,7 +141,7 @@ public trait MutableMap<K, V> : Map<K, V> {
     public fun remove(key : Any?) : V?
 
     // Bulk Modification Operations
-    public fun putAll(m : Map<out K, out V>)
+    public fun putAll(m : Map<out K, V>)
     public fun clear()
 
     // Views
