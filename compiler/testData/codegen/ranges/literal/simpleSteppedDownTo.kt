@@ -58,5 +58,5 @@ fun box(): String {
         return "Wrong elements for 6.0.toFloat() downTo 4.0.toFloat() step 0.5.toFloat(): $list7"
     }
 
-   return "OK"
+    return "OK"
 }
