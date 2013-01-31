@@ -48,6 +48,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
+import static org.jetbrains.jet.cli.common.ExitCode.OK;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
@@ -87,7 +89,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         Config config = getConfig(arguments, project);
         if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
-            return ExitCode.COMPILATION_ERROR;
+            return COMPILATION_ERROR;
         }
 
         String outputFile = arguments.outputFile;
@@ -132,7 +134,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             // for example inside a mvn plugin we need to see the stack trace
             return ExitCode.INTERNAL_ERROR;
         }
-        return ExitCode.OK;
+        return messageCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : OK;
     }
 
     private static boolean analyzeAndReportErrors(@NotNull PrintingMessageCollector messageCollector,

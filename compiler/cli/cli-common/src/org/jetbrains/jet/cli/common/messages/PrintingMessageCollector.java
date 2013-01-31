@@ -18,10 +18,13 @@ package org.jetbrains.jet.cli.common.messages;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 
 public class PrintingMessageCollector implements MessageCollector {
 
@@ -31,6 +34,8 @@ public class PrintingMessageCollector implements MessageCollector {
 
     // File path (nullable) -> error message
     private final Multimap<String, String> groupedMessages = LinkedHashMultimap.create();
+
+    private final Set<CompilerMessageSeverity> reportedSeverities = Sets.newHashSet();
 
     public PrintingMessageCollector(PrintStream errStream,
             MessageRenderer messageRenderer,
@@ -44,6 +49,8 @@ public class PrintingMessageCollector implements MessageCollector {
     public void report(@NotNull CompilerMessageSeverity severity,
             @NotNull String message,
             @NotNull CompilerMessageLocation location) {
+        reportedSeverities.add(severity);
+
         String text = messageRenderer.render(severity, message, location);
         if (severity == CompilerMessageSeverity.LOGGING || severity == CompilerMessageSeverity.OUTPUT) {
             if (!verbose) {
@@ -73,5 +80,9 @@ public class PrintingMessageCollector implements MessageCollector {
 
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
+    }
+
+    public boolean anyReported(@NotNull CompilerMessageSeverity... severities) {
+        return reportedSeverities.containsAll(Arrays.asList(severities));
     }
 }

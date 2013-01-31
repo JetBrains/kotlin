@@ -118,27 +118,26 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             File jar = arguments.jar != null ? new File(arguments.jar) : null;
             File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
 
-            boolean noErrors;
             if (arguments.module != null) {
                 boolean oldVerbose = messageCollector.isVerbose();
                 messageCollector.setVerbose(false);
                 List<Module> modules = CompileEnvironmentUtil.loadModuleScript(paths, arguments.module, messageCollector);
                 messageCollector.setVerbose(oldVerbose);
                 File directory = new File(arguments.module).getParentFile();
-                noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
+                KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
                                                                       directory, jar, outputDir,
                                                                       arguments.includeRuntime);
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
                 JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
-                noErrors = KotlinToJVMBytecodeCompiler.compileAndExecuteScript(paths, environment, scriptArgs);
+                KotlinToJVMBytecodeCompiler.compileAndExecuteScript(paths, environment, scriptArgs);
             }
             else {
                 JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
-                noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
+                KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
-            return noErrors ? OK : COMPILATION_ERROR;
+            return messageCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : OK;
         }
         catch (CompilationException e) {
             messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
