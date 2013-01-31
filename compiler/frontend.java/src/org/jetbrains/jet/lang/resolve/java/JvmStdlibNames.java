@@ -26,6 +26,7 @@ public class JvmStdlibNames {
     public static final String JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD = "hasDefaultValue";
     public static final String JET_VALUE_PARAMETER_TYPE_FIELD = "type";
     public static final String JET_VALUE_PARAMETER_RECEIVER_FIELD = "receiver";
+    public static final String JET_VALUE_PARAMETER_VARARG = "vararg";
 
 
     public static final JvmClassName JET_TYPE_PARAMETER = JvmClassName.byFqNameWithoutInnerClasses("jet.runtime.typeinfo.JetTypeParameter");

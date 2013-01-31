@@ -47,7 +47,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.java.kt.DescriptorKindUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
@@ -401,6 +400,7 @@ public class FunctionCodegen extends GenerationStateAware {
             JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
             av.writeName(parameterDescriptor.getName().getName());
             av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
+            av.writeVararg(parameterDescriptor.getVarargElementType() != null);
             if (kotlinParameterTypes.get(i) != null) {
                 av.writeType(kotlinParameterTypes.get(i + start).getKotlinSignature());
             }

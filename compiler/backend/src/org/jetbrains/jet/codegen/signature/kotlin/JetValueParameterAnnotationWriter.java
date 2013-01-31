@@ -58,4 +58,10 @@ public class JetValueParameterAnnotationWriter {
             av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
         }
     }
+
+    public void writeVararg(boolean vararg) {
+        if (vararg) {
+            av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_VARARG, true);
+        }
+    }
 }

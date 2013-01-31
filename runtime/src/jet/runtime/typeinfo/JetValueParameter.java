@@ -48,4 +48,12 @@ public @interface JetValueParameter {
      * @return type unless Java type is correct Kotlin type.
      */
     String type() default "";
+
+    /**
+     * @return <code>true</code> if this parameter is a vararg
+     *
+     * NOTE: a method may have a vararg parameter in Kotlin and not be marked as Opcodes.ACC_VARARGS, e.g.
+     * fun foo(vararg x: Int, f: () -> Unit)
+     */
+    boolean vararg() default false;
 }
