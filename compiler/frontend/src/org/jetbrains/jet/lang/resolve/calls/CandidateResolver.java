@@ -66,7 +66,7 @@ public class CandidateResolver {
     }
 
     public <D extends CallableDescriptor, F extends D> void performResolutionForCandidateCall(
-            @NotNull CallCandidateResolutionContext<D, F> context,
+            @NotNull CallCandidateResolutionContext<D> context,
             @NotNull ResolutionTask<D, F> task) {
 
         ProgressIndicatorProvider.checkCanceled();
@@ -167,7 +167,7 @@ public class CandidateResolver {
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
     }
 
-    private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?, ?> context) {
+    private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
         if (context.call.getExplicitReceiver().exists()) return true;
 
@@ -186,7 +186,7 @@ public class CandidateResolver {
     }
 
     public <D extends CallableDescriptor> void completeTypeInferenceDependentOnFunctionLiteralsForCall(
-            CallCandidateResolutionContext<D, D> context
+            CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         assert resolvedCall.hasUnknownTypeParameters();
@@ -209,7 +209,7 @@ public class CandidateResolver {
     }
 
     public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
-            CallCandidateResolutionContext<D, D> context
+            CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         assert resolvedCall.hasUnknownTypeParameters();
@@ -263,7 +263,7 @@ public class CandidateResolver {
             @NotNull ValueArgument valueArgument,
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull ConstraintSystem constraintSystem,
-            @NotNull CallCandidateResolutionContext<D, D> context
+            @NotNull CallCandidateResolutionContext<D> context
     ) {
         JetExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression instanceof JetFunctionLiteralExpression;
@@ -283,7 +283,7 @@ public class CandidateResolver {
             if (statementExpression == null) return;
             ObservableBindingTrace errorInterceptingTrace = ExpressionTypingUtils.makeTraceInterceptingTypeMismatch(
                     traceToResolveFunctionLiteral, statementExpression, mismatch);
-            CallCandidateResolutionContext<D, D> newContext =
+            CallCandidateResolutionContext<D> newContext =
                     context.replaceBindingTrace(errorInterceptingTrace).replaceExpectedType(expectedType);
             JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
             if (!mismatch[0]) {
@@ -296,13 +296,13 @@ public class CandidateResolver {
             }
         }
         JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeToUnknown(expectedType) : expectedType;
-        CallCandidateResolutionContext<D, D> newContext = context.replaceExpectedType(expectedTypeWithoutReturnType);
+        CallCandidateResolutionContext<D> newContext = context.replaceExpectedType(expectedTypeWithoutReturnType);
         JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
         constraintSystem.addSubtypeConstraint(
                 type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
     }
 
-    private <D extends CallableDescriptor, F extends D> ResolutionStatus inferTypeArguments(CallCandidateResolutionContext<D, F> context) {
+    private <D extends CallableDescriptor> ResolutionStatus inferTypeArguments(CallCandidateResolutionContext<D> context) {
         ResolvedCallImpl<D> candidateCall = context.candidateCall;
         final D candidate = candidateCall.getCandidateDescriptor();
 
@@ -418,8 +418,8 @@ public class CandidateResolver {
         }
     }
 
-    private <D extends CallableDescriptor, F extends D> ValueArgumentsCheckingResult checkAllValueArguments(
-            @NotNull CallCandidateResolutionContext<D, F> context,
+    private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(
+            @NotNull CallCandidateResolutionContext<D> context,
             @NotNull ResolveMode resolveFunctionArgumentBodies) {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall,
                                                                               context.candidateCall.getTrace(), resolveFunctionArgumentBodies);
@@ -511,7 +511,7 @@ public class CandidateResolver {
         return null;
     }
 
-    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallCandidateResolutionContext<D, F> context, ResolvedCall<D> candidateCall,
+    private <D extends CallableDescriptor> ResolutionStatus checkReceiver(CallCandidateResolutionContext<D> context, ResolvedCall<D> candidateCall,
             ReceiverParameterDescriptor receiverParameter, ReceiverValue receiverArgument,
             boolean isExplicitReceiver, boolean implicitInvokeCheck) {
 

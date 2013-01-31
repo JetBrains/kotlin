@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
-public final class CallCandidateResolutionContext<D extends CallableDescriptor, F extends D> extends CallResolutionContext<CallCandidateResolutionContext<D, F>> {
+public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
     public final ResolvedCallImpl<D> candidateCall;
     public final TracingStrategy tracing;
     public ReceiverValue receiverForVariableAsFunctionSecondCall = ReceiverValue.NO_RECEIVER;
@@ -52,40 +52,40 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor, 
         }
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D, F> create(
+    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D> create(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call) {
-        return new CallCandidateResolutionContext<D, F>(candidateCall, tracing, trace, task.scope, call, task.expectedType,
+        return new CallCandidateResolutionContext<D>(candidateCall, tracing, trace, task.scope, call, task.expectedType,
                                                         task.dataFlowInfo, task.namespacesAllowed, true);
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D, F> create(
+    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D> create(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing) {
         return create(candidateCall, task, trace, tracing, task.call);
     }
 
-    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D, D> createForCallBeingAnalyzed(
+    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {
-        return new CallCandidateResolutionContext<D, D>(candidateCall, tracing, context.trace, context.scope, context.call,
+        return new CallCandidateResolutionContext<D>(candidateCall, tracing, context.trace, context.scope, context.call,
                                                         context.expectedType, context.dataFlowInfo, context.namespacesAllowed, false);
     }
 
     @Override
-    protected CallCandidateResolutionContext<D, F> replace(
+    protected CallCandidateResolutionContext<D> replace(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             boolean namespacesAllowed
     ) {
-        return new CallCandidateResolutionContext<D, F>(candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo,
+        return new CallCandidateResolutionContext<D>(candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo,
                                                         namespacesAllowed, false);
     }
 
     @Override
-    protected CallCandidateResolutionContext<D, F> self() {
+    protected CallCandidateResolutionContext<D> self() {
         return this;
     }
 }
