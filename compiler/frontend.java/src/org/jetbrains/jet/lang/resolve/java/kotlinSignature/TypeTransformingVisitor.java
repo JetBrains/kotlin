@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -39,7 +40,9 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.java.TypeUsage.TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
-class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
+public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
+    private static boolean strictMode = false;
+
     private final JetType originalType;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
@@ -179,7 +182,10 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                 }
                 if (altProjectionKind != INVARIANT && parameter.getVariance() != INVARIANT) {
                     if (altProjectionKind == parameter.getVariance()) {
-                        // TODO report redundant if in strict mode
+                        if (strictMode) {
+                            throw new AlternativeSignatureMismatchException("Projection kind '%s' is redundant",
+                                    altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                        }
                     }
                     else {
                         throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
@@ -231,5 +237,10 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
     private static boolean isSameName(String qualifiedName, String fullyQualifiedName) {
         return fullyQualifiedName.equals(qualifiedName) || fullyQualifiedName.endsWith("." + qualifiedName);
+    }
+
+    @TestOnly
+    public static void setStrictMode(boolean strictMode) {
+        TypeTransformingVisitor.strictMode = strictMode;
     }
 }
