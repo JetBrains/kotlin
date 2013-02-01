@@ -99,7 +99,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         String shortName = type.getReferenceExpression().getReferencedName();
         String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
 
-        if (KotlinBuiltIns.getInstance().UNIT_ALIAS.getName().equals(longName)) {
+        if (KotlinBuiltIns.UNIT_ALIAS.getName().equals(longName)) {
             return visitCommonType(KotlinBuiltIns.getInstance().getTuple(0), type);
         }
 
@@ -142,64 +142,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
         List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
         for (int i = 0, size = arguments.size(); i < size; i++) {
-            JetTypeReference typeReference = type.getTypeArgumentsAsTypes().get(i);
-
-            if (typeReference == null) {
-                // star projection
-                assert type instanceof JetUserType
-                       && ((JetUserType) type).getTypeArguments().get(i).getProjectionKind() == JetProjectionKind.STAR;
-
-                altArguments.add(arguments.get(i));
-
-                continue;
-            }
-
-            JetTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
-            assert argumentAlternativeTypeElement != null;
-
-            TypeParameterDescriptor parameter = typeConstructor.getParameters().get(i);
-            TypeProjection argument = arguments.get(i);
-            JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
-            Variance projectionKind = argument.getProjectionKind();
-            Variance altProjectionKind;
-            if (type instanceof JetUserType) {
-                JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
-                switch (typeProjection.getProjectionKind()) {
-                    case IN:
-                        altProjectionKind = Variance.IN_VARIANCE;
-                        break;
-                    case OUT:
-                        altProjectionKind = Variance.OUT_VARIANCE;
-                        break;
-                    case STAR:
-                        throw new IllegalStateException("star projection should have been processed above");
-                    default:
-                        altProjectionKind = Variance.INVARIANT;
-                }
-                if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
-                    throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
-                                                                    projectionKind, altProjectionKind);
-                }
-                if (altProjectionKind != INVARIANT && parameter.getVariance() != INVARIANT) {
-                    if (altProjectionKind == parameter.getVariance()) {
-                        if (strictMode) {
-                            throw new AlternativeSignatureMismatchException("Projection kind '%s' is redundant",
-                                    altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
-                        }
-                        else {
-                            altProjectionKind = projectionKind;
-                        }
-                    }
-                    else {
-                        throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
-                                altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
-                    }
-                }
-            }
-            else {
-                altProjectionKind = projectionKind;
-            }
-            altArguments.add(new TypeProjection(altProjectionKind, alternativeArgumentType));
+            altArguments.add(getAltArgument(type, typeConstructor, i, arguments.get(i)));
         }
 
         JetScope memberScope;
@@ -215,6 +158,70 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         }
         return new JetTypeImpl(originalType.getAnnotations(), typeConstructor, false,
                                altArguments, memberScope);
+    }
+
+    @NotNull
+    private TypeProjection getAltArgument(
+            @NotNull JetTypeElement type,
+            @NotNull TypeConstructor typeConstructor,
+            int i,
+            @NotNull TypeProjection originalArgument
+    ) {
+        JetTypeReference typeReference = type.getTypeArgumentsAsTypes().get(i); // process both function type and user type
+
+        if (typeReference == null) {
+            // star projection
+            assert type instanceof JetUserType
+                   && ((JetUserType) type).getTypeArguments().get(i).getProjectionKind() == JetProjectionKind.STAR;
+
+            return originalArgument;
+        }
+
+        JetTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
+        assert argumentAlternativeTypeElement != null;
+
+        TypeParameterDescriptor parameter = typeConstructor.getParameters().get(i);
+        JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, originalArgument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
+        Variance projectionKind = originalArgument.getProjectionKind();
+        Variance altProjectionKind;
+        if (type instanceof JetUserType) {
+            JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
+            switch (typeProjection.getProjectionKind()) {
+                case IN:
+                    altProjectionKind = Variance.IN_VARIANCE;
+                    break;
+                case OUT:
+                    altProjectionKind = Variance.OUT_VARIANCE;
+                    break;
+                case STAR:
+                    throw new IllegalStateException("star projection should have been processed above");
+                default:
+                    altProjectionKind = Variance.INVARIANT;
+            }
+            if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
+                throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
+                                                                projectionKind, altProjectionKind);
+            }
+            if (altProjectionKind != INVARIANT && parameter.getVariance() != INVARIANT) {
+                if (altProjectionKind == parameter.getVariance()) {
+                    if (strictMode) {
+                        throw new AlternativeSignatureMismatchException("Projection kind '%s' is redundant",
+                                altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                    }
+                    else {
+                        altProjectionKind = projectionKind;
+                    }
+                }
+                else {
+                    throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
+                            altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                }
+            }
+        }
+        else {
+            altProjectionKind = projectionKind;
+        }
+        return new TypeProjection(altProjectionKind, alternativeArgumentType);
     }
 
     @Nullable
