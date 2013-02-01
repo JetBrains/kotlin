@@ -25,7 +25,10 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -33,7 +36,8 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.TYPE_ARGUMENT;
+import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
 class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     private final JetType originalType;
@@ -113,6 +117,18 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s", qualifiedName, fqName);
         }
 
+        TypeConstructor typeConstructor;
+        if (classFromLibrary != null) {
+            typeConstructor = classFromLibrary.getTypeConstructor();
+        }
+        else {
+            typeConstructor = originalTypeConstructor;
+        }
+        ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
+        if (typeConstructorClassifier instanceof TypeParameterDescriptor && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
+            typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
+        }
+
         List<TypeProjection> arguments = originalType.getArguments();
 
         if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
@@ -138,6 +154,7 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             JetTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
             assert argumentAlternativeTypeElement != null;
 
+            TypeParameterDescriptor parameter = typeConstructor.getParameters().get(i);
             TypeProjection argument = arguments.get(i);
             JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
             Variance projectionKind = argument.getProjectionKind();
@@ -160,6 +177,16 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                     throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
                                                                     projectionKind, altProjectionKind);
                 }
+                if (altProjectionKind != INVARIANT && parameter.getVariance() != INVARIANT) {
+                    if (altProjectionKind == parameter.getVariance()) {
+                        // TODO report redundant if in strict mode
+                    }
+                    else {
+                        throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
+                                altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                    }
+                    altProjectionKind = projectionKind;
+                }
             }
             else {
                 altProjectionKind = projectionKind;
@@ -167,17 +194,6 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             altArguments.add(new TypeProjection(altProjectionKind, alternativeArgumentType));
         }
 
-        TypeConstructor typeConstructor;
-        if (classFromLibrary != null) {
-            typeConstructor = classFromLibrary.getTypeConstructor();
-        }
-        else {
-            typeConstructor = originalTypeConstructor;
-        }
-        ClassifierDescriptor typeConstructorClassifier = typeConstructor.getDeclarationDescriptor();
-        if (typeConstructorClassifier instanceof TypeParameterDescriptor && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
-            typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
-        }
         JetScope memberScope;
         if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
             memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();

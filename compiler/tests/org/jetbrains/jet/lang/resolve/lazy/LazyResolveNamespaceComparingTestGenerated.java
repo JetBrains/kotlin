@@ -1312,6 +1312,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/error"), "kt", true);
                 }
                 
+                @TestMetadata("ConflictingProjectionKind.kt")
+                public void testConflictingProjectionKind() throws Exception {
+                    doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/ConflictingProjectionKind.kt");
+                }
+                
                 @TestMetadata("ExplicitFieldGettersAndSetters.kt")
                 public void testExplicitFieldGettersAndSetters() throws Exception {
                     doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.kt");
@@ -1335,6 +1340,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("NotVarargReplacedWithVararg.kt")
                 public void testNotVarargReplacedWithVararg() throws Exception {
                     doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/NotVarargReplacedWithVararg.kt");
+                }
+                
+                @TestMetadata("RedundantProjectionKind.kt")
+                public void testRedundantProjectionKind() throws Exception {
+                    doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/error/RedundantProjectionKind.kt");
                 }
                 
                 @TestMetadata("ReturnTypeMissing.kt")
