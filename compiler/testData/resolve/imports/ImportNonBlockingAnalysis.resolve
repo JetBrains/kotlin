@@ -1,0 +1,18 @@
+//FILE:firstOrder.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.InTesting2
+import testing.InTesting1
+
+trait ~InTest1~InTest1 : `InTesting1`InTesting1
+trait ~InTest2~InTest2 : `InTesting2`InTesting2
+
+//FILE:testing.kt
+//----------------------------------------------------------------------------------
+package testing
+
+import test.InTest2
+
+trait ~InTesting1~InTesting1 : `InTest2`InTest2
+trait ~InTesting2~InTesting2

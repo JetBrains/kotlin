@@ -1,0 +1,18 @@
+//FILE:insideClass.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.TestClass
+
+class WithInnerClass {
+  inner class ~inner-class~TestClass
+
+  val a3: `inner-class`TestClass? = null
+}
+
+
+//FILE:testing.kt
+//----------------------------------------------------------------------------------
+package testing
+
+class ~testing~TestClass

@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.resolve;
+package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.resolve.ExpectedResolveData;
+import org.jetbrains.jet.resolve.JetExpectedResolveDataUtil;
 
+import java.io.File;
 import java.util.List;
 
-public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
+public abstract class AbstractLazyResolveTest extends JetLiteFixture {
     private ExpectedResolveData expectedResolveData;
 
     @Override
@@ -39,22 +47,38 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
         expectedResolveData = getExpectedResolveData();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        expectedResolveData = null;
-        super.tearDown();
+    protected ExpectedResolveData getExpectedResolveData() {
+        Project project = getProject();
+
+        return new ExpectedResolveData(
+                JetExpectedResolveDataUtil.prepareDefaultNameToDescriptors(project),
+                JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project),
+                getEnvironment()) {
+            @Override
+            protected JetFile createJetFile(String fileName, String text) {
+                return createCheckAndReturnPsiFile(fileName, null, text);
+            }
+        };
     }
 
-    protected abstract ExpectedResolveData getExpectedResolveData();
+    protected void doTest(@NonNls String testFile) throws Exception {
+        String text = FileUtil.loadFile(new File(testFile), true);
 
-    protected void doTest(@NonNls String filePath) throws Exception {
-        String text = loadFile(filePath);
         List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
             @Override
             public JetFile create(String fileName, String text) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
         });
-        expectedResolveData.checkResult(expectedResolveData.analyze(files));
+
+        ResolveSession resolveSession = LazyResolveTestUtil.resolveLazilyWithSession(files, getEnvironment());
+
+        NamespaceDescriptor actual = resolveSession.getPackageDescriptor(Name.identifier("test"));
+        Assert.assertNotNull("Package 'test' was not found", actual);
+
+        resolveSession.forceResolveAll();
+
+        expectedResolveData.checkResult(resolveSession.getBindingContext());
     }
+
 }

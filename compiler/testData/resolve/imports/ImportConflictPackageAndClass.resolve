@@ -1,0 +1,34 @@
+//FILE:mainToSecond.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.first.*
+import testing.second.TestClass
+
+val a1: `second`TestClass? = null
+
+
+//FILE:mainToFirst.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.second.TestClass
+import testing.first.*
+
+// Single import has priority over package import
+val a2: `first`TestClass? = null
+
+
+//FILE:importFirst.kt
+//----------------------------------------------------------------------------------
+package testing.first
+
+class ~first~TestClass
+
+
+//FILE:importSecond.kt
+//----------------------------------------------------------------------------------
+package testing.second
+class testing.second
+
+class ~second~TestClass

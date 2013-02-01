@@ -1,0 +1,17 @@
+//FILE:mainFile.jet
+//----------------------------------------------------------------------------------
+package test
+
+import testing.*
+
+val a1: `fromRoot`TestClass? = null
+
+//FILE:fromRoot.kt
+//----------------------------------------------------------------------------------
+trait ~fromRoot~TestClass
+
+//FILE:fromOtherPackage.kt
+//----------------------------------------------------------------------------------
+package testing
+
+trait ~fromOtherPackage~TestClass

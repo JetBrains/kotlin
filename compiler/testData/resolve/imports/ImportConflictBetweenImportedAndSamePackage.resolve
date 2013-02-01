@@ -1,0 +1,20 @@
+//FILE:mainFile.jet
+//----------------------------------------------------------------------------------
+package test
+
+import otherPackage.*
+
+val a1: `fromSamePackage`TestClass? = null
+
+//FILE:fromOtherPackage.kt
+//----------------------------------------------------------------------------------
+package otherPackage
+
+trait ~fromOtherPackage~TestClass
+
+
+//FILE:fromSamePackage.kt
+//----------------------------------------------------------------------------------
+package test
+
+class ~fromSamePackage~TestClass

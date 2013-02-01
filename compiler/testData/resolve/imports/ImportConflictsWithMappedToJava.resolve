@@ -1,0 +1,54 @@
+//FILE:allPackageImport.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.custom.*
+
+// Non default import has priority over default one. No conflicts are expected.
+val a1: `custom`List<Int>? = null
+
+//FILE:javaUtilImport.kt
+//----------------------------------------------------------------------------------
+package test
+
+import java.util.*
+
+// Mapped declarations are dropped from on-demand imports.
+// TODO: Fix for lazy resolve test
+// val a2: 'kotlin::List'List<Int>? = null
+
+//FILE:allPackageWithJavaUtilImport.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.custom.*
+import java.util.*
+
+// Mapped declarations are dropped from on-demand "java.util" import. So no conflicts are expected.
+val a3: `custom`List<Int>? = null
+
+//FILE:singleClassImportFromJavaUtil.kt
+//----------------------------------------------------------------------------------
+package test
+
+import java.util.List
+
+// Single import doesn't processed with Java->Kotlin class mapper. This is the way how
+// java classes can be imported.
+val a4: `java::java.util.List`List<Int>? = null
+
+//FILE:singleClassImport.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.custom.List
+
+// Single import doesn't processed with Java->Kotlin class mapper
+val a5: `custom`List<Int>? = null
+
+
+//FILE:importFirst.kt
+//----------------------------------------------------------------------------------
+package testing.custom
+
+class ~custom~List<T>

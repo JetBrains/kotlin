@@ -82,7 +82,7 @@ public class LazyResolveTestUtil {
         return module;
     }
 
-    public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
+    public static ResolveSession resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
         ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
@@ -136,9 +136,11 @@ public class LazyResolveTestUtil {
         };
 
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-        ResolveSession
-                session = new ResolveSession(project, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory);
-        return lazyModule;
+        return new ResolveSession(project, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, sharedTrace);
+    }
+
+    public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
+        return resolveLazilyWithSession(files, environment).getRootModuleDescriptor();
     }
 
     @NotNull
