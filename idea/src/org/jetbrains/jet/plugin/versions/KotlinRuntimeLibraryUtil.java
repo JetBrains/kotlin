@@ -107,7 +107,9 @@ public class KotlinRuntimeLibraryUtil {
 
     public static void addJdkAnnotations(@NotNull Module module) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-        assert sdk != null;
+        if (sdk == null) {
+            return;
+        }
         File annotationsIoFile = PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath();
         if (annotationsIoFile.exists()) {
             VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsIoFile);
