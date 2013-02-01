@@ -186,12 +186,14 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                             throw new AlternativeSignatureMismatchException("Projection kind '%s' is redundant",
                                     altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
                         }
+                        else {
+                            altProjectionKind = projectionKind;
+                        }
                     }
                     else {
                         throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
                                 altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
                     }
-                    altProjectionKind = projectionKind;
                 }
             }
             else {
