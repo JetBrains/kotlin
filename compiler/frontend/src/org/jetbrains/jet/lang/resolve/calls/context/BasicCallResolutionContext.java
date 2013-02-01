@@ -31,15 +31,16 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ResolveMode resolveMode,
             boolean namespacesAllowed
     ) {
-        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
     }
 
     private BasicCallResolutionContext(
-            BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, boolean namespacesAllowed
+            BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, ResolveMode resolveMode, boolean namespacesAllowed
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             boolean namespacesAllowed
     ) {
-        return create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
     }
 
     @Override

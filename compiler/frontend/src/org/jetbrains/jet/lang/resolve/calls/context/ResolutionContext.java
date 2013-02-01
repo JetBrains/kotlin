@@ -88,7 +88,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext> {
     }
 
     @NotNull
-    public BasicCallResolutionContext toCallResolutionContext(@NotNull Call call) {
-        return BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+    public BasicCallResolutionContext toCallResolutionContext(@NotNull Call call, @NotNull ResolveMode resolveMode) {
+        return BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
     }
 }

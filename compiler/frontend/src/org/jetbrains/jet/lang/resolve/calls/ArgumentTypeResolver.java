@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -172,10 +173,10 @@ public class ArgumentTypeResolver {
         TypeInfoForCall result = null;
         if (expression instanceof JetCallExpression) {
             result = callExpressionResolver.getCallExpressionExtendedTypeInfo(
-                    (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null, context);
+                    (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null, context, ResolveMode.INTERNAL);
         }
         if (expression instanceof JetQualifiedExpression) {
-            result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo((JetQualifiedExpression) expression, context);
+            result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo((JetQualifiedExpression) expression, context, ResolveMode.INTERNAL);
         }
         if (result != null) {
             recordExpressionType(expression, context, result.getTypeInfo());

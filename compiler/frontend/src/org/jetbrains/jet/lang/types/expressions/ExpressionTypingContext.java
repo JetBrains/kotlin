@@ -16,24 +16,18 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
 public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingContext> {
@@ -108,23 +102,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
 ////////// Call resolution utilities
 
-    private BasicCallResolutionContext makeResolutionContext(@NotNull Call call) {
-        return BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
-    }
-
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
-        return expressionTypingServices.getCallResolver().resolveCallWithGivenName(makeResolutionContext(call), functionReference, name);
-    }
-
-    @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull Call call) {
-        return expressionTypingServices.getCallResolver().resolveFunctionCall(makeResolutionContext(call));
-    }
-
-    @NotNull
-    public OverloadResolutionResults<VariableDescriptor> resolveSimpleProperty(@NotNull ReceiverValue receiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
-        Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
-        return expressionTypingServices.getCallResolver().resolveSimpleProperty(makeResolutionContext(call));
+        return expressionTypingServices.getCallResolver().resolveCallWithGivenName(toCallResolutionContext(call, ResolveMode.NORMAL), functionReference, name);
     }
 }

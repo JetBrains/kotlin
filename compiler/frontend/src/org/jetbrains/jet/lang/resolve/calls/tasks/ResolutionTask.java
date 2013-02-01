@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
@@ -60,14 +61,14 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
 
     public ResolutionTask(
             @NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference,
-            BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, boolean namespacesAllowed) {
-        super(trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+            BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, ResolveMode resolveMode, boolean namespacesAllowed) {
+        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
         this.candidates = candidates;
         this.reference = reference;
     }
 
     public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicCallResolutionContext context) {
-        this(candidates, reference, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo, context.namespacesAllowed);
+        this(candidates, reference, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo, context.resolveMode, context.namespacesAllowed);
     }
 
     @NotNull
@@ -91,12 +92,6 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         return true;
     }
 
-    public ResolutionTask<D, F> withTrace(BindingTrace newTrace) {
-        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, newTrace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
-        newTask.setCheckingStrategy(checkingStrategy);
-        return newTask;
-    }
-
     @Override
     protected ResolutionTask<D, F> replace(
             @NotNull BindingTrace trace,
@@ -105,7 +100,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull JetType expectedType,
             boolean namespacesAllowed
     ) {
-        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, trace, scope, call, expectedType, dataFlowInfo, namespacesAllowed);
+        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
     }

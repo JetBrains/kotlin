@@ -50,25 +50,14 @@ public class TypeInfoForCall {
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ResolvedCall<FunctionDescriptor> resolvedCall,
             @NotNull Call call,
-            @NotNull ResolutionContext context
+            @NotNull ResolutionContext context,
+            @NotNull ResolveMode resolveMode
     ) {
-        return create(JetTypeInfo.create(type, dataFlowInfo), resolvedCall, call, context);
-    }
-
-    public static TypeInfoForCall create(@NotNull JetTypeInfo typeInfo) {
-        return new TypeInfoForCall(typeInfo, null);
-    }
-
-    public static TypeInfoForCall create(
-            @NotNull JetTypeInfo typeInfo,
-            @Nullable ResolvedCall<FunctionDescriptor> resolvedCall,
-            @Nullable Call call,
-            @Nullable ResolutionContext context
-    ) {
+        JetTypeInfo typeInfo = JetTypeInfo.create(type, dataFlowInfo);
         CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext;
-        if (call != null && context != null && resolvedCall instanceof ResolvedCallImpl) {
+        if (resolvedCall instanceof ResolvedCallImpl) {
             BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(
-                    TRACE_STUB, context.scope, call, TypeUtils.NO_EXPECTED_TYPE, typeInfo.getDataFlowInfo(), context.namespacesAllowed);
+                    TRACE_STUB, context.scope, call, TypeUtils.NO_EXPECTED_TYPE, typeInfo.getDataFlowInfo(), resolveMode, context.namespacesAllowed);
             callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                     (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, basicCallResolutionContext, TracingStrategy.EMPTY);
         }
@@ -76,6 +65,11 @@ public class TypeInfoForCall {
             callCandidateResolutionContext = null;
         }
         return new TypeInfoForCall(typeInfo, callCandidateResolutionContext);
+
+    }
+
+    public static TypeInfoForCall create(@NotNull JetTypeInfo typeInfo) {
+        return new TypeInfoForCall(typeInfo, null);
     }
 
     public static TypeInfoForCall create(
