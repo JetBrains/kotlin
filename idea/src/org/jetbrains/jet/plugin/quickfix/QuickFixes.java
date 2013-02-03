@@ -159,5 +159,7 @@ public class QuickFixes {
         factories.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, AddModifierFix.createFactory(INNER_KEYWORD, JetClass.class));
         
         factories.put(FINAL_SUPERTYPE, FinalSupertypeFix.createFactory());
+
+        factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
     }
 }
