@@ -16,19 +16,30 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
+
+import static org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction.addTypeAnnotation;
+import static org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction.getTypeForDeclaration;
 
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
-public class SpecifyTypeExplicitlyFix extends SpecifyTypeExplicitlyAction {
+public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
+    @NotNull
+    @Override
+    public String getFamilyName() {
+        return JetBundle.message("specify.type.explicitly.action.family.name");
+    }
+
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
         //noinspection unchecked

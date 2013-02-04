@@ -142,7 +142,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     @NotNull
-    protected static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
+    public static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
         BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile) declaration.getContainingFile());
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
