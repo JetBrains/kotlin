@@ -718,7 +718,7 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         if (JetPsiUtil.isScriptDeclaration(variable)) {
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+            PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                     containingDeclaration,
                     annotationResolver.getResolvedAnnotations(variable.getModifierList(), trace),
                     Modality.FINAL,
@@ -787,7 +787,7 @@ public class DescriptorResolver {
             @NotNull ClassDescriptor classDescriptor, BindingTrace trace
     ) {
         JetModifierList modifierList = objectDeclaration.getModifierList();
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 annotationResolver.getResolvedAnnotations(modifierList, trace),
                 Modality.FINAL,
@@ -899,7 +899,7 @@ public class DescriptorResolver {
                             ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, hasBody))
                             : Modality.FINAL;
         Visibility visibility = resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList, trace),
                 modality,
@@ -1196,7 +1196,7 @@ public class DescriptorResolver {
             }
         }
 
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 classDescriptor,
                 valueParameter.getAnnotations(),
                 resolveModalityFromModifiers(parameter, Modality.FINAL),

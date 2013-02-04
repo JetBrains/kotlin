@@ -181,7 +181,7 @@ public final class JavaPropertyResolver {
         }
 
         boolean isEnumEntry = DescriptorUtils.isEnumClassObject(owner);
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
                 owner,
                 annotationResolver.resolveAnnotations(psiData.getCharacteristicPsi()),
                 DescriptorResolverUtils.resolveModality(characteristicMember.getMember(),

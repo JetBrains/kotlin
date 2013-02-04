@@ -149,7 +149,7 @@ public class ErrorUtils {
     }
 
     private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
-    private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptor(
+    private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(
             ERROR_CLASS,
             Collections.<AnnotationDescriptor>emptyList(),
             Modality.OPEN,

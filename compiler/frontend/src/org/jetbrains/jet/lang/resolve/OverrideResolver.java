@@ -880,8 +880,8 @@ public class OverrideResolver {
             visibility = Visibilities.PUBLIC;
         }
 
-        if (memberDescriptor instanceof PropertyDescriptor) {
-            ((PropertyDescriptor)memberDescriptor).setVisibility(visibility);
+        if (memberDescriptor instanceof PropertyDescriptorImpl) {
+            ((PropertyDescriptorImpl)memberDescriptor).setVisibility(visibility);
             for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
                 resolveUnknownVisibilityForMember(null, accessor, trace);
             }
