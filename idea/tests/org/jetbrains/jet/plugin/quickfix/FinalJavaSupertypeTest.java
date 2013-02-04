@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.PsiTestUtil;
@@ -26,7 +25,7 @@ import org.jetbrains.jet.testing.LocalFileSystemUtils;
 import java.util.Arrays;
 import java.util.List;
 
-public class FinalJavaSupertypeTest extends JetQuickFixMultiFileTest {
+public class FinalJavaSupertypeTest extends AbstractQuickFixMultiFileTest {
     @Override
     protected void setUp() throws Exception {
         super.setUp();

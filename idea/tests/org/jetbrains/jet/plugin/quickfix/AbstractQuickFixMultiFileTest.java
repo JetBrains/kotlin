@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class JetQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
+public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCase {
 
     protected static boolean shouldBeAvailableAfterExecution() {
         return false;

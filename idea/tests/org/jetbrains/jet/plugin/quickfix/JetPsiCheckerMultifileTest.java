@@ -34,7 +34,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 
-public class JetPsiCheckerMultifileTest extends JetQuickFixMultiFileTest {
+public class JetPsiCheckerMultifileTest extends AbstractQuickFixMultiFileTest {
 
     public final static String MAIN_SUBSTRING = ".Main";
     public final static String DATA_SUBSTRING = ".Data";
