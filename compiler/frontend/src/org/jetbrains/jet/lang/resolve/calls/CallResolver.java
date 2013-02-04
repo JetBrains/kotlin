@@ -490,7 +490,7 @@ public class CallResolver {
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps
-            ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(task.getCandidates(), task.reference,
+            ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(task.getCandidates(), task.reference, task.tracing,
                         TemporaryBindingTrace.create(task.trace, "trace for resolution guarded for extra function literal arguments"),
                         task.scope, new DelegatingCall(task.call) {
                             @NotNull
