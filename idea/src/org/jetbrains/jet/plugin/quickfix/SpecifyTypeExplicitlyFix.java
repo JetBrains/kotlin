@@ -21,15 +21,30 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class SpecifyTypeExplicitlyFix extends SpecifyTypeExplicitlyAction {
+    @Override
+    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        //noinspection unchecked
+        JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetProperty.class, JetNamedFunction.class);
+        JetType type = getTypeForDeclaration(declaration);
+        if (declaration instanceof JetProperty) {
+            addTypeAnnotation(project, (JetProperty) declaration, type);
+        }
+        else if (declaration instanceof JetNamedFunction) {
+            addTypeAnnotation(project, (JetNamedFunction) declaration, type);
+        }
+        else {
+            assert false : "Couldn't find property or function";
+        }
+    }
+
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
         //noinspection unchecked
