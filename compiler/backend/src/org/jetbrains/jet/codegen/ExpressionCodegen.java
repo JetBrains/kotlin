@@ -55,7 +55,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -421,22 +420,38 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitDoWhileExpression(JetDoWhileExpression expression, StackValue receiver) {
-        Label condition = new Label();
-        v.mark(condition);
+        Label continueLabel = new Label();
+        v.mark(continueLabel);
 
-        Label end = new Label();
+        Label breakLabel = new Label();
 
-        blockStackElements.push(new LoopBlockStackElement(end, condition, targetLabel(expression)));
+        blockStackElements.push(new LoopBlockStackElement(breakLabel, continueLabel, targetLabel(expression)));
 
-        gen(expression.getBody(), Type.VOID_TYPE);
+        JetExpression body = expression.getBody();
+        JetExpression condition = expression.getCondition();
+        StackValue conditionValue;
 
-        final StackValue conditionValue = gen(expression.getCondition());
-        conditionValue.condJump(condition, false, v);
+        if (body instanceof JetBlockExpression) {
+            // If body's a block, it can contain variable declarations which may be used in the condition of a do-while loop.
+            // We handle this case separately because otherwise such variable will be out of the frame map after the block ends
+            List<JetElement> doWhileStatements = ((JetBlockExpression) body).getStatements();
 
-        v.mark(end);
+            List<JetElement> statements = new ArrayList<JetElement>(doWhileStatements.size() + 1);
+            statements.addAll(doWhileStatements);
+            statements.add(condition);
+
+            conditionValue = generateBlock(statements, true);
+        }
+        else {
+            gen(body, Type.VOID_TYPE);
+            conditionValue = gen(condition);
+        }
+
+        conditionValue.condJump(continueLabel, false, v);
+        v.mark(breakLabel);
 
         blockStackElements.pop();
-        return StackValue.onStack(Type.VOID_TYPE);
+        return StackValue.none();
     }
 
     @Override
