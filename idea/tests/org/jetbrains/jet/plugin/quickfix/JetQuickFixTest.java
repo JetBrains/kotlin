@@ -53,7 +53,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         FilenameFilter singleFileNameFilter = new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
-                return s.startsWith("before") && !JetPsiCheckerMultifileTest.isMultiFileName(s);
+                return s.startsWith("before") && !QuickFixMultifileTest.isMultiFileName(s);
             }
         };
 

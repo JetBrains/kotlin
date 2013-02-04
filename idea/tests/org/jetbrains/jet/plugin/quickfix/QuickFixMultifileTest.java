@@ -34,7 +34,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
 
-public class JetPsiCheckerMultifileTest extends AbstractQuickFixMultiFileTest {
+public class QuickFixMultifileTest extends AbstractQuickFixMultiFileTest {
 
     public final static String MAIN_SUBSTRING = ".Main";
     public final static String DATA_SUBSTRING = ".Data";
@@ -42,7 +42,7 @@ public class JetPsiCheckerMultifileTest extends AbstractQuickFixMultiFileTest {
     private final String dataPath;
     private final String name;
 
-    public JetPsiCheckerMultifileTest(String dataPath, String name) {
+    public QuickFixMultifileTest(String dataPath, String name) {
         this.dataPath = dataPath;
         this.name = name;
 
@@ -141,7 +141,7 @@ public class JetPsiCheckerMultifileTest extends AbstractQuickFixMultiFileTest {
         FilenameFilter multifileFileNameFilter = new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
-                return s.startsWith("before") && JetPsiCheckerMultifileTest.isMainFile(s);
+                return s.startsWith("before") && QuickFixMultifileTest.isMainFile(s);
             }
         };
 
@@ -149,7 +149,7 @@ public class JetPsiCheckerMultifileTest extends AbstractQuickFixMultiFileTest {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetPsiCheckerMultifileTest(dataPath, name);
+                return new QuickFixMultifileTest(dataPath, name);
             }
         };
 
