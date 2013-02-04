@@ -1,7 +1,7 @@
 <project name="Kotlin" default="dist">
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
-    <property name="shrink" value="true"/>
+    <property name="shrink" value="false"/>
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
     <property name="generate.javadoc" value="true"/>
 
@@ -14,12 +14,6 @@
 
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
-
-        <!--
-            Work around this problem: https://gist.github.com/1c4a7d51b61ec81d581b
-            Somebody please fix it properly or delete this comment if this is OK
-        -->
-        <pathelement path="${idea.sdk}/lib/resources_en.jar"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${basedir}/dependencies" includes="jline.jar"/>
