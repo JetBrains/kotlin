@@ -256,7 +256,7 @@ public open class Converter() {
                     elementToElement(field.getArgumentList()))
         }
 
-        var kType = typeToType(field.getType())
+        var kType = typeToType(field.getType(), isAnnotatedAsNotNull(field.getModifierList()))
         if (field.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(field.getInitializer())) {
             kType = kType.convertedToNotNull();
         }
