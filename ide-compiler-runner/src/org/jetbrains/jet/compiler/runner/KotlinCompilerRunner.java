@@ -90,6 +90,7 @@ public class KotlinCompilerRunner {
                 "-module", scriptFile.getAbsolutePath(),
                 "-output", outputDir.getPath(),
                 "-tags", "-verbose", "-version",
+                "-notNullAssertions", "-notNullParamAssertions",
                 "-noStdlib", "-noJdkAnnotations", "-noJdk"};
     }
 
