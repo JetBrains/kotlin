@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.projectRoots.JavaSdk;
@@ -33,7 +32,6 @@ import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +40,6 @@ import java.util.List;
 public class JetQuickFixTest extends LightQuickFixTestCase {
     private final String dataPath;
     private final String name;
-    private static FilenameFilter quickFixTestsFilter;
 
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
     public JetQuickFixTest(String dataPath, String name) {
@@ -50,20 +47,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         this.name = name;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    private static void setFilter() {
-        final ArrayList<String> appropriateDirs = Lists.newArrayList("classImport", "expressions");
-        quickFixTestsFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                if (appropriateDirs.contains(s)) return true;
-                return false;
-            }
-        };
-    }
-
     public static Test suite() {
-        //setFilter(); //to launch only part of tests
         TestSuite suite = new TestSuite();
 
         FilenameFilter singleFileNameFilter = new FilenameFilter() {
@@ -82,7 +66,7 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
         };
 
         File dir = new File(getTestDataPathBase());
-        List<String> subDirs = Arrays.asList(quickFixTestsFilter != null ? dir.list(quickFixTestsFilter) : dir.list());
+        List<String> subDirs = Arrays.asList(dir.list());
         Collections.sort(subDirs);
         for (String subDirName : subDirs) {
             final TestSuite singleFileTestSuite = JetTestCaseBuilder
