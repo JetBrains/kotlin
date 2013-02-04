@@ -84,7 +84,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             addTypeAnnotation(project, function, type);
         }
         else {
-            assert false;
+            throw new IllegalStateException("Unexpected parent: " + parent);
         }
     }
 
