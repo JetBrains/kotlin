@@ -21,82 +21,25 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("JUnitTestCaseWithNoTests")
-public class JetQuickFixTest extends LightQuickFixTestCase {
-    private final String dataPath;
-    private final String name;
-
-    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    public JetQuickFixTest(String dataPath, String name) {
-        this.dataPath = dataPath;
-        this.name = name;
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-
-        FilenameFilter singleFileNameFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File file, String s) {
-                return s.startsWith("before") && !QuickFixMultifileTest.isMultiFileName(s);
-            }
-        };
-
-        JetTestCaseBuilder.NamedTestFactory singleFileNamedTestFactory = new JetTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetQuickFixTest(dataPath, name);
-            }
-        };
-
-        File dir = new File(getTestDataPathBase());
-        List<String> subDirs = Arrays.asList(dir.list());
-        Collections.sort(subDirs);
-        for (String subDirName : subDirs) {
-            final TestSuite singleFileTestSuite = JetTestCaseBuilder
-                    .suiteForDirectory(getTestDataPathBase(), subDirName, true, singleFileNameFilter, singleFileNamedTestFactory);
-            if (singleFileTestSuite.countTestCases() != 0) {
-                suite.addTest(singleFileTestSuite);
-            }
-        }
-        return suite;
-    }
-
-    public static String getTestDataPathBase() {
-        return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData/quickfix/";
-    }
-
-    @Override
-    public String getName() {
-        return "test" + name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toUpperCase());
-    }
-
-    @Override
-    protected void runTest() throws Throwable {
-        boolean isWithRuntime = name.endsWith("Runtime");
+public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
+    protected void doTest(@NotNull String beforeFileName) throws Exception {
+        boolean isWithRuntime = beforeFileName.endsWith("Runtime.kt");
 
         if (isWithRuntime) {
             ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
         }
 
         try {
-            doSingleTest(name.substring("before".length()) + ".kt");
+            doSingleTest(getTestName(false) + ".kt");
             checkAvailableActionsAreExpected();
             checkForUnexpectedErrors();
         }
@@ -122,13 +65,13 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
 
     @Override
     protected String getBasePath() {
-        return "/quickfix/" + dataPath;
+        return getClass().getAnnotation(TestMetadata.class).value();
     }
 
     @NotNull
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase();
+        return "./";
     }
 
     @Override

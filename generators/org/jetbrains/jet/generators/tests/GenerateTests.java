@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
+import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestClassModel;
 import org.jetbrains.jet.test.generator.TestGenerator;
@@ -199,6 +200,13 @@ public class GenerateTests {
                 testModel("idea/testData/checker/regression"),
                 testModel("idea/testData/checker/rendering"),
                 testModel("idea/testData/checker/infos", false, "kt", "doTestWithInfos")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "QuickFixTestGenerated",
+                AbstractQuickFixTest.class,
+                new SimpleTestClassModel(new File("idea/testData/quickfix"), true, Pattern.compile("^before(\\w+)\\.kt$"), "doTest")
         );
 
         generateTest(

@@ -127,10 +127,6 @@ public class QuickFixMultifileTest extends AbstractQuickFixMultiFileTest {
         return PluginTestCaseBase.jdkFromIdeaHome();
     }
 
-    public static boolean isMultiFileName(String fileName) {
-        return fileName.contains(MAIN_SUBSTRING) || fileName.contains(DATA_SUBSTRING);
-    }
-
     public static boolean isMainFile(String fileName) {
         return fileName.contains(MAIN_SUBSTRING);
     }
@@ -141,7 +137,7 @@ public class QuickFixMultifileTest extends AbstractQuickFixMultiFileTest {
         FilenameFilter multifileFileNameFilter = new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
-                return s.startsWith("before") && QuickFixMultifileTest.isMainFile(s);
+                return s.startsWith("before") && isMainFile(s);
             }
         };
 
