@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -56,8 +57,9 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     };
 
     @NotNull
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
-        return new ResolvedCallImpl<D>(candidate, trace);
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace,
+            @NotNull TracingStrategy tracing) {
+        return new ResolvedCallImpl<D>(candidate, trace, tracing);
     }
 
     private final D candidateDescriptor;
@@ -71,18 +73,20 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private boolean someArgumentHasNoType = false;
     private final DelegatingBindingTrace trace;
+    private final TracingStrategy tracing;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
     private DataFlowInfo dataFlowInfo;
 
-    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace) {
+    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull DelegatingBindingTrace trace, @NotNull TracingStrategy tracing) {
         this.candidateDescriptor = candidate.getDescriptor();
         this.thisObject = candidate.getThisObject();
         this.receiverArgument = candidate.getReceiverArgument();
         this.explicitReceiverKind = candidate.getExplicitReceiverKind();
         this.isSafeCall = candidate.isSafeCall();
         this.trace = trace;
+        this.tracing = tracing;
     }
 
     @Override
@@ -108,6 +112,11 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @NotNull
     public DelegatingBindingTrace getTrace() {
         return trace;
+    }
+
+    @NotNull
+    public TracingStrategy getTracing() {
+        return tracing;
     }
 
     @Override

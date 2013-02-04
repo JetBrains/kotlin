@@ -53,7 +53,7 @@ public class CallResolverUtil {
                                                                       call.isSafeCall());
 
         TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, call.getTrace().toString() + "(copy)");
-        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, trace);
+        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, trace, call.getTracing());
 
         call.getTrace().addAllMyDataTo(trace);
         trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);

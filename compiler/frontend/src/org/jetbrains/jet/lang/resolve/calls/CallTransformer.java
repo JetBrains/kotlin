@@ -68,7 +68,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             @NotNull ResolutionTask<D, F> task,
             @NotNull TemporaryBindingTrace candidateTrace) {
 
-        ResolvedCallImpl<D> candidateCall = ResolvedCallImpl.create(candidate, candidateTrace);
+        ResolvedCallImpl<D> candidateCall = ResolvedCallImpl.create(candidate, candidateTrace, task.tracing);
         return Collections.singleton(CallCandidateResolutionContext.create(candidateCall, task, candidateTrace, task.tracing));
     }
 
@@ -103,7 +103,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             Call variableCall = stripCallArguments(task);
             if (!hasReceiver) {
                 CallCandidateResolutionContext<CallableDescriptor> context = CallCandidateResolutionContext.create(
-                        ResolvedCallImpl.create(candidate, candidateTrace), task, candidateTrace, task.tracing, variableCall);
+                        ResolvedCallImpl.create(candidate, candidateTrace, task.tracing), task, candidateTrace, task.tracing, variableCall);
                 return Collections.singleton(context);
             }
             Call variableCallWithoutReceiver = stripReceiver(variableCall);
@@ -125,7 +125,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                 Call call, TemporaryBindingTrace temporaryTrace, ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
 
             ChainedTemporaryBindingTrace chainedTrace = ChainedTemporaryBindingTrace.create(temporaryTrace, "chained trace to resolve candidate", candidate);
-            ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace);
+            ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace, task.tracing);
             return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call);
         }
 
