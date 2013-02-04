@@ -256,6 +256,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     }
     
     @TestMetadata("compiler/testData/loadKotlin/constructor")
+    @InnerTestClasses({Constructor.Vararg.class})
     public static class Constructor extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInConstructor() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor"), "kt", true);
@@ -284,11 +285,6 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("ConstructorCollectionParameter.kt")
         public void testConstructorCollectionParameter() throws Exception {
             doTest("compiler/testData/loadKotlin/constructor/ConstructorCollectionParameter.kt");
-        }
-        
-        @TestMetadata("ConstructorVararg.kt")
-        public void testConstructorVararg() throws Exception {
-            doTest("compiler/testData/loadKotlin/constructor/ConstructorVararg.kt");
         }
         
         @TestMetadata("ConstructorWithTwoDefArgs.kt")
@@ -331,6 +327,30 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTest("compiler/testData/loadKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
         }
         
+        @TestMetadata("compiler/testData/loadKotlin/constructor/vararg")
+        public static class Vararg extends AbstractLoadCompiledKotlinTest {
+            public void testAllFilesPresentInVararg() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor/vararg"), "kt", true);
+            }
+            
+            @TestMetadata("ConstructorNonLastVararg.kt")
+            public void testConstructorNonLastVararg() throws Exception {
+                doTest("compiler/testData/loadKotlin/constructor/vararg/ConstructorNonLastVararg.kt");
+            }
+            
+            @TestMetadata("ConstructorVararg.kt")
+            public void testConstructorVararg() throws Exception {
+                doTest("compiler/testData/loadKotlin/constructor/vararg/ConstructorVararg.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Constructor");
+            suite.addTestSuite(Constructor.class);
+            suite.addTestSuite(Vararg.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/loadKotlin/dataClass")
@@ -377,7 +397,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     }
     
     @TestMetadata("compiler/testData/loadKotlin/fun")
-    @InnerTestClasses({Fun.GenericWithTypeVariables.class, Fun.GenericWithoutTypeVariables.class, Fun.NonGeneric.class})
+    @InnerTestClasses({Fun.GenericWithTypeVariables.class, Fun.GenericWithoutTypeVariables.class, Fun.NonGeneric.class, Fun.Vararg.class})
     public static class Fun extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInFun() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), "kt", true);
@@ -567,12 +587,26 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             
         }
         
+        @TestMetadata("compiler/testData/loadKotlin/fun/vararg")
+        public static class Vararg extends AbstractLoadCompiledKotlinTest {
+            public void testAllFilesPresentInVararg() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/vararg"), "kt", true);
+            }
+            
+            @TestMetadata("nonLastVararg.kt")
+            public void testNonLastVararg() throws Exception {
+                doTest("compiler/testData/loadKotlin/fun/vararg/nonLastVararg.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Fun");
             suite.addTestSuite(Fun.class);
             suite.addTestSuite(GenericWithTypeVariables.class);
             suite.addTestSuite(GenericWithoutTypeVariables.class);
             suite.addTestSuite(NonGeneric.class);
+            suite.addTestSuite(Vararg.class);
             return suite;
         }
     }
@@ -952,7 +986,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         suite.addTestSuite(Class.class);
         suite.addTestSuite(ClassFun.class);
         suite.addTestSuite(ClassObject.class);
-        suite.addTestSuite(Constructor.class);
+        suite.addTest(Constructor.innerSuite());
         suite.addTestSuite(DataClass.class);
         suite.addTest(Fun.innerSuite());
         suite.addTestSuite(Prop.class);

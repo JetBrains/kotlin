@@ -1,0 +1,16 @@
+//FILE:sameFile.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.TestClass
+
+class ~same-file~TestClass
+
+val a1: `same-file`TestClass? = null
+
+
+//FILE:testing.kt
+//----------------------------------------------------------------------------------
+package testing
+
+class ~testing~TestClass

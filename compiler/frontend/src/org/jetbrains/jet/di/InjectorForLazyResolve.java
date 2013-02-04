@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -45,6 +46,7 @@ public class InjectorForLazyResolve {
     private ScopeProvider scopeProvider;
     private AnnotationResolver annotationResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private JetImportsFactory jetImportsFactory;
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
     private CandidateResolver candidateResolver;
@@ -65,6 +67,7 @@ public class InjectorForLazyResolve {
         this.scopeProvider = new ScopeProvider(resolveSession);
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.jetImportsFactory = new JetImportsFactory();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
@@ -85,6 +88,8 @@ public class InjectorForLazyResolve {
 
         this.annotationResolver.setCallResolver(callResolver);
         this.annotationResolver.setExpressionTypingServices(expressionTypingServices);
+
+        this.jetImportsFactory.setProject(project);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
@@ -124,6 +129,10 @@ public class InjectorForLazyResolve {
 
     public QualifiedExpressionResolver getQualifiedExpressionResolver() {
         return this.qualifiedExpressionResolver;
+    }
+
+    public JetImportsFactory getJetImportsFactory() {
+        return this.jetImportsFactory;
     }
 
 }

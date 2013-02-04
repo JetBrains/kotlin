@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -258,17 +259,22 @@ public class JetPsiUtil {
     @Nullable
     @IfNotParsed
     public static ImportPath getImportPath(JetImportDirective importDirective) {
-        final JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null) {
+        if (PsiTreeUtil.hasErrorElements(importDirective)) {
             return null;
         }
 
-        if (PsiTreeUtil.hasErrorElements(importedReference)) {
+        FqName importFqn = getFQName(importDirective.getImportedReference());
+        if (importFqn == null) {
             return null;
         }
 
-        final String text = importedReference.getText();
-        return new ImportPath(text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : ""));
+        Name alias = null;
+        String aliasName = importDirective.getAliasName();
+        if (aliasName != null) {
+            alias = Name.identifier(aliasName);
+        }
+
+        return new ImportPath(importFqn, importDirective.isAllUnder(), alias);
     }
 
     @Nullable
@@ -356,8 +362,7 @@ public class JetPsiUtil {
             aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
         }
 
-        //noinspection ConstantConditions
-        return !aliasName.isEmpty() ? Name.identifier(aliasName) : null;
+        return aliasName != null && !aliasName.isEmpty() ? Name.identifier(aliasName) : null;
     }
 
     @Nullable
@@ -373,7 +378,8 @@ public class JetPsiUtil {
     }
 
     public static boolean isFirstPartInQualified(@NotNull JetSimpleNameExpression nameExpression) {
-        @SuppressWarnings("unchecked") JetUserType userType = PsiTreeUtil.getParentOfType(nameExpression, JetUserType.class, true, JetDeclaration.class);
+        @SuppressWarnings("unchecked") JetUserType userType = PsiTreeUtil.getParentOfType(nameExpression, JetUserType.class, true,
+                                                                                          JetDeclaration.class);
         if (userType != null) {
             return PsiTreeUtil.isAncestor(userType.getFirstChild(), nameExpression, false);
         }
@@ -484,5 +490,41 @@ public class JetPsiUtil {
 
     public static boolean isBackingFieldReference(@Nullable JetElement element) {
         return element instanceof JetSimpleNameExpression && isBackingFieldReference((JetSimpleNameExpression)element);
+    }
+
+    @Nullable
+    private static FqName getFQName(@Nullable JetExpression expression) {
+        if (expression == null) {
+            return null;
+        }
+
+        if (expression instanceof JetDotQualifiedExpression) {
+            JetDotQualifiedExpression dotQualifiedExpression = (JetDotQualifiedExpression) expression;
+            FqName parentFqn = getFQName(dotQualifiedExpression.getReceiverExpression());
+            Name child = getName(dotQualifiedExpression.getSelectorExpression());
+
+            return parentFqn != null && child != null ? parentFqn.child(child) : null;
+        }
+        else if (expression instanceof JetSimpleNameExpression) {
+            JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
+            return FqName.topLevel(simpleNameExpression.getReferencedNameAsName());
+        }
+        else {
+            throw new IllegalArgumentException("Can't construct fqn for: " + expression.getClass().toString());
+        }
+    }
+
+    @Nullable
+    private static Name getName(@Nullable JetExpression expression) {
+        if (expression == null) {
+            return null;
+        }
+
+        if (expression instanceof JetSimpleNameExpression) {
+            return ((JetSimpleNameExpression) expression).getReferencedNameAsName();
+        }
+        else {
+            throw new IllegalArgumentException("Can't construct name for: " + expression.getClass().toString());
+        }
     }
 }

@@ -38,8 +38,7 @@ public class JvmClassName {
     @NotNull
     public static JvmClassName byType(@NotNull Type type) {
         if (type.getSort() != Type.OBJECT) {
-            throw new IllegalArgumentException(
-                    "must be an object to be converted to " + JvmClassName.class.getSimpleName());
+            throw new IllegalArgumentException("Type is not convertible to " + JvmClassName.class.getSimpleName() + ": " + type);
         }
         return byInternalName(type.getInternalName());
     }

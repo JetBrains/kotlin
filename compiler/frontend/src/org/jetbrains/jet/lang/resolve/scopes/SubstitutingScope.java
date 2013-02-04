@@ -53,10 +53,13 @@ public class SubstitutingScope implements JetScope {
         }
 
         DeclarationDescriptor substituted = substitutedDescriptors.get(descriptor);
-        if (substituted == null) {
+        if (substituted == null && !substitutedDescriptors.containsKey(descriptor)) {
             substituted = descriptor.substitute(substitutor);
+
+            //noinspection ConstantConditions
             substitutedDescriptors.put(descriptor, substituted);
         }
+
         //noinspection unchecked
         return (D) substituted;
     }
@@ -129,7 +132,7 @@ public class SubstitutingScope implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         throw new UnsupportedOperationException(); // TODO
     }
 
@@ -142,14 +145,7 @@ public class SubstitutingScope implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
-            for (DeclarationDescriptor descriptor : workerScope.getAllDescriptors()) {
-                DeclarationDescriptor substitute = substitute(descriptor);
-//                assert substitute != null : descriptor;
-                if (substitute != null) {
-                    allDescriptors.add(substitute);
-                }
-            }
+            allDescriptors = substitute(workerScope.getAllDescriptors());
         }
         return allDescriptors;
     }

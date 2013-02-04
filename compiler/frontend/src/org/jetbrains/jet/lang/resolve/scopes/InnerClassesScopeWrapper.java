@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -43,10 +42,6 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     @Override
     protected JetScope getWorkerScope() {
         return actualScope;
-    }
-
-    private boolean isClass(DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isObject();
     }
 
     @Override
@@ -89,5 +84,9 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     @Override
     public String toString() {
         return "Classes from " + actualScope;
+    }
+
+    private static boolean isClass(DeclarationDescriptor descriptor) {
+        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isObject();
     }
 }

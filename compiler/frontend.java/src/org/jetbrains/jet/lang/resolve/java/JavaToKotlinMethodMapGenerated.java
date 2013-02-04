@@ -198,7 +198,7 @@ class JavaToKotlinMethodMapGenerated {
             pair("java.util.Map boolean isEmpty()", "public abstract fun isEmpty() : jet.Boolean defined in jet.MutableMap"),            
             pair("java.util.Map java.util.Set<K> keySet()", "public abstract fun keySet() : jet.MutableSet<K> defined in jet.MutableMap"),            
             pair("java.util.Map V put(K, V)", "public abstract fun put(key : K, value : V) : V? defined in jet.MutableMap"),            
-            pair("java.util.Map void putAll(java.util.Map<? extends K,? extends V>)", "public abstract fun putAll(m : jet.Map<out K, out V>) : Unit defined in jet.MutableMap"),            
+            pair("java.util.Map void putAll(java.util.Map<? extends K,? extends V>)", "public abstract fun putAll(m : jet.Map<out K, V>) : Unit defined in jet.MutableMap"),            
             pair("java.util.Map V remove(java.lang.Object)", "public abstract fun remove(key : jet.Any?) : V? defined in jet.MutableMap"),            
             pair("java.util.Map int size()", "public abstract fun size() : jet.Int defined in jet.MutableMap"),            
             pair("java.util.Map java.util.Collection<V> values()", "public abstract fun values() : jet.MutableCollection<V> defined in jet.MutableMap")            

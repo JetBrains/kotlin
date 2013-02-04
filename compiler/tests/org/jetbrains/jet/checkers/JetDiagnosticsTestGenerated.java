@@ -3319,6 +3319,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/regressions/ea40964.kt");
             }
             
+            @TestMetadata("ea43298.kt")
+            public void testEa43298() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/regressions/ea43298.kt");
+            }
+            
             @TestMetadata("ErrorsOnIbjectExpressionsAsParameters.kt")
             public void testErrorsOnIbjectExpressionsAsParameters() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/regressions/ErrorsOnIbjectExpressionsAsParameters.kt");
@@ -3808,6 +3813,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         public static class Scopes extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInScopes() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/scopes"), "kt", true);
+            }
+            
+            @TestMetadata("AmbiguityBetweenRootAndPackage.kt")
+            public void testAmbiguityBetweenRootAndPackage() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/scopes/AmbiguityBetweenRootAndPackage.kt");
             }
             
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")

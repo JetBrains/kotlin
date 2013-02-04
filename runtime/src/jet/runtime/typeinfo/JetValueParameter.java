@@ -35,20 +35,9 @@ public @interface JetValueParameter {
     String name ();
 
     /**
-     * @return type projections or empty
-     */
-    JetTypeProjection[] typeProjections() default {};
-
-    /**
-     * @deprecated info contained in type field
-     * @return is this type nullable
-     */
-    boolean nullable () default false;
-
-    /**
      * @return if this parameter has default value
      */
-    boolean hasDefaultValue () default false;
+    boolean hasDefaultValue() default false;
 
     /**
      * @return if this parameter is receiver
@@ -59,4 +48,12 @@ public @interface JetValueParameter {
      * @return type unless Java type is correct Kotlin type.
      */
     String type() default "";
+
+    /**
+     * @return <code>true</code> if this parameter is a vararg
+     *
+     * NOTE: a method may have a vararg parameter in Kotlin and not be marked as Opcodes.ACC_VARARGS, e.g.
+     * fun foo(vararg x: Int, f: () -> Unit)
+     */
+    boolean vararg() default false;
 }

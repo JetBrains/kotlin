@@ -343,6 +343,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/error"), "java", true);
             }
             
+            @TestMetadata("ConflictingProjectionKind.java")
+            public void testConflictingProjectionKind() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/ConflictingProjectionKind.java");
+            }
+            
             @TestMetadata("ExplicitFieldGettersAndSetters.java")
             public void testExplicitFieldGettersAndSetters() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.java");
@@ -366,6 +371,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("NotVarargReplacedWithVararg.java")
             public void testNotVarargReplacedWithVararg() throws Exception {
                 doTest("compiler/testData/loadJava/kotlinSignature/error/NotVarargReplacedWithVararg.java");
+            }
+            
+            @TestMetadata("RedundantProjectionKind.java")
+            public void testRedundantProjectionKind() throws Exception {
+                doTest("compiler/testData/loadJava/kotlinSignature/error/RedundantProjectionKind.java");
             }
             
             @TestMetadata("ReturnTypeMissing.java")

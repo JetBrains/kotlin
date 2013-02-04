@@ -17,15 +17,23 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class ImportPath {
     private final @NotNull FqName fqName;
+    private final @Nullable Name alias;
     private final boolean isAllUnder;
 
     public ImportPath(@NotNull FqName fqName, boolean isAllUnder) {
+        this(fqName, isAllUnder, null);
+    }
+
+    public ImportPath(@NotNull FqName fqName, boolean isAllUnder, @Nullable Name alias) {
         this.fqName = fqName;
         this.isAllUnder = isAllUnder;
+        this.alias = alias;
     }
 
     public ImportPath(@NotNull String pathStr) {
@@ -37,6 +45,8 @@ public final class ImportPath {
             this.isAllUnder = false;
             this.fqName = new FqName(pathStr);
         }
+
+        alias = null;
     }
 
     public String getPathStr() {
@@ -45,7 +55,7 @@ public final class ImportPath {
 
     @Override
     public String toString() {
-        return getPathStr();
+        return getPathStr() + (alias != null ? " as " + alias.getName() : "");
     }
 
     @NotNull
@@ -53,21 +63,47 @@ public final class ImportPath {
         return fqName;
     }
 
+    @Nullable
+    public Name getAlias() {
+        return alias;
+    }
+
+    public boolean hasAlias() {
+        return alias != null;
+    }
+
     public boolean isAllUnder() {
         return isAllUnder;
     }
 
-    @Override
-    public int hashCode() {
-        return 31 * fqName.hashCode() + (isAllUnder ? 1 : 0);
+    @Nullable
+    public Name getImportedName() {
+        if (!isAllUnder()) {
+            return alias != null ? alias : fqName.shortName();
+        }
+
+        return null;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof ImportPath)) return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        ImportPath other = (ImportPath) obj;
-        return fqName.equals(other.fqName) && (isAllUnder == other.isAllUnder);
+        ImportPath path = (ImportPath) o;
+
+        if (isAllUnder != path.isAllUnder) return false;
+        if (alias != null ? !alias.equals(path.alias) : path.alias != null) return false;
+        if (!fqName.equals(path.fqName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fqName.hashCode();
+        result = 31 * result + (alias != null ? alias.hashCode() : 0);
+        result = 31 * result + (isAllUnder ? 1 : 0);
+        return result;
     }
 }

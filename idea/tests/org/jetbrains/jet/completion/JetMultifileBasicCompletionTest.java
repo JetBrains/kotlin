@@ -19,6 +19,10 @@ package org.jetbrains.jet.completion;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase {
+    public void testCompleteImportedFunction() {
+        doFileTest();
+    }
+
     public void testCompletionOnImportedFunction() {
         doFileTest();
     }

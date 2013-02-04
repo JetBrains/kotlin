@@ -1,0 +1,21 @@
+//FILE:classObject.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.TestClass
+
+class WithClassObject {
+  class object {
+    class ~class-object~TestClass
+  }
+
+  // TODO: Isn't it a bug?
+  val a2: `testing`TestClass? = null
+}
+
+
+//FILE:testing.kt
+//----------------------------------------------------------------------------------
+package testing
+
+class ~testing~TestClass

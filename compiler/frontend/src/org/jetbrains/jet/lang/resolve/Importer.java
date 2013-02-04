@@ -31,8 +31,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import java.util.Collection;
 import java.util.List;
 
-/*package*/ interface Importer {
-
+public interface Importer {
     void addAllUnderImport(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap);
 
     void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName);

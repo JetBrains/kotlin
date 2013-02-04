@@ -30,13 +30,20 @@ import java.util.Set;
 
 public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
+    private final String debugName;
     private final JetScope[] scopeChain;
     private Collection<DeclarationDescriptor> allDescriptors;
     private List<ReceiverParameterDescriptor> implicitReceiverHierarchy;
 
     public ChainedScope(DeclarationDescriptor containingDeclaration, JetScope... scopes) {
+        this(containingDeclaration, "Untitled chained scope", scopes);
+    }
+
+    public ChainedScope(DeclarationDescriptor containingDeclaration, String debugName, JetScope... scopes) {
         this.containingDeclaration = containingDeclaration;
         scopeChain = scopes.clone();
+
+        this.debugName = debugName;
     }
 
     @Override
@@ -133,7 +140,7 @@ public class ChainedScope implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         for (JetScope jetScope : scopeChain) {
             Collection<DeclarationDescriptor> declarationsByLabel = jetScope.getDeclarationsByLabel(labelName);
             if (!declarationsByLabel.isEmpty()) return declarationsByLabel; // TODO : merge?
@@ -168,5 +175,10 @@ public class ChainedScope implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        return debugName;
     }
 }

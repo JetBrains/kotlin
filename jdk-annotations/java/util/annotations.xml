@@ -235,7 +235,7 @@
     </item>
     <item name='java.util.Collections int binarySearch(java.util.List&lt;? extends T&gt;, T, java.util.Comparator&lt;? super T&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T&gt; binarySearch(list : List&lt;out T&gt;, key : T, c : Comparator&lt;in T&gt;) : Int&quot;"/>
+            <val name="value" val="&quot;fun &lt;T&gt; binarySearch(list : List&lt;T&gt;, key : T, c : Comparator&lt;in T&gt;) : Int&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Arrays double[] copyOf(double[], int)'>
@@ -609,7 +609,7 @@
     </item>
     <item name='java.util.HashMap void putAll(java.util.Map&lt;? extends K,? extends V&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun putAll(m : Map&lt;out K, out V&gt;)&quot;"/>
+            <val name="value" val="&quot;fun putAll(m : Map&lt;out K, V&gt;)&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Timer void scheduleAtFixedRate(java.util.TimerTask, java.util.Date, long) 0'>
@@ -833,7 +833,7 @@
     <item name='java.util.Collections java.util.Set&lt;T&gt; unmodifiableSet(java.util.Set&lt;? extends T&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T&gt; unmodifiableSet(s : Set&lt;out T&gt;) : MutableSet&lt;T&gt;&quot;"/>
+            <val name="value" val="&quot;fun &lt;T&gt; unmodifiableSet(s : Set&lt;T&gt;) : MutableSet&lt;T&gt;&quot;"/>
         </annotation>
     </item>
     <item name='java.util.BitSet java.util.BitSet valueOf(java.nio.ByteBuffer)'>
@@ -1244,7 +1244,7 @@
     <item name='java.util.Collections T max(java.util.Collection&lt;? extends T&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T: Comparable&lt;in T&gt;&gt; max(coll : Collection&lt;T&gt;) : T&quot;"/>
+            <val name="value" val="&quot;fun &lt;T: Comparable&lt;T&gt;&gt; max(coll : Collection&lt;T&gt;) : T&quot;"/>
         </annotation>
     </item>
     <item name='java.util.AbstractCollection java.lang.String toString()'>
@@ -1333,7 +1333,7 @@
     </item>
     <item name='java.util.Collections boolean addAll(java.util.Collection&lt;? super T&gt;, T...)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T&gt; addAll(c : Collection&lt;in T&gt;, vararg elements : T) : Boolean&quot;"/>
+            <val name="value" val="&quot;fun &lt;T&gt; addAll(c : MutableCollection&lt;in T&gt;, vararg elements : T) : Boolean&quot;"/>
         </annotation>
     </item>
     <item name='java.util.List java.util.ListIterator&lt;E&gt; listIterator(int)'>
@@ -1836,7 +1836,7 @@
     <item name='java.util.Collections T min(java.util.Collection&lt;? extends T&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T: Comparable&lt;in T&gt;&gt; min(coll : Collection&lt;T&gt;) : T&quot;"/>
+            <val name="value" val="&quot;fun &lt;T: Comparable&lt;T&gt;&gt; min(coll : Collection&lt;T&gt;) : T&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Locale.Builder java.util.Locale.Builder clear()'>
@@ -1920,7 +1920,7 @@
     <item name='java.util.Collections java.util.List&lt;T&gt; unmodifiableList(java.util.List&lt;? extends T&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T&gt; unmodifiableList(list : List&lt;out T&gt;) : MutableList&lt;T&gt;&quot;"/>
+            <val name="value" val="&quot;fun &lt;T&gt; unmodifiableList(list : List&lt;T&gt;) : MutableList&lt;T&gt;&quot;"/>
         </annotation>
     </item>
     <item name='java.util.ArrayDeque boolean removeFirstOccurrence(java.lang.Object) 0'>
@@ -2321,7 +2321,7 @@
     </item>
     <item name='java.util.Collections int indexOfSubList(java.util.List&lt;?&gt;, java.util.List&lt;?&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun indexOfSubList(source : List&lt;out Any?&gt;, target : List&lt;out Any?&gt;) : Int&quot;"/>
+            <val name="value" val="&quot;fun indexOfSubList(source : List&lt;Any?&gt;, target : List&lt;Any?&gt;) : Int&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Collections void sort(java.util.List&lt;T&gt;, java.util.Comparator&lt;? super T&gt;)'>
@@ -2513,7 +2513,7 @@
     </item>
     <item name='java.util.Collections int binarySearch(java.util.List&lt;? extends java.lang.Comparable&lt;? super T&gt;&gt;, T)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T&gt; binarySearch(list : List&lt;out Comparable&lt;in T&gt;&gt;, key : T) : Int&quot;"/>
+            <val name="value" val="&quot;fun &lt;T&gt; binarySearch(list : List&lt;Comparable&lt;T&gt;&gt;, key : T) : Int&quot;"/>
         </annotation>
     </item>
     <item name='java.util.AbstractMap V put(K, V) 0'>
@@ -2651,7 +2651,7 @@
     </item>
     <item name='java.util.AbstractMap void putAll(java.util.Map&lt;? extends K,? extends V&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun putAll(m : Map&lt;out K, out V&gt;)&quot;"/>
+            <val name="value" val="&quot;fun putAll(m : Map&lt;out K, V&gt;)&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Scanner Scanner(java.nio.channels.ReadableByteChannel, java.lang.String) 0'>
@@ -2898,7 +2898,7 @@
     </item>
     <item name='java.util.Collections void sort(java.util.List&lt;T&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T : Comparable&lt;in T&gt;&gt; sort(list : MutableList&lt;T&gt;) : Unit&quot;"/>
+            <val name="value" val="&quot;fun &lt;T : Comparable&lt;T&gt;&gt; sort(list : MutableList&lt;T&gt;) : Unit&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Observable void addObserver(java.util.Observer) 0'>
@@ -2968,7 +2968,7 @@
     <item name='java.util.Collections java.util.Map&lt;K,V&gt; unmodifiableMap(java.util.Map&lt;? extends K,? extends V&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;K, V&gt; unmodifiableMap(m : Map&lt;out K, out V&gt;) : MutableMap&lt;K, V&gt;&quot;"/>
+            <val name="value" val="&quot;fun &lt;K, V&gt; unmodifiableMap(m : Map&lt;out K, V&gt;) : MutableMap&lt;K, V&gt;&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Arrays void fill(double[], double) 0'>
@@ -3116,7 +3116,7 @@
     </item>
     <item name='java.util.Collections void copy(java.util.List&lt;? super T&gt;, java.util.List&lt;? extends T&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun &lt;T&gt; copy(dest : MutableList&lt;in T&gt;, src : List&lt;out T&gt;) : Unit&quot;"/>
+            <val name="value" val="&quot;fun &lt;T&gt; copy(dest : MutableList&lt;in T&gt;, src : List&lt;T&gt;) : Unit&quot;"/>
         </annotation>
     </item>
     <item name='java.util.EventObject EventObject(java.lang.Object) 0'>
@@ -3421,7 +3421,7 @@
     </item>
     <item name='java.util.Collections int lastIndexOfSubList(java.util.List&lt;?&gt;, java.util.List&lt;?&gt;)'>
         <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-            <val name="value" val="&quot;fun lastIndexOfSubList(source : List&lt;out Any?&gt;, target : List&lt;out Any?&gt;) : Int&quot;"/>
+            <val name="value" val="&quot;fun lastIndexOfSubList(source : List&lt;Any?&gt;, target : List&lt;Any?&gt;) : Int&quot;"/>
         </annotation>
     </item>
     <item name='java.util.Collections java.util.List&lt;T&gt; singletonList(T)'>

@@ -143,18 +143,22 @@ public abstract class ExpectedResolveData {
 
     protected abstract JetFile createJetFile(String fileName, String text);
 
-    public final void checkResult(List<JetFile> files) {
+    protected BindingContext analyze(List<JetFile> files) {
         if (files.isEmpty()) {
             System.err.println("Suspicious: no files");
-            return;
+            return BindingContext.EMPTY;
         }
-        final Set<PsiElement> unresolvedReferences = Sets.newHashSet();
+
         Project project = files.iterator().next().getProject();
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                project, files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue());
+        return analyzeExhaust.getBindingContext();
+    }
+
+    public final void checkResult(BindingContext bindingContext) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
-                Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue());
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        final Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
                 unresolvedReferences.add(diagnostic.getPsiElement());

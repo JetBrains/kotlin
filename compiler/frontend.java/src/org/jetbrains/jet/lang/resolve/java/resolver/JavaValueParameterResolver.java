@@ -76,7 +76,7 @@ public final class JavaValueParameterResolver {
         }
 
         JetType varargElementType;
-        if (psiType instanceof PsiEllipsisType) {
+        if (psiType instanceof PsiEllipsisType || parameter.getJetValueParameter().vararg()) {
             varargElementType = KotlinBuiltIns.getInstance().getArrayElementType(TypeUtils.makeNotNullable(outType));
             outType = TypeUtils.makeNotNullable(outType);
         }

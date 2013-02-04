@@ -1,0 +1,29 @@
+//FILE:withAllUnderImportsSecond.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.first.*
+import testing.second.*
+
+val a1 = ~second~testFun()
+
+//FILE:withAllUnderImportsFirst.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.second.*
+import testing.first.*
+
+val a1 = ~first~testFun()
+
+//FILE:importFirst.kt
+//----------------------------------------------------------------------------------
+package testing.first
+
+fun ~first~testFun(): Int = 12
+
+//FILE:importSecond.kt
+//----------------------------------------------------------------------------------
+package testing.second
+
+fun ~second~testFun(): Int = 12

@@ -29,6 +29,7 @@ import org.jetbrains.jet.codegen.generated.AbstractRangesCodegenTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
+import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
 import org.jetbrains.jet.test.generator.SimpleTestClassModel;
 import org.jetbrains.jet.test.generator.TestClassModel;
@@ -166,6 +167,11 @@ public class GenerateTests {
         //        AbstractLazyResolveDiagnosticsTest.class,
         //        new SimpleTestClassModel(AbstractLazyResolveDiagnosticsTest.TEST_DATA_DIR, true, "kt", "doTest")
         //);
+
+        generateTest("compiler/tests",
+                     "LazyResolveTestGenerated",
+                     AbstractLazyResolveTest.class,
+                     testModel("compiler/testData/resolve/imports", false, "resolve", "doTest"));
 
         generateTest(
                 "compiler/tests/",

@@ -16,15 +16,13 @@
 
 package org.jetbrains.k2js.analyze;
 
-import com.intellij.openapi.project.Project;
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -34,8 +32,6 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
@@ -43,36 +39,31 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isRootNamespace;
 public class JsConfiguration implements ModuleConfiguration {
 
     @NotNull
-    public static final List<ImportPath> DEFAULT_IMPORT_PATHS = Arrays.asList(
+    public static final List<ImportPath> DEFAULT_IMPORT_PATHS = ImmutableList.of(
             new ImportPath("js.*"),
             new ImportPath("java.lang.*"),
             new ImportPath(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), true),
             new ImportPath("kotlin.*"));
 
-    @NotNull
-    private final Project project;
     /*
-    * Adds a possibility to inject some preanalyzed files to speed up tests.
-    * */
+     * Adds a possibility to inject some preanalyzed files to speed up tests.
+     */
     @Nullable
     private final BindingContext preanalyzedContext;
 
-    JsConfiguration(@NotNull Project project, @Nullable BindingContext preanalyzedContext) {
-        this.project = project;
+    JsConfiguration(@Nullable BindingContext preanalyzedContext) {
         this.preanalyzedContext = preanalyzedContext;
     }
 
     @Override
-    public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
-        for (ImportPath path : DEFAULT_IMPORT_PATHS) {
-            directives.add(JetPsiFactory.createImportDirective(project, path));
-        }
+    public List<ImportPath> getDefaultImports() {
+        return DEFAULT_IMPORT_PATHS;
     }
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
             @NotNull WritableScope namespaceMemberScope) {
-        DefaultModuleConfiguration.createStandardConfiguration(project)
+        DefaultModuleConfiguration.createStandardConfiguration()
                 .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
 
         // Extend root namespace with standard classes

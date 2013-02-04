@@ -1099,6 +1099,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i);
                 jetValueParameterAnnotation.writeName(valueParameter.getName().getName());
                 jetValueParameterAnnotation.writeHasDefaultValue(valueParameter.declaresDefaultValue());
+                jetValueParameterAnnotation.writeVararg(valueParameter.getVarargElementType() != null);
                 jetValueParameterAnnotation.writeType(constructorMethod.getKotlinParameterType(i));
                 jetValueParameterAnnotation.visitEnd();
                 ++i;

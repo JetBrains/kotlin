@@ -1,0 +1,45 @@
+//FILE:firstOrder.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.other.*
+import testing.exact.Second
+import testing.allUnder.*
+
+// The goal is to activate lazy resolve in order Second, Other
+class FirstOrder: `other`Other, FirstInternal
+trait FirstInternal: `allUnder`Second
+
+
+
+//FILE:secondOrder.kt
+//----------------------------------------------------------------------------------
+package test
+
+import testing.other.*
+import testing.exact.Second
+import testing.allUnder.*
+
+// The goal is to activate lazy resolve in order Other, Second
+class FirstOrder: FirstInternal, `other`Other
+trait FirstInternal: `allUnder`Second
+
+
+
+//FILE:secondForAllUnderImport.kt
+//----------------------------------------------------------------------------------
+package testing.allUnder
+
+trait ~allUnder~Second
+
+//FILE:secondForExactImport.kt
+//----------------------------------------------------------------------------------
+package testing.exact
+
+trait ~exact~Second
+
+//FILE:someOther.kt
+//----------------------------------------------------------------------------------
+package testing.other
+
+trait ~other~Other

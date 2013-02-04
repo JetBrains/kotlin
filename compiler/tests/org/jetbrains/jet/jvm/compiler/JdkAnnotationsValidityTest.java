@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.kotlinSignature.TypeTransformingVisitor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -65,10 +66,22 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         return new JetCoreEnvironment(parentDisposable, configuration);
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        TypeTransformingVisitor.setStrictMode(true);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        TypeTransformingVisitor.setStrictMode(false);
+        super.tearDown();
+    }
+
     public void testNoErrorsInAlternativeSignatures() {
         List<FqName> affectedClasses = getAffectedClasses("file://jdk-annotations");
 
-        final Map<String, List<String>> errors = Maps.newHashMap();
+        final Map<String, List<String>> errors = Maps.newLinkedHashMap();
 
         for (int chunkIndex = 0; chunkIndex < affectedClasses.size() / CLASSES_IN_CHUNK + 1; chunkIndex++) {
             Disposable parentDisposable = CompileEnvironmentUtil.createMockDisposable();

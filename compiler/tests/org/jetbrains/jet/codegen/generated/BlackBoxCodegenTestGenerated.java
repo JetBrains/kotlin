@@ -1012,6 +1012,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/continueToLabelInFor.kt");
         }
         
+        @TestMetadata("doWhile.kt")
+        public void testDoWhile() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/doWhile.kt");
+        }
+        
+        @TestMetadata("doWhileFib.kt")
+        public void testDoWhileFib() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/doWhileFib.kt");
+        }
+        
         @TestMetadata("finallyOnEmptyReturn.kt")
         public void testFinallyOnEmptyReturn() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/finallyOnEmptyReturn.kt");
@@ -1155,6 +1165,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt3273.kt")
         public void testKt3273() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt3273.kt");
+        }
+        
+        @TestMetadata("kt3280.kt")
+        public void testKt3280() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt3280.kt");
         }
         
         @TestMetadata("kt416.kt")

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -25,7 +26,10 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -33,9 +37,12 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.TypeUsage.*;
+import static org.jetbrains.jet.lang.resolve.java.TypeUsage.TYPE_ARGUMENT;
+import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
-class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
+public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
+    private static boolean strictMode = false;
+
     private final JetType originalType;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
@@ -92,7 +99,7 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         String shortName = type.getReferenceExpression().getReferencedName();
         String longName = (qualifier == null ? "" : qualifier.getText() + ".") + shortName;
 
-        if (KotlinBuiltIns.getInstance().UNIT_ALIAS.getName().equals(longName)) {
+        if (KotlinBuiltIns.UNIT_ALIAS.getName().equals(longName)) {
             return visitCommonType(KotlinBuiltIns.getInstance().getTuple(0), type);
         }
 
@@ -113,60 +120,6 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s", qualifiedName, fqName);
         }
 
-        List<TypeProjection> arguments = originalType.getArguments();
-
-        if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
-            throw new AlternativeSignatureMismatchException("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
-                 DescriptorRenderer.TEXT.renderType(originalType), arguments.size(), type.getText(),
-                 type.getTypeArgumentsAsTypes().size());
-        }
-
-        List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
-        for (int i = 0, size = arguments.size(); i < size; i++) {
-            JetTypeReference typeReference = type.getTypeArgumentsAsTypes().get(i);
-
-            if (typeReference == null) {
-                // star projection
-                assert type instanceof JetUserType
-                       && ((JetUserType) type).getTypeArguments().get(i).getProjectionKind() == JetProjectionKind.STAR;
-
-                altArguments.add(arguments.get(i));
-
-                continue;
-            }
-
-            JetTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
-            assert argumentAlternativeTypeElement != null;
-
-            TypeProjection argument = arguments.get(i);
-            JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, argument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
-            Variance projectionKind = argument.getProjectionKind();
-            Variance altProjectionKind;
-            if (type instanceof JetUserType) {
-                JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
-                switch (typeProjection.getProjectionKind()) {
-                    case IN:
-                        altProjectionKind = Variance.IN_VARIANCE;
-                        break;
-                    case OUT:
-                        altProjectionKind = Variance.OUT_VARIANCE;
-                        break;
-                    case STAR:
-                        throw new IllegalStateException("star projection should have been processed above");
-                    default:
-                        altProjectionKind = Variance.INVARIANT;
-                }
-                if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
-                    throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
-                                                                    projectionKind, altProjectionKind);
-                }
-            }
-            else {
-                altProjectionKind = projectionKind;
-            }
-            altArguments.add(new TypeProjection(altProjectionKind, alternativeArgumentType));
-        }
-
         TypeConstructor typeConstructor;
         if (classFromLibrary != null) {
             typeConstructor = classFromLibrary.getTypeConstructor();
@@ -178,6 +131,20 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         if (typeConstructorClassifier instanceof TypeParameterDescriptor && originalToAltTypeParameters.containsKey(typeConstructorClassifier)) {
             typeConstructor = originalToAltTypeParameters.get(typeConstructorClassifier).getTypeConstructor();
         }
+
+        List<TypeProjection> arguments = originalType.getArguments();
+
+        if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
+            throw new AlternativeSignatureMismatchException("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
+                 DescriptorRenderer.TEXT.renderType(originalType), arguments.size(), type.getText(),
+                 type.getTypeArgumentsAsTypes().size());
+        }
+
+        List<TypeProjection> altArguments = new ArrayList<TypeProjection>();
+        for (int i = 0, size = arguments.size(); i < size; i++) {
+            altArguments.add(getAltArgument(type, typeConstructor, i, arguments.get(i)));
+        }
+
         JetScope memberScope;
         if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
             memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
@@ -191,6 +158,70 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         }
         return new JetTypeImpl(originalType.getAnnotations(), typeConstructor, false,
                                altArguments, memberScope);
+    }
+
+    @NotNull
+    private TypeProjection getAltArgument(
+            @NotNull JetTypeElement type,
+            @NotNull TypeConstructor typeConstructor,
+            int i,
+            @NotNull TypeProjection originalArgument
+    ) {
+        JetTypeReference typeReference = type.getTypeArgumentsAsTypes().get(i); // process both function type and user type
+
+        if (typeReference == null) {
+            // star projection
+            assert type instanceof JetUserType
+                   && ((JetUserType) type).getTypeArguments().get(i).getProjectionKind() == JetProjectionKind.STAR;
+
+            return originalArgument;
+        }
+
+        JetTypeElement argumentAlternativeTypeElement = typeReference.getTypeElement();
+        assert argumentAlternativeTypeElement != null;
+
+        TypeParameterDescriptor parameter = typeConstructor.getParameters().get(i);
+        JetType alternativeArgumentType = computeType(argumentAlternativeTypeElement, originalArgument.getType(), originalToAltTypeParameters, TYPE_ARGUMENT);
+        Variance projectionKind = originalArgument.getProjectionKind();
+        Variance altProjectionKind;
+        if (type instanceof JetUserType) {
+            JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
+            switch (typeProjection.getProjectionKind()) {
+                case IN:
+                    altProjectionKind = Variance.IN_VARIANCE;
+                    break;
+                case OUT:
+                    altProjectionKind = Variance.OUT_VARIANCE;
+                    break;
+                case STAR:
+                    throw new IllegalStateException("star projection should have been processed above");
+                default:
+                    altProjectionKind = Variance.INVARIANT;
+            }
+            if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
+                throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
+                                                                projectionKind, altProjectionKind);
+            }
+            if (altProjectionKind != INVARIANT && parameter.getVariance() != INVARIANT) {
+                if (altProjectionKind == parameter.getVariance()) {
+                    if (strictMode) {
+                        throw new AlternativeSignatureMismatchException("Projection kind '%s' is redundant",
+                                altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                    }
+                    else {
+                        altProjectionKind = projectionKind;
+                    }
+                }
+                else {
+                    throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
+                            altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                }
+            }
+        }
+        else {
+            altProjectionKind = projectionKind;
+        }
+        return new TypeProjection(altProjectionKind, alternativeArgumentType);
     }
 
     @Nullable
@@ -215,5 +246,10 @@ class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
     private static boolean isSameName(String qualifiedName, String fullyQualifiedName) {
         return fullyQualifiedName.equals(qualifiedName) || fullyQualifiedName.endsWith("." + qualifiedName);
+    }
+
+    @TestOnly
+    public static void setStrictMode(boolean strictMode) {
+        TypeTransformingVisitor.strictMode = strictMode;
     }
 }

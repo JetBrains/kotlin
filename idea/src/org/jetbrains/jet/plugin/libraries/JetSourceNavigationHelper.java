@@ -211,7 +211,7 @@ public class JetSourceNavigationHelper {
                 project,
                 storageManager,
                 new ModuleDescriptor(Name.special("<library module>")),
-                DefaultModuleConfiguration.createStandardConfiguration(project),
+                DefaultModuleConfiguration.createStandardConfiguration(),
                 providerFactory);
 
         for (JetNamedDeclaration candidate : candidates) {
@@ -229,10 +229,10 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     private static JetClassOrObject getSourceForNamedClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
-        FqName classFqName = JetPsiUtil.getFQName((JetNamedDeclaration) decompiledClassOrObject);
+        FqName classFqName = JetPsiUtil.getFQName(decompiledClassOrObject);
         assert classFqName != null;
 
-        GlobalSearchScope librarySourcesScope = createLibrarySourcesScope((JetNamedDeclaration) decompiledClassOrObject);
+        GlobalSearchScope librarySourcesScope = createLibrarySourcesScope(decompiledClassOrObject);
         if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
             return null;
         }

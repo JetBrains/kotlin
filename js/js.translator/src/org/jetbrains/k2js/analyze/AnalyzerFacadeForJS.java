@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public final class AnalyzerFacadeForJS {
                              new DelegatingBindingTrace(libraryBindingContext, "trace for analyzing library in js");
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
                 project, topDownAnalysisParameters, trace, owner,
-                new JsConfiguration(project, libraryBindingContext));
+                new JsConfiguration(libraryBindingContext));
         try {
             Collection<JetFile> allFiles = libraryBindingContext != null ?
                                            files :
@@ -144,6 +144,6 @@ public final class AnalyzerFacadeForJS {
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
-        return new ResolveSession(config.getProject(), storageManager, lazyModule, new JsConfiguration(config.getProject(), null), declarationProviderFactory);
+        return new ResolveSession(config.getProject(), storageManager, lazyModule, new JsConfiguration(null), declarationProviderFactory);
     }
 }

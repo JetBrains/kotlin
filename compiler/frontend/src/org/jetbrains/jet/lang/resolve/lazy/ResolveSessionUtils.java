@@ -240,7 +240,7 @@ public class ResolveSessionUtils {
         ScopeProvider provider = resolveSession.getInjector().getScopeProvider();
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
         if (parentDeclaration == null) {
-            return provider.getFileScopeWithAllImported((JetFile) expression.getContainingFile());
+            return provider.getFileScope((JetFile) expression.getContainingFile());
         }
         return provider.getResolutionScopeForDeclaration(parentDeclaration);
     }
@@ -285,11 +285,13 @@ public class ResolveSessionUtils {
 
                     if (element instanceof JetDotQualifiedExpression) {
                         descriptors = qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                                (JetDotQualifiedExpression) element, rootPackage.getMemberScope(), scope, trace, false, false);
+                                (JetDotQualifiedExpression) element, rootPackage.getMemberScope(), scope, trace,
+                                QualifiedExpressionResolver.LookupMode.EVERYTHING, false);
                     }
                     else {
                         descriptors = qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                                (JetSimpleNameExpression) element, rootPackage.getMemberScope(), scope, trace, false, false, false);
+                                (JetSimpleNameExpression) element, rootPackage.getMemberScope(), scope, trace,
+                                QualifiedExpressionResolver.LookupMode.EVERYTHING, false, false);
                     }
 
                     for (DeclarationDescriptor descriptor : descriptors) {
