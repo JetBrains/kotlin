@@ -454,7 +454,7 @@ public class JetTestUtils {
             @NotNull Class<?> testCaseClass,
             @NotNull String generatorClassFqName,
             @NotNull File testDataDir,
-            @NotNull String extension,
+            @NotNull Pattern filenamePattern,
             boolean recursive
     ) {
         TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
@@ -474,12 +474,12 @@ public class JetTestUtils {
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    if (recursive && containsTestData(file, extension)) {
+                    if (recursive && containsTestData(file, filenamePattern)) {
                         assertTestClassPresentByMetadata(testCaseClass, generatorClassFqName, file);
                     }
                 }
                 else {
-                    if (file.getName().endsWith("." + extension)) {
+                    if (filenamePattern.matcher(file.getName()).matches()) {
                         String relativePath = FileUtil.getRelativePath(rootFile, file);
                         if (!filePaths.contains(relativePath)) {
                             Assert.fail("Test data file missing from the generated test class: " +
@@ -492,17 +492,17 @@ public class JetTestUtils {
         }
     }
 
-    private static boolean containsTestData(File dir, String extension) {
+    private static boolean containsTestData(File dir, Pattern filenamePattern) {
         File[] files = dir.listFiles();
         assert files != null;
         for (File file : files) {
             if (file.isDirectory()) {
-                if (containsTestData(file, extension)) {
+                if (containsTestData(file, filenamePattern)) {
                     return true;
                 }
             }
             else {
-                if (FileUtil.getExtension(file.getName()).equals(extension)) {
+                if (filenamePattern.matcher(file.getName()).matches()) {
                     return true;
                 }
             }

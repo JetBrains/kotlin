@@ -39,6 +39,7 @@ import org.jetbrains.jet.test.generator.TestGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class GenerateTests {
     private static void generateTest(
@@ -222,7 +223,7 @@ public class GenerateTests {
             @NotNull String extension,
             @NotNull String doTestMethodName
     ) {
-        return new SimpleTestClassModel(new File(rootPath), recursive, extension, doTestMethodName);
+        return new SimpleTestClassModel(new File(rootPath), recursive, Pattern.compile("^(.+)\\." + extension + "$"), doTestMethodName);
     }
 
     private GenerateTests() {

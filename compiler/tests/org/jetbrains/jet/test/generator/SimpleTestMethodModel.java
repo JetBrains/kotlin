@@ -23,16 +23,19 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 public class SimpleTestMethodModel implements TestMethodModel {
     private final File rootDir;
     private final File file;
     private final String doTestMethodName;
+    private final Pattern filenamePattern;
 
-    public SimpleTestMethodModel(File rootDir, File file, String doTestMethodName) {
+    public SimpleTestMethodModel(File rootDir, File file, String doTestMethodName, Pattern filenamePattern) {
         this.rootDir = rootDir;
         this.file = file;
         this.doTestMethodName = doTestMethodName;
+        this.filenamePattern = filenamePattern;
     }
 
     @Override

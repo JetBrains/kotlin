@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class SimpleTestClassModel implements TestClassModel {
     private static final Comparator<TestEntityModel> BY_NAME = new Comparator<TestEntityModel>() {
@@ -37,17 +38,17 @@ public class SimpleTestClassModel implements TestClassModel {
     };
     private final File rootFile;
     private final boolean recursive;
-    private final String extension;
+    private final Pattern filenamePattern;
     private final String doTestMethodName;
     private final String testClassName;
 
     private Collection<TestClassModel> innerTestClasses;
     private Collection<TestMethodModel> testMethods;
 
-    public SimpleTestClassModel(@NotNull File rootFile, boolean recursive, @NotNull String extension, @NotNull String doTestMethodName) {
+    public SimpleTestClassModel(@NotNull File rootFile, boolean recursive, @NotNull Pattern filenamePattern, @NotNull String doTestMethodName) {
         this.rootFile = rootFile;
         this.recursive = recursive;
-        this.extension = extension;
+        this.filenamePattern = filenamePattern;
         this.doTestMethodName = doTestMethodName;
         this.testClassName = StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(rootFile.getName()));
     }
@@ -64,7 +65,7 @@ public class SimpleTestClassModel implements TestClassModel {
             if (files != null) {
                 for (File file : files) {
                     if (file.isDirectory()) {
-                        children.add(new SimpleTestClassModel(file, recursive, extension, doTestMethodName));
+                        children.add(new SimpleTestClassModel(file, recursive, filenamePattern, doTestMethodName));
                     }
                 }
             }
@@ -79,7 +80,7 @@ public class SimpleTestClassModel implements TestClassModel {
     public Collection<TestMethodModel> getTestMethods() {
         if (testMethods == null) {
             if (!rootFile.isDirectory()) {
-                testMethods = Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName));
+                testMethods = Collections.<TestMethodModel>singletonList(new SimpleTestMethodModel(rootFile, rootFile, doTestMethodName, filenamePattern));
             }
             else {
                 List<TestMethodModel> result = Lists.newArrayList();
@@ -89,8 +90,8 @@ public class SimpleTestClassModel implements TestClassModel {
                 File[] listFiles = rootFile.listFiles();
                 if (listFiles != null) {
                     for (File file : listFiles) {
-                        if (!file.isDirectory() && file.getName().endsWith("." + extension)) {
-                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName));
+                        if (!file.isDirectory() && filenamePattern.matcher(file.getName()).matches()) {
+                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern));
                         }
                     }
                 }
@@ -127,8 +128,8 @@ public class SimpleTestClassModel implements TestClassModel {
         @Override
         public void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName) {
             String assertTestsPresentStr =
-                    String.format("JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), \"%s\", new File(\"%s\"), \"%s\", %s);",
-                                  generatorClassFqName, JetTestUtils.getFilePath(rootFile), extension, recursive);
+                    String.format("JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), \"%s\", new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
+                                  generatorClassFqName, JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), recursive);
             p.println(assertTestsPresentStr);
         }
 

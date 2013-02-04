@@ -72,6 +72,7 @@ public class TestGenerator {
         p.println();
 
         p.println("import java.io.File;");
+        p.println("import java.util.regex.Pattern;");
         p.println("import org.jetbrains.jet.JetTestUtils;");
         p.println("import org.jetbrains.jet.test.InnerTestClasses;");
         p.println("import org.jetbrains.jet.test.TestMetadata;");
