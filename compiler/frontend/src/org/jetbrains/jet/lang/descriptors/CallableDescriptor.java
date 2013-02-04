@@ -45,7 +45,7 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     CallableDescriptor getOriginal();
 
     @Override
-    CallableDescriptor substitute(TypeSubstitutor substitutor);
+    CallableDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     @NotNull
     List<ValueParameterDescriptor> getValueParameters();

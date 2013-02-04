@@ -40,5 +40,5 @@ public interface ReceiverParameterDescriptor extends DeclarationDescriptor {
 
     @Nullable
     @Override
-    ReceiverParameterDescriptor substitute(TypeSubstitutor substitutor);
+    ReceiverParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 }

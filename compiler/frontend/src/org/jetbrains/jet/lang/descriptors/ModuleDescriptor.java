@@ -57,7 +57,7 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
 
     @NotNull
     @Override
-    public ModuleDescriptor substitute(TypeSubstitutor substitutor) {
+    public ModuleDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         return this;
     }
 

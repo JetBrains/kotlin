@@ -51,7 +51,7 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
 
     @NotNull
     @Override
-    public NamespaceDescriptor substitute(TypeSubstitutor substitutor) {
+    public NamespaceDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException("This operation does not make sense for a namespace");
     }
 

@@ -35,7 +35,7 @@ public interface DeclarationDescriptor extends Annotated, Named {
     DeclarationDescriptor getContainingDeclaration();
 
     @Nullable
-    DeclarationDescriptor substitute(TypeSubstitutor substitutor);
+    DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data);
     void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor);

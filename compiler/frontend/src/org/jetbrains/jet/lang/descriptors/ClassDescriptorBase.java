@@ -50,7 +50,7 @@ public abstract class ClassDescriptorBase implements ClassDescriptor {
 
     @NotNull
     @Override
-    public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+    public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         if (substitutor.isEmpty()) {
             return this;
         }

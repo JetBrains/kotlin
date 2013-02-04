@@ -48,7 +48,7 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     @NotNull
     @Override
     @Deprecated // Use the static method TypeParameterDescriptor.substitute()
-    TypeParameterDescriptor substitute(TypeSubstitutor substitutor);
+    TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     int getIndex();
 }

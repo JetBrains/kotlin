@@ -198,7 +198,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
     @NotNull
     @Override
     @Deprecated
-    public TypeParameterDescriptor substitute(TypeSubstitutor substitutor) {
+    public TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException();
     }
 

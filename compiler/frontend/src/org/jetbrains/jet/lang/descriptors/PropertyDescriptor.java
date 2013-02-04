@@ -44,5 +44,5 @@ public interface PropertyDescriptor
     Set<? extends PropertyDescriptor> getOverriddenDescriptors();
 
     @Override
-    PropertyDescriptor substitute(TypeSubstitutor substitutor);
+    PropertyDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 }

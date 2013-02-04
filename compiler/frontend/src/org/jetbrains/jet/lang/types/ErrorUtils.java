@@ -130,7 +130,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+        public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
             return ERROR_CLASS;
         }
     };

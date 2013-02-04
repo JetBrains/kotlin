@@ -241,7 +241,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     @Deprecated
-    public TypeParameterDescriptor substitute(TypeSubstitutor substitutor) {
+    public TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException("Don't call substitute() on type parameters");
     }
 

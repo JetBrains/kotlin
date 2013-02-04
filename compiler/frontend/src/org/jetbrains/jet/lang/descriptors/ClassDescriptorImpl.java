@@ -120,7 +120,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
 
     @NotNull
     @Override
-    public ClassDescriptor substitute(TypeSubstitutor substitutor) {
+    public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException(); // TODO
     }
 

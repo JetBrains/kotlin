@@ -54,7 +54,7 @@ class RootContext extends CodegenContext {
         }
 
         @Override
-        public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
+        public DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
             throw new IllegalStateException();
         }
 

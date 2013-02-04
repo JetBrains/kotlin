@@ -50,7 +50,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
 
     @NotNull
     @Override
-    ClassDescriptor substitute(TypeSubstitutor substitutor);
+    ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     @Nullable
     @Override

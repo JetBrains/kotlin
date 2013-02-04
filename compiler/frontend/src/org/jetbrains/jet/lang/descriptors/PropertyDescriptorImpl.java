@@ -195,7 +195,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     }
 
     @Override
-    public PropertyDescriptor substitute(TypeSubstitutor originalSubstitutor) {
+    public PropertyDescriptor substitute(@NotNull TypeSubstitutor originalSubstitutor) {
         if (originalSubstitutor.isEmpty()) {
             return this;
         }

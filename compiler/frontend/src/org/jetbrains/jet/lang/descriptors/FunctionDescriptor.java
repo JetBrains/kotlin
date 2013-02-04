@@ -31,7 +31,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     FunctionDescriptor getOriginal();
 
     @Override
-    FunctionDescriptor substitute(TypeSubstitutor substitutor);
+    FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     @Override
     @NotNull

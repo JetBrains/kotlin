@@ -73,7 +73,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorNo
 
     @NotNull
     @Override
-    public FunctionDescriptor substitute(TypeSubstitutor substitutor) {
+    public FunctionDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException(); // TODO
     }
 

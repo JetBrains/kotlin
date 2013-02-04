@@ -126,7 +126,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @NotNull
     @Override
-    public ValueParameterDescriptor substitute(TypeSubstitutor substitutor) {
+    public ValueParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new UnsupportedOperationException(); // TODO
     }
 

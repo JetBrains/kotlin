@@ -30,7 +30,7 @@ public interface VariableDescriptor extends CallableDescriptor {
     DeclarationDescriptor getContainingDeclaration();
 
     @Override
-    VariableDescriptor substitute(TypeSubstitutor substitutor);
+    VariableDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     boolean isVar();
 }

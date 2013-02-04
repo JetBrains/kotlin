@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,7 +36,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
 
     @Nullable
     @Override
-    public ReceiverParameterDescriptor substitute(TypeSubstitutor substitutor) {
+    public ReceiverParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         if (substitutor.isEmpty()) return this;
         JetType substitutedType = substitutor.substitute(getType(), Variance.INVARIANT);
         if (substitutedType == null) return null;

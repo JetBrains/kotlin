@@ -157,7 +157,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     }
 
     @Override
-    public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
+    public DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         throw new IllegalStateException("nothing to substitute in script");
     }
 
