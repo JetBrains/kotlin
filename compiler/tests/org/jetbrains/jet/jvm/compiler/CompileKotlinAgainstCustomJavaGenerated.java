@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,13 +34,13 @@ import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstCustomJavaTest
 @InnerTestClasses({CompileKotlinAgainstCustomJavaGenerated.DuplicateLibraries.class})
 public class CompileKotlinAgainstCustomJavaGenerated extends AbstractCompileKotlinAgainstCustomJavaTest {
     public void testAllFilesPresentInCompileKotlinAgainstCustomJava() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileKotlinAgainstCustomJava"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileKotlinAgainstCustomJava"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/compileKotlinAgainstCustomJava/duplicateLibraries")
     public static class DuplicateLibraries extends AbstractCompileKotlinAgainstCustomJavaTest {
         public void testAllFilesPresentInDuplicateLibraries() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileKotlinAgainstCustomJava/duplicateLibraries"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileKotlinAgainstCustomJava/duplicateLibraries"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("DuplicateLibraries.kt")

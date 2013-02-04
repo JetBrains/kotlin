@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,13 +34,13 @@ import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
 @InnerTestClasses({BlackBoxCodegenTestGenerated.Arrays.class, BlackBoxCodegenTestGenerated.Bridges.class, BlackBoxCodegenTestGenerated.Casts.class, BlackBoxCodegenTestGenerated.Classes.class, BlackBoxCodegenTestGenerated.Closures.class, BlackBoxCodegenTestGenerated.ControlStructures.class, BlackBoxCodegenTestGenerated.DefaultArguments.class, BlackBoxCodegenTestGenerated.Elvis.class, BlackBoxCodegenTestGenerated.Enum.class, BlackBoxCodegenTestGenerated.ExclExcl.class, BlackBoxCodegenTestGenerated.ExtensionFunctions.class, BlackBoxCodegenTestGenerated.ExtensionProperties.class, BlackBoxCodegenTestGenerated.Functions.class, BlackBoxCodegenTestGenerated.InnerNested.class, BlackBoxCodegenTestGenerated.Instructions.class, BlackBoxCodegenTestGenerated.Intrinsics.class, BlackBoxCodegenTestGenerated.Labels.class, BlackBoxCodegenTestGenerated.LocalClasses.class, BlackBoxCodegenTestGenerated.MultiDecl.class, BlackBoxCodegenTestGenerated.Namespace.class, BlackBoxCodegenTestGenerated.Objects.class, BlackBoxCodegenTestGenerated.OperatorConventions.class, BlackBoxCodegenTestGenerated.PrimitiveTypes.class, BlackBoxCodegenTestGenerated.Properties.class, BlackBoxCodegenTestGenerated.SafeCall.class, BlackBoxCodegenTestGenerated.Strings.class, BlackBoxCodegenTestGenerated.Super.class, BlackBoxCodegenTestGenerated.Traits.class, BlackBoxCodegenTestGenerated.TypeInfo.class, BlackBoxCodegenTestGenerated.Unit.class, BlackBoxCodegenTestGenerated.Vararg.class, BlackBoxCodegenTestGenerated.When.class})
 public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBox() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/codegen/box/arrays")
     public static class Arrays extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInArrays() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/arrays"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("arrayGetAssignMultiIndex.kt")
@@ -232,7 +233,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/bridges")
     public static class Bridges extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInBridges() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/bridges"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("delegation.kt")
@@ -420,7 +421,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/casts")
     public static class Casts extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInCasts() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/casts"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/casts"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("as.kt")
@@ -453,7 +454,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/classes")
     public static class Classes extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInClasses() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/classes"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/classes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("classObject.kt")
@@ -897,7 +898,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @InnerTestClasses({Closures.ClosureInsideClosure.class})
     public static class Closures extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInClosures() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/closures"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/closures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("closureWithParameter.kt")
@@ -953,7 +954,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
         public static class ClosureInsideClosure extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInClosureInsideClosure() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/closures/closureInsideClosure"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/closures/closureInsideClosure"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("localFunInsideLocalFun.kt")
@@ -994,7 +995,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/controlStructures")
     public static class ControlStructures extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInControlStructures() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/controlStructures"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compareBoxedIntegerToZero.kt")
@@ -1248,13 +1249,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @InnerTestClasses({DefaultArguments.Constructor.class, DefaultArguments.Function.class})
     public static class DefaultArguments extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInDefaultArguments() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/defaultArguments"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
         public static class Constructor extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInConstructor() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/defaultArguments/constructor"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/defaultArguments/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("annotation.kt")
@@ -1312,7 +1313,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
         public static class Function extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInFunction() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/defaultArguments/function"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("extentionFunction.kt")
@@ -1384,7 +1385,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/elvis")
     public static class Elvis extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInElvis() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/elvis"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/elvis"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("genericNull.kt")
@@ -1412,7 +1413,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
         
         public void testAllFilesPresentInEnum() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/enum"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/enum"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("asReturnExpression.kt")
@@ -1495,7 +1496,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/exclExcl")
     public static class ExclExcl extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInExclExcl() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/exclExcl"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/exclExcl"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("genericNull.kt")
@@ -1513,7 +1514,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
     public static class ExtensionFunctions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInExtensionFunctions() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/extensionFunctions"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/extensionFunctions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("kt1061.kt")
@@ -1586,7 +1587,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/extensionProperties")
     public static class ExtensionProperties extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInExtensionProperties() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/extensionProperties"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("inClass.kt")
@@ -1654,7 +1655,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/functions")
     public static class Functions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFunctions() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("defaultargs.kt")
@@ -1812,7 +1813,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/innerNested")
     public static class InnerNested extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInInnerNested() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/innerNested"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/innerNested"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("createNestedClass.kt")
@@ -1896,13 +1897,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @InnerTestClasses({Instructions.Swap.class})
     public static class Instructions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInInstructions() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/instructions"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/instructions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/codegen/box/instructions/swap")
         public static class Swap extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInSwap() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/instructions/swap"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/instructions/swap"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("swapRefToSharedVarInt.kt")
@@ -1928,7 +1929,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/intrinsics")
     public static class Intrinsics extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInIntrinsics() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/intrinsics"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/intrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compareTo.kt")
@@ -1956,7 +1957,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/labels")
     public static class Labels extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLabels() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/labels"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/labels"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("propertyAccessor.kt")
@@ -1989,7 +1990,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/localClasses")
     public static class LocalClasses extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInLocalClasses() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/localClasses"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("enum.kt")
@@ -2018,7 +2019,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @InnerTestClasses({MultiDecl.ForArray.class, MultiDecl.ForIterator.class, MultiDecl.ForRange.class})
     public static class MultiDecl extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInMultiDecl() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ComplexInitializer.kt")
@@ -2080,7 +2081,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @InnerTestClasses({ForArray.Int.class, ForArray.Long.class})
         public static class ForArray extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInForArray() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forArray"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forArray"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("MultiDeclFor.kt")
@@ -2111,7 +2112,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forArray/int")
             public static class Int extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInInt() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forArray/int"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forArray/int"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2139,7 +2140,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forArray/long")
             public static class Long extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInLong() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forArray/long"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forArray/long"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2177,7 +2178,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @InnerTestClasses({ForIterator.LongIterator.class})
         public static class ForIterator extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInForIterator() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forIterator"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forIterator"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("MultiDeclFor.kt")
@@ -2208,7 +2209,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
             public static class LongIterator extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInLongIterator() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forIterator/longIterator"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forIterator/longIterator"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2245,7 +2246,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @InnerTestClasses({ForRange.ExplicitRangeTo.class, ForRange.ExplicitRangeToWithDot.class, ForRange.Int.class, ForRange.Long.class})
         public static class ForRange extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInForRange() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("MultiDeclFor.kt")
@@ -2277,7 +2278,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @InnerTestClasses({ExplicitRangeTo.Int.class, ExplicitRangeTo.Long.class})
             public static class ExplicitRangeTo extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInExplicitRangeTo() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("MultiDeclFor.kt")
@@ -2308,7 +2309,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
                 public static class Int extends AbstractBlackBoxCodegenTest {
                     public void testAllFilesPresentInInt() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int"), "kt", true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2336,7 +2337,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long")
                 public static class Long extends AbstractBlackBoxCodegenTest {
                     public void testAllFilesPresentInLong() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long"), "kt", true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2374,7 +2375,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @InnerTestClasses({ExplicitRangeToWithDot.Int.class, ExplicitRangeToWithDot.Long.class})
             public static class ExplicitRangeToWithDot extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInExplicitRangeToWithDot() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("MultiDeclFor.kt")
@@ -2405,7 +2406,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
                 public static class Int extends AbstractBlackBoxCodegenTest {
                     public void testAllFilesPresentInInt() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int"), "kt", true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2433,7 +2434,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long")
                 public static class Long extends AbstractBlackBoxCodegenTest {
                     public void testAllFilesPresentInLong() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long"), "kt", true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2470,7 +2471,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/int")
             public static class Int extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInInt() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/int"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/int"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2498,7 +2499,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/long")
             public static class Long extends AbstractBlackBoxCodegenTest {
                 public void testAllFilesPresentInLong() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/long"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/multiDecl/forRange/long"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
@@ -2547,7 +2548,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/namespace")
     public static class Namespace extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInNamespace() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/namespace"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/namespace"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("checkCast.kt")
@@ -2580,7 +2581,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/objects")
     public static class Objects extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInObjects() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/objects"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/objects"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("flist.kt")
@@ -2704,13 +2705,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @InnerTestClasses({OperatorConventions.CompareTo.class})
     public static class OperatorConventions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInOperatorConventions() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/operatorConventions"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
         public static class CompareTo extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInCompareTo() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/operatorConventions/compareTo"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/operatorConventions/compareTo"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("comparable.kt")
@@ -2771,7 +2772,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
     public static class PrimitiveTypes extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInPrimitiveTypes() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/primitiveTypes"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ea35963.kt")
@@ -2959,7 +2960,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
         
         public void testAllFilesPresentInProperties() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/properties"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/properties"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("kt1159.kt")
@@ -3047,7 +3048,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/safeCall")
     public static class SafeCall extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInSafeCall() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/safeCall"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/safeCall"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("genericNull.kt")
@@ -3085,7 +3086,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/strings")
     public static class Strings extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInStrings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/strings"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/strings"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ea35743.kt")
@@ -3123,7 +3124,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/super")
     public static class Super extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInSuper() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/super"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/super"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("basicmethodSuperClass.kt")
@@ -3176,7 +3177,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/traits")
     public static class Traits extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInTraits() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/traits"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/traits"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("finalMethod.kt")
@@ -3264,7 +3265,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/typeInfo")
     public static class TypeInfo extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInTypeInfo() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/typeInfo"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/typeInfo"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("asInLoop.kt")
@@ -3297,7 +3298,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/unit")
     public static class Unit extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInUnit() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/unit"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/unit"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("UnitValue.kt")
@@ -3310,7 +3311,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/vararg")
     public static class Vararg extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInVararg() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/vararg"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("kt1978.kt")
@@ -3338,7 +3339,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("compiler/testData/codegen/box/when")
     public static class When extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInWhen() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/when"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/when"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("callProperty.kt")

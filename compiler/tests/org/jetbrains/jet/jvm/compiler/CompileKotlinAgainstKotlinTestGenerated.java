@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -32,31 +33,31 @@ import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest;
 @TestMetadata("compiler/testData/compileKotlinAgainstKotlin")
 public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileKotlinAgainstKotlin"), "A.kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.A.kt$"), true);
     }
     
     @TestMetadata("ClassObjectMember.A.kt")
-    public void testClassObjectMember_A() throws Exception {
+    public void testClassObjectMember() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/ClassObjectMember.A.kt");
     }
     
     @TestMetadata("ConstructorVararg.A.kt")
-    public void testConstructorVararg_A() throws Exception {
+    public void testConstructorVararg() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/ConstructorVararg.A.kt");
     }
     
     @TestMetadata("DefaultConstructor.A.kt")
-    public void testDefaultConstructor_A() throws Exception {
+    public void testDefaultConstructor() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/DefaultConstructor.A.kt");
     }
     
     @TestMetadata("ImportObject.A.kt")
-    public void testImportObject_A() throws Exception {
+    public void testImportObject() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/ImportObject.A.kt");
     }
     
     @TestMetadata("Simple.A.kt")
-    public void testSimple_A() throws Exception {
+    public void testSimple() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");
     }
     

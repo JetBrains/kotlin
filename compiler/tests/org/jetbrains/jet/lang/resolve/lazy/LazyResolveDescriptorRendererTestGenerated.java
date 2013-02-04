@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -32,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 @TestMetadata("compiler/testData/renderer")
 public class LazyResolveDescriptorRendererTestGenerated extends AbstractLazyResolveDescriptorRendererTest {
     public void testAllFilesPresentInRenderer() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/renderer"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/renderer"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("Classes.kt")

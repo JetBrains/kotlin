@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,13 +34,13 @@ import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
 @InnerTestClasses({BlackBoxWithJavaCodegenTestGenerated.Enum.class, BlackBoxWithJavaCodegenTestGenerated.Functions.class, BlackBoxWithJavaCodegenTestGenerated.ProtectedStatic.class, BlackBoxWithJavaCodegenTestGenerated.StaticFun.class})
 public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithJava() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithJava/enum")
     public static class Enum extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInEnum() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/enum"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/enum"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("simpleJavaEnum.kt")
@@ -67,7 +68,7 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     @TestMetadata("compiler/testData/codegen/boxWithJava/functions")
     public static class Functions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFunctions() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/functions"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/functions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("referencesStaticInnerClassMethod.kt")
@@ -90,7 +91,7 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     @TestMetadata("compiler/testData/codegen/boxWithJava/protectedStatic")
     public static class ProtectedStatic extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInProtectedStatic() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/protectedStatic"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/protectedStatic"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("funCallInConstructor.kt")
@@ -158,7 +159,7 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     @TestMetadata("compiler/testData/codegen/boxWithJava/staticFun")
     public static class StaticFun extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInStaticFun() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/staticFun"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/staticFun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("classWithNestedEnum.kt")

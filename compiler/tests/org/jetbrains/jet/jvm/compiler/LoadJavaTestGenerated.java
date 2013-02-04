@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,7 +34,7 @@ import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest;
 @InnerTestClasses({LoadJavaTestGenerated.Annotation.class, LoadJavaTestGenerated.Constructor.class, LoadJavaTestGenerated.JavaBean.class, LoadJavaTestGenerated.KotlinSignature.class, LoadJavaTestGenerated.Library.class, LoadJavaTestGenerated.Modality.class, LoadJavaTestGenerated.NotNull.class, LoadJavaTestGenerated.Vararg.class})
 public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     public void testAllFilesPresentInLoadJava() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava"), "java", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava"), Pattern.compile("^(.+)\\.java$"), true);
     }
     
     @TestMetadata("ArrayTypeVariance.java")
@@ -169,7 +170,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/annotation")
     public static class Annotation extends AbstractLoadJavaTest {
         public void testAllFilesPresentInAnnotation() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/annotation"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/annotation"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("AnnotatedAnnotation.java")
@@ -192,7 +193,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/constructor")
     public static class Constructor extends AbstractLoadJavaTest {
         public void testAllFilesPresentInConstructor() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/constructor"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/constructor"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("ConstructorGenericDeep.java")
@@ -215,7 +216,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/javaBean")
     public static class JavaBean extends AbstractLoadJavaTest {
         public void testAllFilesPresentInJavaBean() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/javaBean"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/javaBean"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("DifferentGetterAndSetter.java")
@@ -254,7 +255,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @InnerTestClasses({KotlinSignature.Error.class, KotlinSignature.Propagation.class})
     public static class KotlinSignature extends AbstractLoadJavaTest {
         public void testAllFilesPresentInKotlinSignature() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("ArrayType.java")
@@ -340,7 +341,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             }
             
             public void testAllFilesPresentInError() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/error"), "java", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), true);
             }
             
             @TestMetadata("ConflictingProjectionKind.java")
@@ -479,7 +480,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class, Propagation.TypeParameter.class})
         public static class Propagation extends AbstractLoadJavaTest {
             public void testAllFilesPresentInPropagation() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), "java", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.java$"), true);
             }
             
             @TestMetadata("PropagateTypeArgumentNullable.java")
@@ -490,7 +491,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/parameter")
             public static class Parameter extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInParameter() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), "java", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.java$"), true);
                 }
                 
                 @TestMetadata("ChangeProjectionKind1.java")
@@ -653,7 +654,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 }
                 
                 public void testAllFilesPresentInReturn() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "java", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.java$"), true);
                 }
                 
                 @TestMetadata("CantMakeImmutableInSubclass.java")
@@ -801,7 +802,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter")
             public static class TypeParameter extends AbstractLoadJavaTest {
                 public void testAllFilesPresentInTypeParameter() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter"), "java", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.java$"), true);
                 }
                 
                 @TestMetadata("InheritMutability.java")
@@ -873,7 +874,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/library")
     public static class Library extends AbstractLoadJavaTest {
         public void testAllFilesPresentInLibrary() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/library"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/library"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("LoadIterable.java")
@@ -891,7 +892,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/modality")
     public static class Modality extends AbstractLoadJavaTest {
         public void testAllFilesPresentInModality() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/modality"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/modality"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("ModalityOfFakeOverrides.java")
@@ -904,7 +905,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/notNull")
     public static class NotNull extends AbstractLoadJavaTest {
         public void testAllFilesPresentInNotNull() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/notNull"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/notNull"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("NotNullField.java")
@@ -927,7 +928,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     @TestMetadata("compiler/testData/loadJava/vararg")
     public static class Vararg extends AbstractLoadJavaTest {
         public void testAllFilesPresentInVararg() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/vararg"), "java", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/vararg"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
         @TestMetadata("VarargInt.java")

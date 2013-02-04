@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -32,7 +33,7 @@ import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCo
 @TestMetadata("compiler/testData/codegen/defaultArguments/reflection")
 public class DefaultArgumentsReflectionTestGenerated extends AbstractDefaultConstructorCodegenTest {
     public void testAllFilesPresentInReflection() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/defaultArguments/reflection"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("classInClassObject.kt")

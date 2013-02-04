@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -39,7 +40,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         }
         
         public void testAllFilesPresentInChecker() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker"), "kt", false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), false);
         }
         
         @TestMetadata("AnonymousInitializers.kt")
@@ -267,7 +268,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker/regression")
     public static class Regression extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInRegression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/regression"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("AmbiguityOnLazyTypeComputation.kt")
@@ -390,7 +391,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker/rendering")
     public static class Rendering extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInRendering() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/rendering"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("TypeInferenceError.kt")
@@ -403,7 +404,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker/infos")
     public static class Infos extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInInfos() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/infos"), "kt", false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), false);
         }
         
         @TestMetadata("Autocasts.kt")

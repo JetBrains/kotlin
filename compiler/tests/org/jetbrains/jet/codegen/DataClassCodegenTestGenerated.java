@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,7 +34,7 @@ import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 @InnerTestClasses({DataClassCodegenTestGenerated.Copy.class, DataClassCodegenTestGenerated.Equals.class, DataClassCodegenTestGenerated.Hashcode.class, DataClassCodegenTestGenerated.Tostring.class})
 public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest {
     public void testAllFilesPresentInDataClasses() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("arrayParams.kt")
@@ -89,7 +90,7 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
     @TestMetadata("compiler/testData/codegen/dataClasses/copy")
     public static class Copy extends AbstractDataClassCodegenTest {
         public void testAllFilesPresentInCopy() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/copy"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/copy"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("constructorWithDefaultParam.kt")
@@ -137,7 +138,7 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
     @TestMetadata("compiler/testData/codegen/dataClasses/equals")
     public static class Equals extends AbstractDataClassCodegenTest {
         public void testAllFilesPresentInEquals() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/equals"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/equals"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("alreadyDeclared.kt")
@@ -180,7 +181,7 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
     @TestMetadata("compiler/testData/codegen/dataClasses/hashcode")
     public static class Hashcode extends AbstractDataClassCodegenTest {
         public void testAllFilesPresentInHashcode() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/hashcode"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/hashcode"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("alreadyDeclared.kt")
@@ -253,7 +254,7 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
     @TestMetadata("compiler/testData/codegen/dataClasses/tostring")
     public static class Tostring extends AbstractDataClassCodegenTest {
         public void testAllFilesPresentInTostring() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/tostring"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/dataClasses/tostring"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("alreadyDeclared.kt")

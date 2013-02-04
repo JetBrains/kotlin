@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,13 +34,13 @@ import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest;
 @InnerTestClasses({CompileJavaAgainstKotlinTestGenerated.Class.class, CompileJavaAgainstKotlinTestGenerated.Method.class})
 public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAgainstKotlinTest {
     public void testAllFilesPresentInCompileJavaAgainstKotlin() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/class")
     public static class Class extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInClass() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin/class"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("DefaultConstructor.kt")
@@ -77,7 +78,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
     public static class Method extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInMethod() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin/method"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("Any.kt")

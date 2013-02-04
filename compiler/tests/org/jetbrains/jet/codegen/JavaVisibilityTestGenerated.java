@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,13 +34,13 @@ import org.jetbrains.jet.codegen.AbstractJavaVisibilityTest;
 @InnerTestClasses({JavaVisibilityTestGenerated.Package.class, JavaVisibilityTestGenerated.Protected_and_package.class})
 public class JavaVisibilityTestGenerated extends AbstractJavaVisibilityTest {
     public void testAllFilesPresentInVisibility() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/visibility"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/codegen/visibility/package")
     public static class Package extends AbstractJavaVisibilityTest {
         public void testAllFilesPresentInPackage() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/visibility/package"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/visibility/package"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("packageClass.kt")
@@ -62,7 +63,7 @@ public class JavaVisibilityTestGenerated extends AbstractJavaVisibilityTest {
     @TestMetadata("compiler/testData/codegen/visibility/protected_and_package")
     public static class Protected_and_package extends AbstractJavaVisibilityTest {
         public void testAllFilesPresentInProtected_and_package() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/visibility/protected_and_package"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/visibility/protected_and_package"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("overrideProtectedFunInPackage.kt")

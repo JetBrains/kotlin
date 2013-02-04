@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,20 +34,20 @@ import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 @InnerTestClasses({WriteFlagsTestGenerated.Class.class, WriteFlagsTestGenerated.Function.class, WriteFlagsTestGenerated.InnerClass.class, WriteFlagsTestGenerated.Property.class})
 public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     public void testAllFilesPresentInWriteFlags() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/writeFlags/class")
     @InnerTestClasses({Class.AccessFlags.class, Class.DeprecatedFlag.class, Class.Visibility.class})
     public static class Class extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInClass() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/writeFlags/class/accessFlags")
         public static class AccessFlags extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInAccessFlags() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/accessFlags"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("publicFinalClass.kt")
@@ -74,7 +75,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestMetadata("compiler/testData/writeFlags/class/deprecatedFlag")
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/deprecatedFlag"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("class.kt")
@@ -108,13 +109,13 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @InnerTestClasses({Visibility.Internal.class, Visibility.Private.class, Visibility.Public.class})
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("compiler/testData/writeFlags/class/visibility/internal")
             public static class Internal extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInInternal() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility/internal"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("class.kt")
@@ -162,7 +163,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestMetadata("compiler/testData/writeFlags/class/visibility/private")
             public static class Private extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPrivate() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility/private"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("class.kt")
@@ -210,7 +211,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestMetadata("compiler/testData/writeFlags/class/visibility/public")
             public static class Public extends AbstractWriteFlagsTest {
                 public void testAllFilesPresentInPublic() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility/public"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("class.kt")
@@ -279,13 +280,13 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @InnerTestClasses({Function.DeprecatedFlag.class})
     public static class Function extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInFunction() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/function"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/writeFlags/function/deprecatedFlag")
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/function/deprecatedFlag"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("emptyGetter.kt")
@@ -362,13 +363,13 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @InnerTestClasses({InnerClass.Visibility.class})
     public static class InnerClass extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInInnerClass() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/innerClass"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/writeFlags/innerClass/visibility")
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/innerClass/visibility"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("internal.kt")
@@ -415,13 +416,13 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @InnerTestClasses({Property.DeprecatedFlag.class, Property.Visibility.class})
     public static class Property extends AbstractWriteFlagsTest {
         public void testAllFilesPresentInProperty() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/writeFlags/property/deprecatedFlag")
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/deprecatedFlag"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("propertyInClass.kt")
@@ -439,7 +440,7 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestMetadata("compiler/testData/writeFlags/property/visibility")
         public static class Visibility extends AbstractWriteFlagsTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/visibility"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("internal.kt")

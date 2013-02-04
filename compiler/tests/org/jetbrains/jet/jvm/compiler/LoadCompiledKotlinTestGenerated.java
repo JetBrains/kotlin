@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,13 +34,13 @@ import org.jetbrains.jet.jvm.compiler.AbstractLoadCompiledKotlinTest;
 @InnerTestClasses({LoadCompiledKotlinTestGenerated.Class.class, LoadCompiledKotlinTestGenerated.ClassFun.class, LoadCompiledKotlinTestGenerated.ClassObject.class, LoadCompiledKotlinTestGenerated.Constructor.class, LoadCompiledKotlinTestGenerated.DataClass.class, LoadCompiledKotlinTestGenerated.Fun.class, LoadCompiledKotlinTestGenerated.Prop.class, LoadCompiledKotlinTestGenerated.Type.class, LoadCompiledKotlinTestGenerated.Visibility.class})
 public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinTest {
     public void testAllFilesPresentInLoadKotlin() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/loadKotlin/class")
     public static class Class extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInClass() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/class"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("Class.kt")
@@ -187,7 +188,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @TestMetadata("compiler/testData/loadKotlin/classFun")
     public static class ClassFun extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInClassFun() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classFun"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ClassInParamUsedInFun.kt")
@@ -225,7 +226,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @TestMetadata("compiler/testData/loadKotlin/classObject")
     public static class ClassObject extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInClassObject() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classObject"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ClassObjectDeclaresVal.kt")
@@ -259,7 +260,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @InnerTestClasses({Constructor.Vararg.class})
     public static class Constructor extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInConstructor() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("Constructor0.kt")
@@ -330,7 +331,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("compiler/testData/loadKotlin/constructor/vararg")
         public static class Vararg extends AbstractLoadCompiledKotlinTest {
             public void testAllFilesPresentInVararg() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor/vararg"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ConstructorNonLastVararg.kt")
@@ -356,7 +357,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @TestMetadata("compiler/testData/loadKotlin/dataClass")
     public static class DataClass extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInDataClass() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/dataClass"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("MixedComponents.kt")
@@ -400,7 +401,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @InnerTestClasses({Fun.GenericWithTypeVariables.class, Fun.GenericWithoutTypeVariables.class, Fun.NonGeneric.class, Fun.Vararg.class})
     public static class Fun extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInFun() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("PropagateSubclassOfComparable.kt")
@@ -411,7 +412,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("compiler/testData/loadKotlin/fun/genericWithTypeVariables")
         public static class GenericWithTypeVariables extends AbstractLoadCompiledKotlinTest {
             public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithTypeVariables"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("FunGenericParam.kt")
@@ -469,7 +470,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables")
         public static class GenericWithoutTypeVariables extends AbstractLoadCompiledKotlinTest {
             public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("FunClassParamNotNull.kt")
@@ -502,7 +503,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("compiler/testData/loadKotlin/fun/nonGeneric")
         public static class NonGeneric extends AbstractLoadCompiledKotlinTest {
             public void testAllFilesPresentInNonGeneric() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/nonGeneric"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ClassFun.kt")
@@ -590,7 +591,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
         @TestMetadata("compiler/testData/loadKotlin/fun/vararg")
         public static class Vararg extends AbstractLoadCompiledKotlinTest {
             public void testAllFilesPresentInVararg() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/vararg"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("nonLastVararg.kt")
@@ -614,7 +615,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @TestMetadata("compiler/testData/loadKotlin/prop")
     public static class Prop extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInProp() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/prop"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ClassVal.kt")
@@ -772,7 +773,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @TestMetadata("compiler/testData/loadKotlin/type")
     public static class Type extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/type"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/type"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("Any.kt")
@@ -925,7 +926,7 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
     @TestMetadata("compiler/testData/loadKotlin/visibility")
     public static class Visibility extends AbstractLoadCompiledKotlinTest {
         public void testAllFilesPresentInVisibility() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/visibility"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("InternalAbstractTraitMembersOverridden.kt")

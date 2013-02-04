@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -33,13 +34,13 @@ import org.jetbrains.jet.codegen.generated.AbstractRangesCodegenTest;
 @InnerTestClasses({RangesCodegenTestGenerated.Expression.class, RangesCodegenTestGenerated.Literal.class})
 public class RangesCodegenTestGenerated extends AbstractRangesCodegenTest {
     public void testAllFilesPresentInRanges() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/ranges"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/ranges"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("compiler/testData/codegen/ranges/expression")
     public static class Expression extends AbstractRangesCodegenTest {
         public void testAllFilesPresentInExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/ranges/expression"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/ranges/expression"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("emptyDownto.kt")
@@ -127,7 +128,7 @@ public class RangesCodegenTestGenerated extends AbstractRangesCodegenTest {
     @TestMetadata("compiler/testData/codegen/ranges/literal")
     public static class Literal extends AbstractRangesCodegenTest {
         public void testAllFilesPresentInLiteral() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/ranges/literal"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/ranges/literal"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("emptyDownto.kt")

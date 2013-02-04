@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -32,7 +33,7 @@ import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
 @TestMetadata("idea/testData/highlighter/deprecated")
 public class DeprecatedHighlightingTestGenerated extends AbstractDeprecatedHighlightingTest {
     public void testAllFilesPresentInDeprecated() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/highlighter/deprecated"), "kt", true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("Class.kt")

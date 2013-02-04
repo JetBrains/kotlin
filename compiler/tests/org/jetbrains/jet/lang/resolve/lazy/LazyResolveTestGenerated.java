@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -32,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
 @TestMetadata("compiler/testData/resolve/imports")
 public class LazyResolveTestGenerated extends AbstractLazyResolveTest {
     public void testAllFilesPresentInImports() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/resolve/imports"), "resolve", false);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/resolve/imports"), Pattern.compile("^(.+)\\.resolve$"), false);
     }
     
     @TestMetadata("ImportConflictAllPackage.resolve")

@@ -21,6 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
+import java.util.regex.Pattern;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -35,13 +36,13 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
     @InnerTestClasses({LoadKotlin.Class.class, LoadKotlin.ClassFun.class, LoadKotlin.ClassObject.class, LoadKotlin.Constructor.class, LoadKotlin.DataClass.class, LoadKotlin.Fun.class, LoadKotlin.Prop.class, LoadKotlin.Type.class, LoadKotlin.Visibility.class})
     public static class LoadKotlin extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInLoadKotlin() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("compiler/testData/loadKotlin/class")
         public static class Class extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInClass() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/class"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("Class.kt")
@@ -189,7 +190,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadKotlin/classFun")
         public static class ClassFun extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInClassFun() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classFun"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ClassInParamUsedInFun.kt")
@@ -227,7 +228,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadKotlin/classObject")
         public static class ClassObject extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInClassObject() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classObject"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ClassObjectDeclaresVal.kt")
@@ -261,7 +262,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @InnerTestClasses({Constructor.Vararg.class})
         public static class Constructor extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInConstructor() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("Constructor0.kt")
@@ -332,7 +333,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("compiler/testData/loadKotlin/constructor/vararg")
             public static class Vararg extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInVararg() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor/vararg"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("ConstructorNonLastVararg.kt")
@@ -358,7 +359,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadKotlin/dataClass")
         public static class DataClass extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInDataClass() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/dataClass"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("MixedComponents.kt")
@@ -402,7 +403,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @InnerTestClasses({Fun.GenericWithTypeVariables.class, Fun.GenericWithoutTypeVariables.class, Fun.NonGeneric.class, Fun.Vararg.class})
         public static class Fun extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInFun() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("PropagateSubclassOfComparable.kt")
@@ -413,7 +414,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("compiler/testData/loadKotlin/fun/genericWithTypeVariables")
             public static class GenericWithTypeVariables extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithTypeVariables"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("FunGenericParam.kt")
@@ -471,7 +472,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables")
             public static class GenericWithoutTypeVariables extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("FunClassParamNotNull.kt")
@@ -504,7 +505,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("compiler/testData/loadKotlin/fun/nonGeneric")
             public static class NonGeneric extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInNonGeneric() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/nonGeneric"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("ClassFun.kt")
@@ -592,7 +593,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @TestMetadata("compiler/testData/loadKotlin/fun/vararg")
             public static class Vararg extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInVararg() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/vararg"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("nonLastVararg.kt")
@@ -616,7 +617,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadKotlin/prop")
         public static class Prop extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInProp() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/prop"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ClassVal.kt")
@@ -774,7 +775,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadKotlin/type")
         public static class Type extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInType() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/type"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/type"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("Any.kt")
@@ -927,7 +928,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadKotlin/visibility")
         public static class Visibility extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInVisibility() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/visibility"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("InternalAbstractTraitMembersOverridden.kt")
@@ -1002,7 +1003,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
     @InnerTestClasses({LoadJava.Annotation.class, LoadJava.Constructor.class, LoadJava.JavaBean.class, LoadJava.KotlinSignature.class, LoadJava.Library.class, LoadJava.Modality.class, LoadJava.NotNull.class, LoadJava.Vararg.class})
     public static class LoadJava extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInLoadJava() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ArrayTypeVariance.kt")
@@ -1138,7 +1139,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/annotation")
         public static class Annotation extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInAnnotation() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/annotation"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/annotation"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("AnnotatedAnnotation.kt")
@@ -1161,7 +1162,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/constructor")
         public static class Constructor extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInConstructor() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/constructor"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ConstructorGenericDeep.kt")
@@ -1184,7 +1185,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/javaBean")
         public static class JavaBean extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInJavaBean() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/javaBean"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/javaBean"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("DifferentGetterAndSetter.kt")
@@ -1223,7 +1224,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @InnerTestClasses({KotlinSignature.Error.class, KotlinSignature.Propagation.class})
         public static class KotlinSignature extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInKotlinSignature() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ArrayType.kt")
@@ -1309,7 +1310,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 }
                 
                 public void testAllFilesPresentInError() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/error"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("ConflictingProjectionKind.kt")
@@ -1448,7 +1449,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             @InnerTestClasses({Propagation.Parameter.class, Propagation.Return.class, Propagation.TypeParameter.class})
             public static class Propagation extends AbstractLazyResolveNamespaceComparingTest {
                 public void testAllFilesPresentInPropagation() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("PropagateTypeArgumentNullable.kt")
@@ -1459,7 +1460,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/parameter")
                 public static class Parameter extends AbstractLazyResolveNamespaceComparingTest {
                     public void testAllFilesPresentInParameter() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), "kt", true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
                     
                     @TestMetadata("ChangeProjectionKind1.kt")
@@ -1622,7 +1623,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     }
                     
                     public void testAllFilesPresentInReturn() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), "kt", true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
                     
                     @TestMetadata("CantMakeImmutableInSubclass.kt")
@@ -1770,7 +1771,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter")
                 public static class TypeParameter extends AbstractLazyResolveNamespaceComparingTest {
                     public void testAllFilesPresentInTypeParameter() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter"), "kt", true);
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
                     
                     @TestMetadata("InheritMutability.kt")
@@ -1842,7 +1843,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/library")
         public static class Library extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInLibrary() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/library"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/library"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("LoadIterable.kt")
@@ -1860,7 +1861,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/modality")
         public static class Modality extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInModality() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/modality"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/modality"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("ModalityOfFakeOverrides.kt")
@@ -1873,7 +1874,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/notNull")
         public static class NotNull extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInNotNull() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/notNull"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("NotNullField.kt")
@@ -1896,7 +1897,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/vararg")
         public static class Vararg extends AbstractLazyResolveNamespaceComparingTest {
             public void testAllFilesPresentInVararg() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/vararg"), "kt", true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("VarargInt.kt")
@@ -1929,7 +1930,7 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
     @TestMetadata("compiler/testData/lazyResolve/namespaceComparator")
     public static class NamespaceComparator extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInNamespaceComparator() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/lazyResolve/namespaceComparator"), "kt", true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/lazyResolve/namespaceComparator"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("ClassObject.kt")
