@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <searches>
 <search>
+  <href>kotlin/ComparableRange.html</href>
+  <name>ComparableRange [kotlin]</name>
+  <kind>class</kind>
+</search>
+<search>
   <href>kotlin/template/Formatter.html</href>
   <name>Formatter [kotlin.template]</name>
   <kind>trait</kind>
@@ -316,8 +321,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#all(jet.Function1)</href>
   <name>all() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -331,13 +356,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#all(jet.Function1)</href>
   <name>all() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#all(jet.Function1)</href>
   <name>all() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -361,6 +416,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#all(jet.Function1)</href>
   <name>all() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -373,6 +438,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#all(jet.Function1)</href>
   <name>all() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -391,8 +471,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#any(jet.Function1)</href>
   <name>any() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -406,13 +506,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#any(jet.Function1)</href>
   <name>any() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#any(jet.Function1)</href>
   <name>any() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -436,6 +566,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#any(jet.Function1)</href>
   <name>any() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -448,6 +588,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#any(jet.Function1)</href>
   <name>any() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -471,8 +626,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>appendString() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -486,13 +661,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>appendString() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>appendString() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -516,6 +721,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>appendString() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -528,6 +743,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>appendString() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -686,6 +916,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/ComparableRange.html#component1()</href>
+  <name>component1() [kotlin.ComparableRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/Pair.html#component1()</href>
   <name>component1() [kotlin.Pair]</name>
   <kind>fun</kind>
@@ -698,6 +933,11 @@
 <search>
   <href>kotlin/jet/Entry-extensions.html#component2()</href>
   <name>component2() [jet.Entry]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ComparableRange.html#component2()</href>
+  <name>component2() [kotlin.ComparableRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -721,38 +961,118 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/jet/Collection-extensions.html#contains(T)</href>
-  <name>contains() [jet.Collection]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/Iterable-extensions.html#contains(T)</href>
-  <name>contains() [jet.Iterable]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/List-extensions.html#contains(T)</href>
-  <name>contains() [jet.List]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/MutableIterable-extensions.html#contains(T)</href>
-  <name>contains() [jet.MutableIterable]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/Set-extensions.html#contains(T)</href>
-  <name>contains() [jet.Set]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/jet/String-extensions.html#contains(jet.CharSequence)</href>
   <name>contains() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/ComparableRange.html#contains(T)</href>
+  <name>contains() [kotlin.ComparableRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteProgression-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Collection-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/List-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongProgression-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/MutableIterable-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.MutableIterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Set-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#containsItem(T)</href>
+  <name>containsItem() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#contentEquals(java.lang.StringBuffer)</href>
   <name>contentEquals() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ComparableRange.html#copy(T, T)</href>
+  <name>copy() [kotlin.ComparableRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -881,8 +1201,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#count()</href>
+  <name>count() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#count()</href>
+  <name>count() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#count(jet.Function1)</href>
   <name>count() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#count()</href>
+  <name>count() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#count()</href>
+  <name>count() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -896,13 +1236,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#count()</href>
+  <name>count() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#count()</href>
+  <name>count() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#count(jet.Function1)</href>
   <name>count() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#count()</href>
+  <name>count() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#count()</href>
+  <name>count() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#count(jet.Function1)</href>
   <name>count() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#count()</href>
+  <name>count() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#count()</href>
+  <name>count() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -926,6 +1296,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#count()</href>
+  <name>count() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#count()</href>
+  <name>count() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#count()</href>
   <name>count() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -938,6 +1318,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#count(jet.Function1)</href>
   <name>count() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#count()</href>
+  <name>count() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#count()</href>
+  <name>count() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1031,8 +1421,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#drop(jet.Int)</href>
   <name>drop() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1046,13 +1456,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#drop(jet.Int)</href>
   <name>drop() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#drop(jet.Int)</href>
   <name>drop() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1071,6 +1511,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#drop(jet.Int)</href>
   <name>drop() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1083,6 +1533,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#drop(jet.Int)</href>
   <name>drop() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#drop(jet.Int)</href>
+  <name>drop() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1101,8 +1566,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#dropWhile(jet.Function1)</href>
   <name>dropWhile() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1116,13 +1601,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#dropWhile(jet.Function1)</href>
   <name>dropWhile() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#dropWhile(jet.Function1)</href>
   <name>dropWhile() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1141,6 +1656,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#dropWhile(jet.Function1)</href>
   <name>dropWhile() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1153,6 +1678,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#dropWhile(jet.Function1)</href>
   <name>dropWhile() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#dropWhile(jet.Function1)</href>
+  <name>dropWhile() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1171,8 +1711,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#dropWhileTo(L, jet.Function1)</href>
   <name>dropWhileTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1186,13 +1746,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#dropWhileTo(L, jet.Function1)</href>
   <name>dropWhileTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#dropWhileTo(L, jet.Function1)</href>
   <name>dropWhileTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1216,6 +1806,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#dropWhileTo(L, jet.Function1)</href>
   <name>dropWhileTo() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1231,6 +1831,21 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ShortProgression-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#dropWhileTo(L, jet.Function1)</href>
+  <name>dropWhileTo() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#dropWhileTo(T, jet.Function1)</href>
+  <name>dropWhileTo() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/dom/org/w3c/dom/Document-extensions.html#elements(jet.String)</href>
   <name>elements() [org.w3c.dom.Document]</name>
   <kind>fun</kind>
@@ -1239,6 +1854,11 @@
   <href>kotlin/dom/org/w3c/dom/Element-extensions.html#elements(jet.String)</href>
   <name>elements() [org.w3c.dom.Element]</name>
   <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ComparableRange.html#end</href>
+  <name>end [kotlin.ComparableRange]</name>
+  <kind>val</kind>
 </search>
 <search>
   <href>kotlin/jet/String-extensions.html#endsWith(jet.Char)</href>
@@ -1346,8 +1966,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#filter(jet.Function1)</href>
   <name>filter() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1361,13 +2001,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#filter(jet.Function1)</href>
   <name>filter() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#filter(jet.Function1)</href>
   <name>filter() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1391,6 +2061,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#filter(jet.Function1)</href>
   <name>filter() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1403,6 +2083,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#filter(jet.Function1)</href>
   <name>filter() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1426,8 +2121,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#filterNot(jet.Function1)</href>
   <name>filterNot() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1441,13 +2156,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#filterNot(jet.Function1)</href>
   <name>filterNot() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#filterNot(jet.Function1)</href>
   <name>filterNot() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1471,6 +2216,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#filterNot(jet.Function1)</href>
   <name>filterNot() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1483,6 +2238,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#filterNot(jet.Function1)</href>
   <name>filterNot() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1501,8 +2271,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#filterNotNull()</href>
   <name>filterNotNull() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1516,13 +2306,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#filterNotNull()</href>
   <name>filterNotNull() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#filterNotNull()</href>
   <name>filterNotNull() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1546,6 +2366,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#filterNotNull()</href>
   <name>filterNotNull() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1558,6 +2388,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#filterNotNull()</href>
   <name>filterNotNull() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1576,8 +2416,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1591,13 +2451,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1621,6 +2511,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1633,6 +2533,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#filterNotNullTo(C)</href>
   <name>filterNotNullTo() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#filterNotNullTo(C)</href>
+  <name>filterNotNullTo() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1651,8 +2561,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1666,13 +2596,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1696,6 +2656,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1708,6 +2678,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#filterNotTo(C, jet.Function1)</href>
   <name>filterNotTo() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#filterNotTo(C, jet.Function1)</href>
+  <name>filterNotTo() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#filterNotTo(T, jet.Function1)</href>
+  <name>filterNotTo() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1726,8 +2711,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#filterTo(C, jet.Function1)</href>
   <name>filterTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1741,13 +2746,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#filterTo(C, jet.Function1)</href>
   <name>filterTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#filterTo(C, jet.Function1)</href>
   <name>filterTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1771,6 +2806,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#filterTo(C, jet.Function1)</href>
   <name>filterTo() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1783,6 +2828,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#filterTo(C, jet.Function1)</href>
   <name>filterTo() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#filterTo(T, jet.Function1)</href>
+  <name>filterTo() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1811,8 +2871,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#find(jet.Function1)</href>
   <name>find() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1826,13 +2906,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#find(jet.Function1)</href>
   <name>find() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#find(jet.Function1)</href>
   <name>find() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1856,6 +2966,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#find(jet.Function1)</href>
   <name>find() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1871,6 +2991,26 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ShortProgression-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#findNot(jet.Function1)</href>
+  <name>findNot() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/Pair.html#first</href>
   <name>first [kotlin.Pair]</name>
   <kind>val</kind>
@@ -1881,8 +3021,58 @@
   <kind>val</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#first()</href>
+  <name>first() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#first()</href>
+  <name>first() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#first()</href>
+  <name>first() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#first()</href>
+  <name>first() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Collection-extensions.html#first()</href>
   <name>first() [jet.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#first()</href>
+  <name>first() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#first()</href>
+  <name>first() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#first()</href>
+  <name>first() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#first()</href>
+  <name>first() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#first()</href>
+  <name>first() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#first()</href>
+  <name>first() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1896,6 +3086,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#first()</href>
+  <name>first() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#first()</href>
+  <name>first() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#first()</href>
   <name>first() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1903,6 +3103,16 @@
 <search>
   <href>kotlin/jet/Set-extensions.html#first()</href>
   <name>first() [jet.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#first()</href>
+  <name>first() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#first()</href>
+  <name>first() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1921,8 +3131,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#flatMap(jet.Function1)</href>
   <name>flatMap() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1936,13 +3166,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#flatMap(jet.Function1)</href>
   <name>flatMap() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#flatMap(jet.Function1)</href>
   <name>flatMap() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1966,6 +3226,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#flatMap(jet.Function1)</href>
   <name>flatMap() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -1978,6 +3248,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#flatMap(jet.Function1)</href>
   <name>flatMap() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1996,8 +3281,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
   <name>flatMapTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2011,13 +3316,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
   <name>flatMapTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
   <name>flatMapTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2041,6 +3376,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
   <name>flatMapTo() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -2053,6 +3398,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
   <name>flatMapTo() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#flatMapTo(jet.MutableCollection, jet.Function1)</href>
+  <name>flatMapTo() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2071,8 +3431,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#fold(R, jet.Function2)</href>
   <name>fold() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2086,13 +3466,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#fold(R, jet.Function2)</href>
   <name>fold() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#fold(R, jet.Function2)</href>
   <name>fold() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2116,6 +3526,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#fold(R, jet.Function2)</href>
   <name>fold() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -2128,6 +3548,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#fold(R, jet.Function2)</href>
   <name>fold() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#fold(R, jet.Function2)</href>
+  <name>fold() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2146,8 +3581,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#foldRight(R, jet.Function2)</href>
   <name>foldRight() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2161,13 +3616,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#foldRight(R, jet.Function2)</href>
   <name>foldRight() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#foldRight(R, jet.Function2)</href>
   <name>foldRight() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2191,6 +3676,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#foldRight(R, jet.Function2)</href>
   <name>foldRight() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -2203,6 +3698,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#foldRight(R, jet.Function2)</href>
   <name>foldRight() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#foldRight(R, jet.Function2)</href>
+  <name>foldRight() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2221,8 +3731,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#forEach(jet.Function1)</href>
   <name>forEach() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2236,13 +3766,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#forEach(jet.Function1)</href>
   <name>forEach() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#forEach(jet.Function1)</href>
   <name>forEach() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2266,6 +3826,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#forEach(jet.Function1)</href>
   <name>forEach() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -2278,6 +3848,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#forEach(jet.Function1)</href>
   <name>forEach() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2416,8 +4001,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#groupBy(jet.Function1)</href>
   <name>groupBy() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2431,13 +4036,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#groupBy(jet.Function1)</href>
   <name>groupBy() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#groupBy(jet.Function1)</href>
   <name>groupBy() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2461,6 +4096,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#groupBy(jet.Function1)</href>
   <name>groupBy() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -2473,6 +4118,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#groupBy(jet.Function1)</href>
   <name>groupBy() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2491,8 +4151,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
   <name>groupByTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2506,13 +4186,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
   <name>groupByTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
   <name>groupByTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2536,6 +4246,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
   <name>groupByTo() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -2548,6 +4268,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
   <name>groupByTo() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#groupByTo(jet.MutableMap, jet.Function1)</href>
+  <name>groupByTo() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2586,6 +4321,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Byte-extensions.html#hashCode()</href>
   <name>hashCode() [jet.Byte]</name>
   <kind>fun</kind>
@@ -2593,6 +4338,16 @@
 <search>
   <href>kotlin/jet/CharArray-extensions.html#hashCode()</href>
   <name>hashCode() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2616,6 +4371,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Double-extensions.html#hashCode()</href>
   <name>hashCode() [jet.Double]</name>
   <kind>fun</kind>
@@ -2631,6 +4396,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Float-extensions.html#hashCode()</href>
   <name>hashCode() [jet.Float]</name>
   <kind>fun</kind>
@@ -2638,6 +4413,16 @@
 <search>
   <href>kotlin/jet/IntArray-extensions.html#hashCode()</href>
   <name>hashCode() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2663,6 +4448,16 @@
 <search>
   <href>kotlin/jet/LongArray-extensions.html#hashCode()</href>
   <name>hashCode() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongProgression-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.LongRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2693,6 +4488,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#hashCode()</href>
   <name>hashCode() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#hashCode()</href>
+  <name>hashCode() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2886,8 +4691,58 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#last()</href>
+  <name>last() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#last()</href>
+  <name>last() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#last()</href>
+  <name>last() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#last()</href>
+  <name>last() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Collection-extensions.html#last()</href>
   <name>last() [jet.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#last()</href>
+  <name>last() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#last()</href>
+  <name>last() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#last()</href>
+  <name>last() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#last()</href>
+  <name>last() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#last()</href>
+  <name>last() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#last()</href>
+  <name>last() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2901,6 +4756,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#last()</href>
+  <name>last() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#last()</href>
+  <name>last() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#last()</href>
   <name>last() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -2908,6 +4773,16 @@
 <search>
   <href>kotlin/jet/Set-extensions.html#last()</href>
   <name>last() [jet.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#last()</href>
+  <name>last() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#last()</href>
+  <name>last() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2971,8 +4846,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>makeString() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2986,13 +4881,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>makeString() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>makeString() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3016,6 +4941,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>makeString() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -3028,6 +4963,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
   <name>makeString() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3051,8 +5001,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#map(jet.Function1)</href>
   <name>map() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3066,13 +5036,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#map(jet.Function1)</href>
   <name>map() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#map(jet.Function1)</href>
   <name>map() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3093,6 +5093,16 @@
 <search>
   <href>kotlin/jet/LongArray-extensions.html#map(jet.Function1)</href>
   <name>map() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongProgression-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.LongRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3121,6 +5131,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ShortProgression-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Array-extensions.html#mapTo(C, jet.Function1)</href>
   <name>mapTo() [jet.Array]</name>
   <kind>fun</kind>
@@ -3136,8 +5156,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#mapTo(C, jet.Function1)</href>
   <name>mapTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3151,13 +5191,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#mapTo(C, jet.Function1)</href>
   <name>mapTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#mapTo(C, jet.Function1)</href>
   <name>mapTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3173,6 +5243,16 @@
 <search>
   <href>kotlin/jet/LongArray-extensions.html#mapTo(C, jet.Function1)</href>
   <name>mapTo() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongProgression-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.LongRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3198,6 +5278,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#mapTo(C, jet.Function1)</href>
   <name>mapTo() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3466,8 +5556,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#partition(jet.Function1)</href>
   <name>partition() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3481,13 +5591,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#partition(jet.Function1)</href>
   <name>partition() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#partition(jet.Function1)</href>
   <name>partition() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3511,6 +5651,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#partition(jet.Function1)</href>
   <name>partition() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -3523,6 +5673,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#partition(jet.Function1)</href>
   <name>partition() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#partition(jet.Function1)</href>
+  <name>partition() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3551,8 +5716,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#plus(T)</href>
+  <name>plus() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#plus(T)</href>
+  <name>plus() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#plus(jet.Char)</href>
   <name>plus() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#plus(T)</href>
+  <name>plus() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#plus(T)</href>
+  <name>plus() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3566,13 +5751,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#plus(T)</href>
+  <name>plus() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#plus(T)</href>
+  <name>plus() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#plus(jet.Float)</href>
   <name>plus() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#plus(T)</href>
+  <name>plus() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#plus(T)</href>
+  <name>plus() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#plus(jet.Int)</href>
   <name>plus() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#plus(T)</href>
+  <name>plus() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#plus(T)</href>
+  <name>plus() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3596,6 +5811,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#plus(T)</href>
+  <name>plus() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#plus(T)</href>
+  <name>plus() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#plus(T)</href>
   <name>plus() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -3608,6 +5833,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#plus(jet.Short)</href>
   <name>plus() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#plus(T)</href>
+  <name>plus() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#plus(T)</href>
+  <name>plus() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3771,8 +6006,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#reduce(jet.Function2)</href>
   <name>reduce() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3786,13 +6041,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#reduce(jet.Function2)</href>
   <name>reduce() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#reduce(jet.Function2)</href>
   <name>reduce() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3816,6 +6101,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#reduce(jet.Function2)</href>
   <name>reduce() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -3828,6 +6123,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#reduce(jet.Function2)</href>
   <name>reduce() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#reduce(jet.Function2)</href>
+  <name>reduce() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3846,8 +6156,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#reduceRight(jet.Function2)</href>
   <name>reduceRight() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3861,13 +6191,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#reduceRight(jet.Function2)</href>
   <name>reduceRight() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#reduceRight(jet.Function2)</href>
   <name>reduceRight() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3891,6 +6251,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#reduceRight(jet.Function2)</href>
   <name>reduceRight() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -3903,6 +6273,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#reduceRight(jet.Function2)</href>
   <name>reduceRight() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#reduceRight(jet.Function2)</href>
+  <name>reduceRight() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3956,8 +6341,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#requireNoNulls()</href>
   <name>requireNoNulls() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -3971,13 +6376,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#requireNoNulls()</href>
   <name>requireNoNulls() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#requireNoNulls()</href>
   <name>requireNoNulls() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4001,6 +6436,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#requireNoNulls()</href>
   <name>requireNoNulls() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4013,6 +6458,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#requireNoNulls()</href>
   <name>requireNoNulls() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4031,8 +6486,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#reverse()</href>
+  <name>reverse() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#reverse()</href>
+  <name>reverse() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#reverse()</href>
   <name>reverse() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#reverse()</href>
+  <name>reverse() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#reverse()</href>
+  <name>reverse() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4046,13 +6521,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#reverse()</href>
+  <name>reverse() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#reverse()</href>
+  <name>reverse() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#reverse()</href>
   <name>reverse() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#reverse()</href>
+  <name>reverse() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#reverse()</href>
+  <name>reverse() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#reverse()</href>
   <name>reverse() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#reverse()</href>
+  <name>reverse() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#reverse()</href>
+  <name>reverse() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4076,6 +6581,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#reverse()</href>
+  <name>reverse() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#reverse()</href>
+  <name>reverse() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#reverse()</href>
   <name>reverse() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4088,6 +6603,91 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#reverse()</href>
   <name>reverse() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#reverse()</href>
+  <name>reverse() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#reverse()</href>
+  <name>reverse() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#reverse()</href>
+  <name>reverse() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteProgression-extensions.html#reversed()</href>
+  <name>reversed() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#reversed()</href>
+  <name>reversed() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#reversed()</href>
+  <name>reversed() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#reversed()</href>
+  <name>reversed() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#reversed()</href>
+  <name>reversed() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#reversed()</href>
+  <name>reversed() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#reversed()</href>
+  <name>reversed() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#reversed()</href>
+  <name>reversed() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#reversed()</href>
+  <name>reversed() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#reversed()</href>
+  <name>reversed() [jet.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongProgression-extensions.html#reversed()</href>
+  <name>reversed() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#reversed()</href>
+  <name>reversed() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#reversed()</href>
+  <name>reversed() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#reversed()</href>
+  <name>reversed() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4136,8 +6736,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#sort()</href>
   <name>sort() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4151,13 +6771,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#sort()</href>
   <name>sort() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#sort()</href>
   <name>sort() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4176,6 +6826,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#sort()</href>
   <name>sort() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4191,8 +6851,68 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ShortProgression-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#sort(java.util.Comparator)</href>
+  <name>sort() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteProgression-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Collection-extensions.html#sortBy(jet.Function1)</href>
   <name>sortBy() [jet.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4206,6 +6926,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#sortBy(jet.Function1)</href>
   <name>sortBy() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4216,9 +6946,24 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ShortProgression-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#sortBy(jet.Function1)</href>
+  <name>sortBy() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#split(jet.Char)</href>
   <name>split() [jet.String]</name>
   <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ComparableRange.html#start</href>
+  <name>start [kotlin.ComparableRange]</name>
+  <kind>val</kind>
 </search>
 <search>
   <href>kotlin/jet/String-extensions.html#startsWith(jet.Char)</href>
@@ -4233,6 +6978,76 @@
 <search>
   <href>kotlin/jdbc/javax/sql/DataSource-extensions.html#statement(jet.Function1)</href>
   <name>statement() [javax.sql.DataSource]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteProgression-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#step(jet.Double)</href>
+  <name>step() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#step(jet.Double)</href>
+  <name>step() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#step(jet.Float)</href>
+  <name>step() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#step(jet.Float)</href>
+  <name>step() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.IntRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongProgression-extensions.html#step(jet.Long)</href>
+  <name>step() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#step(jet.Long)</href>
+  <name>step() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#step(jet.Int)</href>
+  <name>step() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4271,8 +7086,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#take(jet.Int)</href>
   <name>take() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4286,13 +7121,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#take(jet.Int)</href>
   <name>take() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#take(jet.Int)</href>
   <name>take() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4316,6 +7181,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#take(jet.Int)</href>
   <name>take() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4328,6 +7203,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#take(jet.Int)</href>
   <name>take() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4346,8 +7236,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#takeWhile(jet.Function1)</href>
   <name>takeWhile() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4361,13 +7271,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#takeWhile(jet.Function1)</href>
   <name>takeWhile() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#takeWhile(jet.Function1)</href>
   <name>takeWhile() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4391,6 +7331,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#takeWhile(jet.Function1)</href>
   <name>takeWhile() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4403,6 +7353,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#takeWhile(jet.Function1)</href>
   <name>takeWhile() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4421,8 +7386,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4436,13 +7421,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4466,6 +7481,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4478,6 +7503,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#takeWhileTo(C, jet.Function1)</href>
   <name>takeWhileTo() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#takeWhileTo(C, jet.Function1)</href>
+  <name>takeWhileTo() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#takeWhileTo(T, jet.Function1)</href>
+  <name>takeWhileTo() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4556,8 +7596,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#toCollection()</href>
   <name>toCollection() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4571,13 +7631,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#toCollection()</href>
   <name>toCollection() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#toCollection()</href>
   <name>toCollection() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4601,6 +7691,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#toCollection()</href>
   <name>toCollection() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4613,6 +7713,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#toCollection()</href>
   <name>toCollection() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4661,8 +7776,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#toLinkedList()</href>
   <name>toLinkedList() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4676,13 +7811,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#toLinkedList()</href>
   <name>toLinkedList() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#toLinkedList()</href>
   <name>toLinkedList() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4706,6 +7871,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#toLinkedList()</href>
   <name>toLinkedList() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4718,6 +7893,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#toLinkedList()</href>
   <name>toLinkedList() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4751,8 +7941,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#toList()</href>
+  <name>toList() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#toList()</href>
+  <name>toList() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#toList()</href>
   <name>toList() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#toList()</href>
+  <name>toList() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#toList()</href>
+  <name>toList() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4766,13 +7976,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#toList()</href>
+  <name>toList() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#toList()</href>
+  <name>toList() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#toList()</href>
   <name>toList() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#toList()</href>
+  <name>toList() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#toList()</href>
+  <name>toList() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#toList()</href>
   <name>toList() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#toList()</href>
+  <name>toList() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#toList()</href>
+  <name>toList() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4796,6 +8036,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#toList()</href>
+  <name>toList() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#toList()</href>
+  <name>toList() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#toList()</href>
   <name>toList() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4808,6 +8058,21 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#toList()</href>
   <name>toList() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#toList()</href>
+  <name>toList() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#toList()</href>
+  <name>toList() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toList()</href>
+  <name>toList() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4871,8 +8136,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#toSet()</href>
+  <name>toSet() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#toSet()</href>
+  <name>toSet() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#toSet()</href>
   <name>toSet() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#toSet()</href>
+  <name>toSet() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#toSet()</href>
+  <name>toSet() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4886,13 +8171,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#toSet()</href>
+  <name>toSet() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#toSet()</href>
+  <name>toSet() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#toSet()</href>
   <name>toSet() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#toSet()</href>
+  <name>toSet() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#toSet()</href>
+  <name>toSet() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#toSet()</href>
   <name>toSet() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#toSet()</href>
+  <name>toSet() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#toSet()</href>
+  <name>toSet() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4916,6 +8231,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#toSet()</href>
+  <name>toSet() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#toSet()</href>
+  <name>toSet() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#toSet()</href>
   <name>toSet() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4931,13 +8256,78 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ShortProgression-extensions.html#toSet()</href>
+  <name>toSet() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#toSet()</href>
+  <name>toSet() [jet.ShortRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toSet()</href>
+  <name>toSet() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#toShort()</href>
   <name>toShort() [jet.String]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Collection-extensions.html#toSortedList()</href>
   <name>toSortedList() [jet.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4951,6 +8341,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#toSortedList()</href>
   <name>toSortedList() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -4958,6 +8358,16 @@
 <search>
   <href>kotlin/jet/Set-extensions.html#toSortedList()</href>
   <name>toSortedList() [jet.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#toSortedList()</href>
+  <name>toSortedList() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -4986,8 +8396,28 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/CharArray-extensions.html#toSortedSet()</href>
   <name>toSortedSet() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.CharRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -5001,13 +8431,43 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/FloatArray-extensions.html#toSortedSet()</href>
   <name>toSortedSet() [jet.FloatArray]</name>
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/FloatProgression-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/IntArray-extensions.html#toSortedSet()</href>
   <name>toSortedSet() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -5031,6 +8491,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#toSortedSet()</href>
   <name>toSortedSet() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -5043,6 +8513,16 @@
 <search>
   <href>kotlin/jet/ShortArray-extensions.html#toSortedSet()</href>
   <name>toSortedSet() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -5098,6 +8578,11 @@
 <search>
   <href>kotlin/jet/String-extensions.html#toString()</href>
   <name>toString() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/ComparableRange.html#toString()</href>
+  <name>toString() [kotlin.ComparableRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -5226,8 +8711,58 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/ByteProgression-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.ByteProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteRange-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.ByteRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharProgression-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.CharProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharRange-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.CharRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/Collection-extensions.html#withIndices()</href>
   <name>withIndices() [jet.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleProgression-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.DoubleProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleRange-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.DoubleRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatProgression-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.FloatProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatRange-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.FloatRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntProgression-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.IntProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntRange-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.IntRange]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -5241,6 +8776,16 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/LongProgression-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.LongProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongRange-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.LongRange]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/MutableIterable-extensions.html#withIndices()</href>
   <name>withIndices() [jet.MutableIterable]</name>
   <kind>fun</kind>
@@ -5248,6 +8793,16 @@
 <search>
   <href>kotlin/jet/Set-extensions.html#withIndices()</href>
   <name>withIndices() [jet.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortProgression-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.ShortProgression]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortRange-extensions.html#withIndices()</href>
+  <name>withIndices() [jet.ShortRange]</name>
   <kind>fun</kind>
 </search>
 <search>

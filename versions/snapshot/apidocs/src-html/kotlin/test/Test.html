@@ -100,19 +100,6 @@
 <a href='#99' name='99'>99</a>
 <a href='#100' name='100'>100</a>
 <a href='#101' name='101'>101</a>
-<a href='#102' name='102'>102</a>
-<a href='#103' name='103'>103</a>
-<a href='#104' name='104'>104</a>
-<a href='#105' name='105'>105</a>
-<a href='#106' name='106'>106</a>
-<a href='#107' name='107'>107</a>
-<a href='#108' name='108'>108</a>
-<a href='#109' name='109'>109</a>
-<a href='#110' name='110'>110</a>
-<a href='#111' name='111'>111</a>
-<a href='#112' name='112'>112</a>
-<a href='#113' name='113'>113</a>
-<a href='#114' name='114'>114</a>
 </td><td><span class='hl-comment'>/**
  * A number of helper methods for writing Kool unit tests
  */</span><span>
@@ -196,19 +183,6 @@
         </span><span class='hl-keyword'>return</span><span> </span><span class='hl-keyword'>null</span><span>
     </span><span class='RBRACE'>}</span><span> </span><span class='catch'>catch</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>e</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Throwable</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='EOL_COMMENT'>//println(&quot;Caught expected exception: $e&quot;)</span><span>
-        </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>e</span><span>
-    </span><span class='RBRACE'>}</span><span>
-</span><span class='RBRACE'>}</span><span>
-
-</span><span class='hl-comment'>/** Asserts that a block fails with a specific exception being thrown */</span><span>
-</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Throwable</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>failsWith</span><span class='LPAR'>(</span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Any</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
-    </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
-        </span><span class='IDENTIFIER'>asserter</span><span class='DOT'>.</span><span class='IDENTIFIER'>fail</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Expected an exception to be thrown</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
-        </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalStateException</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Should have failed</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
-    </span><span class='RBRACE'>}</span><span> </span><span class='catch'>catch</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>e</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='EOL_COMMENT'>//println(&quot;Caught expected exception: $e&quot;)</span><span>
-        </span><span class='EOL_COMMENT'>// OK</span><span>
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>e</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>

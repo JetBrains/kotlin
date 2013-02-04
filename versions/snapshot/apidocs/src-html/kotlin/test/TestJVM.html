@@ -69,9 +69,37 @@
 <a href='#68' name='68'>68</a>
 <a href='#69' name='69'>69</a>
 <a href='#70' name='70'>70</a>
+<a href='#71' name='71'>71</a>
+<a href='#72' name='72'>72</a>
+<a href='#73' name='73'>73</a>
+<a href='#74' name='74'>74</a>
+<a href='#75' name='75'>75</a>
+<a href='#76' name='76'>76</a>
+<a href='#77' name='77'>77</a>
+<a href='#78' name='78'>78</a>
+<a href='#79' name='79'>79</a>
+<a href='#80' name='80'>80</a>
+<a href='#81' name='81'>81</a>
+<a href='#82' name='82'>82</a>
+<a href='#83' name='83'>83</a>
+<a href='#84' name='84'>84</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>test</span><span>
 
 </span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>ServiceLoader</span><span>
+
+</span><span class='hl-comment'>/** Asserts that a block fails with a specific exception being thrown */</span><span>
+</span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Throwable</span><span class='GT'>&gt;</span><span> </span><span class='IDENTIFIER'>failsWith</span><span class='LPAR'>(</span><span class='IDENTIFIER'>exceptionClass</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Class</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>block</span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Any</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>try</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='IDENTIFIER'>block</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+        </span><span class='IDENTIFIER'>asserter</span><span class='DOT'>.</span><span class='IDENTIFIER'>fail</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Expected an exception to be thrown</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
+        </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>IllegalStateException</span><span class='LPAR'>(</span><span class='OPEN_QUOTE'>&quot;</span><span class='REGULAR_STRING_PART'>Should have failed</span><span class='CLOSING_QUOTE'>&quot;</span><span class='RPAR'>)</span><span>
+    </span><span class='RBRACE'>}</span><span> </span><span class='catch'>catch</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>e</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+        </span><span class='hl-keyword'>if</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>exceptionClass</span><span class='DOT'>.</span><span class='IDENTIFIER'>isInstance</span><span class='LPAR'>(</span><span class='IDENTIFIER'>e</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>e</span><span>
+        </span><span class='RBRACE'>}</span><span>
+        </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>e</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
 
 </span><span class='hl-comment'>/**
  * Comments out a block of test code until it is implemented while keeping a link to the code
