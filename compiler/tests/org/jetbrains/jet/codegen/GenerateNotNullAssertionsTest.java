@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.MethodVisitor;
@@ -115,6 +116,28 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
 
         assertNoIntrinsicsMethodIsCalled("A");
     }
+
+    public void testArrayListGet() {
+        setUpEnvironment(true, true);
+
+        loadFile("notNullAssertions/arrayListGet.kt");
+        String text = generateToText();
+
+        assertTrue(text.contains("checkReturnedValueIsNotNull"));
+        assertTrue(text.contains("checkParameterIsNotNull"));
+    }
+
+    public void testJavaMultipleSubstitutions() {
+        File javaClassesTempDirectory = compileJava("notNullAssertions/javaMultipleSubstitutions.java");
+        setUpEnvironment(true, true, javaClassesTempDirectory);
+
+        loadFile("notNullAssertions/javaMultipleSubstitutions.kt");
+        String text = generateToText();
+
+        assertEquals(3, StringUtil.getOccurrenceCount(text, "checkReturnedValueIsNotNull"));
+        assertEquals(3, StringUtil.getOccurrenceCount(text, "checkParameterIsNotNull"));
+    }
+
 
     private void assertNoIntrinsicsMethodIsCalled(String className) {
         ClassFileFactory classes = generateClassesInFile();

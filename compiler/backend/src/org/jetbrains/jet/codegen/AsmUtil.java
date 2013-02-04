@@ -571,7 +571,7 @@ public class AsmUtil {
     ) {
         if (!state.isGenerateNotNullAssertions()) return;
 
-        if (!Boolean.TRUE.equals(state.getBindingContext().get(BindingContext.IS_DECLARED_IN_JAVA, descriptor))) return;
+        if (!isDeclaredInJava(descriptor, state.getBindingContext())) return;
 
         JetType type = descriptor.getReturnType();
         if (type == null || type.isNullable()) return;
@@ -583,6 +583,19 @@ public class AsmUtil {
             v.visitLdcInsn(descriptor.getName().getName());
             v.invokestatic("jet/runtime/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
         }
+    }
+
+    private static boolean isDeclaredInJava(@NotNull CallableDescriptor callableDescriptor, @NotNull BindingContext context) {
+        CallableDescriptor descriptor = callableDescriptor;
+        while (true) {
+            if (Boolean.TRUE.equals(context.get(BindingContext.IS_DECLARED_IN_JAVA, descriptor))) {
+                return true;
+            }
+            CallableDescriptor original = descriptor.getOriginal();
+            if (descriptor == original) break;
+            descriptor = original;
+        }
+        return false;
     }
 
     public static void pushDefaultValueOnStack(@NotNull Type type, @NotNull InstructionAdapter v) {
