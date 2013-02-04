@@ -8,18 +8,18 @@ class PairTest {
     val p = Pair(1, "a")
 
     test fun pairFirstAndSecond() {
-        assertTrue(p.first == 1)
-        assertTrue(p.second == "a")
+        assertEquals(1, p.first)
+        assertEquals("a", p.second)
     }
 
     test fun pairMultiAssignment() {
         val (a, b) = p
-        assertTrue(a == 1)
-        assertTrue(b == "a")
+        assertEquals(1, a)
+        assertEquals("a", b)
     }
 
     test fun pairToString() {
-        assertTrue(p.toString() == "(1, a)")
+        assertEquals("(1, a)", p.toString())
     }
 
     test fun pairEquals() {

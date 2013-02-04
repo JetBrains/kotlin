@@ -10,5 +10,4 @@ fun firstFun() {
 // RUNTIME: 1
 // TIME: 1
 // EXIST: toLinkedList@toLinkedList()~for jet.Iterable<T> in kotlin
-// EXIST: toLinkedList@toLinkedList()~for T? in kotlin.nullable
-// NUMBER: 2
+// NUMBER: 1

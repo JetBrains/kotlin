@@ -1,7 +1,8 @@
 package kotlin
 
-import kotlin.nullable.hashCodeOrDefault
 import java.io.Serializable
+
+private fun Any?.safeHashCode() : Int = if (this == null) 0 else this.hashCode()
 
 // TODO: make it a data class
 public class Pair<out A, out B> (
@@ -14,8 +15,8 @@ public class Pair<out A, out B> (
     override fun toString(): String = "($first, $second)"
 
     override fun hashCode(): Int {
-        var result = first.hashCodeOrDefault(0)
-        result = 31 * result + second.hashCodeOrDefault(0)
+        var result = first.safeHashCode()
+        result = 31 * result + second.safeHashCode()
         return result;
     }
 
@@ -40,9 +41,9 @@ public class Triple<A, B, C> (
     override fun toString(): String = "($first, $second, $third)"
 
     override fun hashCode(): Int {
-        var result = first.hashCodeOrDefault(0)
-        result = 31 * result + second.hashCodeOrDefault(0)
-        result = 31 * result + third.hashCodeOrDefault(0)
+        var result = first.safeHashCode()
+        result = 31 * result + second.safeHashCode()
+        result = 31 * result + third.safeHashCode()
         return result;
     }
 
