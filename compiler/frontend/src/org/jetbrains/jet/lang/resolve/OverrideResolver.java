@@ -890,8 +890,8 @@ public class OverrideResolver {
             ((FunctionDescriptorImpl)memberDescriptor).setVisibility(visibility);
         }
         else {
-            assert memberDescriptor instanceof PropertyAccessorDescriptor;
-            ((PropertyAccessorDescriptor) memberDescriptor).setVisibility(visibility);
+            assert memberDescriptor instanceof PropertyAccessorDescriptorImpl;
+            ((PropertyAccessorDescriptorImpl) memberDescriptor).setVisibility(visibility);
         }
     }
 

@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
+public class PropertySetterDescriptor extends PropertyAccessorDescriptorImpl {
 
     private ValueParameterDescriptor parameter;
     @NotNull

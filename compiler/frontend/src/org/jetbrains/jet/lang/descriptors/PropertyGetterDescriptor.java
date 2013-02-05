@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
+public class PropertyGetterDescriptor extends PropertyAccessorDescriptorImpl {
     private JetType returnType;
 
     @NotNull
