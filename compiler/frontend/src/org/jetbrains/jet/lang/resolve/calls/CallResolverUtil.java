@@ -21,18 +21,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CallResolverUtil {
 
@@ -74,6 +80,11 @@ public class CallResolverUtil {
             copy.recordValueArgument(entry.getKey(), entry.getValue());
         }
         copy.setInitialDataFlowInfo(call.getDataFlowInfo());
+        for (ResolvedValueArgument resolvedArgument : call.getValueArguments().values()) {
+            for (ValueArgument argument : resolvedArgument.getArguments()) {
+                copy.addDeferredComputationForArgument(argument, call.getDeferredComputationForArgument(argument));
+            }
+        }
         return copy;
     }
 
@@ -112,5 +123,27 @@ public class CallResolverUtil {
         }
         newArguments.add(new TypeProjection(Variance.INVARIANT, DONT_CARE));
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
+    }
+
+    public static <D extends CallableDescriptor> boolean hasReturnTypeDependentOnNotInferredParams(@NotNull ResolvedCall<D> resolvedCall) {
+        //todo[ResolvedCallImpl]
+        if (!(resolvedCall instanceof ResolvedCallImpl)) return false;
+        ResolvedCallImpl call = (ResolvedCallImpl) resolvedCall;
+        ConstraintSystem constraintSystem = call.getConstraintSystem();
+        if (constraintSystem == null) return false;
+
+        CallableDescriptor candidateDescriptor = call.getCandidateDescriptor();
+        JetType returnType = candidateDescriptor.getReturnType();
+        if (returnType == null) return false;
+
+        for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
+            JetType inferredValueForTypeVariable = ConstraintsUtil.getValue(constraintSystem.getTypeConstraints(typeVariable));
+            if (inferredValueForTypeVariable == null) {
+                if (TypeUtils.dependsOnTypeParameters(returnType, Collections.singleton(typeVariable))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

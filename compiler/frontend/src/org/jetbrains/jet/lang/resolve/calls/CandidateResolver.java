@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -55,6 +56,7 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgum
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.canHaveSubtypes;
 
 public class CandidateResolver {
     @NotNull
@@ -107,7 +109,7 @@ public class CandidateResolver {
                 argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
                 return;
             }
-            argumentTypeResolver.checkUnmappedArgumentTypes(context.toBasic(), unmappedArguments);
+            candidateCall.setUnmappedArguments(unmappedArguments);
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
@@ -138,7 +140,8 @@ public class CandidateResolver {
 
                 Map<TypeConstructor, TypeProjection>
                         substitutionContext = FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor)candidate, typeArguments);
-                candidateCall.setResultingSubstitutor(TypeSubstitutor.create(substitutionContext));
+                TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
+                candidateCall.setResultingSubstitutor(substitutor);
 
                 List<TypeParameterDescriptor> typeParameters = candidateCall.getCandidateDescriptor().getTypeParameters();
                 for (int i = 0; i < typeParameters.size(); i++) {
@@ -206,6 +209,7 @@ public class CandidateResolver {
                 addConstraintForFunctionLiteral(valueArgument, valueParameterDescriptor, constraintSystem, context);
             }
         }
+        resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
     }
 
     public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
@@ -224,10 +228,11 @@ public class CandidateResolver {
 
         if (!constraintSystem.isSuccessful()) {
             resolvedCall.setResultingSubstitutor(constraintSystemWithoutExpectedTypeConstraint.getResultingSubstitutor());
-            List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, resolvedCall.getTrace(),
+            completeValueArgumentsInference(context);
+            List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace,
                                                                   RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
-            context.tracing.typeInferenceFailed(resolvedCall.getTrace(),
+            context.tracing.typeInferenceFailed(context.trace,
                                                 InferenceErrorData
                                                         .create(descriptor, constraintSystem, argumentTypes, receiverType,
                                                                 context.expectedType),
@@ -246,16 +251,52 @@ public class CandidateResolver {
             }
         }
         if (!boundsAreSatisfied) {
-            context.tracing.upperBoundViolated(resolvedCall.getTrace(), InferenceErrorData.create(resolvedCall.getCandidateDescriptor(), constraintSystem));
+            context.tracing.upperBoundViolated(context.trace, InferenceErrorData.create(resolvedCall.getCandidateDescriptor(), constraintSystem));
         }
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
 
+        completeValueArgumentsInference(context);
         // Here we type check the arguments with inferred types expected
-        checkAllValueArguments(context, RESOLVE_FUNCTION_ARGUMENTS);
+        checkAllValueArguments(context, context.trace, RESOLVE_FUNCTION_ARGUMENTS);
 
         resolvedCall.setHasUnknownTypeParameters(false);
-        if (resolvedCall.getStatus() == ResolutionStatus.UNKNOWN_STATUS) {
-            resolvedCall.addStatus(ResolutionStatus.SUCCESS);
+        ResolutionStatus status = resolvedCall.getStatus();
+        if (status == ResolutionStatus.UNKNOWN_STATUS || status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
+            resolvedCall.setStatusToSuccess();
+        }
+    }
+
+    public <D extends CallableDescriptor> void completeValueArgumentsInference(
+            @NotNull CallCandidateResolutionContext<D> context
+    ) {
+        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
+        ConstraintSystem constraintSystem = context.candidateCall.getConstraintSystem();
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
+            ValueParameterDescriptor parameterDescriptor = entry.getKey();
+            ResolvedValueArgument resolvedArgument = entry.getValue();
+
+            for (ValueArgument argument : resolvedArgument.getArguments()) {
+                JetExpression expression = argument.getArgumentExpression();
+                if (expression == null) continue;
+
+                JetType effectiveExpectedType = getEffectiveExpectedType(parameterDescriptor, argument);
+                JetType expectedType = constraintSystem != null
+                                       ? constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
+                                       : effectiveExpectedType;
+
+                CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
+                        resolvedCall.getDeferredComputationForArgument(argument);
+                if (storedContextForArgument == null) continue;
+
+                CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
+                        storedContextForArgument.replaceResolveMode(ResolveMode.NORMAL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
+                if (contextForArgument.candidateCall.hasUnknownTypeParameters()) {
+                    completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument);
+                }
+                else {
+                    completeValueArgumentsInference(contextForArgument);
+                }
+            }
         }
     }
 
@@ -373,31 +414,21 @@ public class CandidateResolver {
         // Solution
         boolean hasContradiction = constraintSystem.hasContradiction();
         boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/false);
+        candidateCall.setHasUnknownTypeParameters(true);
         if (!hasContradiction && boundsAreSatisfied) {
-            candidateCall.setHasUnknownTypeParameters(true);
-            return SUCCESS;
+            return INCOMPLETE_TYPE_INFERENCE;
         }
         ValueArgumentsCheckingResult checkingResult = checkAllValueArguments(context, SKIP_FUNCTION_ARGUMENTS);
         ResolutionStatus argumentsStatus = checkingResult.status;
-        List<JetType> argumentTypes = checkingResult.argumentTypes;
-        JetType receiverType = candidateCall.getReceiverArgument().exists() ? candidateCall.getReceiverArgument().getType() : null;
-        InferenceErrorData.ExtendedInferenceErrorData inferenceErrorData = InferenceErrorData
-                .create(candidate, constraintSystemWithRightTypeParameters, argumentTypes, receiverType, context.expectedType);
-        if (hasContradiction) {
-            context.tracing.typeInferenceFailed(candidateCall.getTrace(), inferenceErrorData, constraintSystemWithRightTypeParameters);
-        }
-        else {
-            context.tracing.upperBoundViolated(candidateCall.getTrace(), inferenceErrorData);
-        }
         return OTHER_ERROR.combine(argumentsStatus);
     }
 
-    private <C extends CallResolutionContext<C>> void addConstraintForValueArgument(
+    private <D extends CallableDescriptor> void addConstraintForValueArgument(
             @NotNull ValueArgument valueArgument,
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull TypeSubstitutor substitutor,
             @NotNull ConstraintSystem constraintSystem,
-            @NotNull CallResolutionContext<C> context,
+            @NotNull CallCandidateResolutionContext<D> context,
             @Nullable boolean[] isErrorType,
             @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
 
@@ -406,13 +437,17 @@ public class CandidateResolver {
         TemporaryBindingTrace traceToResolveArgument = TemporaryBindingTrace.create(
                 context.trace, "transient trace to resolve argument", argumentExpression);
         JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
-        CallResolutionContext newContext =
-                context.replaceBindingTrace(traceToResolveArgument).replaceExpectedType(
-                        expectedType != null ? expectedType : NO_EXPECTED_TYPE);
-        JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, resolveFunctionArgumentBodies).getType();
+        CallResolutionContext newContext = context.replaceBindingTrace(traceToResolveArgument).replaceExpectedType(expectedType);
+        TypeInfoForCall typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext,
+                                                                                   resolveFunctionArgumentBodies);
+        CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = typeInfoForCall.getCallCandidateResolutionContext();
+        if (contextForArgument != null) {
+            context.candidateCall.addDeferredComputationForArgument(valueArgument, contextForArgument);
+            traceToResolveArgument.commit();
+        }
+        JetType type = typeInfoForCall.getType();
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
-        BindingContextUtils.commitResolutionCacheData(traceToResolveArgument, context.trace);
         if (isErrorType != null) {
             isErrorType[0] = type == null || ErrorUtils.isErrorType(type);
         }
@@ -421,8 +456,16 @@ public class CandidateResolver {
     private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
-        ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(context, context.candidateCall,
-                                                                              context.candidateCall.getTrace(), resolveFunctionArgumentBodies);
+        return checkAllValueArguments(context, context.candidateCall.getTrace(), resolveFunctionArgumentBodies);
+    }
+
+    private <D extends CallableDescriptor> ValueArgumentsCheckingResult checkAllValueArguments(
+            @NotNull CallCandidateResolutionContext<D> context,
+            @NotNull BindingTrace trace,
+            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies
+    ) {
+        ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(
+                context, context.candidateCall, trace, resolveFunctionArgumentBodies);
         ResolutionStatus resultStatus = checkingResult.status;
         ResolvedCall<D> candidateCall = context.candidateCall;
 
@@ -431,13 +474,17 @@ public class CandidateResolver {
         // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
         // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
 
-        resultStatus = resultStatus.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(),
-                                                          candidateCall.getExplicitReceiverKind().isReceiver(), false));
+        resultStatus = resultStatus.combine(checkReceiver(
+                context, candidateCall, trace,
+                candidateCall.getResultingDescriptor().getReceiverParameter(),
+                candidateCall.getReceiverArgument(), candidateCall.getExplicitReceiverKind().isReceiver(), false));
 
-        resultStatus = resultStatus.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
-                                                          candidateCall.getExplicitReceiverKind().isThisObject(),
-                                                          // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
-                                                          context.call instanceof CallTransformer.CallForImplicitInvoke));
+        resultStatus = resultStatus.combine(checkReceiver(
+                context, candidateCall, trace,
+                candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
+                candidateCall.getExplicitReceiverKind().isThisObject(),
+                // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
+                context.call instanceof CallTransformer.CallForImplicitInvoke));
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
@@ -467,6 +514,7 @@ public class CandidateResolver {
                         expression, newContext, resolveFunctionArgumentBodies);
                 JetType type = typeInfoForCall.getType();
                 candidateCall.addDataFlowInfo(typeInfoForCall.getDataFlowInfo());
+                candidateCall.addDeferredComputationForArgument(argument, typeInfoForCall.getCallCandidateResolutionContext());
 
                 if (type == null || (ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE)) {
                     candidateCall.argumentHasNoType();
@@ -511,11 +559,12 @@ public class CandidateResolver {
         return null;
     }
 
-    private <D extends CallableDescriptor> ResolutionStatus checkReceiver(CallCandidateResolutionContext<D> context, ResolvedCall<D> candidateCall,
+    private <D extends CallableDescriptor> ResolutionStatus checkReceiver(
+            CallCandidateResolutionContext<D> context, ResolvedCall<D> candidateCall, BindingTrace trace,
             ReceiverParameterDescriptor receiverParameter, ReceiverValue receiverArgument,
             boolean isExplicitReceiver, boolean implicitInvokeCheck) {
 
-        BindingContext bindingContext = context.candidateCall.getTrace().getBindingContext();
+        BindingContext bindingContext = trace.getBindingContext();
 
         ResolutionStatus result = SUCCESS;
         if (receiverParameter != null && receiverArgument.exists()) {
@@ -524,7 +573,7 @@ public class CandidateResolver {
             AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, bindingContext);
             if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
 
-                context.tracing.unsafeCall(context.candidateCall.getTrace(), receiverArgumentType, implicitInvokeCheck);
+                context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
                 result = UNSAFE_CALL_ERROR;
             }
             else {
@@ -534,13 +583,13 @@ public class CandidateResolver {
                 if (!TypeUtils.dependsOnTypeParameters(receiverParameter.getType(),
                                                        candidateCall.getCandidateDescriptor().getTypeParameters()) &&
                         !argumentTypeResolver.isSubtypeOfForArgumentType(effectiveReceiverArgumentType, receiverParameter.getType())) {
-                    context.tracing.wrongReceiverType(context.candidateCall.getTrace(), receiverParameter, receiverArgument);
+                    context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument);
                     result = OTHER_ERROR;
                 }
             }
             DataFlowValue receiverValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiverArgument, bindingContext);
             if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {
-                context.tracing.unnecessarySafeCall(context.candidateCall.getTrace(), receiverArgumentType);
+                context.tracing.unnecessarySafeCall(trace, receiverArgumentType);
             }
         }
         return result;

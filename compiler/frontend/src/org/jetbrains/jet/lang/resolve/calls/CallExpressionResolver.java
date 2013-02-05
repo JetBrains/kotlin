@@ -157,8 +157,10 @@ public class CallExpressionResolver {
         if (!results.isNothing()) {
             checkSuper(receiver, results, context.trace, callExpression);
             result[0] = true;
-            if (results.isIncomplete()) {
-                return null;
+            if (results.isSingleResult() && resolveMode == ResolveMode.NORMAL) {
+                if (CallResolverUtil.hasReturnTypeDependentOnNotInferredParams(results.getResultingCall())) {
+                    return null;
+                }
             }
             return results.isSingleResult() ? results.getResultingCall() : null;
         }
@@ -246,12 +248,14 @@ public class CallExpressionResolver {
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode
     ) {
         TypeInfoForCall typeInfoForCall = getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context, resolveMode);
-        DataFlowUtils.checkType(typeInfoForCall.getType(), callExpression, context, typeInfoForCall.getDataFlowInfo());
+        if (resolveMode == ResolveMode.NORMAL) {
+            DataFlowUtils.checkType(typeInfoForCall.getType(), callExpression, context, typeInfoForCall.getDataFlowInfo());
+        }
         return typeInfoForCall;
     }
 
     @NotNull
-    private TypeInfoForCall getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(
+    public TypeInfoForCall getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode
     ) {
@@ -385,8 +389,10 @@ public class CallExpressionResolver {
         if (selectorReturnType != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
-        return TypeInfoForCall.create(
-                DataFlowUtils.checkType(selectorReturnType, expression, context, selectorReturnTypeInfo.getDataFlowInfo()),
-                selectorReturnTypeInfo);
+        JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
+        if (resolveMode == ResolveMode.NORMAL) {
+            DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
+        }
+        return TypeInfoForCall.create(typeInfo, selectorReturnTypeInfo);
     }
 }

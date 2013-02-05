@@ -1993,7 +1993,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/inference")
-        @InnerTestClasses({Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.UpperBounds.class, Inference.Varargs.class})
+        @InnerTestClasses({Inference.Complicated.class, Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.UpperBounds.class, Inference.Varargs.class})
         public static class Inference extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInInference() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2117,6 +2117,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("typeInferenceExpectedTypeMismatch.kt")
             public void testTypeInferenceExpectedTypeMismatch() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/typeInferenceExpectedTypeMismatch.kt");
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/complicated")
+            public static class Complicated extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInComplicated() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/complicated"), "kt", true);
+                }
+                
+                @TestMetadata("completeValueArgumentsInference.kt")
+                public void testCompleteValueArgumentsInference() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/complicated/completeValueArgumentsInference.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/inference/regressions")
@@ -2399,6 +2412,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Inference");
                 suite.addTestSuite(Inference.class);
+                suite.addTestSuite(Complicated.class);
                 suite.addTestSuite(Regressions.class);
                 suite.addTestSuite(ReportingImprovements.class);
                 suite.addTestSuite(UpperBounds.class);

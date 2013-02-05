@@ -58,8 +58,9 @@ public class TypeInfoForCall {
         if (resolvedCall instanceof ResolvedCallImpl) {
             BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(
                     TRACE_STUB, context.scope, call, TypeUtils.NO_EXPECTED_TYPE, typeInfo.getDataFlowInfo(), resolveMode, context.namespacesAllowed);
+            //todo[ResolvedCallImpl]
             callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                    (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, basicCallResolutionContext, TracingStrategy.EMPTY);
+                    (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, basicCallResolutionContext, ((ResolvedCallImpl<FunctionDescriptor>) resolvedCall).getTracing());
         }
         else {
             callCandidateResolutionContext = null;

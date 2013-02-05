@@ -17,14 +17,18 @@
 package org.jetbrains.jet.lang.resolve.calls.model;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
@@ -34,10 +38,9 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
 
 public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCallWithTrace<D> {
@@ -71,6 +74,8 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
+    private final Map<ValueArgument, CallCandidateResolutionContext<FunctionDescriptor>> deferredComputationsForArguments = Maps.newLinkedHashMap();
+    private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
     private boolean someArgumentHasNoType = false;
     private final DelegatingBindingTrace trace;
     private final TracingStrategy tracing;
@@ -97,6 +102,11 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     public void addStatus(@NotNull ResolutionStatus status) {
         this.status = this.status.combine(status);
+    }
+
+    public void setStatusToSuccess() {
+        assert status == INCOMPLETE_TYPE_INFERENCE || status == UNKNOWN_STATUS;
+        status = ResolutionStatus.SUCCESS;
     }
 
     @Override
@@ -166,6 +176,16 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {
         assert !valueArguments.containsKey(valueParameter) : valueParameter + " -> " + valueArgument;
         valueArguments.put(valueParameter, valueArgument);
+    }
+
+    public void setUnmappedArguments(@NotNull Collection<ValueArgument> unmappedArguments) {
+        this.unmappedArguments.addAll(unmappedArguments);
+
+    }
+
+    @NotNull
+    public Set<ValueArgument> getUnmappedArguments() {
+        return unmappedArguments;
     }
 
     @Override
@@ -249,5 +269,19 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     public void addDataFlowInfo(@NotNull DataFlowInfo info) {
         assert dataFlowInfo != null;
         dataFlowInfo = dataFlowInfo.and(info);
+    }
+
+    public void addDeferredComputationForArgument(
+            @NotNull ValueArgument valueArgument,
+            @Nullable CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext
+    ) {
+        if (callCandidateResolutionContext != null) {
+            deferredComputationsForArguments.put(valueArgument, callCandidateResolutionContext);
+        }
+    }
+
+    @Nullable
+    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputationForArgument(@NotNull ValueArgument valueArgument) {
+        return deferredComputationsForArguments.get(valueArgument);
     }
 }
