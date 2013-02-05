@@ -94,6 +94,17 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "help", alias = "h", description = "show help")
     public boolean help;
 
+    @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
+    public String kotlinHome;
+
+    public String getKotlinHome() {
+        return kotlinHome;
+    }
+
+    public void setKotlinHome(String kotlinHome) {
+        this.kotlinHome = kotlinHome;
+    }
+
     public String getClasspath() {
         return classpath;
     }
