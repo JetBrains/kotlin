@@ -27,9 +27,6 @@ import java.util.Collections;
 public class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallWithTrace<D> candidate) {
-        if (candidate.hasUnknownTypeParameters()) {
-            return incompleteTypeInference(candidate);
-        }
         return new OverloadResolutionResultsImpl<D>(Code.SUCCESS, Collections.singleton(candidate));
     }
 
@@ -38,9 +35,6 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> singleFailedCandidate(ResolvedCallWithTrace<D> candidate) {
-        if (candidate.getStatus() != ResolutionStatus.STRONG_ERROR && candidate.hasUnknownTypeParameters()) {
-            return incompleteTypeInference(candidate);
-        }
         return new OverloadResolutionResultsImpl<D>(Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH, Collections.singleton(candidate));
     }
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> manyFailedCandidates(Collection<ResolvedCallWithTrace<D>> failedCandidates) {
@@ -48,11 +42,6 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<ResolvedCallWithTrace<D>> candidates) {
-        for (ResolvedCallWithTrace<D> candidate : candidates) {
-            if (candidate.hasUnknownTypeParameters()) {
-                return incompleteTypeInference(candidates);
-            }
-        }
         return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, candidates);
     }
 
@@ -60,7 +49,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
         return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, candidates);
     }
 
-    private static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(ResolvedCallWithTrace<D> candidate) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(ResolvedCallWithTrace<D> candidate) {
         return incompleteTypeInference(Collections.singleton(candidate));
     }
 

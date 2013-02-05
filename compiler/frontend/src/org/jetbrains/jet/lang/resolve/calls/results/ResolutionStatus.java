@@ -49,11 +49,26 @@ public enum ResolutionStatus {
     }
 
     public ResolutionStatus combine(ResolutionStatus other) {
-        if (this == UNKNOWN_STATUS || this.isSuccess()) return other;
-        if (!other.isSuccess() && this.getSeverityIndex() < other.getSeverityIndex()) return other;
+        if (this == UNKNOWN_STATUS) return other;
+        if (SUCCESS.among(this, other)) {
+            return SUCCESS.chooseDifferent(this, other);
+        }
+        if (INCOMPLETE_TYPE_INFERENCE.among(this, other)) {
+            return INCOMPLETE_TYPE_INFERENCE.chooseDifferent(this, other);
+        }
+        if (this.getSeverityIndex() < other.getSeverityIndex()) return other;
         return this;
     }
-    
+
+    private boolean among(ResolutionStatus first, ResolutionStatus second) {
+        return this == first || this == second;
+    }
+
+    private ResolutionStatus chooseDifferent(ResolutionStatus first, ResolutionStatus second) {
+        assert among(first, second);
+        return this == first ? second : first;
+    }
+
     private int getSeverityIndex() {
         if (severityIndex == -1) {
             for (int i = 0; i < SEVERITY_LEVELS.length; i++) {

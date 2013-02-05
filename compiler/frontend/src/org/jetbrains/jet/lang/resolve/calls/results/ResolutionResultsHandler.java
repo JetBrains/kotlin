@@ -24,10 +24,7 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl.MAP_TO_RESULT;
@@ -73,27 +70,31 @@ public class ResolutionResultsHandler {
     ) {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
-        if (successfulCandidates.size() > 0) {
-            OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulCandidates, true);
+        if (!successfulCandidates.isEmpty() || !incompleteCandidates.isEmpty()) {
+            Set<ResolvedCallWithTrace<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
+            successfulAndIncomplete.addAll(successfulCandidates);
+            successfulAndIncomplete.addAll(incompleteCandidates);
+            OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true);
             if (results.isSingleResult()) {
-                results.getResultingCall().getTrace().moveAllMyDataTo(trace);
+                ResolvedCallWithTrace<D> resultingCall = results.getResultingCall();
+                resultingCall.getTrace().moveAllMyDataTo(trace);
+                if (resultingCall.getStatus() == INCOMPLETE_TYPE_INFERENCE) {
+                    return OverloadResolutionResultsImpl.incompleteTypeInference(resultingCall);
+                }
             }
             if (results.isAmbiguity()) {
+                tracing.recordAmbiguity(trace, results.getResultingCalls());
+                if (allIncomplete(results.getResultingCalls())) {
+                    tracing.cannotCompleteResolve(trace, results.getResultingCalls());
+                    return OverloadResolutionResultsImpl.incompleteTypeInference(results.getResultingCalls());
+                }
                 // This check is needed for the following case:
                 //    x.foo(unresolved) -- if there are multiple foo's, we'd report an ambiguity, and it does not make sense here
                 if (allClean(results.getResultingCalls())) {
                     tracing.ambiguity(trace, results.getResultingCalls());
                 }
-                tracing.recordAmbiguity(trace, results.getResultingCalls());
             }
             return results;
-        }
-        else if (!incompleteCandidates.isEmpty()) {
-            assert incompleteCandidates.size() > 1 :
-                    "One incomplete candidate should have been chosen as maximally specific and completed earlier";
-            tracing.cannotCompleteResolve(trace, incompleteCandidates);
-            tracing.recordAmbiguity(trace, incompleteCandidates);
-            return OverloadResolutionResultsImpl.incompleteTypeInference(incompleteCandidates);
         }
         else if (!failedCandidates.isEmpty()) {
             if (failedCandidates.size() != 1) {
@@ -142,9 +143,16 @@ public class ResolutionResultsHandler {
         }
     }
 
-    private <D extends CallableDescriptor> boolean allClean(Collection<ResolvedCallWithTrace<D>> results) {
+    private static <D extends CallableDescriptor> boolean allClean(@NotNull Collection<ResolvedCallWithTrace<D>> results) {
         for (ResolvedCallWithTrace<D> result : results) {
             if (result.isDirty()) return false;
+        }
+        return true;
+    }
+
+    private static <D extends CallableDescriptor> boolean allIncomplete(@NotNull Collection<ResolvedCallWithTrace<D>> results) {
+        for (ResolvedCallWithTrace<D> result : results) {
+            if (result.getStatus() != INCOMPLETE_TYPE_INFERENCE) return false;
         }
         return true;
     }
