@@ -89,4 +89,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     protected CallCandidateResolutionContext<D> self() {
         return this;
     }
+
+    @NotNull
+    public CallCandidateResolutionContext<D> replaceResolveMode(@NotNull ResolveMode newResolveMode) {
+        if (newResolveMode == resolveMode) return this;
+        return new CallCandidateResolutionContext<D>(
+                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, newResolveMode, namespacesAllowed, false);
+    }
 }
