@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.jet.internal.com.intellij.openapi.util.text.StringUtil.join;
@@ -177,9 +178,19 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
                 Field[] fields = arguments.getClass().getFields();
                 for (Field f : fields) {
                     Object value = f.get(arguments);
-                    if (value != null) {
-                        getLog().debug(f.getName() + "=" + value);
+
+                    String valueString;
+                    if (value instanceof Object[]) {
+                        valueString = Arrays.deepToString((Object[]) value);
                     }
+                    else if (value != null) {
+                        valueString = String.valueOf(value);
+                    }
+                    else {
+                        valueString = "(null)";
+                    }
+
+                    getLog().debug(f.getName() + "=" + valueString);
                 }
                 getLog().debug("End of arguments");
             }
@@ -234,12 +245,6 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             log.debug("Removed target directory from compiler classpath (" + output + ")");
         }
 
-//        final String runtime = getRuntimeFromClassPath(classpath);
-//        if (runtime != null) {
-//            log.debug("Removed Kotlin runtime from compiler classpath (" + runtime + ")");
-//            classpathList.remove(runtime);
-//        }
-
         if (classpathList.size() > 0) {
             final String classPathString = Joiner.on(File.pathSeparator).join(classpathList);
             log.info("Classpath: " + classPathString);
@@ -273,21 +278,6 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         return join(list, File.pathSeparator);
     }
 
-
-    // TODO: Make a better runtime detection or get rid of it entirely
-    private String getRuntimeFromClassPath(List<String> classpath) {
-        for (String item : classpath) {
-            final int lastSeparatorIndex = item.lastIndexOf(File.separator);
-
-            if (lastSeparatorIndex < 0)
-                continue;
-
-            if (item.startsWith("kotlin-runtime-", lastSeparatorIndex + 1) && item.endsWith(".jar"))
-                return item;
-        }
-
-        return null;
-    }
 
     private File jdkAnnotationsPath;
 
