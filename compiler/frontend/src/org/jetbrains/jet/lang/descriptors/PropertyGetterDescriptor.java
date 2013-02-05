@@ -17,73 +17,9 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-public class PropertyGetterDescriptor extends PropertyAccessorDescriptorImpl {
-    private JetType returnType;
-
-    @NotNull
-    private final PropertyGetterDescriptor original;
-
-    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean hasBody,
-            boolean isDefault,
-            @NotNull Kind kind) {
-        this(correspondingProperty, annotations, modality, visibility, hasBody, isDefault, kind, null);
-    }
-
-    public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean hasBody,
-            boolean isDefault,
-            @NotNull Kind kind,
-            @Nullable PropertyGetterDescriptor original)
-    {
-        super(modality, visibility, correspondingProperty, annotations, Name.special("<get-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
-        this.original = original != null ? original : this;
-    }
-    
-    public void initialize(JetType returnType) {
-        this.returnType = returnType == null ? getCorrespondingProperty().getType() : returnType;
-    }
-
+public interface PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     @NotNull
     @Override
-    public Set<? extends PropertyAccessorDescriptor> getOverriddenDescriptors() {
-        return super.getOverriddenDescriptors(true);
-    }
-
-    @NotNull
-    @Override
-    public List<ValueParameterDescriptor> getValueParameters() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public JetType getReturnType() {
-        return returnType;
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitPropertyGetterDescriptor(this, data);
-    }
-
-    @NotNull
-    @Override
-    public PropertyGetterDescriptor getOriginal() {
-        return this.original;
-    }
+    PropertyGetterDescriptor getOriginal();
 }

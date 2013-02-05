@@ -946,7 +946,7 @@ public class DescriptorResolver {
         propertyDescriptor.setType(type, typeParameterDescriptors, getExpectedThisObjectIfNeeded(containingDeclaration),
                                    receiverDescriptor);
 
-        PropertyGetterDescriptor getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
+        PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
         PropertySetterDescriptor setter = resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
 
         propertyDescriptor.initialize(getter, setter);
@@ -1087,13 +1087,13 @@ public class DescriptorResolver {
     }
 
     @Nullable
-    private PropertyGetterDescriptor resolvePropertyGetterDescriptor(
+    private PropertyGetterDescriptorImpl resolvePropertyGetterDescriptor(
             @NotNull JetScope scope,
             @NotNull JetProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             BindingTrace trace
     ) {
-        PropertyGetterDescriptor getterDescriptor;
+        PropertyGetterDescriptorImpl getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
             List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, getter.getModifierList(), trace);
@@ -1108,7 +1108,7 @@ public class DescriptorResolver {
                 }
             }
 
-            getterDescriptor = new PropertyGetterDescriptor(
+            getterDescriptor = new PropertyGetterDescriptorImpl(
                     propertyDescriptor, annotations,
                     resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
@@ -1123,9 +1123,9 @@ public class DescriptorResolver {
         return getterDescriptor;
     }
 
-    public static PropertyGetterDescriptor createDefaultGetter(PropertyDescriptor propertyDescriptor) {
-        PropertyGetterDescriptor getterDescriptor;
-        getterDescriptor = new PropertyGetterDescriptor(
+    public static PropertyGetterDescriptorImpl createDefaultGetter(PropertyDescriptor propertyDescriptor) {
+        PropertyGetterDescriptorImpl getterDescriptor;
+        getterDescriptor = new PropertyGetterDescriptorImpl(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
                 false, true, CallableMemberDescriptor.Kind.DECLARATION);
@@ -1208,7 +1208,7 @@ public class DescriptorResolver {
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),
                                    getExpectedThisObjectIfNeeded(classDescriptor), NO_RECEIVER_PARAMETER);
 
-        PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);
+        PropertyGetterDescriptorImpl getter = createDefaultGetter(propertyDescriptor);
         PropertySetterDescriptor setter = propertyDescriptor.isVar() ? createDefaultSetter(propertyDescriptor) : null;
 
         propertyDescriptor.initialize(getter, setter);

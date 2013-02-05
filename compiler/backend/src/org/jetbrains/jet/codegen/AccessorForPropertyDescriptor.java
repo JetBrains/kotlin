@@ -35,7 +35,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
         initialize(new Getter(this), new Setter(this));
     }
 
-    public static class Getter extends PropertyGetterDescriptor {
+    public static class Getter extends PropertyGetterDescriptorImpl {
         public Getter(AccessorForPropertyDescriptor property) {
             super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,
                   false,

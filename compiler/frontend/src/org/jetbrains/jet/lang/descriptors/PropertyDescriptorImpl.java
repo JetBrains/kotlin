@@ -46,7 +46,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     private ReceiverParameterDescriptor expectedThisObject;
     private ReceiverParameterDescriptor receiverParameter;
     private List<TypeParameterDescriptor> typeParameters;
-    private PropertyGetterDescriptor getter;
+    private PropertyGetterDescriptorImpl getter;
     private PropertySetterDescriptor setter;
 
     private PropertyDescriptorImpl(
@@ -119,7 +119,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         this.expectedThisObject = expectedThisObject;
     }
 
-    public void initialize(@Nullable PropertyGetterDescriptor getter, @Nullable PropertySetterDescriptor setter) {
+    public void initialize(@Nullable PropertyGetterDescriptorImpl getter, @Nullable PropertySetterDescriptor setter) {
         this.getter = getter;
         this.setter = setter;
     }
@@ -171,7 +171,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     @Override
     @Nullable
-    public PropertyGetterDescriptor getGetter() {
+    public PropertyGetterDescriptorImpl getGetter() {
         return getter;
     }
 
@@ -238,7 +238,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
         substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedExpectedThisObject, substitutedReceiverType);
 
-        PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
+        PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, Lists.newArrayList(getter.getAnnotations()),
                 DescriptorUtils.convertModality(getter.getModality(), false), convertVisibility(getter.getVisibility(), newVisibility),
                 getter.hasBody(), getter.isDefault(), kind, getter.getOriginal());

@@ -118,7 +118,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     }
 
     public static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
-        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
         if(getter == null) {
             getter = propertyDescriptor.getVisibility() != Visibilities.PRIVATE ? DescriptorResolver.createDefaultGetter(propertyDescriptor) : null;
             if(getter != null)

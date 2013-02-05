@@ -206,7 +206,7 @@ public final class JavaPropertyResolver {
             trace.record(BindingContext.OBJECT_DECLARATION_CLASS, propertyDescriptor, dummyClassDescriptorForEnumEntryObject);
         }
 
-        PropertyGetterDescriptor getterDescriptor = resolveGetter(visibility, kind, getter, propertyDescriptor);
+        PropertyGetterDescriptorImpl getterDescriptor = resolveGetter(visibility, kind, getter, propertyDescriptor);
         PropertySetterDescriptor setterDescriptor = resolveSetter(psiData, kind, propertyDescriptor);
 
         propertyDescriptor.initialize(getterDescriptor, setterDescriptor);
@@ -268,7 +268,7 @@ public final class JavaPropertyResolver {
 
     private static void initializeSetterAndGetter(
             PropertyDescriptor propertyDescriptor,
-            PropertyGetterDescriptor getterDescriptor,
+            PropertyGetterDescriptorImpl getterDescriptor,
             PropertySetterDescriptor setterDescriptor,
             JetType propertyType
     ) {
@@ -307,7 +307,7 @@ public final class JavaPropertyResolver {
     }
 
     @Nullable
-    private PropertyGetterDescriptor resolveGetter(
+    private PropertyGetterDescriptorImpl resolveGetter(
             Visibility visibility,
             CallableMemberDescriptor.Kind kind,
             PropertyPsiDataElement getter,
@@ -316,7 +316,7 @@ public final class JavaPropertyResolver {
         if (getter == null) {
             return null;
         }
-        return new PropertyGetterDescriptor(
+        return new PropertyGetterDescriptorImpl(
                 propertyDescriptor,
                 annotationResolver.resolveAnnotations(getter.getMember().getPsiMember()),
                 Modality.OPEN,
