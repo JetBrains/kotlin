@@ -770,7 +770,7 @@ public fun createMainFunction(file: PsiFile): String {
 
     if (classNamesWithMains.size() > 0) {
         var className: String? = classNamesWithMains.get(0)?.getFirst()
-        return MessageFormat.format("fun main(args : Array<String?>?) = {0}.main(args)", className)!!
+        return MessageFormat.format("fun main(args : Array<String>) = {0}.main(args as Array<String?>?)", className)!!
     }
 
     return ""

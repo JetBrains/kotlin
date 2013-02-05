@@ -35,4 +35,4 @@ var i3 : Identifier<Any?>? = Identifier.init<String?>("name")
 }
 }
 }
-fun main(args : Array<String?>?) = User.main(args)
+fun main(args : Array<String>) = User.main(args as Array<String?>?)
