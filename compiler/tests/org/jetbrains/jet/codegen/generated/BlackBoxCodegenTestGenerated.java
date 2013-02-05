@@ -1736,6 +1736,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2929.kt");
         }
         
+        @TestMetadata("kt3313.kt")
+        public void testKt3313() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt3313.kt");
+        }
+        
         @TestMetadata("kt395.kt")
         public void testKt395() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt395.kt");

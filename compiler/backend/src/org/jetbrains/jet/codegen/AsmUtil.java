@@ -47,6 +47,7 @@ import java.util.Set;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
+import static org.jetbrains.jet.codegen.CodegenUtil.isNullableType;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 
@@ -532,7 +533,7 @@ public class AsmUtil {
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
             JetType type = parameter.getReturnType();
-            if (type == null || type.isNullable()) continue;
+            if (type == null || isNullableType(type)) continue;
 
             int index = frameMap.getIndex(parameter);
             Type asmType = state.getTypeMapper().mapReturnType(type);
@@ -574,7 +575,7 @@ public class AsmUtil {
         if (!isDeclaredInJava(descriptor, state.getBindingContext())) return;
 
         JetType type = descriptor.getReturnType();
-        if (type == null || type.isNullable()) return;
+        if (type == null || isNullableType(type)) return;
 
         Type asmType = state.getTypeMapper().mapReturnType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {

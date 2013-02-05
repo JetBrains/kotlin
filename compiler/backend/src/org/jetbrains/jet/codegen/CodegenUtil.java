@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
@@ -278,5 +279,16 @@ public class CodegenUtil {
                         return ((MemberDescriptor) declaration).getModality() == ABSTRACT;
                     }
                 });
-}
+    }
+
+    /**
+     * A work-around of the generic nullability problem in the type checker
+     * @return true if a value of this type can be null
+     */
+    public static boolean isNullableType(@NotNull JetType type) {
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+            return TypeUtils.hasNullableSuperType(type);
+        }
+        return type.isNullable();
+    }
 }

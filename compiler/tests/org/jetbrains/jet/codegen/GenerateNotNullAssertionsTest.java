@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import jet.runtime.Intrinsics;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.MethodVisitor;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -138,10 +140,27 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         assertEquals(3, StringUtil.getOccurrenceCount(text, "checkParameterIsNotNull"));
     }
 
+    public void testAssertionForNotNullTypeParam() {
+        setUpEnvironment(true, true);
+
+        loadFile("notNullAssertions/assertionForNotNullTypeParam.kt");
+
+        assertTrue(generateToText().contains("checkParameterIsNotNull"));
+    }
+
+    public void testNoAssertionForNullableGenericMethod() {
+        setUpEnvironment(true, false);
+
+        loadFile("notNullAssertions/noAssertionForNullableGenericMethod.kt");
+
+        assertNoIntrinsicsMethodIsCalled(PackageClassUtils.getPackageClassName(FqName.ROOT));
+    }
 
     private void assertNoIntrinsicsMethodIsCalled(String className) {
         ClassFileFactory classes = generateClassesInFile();
         ClassReader reader = new ClassReader(classes.asBytes(className + ".class"));
+
+        final String intrinsics = JvmClassName.byFqNameWithoutInnerClasses(Intrinsics.class.getName()).getInternalName();
 
         reader.accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
@@ -152,8 +171,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
                     @Override
                     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
                         assertFalse(
-                                "jet/Intrinsics method is called: " + name + desc + "  Caller: " + callerName + callerDesc,
-                                "jet/Intrinsics".equals(owner)
+                                "Intrinsics method is called: " + name + desc + "  Caller: " + callerName + callerDesc,
+                                intrinsics.equals(owner)
                         );
                     }
                 };
