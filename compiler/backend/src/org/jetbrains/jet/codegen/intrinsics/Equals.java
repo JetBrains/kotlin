@@ -25,9 +25,7 @@ import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -45,36 +43,20 @@ public class Equals implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-
-        boolean leftNullable = true;
+        StackValue leftExpr;
         JetExpression rightExpr;
         if (element instanceof JetCallExpression) {
-            receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-            JetCallExpression jetCallExpression = (JetCallExpression) element;
-            JetExpression calleeExpression = jetCallExpression.getCalleeExpression();
-            if (calleeExpression != null) {
-                JetType leftType = codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, calleeExpression);
-                if (leftType != null) {
-                    leftNullable = leftType.isNullable();
-                }
-            }
+            leftExpr = receiver;
             rightExpr = arguments.get(0);
         }
         else {
-            JetExpression leftExpr = arguments.get(0);
-            JetType leftType = codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, leftExpr);
-            assert leftType != null;
-            leftNullable = leftType.isNullable();
-            codegen.gen(leftExpr).put(AsmTypeConstants.OBJECT_TYPE, v);
+            leftExpr = codegen.gen(arguments.get(0));
             rightExpr = arguments.get(1);
         }
 
-        JetType rightType = codegen.getBindingContext().get(BindingContext.EXPRESSION_TYPE, rightExpr);
+        leftExpr.put(AsmTypeConstants.OBJECT_TYPE, v);
         codegen.gen(rightExpr).put(AsmTypeConstants.OBJECT_TYPE, v);
 
-        assert rightType != null;
-        return genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.OBJECT_TYPE,
-                                               leftNullable,
-                                               rightType.isNullable());
+        return genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.OBJECT_TYPE);
     }
 }

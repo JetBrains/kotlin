@@ -379,66 +379,6 @@ public class AsmUtil {
         mv.visitInsn(L2I);
     }
 
-    static StackValue genNullSafeEquals(
-            InstructionAdapter v,
-            IElementType opToken,
-            boolean leftNullable,
-            boolean rightNullable
-    ) {
-        if (!leftNullable) {
-            v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-            if (opToken == JetTokens.EXCLEQ) {
-                genInvertBoolean(v);
-            }
-        }
-        else {
-            if (rightNullable) {
-                v.dup2();   // left right left right
-                Label rightNull = new Label();
-                v.ifnull(rightNull);
-                Label leftNull = new Label();
-                v.ifnull(leftNull);
-                v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                    genInvertBoolean(v);
-                }
-                Label end = new Label();
-                v.goTo(end);
-                v.mark(rightNull);
-                // left right left
-                Label bothNull = new Label();
-                v.ifnull(bothNull);
-                v.mark(leftNull);
-                v.pop2();
-                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 1 : 0);
-                v.goTo(end);
-                v.mark(bothNull);
-                v.pop2();
-                v.iconst(opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ ? 0 : 1);
-                v.mark(end);
-            }
-            else {
-                v.dup2();   // left right left right
-                v.pop();
-                Label leftNull = new Label();
-                v.ifnull(leftNull);
-                v.invokevirtual("java/lang/Object", "equals", "(Ljava/lang/Object;)Z");
-                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
-                    genInvertBoolean(v);
-                }
-                Label end = new Label();
-                v.goTo(end);
-                // left right
-                v.mark(leftNull);
-                v.pop2();
-                v.iconst(opToken == JetTokens.EXCLEQ ? 1 : 0);
-                v.mark(end);
-            }
-        }
-
-        return StackValue.onStack(Type.BOOLEAN_TYPE);
-    }
-
     static void genInvertBoolean(InstructionAdapter v) {
         v.iconst(1);
         v.xor(Type.INT_TYPE);
@@ -448,9 +388,7 @@ public class AsmUtil {
             InstructionAdapter v,
             IElementType opToken,
             Type leftType,
-            Type rightType,
-            boolean leftNullable,
-            boolean rightNullable
+            Type rightType
     ) {
         if ((isNumberPrimitive(leftType) || leftType.getSort() == Type.BOOLEAN) && leftType == rightType) {
             return StackValue.cmp(opToken, leftType);
@@ -460,7 +398,13 @@ public class AsmUtil {
                 return StackValue.cmp(opToken, leftType);
             }
             else {
-                return genNullSafeEquals(v, opToken, leftNullable, rightNullable);
+                v.invokestatic("jet/runtime/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z");
+
+                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                    genInvertBoolean(v);
+                }
+
+                return StackValue.onStack(Type.BOOLEAN_TYPE);
             }
         }
     }

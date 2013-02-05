@@ -20,6 +20,7 @@ import jet.Function0;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Intrinsics {
     private Intrinsics() {
     }
@@ -76,7 +77,11 @@ public class Intrinsics {
     public static int compare(int thisVal, int anotherVal) {
         return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
     }
-    
+
+    public static boolean areEqual(Object first, Object second) {
+        return first == null ? second == null : first.equals(second);
+    }
+
     public static <R> R stupidSync(Object lock, Function0<R> block) {
         synchronized (lock) {
             return block.invoke();

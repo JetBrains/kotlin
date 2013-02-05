@@ -2385,12 +2385,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateEquals(JetExpression left, JetExpression right, IElementType opToken) {
-        JetType leftJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
-        assert leftJetType != null;
-        Type leftType = asmType(leftJetType);
-        JetType rightJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, right);
-        assert rightJetType != null;
-        Type rightType = asmType(rightJetType);
+        Type leftType = expressionType(left);
+        Type rightType = expressionType(right);
+
         if (leftType.equals(JET_NOTHING_TYPE)) {
             return genCmpWithNull(right, rightType, opToken);
         }
@@ -2418,13 +2415,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(right, rightType);
         }
 
-        if (isPrimitive(leftType)) // both are primitive
-        {
-            return genEqualsForExpressionsOnStack(v, opToken, leftType, rightType, false, false);
-        }
-
-        return
-                genEqualsForExpressionsOnStack(v, opToken, leftType, rightType, leftJetType.isNullable(), rightJetType.isNullable());
+        return genEqualsForExpressionsOnStack(v, opToken, leftType, rightType);
     }
 
     private boolean isIntZero(JetExpression expr, Type exprType) {
@@ -3292,16 +3283,11 @@ The "returned" value of try expression with no finally is either the last expres
         return generateIsCheck(match, expression.getTypeRef(), expression.isNegated());
     }
 
-    private StackValue generateExpressionMatch(
-            StackValue expressionToMatch,
-            JetExpression patternExpression,
-            boolean expressionToMatchIsNullable
-    ) {
+    private StackValue generateExpressionMatch(StackValue expressionToMatch, JetExpression patternExpression) {
         if (expressionToMatch != null) {
             Type subjectType = expressionToMatch.type;
             expressionToMatch.dupReceiver(v);
             expressionToMatch.put(subjectType, v);
-            boolean patternIsNullable = false;
             JetType condJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, patternExpression);
             Type condType;
             if (isNumberPrimitive(subjectType) || subjectType.getSort() == Type.BOOLEAN) {
@@ -3314,11 +3300,9 @@ The "returned" value of try expression with no finally is either the last expres
             }
             else {
                 condType = OBJECT_TYPE;
-                patternIsNullable = condJetType != null && condJetType.isNullable();
             }
             gen(patternExpression, condType);
-            return genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, subjectType, condType, expressionToMatchIsNullable,
-                                                  patternIsNullable);
+            return genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, subjectType, condType);
         }
         else {
             return gen(patternExpression);
@@ -3394,9 +3378,7 @@ The "returned" value of try expression with no finally is either the last expres
             if (!whenEntry.isElse()) {
                 final JetWhenCondition[] conditions = whenEntry.getConditions();
                 for (int i = 0; i < conditions.length; i++) {
-                    StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal,
-                                                                      subjectJetType != null && subjectJetType.isNullable(),
-                                                                      conditions[i], nextCondition);
+                    StackValue conditionValue = generateWhenCondition(subjectType, subjectLocal, conditions[i]);
                     conditionValue.condJump(nextCondition, true, v);
                     if (i < conditions.length - 1) {
                         v.goTo(thisEntry);
@@ -3426,10 +3408,7 @@ The "returned" value of try expression with no finally is either the last expres
         return StackValue.onStack(resultType);
     }
 
-    private StackValue generateWhenCondition(
-            Type subjectType, int subjectLocal, boolean subjectIsNullable,
-            JetWhenCondition condition, @Nullable Label nextEntry
-    ) {
+    private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition) {
         if (condition instanceof JetWhenConditionInRange) {
             JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
             JetExpression rangeExpression = conditionInRange.getRangeExpression();
@@ -3461,7 +3440,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
         else if (condition instanceof JetWhenConditionWithExpression) {
             JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-            return generateExpressionMatch(match, patternExpression, subjectIsNullable);
+            return generateExpressionMatch(match, patternExpression);
         }
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
