@@ -246,7 +246,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             JetType returnType = getter.getReturnType();
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
-        PropertySetterDescriptor newSetter = setter == null ? null : new PropertySetterDescriptor(
+        PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
                 substitutedDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), false),
                 convertVisibility(setter.getVisibility(), newVisibility), setter.hasBody(), setter.isDefault(), kind, setter.getOriginal());
         if (newSetter != null) {

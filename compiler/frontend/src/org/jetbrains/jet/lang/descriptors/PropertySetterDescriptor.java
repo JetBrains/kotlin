@@ -17,85 +17,9 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-public class PropertySetterDescriptor extends PropertyAccessorDescriptorImpl {
-
-    private ValueParameterDescriptor parameter;
-    @NotNull
-    private final PropertySetterDescriptor original;
-
-    public PropertySetterDescriptor(
-            @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean hasBody,
-            boolean isDefault,
-            @NotNull Kind kind) {
-        this(correspondingProperty, annotations, modality, visibility, hasBody, isDefault, kind, null);
-    }
-
-    public PropertySetterDescriptor(
-            @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean hasBody,
-            boolean isDefault,
-            @NotNull Kind kind,
-            @Nullable PropertySetterDescriptor original) {
-        super(modality, visibility, correspondingProperty, annotations, Name.special("<set-" + correspondingProperty.getName() + ">"), hasBody, isDefault, kind);
-        this.original = original != null ? original : this;
-    }
-
-    public void initialize(@NotNull ValueParameterDescriptor parameter) {
-        assert this.parameter == null;
-        this.parameter = parameter;
-    }
-
-    public void initializeDefault() {
-        assert parameter == null;
-        parameter = new ValueParameterDescriptorImpl(this, 0, Collections.<AnnotationDescriptor>emptyList(), Name.special("<set-?>"), false, getCorrespondingProperty().getReturnType(), false, null);
-    }
-
+public interface PropertySetterDescriptor extends PropertyAccessorDescriptor {
     @NotNull
     @Override
-    public Set<? extends PropertyAccessorDescriptor> getOverriddenDescriptors() {
-        return super.getOverriddenDescriptors(false);
-    }
-
-    @NotNull
-    @Override
-    public List<ValueParameterDescriptor> getValueParameters() {
-        if (parameter == null) {
-            throw new IllegalStateException();
-        }
-        return Collections.singletonList(parameter);
-    }
-
-    @NotNull
-    @Override
-    public JetType getReturnType() {
-        return KotlinBuiltIns.getInstance().getUnitType();
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitPropertySetterDescriptor(this, data);
-    }
-
-    @NotNull
-    @Override
-    public PropertySetterDescriptor getOriginal() {
-        return this.original;
-    }
+    PropertySetterDescriptor getOriginal();
 }

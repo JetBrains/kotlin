@@ -1017,12 +1017,12 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         JetPropertyAccessor setter = property.getSetter();
-        PropertySetterDescriptor setterDescriptor = null;
+        PropertySetterDescriptorImpl setterDescriptor = null;
         if (setter != null) {
             List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, setter.getModifierList(), trace);
             JetParameter parameter = setter.getParameter();
 
-            setterDescriptor = new PropertySetterDescriptor(
+            setterDescriptor = new PropertySetterDescriptorImpl(
                     propertyDescriptor, annotations,
                     resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
@@ -1076,9 +1076,9 @@ public class DescriptorResolver {
         return setterDescriptor;
     }
 
-    public static PropertySetterDescriptor createDefaultSetter(PropertyDescriptor propertyDescriptor) {
-        PropertySetterDescriptor setterDescriptor;
-        setterDescriptor = new PropertySetterDescriptor(
+    public static PropertySetterDescriptorImpl createDefaultSetter(PropertyDescriptor propertyDescriptor) {
+        PropertySetterDescriptorImpl setterDescriptor;
+        setterDescriptor = new PropertySetterDescriptorImpl(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
                 false, true, CallableMemberDescriptor.Kind.DECLARATION);

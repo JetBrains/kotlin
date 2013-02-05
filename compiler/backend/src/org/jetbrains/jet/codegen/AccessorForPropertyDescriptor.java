@@ -44,7 +44,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
         }
     }
 
-    public static class Setter extends PropertySetterDescriptor {
+    public static class Setter extends PropertySetterDescriptorImpl {
         public Setter(AccessorForPropertyDescriptor property) {
             super(property, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.PUBLIC,
                   false,
