@@ -104,10 +104,10 @@ public class TypeResolver {
                         return;
                     }
 
+                    trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
+
                     if (classifierDescriptor instanceof TypeParameterDescriptor) {
                         TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) classifierDescriptor;
-
-                        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);
 
                         JetScope scopeForTypeParameter = getScopeForTypeParameter(typeParameterDescriptor, checkBounds);
                         if (scopeForTypeParameter instanceof ErrorUtils.ErrorScope) {
@@ -133,7 +133,6 @@ public class TypeResolver {
                     else if (classifierDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
 
-                        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
                         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
                         List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments(), trace, checkBounds);
                         List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
