@@ -18,14 +18,12 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 import java.util.Set;
 
-public interface PropertyDescriptor
-        extends Annotated, Named, DeclarationDescriptor, DeclarationDescriptorNonRoot, VariableDescriptor, CallableMemberDescriptor {
+public interface PropertyDescriptor extends VariableDescriptor, CallableMemberDescriptor {
     @Nullable
     PropertyGetterDescriptor getGetter();
 
