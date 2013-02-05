@@ -33,7 +33,7 @@ public open class Field(val identifier : Identifier,
         val declaration : String = docComments.toKotlin("\n", "", "\n") +
                                    modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
         if (initializer.isEmpty()) {
-            return declaration + ((if (isVal() && !isStatic() && writingAccesses == 1)
+            return declaration + ((if (isVal() && !isStatic() && writingAccesses != 0)
                 ""
             else
                 " = " + Converter.getDefaultInitializer(this)))

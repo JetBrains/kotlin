@@ -1,5 +1,5 @@
 public open class Identifier<T>(_myName : T?, _myHasDollar : Boolean) {
-private val myName : T? = null
+private val myName : T?
 private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
 public open fun getName() : T? {
