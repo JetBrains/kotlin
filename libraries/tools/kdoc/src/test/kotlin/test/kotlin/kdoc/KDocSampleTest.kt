@@ -38,6 +38,7 @@ class KDocSampleTest {
         val compiler = KDocCompiler()
 
         val args = KDocArguments()
+        args.kotlinHome = "../../../dist/kotlinc"
 
         args.setSourceDirs(arrayList("src/test/sample"))
 
