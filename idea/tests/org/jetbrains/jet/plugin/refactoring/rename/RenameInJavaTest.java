@@ -26,6 +26,7 @@ import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.refactoring.rename.RenameProcessor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.LocalFileSystemUtils;
 
 public class RenameInJavaTest extends MultiFileTestCase {
 
@@ -33,12 +34,7 @@ public class RenameInJavaTest extends MultiFileTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        String path = getTestDataPath() + getTestRoot();
-        VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
-        if (virtualFile != null) {
-            virtualFile.getChildren();
-            virtualFile.refresh(false, true);
-        }
+        LocalFileSystemUtils.refreshPath(getTestDataPath() + getTestRoot());
     }
 
     public void testRenameJavaClass() throws Exception {
