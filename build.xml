@@ -58,7 +58,7 @@
     <target name="init" depends="clean">
         <mkdir dir="${kotlin-home}"/>
         <mkdir dir="${kotlin-home}/lib"/>
-        <mkdir dir="${kotlin-home}/lib/alt"/>
+        <mkdir dir="${kotlin-home}/lib/tools"/>
     </target>
 
     <target name="prepareDist">
@@ -212,63 +212,24 @@
             <classpath refid="classpath"/>
         </javac>
 
-        <!-- JarJar Kotlin compiler & dependencies -->
-        <jarjar jarfile="${output}/kotlin-compiler-jarjar.jar">
-            <fileset dir="${output}/classes/compiler"/>
-            <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
+        <jar jarfile="${output}/kotlin-compiler-before-jarjar.jar">
+          <fileset dir="${output}/classes/compiler"/>
+          <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
 
-            <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-            <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar"/>
-            <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
-            <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
-            <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
-            <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
-            <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-util-4.0.jar"/>
-            <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
+          <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
+          <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar"/>
+          <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
+          <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
+          <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
+          <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
+          <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-util-4.0.jar"/>
+          <zipgroupfileset dir="${basedir}/dependencies" includes="jetbrains-asm-analysis-4.0.jar"/>
+        </jar>
 
-            <zap pattern="com.thoughtworks.xstream.converters.extended.ISO8601*"/>
-            <zap pattern="com.thoughtworks.xstream.converters.reflection.CGLIBEnhancedConverter*"/>
-            <zap pattern="com.thoughtworks.xstream.io.xml.Dom4J*"/>
-            <zap pattern="com.thoughtworks.xstream.io.xml.Xom*"/>
-            <zap pattern="com.thoughtworks.xstream.mapper.CGLIBMapper*"/>
-
-            <zap pattern="org.apache.log4j.jmx.Agent"/>
-            <zap pattern="org.apache.log4j.net.JMS*"/>
-            <zap pattern="org.apache.log4j.net.SMTP*"/>
-            <zap pattern="org.apache.log4j.or.jms.MessageRenderer"/>
-
-            <zap pattern="org.jdom.xpath.Jaxen*"/>
-
-            <zap pattern="org.mozilla.javascript.xml.impl.xmlbeans.**"/>
-
-            <rule pattern="com.intellij.**" result="org.jetbrains.jet.internal.com.intellij.@1"/>
-            <rule pattern="com.sun.jna.**" result="org.jetbrains.jet.internal.com.sun.jna.@1"/>
-            <rule pattern="org.apache.log4j.**" result="org.jetbrains.jet.internal.org.apache.log4j.@1"/>
-            <rule pattern="org.jdom.**" result="org.jetbrains.jet.internal.org.jdom.@1"/>
-            <rule pattern="JDOMAbout**" result="org.jetbrains.jet.internal.org.jdom.JDOMAbout@1"/>
-            <rule pattern="org.intellij.lang.annotations.**" result="org.jetbrains.jet.internal.org.intellij.lang.annotations.@1"/>
-            <rule pattern="com.google.**" result="org.jetbrains.jet.internal.com.google.@1"/>
-            <rule pattern="org.objectweb.asm.**" result="org.jetbrains.jet.internal.org.objectweb.asm.@1"/>
-            <rule pattern="com.sampullara.cli.**" result="org.jetbrains.jet.internal.com.sampullara.cli.@1"/>
-            <rule pattern="org.picocontainer.**" result="org.jetbrains.jet.internal.org.picocontainer.@1"/>
-            <rule pattern="gnu.trove.**" result="org.jetbrains.jet.internal.gnu.trove.@1"/>
-            <rule pattern="javax.inject.**" result="org.jetbrains.jet.internal.javax.inject.@1"/>
-            <rule pattern="com.thoughtworks.xstream.**" result="org.jetbrains.jet.internal.com.thoughtworks.xstream.@1"/>
-            <rule pattern="org.json.**" result="org.jetbrains.jet.internal.org.json.@1"/>
-            <rule pattern="org.mozilla.**" result="org.jetbrains.jet.internal.org.mozilla.@1"/>
-            <rule pattern="org.xmlpull.**" result="org.jetbrains.jet.internal.org.xmlpull.@1"/>
-            <rule pattern="org.kohsuke.args4j.**" result="org.jetbrains.jet.internal.org.kohsuke.args4j.@1"/>
-
-            <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
-
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-
-                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
-            </manifest>
-        </jarjar>
+        <jarjar-for-kotlin inputJar="${output}/kotlin-compiler-before-jarjar.jar"
+                           outputJar="${output}/kotlin-compiler-jarjar.jar"
+                           jarDescription="Kotlin Compiler"
+                           mainClass="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
 
         <delete file="${kotlin-home}/lib/kotlin-compiler.jar" failonerror="false"/>
 
@@ -465,8 +426,91 @@
         </jar>
     </target>
 
+  <target name="j2kConverter">
+    <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+
+    <cleandir dir="${output}/classes/j2k"/>
+
+    <javac destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+      <src path="${basedir}/j2k/src"/>
+      <src path="${basedir}/compiler/frontend/src"/>
+      <src path="${basedir}/compiler/util/src"/>
+      <classpath refid="classpath"/>
+    </javac>
+
+    <jar jarfile="${output}/j2k-before-jarjar.jar">
+      <fileset dir="${output}/classes/j2k" includes="org/jetbrains/jet/j2k/**"/>
+    </jar>
+
+    <jarjar-for-kotlin inputJar="${output}/j2k-before-jarjar.jar"
+                       outputJar="${kotlin-home}/lib/tools/j2k.jar"
+                       jarDescription="Java to Kotlin Converter"
+                       mainClass="org.jetbrains.jet.j2k.JavaToKotlinTranslator"/>
+
+  </target>
+
+  <macrodef name="jarjar-for-kotlin">
+    <attribute name="inputJar"/>
+    <attribute name="outputJar"/>
+    <attribute name="jarDescription"/>
+    <attribute name="mainClass"/>
+
+    <sequential>
+      <!-- JarJar Kotlin compiler & dependencies -->
+      <jarjar jarfile="@{outputJar}">
+        <zipfileset src="@{inputJar}"/>
+
+        <zap pattern="com.thoughtworks.xstream.converters.extended.ISO8601*"/>
+        <zap pattern="com.thoughtworks.xstream.converters.reflection.CGLIBEnhancedConverter*"/>
+        <zap pattern="com.thoughtworks.xstream.io.xml.Dom4J*"/>
+        <zap pattern="com.thoughtworks.xstream.io.xml.Xom*"/>
+        <zap pattern="com.thoughtworks.xstream.mapper.CGLIBMapper*"/>
+
+        <zap pattern="org.apache.log4j.jmx.Agent"/>
+        <zap pattern="org.apache.log4j.net.JMS*"/>
+        <zap pattern="org.apache.log4j.net.SMTP*"/>
+        <zap pattern="org.apache.log4j.or.jms.MessageRenderer"/>
+
+        <zap pattern="org.jdom.xpath.Jaxen*"/>
+
+        <zap pattern="org.mozilla.javascript.xml.impl.xmlbeans.**"/>
+
+        <rule pattern="com.intellij.**" result="org.jetbrains.jet.internal.com.intellij.@1"/>
+        <rule pattern="com.sun.jna.**" result="org.jetbrains.jet.internal.com.sun.jna.@1"/>
+        <rule pattern="org.apache.log4j.**" result="org.jetbrains.jet.internal.org.apache.log4j.@1"/>
+        <rule pattern="org.jdom.**" result="org.jetbrains.jet.internal.org.jdom.@1"/>
+        <rule pattern="JDOMAbout**" result="org.jetbrains.jet.internal.org.jdom.JDOMAbout@1"/>
+        <rule pattern="org.intellij.lang.annotations.**" result="org.jetbrains.jet.internal.org.intellij.lang.annotations.@1"/>
+        <rule pattern="com.google.**" result="org.jetbrains.jet.internal.com.google.@1"/>
+        <rule pattern="org.objectweb.asm.**" result="org.jetbrains.jet.internal.org.objectweb.asm.@1"/>
+        <rule pattern="com.sampullara.cli.**" result="org.jetbrains.jet.internal.com.sampullara.cli.@1"/>
+        <rule pattern="org.picocontainer.**" result="org.jetbrains.jet.internal.org.picocontainer.@1"/>
+        <rule pattern="gnu.trove.**" result="org.jetbrains.jet.internal.gnu.trove.@1"/>
+        <rule pattern="javax.inject.**" result="org.jetbrains.jet.internal.javax.inject.@1"/>
+        <rule pattern="com.thoughtworks.xstream.**" result="org.jetbrains.jet.internal.com.thoughtworks.xstream.@1"/>
+        <rule pattern="org.json.**" result="org.jetbrains.jet.internal.org.json.@1"/>
+        <rule pattern="org.mozilla.**" result="org.jetbrains.jet.internal.org.mozilla.@1"/>
+        <rule pattern="org.xmlpull.**" result="org.jetbrains.jet.internal.org.xmlpull.@1"/>
+        <rule pattern="org.kohsuke.args4j.**" result="org.jetbrains.jet.internal.org.kohsuke.args4j.@1"/>
+
+        <manifest>
+          <attribute name="Built-By" value="JetBrains"/>
+
+          <attribute name="Implementation-Vendor" value="JetBrains"/>
+          <attribute name="Implementation-Title" value="@{jarDescription}"/>
+          <attribute name="Implementation-Version" value="${build.number}"/>
+
+          <attribute name="Main-Class" value="@{mainClass}"/>
+        </manifest>
+      </jarjar>
+
+      <delete file="@{inputJar}" failonerror="false"/>
+    </sequential>
+  </macrodef>
+
     <target name="dist"
-            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,runtime,jslib"/>
+            depends="init,prepareDist,compileGenerators,invokeGenerators,compiler,compilerSources,antTools,jdkAnnotations,runtime,jslib,j2kConverter"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
