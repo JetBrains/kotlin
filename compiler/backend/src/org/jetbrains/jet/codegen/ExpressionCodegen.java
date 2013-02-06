@@ -2669,21 +2669,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitPostfixExpression(JetPostfixExpression expression, StackValue receiver) {
         if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
-            JetExpression baseExpression = expression.getBaseExpression();
-            JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, baseExpression);
-            StackValue base = genQualified(receiver, baseExpression);
-            if (type != null && type.isNullable()) {
-                base.put(base.type, v);
-                v.dup();
-                Label ok = new Label();
-                v.ifnonnull(ok);
-                v.invokestatic("jet/runtime/Intrinsics", "throwNpe", "()V");
-                v.mark(ok);
-                return StackValue.onStack(base.type);
-            }
-            else {
+            StackValue base = genQualified(receiver, expression.getBaseExpression());
+            if (isPrimitive(base.type)) {
                 return base;
             }
+            base.put(base.type, v);
+            v.dup();
+            Label ok = new Label();
+            v.ifnonnull(ok);
+            v.invokestatic("jet/runtime/Intrinsics", "throwNpe", "()V");
+            v.mark(ok);
+            return StackValue.onStack(base.type);
         }
         DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         if (op instanceof FunctionDescriptor) {
