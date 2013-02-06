@@ -3,7 +3,7 @@ package test
 public open class ConstructorInProtectedStaticNestedClass : java.lang.Object {
     public constructor ConstructorInProtectedStaticNestedClass()
     
-    protected_static open class Inner : java.lang.Object {
+    protected/*protected static*/ open class Inner : java.lang.Object {
         protected constructor Inner()
     }
 }
