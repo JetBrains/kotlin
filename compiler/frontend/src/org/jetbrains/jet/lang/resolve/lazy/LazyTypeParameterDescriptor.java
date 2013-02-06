@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -44,19 +45,15 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
 
     private final JetTypeParameter jetTypeParameter;
     private final Variance variance;
+    private final boolean reified;
     private final int index;
     private final LazyClassDescriptor containingDeclaration;
     private final Name name;
 
-    private TypeConstructor typeConstructor;
-    private JetType defaultType;
-
-    private Set<JetType> upperBounds;
-    private JetType upperBoundsAsType;
-
-    private Set<JetType> classObjectBounds;
-    private JetType classObjectBoundsAsType;
-    private final boolean reified;
+    private final LazyValue<TypeConstructor> typeConstructor;
+    private final LazyValue<JetType> defaultType;
+    private final LazyValue<Set<JetType>> upperBounds;
+    private final LazyValue<JetType> upperBoundsAsType;
 
     public LazyTypeParameterDescriptor(
             @NotNull ResolveSession resolveSession,
@@ -64,13 +61,38 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
             @NotNull JetTypeParameter jetTypeParameter,
             int index) {
         this.resolveSession = resolveSession;
-        // TODO: different smart pointer implementations in IDE and compiler
         this.jetTypeParameter = jetTypeParameter;
         this.variance = jetTypeParameter.getVariance();
         this.containingDeclaration = containingDeclaration;
         this.index = index;
         this.name = jetTypeParameter.getNameAsName();
         this.reified = jetTypeParameter.hasModifier(JetTokens.REIFIED_KEYWORD);
+
+        StorageManager storageManager = resolveSession.getStorageManager();
+        this.typeConstructor = storageManager.createLazyValue(new Computable<TypeConstructor>() {
+            @Override
+            public TypeConstructor compute() {
+                return createTypeConstructor();
+            }
+        });
+        this.defaultType = storageManager.createLazyValue(new Computable<JetType>() {
+            @Override
+            public JetType compute() {
+                return createDefaultType();
+            }
+        });
+        this.upperBounds = storageManager.createLazyValue(new Computable<Set<JetType>>() {
+            @Override
+            public Set<JetType> compute() {
+                return resolveUpperBounds();
+            }
+        });
+        this.upperBoundsAsType = storageManager.createLazyValue(new Computable<JetType>() {
+            @Override
+            public JetType compute() {
+                return computeUpperBoundsAsType();
+            }
+        });
     }
 
     @Override
@@ -86,28 +108,30 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public Set<JetType> getUpperBounds() {
-        if (upperBounds == null) {
-            upperBounds = Sets.newLinkedHashSet();
+        return upperBounds.get();
+    }
 
-            JetTypeParameter jetTypeParameter = this.jetTypeParameter;
+    @NotNull
+    private Set<JetType> resolveUpperBounds() {
+        Set<JetType> upperBounds = Sets.newLinkedHashSet();
 
-            resolveUpperBoundsFromWhereClause(upperBounds, false);
+        JetTypeParameter jetTypeParameter = this.jetTypeParameter;
 
-            JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
-            if (extendsBound != null) {
-                upperBounds.add(resolveBoundType(extendsBound));
-            }
+        resolveUpperBoundsFromWhereClause(upperBounds, false);
 
-            if (upperBounds.isEmpty()) {
-                upperBounds.add(KotlinBuiltIns.getInstance().getDefaultBound());
-            }
+        JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
+        if (extendsBound != null) {
+            upperBounds.add(resolveBoundType(extendsBound));
         }
+
+        if (upperBounds.isEmpty()) {
+            upperBounds.add(KotlinBuiltIns.getInstance().getDefaultBound());
+        }
+
         return upperBounds;
     }
 
     private void resolveUpperBoundsFromWhereClause(Set<JetType> upperBounds, boolean forClassObject) {
-        JetTypeParameter jetTypeParameter = this.jetTypeParameter;
-
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(jetTypeParameter, JetClassOrObject.class);
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
@@ -138,13 +162,16 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public JetType getUpperBoundsAsType() {
+        return upperBoundsAsType.get();
+    }
+
+    @NotNull
+    private JetType computeUpperBoundsAsType() {
+        Set<JetType> upperBounds = getUpperBounds();
+        assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
+        JetType upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
         if (upperBoundsAsType == null) {
-            Set<JetType> upperBounds = getUpperBounds();
-            assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
-            upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
-            if (upperBoundsAsType == null) {
-                upperBoundsAsType = KotlinBuiltIns.getInstance().getNothingType();
-            }
+            upperBoundsAsType = KotlinBuiltIns.getInstance().getNothingType();
         }
         return upperBoundsAsType;
     }
@@ -164,56 +191,60 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
-        if (typeConstructor == null) {
-            typeConstructor = new TypeConstructor() {
-                @NotNull
-                @Override
-                public Collection<JetType> getSupertypes() {
-                    return LazyTypeParameterDescriptor.this.getUpperBounds();
-                }
+        return typeConstructor.get();
+    }
 
-                @NotNull
-                @Override
-                public List<TypeParameterDescriptor> getParameters() {
-                    return Collections.emptyList();
-                }
+    @NotNull
+    private TypeConstructor createTypeConstructor() {
+        return new TypeConstructor() {
+            @NotNull
+            @Override
+            public Collection<JetType> getSupertypes() {
+                return LazyTypeParameterDescriptor.this.getUpperBounds();
+            }
 
-                @Override
-                public boolean isSealed() {
-                    return false;
-                }
+            @NotNull
+            @Override
+            public List<TypeParameterDescriptor> getParameters() {
+                return Collections.emptyList();
+            }
 
-                @Override
-                public ClassifierDescriptor getDeclarationDescriptor() {
-                    return LazyTypeParameterDescriptor.this;
-                }
+            @Override
+            public boolean isSealed() {
+                return false;
+            }
 
-                @Override
-                public List<AnnotationDescriptor> getAnnotations() {
-                    return LazyTypeParameterDescriptor.this.getAnnotations();
-                }
+            @Override
+            public ClassifierDescriptor getDeclarationDescriptor() {
+                return LazyTypeParameterDescriptor.this;
+            }
 
-                @Override
-                public String toString() {
-                    return getName().toString();
-                }
-            };
-        }
-        return typeConstructor;
+            @Override
+            public List<AnnotationDescriptor> getAnnotations() {
+                return LazyTypeParameterDescriptor.this.getAnnotations();
+            }
+
+            @Override
+            public String toString() {
+                return getName().toString();
+            }
+        };
     }
 
     @NotNull
     @Override
     public JetType getDefaultType() {
-        if (defaultType == null) {
-            defaultType = new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
-                @Override
-                protected JetScope compute() {
-                    return getUpperBoundsAsType().getMemberScope();
-                }
-            }));
-        }
-        return defaultType;
+        return defaultType.get();
+    }
+
+    @NotNull
+    private JetType createDefaultType() {
+        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(new RecursionIntolerantLazyValue<JetScope>() {
+                        @Override
+                        protected JetScope compute() {
+                            return getUpperBoundsAsType().getMemberScope();
+                        }
+                    }));
     }
 
     @Override
