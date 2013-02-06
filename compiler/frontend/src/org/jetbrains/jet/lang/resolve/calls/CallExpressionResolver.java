@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -153,7 +154,8 @@ public class CallExpressionResolver {
     ) {
 
         CallResolver callResolver = expressionTypingServices.getCallResolver();
-        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(context.toCallResolutionContext(call, resolveMode));
+        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
+                BasicCallResolutionContext.create(context, call, resolveMode));
         if (!results.isNothing()) {
             checkSuper(receiver, results, context.trace, callExpression);
             result[0] = true;
@@ -177,7 +179,7 @@ public class CallExpressionResolver {
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
         OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(
-                context.replaceBindingTrace(traceForVariable).toCallResolutionContext(call, ResolveMode.NORMAL));
+                BasicCallResolutionContext.create(context.replaceBindingTrace(traceForVariable), call, ResolveMode.NORMAL));
         if (!resolutionResult.isNothing()) {
             traceForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);

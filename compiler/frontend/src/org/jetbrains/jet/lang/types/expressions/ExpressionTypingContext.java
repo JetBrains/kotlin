@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -104,6 +105,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
-        return expressionTypingServices.getCallResolver().resolveCallWithGivenName(toCallResolutionContext(call, ResolveMode.NORMAL), functionReference, name);
+        return expressionTypingServices.getCallResolver().resolveCallWithGivenName(
+                BasicCallResolutionContext.create(this, call, ResolveMode.NORMAL), functionReference, name);
     }
 }

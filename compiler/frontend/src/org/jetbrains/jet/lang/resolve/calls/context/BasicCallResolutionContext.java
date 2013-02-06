@@ -36,6 +36,10 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
     }
+    @NotNull
+    public static BasicCallResolutionContext create(@NotNull ResolutionContext context, @NotNull Call call, @NotNull ResolveMode resolveMode) {
+        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, resolveMode, context.namespacesAllowed);
+    }
 
     private BasicCallResolutionContext(
             BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, ResolveMode resolveMode, boolean namespacesAllowed
