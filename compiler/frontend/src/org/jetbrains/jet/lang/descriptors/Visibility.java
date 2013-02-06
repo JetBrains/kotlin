@@ -43,5 +43,10 @@ public abstract class Visibility {
         return name;
     }
 
+    @NotNull
+    public Visibility normalize() {
+        return this;
+    }
+
     protected abstract boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from);
 }

@@ -1,0 +1,11 @@
+package test
+
+public open class Base : java.lang.Object {
+    public constructor Base()
+    protected/*protected and package*/ open fun foo() : Unit
+}
+
+internal final class Derived : test.Base {
+    public constructor Derived()
+    protected open override /*1*/ fun foo() : Unit
+}

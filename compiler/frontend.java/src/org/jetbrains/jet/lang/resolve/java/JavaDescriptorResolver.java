@@ -55,6 +55,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         public String toString() {
             return "public/*package*/";
         }
+
+        @NotNull
+        @Override
+        public Visibility normalize() {
+            return Visibilities.INTERNAL;
+        }
     };
 
     public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", false) {
@@ -89,6 +95,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         public String toString() {
             return "protected/*protected static*/";
         }
+
+        @NotNull
+        @Override
+        public Visibility normalize() {
+            return Visibilities.PROTECTED;
+        }
     };
 
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", false) {
@@ -121,6 +133,12 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         @Override
         public String toString() {
             return "protected/*protected and package*/";
+        }
+
+        @NotNull
+        @Override
+        public Visibility normalize() {
+            return Visibilities.PROTECTED;
         }
     };
 

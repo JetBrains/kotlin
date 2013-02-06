@@ -264,17 +264,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     private static String displayableVisibility(MemberDescriptor descriptor) {
-        Visibility visibility = descriptor.getVisibility();
-        if (visibility == Visibilities.INTERNAL) {
-            return "";
-        }
-        if (visibility == JavaDescriptorResolver.PACKAGE_VISIBILITY) {
-            return "internal ";
-        }
-        if (visibility == JavaDescriptorResolver.PROTECTED_AND_PACKAGE) {
-            return "protected ";
-        }
-        return visibility.toString() + " ";
+        Visibility visibility = descriptor.getVisibility().normalize();
+        return visibility != Visibilities.INTERNAL ? visibility.toString() + " " : "";
     }
 
     @NotNull

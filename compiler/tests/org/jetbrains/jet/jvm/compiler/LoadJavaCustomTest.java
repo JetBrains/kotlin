@@ -83,7 +83,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
     }
 
     public void testPackageLocalVisibility() throws Exception {
-        String dir = PATH + "/packageLocalVisibility";
+        String dir = PATH + "/packageLocalVisibility/simple/";
         String javaDir = dir + "/java";
         doTest(dir + "/expected.txt",
                javaDir + "/test/JFrame.java",
@@ -163,15 +163,23 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
 
     public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironmentManagement {
         public void testSubclassingKotlinInJava() throws Exception {
-            doTest();
+            doTest(PATH + "/" + getTestName(true));
         }
 
         public void testDeepSubclassingKotlinInJava() throws Exception {
-            doTest();
+            doTest(PATH + "/" + getTestName(true));
         }
 
-        public void doTest() throws Exception {
-            File dir = new File(PATH + "/" + getTestName(true));
+        public void testPackageInheritance() throws Exception {
+            doTest(PATH + "/packageLocalVisibility/inheritance");
+        }
+
+        public void testProtectedPackageInheritance() throws Exception {
+            doTest(PATH + "/protectedPackageVisibility/inheritance");
+        }
+
+        public void doTest(String path) throws Exception {
+            File dir = new File(path);
 
             CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                     ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, new File(dir, "java"));
