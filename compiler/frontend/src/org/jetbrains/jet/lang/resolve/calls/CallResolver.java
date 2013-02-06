@@ -342,7 +342,7 @@ public class CallResolver {
         ResolvedCallImpl<D> copy = CallResolverUtil.copy((ResolvedCallImpl<D>) resolvedCall, context);
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
                 CallCandidateResolutionContext.createForCallBeingAnalyzed(copy, context, tracing);
-        candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext);
+        candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
 
         if (copy.getStatus().isSuccess()) {
             return OverloadResolutionResultsImpl.success(copy);

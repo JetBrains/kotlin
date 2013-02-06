@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -213,7 +215,8 @@ public class CandidateResolver {
     }
 
     public <D extends CallableDescriptor> void completeTypeInferenceDependentOnExpectedTypeForCall(
-            CallCandidateResolutionContext<D> context
+            @NotNull CallCandidateResolutionContext<D> context,
+            boolean isInnerCall
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         assert resolvedCall.hasUnknownTypeParameters();
@@ -264,6 +267,12 @@ public class CandidateResolver {
         if (status == ResolutionStatus.UNKNOWN_STATUS || status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
             resolvedCall.setStatusToSuccess();
         }
+        if (isInnerCall) {
+            PsiElement callElement = context.call.getCallElement();
+            if (callElement instanceof JetCallExpression) {
+                DataFlowUtils.checkType(resolvedCall.getResultingDescriptor().getReturnType(), (JetCallExpression) callElement, context, context.dataFlowInfo);
+            }
+        }
     }
 
     public <D extends CallableDescriptor> void completeValueArgumentsInference(
@@ -291,7 +300,7 @@ public class CandidateResolver {
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
                         storedContextForArgument.replaceResolveMode(ResolveMode.NORMAL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
                 if (contextForArgument.candidateCall.hasUnknownTypeParameters()) {
-                    completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument);
+                    completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
                 }
                 else {
                     completeValueArgumentsInference(contextForArgument);
