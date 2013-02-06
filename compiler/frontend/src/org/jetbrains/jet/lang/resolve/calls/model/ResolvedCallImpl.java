@@ -150,7 +150,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
             parameterMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
         }
 
-        Map<ValueParameterDescriptor, ResolvedValueArgument> originalValueArguments = Maps.newHashMap(valueArguments);
+        Map<ValueParameterDescriptor, ResolvedValueArgument> originalValueArguments = Maps.newLinkedHashMap(valueArguments);
         valueArguments.clear();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : originalValueArguments.entrySet()) {
             ValueParameterDescriptor substitutedVersion = parameterMap.get(entry.getKey().getOriginal());
