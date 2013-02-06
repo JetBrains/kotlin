@@ -311,19 +311,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderVisibility(@NotNull Visibility visibility, @NotNull StringBuilder builder) {
         if (!modifiers) return;
-        if ("package".equals(visibility.toString())) {
-            builder.append("public/*package*/ ");
-        }
-        else if ("protected_static".equals(visibility.toString())) {
-            builder.append("protected/*protected static*/ ");
-        }
-        else if ("protected_and_package".equals(visibility.toString())) {
-            builder.append("protected/*protected and package*/ ");
-        }
-
-        else{
-            builder.append(renderKeyword(visibility.toString())).append(" ");
-        }
+        builder.append(renderKeyword(visibility.toString())).append(" ");
     }
 
     private void renderModality(@NotNull Modality modality, @NotNull StringBuilder builder) {

@@ -50,6 +50,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (visibility == Visibilities.PRIVATE) return 1;
             return -1;
         }
+
+        @Override
+        public String toString() {
+            return "public/*package*/";
+        }
     };
 
     public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", false) {
@@ -79,6 +84,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             }
             return isVisible(what, fromClass.getContainingDeclaration());
         }
+
+        @Override
+        public String toString() {
+            return "protected/*protected static*/";
+        }
     };
 
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", false) {
@@ -106,6 +116,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             if (visibility == Visibilities.INTERNAL) return null;
             if (visibility == Visibilities.PRIVATE) return 1;
             return -1;
+        }
+
+        @Override
+        public String toString() {
+            return "protected/*protected and package*/";
         }
     };
 
