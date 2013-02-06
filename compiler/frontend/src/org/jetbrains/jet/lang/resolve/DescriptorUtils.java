@@ -135,6 +135,12 @@ public class DescriptorUtils {
         return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
     }
 
+    public static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
+        NamespaceDescriptor whatPackage = DescriptorUtils.getParentOfType(first, NamespaceDescriptor.class, false);
+        NamespaceDescriptor fromPackage = DescriptorUtils.getParentOfType(second, NamespaceDescriptor.class, false);
+        return fromPackage != null && whatPackage != null && whatPackage.equals(fromPackage);
+    }
+
     @Nullable
     public static DeclarationDescriptor findTopLevelParent(@NotNull DeclarationDescriptor declarationDescriptor) {
         DeclarationDescriptor descriptor = declarationDescriptor;

@@ -70,6 +70,7 @@ public class AsmUtil {
             .put(Visibilities.PRIVATE, ACC_PRIVATE)
             .put(Visibilities.PROTECTED, ACC_PROTECTED)
             .put(JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY, ACC_PROTECTED)
+            .put(JavaDescriptorResolver.PROTECTED_AND_PACKAGE, ACC_PROTECTED)
             .put(Visibilities.PUBLIC, ACC_PUBLIC)
             .put(Visibilities.INTERNAL, ACC_PUBLIC)
             .put(Visibilities.LOCAL, NO_FLAG_LOCAL)

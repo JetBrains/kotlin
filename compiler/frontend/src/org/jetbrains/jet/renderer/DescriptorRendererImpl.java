@@ -317,6 +317,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         else if ("protected_static".equals(visibility.toString())) {
             builder.append("protected/*protected static*/ ");
         }
+        else if ("protected_and_package".equals(visibility.toString())) {
+            builder.append("protected/*protected and package*/ ");
+        }
+
         else{
             builder.append(renderKeyword(visibility.toString())).append(" ");
         }

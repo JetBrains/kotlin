@@ -95,7 +95,7 @@ public final class DescriptorResolverUtils {
             if (modifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
                 return JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY;
             }
-            return Visibilities.PROTECTED;
+            return JavaDescriptorResolver.PROTECTED_AND_PACKAGE;
         }
         return JavaDescriptorResolver.PACKAGE_VISIBILITY;
     }
@@ -121,7 +121,7 @@ public final class DescriptorResolverUtils {
     public static Visibility getConstructorVisibility(ClassDescriptor classDescriptor) {
         Visibility containingClassVisibility = classDescriptor.getVisibility();
         if (containingClassVisibility == JavaDescriptorResolver.PROTECTED_STATIC_VISIBILITY) {
-            return Visibilities.PROTECTED;
+            return JavaDescriptorResolver.PROTECTED_AND_PACKAGE;
         }
         return containingClassVisibility;
     }

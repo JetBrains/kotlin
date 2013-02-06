@@ -4,6 +4,6 @@ public open class ConstructorInProtectedStaticNestedClass : java.lang.Object {
     public constructor ConstructorInProtectedStaticNestedClass()
     
     protected/*protected static*/ open class Inner : java.lang.Object {
-        protected constructor Inner()
+        protected/*protected and package*/ constructor Inner()
     }
 }
