@@ -433,6 +433,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             blackBoxFileByFullPath("compiler/testData/codegen/box/casts/asSafe.kt");
         }
         
+        @TestMetadata("castGenericNull.kt")
+        public void testCastGenericNull() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/casts/castGenericNull.kt");
+        }
+        
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/casts/is.kt");

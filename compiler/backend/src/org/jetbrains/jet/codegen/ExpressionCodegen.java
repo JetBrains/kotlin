@@ -3237,24 +3237,22 @@ The "returned" value of try expression with no finally is either the last expres
             assert rightType != null;
             Type rightTypeAsm = boxType(asmType(rightType));
             JetExpression left = expression.getLeft();
-            JetType leftType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
                 StackValue value = genQualified(receiver, left);
                 value.put(boxType(value.type), v);
-                assert leftType != null;
 
                 if (opToken != JetTokens.AS_SAFE) {
-                    if (leftType.isNullable()) {
-                        if (!rightType.isNullable()) {
-                            v.dup();
-                            Label nonnull = new Label();
-                            v.ifnonnull(nonnull);
-                            throwNewException(CLASS_TYPE_CAST_EXCEPTION, DescriptorRenderer.TEXT.renderType(leftType) +
-                                                                         " cannot be cast to " +
-                                                                         DescriptorRenderer.TEXT.renderType(rightType));
-                            v.mark(nonnull);
-                        }
+                    if (!rightType.isNullable()) {
+                        v.dup();
+                        Label nonnull = new Label();
+                        v.ifnonnull(nonnull);
+                        JetType leftType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
+                        assert leftType != null;
+                        throwNewException(CLASS_TYPE_CAST_EXCEPTION, DescriptorRenderer.TEXT.renderType(leftType) +
+                                                                     " cannot be cast to " +
+                                                                     DescriptorRenderer.TEXT.renderType(rightType));
+                        v.mark(nonnull);
                     }
                 }
                 else {
@@ -3271,7 +3269,7 @@ The "returned" value of try expression with no finally is either the last expres
                 return StackValue.onStack(rightTypeAsm);
             }
             else {
-                throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
+                throw new UnsupportedOperationException("Don't know how to handle non-class types in as/as? : " + descriptor);
             }
         }
     }
