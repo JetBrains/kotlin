@@ -142,6 +142,10 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doOverrideDirectoryTest("getFooBar");
     }
 
+    public void testJavaMethodWithPackageProtectedVisibility() {
+        doOverrideDirectoryTest("getFooBar");
+    }
+
     public void testInheritVisibilities() {
         doMultiOverrideFileTest();
     }

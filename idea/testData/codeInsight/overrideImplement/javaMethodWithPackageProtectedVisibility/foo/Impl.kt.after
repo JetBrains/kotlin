@@ -1,0 +1,10 @@
+package foo
+
+import foo.Intf
+
+class Impl(): Intf() {
+
+    protected override fun getFooBar(): String? {
+        return super<Intf>.getFooBar()
+    }
+}

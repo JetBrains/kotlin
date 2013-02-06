@@ -271,6 +271,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (visibility == JavaDescriptorResolver.PACKAGE_VISIBILITY) {
             return "internal ";
         }
+        if (visibility == JavaDescriptorResolver.PROTECTED_AND_PACKAGE) {
+            return "protected ";
+        }
         return visibility.toString() + " ";
     }
 
