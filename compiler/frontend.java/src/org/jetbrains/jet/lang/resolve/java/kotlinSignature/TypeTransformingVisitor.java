@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.KotlinToJavaTypesMap;
@@ -186,18 +187,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         Variance altProjectionKind;
         if (type instanceof JetUserType) {
             JetTypeProjection typeProjection = ((JetUserType) type).getTypeArguments().get(i);
-            switch (typeProjection.getProjectionKind()) {
-                case IN:
-                    altProjectionKind = Variance.IN_VARIANCE;
-                    break;
-                case OUT:
-                    altProjectionKind = Variance.OUT_VARIANCE;
-                    break;
-                case STAR:
-                    throw new IllegalStateException("star projection should have been processed above");
-                default:
-                    altProjectionKind = Variance.INVARIANT;
-            }
+            altProjectionKind = TypeResolver.resolveProjectionKind(typeProjection.getProjectionKind());
             if (altProjectionKind != projectionKind && projectionKind != Variance.INVARIANT) {
                 throw new AlternativeSignatureMismatchException("Projection kind mismatch, actual: %s, in alternative signature: %s",
                                                                 projectionKind, altProjectionKind);

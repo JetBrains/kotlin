@@ -304,19 +304,7 @@ public class TypeResolver {
             else {
                 // TODO : handle the Foo<in *> case
                 type = resolveType(scope, argumentElement.getTypeReference(), trace, checkBounds);
-                Variance kind = null;
-                switch (projectionKind) {
-                    case IN:
-                        kind = IN_VARIANCE;
-                        break;
-                    case OUT:
-                        kind = OUT_VARIANCE;
-                        break;
-                    case NONE:
-                        kind = INVARIANT;
-                        break;
-                }
-                assert kind != null;
+                Variance kind = resolveProjectionKind(projectionKind);
                 if (constructor.getParameters().size() > i) {
                     TypeParameterDescriptor parameterDescriptor = constructor.getParameters().get(i);
                     if (kind != INVARIANT && parameterDescriptor.getVariance() != INVARIANT) {
@@ -332,6 +320,26 @@ public class TypeResolver {
             }
         }
         return arguments;
+    }
+
+    @NotNull
+    public static Variance resolveProjectionKind(@NotNull JetProjectionKind projectionKind) {
+        Variance kind = null;
+        switch (projectionKind) {
+            case IN:
+                kind = IN_VARIANCE;
+                break;
+            case OUT:
+                kind = OUT_VARIANCE;
+                break;
+            case NONE:
+                kind = INVARIANT;
+                break;
+            default:
+                // NOTE: Star projections must be handled before this method is called
+                throw new IllegalStateException("Illegal projection kind:" + projectionKind);
+        }
+        return kind;
     }
 
     @Nullable
