@@ -27,6 +27,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 public class LockBasedStorageManager implements StorageManager {
@@ -42,6 +43,11 @@ public class LockBasedStorageManager implements StorageManager {
     @Override
     public <K, V> ConcurrentMap<K, V> createConcurrentMap() {
         return new ConcurrentHashMap<K, V>();
+    }
+
+    @Override
+    public <E> Collection<E> createConcurrentCollection() {
+        return new ConcurrentLinkedQueue<E>();
     }
 
     @NotNull

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -26,23 +25,26 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, PackageMemberDeclarationProvider> {
 
-    private final Map<Name, NamespaceDescriptor> packageDescriptors = Maps.newHashMap();
+    private final ConcurrentMap<Name, NamespaceDescriptor> packageDescriptors;
 
     public LazyPackageMemberScope(@NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider,
             @NotNull NamespaceDescriptor thisPackage) {
         super(resolveSession, declarationProvider, thisPackage);
+
+        this.packageDescriptors = resolveSession.getStorageManager().createConcurrentMap();
     }
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         NamespaceDescriptor known = packageDescriptors.get(name);
         if (known != null) return known;
+
         if (allDescriptorsComputed) return null;
 
         if (!declarationProvider.isPackageDeclared(name)) return null;
@@ -52,8 +54,10 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
         assert packageMemberDeclarationProvider != null : "Package is declared, but declaration provider is not found: " + name;
         NamespaceDescriptor namespaceDescriptor = new LazyPackageDescriptor(thisDescriptor, name, resolveSession, packageMemberDeclarationProvider);
 
-        packageDescriptors.put(name, namespaceDescriptor);
-        allDescriptors.add(namespaceDescriptor);
+        NamespaceDescriptor oldValue = packageDescriptors.putIfAbsent(name, namespaceDescriptor);
+        if (oldValue != null) return oldValue;
+
+        registerDescriptor(namespaceDescriptor);
 
         return namespaceDescriptor;
     }

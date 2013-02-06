@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,8 +66,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         Collection<T> extract(@NotNull JetType extractFrom, @NotNull Name name);
     }
 
-    private ConstructorDescriptor primaryConstructor;
-    private boolean primaryConstructorResolved = false;
+    private final LazyValue<Optional<ConstructorDescriptor>> primaryConstructor;
 
     public LazyClassMemberScope(
             @NotNull ResolveSession resolveSession,
@@ -73,6 +74,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @NotNull LazyClassDescriptor thisClass
     ) {
         super(resolveSession, declarationProvider, thisClass);
+        this.primaryConstructor = resolveSession.getStorageManager().createLazyValue(new Computable<Optional<ConstructorDescriptor>>() {
+            @Override
+            public Optional<ConstructorDescriptor> compute() {
+                return Optional.fromNullable(resolvePrimaryConstructor());
+            }
+        });
     }
 
     @NotNull
@@ -331,9 +338,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
-        if (primaryConstructorResolved) {
-            return primaryConstructor;
-        }
+        return primaryConstructor.get().orNull();
+    }
+
+    @Nullable
+    private ConstructorDescriptor resolvePrimaryConstructor() {
+        ConstructorDescriptor primaryConstructor = null;
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
             JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
             if (!thisDescriptor.getKind().isObject()) {
@@ -353,7 +363,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 primaryConstructor = constructor;
             }
         }
-        primaryConstructorResolved = true;
         return primaryConstructor;
     }
 

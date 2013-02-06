@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
@@ -37,15 +36,14 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected final DP declarationProvider;
     protected final D thisDescriptor;
 
-    protected boolean allDescriptorsComputed = false;
+    private final ConcurrentMap<Name, ClassDescriptor> classDescriptors;
+    private final ConcurrentMap<Name, ClassDescriptor> objectDescriptors;
 
-    private final Map<Name, ClassDescriptor> classDescriptors = Maps.newHashMap();
-    private final Map<Name, ClassDescriptor> objectDescriptors = Maps.newHashMap();
+    private final ConcurrentMap<Name, Set<FunctionDescriptor>> functionDescriptors;
+    private final ConcurrentMap<Name, Set<VariableDescriptor>> propertyDescriptors;
 
-    protected final Map<Name, Set<FunctionDescriptor>> functionDescriptors = Maps.newHashMap();
-    private final Map<Name, Set<VariableDescriptor>> propertyDescriptors = Maps.newHashMap();
-
-    protected final List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
+    private final Collection<DeclarationDescriptor> allDescriptors;
+    protected volatile boolean allDescriptorsComputed = false;
 
     protected AbstractLazyMemberScope(
             @NotNull ResolveSession resolveSession,
@@ -55,10 +53,17 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         this.resolveSession = resolveSession;
         this.declarationProvider = declarationProvider;
         this.thisDescriptor = thisDescriptor;
+
+        StorageManager storageManager = resolveSession.getStorageManager();
+        this.classDescriptors = storageManager.createConcurrentMap();
+        this.objectDescriptors = storageManager.createConcurrentMap();
+        this.functionDescriptors = storageManager.createConcurrentMap();
+        this.propertyDescriptors = storageManager.createConcurrentMap();
+        this.allDescriptors = storageManager.createConcurrentCollection();
     }
 
     @Nullable
-    private ClassDescriptor getClassOrObjectDescriptor(@NotNull Map<Name, ClassDescriptor> cache, @NotNull Name name, boolean object) {
+    private ClassDescriptor getClassOrObjectDescriptor(@NotNull ConcurrentMap<Name, ClassDescriptor> cache, @NotNull Name name, boolean object) {
         ClassDescriptor known = cache.get(name);
         if (known != null) return known;
 
@@ -77,9 +82,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
                                                                       JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
 
-            cache.put(name, classDescriptor);
+            ClassDescriptor oldValue = cache.putIfAbsent(name, classDescriptor);
+            if (oldValue != null) return oldValue;
+
             if (!object) {
-                allDescriptors.add(classDescriptor);
+                registerDescriptor(classDescriptor);
             }
 
             result = classDescriptor;
@@ -123,8 +130,10 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         getNonDeclaredFunctions(name, result);
 
         if (!result.isEmpty()) {
-            functionDescriptors.put(name, result);
-            allDescriptors.addAll(result);
+            Set<FunctionDescriptor> oldValue = functionDescriptors.putIfAbsent(name, result);
+            if (oldValue != null) return oldValue;
+
+            registerDescriptors(result);
         }
         return result;
     }
@@ -170,8 +179,10 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         getNonDeclaredProperties(name, result);
 
         if (!result.isEmpty()) {
-            propertyDescriptors.put(name, result);
-            allDescriptors.addAll(result);
+            Set<VariableDescriptor> oldValue = propertyDescriptors.putIfAbsent(name, result);
+            if (oldValue != null) return oldValue;
+
+            registerDescriptors(result);
         }
         return result;
     }
@@ -206,6 +217,16 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @Override
     public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
         throw new UnsupportedOperationException(); // TODO
+    }
+
+    protected void registerDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        assert !allDescriptorsComputed : "getAllDescriptors() has been called already";
+        allDescriptors.add(descriptor);
+    }
+
+    protected void registerDescriptors(@NotNull Collection<? extends DeclarationDescriptor> descriptors) {
+        assert !allDescriptorsComputed : "getAllDescriptors() has been called already";
+        allDescriptors.addAll(descriptors);
     }
 
     @NotNull

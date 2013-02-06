@@ -20,11 +20,14 @@ import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
 
 public interface StorageManager {
     @NotNull
     <K, V> ConcurrentMap<K, V> createConcurrentMap();
+
+    <E> Collection<E> createConcurrentCollection();
 
     @NotNull
     <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable);
