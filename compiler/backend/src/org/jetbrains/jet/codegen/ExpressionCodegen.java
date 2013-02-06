@@ -2456,27 +2456,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateElvis(JetBinaryExpression expression) {
-        final Type exprType = expressionType(expression);
-        JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getLeft());
-        assert type != null;
-        final Type leftType = asmType(type);
-        if (type.isNullable()) {
-            gen(expression.getLeft(), leftType);
-            v.dup();
-            Label end = new Label();
-            Label ifNull = new Label();
-            v.ifnull(ifNull);
-            StackValue.onStack(leftType).put(exprType, v);
-            v.goTo(end);
-            v.mark(ifNull);
-            v.pop();
-            gen(expression.getRight(), exprType);
-            v.mark(end);
+        Type exprType = expressionType(expression);
+        Type leftType = expressionType(expression.getLeft());
+
+        gen(expression.getLeft(), leftType);
+
+        if (isPrimitive(leftType)) {
+            return StackValue.onStack(leftType);
         }
-        else {
-            gen(expression.getLeft(), leftType);
-            StackValue.onStack(leftType).put(exprType, v);
-        }
+
+        v.dup();
+        Label ifNull = new Label();
+        v.ifnull(ifNull);
+        StackValue.onStack(leftType).put(exprType, v);
+        Label end = new Label();
+        v.goTo(end);
+        v.mark(ifNull);
+        v.pop();
+        gen(expression.getRight(), exprType);
+        v.mark(end);
+
         return StackValue.onStack(exprType);
     }
 
