@@ -506,14 +506,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             genPropertyOnStack(iv, propertyDescriptor, 0);
 
             Label ifNull = null;
-            if (propertyDescriptor.getType().isNullable()) {
+            Type asmType = typeMapper.mapType(propertyDescriptor.getType());
+            if (!isPrimitive(asmType)) {
                 ifNull = new Label();
-
                 iv.dup();
                 iv.ifnull(ifNull);
             }
 
-            genHashCode(mv, iv, typeMapper.mapType(propertyDescriptor.getType()));
+            genHashCode(mv, iv, asmType);
 
             if (ifNull != null) {
                 Label end = new Label();

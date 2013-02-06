@@ -223,6 +223,11 @@ public class DataClassCodegenTestGenerated extends AbstractDataClassCodegenTest 
             blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/hashcode/float.kt");
         }
         
+        @TestMetadata("genericNull.kt")
+        public void testGenericNull() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/hashcode/genericNull.kt");
+        }
+        
         @TestMetadata("int.kt")
         public void testInt() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/dataClasses/hashcode/int.kt");
