@@ -110,7 +110,7 @@ public final class Message {
                               other.message.matches(textMatchesRegexp));
             return;
         }
-        Assert.assertEquals(other.message, this.message);
+        Assert.assertEquals(this.message, other.message);
     }
 
     @Override

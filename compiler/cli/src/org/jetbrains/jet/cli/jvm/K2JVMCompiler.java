@@ -26,6 +26,7 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.jvm.compiler.CommandLineScriptUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
@@ -37,6 +38,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.utils.KotlinPaths;
+import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
@@ -57,7 +59,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     @Override
     @NotNull
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
-        KotlinPaths paths = PathUtil.getKotlinPathsForCompiler();
+        KotlinPaths paths = arguments.kotlinHome != null
+                                ? new KotlinPathsFromHomeDir(new File(arguments.kotlinHome))
+                                : PathUtil.getKotlinPathsForCompiler();
+
+        messageCollector.report(CompilerMessageSeverity.LOGGING,
+                                "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION);
+
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
         configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));

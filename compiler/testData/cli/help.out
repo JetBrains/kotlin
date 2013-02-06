@@ -17,4 +17,5 @@ Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
   -verbose [flag] Enable verbose logging output
   -version [flag] Display compiler version
   -help (-h) [flag] show help
+  -kotlinHome [String] Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
 OK

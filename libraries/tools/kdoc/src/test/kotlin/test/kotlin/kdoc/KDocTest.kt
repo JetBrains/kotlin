@@ -25,6 +25,7 @@ class KDocTest {
 
         val args = KDocArguments()
         //args.setModule(moduleName)
+        args.kotlinHome = "../../../dist/kotlinc"
         val sourceDirs = ArrayList<String>()
         sourceDirs.add("../../stdlib/src")
         sourceDirs.add("../../kunit/src/main/kotlin")
