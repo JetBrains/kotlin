@@ -62,6 +62,8 @@ public class ExpressionTypingUtils {
     private ExpressionTypingUtils() {
     }
 
+    public static final JetType CANNOT_BE_INFERRED = ErrorUtils.createErrorType("Cannot be inferred");
+
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
         if (type == null) return null;

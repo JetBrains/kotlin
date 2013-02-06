@@ -39,6 +39,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.CANNOT_BE_INFERRED;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
@@ -224,7 +225,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 type = expectedType;
             }
             else {
-                type = ErrorUtils.createErrorType("Cannot be inferred");
+                type = CANNOT_BE_INFERRED;
             }
         }
         return context.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptor(
@@ -255,7 +256,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 return KotlinBuiltIns.getInstance().getUnitType();
             }
         }
-        return returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
+        return returnType == null ? CANNOT_BE_INFERRED : returnType;
     }
 
     @Nullable
