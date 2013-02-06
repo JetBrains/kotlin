@@ -3050,6 +3050,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/safeCall"), "kt", true);
         }
         
+        @TestMetadata("genericNull.kt")
+        public void testGenericNull() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/genericNull.kt");
+        }
+        
         @TestMetadata("kt1572.kt")
         public void testKt1572() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/kt1572.kt");
@@ -3068,6 +3073,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt247.kt")
         public void testKt247() throws Exception {
             blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/kt247.kt");
+        }
+        
+        @TestMetadata("primitive.kt")
+        public void testPrimitive() throws Exception {
+            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/primitive.kt");
         }
         
     }

@@ -2228,11 +2228,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitSafeQualifiedExpression(JetSafeQualifiedExpression expression, StackValue receiver) {
         JetExpression expr = expression.getReceiverExpression();
-        JetType receiverJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getReceiverExpression());
-        assert receiverJetType != null;
-        Type receiverType = asmType(receiverJetType);
+        Type receiverType = expressionType(expr);
         gen(expr, receiverType);
-        if (!receiverJetType.isNullable()) {
+        if (isPrimitive(receiverType)) {
             StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
             Type type = boxType(propValue.type);
             propValue.put(type, v);
