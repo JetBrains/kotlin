@@ -218,6 +218,9 @@ public class CallExpressionResolver {
         JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceBindingTrace(traceForVariable), result);
         if (result[0]) {
             traceForVariable.commit();
+            if (type instanceof NamespaceType && !context.namespacesAllowed) {
+                type = null;
+            }
             return JetTypeInfo.create(type, context.dataFlowInfo);
         }
 
