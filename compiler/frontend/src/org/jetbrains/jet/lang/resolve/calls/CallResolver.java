@@ -126,7 +126,7 @@ public class CallResolver {
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        return resolveFunctionCall(BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, ResolveMode.NORMAL, false));
+        return resolveFunctionCall(BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, ResolveMode.TOP_LEVEL_CALL, false));
     }
 
     @NotNull
@@ -292,7 +292,7 @@ public class CallResolver {
         if (prioritizedTasks.isEmpty()) {
             return results;
         }
-        if (context.resolveMode == ResolveMode.INTERNAL) return results;
+        if (context.resolveMode == ResolveMode.NESTED_CALL) return results;
 
         TracingStrategy tracing = prioritizedTasks.iterator().next().tracing;
         return completeTypeInferenceDependentOnExpectedType(context, results, tracing);
@@ -335,7 +335,7 @@ public class CallResolver {
         if (!resolvedCall.hasUnknownTypeParameters()) {
             CallCandidateResolutionContext<D> callCandidateResolutionContext =
                     CallCandidateResolutionContext.createForCallBeingAnalyzed((ResolvedCallImpl<D>) resolvedCall, context, tracing);
-            candidateResolver.completeValueArgumentsInference(callCandidateResolutionContext);
+            candidateResolver.completeNestedCallsInference(callCandidateResolutionContext);
             return results;
         }
         ResolvedCallImpl<D> copy = CallResolverUtil.copy((ResolvedCallImpl<D>) resolvedCall, context);

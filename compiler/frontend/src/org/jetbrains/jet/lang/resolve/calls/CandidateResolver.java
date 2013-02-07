@@ -229,7 +229,7 @@ public class CandidateResolver {
 
         if (!constraintSystem.isSuccessful()) {
             resolvedCall.setResultingSubstitutor(constraintSystemWithoutExpectedTypeConstraint.getResultingSubstitutor());
-            completeValueArgumentsInference(context);
+            completeNestedCallsInference(context);
             List<JetType> argumentTypes = checkValueArgumentTypes(context, resolvedCall, context.trace,
                                                                   RESOLVE_FUNCTION_ARGUMENTS).argumentTypes;
             JetType receiverType = resolvedCall.getReceiverArgument().exists() ? resolvedCall.getReceiverArgument().getType() : null;
@@ -256,7 +256,7 @@ public class CandidateResolver {
         }
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
 
-        completeValueArgumentsInference(context);
+        completeNestedCallsInference(context);
         // Here we type check the arguments with inferred types expected
         checkAllValueArguments(context, context.trace, RESOLVE_FUNCTION_ARGUMENTS);
 
@@ -273,7 +273,7 @@ public class CandidateResolver {
         }
     }
 
-    public <D extends CallableDescriptor> void completeValueArgumentsInference(
+    public <D extends CallableDescriptor> void completeNestedCallsInference(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
@@ -296,12 +296,12 @@ public class CandidateResolver {
                 if (storedContextForArgument == null) continue;
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
-                        storedContextForArgument.replaceResolveMode(ResolveMode.NORMAL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
+                        storedContextForArgument.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
                 if (contextForArgument.candidateCall.hasUnknownTypeParameters()) {
                     completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
                 }
                 else {
-                    completeValueArgumentsInference(contextForArgument);
+                    completeNestedCallsInference(contextForArgument);
                 }
             }
         }

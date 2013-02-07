@@ -181,11 +181,11 @@ public class ArgumentTypeResolver {
         if (expression instanceof JetCallExpression) {
             result = callExpressionResolver.getCallExpressionTypeInfoForCall(
                     (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null,
-                    context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.INTERNAL);
+                    context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL);
         }
         if (expression instanceof JetQualifiedExpression) {
             result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo(
-                    (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.INTERNAL);
+                    (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL);
         }
         if (result != null) {
             recordExpressionType(expression, context, result.getTypeInfo());

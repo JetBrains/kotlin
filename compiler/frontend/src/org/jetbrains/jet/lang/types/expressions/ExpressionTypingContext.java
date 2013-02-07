@@ -106,6 +106,6 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull Name name) {
         return expressionTypingServices.getCallResolver().resolveCallWithGivenName(
-                BasicCallResolutionContext.create(this, call, ResolveMode.NORMAL), functionReference, name);
+                BasicCallResolutionContext.create(this, call, ResolveMode.TOP_LEVEL_CALL), functionReference, name);
     }
 }

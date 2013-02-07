@@ -17,6 +17,6 @@
 package org.jetbrains.jet.lang.resolve.calls.context;
 
 public enum ResolveMode {
-    NORMAL,
-    INTERNAL
+    TOP_LEVEL_CALL,
+    NESTED_CALL
 }

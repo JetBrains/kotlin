@@ -159,7 +159,7 @@ public class CallExpressionResolver {
         if (!results.isNothing()) {
             checkSuper(receiver, results, context.trace, callExpression);
             result[0] = true;
-            if (results.isSingleResult() && resolveMode == ResolveMode.NORMAL) {
+            if (results.isSingleResult() && resolveMode == ResolveMode.TOP_LEVEL_CALL) {
                 if (CallResolverUtil.hasReturnTypeDependentOnNotInferredParams(results.getResultingCall())) {
                     return null;
                 }
@@ -179,7 +179,7 @@ public class CallExpressionResolver {
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
         OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(
-                BasicCallResolutionContext.create(context.replaceBindingTrace(traceForVariable), call, ResolveMode.NORMAL));
+                BasicCallResolutionContext.create(context.replaceBindingTrace(traceForVariable), call, ResolveMode.TOP_LEVEL_CALL));
         if (!resolutionResult.isNothing()) {
             traceForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);
@@ -223,7 +223,7 @@ public class CallExpressionResolver {
 
         Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
         TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", nameExpression);
-        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(call, nameExpression, receiver, context, ResolveMode.NORMAL, result);
+        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(call, nameExpression, receiver, context, ResolveMode.TOP_LEVEL_CALL, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             traceForFunction.commit();
@@ -240,7 +240,7 @@ public class CallExpressionResolver {
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context) {
-        return getCallExpressionTypeInfoForCall(callExpression, receiver, callOperationNode, context, ResolveMode.NORMAL).getTypeInfo();
+        return getCallExpressionTypeInfoForCall(callExpression, receiver, callOperationNode, context, ResolveMode.TOP_LEVEL_CALL).getTypeInfo();
     }
 
     @NotNull
@@ -250,7 +250,7 @@ public class CallExpressionResolver {
     ) {
         TypeInfoForCall typeInfoForCall = getCallExpressionTypeInfoForCallWithoutFinalTypeCheck(callExpression, receiver, callOperationNode,
                                                                                                 context, resolveMode);
-        if (resolveMode == ResolveMode.NORMAL) {
+        if (resolveMode == ResolveMode.TOP_LEVEL_CALL) {
             DataFlowUtils.checkType(typeInfoForCall.getType(), callExpression, context, typeInfoForCall.getDataFlowInfo());
         }
         return typeInfoForCall;
@@ -352,7 +352,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getQualifiedExpressionTypeInfo(@NotNull JetQualifiedExpression expression, @NotNull ResolutionContext context) {
-        return getQualifiedExpressionExtendedTypeInfo(expression, context, ResolveMode.NORMAL).getTypeInfo();
+        return getQualifiedExpressionExtendedTypeInfo(expression, context, ResolveMode.TOP_LEVEL_CALL).getTypeInfo();
     }
 
     @NotNull
@@ -392,7 +392,7 @@ public class CallExpressionResolver {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
-        if (resolveMode == ResolveMode.NORMAL) {
+        if (resolveMode == ResolveMode.TOP_LEVEL_CALL) {
             DataFlowUtils.checkType(typeInfo.getType(), expression, context, typeInfo.getDataFlowInfo());
         }
         return TypeInfoForCall.create(typeInfo, selectorReturnTypeInfo);
