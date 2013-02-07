@@ -22,9 +22,6 @@ import com.intellij.testFramework.PsiTestUtil;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.testing.LocalFileSystemUtils;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class FinalJavaSupertypeTest extends AbstractQuickFixMultiFileTest {
     @Override
     protected void setUp() throws Exception {
@@ -38,17 +35,7 @@ public class FinalJavaSupertypeTest extends AbstractQuickFixMultiFileTest {
         final VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false);
         addSourceContentToRoots(myModule, rootDir);
         PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-        doTest();
-    }
-
-    @Override
-    protected String getCheckFileName() {
-        throw new IllegalStateException("This test is to check that quickfix is not available, so no check file is needed.");
-    }
-
-    @Override
-    protected List<String> getTestFileNames() {
-        return Arrays.asList(getTestName(false) + ".before.kt");
+        doTestWithoutExtraFile(getTestName(false) + ".before.kt");
     }
 
     @Override

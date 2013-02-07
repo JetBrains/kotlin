@@ -24,11 +24,14 @@ import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,21 +50,35 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
         return texts;
     }
 
-    public void doTest() throws Exception {
-        configureByFiles(null, getTestFileNames().toArray(new String[1]));
+    protected void doTestWithoutExtraFile(String beforeFileName) throws Exception {
+        doTest(beforeFileName, false);
+    }
+
+    protected void doTestWithExtraFile(String beforeFileName) throws Exception {
+        doTest(beforeFileName, true);
+    }
+
+    private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
+        if (withExtraFile) {
+            configureByFiles(null, beforeFileName, beforeFileName.replace(".Main.", ".Data.Sample."));
+        }
+        else {
+            configureByFiles(null, beforeFileName);
+        }
 
         CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
             @Override
             public void run() {
                 try {
-                    final Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(getFile(), loadFile(getFile().getName()));
+                    final Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(
+                            getFile(),FileUtil.loadFile(new File(getTestDataPath() + beforeFileName)));
                     final String text = pair.getFirst();
 
                     final boolean actionShouldBeAvailable = pair.getSecond();
 
                     QuickFixActionsUtils.checkForUnexpectedErrors((JetFile) getFile());
 
-                    doAction(text, actionShouldBeAvailable, getTestDataPath());
+                    doAction(text, actionShouldBeAvailable, beforeFileName);
                 }
                 catch (ComparisonFailure e) {
                     throw e;
@@ -110,15 +127,11 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
                 }
             }
 
-            checkResultByFile(getCheckFileName());
+            checkResultByFile(testFullPath.replace(".before.Main.", ".after."));
         }
     }
 
-    protected abstract String getCheckFileName();
-
-    protected abstract List<String> getTestFileNames();
-
-    protected List<IntentionAction> getAvailableActions() {
+    private List<IntentionAction> getAvailableActions() {
         doHighlighting();
         return LightQuickFixTestCase.getAvailableActions(getEditor(), getFile());
     }
@@ -126,5 +139,10 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
     @Override
     protected Sdk getTestProjectJdk() {
         return PluginTestCaseBase.jdkFromIdeaHome();
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return JetTestCaseBuilder.getHomeDirectory() + "/";
     }
 }
