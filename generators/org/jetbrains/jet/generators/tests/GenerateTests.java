@@ -21,12 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
-import org.jetbrains.jet.codegen.AbstractDataClassCodegenTest;
 import org.jetbrains.jet.codegen.AbstractJavaVisibilityTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
-import org.jetbrains.jet.codegen.generated.AbstractRangesCodegenTest;
+import org.jetbrains.jet.codegen.generated.AbstractBlackBoxWithStdlibCodegenTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -80,23 +79,9 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
-                "RangesCodegenTestGenerated",
-                AbstractRangesCodegenTest.class,
-                testModel("compiler/testData/codegen/ranges", "blackBoxFileByFullPath")
-        );
-
-        generateTest(
-                "compiler/tests/",
                 "BlackBoxWithJavaCodegenTestGenerated",
                 AbstractBlackBoxCodegenTest.class,
                 testModel("compiler/testData/codegen/boxWithJava", "blackBoxFileWithJavaByFullPath")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "DataClassCodegenTestGenerated",
-                AbstractDataClassCodegenTest.class,
-                testModel("compiler/testData/codegen/dataClasses", "blackBoxFileByFullPath")
         );
 
         generateTest(

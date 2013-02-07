@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GenerateRangesCodegenTestData {
-    private static final File TEST_DATA_DIR = new File("compiler/testData/codegen/ranges");
+    private static final File TEST_DATA_DIR = new File("compiler/testData/codegen/boxWithStdlib/ranges");
     private static final File AS_LITERAL_DIR = new File(TEST_DATA_DIR, "literal");
     private static final File AS_EXPRESSION_DIR = new File(TEST_DATA_DIR, "expression");
     private static final File SOURCE_TEST_FILE = new File("libraries/stdlib/test/language/RangeIterationTest.kt");
