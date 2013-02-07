@@ -26,15 +26,23 @@ import org.jetbrains.jet.lang.psi.JetNullableType;
 import org.jetbrains.jet.lang.psi.JetTypeElement;
 import org.jetbrains.jet.plugin.JetBundle;
 
-public class RemoveRedundantNullableFix extends JetIntentionAction<JetNullableType> {
-    public RemoveRedundantNullableFix(@NotNull JetNullableType element) {
+public class RemoveNullableFix extends JetIntentionAction<JetNullableType> {
+    boolean isInSuperType;
+
+    public RemoveNullableFix(@NotNull JetNullableType element, boolean isInSuperTypeArg) {
         super(element);
+        isInSuperType = isInSuperTypeArg;
     }
 
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("remove.redundant.nullable");
+        if (isInSuperType) {
+            return JetBundle.message("remove.supertype.nullable");
+        }
+        else {
+            return JetBundle.message("remove.redundant.nullable");
+        }
     }
 
     @NotNull
@@ -49,13 +57,13 @@ public class RemoveRedundantNullableFix extends JetIntentionAction<JetNullableTy
         super.element.replace(type);
     }
 
-    public static JetIntentionActionFactory createFactory() {
+    public static JetIntentionActionFactory createFactory(final boolean isInSupertypeArg) {
         return new JetIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetNullableType> createAction(Diagnostic diagnostic) {
                 JetNullableType type = QuickFixUtil.getParentElementOfType(diagnostic, JetNullableType.class);
                 if (type == null) return null;
-                return new RemoveRedundantNullableFix(type);
+                return new RemoveNullableFix(type, isInSupertypeArg);
             }
         };
     }

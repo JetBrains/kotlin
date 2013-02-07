@@ -541,6 +541,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/nullables/beforeRemoveRedundantNullable.kt");
         }
         
+        @TestMetadata("beforeRemoveSupertypeNullable1.kt")
+        public void testRemoveSupertypeNullable1() throws Exception {
+            doTest("idea/testData/quickfix/nullables/beforeRemoveSupertypeNullable1.kt");
+        }
+        
+        @TestMetadata("beforeRemoveSupertypeNullable2.kt")
+        public void testRemoveSupertypeNullable2() throws Exception {
+            doTest("idea/testData/quickfix/nullables/beforeRemoveSupertypeNullable2.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/quickfix/override")
