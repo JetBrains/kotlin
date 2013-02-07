@@ -130,10 +130,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         FqName classFqName = new FqName(qualifiedName);
         JetScope memberScope = getScopeForMember(javaDescriptorResolver, classFqName, member);
 
+        if (memberScope == null) {
+            return null;
+        }
         return getDescriptorForMember(member, memberScope, bindingContext);
     }
 
-    @NotNull
+    @Nullable
     private static JetScope getScopeForMember(
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
             @NotNull FqName classFqName,
@@ -141,13 +144,17 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     ) {
         if (member.hasModifierProperty(PsiModifier.STATIC)) {
             NamespaceDescriptor packageDescriptor = javaDescriptorResolver.resolveNamespace(classFqName);
-            assert packageDescriptor != null : "No package descriptor for Java class " + classFqName + " that has a static member " + member;
+            if (packageDescriptor == null) {
+                return null;
+            }
 
             return packageDescriptor.getMemberScope();
         }
         else {
             ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName);
-            assert klass != null : " Couldn't find class " + classFqName;
+            if (klass == null) {
+                return null;
+            }
 
             return klass.getDefaultType().getMemberScope();
         }
@@ -181,10 +188,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
 
         PsiModifierListOwner annotationOwner = getAnnotationOwner(member);
-        DeclarationDescriptor memberDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotationOwner);
-        LOG.assertTrue(memberDescriptor != null, "Couldn't find descriptor for " + annotationOwner + "\n"
-                                                 + annotationOwner.getContainingFile().getText());
-        return memberDescriptor;
+        return bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotationOwner);
     }
 
     public static boolean isMarkersEnabled(@NotNull Project project) {
