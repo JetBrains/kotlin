@@ -240,16 +240,16 @@ public class CallExpressionResolver {
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context) {
-        JetTypeInfo typeInfo = getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context, ResolveMode.NORMAL).getTypeInfo();
-        return DataFlowUtils.checkType(typeInfo.getType(), callExpression, context, typeInfo.getDataFlowInfo());
+        return getCallExpressionTypeInfoForCall(callExpression, receiver, callOperationNode, context, ResolveMode.NORMAL).getTypeInfo();
     }
 
     @NotNull
-    public TypeInfoForCall getCallExpressionExtendedTypeInfo(
+    public TypeInfoForCall getCallExpressionTypeInfoForCall(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode
     ) {
-        TypeInfoForCall typeInfoForCall = getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context, resolveMode);
+        TypeInfoForCall typeInfoForCall = getCallExpressionTypeInfoForCallWithoutFinalTypeCheck(callExpression, receiver, callOperationNode,
+                                                                                                context, resolveMode);
         if (resolveMode == ResolveMode.NORMAL) {
             DataFlowUtils.checkType(typeInfoForCall.getType(), callExpression, context, typeInfoForCall.getDataFlowInfo());
         }
@@ -257,7 +257,7 @@ public class CallExpressionResolver {
     }
 
     @NotNull
-    public TypeInfoForCall getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(
+    public TypeInfoForCall getCallExpressionTypeInfoForCallWithoutFinalTypeCheck(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull ResolveMode resolveMode
     ) {
@@ -322,8 +322,8 @@ public class CallExpressionResolver {
             @NotNull ResolveMode resolveMode
     ) {
         if (selectorExpression instanceof JetCallExpression) {
-            return getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck((JetCallExpression) selectorExpression, receiver,
-                                                                          callOperationNode, context, resolveMode);
+            return getCallExpressionTypeInfoForCallWithoutFinalTypeCheck((JetCallExpression) selectorExpression, receiver,
+                                                                         callOperationNode, context, resolveMode);
         }
         else if (selectorExpression instanceof JetSimpleNameExpression) {
             return TypeInfoForCall.create(

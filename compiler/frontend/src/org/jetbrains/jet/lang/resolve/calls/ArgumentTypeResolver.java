@@ -172,7 +172,7 @@ public class ArgumentTypeResolver {
         CallExpressionResolver callExpressionResolver = expressionTypingServices.getCallExpressionResolver();
         TypeInfoForCall result = null;
         if (expression instanceof JetCallExpression) {
-            result = callExpressionResolver.getCallExpressionExtendedTypeInfo(
+            result = callExpressionResolver.getCallExpressionTypeInfoForCall(
                     (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null, context, ResolveMode.INTERNAL);
         }
         if (expression instanceof JetQualifiedExpression) {
