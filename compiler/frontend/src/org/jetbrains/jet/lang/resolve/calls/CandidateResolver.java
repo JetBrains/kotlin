@@ -58,7 +58,6 @@ import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgum
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SKIP_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.canHaveSubtypes;
 
 public class CandidateResolver {
     @NotNull
@@ -195,7 +194,6 @@ public class CandidateResolver {
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         assert resolvedCall.hasUnknownTypeParameters();
-        D descriptor = resolvedCall.getCandidateDescriptor();
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
 
@@ -328,9 +326,9 @@ public class CandidateResolver {
             TemporaryBindingTrace traceToResolveFunctionLiteral = TemporaryBindingTrace.create(
                     context.trace, "trace to resolve function literal with expected return type", argumentExpression);
 
-            final boolean[] mismatch = new boolean[1];
             JetElement statementExpression = JetPsiUtil.getLastStatementInABlock(((JetFunctionLiteralExpression) argumentExpression).getBodyExpression());
             if (statementExpression == null) return;
+            final boolean[] mismatch = new boolean[1];
             ObservableBindingTrace errorInterceptingTrace = ExpressionTypingUtils.makeTraceInterceptingTypeMismatch(
                     traceToResolveFunctionLiteral, statementExpression, mismatch);
             CallCandidateResolutionContext<D> newContext =
@@ -340,10 +338,9 @@ public class CandidateResolver {
                 constraintSystem.addSubtypeConstraint(
                         type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
                 traceToResolveFunctionLiteral.commit();
+                return;
             }
-            else {
-                BindingContextUtils.commitResolutionCacheData(traceToResolveFunctionLiteral, context.trace);
-            }
+            BindingContextUtils.commitResolutionCacheData(traceToResolveFunctionLiteral, context.trace);
         }
         JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeToUnknown(expectedType) : expectedType;
         CallCandidateResolutionContext<D> newContext = context.replaceExpectedType(expectedTypeWithoutReturnType);

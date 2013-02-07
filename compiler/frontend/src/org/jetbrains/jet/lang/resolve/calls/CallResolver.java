@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -262,7 +261,8 @@ public class CallResolver {
             @NotNull final BasicCallResolutionContext context,
             @NotNull final List<ResolutionTask<D, F>> prioritizedTasks,
             @NotNull CallTransformer<D, F> callTransformer,
-            @NotNull final JetReferenceExpression reference) {
+            @NotNull final JetReferenceExpression reference
+    ) {
         PsiElement element = context.call.getCallElement();
         OverloadResolutionResults<F> results = null;
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", context.call);
@@ -279,11 +279,10 @@ public class CallResolver {
         if (results == null) {
             BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
             results = doResolveCall(newContext, prioritizedTasks, callTransformer, reference);
-            if (results instanceof OverloadResolutionResultsImpl) {
-                DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
-                if (deltasTraceForTypeInference != null) {
-                    deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
-                }
+            assert results instanceof OverloadResolutionResultsImpl;
+            DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
+            if (deltasTraceForTypeInference != null) {
+                deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
             }
             completeTypeInferenceDependentOnFunctionLiterals(newContext, results, TracingStrategy.EMPTY);
             cacheResults(resolutionResultsSlice, context, results, traceToResolveCall);
