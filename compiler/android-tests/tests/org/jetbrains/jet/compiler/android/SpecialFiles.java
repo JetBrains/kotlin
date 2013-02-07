@@ -111,6 +111,14 @@ public class SpecialFiles {
         excludedFiles.add("simpleClass2.kt");                // Java
         excludedFiles.add("simpleFun.kt");                   // Java
         excludedFiles.add("simpleProperty.kt");              // Java
+
+        excludedFiles.add("packageClass.kt");                    // Java
+        excludedFiles.add("packageFun.kt");                      // Java
+        excludedFiles.add("packageProperty.kt");                 // Java
+        excludedFiles.add("overrideProtectedFunInPackage.kt");   // Java
+        excludedFiles.add("protectedFunInPackage.kt");           // Java
+        excludedFiles.add("protectedPropertyInPackage.kt");      // Java
+        excludedFiles.add("protectedStaticClass.kt");            // Java
     }
 
     private SpecialFiles() {
