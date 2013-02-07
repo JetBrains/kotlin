@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -463,10 +464,10 @@ public class CandidateResolver {
                 }
                 CallResolutionContext newContext = context.replaceDataFlowInfo(candidateCall.getDataFlowInfo()).replaceBindingTrace(trace)
                         .replaceExpectedType(expectedType);
-                JetTypeInfo typeInfo = argumentTypeResolver.getArgumentTypeInfo(
+                TypeInfoForCall typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
                         expression, newContext, resolveFunctionArgumentBodies);
-                JetType type = typeInfo.getType();
-                candidateCall.addDataFlowInfo(typeInfo.getDataFlowInfo());
+                JetType type = typeInfoForCall.getType();
+                candidateCall.addDataFlowInfo(typeInfoForCall.getDataFlowInfo());
 
                 if (type == null || (ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE)) {
                     candidateCall.argumentHasNoType();

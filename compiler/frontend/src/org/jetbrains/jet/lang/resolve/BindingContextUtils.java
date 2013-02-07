@@ -282,7 +282,7 @@ public class BindingContextUtils {
         }, false);
     }
 
-    public static JetTypeInfo recordExpressionType(@NotNull JetExpression expression, @NotNull ResolutionContext context, @NotNull JetTypeInfo result) {
+    public static void recordExpressionType(@NotNull JetExpression expression, @NotNull ResolutionContext context, @NotNull JetTypeInfo result) {
         JetType type = result.getType();
         if (type != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
@@ -294,6 +294,5 @@ public class BindingContextUtils {
         if (!(expression instanceof JetReferenceExpression)) {
             context.trace.record(BindingContext.RESOLUTION_SCOPE, expression, context.scope);
         }
-        return result;
     }
 }

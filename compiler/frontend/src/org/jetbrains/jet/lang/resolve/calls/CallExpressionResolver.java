@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -233,21 +234,29 @@ public class CallExpressionResolver {
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context) {
-        JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
+        JetTypeInfo typeInfo = getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context).getTypeInfo();
         return DataFlowUtils.checkType(typeInfo.getType(), callExpression, context, typeInfo.getDataFlowInfo());
     }
 
     @NotNull
-    private JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+    public TypeInfoForCall getCallExpressionExtendedTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context) {
+        TypeInfoForCall typeInfoForCall = getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
+        DataFlowUtils.checkType(typeInfoForCall.getType(), callExpression, context, typeInfoForCall.getDataFlowInfo());
+        return typeInfoForCall;
+    }
 
+    @NotNull
+    private TypeInfoForCall getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck(
+            @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
+    ) {
         boolean[] result = new boolean[1];
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
 
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call",
-                                                                              callExpression);
-        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(call, callExpression, receiver,
-                                                                                   context.replaceBindingTrace(traceForFunction), result);
+        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call", callExpression);
+        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
+                call, callExpression, receiver, context.replaceBindingTrace(traceForFunction), result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             traceForFunction.commit();
@@ -257,11 +266,11 @@ public class CallExpressionResolver {
                 context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
             }
             if (functionDescriptor == null) {
-                return JetTypeInfo.create(null, context.dataFlowInfo);
+                return TypeInfoForCall.create(null, context.dataFlowInfo);
             }
             JetType type = functionDescriptor.getReturnType();
 
-            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfo());
+            return TypeInfoForCall.create(type, resolvedCall.getDataFlowInfo(), resolvedCall, call, context);
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
@@ -274,11 +283,11 @@ public class CallExpressionResolver {
                 traceForVariable.commit();
                 context.trace.report(FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, calleeExpression,
                                                           type != null ? type : ErrorUtils.createErrorType("")));
-                return JetTypeInfo.create(null, context.dataFlowInfo);
+                return TypeInfoForCall.create(null, context.dataFlowInfo);
             }
         }
         traceForFunction.commit();
-        return JetTypeInfo.create(null, context.dataFlowInfo);
+        return TypeInfoForCall.create(null, context.dataFlowInfo);
     }
 
     private void checkSuper(@NotNull ReceiverValue receiverValue, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
@@ -295,45 +304,53 @@ public class CallExpressionResolver {
     }
 
     @NotNull
-    public JetTypeInfo getSelectorReturnTypeInfo(
+    private TypeInfoForCall getSelectorReturnTypeInfo(
             @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode,
             @NotNull JetExpression selectorExpression,
             @NotNull ResolutionContext context
     ) {
         if (selectorExpression instanceof JetCallExpression) {
-            return getCallExpressionTypeInfoWithoutFinalTypeCheck(
-                    (JetCallExpression) selectorExpression, receiver, callOperationNode, context);
+            return getCallExpressionExtendedTypeInfoWithoutFinalTypeCheck((JetCallExpression) selectorExpression, receiver,
+                                                                          callOperationNode, context);
         }
         else if (selectorExpression instanceof JetSimpleNameExpression) {
-            return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
+            return TypeInfoForCall.create(
+                    getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context));
         }
         else if (selectorExpression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;
             JetExpression newReceiverExpression = qualifiedExpression.getReceiverExpression();
-            JetTypeInfo newReceiverTypeInfo = getSelectorReturnTypeInfo(receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+            TypeInfoForCall newReceiverTypeInfo = getSelectorReturnTypeInfo(receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
             JetType newReceiverType = newReceiverTypeInfo.getType();
             DataFlowInfo newReceiverDataFlowInfo = newReceiverTypeInfo.getDataFlowInfo();
             JetExpression newSelectorExpression = qualifiedExpression.getSelectorExpression();
             if (newReceiverType != null && newSelectorExpression != null) {
-                return getSelectorReturnTypeInfo(new ExpressionReceiver(newReceiverExpression, newReceiverType), qualifiedExpression.getOperationTokenNode(), newSelectorExpression, context.replaceDataFlowInfo(newReceiverDataFlowInfo));
+                ExpressionReceiver expressionReceiver = new ExpressionReceiver(newReceiverExpression, newReceiverType);
+                return getSelectorReturnTypeInfo(expressionReceiver, qualifiedExpression.getOperationTokenNode(),
+                                                 newSelectorExpression, context.replaceDataFlowInfo(newReceiverDataFlowInfo));
             }
         }
         else {
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
-        return JetTypeInfo.create(null, context.dataFlowInfo);
+        return TypeInfoForCall.create(null, context.dataFlowInfo);
     }
 
     @NotNull
     public JetTypeInfo getQualifiedExpressionTypeInfo(@NotNull JetQualifiedExpression expression, @NotNull ResolutionContext context) {
+        return getQualifiedExpressionExtendedTypeInfo(expression, context).getTypeInfo();
+    }
+
+    @NotNull
+    public TypeInfoForCall getQualifiedExpressionExtendedTypeInfo(@NotNull JetQualifiedExpression expression, @NotNull ResolutionContext context) {
         // TODO : functions as values
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfoWithNamespaces(
                 receiverExpression, context.scope, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace);
         JetType receiverType = receiverTypeInfo.getType();
-        if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
+        if (selectorExpression == null) return TypeInfoForCall.create(null, context.dataFlowInfo);
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
         context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
@@ -342,7 +359,7 @@ public class CallExpressionResolver {
             ConstantUtils.propagateConstantValues(expression, context.trace, (JetSimpleNameExpression) selectorExpression);
         }
 
-        JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
+        TypeInfoForCall selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 new ExpressionReceiver(receiverExpression, receiverType), expression.getOperationTokenNode(), selectorExpression, context);
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
@@ -359,6 +376,8 @@ public class CallExpressionResolver {
         if (selectorReturnType != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
-        return DataFlowUtils.checkType(selectorReturnType, expression, context, selectorReturnTypeInfo.getDataFlowInfo());
+        return TypeInfoForCall.create(
+                DataFlowUtils.checkType(selectorReturnType, expression, context, selectorReturnTypeInfo.getDataFlowInfo()),
+                selectorReturnTypeInfo);
     }
 }

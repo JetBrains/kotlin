@@ -52,17 +52,17 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         }
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D> create(
-            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
+    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
+            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull CallResolutionContext context, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call) {
-        return new CallCandidateResolutionContext<D>(candidateCall, tracing, trace, task.scope, call, task.expectedType,
-                                                        task.dataFlowInfo, task.namespacesAllowed, true);
+        return new CallCandidateResolutionContext<D>(candidateCall, tracing, trace, context.scope, call, context.expectedType,
+                                                        context.dataFlowInfo, context.namespacesAllowed, true);
     }
 
-    public static <D extends CallableDescriptor, F extends D> CallCandidateResolutionContext<D> create(
-            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace,
+    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
+            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull CallResolutionContext context, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing) {
-        return create(candidateCall, task, trace, tracing, task.call);
+        return create(candidateCall, context, trace, tracing, context.call);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(

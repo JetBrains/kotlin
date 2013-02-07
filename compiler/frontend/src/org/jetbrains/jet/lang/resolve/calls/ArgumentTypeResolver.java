@@ -26,13 +26,13 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -155,30 +155,34 @@ public class ArgumentTypeResolver {
     }
 
     @NotNull
-    public JetTypeInfo getArgumentTypeInfo(
+    public TypeInfoForCall getArgumentTypeInfo(
             @Nullable JetExpression expression,
             @NotNull CallResolutionContext context,
             @NotNull ResolveMode resolveFunctionArgumentBodies
     ) {
         if (expression == null) {
-            return JetTypeInfo.create(null, context.dataFlowInfo);
+            return TypeInfoForCall.create(null, context.dataFlowInfo);
         }
         if (expression instanceof JetFunctionLiteralExpression && resolveFunctionArgumentBodies == SKIP_FUNCTION_ARGUMENTS) {
             JetType type = getFunctionLiteralType((JetFunctionLiteralExpression) expression, context.scope, context.trace);
-            return JetTypeInfo.create(type, context.dataFlowInfo);
+            return TypeInfoForCall.create(type, context.dataFlowInfo);
         }
         //todo deparenthesize
         CallExpressionResolver callExpressionResolver = expressionTypingServices.getCallExpressionResolver();
+        TypeInfoForCall result = null;
         if (expression instanceof JetCallExpression) {
-            JetTypeInfo typeInfo = callExpressionResolver.getCallExpressionTypeInfo(
+            result = callExpressionResolver.getCallExpressionExtendedTypeInfo(
                     (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null, context);
-            return recordExpressionType(expression, context, typeInfo);
         }
         if (expression instanceof JetQualifiedExpression) {
-            JetTypeInfo typeInfo = callExpressionResolver.getQualifiedExpressionTypeInfo((JetQualifiedExpression) expression, context);
-            return recordExpressionType(expression, context, typeInfo);
+            result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo((JetQualifiedExpression) expression, context);
         }
-        return expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace);
+        if (result != null) {
+            recordExpressionType(expression, context, result.getTypeInfo());
+            return result;
+        }
+        return TypeInfoForCall.create(
+                expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace));
     }
 
     @Nullable
