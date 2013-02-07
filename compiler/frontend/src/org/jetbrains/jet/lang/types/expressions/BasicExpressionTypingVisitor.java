@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
@@ -29,11 +28,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -41,12 +40,9 @@ import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
-import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
@@ -73,106 +69,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitSimpleNameExpression(JetSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
-        JetTypeInfo typeInfo = getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        JetTypeInfo typeInfo = CallExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
         JetType type = DataFlowUtils.checkType(typeInfo.getType(), expression, context);
         ExpressionTypingUtils.checkWrappingInRef(expression, context.trace, context.scope);
         return JetTypeInfo.create(type, typeInfo.getDataFlowInfo()); // TODO : Extensions to this
-    }
-
-    @Nullable
-    private static JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
-        Name referencedName = expression.getReferencedNameAsName();
-        ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
-        if (classifier != null) {
-            JetType classObjectType = classifier.getClassObjectType();
-            if (classObjectType != null) {
-                context.trace.record(REFERENCE_TARGET, expression, classifier);
-                JetType result;
-                if (context.namespacesAllowed && classifier instanceof ClassDescriptor) {
-                    JetScope scope = new ChainedScope(classifier, classObjectType.getMemberScope(),
-                                                      getStaticNestedClassesScope((ClassDescriptor) classifier));
-                    result = new NamespaceType(referencedName, scope);
-                }
-                else if (context.namespacesAllowed || classifier.isClassObjectAValue()) {
-                    result = classObjectType;
-                }
-                else {
-                    context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
-                    result = null;
-                }
-                return DataFlowUtils.checkType(result, expression, context);
-            }
-        }
-        JetType[] result = new JetType[1];
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
-                context.trace, "trace for namespace/class object lookup of name", referencedName);
-        if (furtherNameLookup(expression, result, context.replaceBindingTrace(temporaryTrace))) {
-            temporaryTrace.commit();
-            return DataFlowUtils.checkType(result[0], expression, context);
-        }
-        // To report NO_CLASS_OBJECT when no namespace found
-        if (classifier != null) {
-            if (!context.namespacesAllowed) {
-                context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
-            }
-            context.trace.record(REFERENCE_TARGET, expression, classifier);
-            JetScope scopeForStaticMembersResolution = classifier instanceof ClassDescriptor
-                                                       ? getStaticNestedClassesScope((ClassDescriptor) classifier)
-                                                       : JetScope.EMPTY;
-            return new NamespaceType(referencedName, scopeForStaticMembersResolution);
-        }
-        temporaryTrace.commit();
-        return result[0];
-    }
-
-    @NotNull
-    private static JetScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
-        JetScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
-        return new FilteringScope(innerClassesScope, new Predicate<DeclarationDescriptor>() {
-            @Override
-            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
-            }
-        });
-    }
-
-    private static boolean furtherNameLookup(
-            @NotNull JetSimpleNameExpression expression,
-            @NotNull JetType[] result,
-            @NotNull ExpressionTypingContext context
-    ) {
-        NamespaceType namespaceType = lookupNamespaceType(expression, context);
-        if (namespaceType == null) {
-            return false;
-        }
-        if (context.namespacesAllowed) {
-            result[0] = namespaceType;
-            return true;
-        }
-        context.trace.report(EXPRESSION_EXPECTED_NAMESPACE_FOUND.on(expression));
-        result[0] = ErrorUtils.createErrorType("Type for " + expression.getReferencedNameAsName());
-        return false;
-    }
-
-    @Nullable
-    private static NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
-        Name name = expression.getReferencedNameAsName();
-        NamespaceDescriptor namespace = context.scope.getNamespace(name);
-        if (namespace == null) {
-            return null;
-        }
-        context.trace.record(REFERENCE_TARGET, expression, namespace);
-
-        // Construct a NamespaceType with everything from the namespace and with static nested classes of the corresponding class (if any)
-        JetScope scope;
-        ClassifierDescriptor classifier = context.scope.getClassifier(name);
-        if (classifier instanceof ClassDescriptor) {
-            scope = new ChainedScope(namespace, namespace.getMemberScope(), getStaticNestedClassesScope((ClassDescriptor) classifier));
-        }
-        else {
-            scope = namespace.getMemberScope();
-        }
-        return new NamespaceType(name, scope);
     }
 
     @Override
@@ -704,7 +604,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             propagateConstantValues(expression, context, (JetSimpleNameExpression) selectorExpression);
         }
 
-        JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(new ExpressionReceiver(receiverExpression, receiverType), expression.getOperationTokenNode(), selectorExpression, context);
+        JetTypeInfo selectorReturnTypeInfo = CallExpressionResolver.getSelectorReturnTypeInfo(
+                new ExpressionReceiver(receiverExpression, receiverType), expression.getOperationTokenNode(), selectorExpression, context);
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
 
         //TODO move further
@@ -723,7 +624,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(selectorReturnType, expression, context, selectorReturnTypeInfo.getDataFlowInfo());
     }
 
-    private void propagateConstantValues(JetQualifiedExpression expression, ExpressionTypingContext context, JetSimpleNameExpression selectorExpression) {
+    private static void propagateConstantValues(JetQualifiedExpression expression, ExpressionTypingContext context, JetSimpleNameExpression selectorExpression) {
         JetExpression receiverExpression = expression.getReceiverExpression();
         CompileTimeConstant<?> receiverValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression);
         CompileTimeConstant<?> wholeExpressionValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
@@ -755,176 +656,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
     }
 
-    @Nullable
-    public static ResolvedCall<FunctionDescriptor> getResolvedCallForFunction(
-            @NotNull Call call, @NotNull JetExpression callExpression, @NotNull ReceiverValue receiver,
-            @NotNull ExpressionTypingContext context, @NotNull boolean[] result
-    ) {
-
-        OverloadResolutionResults<FunctionDescriptor> results = context.resolveFunctionCall(call);
-        if (!results.isNothing()) {
-            checkSuper(receiver, results, context.trace, callExpression);
-            result[0] = true;
-            if (results.isIncomplete()) {
-                return null;
-            }
-            return results.isSingleResult() ? results.getResultingCall() : null;
-        }
-        result[0] = false;
-        return null;
-    }
-
-    @Nullable
-    public static JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result) {
-
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve as local variable or property", nameExpression);
-        OverloadResolutionResults<VariableDescriptor> resolutionResult = context.replaceBindingTrace(traceForVariable).resolveSimpleProperty(receiver, callOperationNode, nameExpression);
-        if (!resolutionResult.isNothing()) {
-            traceForVariable.commit();
-            checkSuper(receiver, resolutionResult, context.trace, nameExpression);
-            result[0] = true;
-            return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
-        }
-
-        ExpressionTypingContext newContext = receiver.exists()
-                                             ? context.replaceScope(receiver.getType().getMemberScope())
-                                             : context;
-        TemporaryBindingTrace traceForNamespaceOrClassObject = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve as namespace or class object", nameExpression);
-        JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceBindingTrace(traceForNamespaceOrClassObject));
-        if (jetType != null) {
-            traceForNamespaceOrClassObject.commit();
-
-            // Uncommitted changes in temp context
-            context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);
-            if (context.dataFlowInfo.hasTypeInfoConstraints()) {
-                context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, nameExpression, context.dataFlowInfo);
-            }
-            result[0] = true;
-            return jetType;
-        }
-        result[0] = false;
-        return null;
-    }
-
-    @NotNull
-    private JetTypeInfo getSelectorReturnTypeInfo(@NotNull ReceiverValue receiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression selectorExpression, @NotNull ExpressionTypingContext context) {
-        if (selectorExpression instanceof JetCallExpression) {
-            return getCallExpressionTypeInfo((JetCallExpression) selectorExpression, receiver, callOperationNode, context);
-        }
-        else if (selectorExpression instanceof JetSimpleNameExpression) {
-            return getSimpleNameExpressionTypeInfo((JetSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
-        }
-        else if (selectorExpression instanceof JetQualifiedExpression) {
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) selectorExpression;
-            JetExpression newReceiverExpression = qualifiedExpression.getReceiverExpression();
-            JetTypeInfo newReceiverTypeInfo = getSelectorReturnTypeInfo(receiver, callOperationNode, newReceiverExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
-            JetType newReceiverType = newReceiverTypeInfo.getType();
-            DataFlowInfo newReceiverDataFlowInfo = newReceiverTypeInfo.getDataFlowInfo();
-            JetExpression newSelectorExpression = qualifiedExpression.getSelectorExpression();
-            if (newReceiverType != null && newSelectorExpression != null) {
-                return getSelectorReturnTypeInfo(new ExpressionReceiver(newReceiverExpression, newReceiverType), qualifiedExpression.getOperationTokenNode(), newSelectorExpression, context.replaceDataFlowInfo(newReceiverDataFlowInfo));
-            }
-        }
-        else {
-            context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
-        }
-        return JetTypeInfo.create(null, context.dataFlowInfo);
-    }
-
-    @NotNull
-    private static JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
-
-        boolean[] result = new boolean[1];
-
-        TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace, "trace to resolve as variable", nameExpression);
-        JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceBindingTrace(traceForVariable), result);
-        if (result[0]) {
-            traceForVariable.commit();
-            if (type instanceof NamespaceType && !context.namespacesAllowed) {
-                type = null;
-            }
-            return JetTypeInfo.create(type, context.dataFlowInfo);
-        }
-
-        Call call = CallMaker.makeCall(nameExpression, receiver, callOperationNode, nameExpression, Collections.<ValueArgument>emptyList());
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", nameExpression);
-        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(call, nameExpression, receiver, context, result);
-        if (result[0]) {
-            FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            traceForFunction.commit();
-            boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
-            context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
-            type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
-            return JetTypeInfo.create(type, context.dataFlowInfo);
-        }
-
-        traceForVariable.commit();
-        return JetTypeInfo.create(null, context.dataFlowInfo);
-    }
-
-    @NotNull
-    private static JetTypeInfo getCallExpressionTypeInfo(@NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context) {
-
-        boolean[] result = new boolean[1];
-        Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
-
-        TemporaryBindingTrace traceForFunction = TemporaryBindingTrace.create(context.trace, "trace to resolve as function call", callExpression);
-        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(call, callExpression, receiver,
-                                                                                   context.replaceBindingTrace(traceForFunction), result);
-        if (result[0]) {
-            FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
-            traceForFunction.commit();
-            if (callExpression.getValueArgumentList() == null && callExpression.getFunctionLiteralArguments().isEmpty()) {
-                // there are only type arguments
-                boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
-                context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
-            }
-            if (functionDescriptor == null) {
-                return JetTypeInfo.create(null, context.dataFlowInfo);
-            }
-            JetType type = functionDescriptor.getReturnType();
-
-            return JetTypeInfo.create(type, resolvedCall.getDataFlowInfo());
-        }
-
-        JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression instanceof JetSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
-            TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(
-                    context.trace, "trace to resolve as variable with 'invoke' call", callExpression);
-            JetType type = getVariableType((JetSimpleNameExpression) calleeExpression, receiver, callOperationNode,
-                                           context.replaceBindingTrace(traceForVariable), result);
-            if (result[0]) {
-                traceForVariable.commit();
-                context.trace.report(FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, calleeExpression,
-                                                          type != null ? type : ErrorUtils.createErrorType("")));
-                return JetTypeInfo.create(null, context.dataFlowInfo);
-            }
-        }
-        traceForFunction.commit();
-        return JetTypeInfo.create(null, context.dataFlowInfo);
-    }
-
-    private static void checkSuper(@NotNull ReceiverValue receiverValue, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
-            @NotNull BindingTrace trace, @NotNull JetExpression expression) {
-        if (!results.isSingleResult()) return;
-        if (!(receiverValue instanceof ExpressionReceiver)) return;
-        JetExpression receiver = ((ExpressionReceiver) receiverValue).getExpression();
-        CallableDescriptor descriptor = results.getResultingDescriptor();
-        if (receiver instanceof JetSuperExpression && descriptor instanceof MemberDescriptor) {
-            if (((MemberDescriptor) descriptor).getModality() == Modality.ABSTRACT) {
-                trace.report(ABSTRACT_SUPER_CALL.on(expression));
-            }
-        }
-    }
-
     @Override
     public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
-        JetTypeInfo expressionTypeInfo = getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        JetTypeInfo expressionTypeInfo = CallExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
         return DataFlowUtils.checkType(expressionTypeInfo.getType(), expression, context, expressionTypeInfo.getDataFlowInfo());
     }
 
