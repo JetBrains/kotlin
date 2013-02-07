@@ -23,6 +23,7 @@ import java.util.Map;
 public class ConstraintPosition {
     public static final ConstraintPosition RECEIVER_POSITION = new ConstraintPosition("RECEIVER_POSITION");
     public static final ConstraintPosition EXPECTED_TYPE_POSITION = new ConstraintPosition("EXPECTED_TYPE_POSITION");
+    public static final ConstraintPosition BOUND_CONSTRAINT_POSITION = new ConstraintPosition("BOUND_CONSTRAINT_POSITION");
 
     private static final Map<Integer, ConstraintPosition> valueParameterPositions = Maps.newHashMap();
 

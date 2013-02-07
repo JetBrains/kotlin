@@ -153,25 +153,35 @@ public class ConstraintsUtil {
         return typeParameter.getUpperBoundsAsType();
     }
 
-    public static boolean checkUpperBoundIsSatisfied(@NotNull ConstraintSystem constraintSystem,
-            @NotNull TypeParameterDescriptor typeParameter) {
+    public static boolean checkUpperBoundIsSatisfied(
+            @NotNull ConstraintSystem constraintSystem,
+            @NotNull TypeParameterDescriptor typeParameter,
+            boolean substituteOtherTypeParametersInBound
+    ) {
         TypeConstraints typeConstraints = constraintSystem.getTypeConstraints(typeParameter);
         assert typeConstraints != null;
         JetType type = getValue(typeConstraints);
-        JetType upperBound = typeParameter.getUpperBoundsAsType();
-        JetType substitutedType = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+        if (type == null) return true;
+        for (JetType upperBound : typeParameter.getUpperBounds()) {
+            if (!substituteOtherTypeParametersInBound && TypeUtils.dependsOnTypeParameters(upperBound, constraintSystem.getTypeVariables())) {
+                continue;
+            }
+            JetType substitutedUpperBound = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
-        if (type != null) {
-            if (substitutedType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(type, substitutedType)) {
+            assert substitutedUpperBound != null : "We wanted to substitute projections as a result for " + typeParameter;
+            if (!JetTypeChecker.INSTANCE.isSubtypeOf(type, substitutedUpperBound)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static boolean checkBoundsAreSatisfied(@NotNull ConstraintSystem constraintSystem) {
+    public static boolean checkBoundsAreSatisfied(
+            @NotNull ConstraintSystem constraintSystem,
+            boolean substituteOtherTypeParametersInBounds
+    ) {
         for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
-            if (!checkUpperBoundIsSatisfied(constraintSystem, typeVariable)) {
+            if (!checkUpperBoundIsSatisfied(constraintSystem, typeVariable, substituteOtherTypeParametersInBounds)) {
                 return false;
             }
         }

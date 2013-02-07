@@ -41,10 +41,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
@@ -238,11 +235,23 @@ public class CandidateResolver {
             return;
         }
 
+        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/true);
+        if (!boundsAreSatisfied) {
+            ConstraintSystemImpl copy = (ConstraintSystemImpl) constraintSystem.copy();
+            copy.processDeclaredBoundConstraints();
+            boundsAreSatisfied = copy.isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(copy, /*substituteOtherTypeParametersInBounds=*/true);
+            if (boundsAreSatisfied) {
+                constraintSystem = copy;
+            }
+        }
+        if (!boundsAreSatisfied) {
+            context.tracing.upperBoundViolated(resolvedCall.getTrace(), InferenceErrorData.create(resolvedCall.getCandidateDescriptor(), constraintSystem));
+        }
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
+
         // Here we type check the arguments with inferred types expected
         checkAllValueArguments(context, RESOLVE_FUNCTION_ARGUMENTS);
 
-        checkBounds(resolvedCall, constraintSystem, resolvedCall.getTrace(), context.tracing);
         resolvedCall.setHasUnknownTypeParameters(false);
         if (resolvedCall.getStatus() == ResolutionStatus.UNKNOWN_STATUS) {
             resolvedCall.addStatus(ResolutionStatus.SUCCESS);
@@ -319,7 +328,7 @@ public class CandidateResolver {
 
         // Solution
         boolean hasContradiction = constraintSystem.hasContradiction();
-        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem);
+        boolean boundsAreSatisfied = ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, /*substituteOtherTypeParametersInBounds=*/false);
         if (!hasContradiction && boundsAreSatisfied) {
             candidateCall.setHasUnknownTypeParameters(true);
             return SUCCESS;
@@ -522,19 +531,6 @@ public class CandidateResolver {
                     return parameterDescriptor.getType();
                 }
                 return varargElementType;
-            }
-        }
-    }
-
-    private static <D extends CallableDescriptor> void checkBounds(
-            @NotNull ResolvedCallImpl<D> call,
-            @NotNull ConstraintSystem constraintSystem,
-            @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing
-    ) {
-        for (TypeParameterDescriptor typeParameter : call.getCandidateDescriptor().getTypeParameters()) {
-            if (!ConstraintsUtil.checkUpperBoundIsSatisfied(constraintSystem, typeParameter)) {
-                tracing.upperBoundViolated(trace, InferenceErrorData.create(call.getCandidateDescriptor(), constraintSystem));
             }
         }
     }

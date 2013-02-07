@@ -1993,7 +1993,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/inference")
-        @InnerTestClasses({Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.Varargs.class})
+        @InnerTestClasses({Inference.Regressions.class, Inference.ReportingImprovements.class, Inference.UpperBounds.class, Inference.Varargs.class})
         public static class Inference extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInInference() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2365,6 +2365,24 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/upperBounds")
+            public static class UpperBounds extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInUpperBounds() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/upperBounds"), "kt", true);
+                }
+                
+                @TestMetadata("kt2856.kt")
+                public void testKt2856() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/upperBounds/kt2856.kt");
+                }
+                
+                @TestMetadata("useBoundsToInferTypeParamsSimple.kt")
+                public void testUseBoundsToInferTypeParamsSimple() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/upperBounds/useBoundsToInferTypeParamsSimple.kt");
+                }
+                
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/inference/varargs")
             public static class Varargs extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInVarargs() throws Exception {
@@ -2383,6 +2401,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 suite.addTestSuite(Inference.class);
                 suite.addTestSuite(Regressions.class);
                 suite.addTestSuite(ReportingImprovements.class);
+                suite.addTestSuite(UpperBounds.class);
                 suite.addTestSuite(Varargs.class);
                 return suite;
             }
