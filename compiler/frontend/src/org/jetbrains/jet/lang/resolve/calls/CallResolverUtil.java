@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
@@ -29,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.types.*;
@@ -38,7 +36,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class CallResolverUtil {
 
@@ -84,17 +81,15 @@ public class CallResolverUtil {
     }
 
 
-    public static boolean containsUnknownFunctionArgument(@NotNull JetType type) {
+    public static boolean hasUnknownFunctionParameter(@NotNull JetType type) {
         assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
-        int index = 0;
-        for (TypeProjection argument : arguments) {
-            if (index < arguments.size() - 1) {
-                if (ErrorUtils.containsErrorType(argument.getType())) {
-                    return true;
-                }
+        // last argument is return type of function type
+        List<TypeProjection> functionParameters = arguments.subList(0, arguments.size() - 1);
+        for (TypeProjection functionParameter : functionParameters) {
+            if (TypeUtils.equalsOrContainsAsArgument(functionParameter.getType(), CANT_INFER, DONT_CARE)) {
+                return true;
             }
-            index++;
         }
         return false;
     }
@@ -105,17 +100,11 @@ public class CallResolverUtil {
         return ErrorUtils.containsErrorType(returnTypeFromFunctionType);
     }
 
-    public static JetType replaceReturnTypeToUnknown(@NotNull JetType type) {
+    public static JetType replaceReturnTypeByUnknown(@NotNull JetType type) {
         assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
         List<TypeProjection> arguments = type.getArguments();
         List<TypeProjection> newArguments = Lists.newArrayList();
-        int index = 0;
-        for (TypeProjection argument : arguments) {
-            if (index < arguments.size() - 1) {
-                newArguments.add(argument);
-            }
-            index++;
-        }
+        newArguments.addAll(arguments.subList(0, arguments.size() - 1));
         newArguments.add(new TypeProjection(Variance.INVARIANT, DONT_CARE));
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
     }

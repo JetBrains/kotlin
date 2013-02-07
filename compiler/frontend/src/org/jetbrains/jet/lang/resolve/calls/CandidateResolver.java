@@ -318,7 +318,7 @@ public class CandidateResolver {
         JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
         JetType expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT);
         if (expectedType == null || !KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)
-                || CallResolverUtil.containsUnknownFunctionArgument(expectedType)) {
+                || CallResolverUtil.hasUnknownFunctionParameter(expectedType)) {
             return;
         }
         boolean hasExpectedReturnType = !CallResolverUtil.hasUnknownReturnType(expectedType);
@@ -342,7 +342,7 @@ public class CandidateResolver {
             }
             BindingContextUtils.commitResolutionCacheData(traceToResolveFunctionLiteral, context.trace);
         }
-        JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeToUnknown(expectedType) : expectedType;
+        JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeByUnknown(expectedType) : expectedType;
         CallCandidateResolutionContext<D> newContext = context.replaceExpectedType(expectedTypeWithoutReturnType);
         JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
         constraintSystem.addSubtypeConstraint(
