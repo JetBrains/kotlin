@@ -433,6 +433,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/modifiers/beforeOpenModifierInEnum.kt");
         }
         
+        @TestMetadata("beforePackageMemberCannotBeProtected.kt")
+        public void testPackageMemberCannotBeProtected() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforePackageMemberCannotBeProtected.kt");
+        }
+        
         @TestMetadata("beforeRemoveIncompatibleModifier.kt")
         public void testRemoveIncompatibleModifier() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeRemoveIncompatibleModifier.kt");
