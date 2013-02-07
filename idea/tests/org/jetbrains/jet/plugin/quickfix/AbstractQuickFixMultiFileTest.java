@@ -60,7 +60,7 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
 
     private void doTest(final String beforeFileName, boolean withExtraFile) throws Exception {
         if (withExtraFile) {
-            configureByFiles(null, beforeFileName, beforeFileName.replace(".Main.", ".Data.Sample."));
+            configureByFiles(null, beforeFileName, beforeFileName.replace(".Main.", ".data.Sample."));
         }
         else {
             configureByFiles(null, beforeFileName);
