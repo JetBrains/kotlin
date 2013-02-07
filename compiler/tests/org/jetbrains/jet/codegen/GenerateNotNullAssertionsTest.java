@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.io.File;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.compileJava;
-import static org.jetbrains.jet.codegen.CodegenTestUtil.generateFiles;
 
 public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     @Override
@@ -55,20 +54,21 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
     }
 
-    private void doTestGenerateAssertions(boolean generateAssertions, String ktFile) throws Exception {
+    private void doTestGenerateAssertions(boolean generateAssertions) throws Exception {
         File javaClassesTempDirectory = compileJava("notNullAssertions/A.java");
 
         setUpEnvironment(generateAssertions, false, javaClassesTempDirectory);
 
-        blackBoxMultiFile("notNullAssertions/AssertionChecker.kt", ktFile);
+        loadFile("notNullAssertions/AssertionChecker.kt");
+        generateFunction("checkAssertions").invoke(null, generateAssertions);
     }
 
     public void testGenerateAssertions() throws Exception {
-        doTestGenerateAssertions(true, "notNullAssertions/doGenerateAssertions.kt");
+        doTestGenerateAssertions(true);
     }
 
     public void testDoNotGenerateAssertions() throws Exception {
-        doTestGenerateAssertions(false, "notNullAssertions/doNotGenerateAssertions.kt");
+        doTestGenerateAssertions(false);
     }
 
     public void testNoAssertionsForKotlinFromSource() throws Exception {
@@ -80,16 +80,13 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     public void testNoAssertionsForKotlinFromBinary() throws Exception {
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
-        JetCoreEnvironment tmpEnvironment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
-        ClassFileFactory factory = generateFiles(tmpEnvironment,
-                CodegenTestFiles.create(tmpEnvironment.getProject(), new String[] {"notNullAssertions/noAssertionsForKotlin.kt"}));
+        setUpEnvironment(true, false);
+        loadFile("notNullAssertions/noAssertionsForKotlin.kt");
+        ClassFileFactory factory = generateClassesInFile();
         File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
         CompileEnvironmentUtil.writeToOutputDirectory(factory, compiledDirectory);
 
         setUpEnvironment(true, false, compiledDirectory);
-
         loadFile("notNullAssertions/noAssertionsForKotlinMain.kt");
 
         assertNoIntrinsicsMethodIsCalled(PackageClassUtils.getPackageClassName(FqName.ROOT));
