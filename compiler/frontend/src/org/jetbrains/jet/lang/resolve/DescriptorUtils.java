@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -445,6 +447,17 @@ public class DescriptorUtils {
     public static ClassDescriptor getContainingClass(@NotNull JetScope scope) {
         DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
         return getParentOfType(containingDeclaration, ClassDescriptor.class, false);
+    }
+
+    @NotNull
+    public static JetScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
+        JetScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
+        return new FilteringScope(innerClassesScope, new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+                return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
+            }
+        });
     }
 
     @Nullable

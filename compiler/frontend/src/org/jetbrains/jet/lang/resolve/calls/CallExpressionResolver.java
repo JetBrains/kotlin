@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.base.Predicate;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
-import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -48,6 +46,7 @@ import java.util.Collections;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallExpressionResolver {
@@ -103,17 +102,6 @@ public class CallExpressionResolver {
         }
         temporaryTrace.commit();
         return result[0];
-    }
-
-    @NotNull
-    private JetScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
-        JetScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
-        return new FilteringScope(innerClassesScope, new Predicate<DeclarationDescriptor>() {
-            @Override
-            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
-            }
-        });
     }
 
     private boolean furtherNameLookup(
