@@ -7,7 +7,6 @@ public class Test {
     }
 }
 
-fun box() : String {
-  Test().f()
-  return "OK"
+fun foo() {
+    Test().f()
 }

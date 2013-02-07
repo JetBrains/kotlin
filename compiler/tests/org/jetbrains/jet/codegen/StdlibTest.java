@@ -16,68 +16,27 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.junit.Test;
 
-import java.io.File;
 import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 public class StdlibTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        File junitJar = new File("libraries/lib/junit-4.9.jar");
-
-        if (!junitJar.exists()) {
-            throw new AssertionError();
-        }
 
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironemnt twice");
         }
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
+                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar()));
     }
 
-    @NotNull
-    @Override
-    protected GeneratedClassLoader createClassLoader(@NotNull ClassFileFactory codegens) {
-        try {
-            return new GeneratedClassLoader(
-                    codegens,
-                    new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
-                                       getClass().getClassLoader()));
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    //from NamespaceGenTest
-//    public void testPredicateOperator() throws Exception {
-//        loadText("fun foo(s: String) = s?startsWith(\"J\")");
-//        final Method main = generateFunction();
-//        try {
-//            assertEquals("JetBrains", main.invoke(null, "JetBrains"));
-//            assertNull(main.invoke(null, "IntelliJ"));
-//        } catch (Throwable t) {
-////            System.out.println(generateToText());
-//            t.printStackTrace();
-//            throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
-//        }
-//    }
-//
     public void testForInString() throws Exception {
         loadText("fun foo() : Int {        var sum = 0\n" +
                  "        for(c in \"239\")\n" +
@@ -92,17 +51,6 @@ public class StdlibTest extends CodegenTestCase {
             t.printStackTrace();
             throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
         }
-    }
-
-    public void testKt1592 () throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        loadFile("regressions/kt1592.kt");
-        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFiles.getPsiFile())).getFqName().getFqName();
-        Class<?> namespaceClass = generateClass(fqName);
-        Method method = namespaceClass.getMethod("foo", Method.class);
-        method.setAccessible(true);
-        Test annotation = method.getAnnotation(Test.class);
-        assertEquals(annotation.timeout(), 0l);
-        assertEquals(annotation.expected(), Test.None.class);
     }
 
     public void testAnnotationClassWithClassProperty()

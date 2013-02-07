@@ -52,8 +52,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
     private JetCoreEnvironment environmentWithMockJdk = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
     private JetCoreEnvironment environmentWithFullJdk = JetTestUtils.createEnvironmentWithFullJdk(myTestRootDisposable);
-    private JetCoreEnvironment environmentWithFullJdkAndJUnit;
-    
+
     private final Pattern packagePattern = Pattern.compile("package (.*)");
 
     private final List<String> generatedTestNames = Lists.newArrayList();
@@ -64,16 +63,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
     private CodegenTestsOnAndroidGenerator(PathManager pathManager) {
         this.pathManager = pathManager;
-
-        File junitJar = new File("libraries/lib/junit-4.9.jar");
-
-        if (!junitJar.exists()) {
-            throw new AssertionError();
-        }
-
-        environmentWithFullJdkAndJUnit = new JetCoreEnvironment(myTestRootDisposable, JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar(), junitJar));
-
     }
 
     private void generateOutputFiles() throws Throwable {
@@ -130,7 +119,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         Assert.assertNotNull("Folder with testData is empty: " + dir.getAbsolutePath(), files);
         Set<String> excludedFiles = SpecialFiles.getExcludedFiles();
         Set<String> filesCompiledWithoutStdLib = SpecialFiles.getFilesCompiledWithoutStdLib();
-        Set<String> filesCompiledWithJUnit = SpecialFiles.getFilesCompiledWithJUnit();
         for (File file : files) {
             if (excludedFiles.contains(file.getName())) {
                 continue;
@@ -148,9 +136,6 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     final ClassFileFactory factory;
                     if (filesCompiledWithoutStdLib.contains(file.getName())) {
                         factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithMockJdk);
-                    }
-                    else if (filesCompiledWithJUnit.contains(file.getName())) {
-                        factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdkAndJUnit);
                     }
                     else {
                         factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdk);

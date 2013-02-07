@@ -24,18 +24,12 @@ import java.util.Set;
 public class SpecialFiles {
     private static final Set<String> excludedFiles = Sets.newHashSet();
     private static final Set<String> filesCompiledWithoutStdLib = Sets.newHashSet();
-    private static final Set<String> filesCompiledWithJUnit = Sets.newHashSet();
 
     static {
         fillExcludedFiles();
         fillFilesCompiledWithoutStdLib();
-        fillFilesCompiledWithJUnit();
     }
 
-
-    public static Set<String> getFilesCompiledWithJUnit() {
-        return filesCompiledWithJUnit;
-    }
 
     public static Set<String> getExcludedFiles() {
         return excludedFiles;
@@ -43,10 +37,6 @@ public class SpecialFiles {
 
     public static Set<String> getFilesCompiledWithoutStdLib() {
         return filesCompiledWithoutStdLib;
-    }
-
-    private static void fillFilesCompiledWithJUnit() {
-        filesCompiledWithJUnit.add("kt2334.kt");
     }
 
     private static void fillFilesCompiledWithoutStdLib() {
