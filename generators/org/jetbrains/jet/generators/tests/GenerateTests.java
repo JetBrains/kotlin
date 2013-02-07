@@ -25,7 +25,6 @@ import org.jetbrains.jet.codegen.AbstractJavaVisibilityTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
-import org.jetbrains.jet.codegen.generated.AbstractBlackBoxWithStdlibCodegenTest;
 import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
@@ -72,7 +71,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "BlackBoxCodegenTestGenerated",
                 AbstractBlackBoxCodegenTest.class,
-                testModel("compiler/testData/codegen/box", "blackBoxFileByFullPath")
+                testModel("compiler/testData/codegen/box", "doTest")
         );
 
         GenerateRangesCodegenTestData.main(args);
@@ -81,14 +80,14 @@ public class GenerateTests {
                 "compiler/tests/",
                 "BlackBoxWithJavaCodegenTestGenerated",
                 AbstractBlackBoxCodegenTest.class,
-                testModel("compiler/testData/codegen/boxWithJava", "blackBoxFileWithJavaByFullPath")
+                testModel("compiler/testData/codegen/boxWithJava", "doTestWithJava")
         );
 
         generateTest(
                 "compiler/tests/",
                 "BlackBoxWithStdlibCodegenTestGenerated",
-                AbstractBlackBoxWithStdlibCodegenTest.class,
-                testModel("compiler/testData/codegen/boxWithStdlib", "blackBoxFileByFullPath")
+                AbstractBlackBoxCodegenTest.class,
+                testModel("compiler/testData/codegen/boxWithStdlib", "doTestWithStdlib")
         );
 
         generateTest(

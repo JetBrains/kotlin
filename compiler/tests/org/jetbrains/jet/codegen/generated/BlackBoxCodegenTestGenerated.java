@@ -45,187 +45,187 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("arrayGetAssignMultiIndex.kt")
         public void testArrayGetAssignMultiIndex() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/arrayGetAssignMultiIndex.kt");
+            doTest("compiler/testData/codegen/box/arrays/arrayGetAssignMultiIndex.kt");
         }
         
         @TestMetadata("arrayGetMultiIndex.kt")
         public void testArrayGetMultiIndex() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/arrayGetMultiIndex.kt");
+            doTest("compiler/testData/codegen/box/arrays/arrayGetMultiIndex.kt");
         }
         
         @TestMetadata("arrayPlusAssign.kt")
         public void testArrayPlusAssign() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
+            doTest("compiler/testData/codegen/box/arrays/arrayPlusAssign.kt");
         }
         
         @TestMetadata("collectionAssignGetMultiIndex.kt")
         public void testCollectionAssignGetMultiIndex() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/collectionAssignGetMultiIndex.kt");
+            doTest("compiler/testData/codegen/box/arrays/collectionAssignGetMultiIndex.kt");
         }
         
         @TestMetadata("collectionGetMultiIndex.kt")
         public void testCollectionGetMultiIndex() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/collectionGetMultiIndex.kt");
+            doTest("compiler/testData/codegen/box/arrays/collectionGetMultiIndex.kt");
         }
         
         @TestMetadata("forEachBooleanArray.kt")
         public void testForEachBooleanArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachBooleanArray.kt");
         }
         
         @TestMetadata("forEachByteArray.kt")
         public void testForEachByteArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachByteArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachByteArray.kt");
         }
         
         @TestMetadata("forEachCharArray.kt")
         public void testForEachCharArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachCharArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachCharArray.kt");
         }
         
         @TestMetadata("forEachDoubleArray.kt")
         public void testForEachDoubleArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachDoubleArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachDoubleArray.kt");
         }
         
         @TestMetadata("forEachFloatArray.kt")
         public void testForEachFloatArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachFloatArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachFloatArray.kt");
         }
         
         @TestMetadata("forEachIntArray.kt")
         public void testForEachIntArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachIntArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachIntArray.kt");
         }
         
         @TestMetadata("forEachLongArray.kt")
         public void testForEachLongArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachLongArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachLongArray.kt");
         }
         
         @TestMetadata("forEachShortArray.kt")
         public void testForEachShortArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/forEachShortArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/forEachShortArray.kt");
         }
         
         @TestMetadata("hashMap.kt")
         public void testHashMap() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/hashMap.kt");
+            doTest("compiler/testData/codegen/box/arrays/hashMap.kt");
         }
         
         @TestMetadata("indices.kt")
         public void testIndices() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/indices.kt");
+            doTest("compiler/testData/codegen/box/arrays/indices.kt");
         }
         
         @TestMetadata("indicesChar.kt")
         public void testIndicesChar() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/indicesChar.kt");
+            doTest("compiler/testData/codegen/box/arrays/indicesChar.kt");
         }
         
         @TestMetadata("iterator.kt")
         public void testIterator() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iterator.kt");
+            doTest("compiler/testData/codegen/box/arrays/iterator.kt");
         }
         
         @TestMetadata("iteratorBooleanArray.kt")
         public void testIteratorBooleanArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorBooleanArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorBooleanArray.kt");
         }
         
         @TestMetadata("iteratorByteArray.kt")
         public void testIteratorByteArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorByteArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorByteArray.kt");
         }
         
         @TestMetadata("iteratorByteArrayNextByte.kt")
         public void testIteratorByteArrayNextByte() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorByteArrayNextByte.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorByteArrayNextByte.kt");
         }
         
         @TestMetadata("iteratorCharArray.kt")
         public void testIteratorCharArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorCharArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorCharArray.kt");
         }
         
         @TestMetadata("iteratorDoubleArray.kt")
         public void testIteratorDoubleArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorDoubleArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorDoubleArray.kt");
         }
         
         @TestMetadata("iteratorFloatArray.kt")
         public void testIteratorFloatArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorFloatArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorFloatArray.kt");
         }
         
         @TestMetadata("iteratorIntArray.kt")
         public void testIteratorIntArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorIntArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorIntArray.kt");
         }
         
         @TestMetadata("iteratorLongArray.kt")
         public void testIteratorLongArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorLongArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorLongArray.kt");
         }
         
         @TestMetadata("iteratorLongArrayNextLong.kt")
         public void testIteratorLongArrayNextLong() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorLongArrayNextLong.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorLongArrayNextLong.kt");
         }
         
         @TestMetadata("iteratorShortArray.kt")
         public void testIteratorShortArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/iteratorShortArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/iteratorShortArray.kt");
         }
         
         @TestMetadata("kt238.kt")
         public void testKt238() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt238.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt238.kt");
         }
         
         @TestMetadata("kt2997.kt")
         public void testKt2997() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt2997.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt2997.kt");
         }
         
         @TestMetadata("kt33.kt")
         public void testKt33() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt33.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt33.kt");
         }
         
         @TestMetadata("kt503.kt")
         public void testKt503() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt503.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt503.kt");
         }
         
         @TestMetadata("kt594.kt")
         public void testKt594() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt594.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt594.kt");
         }
         
         @TestMetadata("kt602.kt")
         public void testKt602() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt602.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt602.kt");
         }
         
         @TestMetadata("kt779.kt")
         public void testKt779() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt779.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt779.kt");
         }
         
         @TestMetadata("kt950.kt")
         public void testKt950() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/kt950.kt");
+            doTest("compiler/testData/codegen/box/arrays/kt950.kt");
         }
         
         @TestMetadata("longAsIndex.kt")
         public void testLongAsIndex() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/longAsIndex.kt");
+            doTest("compiler/testData/codegen/box/arrays/longAsIndex.kt");
         }
         
         @TestMetadata("nonNullArray.kt")
         public void testNonNullArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/arrays/nonNullArray.kt");
+            doTest("compiler/testData/codegen/box/arrays/nonNullArray.kt");
         }
         
     }
@@ -238,182 +238,182 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("delegation.kt")
         public void testDelegation() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/delegation.kt");
+            doTest("compiler/testData/codegen/box/bridges/delegation.kt");
         }
         
         @TestMetadata("delegationProperty.kt")
         public void testDelegationProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/delegationProperty.kt");
+            doTest("compiler/testData/codegen/box/bridges/delegationProperty.kt");
         }
         
         @TestMetadata("delegationToTraitImpl.kt")
         public void testDelegationToTraitImpl() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/delegationToTraitImpl.kt");
+            doTest("compiler/testData/codegen/box/bridges/delegationToTraitImpl.kt");
         }
         
         @TestMetadata("diamond.kt")
         public void testDiamond() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/diamond.kt");
+            doTest("compiler/testData/codegen/box/bridges/diamond.kt");
         }
         
         @TestMetadata("kt1939.kt")
         public void testKt1939() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/kt1939.kt");
+            doTest("compiler/testData/codegen/box/bridges/kt1939.kt");
         }
         
         @TestMetadata("kt1959.kt")
         public void testKt1959() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/kt1959.kt");
+            doTest("compiler/testData/codegen/box/bridges/kt1959.kt");
         }
         
         @TestMetadata("kt2498.kt")
         public void testKt2498() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/kt2498.kt");
+            doTest("compiler/testData/codegen/box/bridges/kt2498.kt");
         }
         
         @TestMetadata("kt2702.kt")
         public void testKt2702() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/kt2702.kt");
+            doTest("compiler/testData/codegen/box/bridges/kt2702.kt");
         }
         
         @TestMetadata("kt2833.kt")
         public void testKt2833() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/kt2833.kt");
+            doTest("compiler/testData/codegen/box/bridges/kt2833.kt");
         }
         
         @TestMetadata("kt2920.kt")
         public void testKt2920() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/kt2920.kt");
+            doTest("compiler/testData/codegen/box/bridges/kt2920.kt");
         }
         
         @TestMetadata("longChainOneBridge.kt")
         public void testLongChainOneBridge() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
+            doTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
         }
         
         @TestMetadata("manyTypeArgumentsSubstitutedSuccessively.kt")
         public void testManyTypeArgumentsSubstitutedSuccessively() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/manyTypeArgumentsSubstitutedSuccessively.kt");
+            doTest("compiler/testData/codegen/box/bridges/manyTypeArgumentsSubstitutedSuccessively.kt");
         }
         
         @TestMetadata("methodFromTrait.kt")
         public void testMethodFromTrait() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/methodFromTrait.kt");
+            doTest("compiler/testData/codegen/box/bridges/methodFromTrait.kt");
         }
         
         @TestMetadata("overrideAbstractProperty.kt")
         public void testOverrideAbstractProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/overrideAbstractProperty.kt");
+            doTest("compiler/testData/codegen/box/bridges/overrideAbstractProperty.kt");
         }
         
         @TestMetadata("overrideReturnType.kt")
         public void testOverrideReturnType() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/overrideReturnType.kt");
+            doTest("compiler/testData/codegen/box/bridges/overrideReturnType.kt");
         }
         
         @TestMetadata("propertyAccessorsWithoutBody.kt")
         public void testPropertyAccessorsWithoutBody() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/propertyAccessorsWithoutBody.kt");
+            doTest("compiler/testData/codegen/box/bridges/propertyAccessorsWithoutBody.kt");
         }
         
         @TestMetadata("propertyDiamond.kt")
         public void testPropertyDiamond() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/propertyDiamond.kt");
+            doTest("compiler/testData/codegen/box/bridges/propertyDiamond.kt");
         }
         
         @TestMetadata("propertyInConstructor.kt")
         public void testPropertyInConstructor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/propertyInConstructor.kt");
+            doTest("compiler/testData/codegen/box/bridges/propertyInConstructor.kt");
         }
         
         @TestMetadata("propertySetter.kt")
         public void testPropertySetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/propertySetter.kt");
+            doTest("compiler/testData/codegen/box/bridges/propertySetter.kt");
         }
         
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/simple.kt");
+            doTest("compiler/testData/codegen/box/bridges/simple.kt");
         }
         
         @TestMetadata("simpleEnum.kt")
         public void testSimpleEnum() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/simpleEnum.kt");
+            doTest("compiler/testData/codegen/box/bridges/simpleEnum.kt");
         }
         
         @TestMetadata("simpleGenericMethod.kt")
         public void testSimpleGenericMethod() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/simpleGenericMethod.kt");
+            doTest("compiler/testData/codegen/box/bridges/simpleGenericMethod.kt");
         }
         
         @TestMetadata("simpleObject.kt")
         public void testSimpleObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/simpleObject.kt");
+            doTest("compiler/testData/codegen/box/bridges/simpleObject.kt");
         }
         
         @TestMetadata("simpleReturnType.kt")
         public void testSimpleReturnType() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/simpleReturnType.kt");
+            doTest("compiler/testData/codegen/box/bridges/simpleReturnType.kt");
         }
         
         @TestMetadata("simpleUpperBound.kt")
         public void testSimpleUpperBound() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/simpleUpperBound.kt");
+            doTest("compiler/testData/codegen/box/bridges/simpleUpperBound.kt");
         }
         
         @TestMetadata("substitutionInSuperClass.kt")
         public void testSubstitutionInSuperClass() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClass.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass.kt");
         }
         
         @TestMetadata("substitutionInSuperClassAbstractFun.kt")
         public void testSubstitutionInSuperClassAbstractFun() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassAbstractFun.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassAbstractFun.kt");
         }
         
         @TestMetadata("substitutionInSuperClassBoundedTypeArguments.kt")
         public void testSubstitutionInSuperClassBoundedTypeArguments() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassBoundedTypeArguments.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassBoundedTypeArguments.kt");
         }
         
         @TestMetadata("substitutionInSuperClassDelegation.kt")
         public void testSubstitutionInSuperClassDelegation() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassDelegation.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassDelegation.kt");
         }
         
         @TestMetadata("substitutionInSuperClassEnum.kt")
         public void testSubstitutionInSuperClassEnum() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassEnum.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassEnum.kt");
         }
         
         @TestMetadata("substitutionInSuperClassGenericMethod.kt")
         public void testSubstitutionInSuperClassGenericMethod() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassGenericMethod.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassGenericMethod.kt");
         }
         
         @TestMetadata("substitutionInSuperClassObject.kt")
         public void testSubstitutionInSuperClassObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassObject.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassObject.kt");
         }
         
         @TestMetadata("substitutionInSuperClassProperty.kt")
         public void testSubstitutionInSuperClassProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassProperty.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassProperty.kt");
         }
         
         @TestMetadata("substitutionInSuperClassUpperBound.kt")
         public void testSubstitutionInSuperClassUpperBound() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/substitutionInSuperClassUpperBound.kt");
+            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassUpperBound.kt");
         }
         
         @TestMetadata("twoParentsWithDifferentMethodsTwoBridges.kt")
         public void testTwoParentsWithDifferentMethodsTwoBridges() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges.kt");
+            doTest("compiler/testData/codegen/box/bridges/twoParentsWithDifferentMethodsTwoBridges.kt");
         }
         
         @TestMetadata("twoParentsWithTheSameMethodOneBridge.kt")
         public void testTwoParentsWithTheSameMethodOneBridge() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/bridges/twoParentsWithTheSameMethodOneBridge.kt");
+            doTest("compiler/testData/codegen/box/bridges/twoParentsWithTheSameMethodOneBridge.kt");
         }
         
     }
@@ -426,27 +426,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("as.kt")
         public void testAs() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/casts/as.kt");
+            doTest("compiler/testData/codegen/box/casts/as.kt");
         }
         
         @TestMetadata("asSafe.kt")
         public void testAsSafe() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/casts/asSafe.kt");
+            doTest("compiler/testData/codegen/box/casts/asSafe.kt");
         }
         
         @TestMetadata("castGenericNull.kt")
         public void testCastGenericNull() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/casts/castGenericNull.kt");
+            doTest("compiler/testData/codegen/box/casts/castGenericNull.kt");
         }
         
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/casts/is.kt");
+            doTest("compiler/testData/codegen/box/casts/is.kt");
         }
         
         @TestMetadata("notIs.kt")
         public void testNotIs() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/casts/notIs.kt");
+            doTest("compiler/testData/codegen/box/casts/notIs.kt");
         }
         
     }
@@ -459,437 +459,437 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("classObject.kt")
         public void testClassObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/classObject.kt");
+            doTest("compiler/testData/codegen/box/classes/classObject.kt");
         }
         
         @TestMetadata("classObjectField.kt")
         public void testClassObjectField() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/classObjectField.kt");
+            doTest("compiler/testData/codegen/box/classes/classObjectField.kt");
         }
         
         @TestMetadata("classObjectInTrait.kt")
         public void testClassObjectInTrait() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/classObjectInTrait.kt");
+            doTest("compiler/testData/codegen/box/classes/classObjectInTrait.kt");
         }
         
         @TestMetadata("delegation2.kt")
         public void testDelegation2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegation2.kt");
+            doTest("compiler/testData/codegen/box/classes/delegation2.kt");
         }
         
         @TestMetadata("delegation3.kt")
         public void testDelegation3() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegation3.kt");
+            doTest("compiler/testData/codegen/box/classes/delegation3.kt");
         }
         
         @TestMetadata("delegation4.kt")
         public void testDelegation4() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegation4.kt");
+            doTest("compiler/testData/codegen/box/classes/delegation4.kt");
         }
         
         @TestMetadata("delegationGenericArg.kt")
         public void testDelegationGenericArg() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegationGenericArg.kt");
+            doTest("compiler/testData/codegen/box/classes/delegationGenericArg.kt");
         }
         
         @TestMetadata("delegationGenericArgUpperBound.kt")
         public void testDelegationGenericArgUpperBound() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegationGenericArgUpperBound.kt");
+            doTest("compiler/testData/codegen/box/classes/delegationGenericArgUpperBound.kt");
         }
         
         @TestMetadata("delegationGenericLongArg.kt")
         public void testDelegationGenericLongArg() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegationGenericLongArg.kt");
+            doTest("compiler/testData/codegen/box/classes/delegationGenericLongArg.kt");
         }
         
         @TestMetadata("delegationJava.kt")
         public void testDelegationJava() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegationJava.kt");
+            doTest("compiler/testData/codegen/box/classes/delegationJava.kt");
         }
         
         @TestMetadata("delegationMethodsWithArgs.kt")
         public void testDelegationMethodsWithArgs() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/delegationMethodsWithArgs.kt");
+            doTest("compiler/testData/codegen/box/classes/delegationMethodsWithArgs.kt");
         }
         
         @TestMetadata("diamondInheritance.kt")
         public void testDiamondInheritance() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/diamondInheritance.kt");
+            doTest("compiler/testData/codegen/box/classes/diamondInheritance.kt");
         }
         
         @TestMetadata("exceptionConstructor.kt")
         public void testExceptionConstructor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/exceptionConstructor.kt");
+            doTest("compiler/testData/codegen/box/classes/exceptionConstructor.kt");
         }
         
         @TestMetadata("funDelegation.kt")
         public void testFunDelegation() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/funDelegation.kt");
+            doTest("compiler/testData/codegen/box/classes/funDelegation.kt");
         }
         
         @TestMetadata("inheritance.kt")
         public void testInheritance() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/inheritance.kt");
+            doTest("compiler/testData/codegen/box/classes/inheritance.kt");
         }
         
         @TestMetadata("inheritedInnerClass.kt")
         public void testInheritedInnerClass() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/inheritedInnerClass.kt");
+            doTest("compiler/testData/codegen/box/classes/inheritedInnerClass.kt");
         }
         
         @TestMetadata("inheritedMethod.kt")
         public void testInheritedMethod() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/inheritedMethod.kt");
+            doTest("compiler/testData/codegen/box/classes/inheritedMethod.kt");
         }
         
         @TestMetadata("initializerBlock.kt")
         public void testInitializerBlock() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/initializerBlock.kt");
+            doTest("compiler/testData/codegen/box/classes/initializerBlock.kt");
         }
         
         @TestMetadata("initializerBlockDImpl.kt")
         public void testInitializerBlockDImpl() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/initializerBlockDImpl.kt");
+            doTest("compiler/testData/codegen/box/classes/initializerBlockDImpl.kt");
         }
         
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/innerClass.kt");
+            doTest("compiler/testData/codegen/box/classes/innerClass.kt");
         }
         
         @TestMetadata("kt1018.kt")
         public void testKt1018() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1018.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1018.kt");
         }
         
         @TestMetadata("kt1120.kt")
         public void testKt1120() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1120.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1120.kt");
         }
         
         @TestMetadata("kt1134.kt")
         public void testKt1134() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1134.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1134.kt");
         }
         
         @TestMetadata("kt1157.kt")
         public void testKt1157() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1157.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1157.kt");
         }
         
         @TestMetadata("kt1247.kt")
         public void testKt1247() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1247.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1247.kt");
         }
         
         @TestMetadata("kt1345.kt")
         public void testKt1345() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1345.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1345.kt");
         }
         
         @TestMetadata("kt1439.kt")
         public void testKt1439() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1439.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1439.kt");
         }
         
         @TestMetadata("kt1535.kt")
         public void testKt1535() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1535.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1535.kt");
         }
         
         @TestMetadata("kt1538.kt")
         public void testKt1538() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1538.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1538.kt");
         }
         
         @TestMetadata("kt1578.kt")
         public void testKt1578() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1578.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1578.kt");
         }
         
         @TestMetadata("kt1611.kt")
         public void testKt1611() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1611.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1611.kt");
         }
         
         @TestMetadata("kt1721.kt")
         public void testKt1721() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1721.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1721.kt");
         }
         
         @TestMetadata("kt1726.kt")
         public void testKt1726() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1726.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1726.kt");
         }
         
         @TestMetadata("kt1759.kt")
         public void testKt1759() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1759.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1759.kt");
         }
         
         @TestMetadata("kt1891.kt")
         public void testKt1891() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1891.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1891.kt");
         }
         
         @TestMetadata("kt1918.kt")
         public void testKt1918() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1918.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1918.kt");
         }
         
         @TestMetadata("kt1976.kt")
         public void testKt1976() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1976.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1976.kt");
         }
         
         @TestMetadata("kt1980.kt")
         public void testKt1980() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt1980.kt");
+            doTest("compiler/testData/codegen/box/classes/kt1980.kt");
         }
         
         @TestMetadata("kt2224.kt")
         public void testKt2224() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2224.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2224.kt");
         }
         
         @TestMetadata("kt2288.kt")
         public void testKt2288() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2288.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2288.kt");
         }
         
         @TestMetadata("kt2384.kt")
         public void testKt2384() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2384.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2384.kt");
         }
         
         @TestMetadata("kt2390.kt")
         public void testKt2390() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2390.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2390.kt");
         }
         
         @TestMetadata("kt2391.kt")
         public void testKt2391() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2391.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2391.kt");
         }
         
         @TestMetadata("kt2395.kt")
         public void testKt2395() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2395.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2395.kt");
         }
         
         @TestMetadata("kt2417.kt")
         public void testKt2417() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2417.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2417.kt");
         }
         
         @TestMetadata("kt2477.kt")
         public void testKt2477() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2477.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2477.kt");
         }
         
         @TestMetadata("kt2480.kt")
         public void testKt2480() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2480.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2480.kt");
         }
         
         @TestMetadata("kt2482.kt")
         public void testKt2482() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2482.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2482.kt");
         }
         
         @TestMetadata("kt2485.kt")
         public void testKt2485() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2485.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2485.kt");
         }
         
         @TestMetadata("kt249.kt")
         public void testKt249() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt249.kt");
+            doTest("compiler/testData/codegen/box/classes/kt249.kt");
         }
         
         @TestMetadata("kt2532.kt")
         public void testKt2532() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2532.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2532.kt");
         }
         
         @TestMetadata("kt2566.kt")
         public void testKt2566() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2566.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2566.kt");
         }
         
         @TestMetadata("kt2566_2.kt")
         public void testKt2566_2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2566_2.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2566_2.kt");
         }
         
         @TestMetadata("kt2607.kt")
         public void testKt2607() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2607.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2607.kt");
         }
         
         @TestMetadata("kt2626.kt")
         public void testKt2626() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2626.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2626.kt");
         }
         
         @TestMetadata("kt2711.kt")
         public void testKt2711() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt2711.kt");
+            doTest("compiler/testData/codegen/box/classes/kt2711.kt");
         }
         
         @TestMetadata("kt285.kt")
         public void testKt285() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt285.kt");
+            doTest("compiler/testData/codegen/box/classes/kt285.kt");
         }
         
         @TestMetadata("kt343.kt")
         public void testKt343() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt343.kt");
+            doTest("compiler/testData/codegen/box/classes/kt343.kt");
         }
         
         @TestMetadata("kt454.kt")
         public void testKt454() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt454.kt");
+            doTest("compiler/testData/codegen/box/classes/kt454.kt");
         }
         
         @TestMetadata("kt471.kt")
         public void testKt471() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt471.kt");
+            doTest("compiler/testData/codegen/box/classes/kt471.kt");
         }
         
         @TestMetadata("kt48.kt")
         public void testKt48() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt48.kt");
+            doTest("compiler/testData/codegen/box/classes/kt48.kt");
         }
         
         @TestMetadata("kt496.kt")
         public void testKt496() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt496.kt");
+            doTest("compiler/testData/codegen/box/classes/kt496.kt");
         }
         
         @TestMetadata("kt500.kt")
         public void testKt500() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt500.kt");
+            doTest("compiler/testData/codegen/box/classes/kt500.kt");
         }
         
         @TestMetadata("kt501.kt")
         public void testKt501() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt501.kt");
+            doTest("compiler/testData/codegen/box/classes/kt501.kt");
         }
         
         @TestMetadata("kt504.kt")
         public void testKt504() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt504.kt");
+            doTest("compiler/testData/codegen/box/classes/kt504.kt");
         }
         
         @TestMetadata("kt508.kt")
         public void testKt508() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt508.kt");
+            doTest("compiler/testData/codegen/box/classes/kt508.kt");
         }
         
         @TestMetadata("kt633.kt")
         public void testKt633() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt633.kt");
+            doTest("compiler/testData/codegen/box/classes/kt633.kt");
         }
         
         @TestMetadata("kt707.kt")
         public void testKt707() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt707.kt");
+            doTest("compiler/testData/codegen/box/classes/kt707.kt");
         }
         
         @TestMetadata("kt723.kt")
         public void testKt723() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt723.kt");
+            doTest("compiler/testData/codegen/box/classes/kt723.kt");
         }
         
         @TestMetadata("kt725.kt")
         public void testKt725() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt725.kt");
+            doTest("compiler/testData/codegen/box/classes/kt725.kt");
         }
         
         @TestMetadata("kt903.kt")
         public void testKt903() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt903.kt");
+            doTest("compiler/testData/codegen/box/classes/kt903.kt");
         }
         
         @TestMetadata("kt940.kt")
         public void testKt940() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/kt940.kt");
+            doTest("compiler/testData/codegen/box/classes/kt940.kt");
         }
         
         @TestMetadata("outerThis.kt")
         public void testOuterThis() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/outerThis.kt");
+            doTest("compiler/testData/codegen/box/classes/outerThis.kt");
         }
         
         @TestMetadata("overloadBinaryOperator.kt")
         public void testOverloadBinaryOperator() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/overloadBinaryOperator.kt");
+            doTest("compiler/testData/codegen/box/classes/overloadBinaryOperator.kt");
         }
         
         @TestMetadata("overloadPlusAssign.kt")
         public void testOverloadPlusAssign() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/overloadPlusAssign.kt");
+            doTest("compiler/testData/codegen/box/classes/overloadPlusAssign.kt");
         }
         
         @TestMetadata("overloadPlusAssignReturn.kt")
         public void testOverloadPlusAssignReturn() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/overloadPlusAssignReturn.kt");
+            doTest("compiler/testData/codegen/box/classes/overloadPlusAssignReturn.kt");
         }
         
         @TestMetadata("overloadPlusToPlusAssign.kt")
         public void testOverloadPlusToPlusAssign() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/overloadPlusToPlusAssign.kt");
+            doTest("compiler/testData/codegen/box/classes/overloadPlusToPlusAssign.kt");
         }
         
         @TestMetadata("overloadUnaryOperator.kt")
         public void testOverloadUnaryOperator() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/overloadUnaryOperator.kt");
+            doTest("compiler/testData/codegen/box/classes/overloadUnaryOperator.kt");
         }
         
         @TestMetadata("privateOuterFunctions.kt")
         public void testPrivateOuterFunctions() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/privateOuterFunctions.kt");
+            doTest("compiler/testData/codegen/box/classes/privateOuterFunctions.kt");
         }
         
         @TestMetadata("privateOuterProperty.kt")
         public void testPrivateOuterProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/privateOuterProperty.kt");
+            doTest("compiler/testData/codegen/box/classes/privateOuterProperty.kt");
         }
         
         @TestMetadata("propertyDelegation.kt")
         public void testPropertyDelegation() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/propertyDelegation.kt");
+            doTest("compiler/testData/codegen/box/classes/propertyDelegation.kt");
         }
         
         @TestMetadata("propertyInInitializer.kt")
         public void testPropertyInInitializer() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/propertyInInitializer.kt");
+            doTest("compiler/testData/codegen/box/classes/propertyInInitializer.kt");
         }
         
         @TestMetadata("resolveOrder.kt")
         public void testResolveOrder() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/resolveOrder.kt");
+            doTest("compiler/testData/codegen/box/classes/resolveOrder.kt");
         }
         
         @TestMetadata("rightHandOverride.kt")
         public void testRightHandOverride() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/rightHandOverride.kt");
+            doTest("compiler/testData/codegen/box/classes/rightHandOverride.kt");
         }
         
         @TestMetadata("selfcreate.kt")
         public void testSelfcreate() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/selfcreate.kt");
+            doTest("compiler/testData/codegen/box/classes/selfcreate.kt");
         }
         
         @TestMetadata("simpleBox.kt")
         public void testSimpleBox() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/simpleBox.kt");
+            doTest("compiler/testData/codegen/box/classes/simpleBox.kt");
         }
         
         @TestMetadata("typedDelegation.kt")
         public void testTypedDelegation() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/classes/typedDelegation.kt");
+            doTest("compiler/testData/codegen/box/classes/typedDelegation.kt");
         }
         
     }
@@ -903,52 +903,52 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("closureWithParameter.kt")
         public void testClosureWithParameter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/closureWithParameter.kt");
+            doTest("compiler/testData/codegen/box/closures/closureWithParameter.kt");
         }
         
         @TestMetadata("closureWithParameterAndBoxing.kt")
         public void testClosureWithParameterAndBoxing() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/closureWithParameterAndBoxing.kt");
+            doTest("compiler/testData/codegen/box/closures/closureWithParameterAndBoxing.kt");
         }
         
         @TestMetadata("doubleEnclosedLocalVariable.kt")
         public void testDoubleEnclosedLocalVariable() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/doubleEnclosedLocalVariable.kt");
+            doTest("compiler/testData/codegen/box/closures/doubleEnclosedLocalVariable.kt");
         }
         
         @TestMetadata("enclosingLocalVariable.kt")
         public void testEnclosingLocalVariable() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/enclosingLocalVariable.kt");
+            doTest("compiler/testData/codegen/box/closures/enclosingLocalVariable.kt");
         }
         
         @TestMetadata("enclosingThis.kt")
         public void testEnclosingThis() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/enclosingThis.kt");
+            doTest("compiler/testData/codegen/box/closures/enclosingThis.kt");
         }
         
         @TestMetadata("extensionClosure.kt")
         public void testExtensionClosure() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/extensionClosure.kt");
+            doTest("compiler/testData/codegen/box/closures/extensionClosure.kt");
         }
         
         @TestMetadata("kt2151.kt")
         public void testKt2151() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/kt2151.kt");
+            doTest("compiler/testData/codegen/box/closures/kt2151.kt");
         }
         
         @TestMetadata("recursiveClosure.kt")
         public void testRecursiveClosure() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/recursiveClosure.kt");
+            doTest("compiler/testData/codegen/box/closures/recursiveClosure.kt");
         }
         
         @TestMetadata("simplestClosure.kt")
         public void testSimplestClosure() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/simplestClosure.kt");
+            doTest("compiler/testData/codegen/box/closures/simplestClosure.kt");
         }
         
         @TestMetadata("simplestClosureAndBoxing.kt")
         public void testSimplestClosureAndBoxing() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/closures/simplestClosureAndBoxing.kt");
+            doTest("compiler/testData/codegen/box/closures/simplestClosureAndBoxing.kt");
         }
         
         @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
@@ -959,27 +959,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("localFunInsideLocalFun.kt")
             public void testLocalFunInsideLocalFun() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFun.kt");
+                doTest("compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFun.kt");
             }
             
             @TestMetadata("localFunInsideLocalFunDifferentSignatures.kt")
             public void testLocalFunInsideLocalFunDifferentSignatures() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFunDifferentSignatures.kt");
+                doTest("compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFunDifferentSignatures.kt");
             }
             
             @TestMetadata("threeLevels.kt")
             public void testThreeLevels() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/closures/closureInsideClosure/threeLevels.kt");
+                doTest("compiler/testData/codegen/box/closures/closureInsideClosure/threeLevels.kt");
             }
             
             @TestMetadata("threeLevelsDifferentSignatures.kt")
             public void testThreeLevelsDifferentSignatures() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/closures/closureInsideClosure/threeLevelsDifferentSignatures.kt");
+                doTest("compiler/testData/codegen/box/closures/closureInsideClosure/threeLevelsDifferentSignatures.kt");
             }
             
             @TestMetadata("varAsFunInsideLocalFun.kt")
             public void testVarAsFunInsideLocalFun() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/closures/closureInsideClosure/varAsFunInsideLocalFun.kt");
+                doTest("compiler/testData/codegen/box/closures/closureInsideClosure/varAsFunInsideLocalFun.kt");
             }
             
         }
@@ -1000,247 +1000,247 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("compareBoxedIntegerToZero.kt")
         public void testCompareBoxedIntegerToZero() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/compareBoxedIntegerToZero.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/compareBoxedIntegerToZero.kt");
         }
         
         @TestMetadata("conditionOfEmptyIf.kt")
         public void testConditionOfEmptyIf() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/conditionOfEmptyIf.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/conditionOfEmptyIf.kt");
         }
         
         @TestMetadata("continueInFor.kt")
         public void testContinueInFor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/continueInFor.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/continueInFor.kt");
         }
         
         @TestMetadata("continueToLabelInFor.kt")
         public void testContinueToLabelInFor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/continueToLabelInFor.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/continueToLabelInFor.kt");
         }
         
         @TestMetadata("doWhile.kt")
         public void testDoWhile() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/doWhile.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/doWhile.kt");
         }
         
         @TestMetadata("doWhileFib.kt")
         public void testDoWhileFib() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/doWhileFib.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/doWhileFib.kt");
         }
         
         @TestMetadata("finallyOnEmptyReturn.kt")
         public void testFinallyOnEmptyReturn() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/finallyOnEmptyReturn.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/finallyOnEmptyReturn.kt");
         }
         
         @TestMetadata("forInSmartCastedToArray.kt")
         public void testForInSmartCastedToArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forInSmartCastedToArray.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forInSmartCastedToArray.kt");
         }
         
         @TestMetadata("forIntArray.kt")
         public void testForIntArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forIntArray.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forIntArray.kt");
         }
         
         @TestMetadata("forIntRange.kt")
         public void testForIntRange() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forIntRange.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forIntRange.kt");
         }
         
         @TestMetadata("forLoopMemberExtensionAll.kt")
         public void testForLoopMemberExtensionAll() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionAll.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionAll.kt");
         }
         
         @TestMetadata("forLoopMemberExtensionHasNext.kt")
         public void testForLoopMemberExtensionHasNext() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionHasNext.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionHasNext.kt");
         }
         
         @TestMetadata("forLoopMemberExtensionNext.kt")
         public void testForLoopMemberExtensionNext() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionNext.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forLoopMemberExtensionNext.kt");
         }
         
         @TestMetadata("forNullableIntArray.kt")
         public void testForNullableIntArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forNullableIntArray.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forNullableIntArray.kt");
         }
         
         @TestMetadata("forPrimitiveIntArray.kt")
         public void testForPrimitiveIntArray() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forPrimitiveIntArray.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forPrimitiveIntArray.kt");
         }
         
         @TestMetadata("forUserType.kt")
         public void testForUserType() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/forUserType.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/forUserType.kt");
         }
         
         @TestMetadata("inRangeConditionsInWhen.kt")
         public void testInRangeConditionsInWhen() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/inRangeConditionsInWhen.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/inRangeConditionsInWhen.kt");
         }
         
         @TestMetadata("kt1441.kt")
         public void testKt1441() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt1441.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt1441.kt");
         }
         
         @TestMetadata("kt1688.kt")
         public void testKt1688() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt1688.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt1688.kt");
         }
         
         @TestMetadata("kt1742.kt")
         public void testKt1742() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt1742.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt1742.kt");
         }
         
         @TestMetadata("kt1899.kt")
         public void testKt1899() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt1899.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt1899.kt");
         }
         
         @TestMetadata("kt2062.kt")
         public void testKt2062() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2062.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2062.kt");
         }
         
         @TestMetadata("kt2147.kt")
         public void testKt2147() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2147.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2147.kt");
         }
         
         @TestMetadata("kt2259.kt")
         public void testKt2259() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2259.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2259.kt");
         }
         
         @TestMetadata("kt2291.kt")
         public void testKt2291() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2291.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2291.kt");
         }
         
         @TestMetadata("kt237.kt")
         public void testKt237() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt237.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt237.kt");
         }
         
         @TestMetadata("kt2416.kt")
         public void testKt2416() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2416.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2416.kt");
         }
         
         @TestMetadata("kt2577.kt")
         public void testKt2577() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2577.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2577.kt");
         }
         
         @TestMetadata("kt2597.kt")
         public void testKt2597() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2597.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2597.kt");
         }
         
         @TestMetadata("kt2598.kt")
         public void testKt2598() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt2598.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt2598.kt");
         }
         
         @TestMetadata("kt299.kt")
         public void testKt299() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt299.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt299.kt");
         }
         
         @TestMetadata("kt3087.kt")
         public void testKt3087() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt3087.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt3087.kt");
         }
         
         @TestMetadata("kt3203_1.kt")
         public void testKt3203_1() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt3203_1.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt3203_1.kt");
         }
         
         @TestMetadata("kt3203_2.kt")
         public void testKt3203_2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt3203_2.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt3203_2.kt");
         }
         
         @TestMetadata("kt3273.kt")
         public void testKt3273() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt3273.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt3273.kt");
         }
         
         @TestMetadata("kt3280.kt")
         public void testKt3280() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt3280.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt3280.kt");
         }
         
         @TestMetadata("kt416.kt")
         public void testKt416() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt416.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt416.kt");
         }
         
         @TestMetadata("kt513.kt")
         public void testKt513() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt513.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt513.kt");
         }
         
         @TestMetadata("kt628.kt")
         public void testKt628() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt628.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt628.kt");
         }
         
         @TestMetadata("kt769.kt")
         public void testKt769() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt769.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt769.kt");
         }
         
         @TestMetadata("kt772.kt")
         public void testKt772() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt772.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt772.kt");
         }
         
         @TestMetadata("kt773.kt")
         public void testKt773() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt773.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt773.kt");
         }
         
         @TestMetadata("kt870.kt")
         public void testKt870() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt870.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt870.kt");
         }
         
         @TestMetadata("kt910.kt")
         public void testKt910() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt910.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt910.kt");
         }
         
         @TestMetadata("kt958.kt")
         public void testKt958() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt958.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt958.kt");
         }
         
         @TestMetadata("kt998.kt")
         public void testKt998() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/kt998.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/kt998.kt");
         }
         
         @TestMetadata("longRange.kt")
         public void testLongRange() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/longRange.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/longRange.kt");
         }
         
         @TestMetadata("quicksort.kt")
         public void testQuicksort() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/quicksort.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/quicksort.kt");
         }
         
         @TestMetadata("tryCatchFinallyChain.kt")
         public void testTryCatchFinallyChain() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/controlStructures/tryCatchFinallyChain.kt");
+            doTest("compiler/testData/codegen/box/controlStructures/tryCatchFinallyChain.kt");
         }
         
     }
@@ -1260,52 +1260,52 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("annotation.kt")
             public void testAnnotation() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/annotation.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/annotation.kt");
             }
             
             @TestMetadata("defArgs1.kt")
             public void testDefArgs1() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/defArgs1.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/defArgs1.kt");
             }
             
             @TestMetadata("defArgs1InnerClass.kt")
             public void testDefArgs1InnerClass() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/defArgs1InnerClass.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/defArgs1InnerClass.kt");
             }
             
             @TestMetadata("defArgs2.kt")
             public void testDefArgs2() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/defArgs2.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/defArgs2.kt");
             }
             
             @TestMetadata("doubleDefArgs1InnerClass.kt")
             public void testDoubleDefArgs1InnerClass() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/doubleDefArgs1InnerClass.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/doubleDefArgs1InnerClass.kt");
             }
             
             @TestMetadata("enum.kt")
             public void testEnum() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/enum.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/enum.kt");
             }
             
             @TestMetadata("enumWithOneDefArg.kt")
             public void testEnumWithOneDefArg() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/enumWithOneDefArg.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/enumWithOneDefArg.kt");
             }
             
             @TestMetadata("enumWithTwoDefArgs.kt")
             public void testEnumWithTwoDefArgs() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/enumWithTwoDefArgs.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/enumWithTwoDefArgs.kt");
             }
             
             @TestMetadata("enumWithTwoDoubleDefArgs.kt")
             public void testEnumWithTwoDoubleDefArgs() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/enumWithTwoDoubleDefArgs.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/enumWithTwoDoubleDefArgs.kt");
             }
             
             @TestMetadata("kt2852.kt")
             public void testKt2852() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/constructor/kt2852.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/constructor/kt2852.kt");
             }
             
         }
@@ -1318,57 +1318,57 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("extentionFunction.kt")
             public void testExtentionFunction() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/extentionFunction.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunction.kt");
             }
             
             @TestMetadata("extentionFunctionDouble.kt")
             public void testExtentionFunctionDouble() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionDouble.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionDouble.kt");
             }
             
             @TestMetadata("extentionFunctionDoubleTwoArgs.kt")
             public void testExtentionFunctionDoubleTwoArgs() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionDoubleTwoArgs.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionDoubleTwoArgs.kt");
             }
             
             @TestMetadata("extentionFunctionInClassObject.kt")
             public void testExtentionFunctionInClassObject() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionInClassObject.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionInClassObject.kt");
             }
             
             @TestMetadata("extentionFunctionInObject.kt")
             public void testExtentionFunctionInObject() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionInObject.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionInObject.kt");
             }
             
             @TestMetadata("extentionFunctionWithOneDefArg.kt")
             public void testExtentionFunctionWithOneDefArg() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionWithOneDefArg.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/extentionFunctionWithOneDefArg.kt");
             }
             
             @TestMetadata("funInTrait.kt")
             public void testFunInTrait() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/funInTrait.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/funInTrait.kt");
             }
             
             @TestMetadata("innerExtentionFunction.kt")
             public void testInnerExtentionFunction() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunction.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunction.kt");
             }
             
             @TestMetadata("innerExtentionFunctionDouble.kt")
             public void testInnerExtentionFunctionDouble() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionDouble.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionDouble.kt");
             }
             
             @TestMetadata("innerExtentionFunctionDoubleTwoArgs.kt")
             public void testInnerExtentionFunctionDoubleTwoArgs() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionDoubleTwoArgs.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/innerExtentionFunctionDoubleTwoArgs.kt");
             }
             
             @TestMetadata("mixingNamedAndPositioned.kt")
             public void testMixingNamedAndPositioned() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/defaultArguments/function/mixingNamedAndPositioned.kt");
+                doTest("compiler/testData/codegen/box/defaultArguments/function/mixingNamedAndPositioned.kt");
             }
             
         }
@@ -1390,12 +1390,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("genericNull.kt")
         public void testGenericNull() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/elvis/genericNull.kt");
+            doTest("compiler/testData/codegen/box/elvis/genericNull.kt");
         }
         
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/elvis/primitive.kt");
+            doTest("compiler/testData/codegen/box/elvis/primitive.kt");
         }
         
     }
@@ -1404,12 +1404,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public static class Enum extends AbstractBlackBoxCodegenTest {
         @TestMetadata("abstractMethodInEnum.kt")
         public void testAbstractMethodInEnum() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/abstractMethodInEnum.kt");
+            doTest("compiler/testData/codegen/box/enum/abstractMethodInEnum.kt");
         }
         
         @TestMetadata("abstractmethod.kt")
         public void testAbstractmethod() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/abstractmethod.kt");
+            doTest("compiler/testData/codegen/box/enum/abstractmethod.kt");
         }
         
         public void testAllFilesPresentInEnum() throws Exception {
@@ -1418,77 +1418,77 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("asReturnExpression.kt")
         public void testAsReturnExpression() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/asReturnExpression.kt");
+            doTest("compiler/testData/codegen/box/enum/asReturnExpression.kt");
         }
         
         @TestMetadata("entrywithinner.kt")
         public void testEntrywithinner() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/entrywithinner.kt");
+            doTest("compiler/testData/codegen/box/enum/entrywithinner.kt");
         }
         
         @TestMetadata("inFunction.kt")
         public void testInFunction() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/inFunction.kt");
+            doTest("compiler/testData/codegen/box/enum/inFunction.kt");
         }
         
         @TestMetadata("inPackage.kt")
         public void testInPackage() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/inPackage.kt");
+            doTest("compiler/testData/codegen/box/enum/inPackage.kt");
         }
         
         @TestMetadata("inclassobj.kt")
         public void testInclassobj() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/inclassobj.kt");
+            doTest("compiler/testData/codegen/box/enum/inclassobj.kt");
         }
         
         @TestMetadata("inner.kt")
         public void testInner() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/inner.kt");
+            doTest("compiler/testData/codegen/box/enum/inner.kt");
         }
         
         @TestMetadata("innerWithExistingClassObject.kt")
         public void testInnerWithExistingClassObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/innerWithExistingClassObject.kt");
+            doTest("compiler/testData/codegen/box/enum/innerWithExistingClassObject.kt");
         }
         
         @TestMetadata("kt1119.kt")
         public void testKt1119() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/kt1119.kt");
+            doTest("compiler/testData/codegen/box/enum/kt1119.kt");
         }
         
         @TestMetadata("kt2350.kt")
         public void testKt2350() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/kt2350.kt");
+            doTest("compiler/testData/codegen/box/enum/kt2350.kt");
         }
         
         @TestMetadata("kt2673.kt")
         public void testKt2673() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/kt2673.kt");
+            doTest("compiler/testData/codegen/box/enum/kt2673.kt");
         }
         
         @TestMetadata("name.kt")
         public void testName() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/name.kt");
+            doTest("compiler/testData/codegen/box/enum/name.kt");
         }
         
         @TestMetadata("ordinal.kt")
         public void testOrdinal() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/ordinal.kt");
+            doTest("compiler/testData/codegen/box/enum/ordinal.kt");
         }
         
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/simple.kt");
+            doTest("compiler/testData/codegen/box/enum/simple.kt");
         }
         
         @TestMetadata("toString.kt")
         public void testToString() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/toString.kt");
+            doTest("compiler/testData/codegen/box/enum/toString.kt");
         }
         
         @TestMetadata("valueof.kt")
         public void testValueof() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/enum/valueof.kt");
+            doTest("compiler/testData/codegen/box/enum/valueof.kt");
         }
         
     }
@@ -1501,12 +1501,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("genericNull.kt")
         public void testGenericNull() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/exclExcl/genericNull.kt");
+            doTest("compiler/testData/codegen/box/exclExcl/genericNull.kt");
         }
         
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/exclExcl/primitive.kt");
+            doTest("compiler/testData/codegen/box/exclExcl/primitive.kt");
         }
         
     }
@@ -1519,67 +1519,67 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("kt1061.kt")
         public void testKt1061() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt1061.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt1061.kt");
         }
         
         @TestMetadata("kt1249.kt")
         public void testKt1249() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt1249.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt1249.kt");
         }
         
         @TestMetadata("kt1290.kt")
         public void testKt1290() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt1290.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt1290.kt");
         }
         
         @TestMetadata("kt1953.kt")
         public void testKt1953() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt1953.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt1953.kt");
         }
         
         @TestMetadata("kt1953_class.kt")
         public void testKt1953_class() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt1953_class.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt1953_class.kt");
         }
         
         @TestMetadata("kt475.kt")
         public void testKt475() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt475.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt475.kt");
         }
         
         @TestMetadata("kt606.kt")
         public void testKt606() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt606.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt606.kt");
         }
         
         @TestMetadata("kt865.kt")
         public void testKt865() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/kt865.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt865.kt");
         }
         
         @TestMetadata("nested2.kt")
         public void testNested2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/nested2.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/nested2.kt");
         }
         
         @TestMetadata("shared.kt")
         public void testShared() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/shared.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/shared.kt");
         }
         
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/simple.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/simple.kt");
         }
         
         @TestMetadata("virtual.kt")
         public void testVirtual() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/virtual.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/virtual.kt");
         }
         
         @TestMetadata("whenFail.kt")
         public void testWhenFail() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionFunctions/whenFail.kt");
+            doTest("compiler/testData/codegen/box/extensionFunctions/whenFail.kt");
         }
         
     }
@@ -1592,62 +1592,62 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("inClass.kt")
         public void testInClass() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/inClass.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/inClass.kt");
         }
         
         @TestMetadata("inClassLongTypeInReceiver.kt")
         public void testInClassLongTypeInReceiver() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/inClassLongTypeInReceiver.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/inClassLongTypeInReceiver.kt");
         }
         
         @TestMetadata("inClassWithEmptySetter.kt")
         public void testInClassWithEmptySetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/inClassWithEmptySetter.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/inClassWithEmptySetter.kt");
         }
         
         @TestMetadata("inClassWithGetter.kt")
         public void testInClassWithGetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/inClassWithGetter.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/inClassWithGetter.kt");
         }
         
         @TestMetadata("inClassWithPrivateGetter.kt")
         public void testInClassWithPrivateGetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/inClassWithPrivateGetter.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/inClassWithPrivateGetter.kt");
         }
         
         @TestMetadata("inClassWithPrivateSetter.kt")
         public void testInClassWithPrivateSetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/inClassWithPrivateSetter.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/inClassWithPrivateSetter.kt");
         }
         
         @TestMetadata("inClassWithSetter.kt")
         public void testInClassWithSetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/inClassWithSetter.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/inClassWithSetter.kt");
         }
         
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/topLevel.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/topLevel.kt");
         }
         
         @TestMetadata("topLevelLongTypeInReceiver.kt")
         public void testTopLevelLongTypeInReceiver() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/topLevelLongTypeInReceiver.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/topLevelLongTypeInReceiver.kt");
         }
         
         @TestMetadata("topLevelSetterLongTypeInReceiver.kt")
         public void testTopLevelSetterLongTypeInReceiver() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/topLevelSetterLongTypeInReceiver.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/topLevelSetterLongTypeInReceiver.kt");
         }
         
         @TestMetadata("topLevelWithGetter.kt")
         public void testTopLevelWithGetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/topLevelWithGetter.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/topLevelWithGetter.kt");
         }
         
         @TestMetadata("topLevelWithSetter.kt")
         public void testTopLevelWithSetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/extensionProperties/topLevelWithSetter.kt");
+            doTest("compiler/testData/codegen/box/extensionProperties/topLevelWithSetter.kt");
         }
         
     }
@@ -1660,152 +1660,152 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("defaultargs.kt")
         public void testDefaultargs() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs.kt");
         }
         
         @TestMetadata("defaultargs1.kt")
         public void testDefaultargs1() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs1.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs1.kt");
         }
         
         @TestMetadata("defaultargs2.kt")
         public void testDefaultargs2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs2.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs2.kt");
         }
         
         @TestMetadata("defaultargs3.kt")
         public void testDefaultargs3() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs3.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs3.kt");
         }
         
         @TestMetadata("defaultargs4.kt")
         public void testDefaultargs4() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs4.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs4.kt");
         }
         
         @TestMetadata("defaultargs5.kt")
         public void testDefaultargs5() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs5.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs5.kt");
         }
         
         @TestMetadata("defaultargs6.kt")
         public void testDefaultargs6() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs6.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs6.kt");
         }
         
         @TestMetadata("defaultargs7.kt")
         public void testDefaultargs7() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/defaultargs7.kt");
+            doTest("compiler/testData/codegen/box/functions/defaultargs7.kt");
         }
         
         @TestMetadata("ea33909.kt")
         public void testEa33909() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/ea33909.kt");
+            doTest("compiler/testData/codegen/box/functions/ea33909.kt");
         }
         
         @TestMetadata("functionExpression.kt")
         public void testFunctionExpression() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/functionExpression.kt");
+            doTest("compiler/testData/codegen/box/functions/functionExpression.kt");
         }
         
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/invoke.kt");
+            doTest("compiler/testData/codegen/box/functions/invoke.kt");
         }
         
         @TestMetadata("kt1038.kt")
         public void testKt1038() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt1038.kt");
+            doTest("compiler/testData/codegen/box/functions/kt1038.kt");
         }
         
         @TestMetadata("kt1199.kt")
         public void testKt1199() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt1199.kt");
+            doTest("compiler/testData/codegen/box/functions/kt1199.kt");
         }
         
         @TestMetadata("kt1413.kt")
         public void testKt1413() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt1413.kt");
+            doTest("compiler/testData/codegen/box/functions/kt1413.kt");
         }
         
         @TestMetadata("kt1649_1.kt")
         public void testKt1649_1() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt1649_1.kt");
+            doTest("compiler/testData/codegen/box/functions/kt1649_1.kt");
         }
         
         @TestMetadata("kt1649_2.kt")
         public void testKt1649_2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt1649_2.kt");
+            doTest("compiler/testData/codegen/box/functions/kt1649_2.kt");
         }
         
         @TestMetadata("kt1739.kt")
         public void testKt1739() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt1739.kt");
+            doTest("compiler/testData/codegen/box/functions/kt1739.kt");
         }
         
         @TestMetadata("kt2270.kt")
         public void testKt2270() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2270.kt");
+            doTest("compiler/testData/codegen/box/functions/kt2270.kt");
         }
         
         @TestMetadata("kt2271.kt")
         public void testKt2271() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2271.kt");
+            doTest("compiler/testData/codegen/box/functions/kt2271.kt");
         }
         
         @TestMetadata("kt2280.kt")
         public void testKt2280() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2280.kt");
+            doTest("compiler/testData/codegen/box/functions/kt2280.kt");
         }
         
         @TestMetadata("kt2481.kt")
         public void testKt2481() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2481.kt");
+            doTest("compiler/testData/codegen/box/functions/kt2481.kt");
         }
         
         @TestMetadata("kt2716.kt")
         public void testKt2716() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2716.kt");
+            doTest("compiler/testData/codegen/box/functions/kt2716.kt");
         }
         
         @TestMetadata("kt2739.kt")
         public void testKt2739() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2739.kt");
+            doTest("compiler/testData/codegen/box/functions/kt2739.kt");
         }
         
         @TestMetadata("kt2929.kt")
         public void testKt2929() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt2929.kt");
+            doTest("compiler/testData/codegen/box/functions/kt2929.kt");
         }
         
         @TestMetadata("kt3313.kt")
         public void testKt3313() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt3313.kt");
+            doTest("compiler/testData/codegen/box/functions/kt3313.kt");
         }
         
         @TestMetadata("kt395.kt")
         public void testKt395() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt395.kt");
+            doTest("compiler/testData/codegen/box/functions/kt395.kt");
         }
         
         @TestMetadata("kt785.kt")
         public void testKt785() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt785.kt");
+            doTest("compiler/testData/codegen/box/functions/kt785.kt");
         }
         
         @TestMetadata("kt873.kt")
         public void testKt873() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/kt873.kt");
+            doTest("compiler/testData/codegen/box/functions/kt873.kt");
         }
         
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/localFunction.kt");
+            doTest("compiler/testData/codegen/box/functions/localFunction.kt");
         }
         
         @TestMetadata("nothisnoclosure.kt")
         public void testNothisnoclosure() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
+            doTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
         }
         
     }
@@ -1818,77 +1818,77 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("createNestedClass.kt")
         public void testCreateNestedClass() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/createNestedClass.kt");
+            doTest("compiler/testData/codegen/box/innerNested/createNestedClass.kt");
         }
         
         @TestMetadata("createdNestedInOuterMember.kt")
         public void testCreatedNestedInOuterMember() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/createdNestedInOuterMember.kt");
+            doTest("compiler/testData/codegen/box/innerNested/createdNestedInOuterMember.kt");
         }
         
         @TestMetadata("dataLocalVariable.kt")
         public void testDataLocalVariable() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/dataLocalVariable.kt");
+            doTest("compiler/testData/codegen/box/innerNested/dataLocalVariable.kt");
         }
         
         @TestMetadata("extensionFun.kt")
         public void testExtensionFun() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/extensionFun.kt");
+            doTest("compiler/testData/codegen/box/innerNested/extensionFun.kt");
         }
         
         @TestMetadata("importNestedClass.kt")
         public void testImportNestedClass() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/importNestedClass.kt");
+            doTest("compiler/testData/codegen/box/innerNested/importNestedClass.kt");
         }
         
         @TestMetadata("innerGeneric.kt")
         public void testInnerGeneric() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/innerGeneric.kt");
+            doTest("compiler/testData/codegen/box/innerNested/innerGeneric.kt");
         }
         
         @TestMetadata("innerLabeledThis.kt")
         public void testInnerLabeledThis() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/innerLabeledThis.kt");
+            doTest("compiler/testData/codegen/box/innerNested/innerLabeledThis.kt");
         }
         
         @TestMetadata("innerSimple.kt")
         public void testInnerSimple() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/innerSimple.kt");
+            doTest("compiler/testData/codegen/box/innerNested/innerSimple.kt");
         }
         
         @TestMetadata("kt3132.kt")
         public void testKt3132() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/kt3132.kt");
+            doTest("compiler/testData/codegen/box/innerNested/kt3132.kt");
         }
         
         @TestMetadata("nestedClassObject.kt")
         public void testNestedClassObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/nestedClassObject.kt");
+            doTest("compiler/testData/codegen/box/innerNested/nestedClassObject.kt");
         }
         
         @TestMetadata("nestedEnumConstant.kt")
         public void testNestedEnumConstant() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/nestedEnumConstant.kt");
+            doTest("compiler/testData/codegen/box/innerNested/nestedEnumConstant.kt");
         }
         
         @TestMetadata("nestedGeneric.kt")
         public void testNestedGeneric() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/nestedGeneric.kt");
+            doTest("compiler/testData/codegen/box/innerNested/nestedGeneric.kt");
         }
         
         @TestMetadata("nestedInPackage.kt")
         public void testNestedInPackage() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/nestedInPackage.kt");
+            doTest("compiler/testData/codegen/box/innerNested/nestedInPackage.kt");
         }
         
         @TestMetadata("nestedObjects.kt")
         public void testNestedObjects() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/nestedObjects.kt");
+            doTest("compiler/testData/codegen/box/innerNested/nestedObjects.kt");
         }
         
         @TestMetadata("nestedSimple.kt")
         public void testNestedSimple() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/innerNested/nestedSimple.kt");
+            doTest("compiler/testData/codegen/box/innerNested/nestedSimple.kt");
         }
         
     }
@@ -1908,12 +1908,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("swapRefToSharedVarInt.kt")
             public void testSwapRefToSharedVarInt() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/instructions/swap/swapRefToSharedVarInt.kt");
+                doTest("compiler/testData/codegen/box/instructions/swap/swapRefToSharedVarInt.kt");
             }
             
             @TestMetadata("swapRefToSharedVarLong.kt")
             public void testSwapRefToSharedVarLong() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/instructions/swap/swapRefToSharedVarLong.kt");
+                doTest("compiler/testData/codegen/box/instructions/swap/swapRefToSharedVarLong.kt");
             }
             
         }
@@ -1934,22 +1934,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("compareTo.kt")
         public void testCompareTo() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/intrinsics/compareTo.kt");
+            doTest("compiler/testData/codegen/box/intrinsics/compareTo.kt");
         }
         
         @TestMetadata("ea35953.kt")
         public void testEa35953() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/intrinsics/ea35953.kt");
+            doTest("compiler/testData/codegen/box/intrinsics/ea35953.kt");
         }
         
         @TestMetadata("longRangeWithExplicitDot.kt")
         public void testLongRangeWithExplicitDot() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/intrinsics/longRangeWithExplicitDot.kt");
+            doTest("compiler/testData/codegen/box/intrinsics/longRangeWithExplicitDot.kt");
         }
         
         @TestMetadata("tostring.kt")
         public void testTostring() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/intrinsics/tostring.kt");
+            doTest("compiler/testData/codegen/box/intrinsics/tostring.kt");
         }
         
     }
@@ -1962,27 +1962,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("propertyAccessor.kt")
         public void testPropertyAccessor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/labels/propertyAccessor.kt");
+            doTest("compiler/testData/codegen/box/labels/propertyAccessor.kt");
         }
         
         @TestMetadata("propertyAccessorFunctionLiteral.kt")
         public void testPropertyAccessorFunctionLiteral() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/labels/propertyAccessorFunctionLiteral.kt");
+            doTest("compiler/testData/codegen/box/labels/propertyAccessorFunctionLiteral.kt");
         }
         
         @TestMetadata("propertyAccessorInnerExtensionFun.kt")
         public void testPropertyAccessorInnerExtensionFun() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/labels/propertyAccessorInnerExtensionFun.kt");
+            doTest("compiler/testData/codegen/box/labels/propertyAccessorInnerExtensionFun.kt");
         }
         
         @TestMetadata("propertyAccessorObject.kt")
         public void testPropertyAccessorObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/labels/propertyAccessorObject.kt");
+            doTest("compiler/testData/codegen/box/labels/propertyAccessorObject.kt");
         }
         
         @TestMetadata("propertyInClassAccessor.kt")
         public void testPropertyInClassAccessor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/labels/propertyInClassAccessor.kt");
+            doTest("compiler/testData/codegen/box/labels/propertyInClassAccessor.kt");
         }
         
     }
@@ -1995,22 +1995,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/localClasses/enum.kt");
+            doTest("compiler/testData/codegen/box/localClasses/enum.kt");
         }
         
         @TestMetadata("noclosure.kt")
         public void testNoclosure() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/localClasses/noclosure.kt");
+            doTest("compiler/testData/codegen/box/localClasses/noclosure.kt");
         }
         
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/localClasses/object.kt");
+            doTest("compiler/testData/codegen/box/localClasses/object.kt");
         }
         
         @TestMetadata("withclosure.kt")
         public void testWithclosure() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/localClasses/withclosure.kt");
+            doTest("compiler/testData/codegen/box/localClasses/withclosure.kt");
         }
         
     }
@@ -2024,57 +2024,57 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("ComplexInitializer.kt")
         public void testComplexInitializer() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/ComplexInitializer.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/ComplexInitializer.kt");
         }
         
         @TestMetadata("component.kt")
         public void testComponent() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/component.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/component.kt");
         }
         
         @TestMetadata("SimpleVals.kt")
         public void testSimpleVals() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/SimpleVals.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/SimpleVals.kt");
         }
         
         @TestMetadata("SimpleValsExtensions.kt")
         public void testSimpleValsExtensions() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/SimpleValsExtensions.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/SimpleValsExtensions.kt");
         }
         
         @TestMetadata("SimpleVarsExtensions.kt")
         public void testSimpleVarsExtensions() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/SimpleVarsExtensions.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/SimpleVarsExtensions.kt");
         }
         
         @TestMetadata("ValCapturedInFunctionLiteral.kt")
         public void testValCapturedInFunctionLiteral() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/ValCapturedInFunctionLiteral.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/ValCapturedInFunctionLiteral.kt");
         }
         
         @TestMetadata("ValCapturedInLocalFunction.kt")
         public void testValCapturedInLocalFunction() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/ValCapturedInLocalFunction.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/ValCapturedInLocalFunction.kt");
         }
         
         @TestMetadata("ValCapturedInObjectLiteral.kt")
         public void testValCapturedInObjectLiteral() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/ValCapturedInObjectLiteral.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/ValCapturedInObjectLiteral.kt");
         }
         
         @TestMetadata("VarCapturedInFunctionLiteral.kt")
         public void testVarCapturedInFunctionLiteral() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/VarCapturedInFunctionLiteral.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/VarCapturedInFunctionLiteral.kt");
         }
         
         @TestMetadata("VarCapturedInLocalFunction.kt")
         public void testVarCapturedInLocalFunction() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/VarCapturedInLocalFunction.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/VarCapturedInLocalFunction.kt");
         }
         
         @TestMetadata("VarCapturedInObjectLiteral.kt")
         public void testVarCapturedInObjectLiteral() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/VarCapturedInObjectLiteral.kt");
+            doTest("compiler/testData/codegen/box/multiDecl/VarCapturedInObjectLiteral.kt");
         }
         
         @TestMetadata("compiler/testData/codegen/box/multiDecl/forArray")
@@ -2086,27 +2086,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("MultiDeclFor.kt")
             public void testMultiDeclFor() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclFor.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclFor.kt");
             }
             
             @TestMetadata("MultiDeclForComponentExtensions.kt")
             public void testMultiDeclForComponentExtensions() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentExtensions.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentExtensions.kt");
             }
             
             @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
             public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentMemberExtensions.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentMemberExtensions.kt");
             }
             
             @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
             public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
             }
             
             @TestMetadata("MultiDeclForValCaptured.kt")
             public void testMultiDeclForValCaptured() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForValCaptured.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forArray/MultiDeclForValCaptured.kt");
             }
             
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forArray/int")
@@ -2117,22 +2117,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
                 public void testMultiDeclForComponentExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                 public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentExtensionsValCaptured.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentExtensionsValCaptured.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                 public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentMemberExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentMemberExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
                 
             }
@@ -2145,22 +2145,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
                 public void testMultiDeclForComponentExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                 public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentExtensionsValCaptured.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentExtensionsValCaptured.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                 public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentMemberExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentMemberExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forArray/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
                 
             }
@@ -2183,27 +2183,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("MultiDeclFor.kt")
             public void testMultiDeclFor() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclFor.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclFor.kt");
             }
             
             @TestMetadata("MultiDeclForComponentExtensions.kt")
             public void testMultiDeclForComponentExtensions() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForComponentExtensions.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForComponentExtensions.kt");
             }
             
             @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
             public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForComponentMemberExtensions.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForComponentMemberExtensions.kt");
             }
             
             @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
             public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
             }
             
             @TestMetadata("MultiDeclForValCaptured.kt")
             public void testMultiDeclForValCaptured() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForValCaptured.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forIterator/MultiDeclForValCaptured.kt");
             }
             
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
@@ -2214,22 +2214,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
                 public void testMultiDeclForComponentExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                 public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensionsValCaptured.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentExtensionsValCaptured.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                 public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forIterator/longIterator/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
                 
             }
@@ -2251,27 +2251,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("MultiDeclFor.kt")
             public void testMultiDeclFor() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclFor.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclFor.kt");
             }
             
             @TestMetadata("MultiDeclForComponentExtensions.kt")
             public void testMultiDeclForComponentExtensions() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForComponentExtensions.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForComponentExtensions.kt");
             }
             
             @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
             public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForComponentMemberExtensions.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForComponentMemberExtensions.kt");
             }
             
             @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
             public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
             }
             
             @TestMetadata("MultiDeclForValCaptured.kt")
             public void testMultiDeclForValCaptured() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForValCaptured.kt");
+                doTest("compiler/testData/codegen/box/multiDecl/forRange/MultiDeclForValCaptured.kt");
             }
             
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
@@ -2283,27 +2283,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 
                 @TestMetadata("MultiDeclFor.kt")
                 public void testMultiDeclFor() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclFor.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclFor.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
                 public void testMultiDeclForComponentExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                 public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
                 
                 @TestMetadata("MultiDeclForValCaptured.kt")
                 public void testMultiDeclForValCaptured() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForValCaptured.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/MultiDeclForValCaptured.kt");
                 }
                 
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
@@ -2314,22 +2314,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
                     public void testMultiDeclForComponentExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                     public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentExtensionsValCaptured.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentExtensionsValCaptured.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                     public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentMemberExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentMemberExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                     public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                     }
                     
                 }
@@ -2342,22 +2342,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
                     public void testMultiDeclForComponentExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                     public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentExtensionsValCaptured.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentExtensionsValCaptured.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                     public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentMemberExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentMemberExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                     public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                     }
                     
                 }
@@ -2380,27 +2380,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 
                 @TestMetadata("MultiDeclFor.kt")
                 public void testMultiDeclFor() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclFor.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclFor.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
                 public void testMultiDeclForComponentExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                 public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentMemberExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentMemberExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
                 
                 @TestMetadata("MultiDeclForValCaptured.kt")
                 public void testMultiDeclForValCaptured() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForValCaptured.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/MultiDeclForValCaptured.kt");
                 }
                 
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
@@ -2411,22 +2411,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
                     public void testMultiDeclForComponentExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                     public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentExtensionsValCaptured.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentExtensionsValCaptured.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                     public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentMemberExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentMemberExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                     public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                     }
                     
                 }
@@ -2439,22 +2439,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     
                     @TestMetadata("MultiDeclForComponentExtensions.kt")
                     public void testMultiDeclForComponentExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                     public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentExtensionsValCaptured.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentExtensionsValCaptured.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                     public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentMemberExtensions.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentMemberExtensions.kt");
                     }
                     
                     @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                     public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                        blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                        doTest("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                     }
                     
                 }
@@ -2476,22 +2476,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
                 public void testMultiDeclForComponentExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                 public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentExtensionsValCaptured.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentExtensionsValCaptured.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                 public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentMemberExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentMemberExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/int/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
                 
             }
@@ -2504,22 +2504,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 
                 @TestMetadata("MultiDeclForComponentExtensions.kt")
                 public void testMultiDeclForComponentExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentExtensionsValCaptured.kt")
                 public void testMultiDeclForComponentExtensionsValCaptured() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentExtensionsValCaptured.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentExtensionsValCaptured.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensions.kt")
                 public void testMultiDeclForComponentMemberExtensions() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentMemberExtensions.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentMemberExtensions.kt");
                 }
                 
                 @TestMetadata("MultiDeclForComponentMemberExtensionsInExtensionFunction.kt")
                 public void testMultiDeclForComponentMemberExtensionsInExtensionFunction() throws Exception {
-                    blackBoxFileByFullPath("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
+                    doTest("compiler/testData/codegen/box/multiDecl/forRange/long/MultiDeclForComponentMemberExtensionsInExtensionFunction.kt");
                 }
                 
             }
@@ -2553,27 +2553,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("checkCast.kt")
         public void testCheckCast() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/namespace/checkCast.kt");
+            doTest("compiler/testData/codegen/box/namespace/checkCast.kt");
         }
         
         @TestMetadata("incrementProperty.kt")
         public void testIncrementProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/namespace/incrementProperty.kt");
+            doTest("compiler/testData/codegen/box/namespace/incrementProperty.kt");
         }
         
         @TestMetadata("invokespecial.kt")
         public void testInvokespecial() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/namespace/invokespecial.kt");
+            doTest("compiler/testData/codegen/box/namespace/invokespecial.kt");
         }
         
         @TestMetadata("namespaceQualifiedMethod.kt")
         public void testNamespaceQualifiedMethod() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/namespace/namespaceQualifiedMethod.kt");
+            doTest("compiler/testData/codegen/box/namespace/namespaceQualifiedMethod.kt");
         }
         
         @TestMetadata("privateTopLevelPropAndVarInInner.kt")
         public void testPrivateTopLevelPropAndVarInInner() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/namespace/privateTopLevelPropAndVarInInner.kt");
+            doTest("compiler/testData/codegen/box/namespace/privateTopLevelPropAndVarInInner.kt");
         }
         
     }
@@ -2586,117 +2586,117 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("flist.kt")
         public void testFlist() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/flist.kt");
+            doTest("compiler/testData/codegen/box/objects/flist.kt");
         }
         
         @TestMetadata("kt1047.kt")
         public void testKt1047() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt1047.kt");
+            doTest("compiler/testData/codegen/box/objects/kt1047.kt");
         }
         
         @TestMetadata("kt1136.kt")
         public void testKt1136() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt1136.kt");
+            doTest("compiler/testData/codegen/box/objects/kt1136.kt");
         }
         
         @TestMetadata("kt1186.kt")
         public void testKt1186() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt1186.kt");
+            doTest("compiler/testData/codegen/box/objects/kt1186.kt");
         }
         
         @TestMetadata("kt1600.kt")
         public void testKt1600() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt1600.kt");
+            doTest("compiler/testData/codegen/box/objects/kt1600.kt");
         }
         
         @TestMetadata("kt1737.kt")
         public void testKt1737() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt1737.kt");
+            doTest("compiler/testData/codegen/box/objects/kt1737.kt");
         }
         
         @TestMetadata("kt2398.kt")
         public void testKt2398() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt2398.kt");
+            doTest("compiler/testData/codegen/box/objects/kt2398.kt");
         }
         
         @TestMetadata("kt2663.kt")
         public void testKt2663() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt2663.kt");
+            doTest("compiler/testData/codegen/box/objects/kt2663.kt");
         }
         
         @TestMetadata("kt2663_2.kt")
         public void testKt2663_2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt2663_2.kt");
+            doTest("compiler/testData/codegen/box/objects/kt2663_2.kt");
         }
         
         @TestMetadata("kt2675.kt")
         public void testKt2675() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt2675.kt");
+            doTest("compiler/testData/codegen/box/objects/kt2675.kt");
         }
         
         @TestMetadata("kt2719.kt")
         public void testKt2719() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt2719.kt");
+            doTest("compiler/testData/codegen/box/objects/kt2719.kt");
         }
         
         @TestMetadata("kt2822.kt")
         public void testKt2822() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt2822.kt");
+            doTest("compiler/testData/codegen/box/objects/kt2822.kt");
         }
         
         @TestMetadata("kt3238.kt")
         public void testKt3238() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt3238.kt");
+            doTest("compiler/testData/codegen/box/objects/kt3238.kt");
         }
         
         @TestMetadata("kt535.kt")
         public void testKt535() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt535.kt");
+            doTest("compiler/testData/codegen/box/objects/kt535.kt");
         }
         
         @TestMetadata("kt560.kt")
         public void testKt560() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt560.kt");
+            doTest("compiler/testData/codegen/box/objects/kt560.kt");
         }
         
         @TestMetadata("kt640.kt")
         public void testKt640() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt640.kt");
+            doTest("compiler/testData/codegen/box/objects/kt640.kt");
         }
         
         @TestMetadata("kt694.kt")
         public void testKt694() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/kt694.kt");
+            doTest("compiler/testData/codegen/box/objects/kt694.kt");
         }
         
         @TestMetadata("methodOnObject.kt")
         public void testMethodOnObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/methodOnObject.kt");
+            doTest("compiler/testData/codegen/box/objects/methodOnObject.kt");
         }
         
         @TestMetadata("objectLiteral.kt")
         public void testObjectLiteral() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/objectLiteral.kt");
+            doTest("compiler/testData/codegen/box/objects/objectLiteral.kt");
         }
         
         @TestMetadata("objectLiteralInClosure.kt")
         public void testObjectLiteralInClosure() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/objectLiteralInClosure.kt");
+            doTest("compiler/testData/codegen/box/objects/objectLiteralInClosure.kt");
         }
         
         @TestMetadata("receiverInConstructor.kt")
         public void testReceiverInConstructor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/receiverInConstructor.kt");
+            doTest("compiler/testData/codegen/box/objects/receiverInConstructor.kt");
         }
         
         @TestMetadata("simpleObject.kt")
         public void testSimpleObject() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/simpleObject.kt");
+            doTest("compiler/testData/codegen/box/objects/simpleObject.kt");
         }
         
         @TestMetadata("thisInConstructor.kt")
         public void testThisInConstructor() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/objects/thisInConstructor.kt");
+            doTest("compiler/testData/codegen/box/objects/thisInConstructor.kt");
         }
         
     }
@@ -2716,47 +2716,47 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
             @TestMetadata("comparable.kt")
             public void testComparable() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/comparable.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/comparable.kt");
             }
             
             @TestMetadata("doubleInt.kt")
             public void testDoubleInt() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/doubleInt.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/doubleInt.kt");
             }
             
             @TestMetadata("doubleLong.kt")
             public void testDoubleLong() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/doubleLong.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/doubleLong.kt");
             }
             
             @TestMetadata("extensionArray.kt")
             public void testExtensionArray() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/extensionArray.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/extensionArray.kt");
             }
             
             @TestMetadata("extensionObject.kt")
             public void testExtensionObject() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/extensionObject.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/extensionObject.kt");
             }
             
             @TestMetadata("intDouble.kt")
             public void testIntDouble() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/intDouble.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/intDouble.kt");
             }
             
             @TestMetadata("intLong.kt")
             public void testIntLong() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/intLong.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/intLong.kt");
             }
             
             @TestMetadata("longDouble.kt")
             public void testLongDouble() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/longDouble.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/longDouble.kt");
             }
             
             @TestMetadata("longInt.kt")
             public void testLongInt() throws Exception {
-                blackBoxFileByFullPath("compiler/testData/codegen/box/operatorConventions/compareTo/longInt.kt");
+                doTest("compiler/testData/codegen/box/operatorConventions/compareTo/longInt.kt");
             }
             
         }
@@ -2777,177 +2777,177 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("comparisonWithNullCallsFun.kt")
         public void testComparisonWithNullCallsFun() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/comparisonWithNullCallsFun.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNullCallsFun.kt");
         }
         
         @TestMetadata("ea35963.kt")
         public void testEa35963() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");
         }
         
         @TestMetadata("intLiteralIsNotNull.kt")
         public void testIntLiteralIsNotNull() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/intLiteralIsNotNull.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/intLiteralIsNotNull.kt");
         }
         
         @TestMetadata("kt1054.kt")
         public void testKt1054() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt1054.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt1054.kt");
         }
         
         @TestMetadata("kt1055.kt")
         public void testKt1055() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt1055.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt1055.kt");
         }
         
         @TestMetadata("kt1093.kt")
         public void testKt1093() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt1093.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt1093.kt");
         }
         
         @TestMetadata("kt1508.kt")
         public void testKt1508() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt1508.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt1508.kt");
         }
         
         @TestMetadata("kt1634.kt")
         public void testKt1634() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt1634.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt1634.kt");
         }
         
         @TestMetadata("kt2251.kt")
         public void testKt2251() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt2251.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt2251.kt");
         }
         
         @TestMetadata("kt2269.kt")
         public void testKt2269() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt2269.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt2269.kt");
         }
         
         @TestMetadata("kt2275.kt")
         public void testKt2275() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt2275.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt2275.kt");
         }
         
         @TestMetadata("kt239.kt")
         public void testKt239() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt239.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt239.kt");
         }
         
         @TestMetadata("kt242.kt")
         public void testKt242() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt242.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt242.kt");
         }
         
         @TestMetadata("kt243.kt")
         public void testKt243() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt243.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt243.kt");
         }
         
         @TestMetadata("kt248.kt")
         public void testKt248() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt248.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt248.kt");
         }
         
         @TestMetadata("kt2794.kt")
         public void testKt2794() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt2794.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt2794.kt");
         }
         
         @TestMetadata("kt3078.kt")
         public void testKt3078() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt3078.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt3078.kt");
         }
         
         @TestMetadata("kt446.kt")
         public void testKt446() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt446.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt446.kt");
         }
         
         @TestMetadata("kt518.kt")
         public void testKt518() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt518.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt518.kt");
         }
         
         @TestMetadata("kt665.kt")
         public void testKt665() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt665.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt665.kt");
         }
         
         @TestMetadata("kt684.kt")
         public void testKt684() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt684.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt684.kt");
         }
         
         @TestMetadata("kt711.kt")
         public void testKt711() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt711.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt711.kt");
         }
         
         @TestMetadata("kt737.kt")
         public void testKt737() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt737.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt737.kt");
         }
         
         @TestMetadata("kt752.kt")
         public void testKt752() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt752.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt752.kt");
         }
         
         @TestMetadata("kt753.kt")
         public void testKt753() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt753.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt753.kt");
         }
         
         @TestMetadata("kt756.kt")
         public void testKt756() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt756.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt756.kt");
         }
         
         @TestMetadata("kt757.kt")
         public void testKt757() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt757.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt757.kt");
         }
         
         @TestMetadata("kt828.kt")
         public void testKt828() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt828.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt828.kt");
         }
         
         @TestMetadata("kt877.kt")
         public void testKt877() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt877.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt877.kt");
         }
         
         @TestMetadata("kt882.kt")
         public void testKt882() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt882.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt882.kt");
         }
         
         @TestMetadata("kt887.kt")
         public void testKt887() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt887.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt887.kt");
         }
         
         @TestMetadata("kt935.kt")
         public void testKt935() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt935.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt935.kt");
         }
         
         @TestMetadata("kt945.kt")
         public void testKt945() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/kt945.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt945.kt");
         }
         
         @TestMetadata("nullAsNullableIntIsNull.kt")
         public void testNullAsNullableIntIsNull() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/nullAsNullableIntIsNull.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/nullAsNullableIntIsNull.kt");
         }
         
         @TestMetadata("unboxComparable.kt")
         public void testUnboxComparable() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");
+            doTest("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");
         }
         
     }
@@ -2956,12 +2956,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public static class Properties extends AbstractBlackBoxCodegenTest {
         @TestMetadata("accessToPrivateProperty.kt")
         public void testAccessToPrivateProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/accessToPrivateProperty.kt");
+            doTest("compiler/testData/codegen/box/properties/accessToPrivateProperty.kt");
         }
         
         @TestMetadata("accessToPrivateSetter.kt")
         public void testAccessToPrivateSetter() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/accessToPrivateSetter.kt");
+            doTest("compiler/testData/codegen/box/properties/accessToPrivateSetter.kt");
         }
         
         public void testAllFilesPresentInProperties() throws Exception {
@@ -2970,82 +2970,82 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("kt1159.kt")
         public void testKt1159() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1159.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1159.kt");
         }
         
         @TestMetadata("kt1165.kt")
         public void testKt1165() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1165.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1165.kt");
         }
         
         @TestMetadata("kt1168.kt")
         public void testKt1168() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1168.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1168.kt");
         }
         
         @TestMetadata("kt1170.kt")
         public void testKt1170() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1170.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1170.kt");
         }
         
         @TestMetadata("kt1398.kt")
         public void testKt1398() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1398.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1398.kt");
         }
         
         @TestMetadata("kt1417.kt")
         public void testKt1417() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1417.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1417.kt");
         }
         
         @TestMetadata("kt1482_2279.kt")
         public void testKt1482_2279() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1482_2279.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1482_2279.kt");
         }
         
         @TestMetadata("kt1714.kt")
         public void testKt1714() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1714.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1714.kt");
         }
         
         @TestMetadata("kt1714_minimal.kt")
         public void testKt1714_minimal() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1714_minimal.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1714_minimal.kt");
         }
         
         @TestMetadata("kt1892.kt")
         public void testKt1892() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt1892.kt");
+            doTest("compiler/testData/codegen/box/properties/kt1892.kt");
         }
         
         @TestMetadata("kt2331.kt")
         public void testKt2331() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt2331.kt");
+            doTest("compiler/testData/codegen/box/properties/kt2331.kt");
         }
         
         @TestMetadata("kt257.kt")
         public void testKt257() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt257.kt");
+            doTest("compiler/testData/codegen/box/properties/kt257.kt");
         }
         
         @TestMetadata("kt2655.kt")
         public void testKt2655() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt2655.kt");
+            doTest("compiler/testData/codegen/box/properties/kt2655.kt");
         }
         
         @TestMetadata("kt2786.kt")
         public void testKt2786() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt2786.kt");
+            doTest("compiler/testData/codegen/box/properties/kt2786.kt");
         }
         
         @TestMetadata("kt2892.kt")
         public void testKt2892() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt2892.kt");
+            doTest("compiler/testData/codegen/box/properties/kt2892.kt");
         }
         
         @TestMetadata("kt613.kt")
         public void testKt613() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/properties/kt613.kt");
+            doTest("compiler/testData/codegen/box/properties/kt613.kt");
         }
         
     }
@@ -3058,32 +3058,32 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("genericNull.kt")
         public void testGenericNull() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/genericNull.kt");
+            doTest("compiler/testData/codegen/box/safeCall/genericNull.kt");
         }
         
         @TestMetadata("kt1572.kt")
         public void testKt1572() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/kt1572.kt");
+            doTest("compiler/testData/codegen/box/safeCall/kt1572.kt");
         }
         
         @TestMetadata("kt232.kt")
         public void testKt232() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/kt232.kt");
+            doTest("compiler/testData/codegen/box/safeCall/kt232.kt");
         }
         
         @TestMetadata("kt245.kt")
         public void testKt245() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/kt245.kt");
+            doTest("compiler/testData/codegen/box/safeCall/kt245.kt");
         }
         
         @TestMetadata("kt247.kt")
         public void testKt247() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/kt247.kt");
+            doTest("compiler/testData/codegen/box/safeCall/kt247.kt");
         }
         
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/safeCall/primitive.kt");
+            doTest("compiler/testData/codegen/box/safeCall/primitive.kt");
         }
         
     }
@@ -3096,32 +3096,32 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("ea35743.kt")
         public void testEa35743() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/strings/ea35743.kt");
+            doTest("compiler/testData/codegen/box/strings/ea35743.kt");
         }
         
         @TestMetadata("kt881.kt")
         public void testKt881() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/strings/kt881.kt");
+            doTest("compiler/testData/codegen/box/strings/kt881.kt");
         }
         
         @TestMetadata("kt889.kt")
         public void testKt889() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/strings/kt889.kt");
+            doTest("compiler/testData/codegen/box/strings/kt889.kt");
         }
         
         @TestMetadata("kt894.kt")
         public void testKt894() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/strings/kt894.kt");
+            doTest("compiler/testData/codegen/box/strings/kt894.kt");
         }
         
         @TestMetadata("multilineStringsWithTemplates.kt")
         public void testMultilineStringsWithTemplates() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/strings/multilineStringsWithTemplates.kt");
+            doTest("compiler/testData/codegen/box/strings/multilineStringsWithTemplates.kt");
         }
         
         @TestMetadata("rawStrings.kt")
         public void testRawStrings() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/strings/rawStrings.kt");
+            doTest("compiler/testData/codegen/box/strings/rawStrings.kt");
         }
         
     }
@@ -3134,47 +3134,47 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("basicmethodSuperClass.kt")
         public void testBasicmethodSuperClass() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/basicmethodSuperClass.kt");
+            doTest("compiler/testData/codegen/box/super/basicmethodSuperClass.kt");
         }
         
         @TestMetadata("basicmethodSuperTrait.kt")
         public void testBasicmethodSuperTrait() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/basicmethodSuperTrait.kt");
+            doTest("compiler/testData/codegen/box/super/basicmethodSuperTrait.kt");
         }
         
         @TestMetadata("basicproperty.kt")
         public void testBasicproperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/basicproperty.kt");
+            doTest("compiler/testData/codegen/box/super/basicproperty.kt");
         }
         
         @TestMetadata("enclosedFun.kt")
         public void testEnclosedFun() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/enclosedFun.kt");
+            doTest("compiler/testData/codegen/box/super/enclosedFun.kt");
         }
         
         @TestMetadata("enclosedVar.kt")
         public void testEnclosedVar() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/enclosedVar.kt");
+            doTest("compiler/testData/codegen/box/super/enclosedVar.kt");
         }
         
         @TestMetadata("innerClassLabeledSuper.kt")
         public void testInnerClassLabeledSuper() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/innerClassLabeledSuper.kt");
+            doTest("compiler/testData/codegen/box/super/innerClassLabeledSuper.kt");
         }
         
         @TestMetadata("innerClassLabeledSuperProperty.kt")
         public void testInnerClassLabeledSuperProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/innerClassLabeledSuperProperty.kt");
+            doTest("compiler/testData/codegen/box/super/innerClassLabeledSuperProperty.kt");
         }
         
         @TestMetadata("multipleSuperTraits.kt")
         public void testMultipleSuperTraits() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/multipleSuperTraits.kt");
+            doTest("compiler/testData/codegen/box/super/multipleSuperTraits.kt");
         }
         
         @TestMetadata("traitproperty.kt")
         public void testTraitproperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/super/traitproperty.kt");
+            doTest("compiler/testData/codegen/box/super/traitproperty.kt");
         }
         
     }
@@ -3187,82 +3187,82 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("finalMethod.kt")
         public void testFinalMethod() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/finalMethod.kt");
+            doTest("compiler/testData/codegen/box/traits/finalMethod.kt");
         }
         
         @TestMetadata("inheritedFun.kt")
         public void testInheritedFun() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/inheritedFun.kt");
+            doTest("compiler/testData/codegen/box/traits/inheritedFun.kt");
         }
         
         @TestMetadata("inheritedVar.kt")
         public void testInheritedVar() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/inheritedVar.kt");
+            doTest("compiler/testData/codegen/box/traits/inheritedVar.kt");
         }
         
         @TestMetadata("kt1936_1.kt")
         public void testKt1936_1() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/kt1936_1.kt");
+            doTest("compiler/testData/codegen/box/traits/kt1936_1.kt");
         }
         
         @TestMetadata("kt1936_2.kt")
         public void testKt1936_2() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/kt1936_2.kt");
+            doTest("compiler/testData/codegen/box/traits/kt1936_2.kt");
         }
         
         @TestMetadata("kt2260.kt")
         public void testKt2260() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/kt2260.kt");
+            doTest("compiler/testData/codegen/box/traits/kt2260.kt");
         }
         
         @TestMetadata("kt2399.kt")
         public void testKt2399() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/kt2399.kt");
+            doTest("compiler/testData/codegen/box/traits/kt2399.kt");
         }
         
         @TestMetadata("kt2541.kt")
         public void testKt2541() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/kt2541.kt");
+            doTest("compiler/testData/codegen/box/traits/kt2541.kt");
         }
         
         @TestMetadata("kt2963.kt")
         public void testKt2963() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/kt2963.kt");
+            doTest("compiler/testData/codegen/box/traits/kt2963.kt");
         }
         
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/multiple.kt");
+            doTest("compiler/testData/codegen/box/traits/multiple.kt");
         }
         
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/simple.kt");
+            doTest("compiler/testData/codegen/box/traits/simple.kt");
         }
         
         @TestMetadata("stdlib.kt")
         public void testStdlib() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/stdlib.kt");
+            doTest("compiler/testData/codegen/box/traits/stdlib.kt");
         }
         
         @TestMetadata("traitFuncCall.kt")
         public void testTraitFuncCall() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/traitFuncCall.kt");
+            doTest("compiler/testData/codegen/box/traits/traitFuncCall.kt");
         }
         
         @TestMetadata("withRequired.kt")
         public void testWithRequired() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/withRequired.kt");
+            doTest("compiler/testData/codegen/box/traits/withRequired.kt");
         }
         
         @TestMetadata("withRequiredSuper.kt")
         public void testWithRequiredSuper() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/withRequiredSuper.kt");
+            doTest("compiler/testData/codegen/box/traits/withRequiredSuper.kt");
         }
         
         @TestMetadata("withRequiredSuperViaBridge.kt")
         public void testWithRequiredSuperViaBridge() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/traits/withRequiredSuperViaBridge.kt");
+            doTest("compiler/testData/codegen/box/traits/withRequiredSuperViaBridge.kt");
         }
         
     }
@@ -3275,27 +3275,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("asInLoop.kt")
         public void testAsInLoop() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/typeInfo/asInLoop.kt");
+            doTest("compiler/testData/codegen/box/typeInfo/asInLoop.kt");
         }
         
         @TestMetadata("inheritance.kt")
         public void testInheritance() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/typeInfo/inheritance.kt");
+            doTest("compiler/testData/codegen/box/typeInfo/inheritance.kt");
         }
         
         @TestMetadata("kt2811.kt")
         public void testKt2811() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/typeInfo/kt2811.kt");
+            doTest("compiler/testData/codegen/box/typeInfo/kt2811.kt");
         }
         
         @TestMetadata("kt511.kt")
         public void testKt511() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/typeInfo/kt511.kt");
+            doTest("compiler/testData/codegen/box/typeInfo/kt511.kt");
         }
         
         @TestMetadata("primitiveTypeInfo.kt")
         public void testPrimitiveTypeInfo() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/typeInfo/primitiveTypeInfo.kt");
+            doTest("compiler/testData/codegen/box/typeInfo/primitiveTypeInfo.kt");
         }
         
     }
@@ -3308,7 +3308,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("UnitValue.kt")
         public void testUnitValue() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/unit/UnitValue.kt");
+            doTest("compiler/testData/codegen/box/unit/UnitValue.kt");
         }
         
     }
@@ -3321,22 +3321,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("kt1978.kt")
         public void testKt1978() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/vararg/kt1978.kt");
+            doTest("compiler/testData/codegen/box/vararg/kt1978.kt");
         }
         
         @TestMetadata("kt581.kt")
         public void testKt581() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/vararg/kt581.kt");
+            doTest("compiler/testData/codegen/box/vararg/kt581.kt");
         }
         
         @TestMetadata("kt796_797.kt")
         public void testKt796_797() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/vararg/kt796_797.kt");
+            doTest("compiler/testData/codegen/box/vararg/kt796_797.kt");
         }
         
         @TestMetadata("varargsAndFunctionLiterals.kt")
         public void testVarargsAndFunctionLiterals() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/vararg/varargsAndFunctionLiterals.kt");
+            doTest("compiler/testData/codegen/box/vararg/varargsAndFunctionLiterals.kt");
         }
         
     }
@@ -3349,47 +3349,47 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("callProperty.kt")
         public void testCallProperty() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/callProperty.kt");
+            doTest("compiler/testData/codegen/box/when/callProperty.kt");
         }
         
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/is.kt");
+            doTest("compiler/testData/codegen/box/when/is.kt");
         }
         
         @TestMetadata("kt2457.kt")
         public void testKt2457() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/kt2457.kt");
+            doTest("compiler/testData/codegen/box/when/kt2457.kt");
         }
         
         @TestMetadata("kt2466.kt")
         public void testKt2466() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/kt2466.kt");
+            doTest("compiler/testData/codegen/box/when/kt2466.kt");
         }
         
         @TestMetadata("longInRange.kt")
         public void testLongInRange() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/longInRange.kt");
+            doTest("compiler/testData/codegen/box/when/longInRange.kt");
         }
         
         @TestMetadata("matchNotNullAgainstNullable.kt")
         public void testMatchNotNullAgainstNullable() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/matchNotNullAgainstNullable.kt");
+            doTest("compiler/testData/codegen/box/when/matchNotNullAgainstNullable.kt");
         }
         
         @TestMetadata("nullableWhen.kt")
         public void testNullableWhen() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/nullableWhen.kt");
+            doTest("compiler/testData/codegen/box/when/nullableWhen.kt");
         }
         
         @TestMetadata("range.kt")
         public void testRange() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/range.kt");
+            doTest("compiler/testData/codegen/box/when/range.kt");
         }
         
         @TestMetadata("whenArgumentIsEvaluatedOnlyOnce.kt")
         public void testWhenArgumentIsEvaluatedOnlyOnce() throws Exception {
-            blackBoxFileByFullPath("compiler/testData/codegen/box/when/whenArgumentIsEvaluatedOnlyOnce.kt");
+            doTest("compiler/testData/codegen/box/when/whenArgumentIsEvaluatedOnlyOnce.kt");
         }
         
     }

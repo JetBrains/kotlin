@@ -45,22 +45,22 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         
         @TestMetadata("simpleJavaEnum.kt")
         public void testSimpleJavaEnum() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/enum/simpleJavaEnum.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/enum/simpleJavaEnum.kt");
         }
         
         @TestMetadata("simpleJavaEnumWithFunction.kt")
         public void testSimpleJavaEnumWithFunction() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/enum/simpleJavaEnumWithFunction.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/enum/simpleJavaEnumWithFunction.kt");
         }
         
         @TestMetadata("simpleJavaEnumWithStaticImport.kt")
         public void testSimpleJavaEnumWithStaticImport() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/enum/simpleJavaEnumWithStaticImport.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/enum/simpleJavaEnumWithStaticImport.kt");
         }
         
         @TestMetadata("simpleJavaInnerEnum.kt")
         public void testSimpleJavaInnerEnum() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/enum/simpleJavaInnerEnum.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/enum/simpleJavaInnerEnum.kt");
         }
         
     }
@@ -73,17 +73,17 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         
         @TestMetadata("referencesStaticInnerClassMethod.kt")
         public void testReferencesStaticInnerClassMethod() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/functions/referencesStaticInnerClassMethod.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/functions/referencesStaticInnerClassMethod.kt");
         }
         
         @TestMetadata("referencesStaticInnerClassMethodL2.kt")
         public void testReferencesStaticInnerClassMethodL2() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/functions/referencesStaticInnerClassMethodL2.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/functions/referencesStaticInnerClassMethodL2.kt");
         }
         
         @TestMetadata("removeInIterator.kt")
         public void testRemoveInIterator() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/functions/removeInIterator.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/functions/removeInIterator.kt");
         }
         
     }
@@ -96,62 +96,62 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         
         @TestMetadata("funCallInConstructor.kt")
         public void testFunCallInConstructor() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funCallInConstructor.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funCallInConstructor.kt");
         }
         
         @TestMetadata("funClassObject.kt")
         public void testFunClassObject() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funClassObject.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funClassObject.kt");
         }
         
         @TestMetadata("funGenericClass.kt")
         public void testFunGenericClass() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funGenericClass.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funGenericClass.kt");
         }
         
         @TestMetadata("funNestedStaticClass.kt")
         public void testFunNestedStaticClass() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funNestedStaticClass.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funNestedStaticClass.kt");
         }
         
         @TestMetadata("funNestedStaticClass2.kt")
         public void testFunNestedStaticClass2() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funNestedStaticClass2.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funNestedStaticClass2.kt");
         }
         
         @TestMetadata("funNestedStaticGenericClass.kt")
         public void testFunNestedStaticGenericClass() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funNestedStaticGenericClass.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funNestedStaticGenericClass.kt");
         }
         
         @TestMetadata("funNotDirectSuperClass.kt")
         public void testFunNotDirectSuperClass() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funNotDirectSuperClass.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funNotDirectSuperClass.kt");
         }
         
         @TestMetadata("funObject.kt")
         public void testFunObject() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/funObject.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/funObject.kt");
         }
         
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/simpleClass.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/simpleClass.kt");
         }
         
         @TestMetadata("simpleClass2.kt")
         public void testSimpleClass2() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/simpleClass2.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/simpleClass2.kt");
         }
         
         @TestMetadata("simpleFun.kt")
         public void testSimpleFun() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/simpleFun.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/simpleFun.kt");
         }
         
         @TestMetadata("simpleProperty.kt")
         public void testSimpleProperty() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/protectedStatic/simpleProperty.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/protectedStatic/simpleProperty.kt");
         }
         
     }
@@ -164,7 +164,7 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         
         @TestMetadata("classWithNestedEnum.kt")
         public void testClassWithNestedEnum() throws Exception {
-            blackBoxFileWithJavaByFullPath("compiler/testData/codegen/boxWithJava/staticFun/classWithNestedEnum.kt");
+            doTestWithJava("compiler/testData/codegen/boxWithJava/staticFun/classWithNestedEnum.kt");
         }
         
     }

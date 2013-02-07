@@ -16,13 +16,24 @@
 
 package org.jetbrains.jet.codegen.generated;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void doTest(@NotNull String filename) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFileByFullPath(filename);
+    }
+
+    public void doTestWithJava(@NotNull String filename) {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        blackBoxFileWithJavaByFullPath(filename);
+    }
+
+    public void doTestWithStdlib(@NotNull String filename) {
+        myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
+        blackBoxFileByFullPath(filename);
     }
 }
