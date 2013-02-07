@@ -19,6 +19,7 @@ package org.jetbrains.jet.di;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
@@ -35,6 +36,7 @@ public class InjectorForMacros {
     private ExpressionTypingServices expressionTypingServices;
     private final Project project;
     private final ModuleConfiguration moduleConfiguration;
+    private CallExpressionResolver callExpressionResolver;
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
     private TypeResolver typeResolver;
@@ -50,6 +52,7 @@ public class InjectorForMacros {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.project = project;
         this.moduleConfiguration = moduleConfiguration;
+        this.callExpressionResolver = new CallExpressionResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.typeResolver = new TypeResolver();
@@ -58,10 +61,13 @@ public class InjectorForMacros {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.candidateResolver = new CandidateResolver();
 
+        this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
+
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);

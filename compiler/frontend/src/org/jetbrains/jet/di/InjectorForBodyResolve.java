@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
@@ -49,6 +50,7 @@ public class InjectorForBodyResolve {
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
     private ExpressionTypingServices expressionTypingServices;
+    private CallExpressionResolver callExpressionResolver;
     private DescriptorResolver descriptorResolver;
     private AnnotationResolver annotationResolver;
     private TypeResolver typeResolver;
@@ -75,6 +77,7 @@ public class InjectorForBodyResolve {
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.expressionTypingServices = new ExpressionTypingServices();
+        this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.annotationResolver = new AnnotationResolver();
         this.typeResolver = new TypeResolver();
@@ -103,10 +106,13 @@ public class InjectorForBodyResolve {
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
         argumentTypeResolver.setTypeResolver(typeResolver);
 
+        expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
+
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);

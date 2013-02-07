@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -61,6 +62,8 @@ public class ExpressionTypingServices {
     @NotNull
     private CallResolver callResolver;
     @NotNull
+    private CallExpressionResolver callExpressionResolver;
+    @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
     private TypeResolver typeResolver;
@@ -85,6 +88,16 @@ public class ExpressionTypingServices {
     @Inject
     public void setCallResolver(@NotNull CallResolver callResolver) {
         this.callResolver = callResolver;
+    }
+
+    @NotNull
+    public CallExpressionResolver getCallExpressionResolver() {
+        return callExpressionResolver;
+    }
+
+    @Inject
+    public void setCallExpressionResolver(@NotNull CallExpressionResolver callExpressionResolver) {
+        this.callExpressionResolver = callExpressionResolver;
     }
 
     @NotNull
@@ -128,11 +141,10 @@ public class ExpressionTypingServices {
         return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace).getType();
     }
 
-    public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull BindingTrace trace) {
+    public JetTypeInfo getTypeInfoWithNamespaces(@NotNull JetExpression expression, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                this, trace, scope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, true);
-        return expressionTypingFacade.getTypeInfo(expression, context).getType();
-//        return ((ExpressionTypingContext) ExpressionTyperVisitorWithNamespaces).INSTANCE.getType(expression, ExpressionTypingContext.newRootContext(semanticServices, trace, scope, DataFlowInfo.getEmpty(), TypeUtils.NO_EXPECTED_TYPE, TypeUtils.NO_EXPECTED_TYPE));
+                this, trace, scope, dataFlowInfo, expectedType, true);
+        return expressionTypingFacade.getTypeInfo(expression, context);
     }
 
     @NotNull

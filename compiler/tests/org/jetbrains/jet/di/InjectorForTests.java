@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -41,6 +42,7 @@ public class InjectorForTests {
     private ModuleConfiguration moduleConfiguration;
     private final Project project;
     private AnnotationResolver annotationResolver;
+    private CallExpressionResolver callExpressionResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private ArgumentTypeResolver argumentTypeResolver;
     private CandidateResolver candidateResolver;
@@ -56,6 +58,7 @@ public class InjectorForTests {
         this.moduleConfiguration = ModuleConfiguration.EMPTY;
         this.project = project;
         this.annotationResolver = new AnnotationResolver();
+        this.callExpressionResolver = new CallExpressionResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
@@ -64,6 +67,7 @@ public class InjectorForTests {
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
+        this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setProject(project);
@@ -81,6 +85,8 @@ public class InjectorForTests {
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
+
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
         argumentTypeResolver.setTypeResolver(typeResolver);

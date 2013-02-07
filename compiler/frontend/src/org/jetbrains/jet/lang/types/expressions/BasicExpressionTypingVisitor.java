@@ -69,7 +69,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitSimpleNameExpression(JetSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
-        JetTypeInfo typeInfo = CallExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
+        JetTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
         JetType type = DataFlowUtils.checkType(typeInfo.getType(), expression, context);
         ExpressionTypingUtils.checkWrappingInRef(expression, context.trace, context.scope);
         return JetTypeInfo.create(type, typeInfo.getDataFlowInfo()); // TODO : Extensions to this
@@ -589,76 +590,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitQualifiedExpression(JetQualifiedExpression expression, ExpressionTypingContext context) {
-        // TODO : functions as values
-        JetExpression selectorExpression = expression.getSelectorExpression();
-        JetExpression receiverExpression = expression.getReceiverExpression();
-        ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
-        JetTypeInfo receiverTypeInfo = facade.getTypeInfo(receiverExpression, contextWithNoExpectedType.replaceNamespacesAllowed(true));
-        JetType receiverType = receiverTypeInfo.getType();
-        if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
-        if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
-
-        context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
-
-        if (selectorExpression instanceof JetSimpleNameExpression) {
-            propagateConstantValues(expression, context, (JetSimpleNameExpression) selectorExpression);
-        }
-
-        JetTypeInfo selectorReturnTypeInfo = CallExpressionResolver.getSelectorReturnTypeInfo(
-                new ExpressionReceiver(receiverExpression, receiverType), expression.getOperationTokenNode(), selectorExpression, context);
-        JetType selectorReturnType = selectorReturnTypeInfo.getType();
-
-        //TODO move further
-        if (!(receiverType instanceof NamespaceType) && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
-            if (selectorReturnType != null && !selectorReturnType.isNullable() && !KotlinBuiltIns.getInstance().isUnit(selectorReturnType)) {
-                if (receiverType.isNullable()) {
-                    selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
-                }
-            }
-        }
-
-        // TODO : this is suspicious: remove this code?
-        if (selectorReturnType != null) {
-            context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
-        }
-        return DataFlowUtils.checkType(selectorReturnType, expression, context, selectorReturnTypeInfo.getDataFlowInfo());
-    }
-
-    private static void propagateConstantValues(JetQualifiedExpression expression, ExpressionTypingContext context, JetSimpleNameExpression selectorExpression) {
-        JetExpression receiverExpression = expression.getReceiverExpression();
-        CompileTimeConstant<?> receiverValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression);
-        CompileTimeConstant<?> wholeExpressionValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
-        DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, selectorExpression);
-        if (wholeExpressionValue == null && receiverValue != null && !(receiverValue instanceof ErrorValue) && receiverValue.getValue() instanceof Number
-            && KotlinBuiltIns.getInstance().getNumber() == declarationDescriptor) {
-            Number value = (Number) receiverValue.getValue();
-            Name referencedName = selectorExpression.getReferencedNameAsName();
-            if (OperatorConventions.NUMBER_CONVERSIONS.contains(referencedName)) {
-                if (DOUBLE.equals(referencedName)) {
-                    context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new DoubleValue(value.doubleValue()));
-                }
-                else if (FLOAT.equals(referencedName)) {
-                    context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new FloatValue(value.floatValue()));
-                }
-                else if (LONG.equals(referencedName)) {
-                    context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new LongValue(value.longValue()));
-                }
-                else if (SHORT.equals(referencedName)) {
-                    context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ShortValue(value.shortValue()));
-                }
-                else if (BYTE.equals(referencedName)) {
-                    context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ByteValue(value.byteValue()));
-                }
-                else if (INT.equals(referencedName)) {
-                    context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new IntValue(value.intValue()));
-                }
-            }
-        }
+        CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
+        return callExpressionResolver.getQualifiedExpressionTypeInfo(expression, context);
     }
 
     @Override
     public JetTypeInfo visitCallExpression(JetCallExpression expression, ExpressionTypingContext context) {
-        JetTypeInfo expressionTypeInfo = CallExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        CallExpressionResolver callExpressionResolver = context.expressionTypingServices.getCallExpressionResolver();
+        JetTypeInfo expressionTypeInfo = callExpressionResolver.getCallExpressionTypeInfo(expression, NO_RECEIVER, null, context);
         return DataFlowUtils.checkType(expressionTypeInfo.getType(), expression, context, expressionTypeInfo.getDataFlowInfo());
     }
 

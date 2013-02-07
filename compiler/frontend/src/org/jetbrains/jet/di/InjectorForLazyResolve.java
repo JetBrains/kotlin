@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
+import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
@@ -47,6 +48,7 @@ public class InjectorForLazyResolve {
     private AnnotationResolver annotationResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private JetImportsFactory jetImportsFactory;
+    private CallExpressionResolver callExpressionResolver;
     private CallResolver callResolver;
     private ArgumentTypeResolver argumentTypeResolver;
     private CandidateResolver candidateResolver;
@@ -68,6 +70,7 @@ public class InjectorForLazyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.jetImportsFactory = new JetImportsFactory();
+        this.callExpressionResolver = new CallExpressionResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
@@ -76,6 +79,7 @@ public class InjectorForLazyResolve {
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
+        this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setProject(project);
@@ -90,6 +94,8 @@ public class InjectorForLazyResolve {
         this.annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
         this.jetImportsFactory.setProject(project);
+
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
