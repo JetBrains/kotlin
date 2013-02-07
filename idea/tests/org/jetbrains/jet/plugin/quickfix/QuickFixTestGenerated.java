@@ -418,6 +418,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass2.kt");
         }
         
+        @TestMetadata("beforeRemoveIncompatibleModifier.kt")
+        public void testRemoveIncompatibleModifier() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeRemoveIncompatibleModifier.kt");
+        }
+        
         @TestMetadata("beforeRemoveRedundantModifier1.kt")
         public void testRemoveRedundantModifier1() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier1.kt");
