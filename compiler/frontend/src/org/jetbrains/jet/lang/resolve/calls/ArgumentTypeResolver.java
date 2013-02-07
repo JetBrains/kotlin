@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -179,10 +180,12 @@ public class ArgumentTypeResolver {
         TypeInfoForCall result = null;
         if (expression instanceof JetCallExpression) {
             result = callExpressionResolver.getCallExpressionTypeInfoForCall(
-                    (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null, context, ResolveMode.INTERNAL);
+                    (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null,
+                    context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.INTERNAL);
         }
         if (expression instanceof JetQualifiedExpression) {
-            result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo((JetQualifiedExpression) expression, context, ResolveMode.INTERNAL);
+            result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo(
+                    (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.INTERNAL);
         }
         if (result != null) {
             recordExpressionType(expression, context, result.getTypeInfo());
