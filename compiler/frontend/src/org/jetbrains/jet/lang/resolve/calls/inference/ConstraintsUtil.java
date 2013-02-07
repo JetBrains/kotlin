@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.calls.inference;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -40,8 +42,9 @@ public class ConstraintsUtil {
                 }
             }
             values.addAll(typeConstraints.getExactBounds());
-            if (!typeConstraints.getLowerBounds().isEmpty()) {
-                JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(typeConstraints.getLowerBounds());
+            Collection<JetType> lowerBounds = filterNotContainingErrorType(typeConstraints.getLowerBounds());
+            if (!lowerBounds.isEmpty()) {
+                JetType superTypeOfLowerBounds = CommonSupertypes.commonSupertype(lowerBounds);
                 for (JetType value : values) {
                     if (!JetTypeChecker.INSTANCE.isSubtypeOf(superTypeOfLowerBounds, value)) {
                         values.add(superTypeOfLowerBounds);
@@ -52,9 +55,10 @@ public class ConstraintsUtil {
                     values.add(superTypeOfLowerBounds);
                 }
             }
-            if (!typeConstraints.getUpperBounds().isEmpty()) {
+            Collection<JetType> upperBounds = filterNotContainingErrorType(typeConstraints.getUpperBounds());
+            if (!upperBounds.isEmpty()) {
                 //todo subTypeOfUpperBounds
-                JetType subTypeOfUpperBounds = typeConstraints.getUpperBounds().iterator().next(); //todo
+                JetType subTypeOfUpperBounds = upperBounds.iterator().next(); //todo
                 for (JetType value : values) {
                     if (!JetTypeChecker.INSTANCE.isSubtypeOf(value, subTypeOfUpperBounds)) {
                         values.add(subTypeOfUpperBounds);
@@ -82,6 +86,17 @@ public class ConstraintsUtil {
             }
         }
         return true;
+    }
+
+    @NotNull
+    private static Collection<JetType> filterNotContainingErrorType(@NotNull Collection<JetType> types) {
+        return Collections2.filter(types, new Predicate<JetType>() {
+            @Override
+            public boolean apply(@Nullable JetType type) {
+                if (ErrorUtils.containsErrorType(type)) return false;
+                return true;
+            }
+        });
     }
 
     @Nullable
