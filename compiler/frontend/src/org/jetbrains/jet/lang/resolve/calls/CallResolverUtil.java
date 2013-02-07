@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -27,10 +29,13 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallResolverUtil {
 
@@ -74,4 +79,40 @@ public class CallResolverUtil {
         return copy;
     }
 
+
+    public static boolean containsUnknownFunctionArgument(@NotNull JetType type) {
+        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
+        List<TypeProjection> arguments = type.getArguments();
+        int index = 0;
+        for (TypeProjection argument : arguments) {
+            if (index < arguments.size() - 1) {
+                if (ErrorUtils.containsErrorType(argument.getType())) {
+                    return true;
+                }
+            }
+            index++;
+        }
+        return false;
+    }
+
+    public static boolean hasUnknownReturnType(@NotNull JetType type) {
+        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
+        JetType returnTypeFromFunctionType = KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type);
+        return ErrorUtils.containsErrorType(returnTypeFromFunctionType);
+    }
+
+    public static JetType replaceReturnTypeToUnknown(@NotNull JetType type) {
+        assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
+        List<TypeProjection> arguments = type.getArguments();
+        List<TypeProjection> newArguments = Lists.newArrayList();
+        int index = 0;
+        for (TypeProjection argument : arguments) {
+            if (index < arguments.size() - 1) {
+                newArguments.add(argument);
+            }
+            index++;
+        }
+        newArguments.add(new TypeProjection(Variance.INVARIANT, DONT_CARE));
+        return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
+    }
 }

@@ -527,4 +527,11 @@ public class JetPsiUtil {
             throw new IllegalArgumentException("Can't construct name for: " + expression.getClass().toString());
         }
     }
+
+    @Nullable
+    public static JetElement getLastStatementInABlock(@Nullable JetBlockExpression blockExpression) {
+        if (blockExpression == null) return null;
+        List<JetElement> statements = blockExpression.getStatements();
+        return statements.isEmpty() ? null : statements.get(statements.size() - 1);
+    }
 }
