@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.PsiTestUtil;
-import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.LocalFileSystemUtils;
 
 public class FinalJavaSupertypeTest extends AbstractQuickFixMultiFileTest {
@@ -31,7 +31,7 @@ public class FinalJavaSupertypeTest extends AbstractQuickFixMultiFileTest {
     }
 
     public void testFinalJavaSupertype() throws Exception {
-        String path = getTestDataPath() + "/../javaCode/";
+        String path = getTestDataPath() + "javaCode/";
         final VirtualFile rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false);
         addSourceContentToRoots(myModule, rootDir);
         PsiDocumentManager.getInstance(myProject).commitAllDocuments();
@@ -40,6 +40,6 @@ public class FinalJavaSupertypeTest extends AbstractQuickFixMultiFileTest {
 
     @Override
     protected String getTestDataPath() {
-        return JetTestCaseBuilder.getHomeDirectory() + "/idea/testData/quickfix/modifiers/finalSupertype/" + getTestName(true) + "/test/";
+        return PluginTestCaseBase.getTestDataPathBase() + "/quickfix/modifiers/finalSupertype/" + getTestName(true) + "/";
     }
 }
