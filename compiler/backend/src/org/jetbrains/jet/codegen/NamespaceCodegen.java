@@ -62,7 +62,7 @@ public class NamespaceCodegen extends MemberCodegen {
         name = fqName;
         this.files = namespaceFiles;
 
-        final PsiFile sourceFile = namespaceFiles.iterator().next().getContainingFile();
+        final PsiFile sourceFile = namespaceFiles.size() == 1 ? namespaceFiles.iterator().next().getContainingFile() : null;
 
         v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
             @Override
@@ -75,8 +75,10 @@ public class NamespaceCodegen extends MemberCodegen {
                               "java/lang/Object",
                               new String[0]
                 );
-                // TODO figure something out for a namespace that spans multiple files
-                v.visitSource(sourceFile.getName(), null);
+                //We don't generate any source information for namespace with multiple files
+                if (sourceFile != null) {
+                    v.visitSource(sourceFile.getName(), null);
+                }
             }
         });
     }
