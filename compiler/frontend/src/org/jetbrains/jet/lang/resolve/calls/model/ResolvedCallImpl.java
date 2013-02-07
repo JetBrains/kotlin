@@ -74,7 +74,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
-    private final Map<ValueArgument, CallCandidateResolutionContext<FunctionDescriptor>> deferredComputationsForArguments = Maps.newLinkedHashMap();
     private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
     private boolean someArgumentHasNoType = false;
     private final DelegatingBindingTrace trace;
@@ -269,19 +268,5 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     public void addDataFlowInfo(@NotNull DataFlowInfo info) {
         assert dataFlowInfo != null;
         dataFlowInfo = dataFlowInfo.and(info);
-    }
-
-    public void addDeferredComputationForArgument(
-            @NotNull ValueArgument valueArgument,
-            @Nullable CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext
-    ) {
-        if (callCandidateResolutionContext != null) {
-            deferredComputationsForArguments.put(valueArgument, callCandidateResolutionContext);
-        }
-    }
-
-    @Nullable
-    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputationForArgument(@NotNull ValueArgument valueArgument) {
-        return deferredComputationsForArguments.get(valueArgument);
     }
 }

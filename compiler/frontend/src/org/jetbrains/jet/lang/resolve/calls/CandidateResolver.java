@@ -294,7 +294,7 @@ public class CandidateResolver {
                                        : effectiveExpectedType;
 
                 CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
-                        resolvedCall.getDeferredComputationForArgument(argument);
+                        context.trace.get(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression);
                 if (storedContextForArgument == null) continue;
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
@@ -451,7 +451,7 @@ public class CandidateResolver {
                                                                                    resolveFunctionArgumentBodies);
         CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = typeInfoForCall.getCallCandidateResolutionContext();
         if (contextForArgument != null) {
-            context.candidateCall.addDeferredComputationForArgument(valueArgument, contextForArgument);
+            //todo return JetTypeInfo instead of TypeInfoForCall, remove TypeInfoForCall
             traceToResolveArgument.commit();
         }
         JetType type = typeInfoForCall.getType();
@@ -523,7 +523,6 @@ public class CandidateResolver {
                         expression, newContext, resolveFunctionArgumentBodies);
                 JetType type = typeInfoForCall.getType();
                 candidateCall.addDataFlowInfo(typeInfoForCall.getDataFlowInfo());
-                candidateCall.addDeferredComputationForArgument(argument, typeInfoForCall.getCallCandidateResolutionContext());
 
                 if (type == null || (ErrorUtils.isErrorType(type) && type != PLACEHOLDER_FUNCTION_TYPE)) {
                     candidateCall.argumentHasNoType();

@@ -68,15 +68,25 @@ public class TypeInfoForCall {
 
     }
 
+    @NotNull
     public static TypeInfoForCall create(@NotNull JetTypeInfo typeInfo) {
         return new TypeInfoForCall(typeInfo, null);
     }
 
+    @NotNull
     public static TypeInfoForCall create(
             @NotNull JetTypeInfo typeInfo,
             @NotNull TypeInfoForCall typeInfoForCall
     ) {
         return new TypeInfoForCall(typeInfo, typeInfoForCall.getCallCandidateResolutionContext());
+    }
+
+    @NotNull
+    public static TypeInfoForCall create(
+            @NotNull JetTypeInfo typeInfo,
+            @Nullable CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext
+    ) {
+        return new TypeInfoForCall(typeInfo, callCandidateResolutionContext);
     }
 
     private TypeInfoForCall(

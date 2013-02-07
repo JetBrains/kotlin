@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfoForCall;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordContextForExpressionCall;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordExpressionType;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
@@ -168,6 +170,10 @@ public class ArgumentTypeResolver {
             JetType type = getFunctionLiteralType((JetFunctionLiteralExpression) expression, context.scope, context.trace);
             return TypeInfoForCall.create(type, context.dataFlowInfo);
         }
+        TypeInfoForCall cachedTypeInfo = getRecordedTypeInfoForCall(expression, context);
+        if (cachedTypeInfo != null) {
+            return cachedTypeInfo;
+        }
         //todo deparenthesize
         CallExpressionResolver callExpressionResolver = expressionTypingServices.getCallExpressionResolver();
         TypeInfoForCall result = null;
@@ -180,6 +186,7 @@ public class ArgumentTypeResolver {
         }
         if (result != null) {
             recordExpressionType(expression, context, result.getTypeInfo());
+            recordContextForExpressionCall(expression, context.trace, result.getCallCandidateResolutionContext());
             return result;
         }
         return TypeInfoForCall.create(

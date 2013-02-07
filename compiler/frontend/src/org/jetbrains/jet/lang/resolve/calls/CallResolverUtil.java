@@ -80,11 +80,6 @@ public class CallResolverUtil {
             copy.recordValueArgument(entry.getKey(), entry.getValue());
         }
         copy.setInitialDataFlowInfo(call.getDataFlowInfo());
-        for (ResolvedValueArgument resolvedArgument : call.getValueArguments().values()) {
-            for (ValueArgument argument : resolvedArgument.getArguments()) {
-                copy.addDeferredComputationForArgument(argument, call.getDeferredComputationForArgument(argument));
-            }
-        }
         return copy;
     }
 
