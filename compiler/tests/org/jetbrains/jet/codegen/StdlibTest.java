@@ -63,42 +63,6 @@ public class StdlibTest extends CodegenTestCase {
         }
     }
 
-    public void testKt533 () {
-        blackBoxFile("regressions/kt533.kt");
-    }
-
-    public void testKt529 () {
-        blackBoxFile("regressions/kt529.kt");
-    }
-
-    public void testKt528 () {
-        blackBoxFile("regressions/kt528.kt");
-    }
-
-    public void testKt789 () {
-        blackBoxFile("regressions/kt789.kt");
-    }
-
-    public void testKt715 () {
-        blackBoxFile("regressions/kt715.kt");
-    }
-
-    public void testKt864 () {
-        blackBoxFile("regressions/kt864.kt");
-    }
-
-    public void testKt274 () {
-        blackBoxFile("regressions/kt274.kt");
-    }
-
-    public void testKt344 () {
-        blackBoxFile("regressions/kt344.kt");
-    }
-
-    //from ExtensionFunctionsTest
-    public void testGeneric() throws Exception {
-        blackBoxFile("extensionFunctions/generic.kt");
-    }
 
     //from NamespaceGenTest
 //    public void testPredicateOperator() throws Exception {
@@ -128,14 +92,6 @@ public class StdlibTest extends CodegenTestCase {
             t.printStackTrace();
             throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
         }
-    }
-
-    public void testKt1406() throws Exception {
-        blackBoxFile("regressions/kt1406.kt");
-    }
-
-    public void testKt1568() throws Exception {
-        blackBoxFile("regressions/kt1568.kt");
     }
 
     public void testKt1592 () throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -303,56 +259,7 @@ public class StdlibTest extends CodegenTestCase {
         assertEquals(invoke1[1].value(), RetentionPolicy.SOURCE);
     }
 
-    public void testInvokeAnnotationMethod() {
-        blackBoxFile("regressions/kt1932.kt");
-    }
-
-
-    public void testKt1800() {
-        blackBoxFile("regressions/kt1800.kt");
-    }
-
-    public void testKt2334() {
-        blackBoxFile("regressions/kt2334.kt");
-    }
-
-    public void test1733() {
-        blackBoxFile("regressions/kt1733.kt");
-    }
-
-    public void test1779() {
-        blackBoxFile("regressions/kt1779.kt");
-    }
-
-    public void testKt2210() throws Exception {
-        blackBoxFile("regressions/kt2210.kt");
-    }
-
-    public void testKt2593() {
-        blackBoxFile("regressions/kt2593.kt");
-    }
-
-    public void testKt2318() {
-        blackBoxFile("regressions/kt2318.kt");
-    }
-
-    public void testKt3046() {
-        blackBoxFile("regressions/kt3046.kt");
-    }
-
-    public void testKt2246() {
-        blackBoxFile("regressions/kt2246.kt");
-    }
-
-    public void testCollections() {
-        blackBoxFile("jdk-annotations/collections.kt");
-    }
-
     public void testKt1515() {
         blackBoxMultiFile("/multi/kt1515/thisPackage.kt", "/multi/kt1515/otherPackage.kt");
-    }
-
-    public void testTypeCastException() {
-        blackBoxFile("typeCastException.kt");
     }
 }
