@@ -104,6 +104,7 @@ public class QuickFixes {
         factories.put(TRAIT_CAN_NOT_BE_FINAL, removeFinalModifierFactory);
         factories.put(REDUNDANT_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory());
         factories.put(INCOMPATIBLE_MODIFIERS, RemoveModifierFix.createRemoveModifierFactory(false));
+        factories.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, RemoveModifierFix.createRemoveVarianceFactory());
 
         JetIntentionActionFactory removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD);
         factories.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, AddModifierFix.createFactory(OPEN_KEYWORD, JetClass.class));

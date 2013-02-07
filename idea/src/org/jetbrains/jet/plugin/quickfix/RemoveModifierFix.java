@@ -29,7 +29,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
+import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import org.jetbrains.jet.lang.psi.JetTypeProjection;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetTypeParameterElementType;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -150,6 +153,33 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
                 if (!(elementType instanceof JetKeywordToken)) return null;
                 JetKeywordToken variance = (JetKeywordToken) elementType;
                 return new RemoveModifierFix(projection, variance, true);
+            }
+        };
+    }
+
+    public static JetIntentionActionFactory createRemoveVarianceFactory() {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
+                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
+                if (modifierListOwner == null) return null;
+                PsiElement psiElement = diagnostic.getPsiElement();
+                if (!(psiElement instanceof JetTypeParameter)) return null;
+                JetTypeParameter parameter = (JetTypeParameter) psiElement;
+                Variance variance = parameter.getVariance();
+                JetKeywordToken modifier;
+                switch (variance) {
+                    case IN_VARIANCE:
+                        modifier = JetTokens.IN_KEYWORD;
+                        break;
+                    case OUT_VARIANCE:
+                        modifier = JetTokens.OUT_KEYWORD;
+                        break;
+                    default:
+                        return null;
+                }
+                return new RemoveModifierFix(modifierListOwner, modifier, false);
             }
         };
     }

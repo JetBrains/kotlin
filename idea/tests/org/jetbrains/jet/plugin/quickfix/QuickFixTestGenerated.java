@@ -683,6 +683,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/typeProjection/beforeRemoveRedundantProjection2.kt");
         }
         
+        @TestMetadata("beforeRemoveVariance.kt")
+        public void testRemoveVariance() throws Exception {
+            doTest("idea/testData/quickfix/typeProjection/beforeRemoveVariance.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/quickfix/uselessImports")
