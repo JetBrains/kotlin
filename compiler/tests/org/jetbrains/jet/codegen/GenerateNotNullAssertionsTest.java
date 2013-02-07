@@ -100,7 +100,8 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
 
         setUpEnvironment(false, true, javaClassesTempDirectory);
 
-        blackBoxFile("notNullAssertions/doGenerateParamAssertions.kt");
+        loadFile("notNullAssertions/doGenerateParamAssertions.kt");
+        generateFunction().invoke(null);
     }
 
     public void testDoNotGenerateParamAssertions() throws Exception {

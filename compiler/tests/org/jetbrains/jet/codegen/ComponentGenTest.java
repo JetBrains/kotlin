@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.jet.ConfigurationKind;
 
 /**
@@ -25,13 +26,7 @@ import org.jetbrains.jet.ConfigurationKind;
 public class ComponentGenTest extends CodegenTestCase {
     public void testComponent() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        blackBoxFile("componentEvaluatesOnlyOnce.kt");
-
-        String asm = generateToText();
-        //System.out.println(asm);
-        final String pattern = "NEW S\n";
-        final int index = asm.indexOf(pattern);
-        asm = asm.substring(index + pattern.length());
-        assertEquals(-1, asm.indexOf(pattern));
+        loadFile("componentEvaluatesOnlyOnce.kt");
+        assertEquals(1, StringUtils.countMatches(generateToText(), "NEW S\n"));
     }
 }

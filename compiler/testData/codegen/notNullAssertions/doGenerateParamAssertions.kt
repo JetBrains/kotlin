@@ -5,4 +5,4 @@ class A : C() {
     }
 }
 
-fun box() = C.foo(A())
+fun doTest() = C.foo(A())

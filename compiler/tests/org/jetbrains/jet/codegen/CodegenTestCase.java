@@ -105,10 +105,6 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         throw new UnsupportedOperationException();
     }
 
-    protected void blackBoxFile(@NotNull String filename) {
-        blackBoxMultiFile(filename);
-    }
-
     protected void blackBoxFileByFullPath(@NotNull String filename) {
         loadFileByFullPath(filename);
         blackBox();
@@ -148,7 +144,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
 
-        blackBoxFile(ktFile);
+        blackBoxMultiFile(ktFile);
     }
 
     @NotNull
