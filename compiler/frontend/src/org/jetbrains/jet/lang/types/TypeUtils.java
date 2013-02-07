@@ -485,6 +485,20 @@ public class TypeUtils {
         return false;
     }
 
+    public static boolean equalsOrContainsAsArgument(@Nullable JetType type, @NotNull JetType... possibleArgumentTypes) {
+        return equalsOrContainsAsArgument(type, Sets.newHashSet(possibleArgumentTypes));
+    }
+
+    private static boolean equalsOrContainsAsArgument(@Nullable JetType type, @NotNull Set<JetType> possibleArgumentTypes) {
+        if (type == null) return false;
+        if (possibleArgumentTypes.contains(type)) return true;
+        if (type instanceof NamespaceType) return false;
+        for (TypeProjection projection : type.getArguments()) {
+            if (equalsOrContainsAsArgument(projection.getType(), possibleArgumentTypes)) return true;
+        }
+        return false;
+    }
+
     @NotNull
     public static String getTypeNameAndStarProjectionsString(@NotNull String name, int size) {
         StringBuilder builder = new StringBuilder(name);
