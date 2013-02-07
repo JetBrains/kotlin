@@ -1,5 +1,5 @@
 package foo;
 
-fun box() = {
+fun box1() = {
   1
 }
