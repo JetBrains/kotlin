@@ -66,8 +66,15 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull ResolvedCallImpl<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {
-        return new CallCandidateResolutionContext<D>(candidateCall, tracing, context.trace, context.scope, context.call,
-                                                        context.expectedType, context.dataFlowInfo, context.resolveMode, context.namespacesAllowed);
+        return createForCallBeingAnalyzed(candidateCall, context, context.call, context.resolveMode, tracing);
+    }
+
+    public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
+            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionContext context, @NotNull Call call,
+            @NotNull ResolveMode resolveMode, @NotNull TracingStrategy tracing
+    ) {
+        return new CallCandidateResolutionContext<D>(candidateCall, tracing, context.trace, context.scope, call,
+                                                        context.expectedType, context.dataFlowInfo, resolveMode, context.namespacesAllowed);
     }
 
     @Override

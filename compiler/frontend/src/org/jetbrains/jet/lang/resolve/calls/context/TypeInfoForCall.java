@@ -56,11 +56,10 @@ public class TypeInfoForCall {
         JetTypeInfo typeInfo = JetTypeInfo.create(type, dataFlowInfo);
         CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext;
         if (resolvedCall instanceof ResolvedCallImpl) {
-            BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(
-                    TRACE_STUB, context.scope, call, TypeUtils.NO_EXPECTED_TYPE, typeInfo.getDataFlowInfo(), resolveMode, context.namespacesAllowed);
             //todo[ResolvedCallImpl]
             callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                    (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, basicCallResolutionContext, ((ResolvedCallImpl<FunctionDescriptor>) resolvedCall).getTracing());
+                    (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, context.replaceBindingTrace(TRACE_STUB),
+                    call, resolveMode, ((ResolvedCallImpl<FunctionDescriptor>) resolvedCall).getTracing());
         }
         else {
             callCandidateResolutionContext = null;
