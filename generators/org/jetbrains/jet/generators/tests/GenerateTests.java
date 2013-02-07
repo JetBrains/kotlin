@@ -86,6 +86,13 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
+                "BlackBoxWithStdlibCodegenTestGenerated",
+                AbstractBlackBoxWithStdlibCodegenTest.class,
+                testModel("compiler/testData/codegen/boxWithStdlib", "blackBoxFileByFullPath")
+        );
+
+        generateTest(
+                "compiler/tests/",
                 "JavaVisibilityTestGenerated",
                 AbstractJavaVisibilityTest.class,
                 testModel("compiler/testData/codegen/visibility", "blackBoxFileWithJavaByFullPath")
