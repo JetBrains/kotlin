@@ -74,7 +74,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     }
 
     @Override
-    protected CallCandidateResolutionContext<D> replace(
+    protected CallCandidateResolutionContext<D> create(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,

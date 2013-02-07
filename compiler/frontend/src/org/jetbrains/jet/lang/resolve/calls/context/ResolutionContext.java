@@ -47,7 +47,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext> {
         this.namespacesAllowed = namespacesAllowed;
     }
 
-    protected abstract Context replace(
+    protected abstract Context create(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -59,32 +59,32 @@ public abstract class ResolutionContext<Context extends ResolutionContext> {
     
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
-        return replace(trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+        return create(trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
     
     @NotNull
     public Context replaceNamespacesAllowed(boolean namespacesAllowed) {
         if (namespacesAllowed == this.namespacesAllowed) return self();
-        return replace(trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+        return create(trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
-        return replace(trace, scope, newDataFlowInfo, expectedType, namespacesAllowed);
+        return create(trace, scope, newDataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull
     public Context replaceExpectedType(@Nullable JetType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
-        return replace(trace, scope, dataFlowInfo, newExpectedType, namespacesAllowed);
+        return create(trace, scope, dataFlowInfo, newExpectedType, namespacesAllowed);
     }
 
     @NotNull
     public Context replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return self();
-        return replace(trace, newScope, dataFlowInfo, expectedType, namespacesAllowed);
+        return create(trace, newScope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull

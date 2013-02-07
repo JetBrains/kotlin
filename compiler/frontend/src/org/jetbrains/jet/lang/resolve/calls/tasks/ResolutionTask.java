@@ -78,7 +78,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     }
 
     @Override
-    protected ResolutionTask<D, F> replace(
+    protected ResolutionTask<D, F> create(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,

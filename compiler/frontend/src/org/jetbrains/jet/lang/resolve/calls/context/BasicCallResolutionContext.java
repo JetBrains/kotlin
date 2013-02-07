@@ -44,7 +44,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     }
 
     @Override
-    protected BasicCallResolutionContext replace(
+    protected BasicCallResolutionContext create(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,

@@ -76,7 +76,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     }
 
     @Override
-    protected ExpressionTypingContext replace(
+    protected ExpressionTypingContext create(
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
