@@ -2386,11 +2386,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
 
-        if (leftType.equals(JET_NOTHING_TYPE)) {
+        if (JetPsiUtil.isNullConstant(left)) {
             return genCmpWithNull(right, rightType, opToken);
         }
 
-        if (rightType.equals(JET_NOTHING_TYPE)) {
+        if (JetPsiUtil.isNullConstant(right)) {
             return genCmpWithNull(left, leftType, opToken);
         }
 
