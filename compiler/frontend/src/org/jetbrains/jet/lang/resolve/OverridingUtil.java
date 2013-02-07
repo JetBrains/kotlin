@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -222,6 +223,7 @@ public class OverridingUtil {
 
     public static boolean isReturnTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
+        if (typeSubstitutor == null) return false;
 
         JetType superReturnType = superDescriptor.getReturnType();
         assert superReturnType != null;
@@ -235,11 +237,14 @@ public class OverridingUtil {
         return typeChecker.isSubtypeOf(subReturnType, substitutedSuperReturnType);
     }
 
+    @Nullable
     private static TypeSubstitutor prepareTypeSubstitutor(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
         List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
+        if (subTypeParameters.size() != superTypeParameters.size()) return null;
+
         Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMap();
-        for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
+        for (int i = 0; i < superTypeParameters.size(); i++) {
             TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
             TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
             substitutionContext.put(

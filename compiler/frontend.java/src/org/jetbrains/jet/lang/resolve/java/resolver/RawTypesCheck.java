@@ -95,12 +95,21 @@ public class RawTypesCheck {
         }
 
         for (HierarchicalMethodSignature superSignature : method.getHierarchicalMethodSignature().getSuperSignatures()) {
-            if (superSignature.isRaw() || hasRawTypesInSignature(superSignature.getMethod())) {
+            PsiMethod superMethod = superSignature.getMethod();
+            if (superSignature.isRaw() || typeParameterIsErased(method, superMethod) || hasRawTypesInSignature(superMethod)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private static boolean typeParameterIsErased(@NotNull PsiMethod a, @NotNull PsiMethod b) {
+        // Java allows you to write
+        //   <T extends Foo> T foo(), in the superclass and then
+        //   Foo foo(), in the subclass
+        // this is a valid Java override, but in fact it is an erasure
+        return a.getTypeParameters().length != b.getTypeParameters().length;
     }
 
     private RawTypesCheck() {

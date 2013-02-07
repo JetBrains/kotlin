@@ -161,6 +161,12 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
                dir + "SubclassWithRawType.java");
     }
 
+    public void testMethodTypeParameterErased() throws Exception {
+        String dir = PATH + "/methodTypeParameterErased/";
+        doTest(dir + "MethodTypeParameterErased.txt",
+               dir + "MethodTypeParameterErased.java");
+    }
+
     public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironmentManagement {
         public void testSubclassingKotlinInJava() throws Exception {
             doTest(PATH + "/" + getTestName(true));
