@@ -793,7 +793,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         private final RangeCodegenUtil.BinaryCall rangeCall;
         private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
         private Type asmElementType;
-        private int indexVar;
         private int lastVar;
 
         private ForInRangeLiteralLoopGenerator(
@@ -813,9 +812,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert elementType != null;
             asmElementType = asmType(elementType);
 
-            indexVar = createLoopTempVariable(asmElementType);
             gen(rangeCall.left, asmElementType);
-            v.store(indexVar, asmElementType);
+            v.store(loopParameterVar, asmElementType);
 
             lastVar = createLoopTempVariable(asmElementType);
             gen(rangeCall.right, asmElementType);
@@ -824,7 +822,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
-            v.load(indexVar, asmElementType);
+            v.load(loopParameterVar, asmElementType);
             v.load(lastVar, asmElementType);
 
             int sort = asmElementType.getSort();
@@ -854,9 +852,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         protected void assignToLoopParameter() {
-            // todo: don't create a temp variable if this is not a multi-decl for
-            v.load(indexVar, asmElementType);
-            v.store(loopParameterVar, asmElementType);
         }
 
         @Override
@@ -867,24 +862,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 case Type.CHAR:
                 case Type.BYTE:
                 case Type.SHORT:
-                    v.iinc(indexVar, 1);
+                    v.iinc(loopParameterVar, 1);
                     if (sort != Type.INT) {
-                        v.load(indexVar, Type.INT_TYPE);
+                        v.load(loopParameterVar, Type.INT_TYPE);
                         StackValue.coerce(Type.INT_TYPE, asmElementType, v);
-                        v.store(indexVar, asmElementType);
+                        v.store(loopParameterVar, asmElementType);
                     }
                     break;
 
                 case Type.LONG:
-                    v.load(indexVar, asmElementType);
+                    v.load(loopParameterVar, asmElementType);
                     v.lconst(1);
                     v.add(asmElementType);
-                    v.store(indexVar, asmElementType);
+                    v.store(loopParameterVar, asmElementType);
                     break;
 
                 case Type.FLOAT:
                 case Type.DOUBLE:
-                    v.load(indexVar, asmElementType);
+                    v.load(loopParameterVar, asmElementType);
                     if (sort == Type.DOUBLE) {
                         v.dconst(1.0);
                     }
@@ -892,7 +887,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         v.fconst(1.0f);
                     }
                     v.add(asmElementType);
-                    v.store(indexVar, asmElementType);
+                    v.store(loopParameterVar, asmElementType);
                     break;
 
                 default:
@@ -903,7 +898,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private class ForInIntRangeInstanceLoopGenerator extends AbstractForLoopGenerator {
-        private int indexVar;
         private int endVar;
 
         private ForInIntRangeInstanceLoopGenerator(
@@ -922,10 +916,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(forExpression.getLoopRange(), asmLoopRangeType);
             v.dup();
 
-            indexVar = createLoopTempVariable(Type.INT_TYPE);
             v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getStart", "()Ljava/lang/Integer;");
             StackValue.coerce(Type.getType("Ljava/lang/Integer;"), Type.INT_TYPE, v);
-            v.store(indexVar, Type.INT_TYPE);
+            v.store(loopParameterVar, Type.INT_TYPE);
 
             endVar = createLoopTempVariable(Type.INT_TYPE);
             v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getEnd", "()Ljava/lang/Integer;");
@@ -935,21 +928,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
-            v.load(indexVar, Type.INT_TYPE);
+            v.load(loopParameterVar, Type.INT_TYPE);
             v.load(endVar, Type.INT_TYPE);
             v.ificmpgt(loopExit);
         }
 
         @Override
         protected void assignToLoopParameter() {
-            // todo: no temp var when this is not a multi-declaration for-loop
-            v.load(indexVar, Type.INT_TYPE);
-            v.store(loopParameterVar, Type.INT_TYPE);
         }
 
         @Override
         public void afterBody() {
-            v.iinc(indexVar, 1);
+            v.iinc(loopParameterVar, 1);
             super.afterBody();
         }
     }
