@@ -619,6 +619,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         protected abstract void assignToLoopParameter();
 
+        protected abstract void increment();
+
         public void body() {
             gen(forExpression.getBody(), Type.VOID_TYPE);
         }
@@ -643,6 +645,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         public void afterBody() {
+            increment();
+
             v.mark(bodyEnd);
             // e goes out of scope
             for (Runnable task : Lists.reverse(afterBodyLeaveVariableTasks)) {
@@ -722,6 +726,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             //noinspection ConstantConditions
             v.store(loopParameterVar, asmType(nextCall.getResultingDescriptor().getReturnType()));
         }
+
+        @Override
+        protected void increment() {
+        }
     }
 
     private class ForInArrayLoopGenerator extends AbstractForLoopGenerator {
@@ -783,9 +791,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        public void afterBody() {
+        protected void increment() {
             v.iinc(indexVar, 1);
-            super.afterBody();
         }
     }
 
@@ -855,7 +862,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        public void afterBody() {
+        protected void increment() {
             int sort = asmElementType.getSort();
             switch (sort) {
                 case Type.INT:
@@ -893,7 +900,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 default:
                     throw new IllegalStateException("Unexpected range element type: " + asmElementType);
             }
-            super.afterBody();
         }
     }
 
@@ -938,9 +944,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        public void afterBody() {
+        protected void increment() {
             v.iinc(loopParameterVar, 1);
-            super.afterBody();
         }
     }
 
