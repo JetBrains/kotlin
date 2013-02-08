@@ -193,10 +193,6 @@ public class PropertyGenTest extends CodegenTestCase {
         }
     }
 
-    public void testKt1528() {
-        blackBoxMultiFile("regressions/kt1528_1.kt", "regressions/kt1528_3.kt");
-    }
-
     public void testKt2589() {
         loadFile("regressions/kt2589.kt");
         final Class aClass = generateClass("Foo");

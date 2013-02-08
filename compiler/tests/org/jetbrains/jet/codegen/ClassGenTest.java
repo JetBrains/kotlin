@@ -135,16 +135,4 @@ public class ClassGenTest extends CodegenTestCase {
         //        blackBoxFile("regressions/kt1213.kt");
     }
     */
-
-    public void testKt2060() {
-        blackBoxMultiFile("regressions/kt2060_1.kt", "regressions/kt2060.kt");
-    }
-
-    public void testKt2257() {
-        blackBoxMultiFile("regressions/kt2257_1.kt", "regressions/kt2257_2.kt");
-    }
-
-    public void testKt1845() {
-        blackBoxMultiFile("regressions/kt1845_1.kt", "regressions/kt1845_2.kt");
-    }
 }
