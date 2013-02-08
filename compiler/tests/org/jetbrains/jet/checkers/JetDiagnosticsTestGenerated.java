@@ -2122,7 +2122,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("compiler/testData/diagnostics/tests/inference/complicated")
             public static class Complicated extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInComplicated() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/complicated"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/complicated"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("completeNestedCallsInference.kt")
@@ -2381,7 +2381,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("compiler/testData/diagnostics/tests/inference/upperBounds")
             public static class UpperBounds extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInUpperBounds() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/upperBounds"), "kt", true);
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/upperBounds"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
                 @TestMetadata("kt2856.kt")
