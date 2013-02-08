@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -71,7 +70,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     private final LazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
     private final LazyValue<List<AnnotationDescriptor>> annotations;
-    private final LazyValue<Optional<ClassDescriptor>> classObjectDescriptor;
+    private final LazyValue<ClassDescriptor> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
     private final JetScope unsubstitutedInnerClassesScope;
@@ -129,10 +128,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 return resolveAnnotations();
             }
         });
-        this.classObjectDescriptor = storageManager.createLazyValue(new Computable<Optional<ClassDescriptor>>() {
+        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Computable<ClassDescriptor>() {
             @Override
-            public Optional<ClassDescriptor> compute() {
-                return Optional.fromNullable(computeClassObjectDescriptor());
+            public ClassDescriptor compute() {
+                return computeClassObjectDescriptor();
             }
         });
         this.scopeForClassHeaderResolution = storageManager.createLazyValue(new Computable<JetScope>() {
@@ -273,7 +272,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor.get().orNull();
+        return classObjectDescriptor.get();
     }
 
     @Nullable

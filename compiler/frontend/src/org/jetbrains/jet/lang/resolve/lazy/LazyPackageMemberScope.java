@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -26,36 +28,37 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, PackageMemberDeclarationProvider> {
 
-    private final ConcurrentMap<Name, NamespaceDescriptor> packageDescriptors;
+    private final Function<Name, NamespaceDescriptor> packageDescriptors;
 
     public LazyPackageMemberScope(@NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider,
             @NotNull NamespaceDescriptor thisPackage) {
         super(resolveSession, declarationProvider, thisPackage);
 
-        this.packageDescriptors = resolveSession.getStorageManager().createConcurrentMap();
+        this.packageDescriptors = resolveSession.getStorageManager().createMemoizedFunctionWithNullableValues(new Function<Name, NamespaceDescriptor>() {
+            @Override
+            public NamespaceDescriptor fun(Name name) {
+                return createPackageDescriptor(name);
+            }
+        }, StorageManager.MemoizationMode.STRONG);
     }
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        NamespaceDescriptor known = packageDescriptors.get(name);
-        if (known != null) return known;
+        return packageDescriptors.fun(name);
+    }
 
-        if (allDescriptorsComputed) return null;
-
+    @Nullable
+    public NamespaceDescriptor createPackageDescriptor(@NotNull Name name) {
         if (!declarationProvider.isPackageDeclared(name)) return null;
 
         PackageMemberDeclarationProvider packageMemberDeclarationProvider = resolveSession.getDeclarationProviderFactory().getPackageMemberDeclarationProvider(
                 DescriptorUtils.getFQName(thisDescriptor).child(name).toSafe());
         assert packageMemberDeclarationProvider != null : "Package is declared, but declaration provider is not found: " + name;
         NamespaceDescriptor namespaceDescriptor = new LazyPackageDescriptor(thisDescriptor, name, resolveSession, packageMemberDeclarationProvider);
-
-        NamespaceDescriptor oldValue = packageDescriptors.putIfAbsent(name, namespaceDescriptor);
-        if (oldValue != null) return oldValue;
 
         registerDescriptor(namespaceDescriptor);
 

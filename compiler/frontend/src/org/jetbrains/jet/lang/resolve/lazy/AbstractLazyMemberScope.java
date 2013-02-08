@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Sets;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,21 +27,24 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
+import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.MemoizationMode.STRONG;
 
 public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> implements JetScope {
     protected final ResolveSession resolveSession;
     protected final DP declarationProvider;
     protected final D thisDescriptor;
 
-    private final ConcurrentMap<Name, ClassDescriptor> classDescriptors;
-    private final ConcurrentMap<Name, ClassDescriptor> objectDescriptors;
+    private final Function<Name, ClassDescriptor> classDescriptors;
+    private final Function<Name, ClassDescriptor> objectDescriptors;
 
-    private final ConcurrentMap<Name, Set<FunctionDescriptor>> functionDescriptors;
-    private final ConcurrentMap<Name, Set<VariableDescriptor>> propertyDescriptors;
+    private final Function<Name, Set<FunctionDescriptor>> functionDescriptors;
+    private final Function<Name, Set<VariableDescriptor>> propertyDescriptors;
 
     private final Collection<DeclarationDescriptor> allDescriptors;
     protected volatile boolean allDescriptorsComputed = false;
@@ -55,24 +59,39 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         this.thisDescriptor = thisDescriptor;
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.classDescriptors = storageManager.createConcurrentMap();
-        this.objectDescriptors = storageManager.createConcurrentMap();
-        this.functionDescriptors = storageManager.createConcurrentMap();
-        this.propertyDescriptors = storageManager.createConcurrentMap();
+        this.classDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor fun(Name name) {
+                return resolveClassOrObjectDescriptor(name, false);
+            }
+        }, STRONG);
+        this.objectDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor fun(Name name) {
+                return resolveClassOrObjectDescriptor(name, true);
+            }
+        }, STRONG);
+
+        this.functionDescriptors = storageManager.createMemoizedFunction(new Function<Name, Set<FunctionDescriptor>>() {
+            @Override
+            public Set<FunctionDescriptor> fun(Name name) {
+                return doGetFunctions(name);
+            }
+        }, STRONG);
+        this.propertyDescriptors = storageManager.createMemoizedFunction(new Function<Name, Set<VariableDescriptor>>() {
+            @Override
+            public Set<VariableDescriptor> fun(Name name) {
+                return doGetProperties(name);
+            }
+        }, STRONG);
+
         this.allDescriptors = storageManager.createConcurrentCollection();
     }
 
     @Nullable
-    private ClassDescriptor getClassOrObjectDescriptor(@NotNull ConcurrentMap<Name, ClassDescriptor> cache, @NotNull Name name, boolean object) {
-        ClassDescriptor known = cache.get(name);
-        if (known != null) return known;
-
-        if (allDescriptorsComputed) return null;
-
+    private ClassDescriptor resolveClassOrObjectDescriptor(@NotNull Name name, boolean object) {
         Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
         if (classOrObjectDeclarations.isEmpty()) return null;
-
-        ClassDescriptor result = null;
 
         for (JetClassOrObject classOrObjectDeclaration : classOrObjectDeclarations) {
 
@@ -82,16 +101,13 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,
                                                                       JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
 
-            ClassDescriptor oldValue = cache.putIfAbsent(name, classDescriptor);
-            if (oldValue != null) return oldValue;
-
             if (!object) {
                 registerDescriptor(classDescriptor);
             }
 
-            result = classDescriptor;
+            return classDescriptor;
         }
-        return result;
+        return null;
     }
 
     private static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
@@ -100,23 +116,22 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return getClassOrObjectDescriptor(classDescriptors, name, false);
+        return classDescriptors.fun(name);
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return getClassOrObjectDescriptor(objectDescriptors, name, true);
+        return objectDescriptors.fun(name);
     }
 
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        Set<FunctionDescriptor> known = functionDescriptors.get(name);
-        if (known != null) return known;
+        return functionDescriptors.fun(name);
+    }
 
-        // If all descriptors are already computed, we are
-        if (allDescriptorsComputed) return Collections.emptySet();
-
+    @NotNull
+    private Set<FunctionDescriptor> doGetFunctions(@NotNull Name name) {
         Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
 
         Collection<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
@@ -130,9 +145,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         getNonDeclaredFunctions(name, result);
 
         if (!result.isEmpty()) {
-            Set<FunctionDescriptor> oldValue = functionDescriptors.putIfAbsent(name, result);
-            if (oldValue != null) return oldValue;
-
             registerDescriptors(result);
         }
         return result;
@@ -146,12 +158,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull Name name) {
-        Set<VariableDescriptor> known = propertyDescriptors.get(name);
-        if (known != null) return known;
+        return propertyDescriptors.fun(name);
+    }
 
-        // If all descriptors are already computed, we are
-        if (allDescriptorsComputed) return Collections.emptySet();
-
+    @NotNull
+    public Set<VariableDescriptor> doGetProperties(@NotNull Name name) {
         Set<VariableDescriptor> result = Sets.newLinkedHashSet();
 
         Collection<JetProperty> declarations = declarationProvider.getPropertyDeclarations(name);
@@ -178,12 +189,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
         getNonDeclaredProperties(name, result);
 
-        if (!result.isEmpty()) {
-            Set<VariableDescriptor> oldValue = propertyDescriptors.putIfAbsent(name, result);
-            if (oldValue != null) return oldValue;
+        registerDescriptors(result);
 
-            registerDescriptors(result);
-        }
         return result;
     }
 

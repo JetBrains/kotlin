@@ -23,7 +23,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Computable;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -31,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 public class FileBasedDeclarationProviderFactory implements DeclarationProviderFactory {
 
@@ -45,7 +46,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private final StorageManager storageManager;
     private final LazyValue<Index> index;
 
-    private final ConcurrentMap<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders;
+    private final Function<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders;
 
     public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull Collection<JetFile> files) {
         this(storageManager, files, Predicates.<FqName>alwaysFalse());
@@ -64,7 +65,12 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
                 return computeFilesByPackage(files);
             }
         });
-        this.packageDeclarationProviders = storageManager.createConcurrentMap();
+        this.packageDeclarationProviders = storageManager.createMemoizedFunctionWithNullableValues(new Function<FqName, PackageMemberDeclarationProvider>() {
+            @Override
+            public PackageMemberDeclarationProvider fun(FqName fqName) {
+                return createPackageMemberDeclarationProvider(fqName);
+            }
+        }, StorageManager.MemoizationMode.STRONG);
     }
 
     @NotNull
@@ -109,11 +115,11 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     @Override
     public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-        PackageMemberDeclarationProvider cached = packageDeclarationProviders.get(packageFqName);
-        if (cached != null) {
-            return cached;
-        }
+        return packageDeclarationProviders.fun(packageFqName);
+    }
 
+    @Nullable
+    public PackageMemberDeclarationProvider createPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
         if (!isPackageDeclaredExplicitly(packageFqName)) {
             if (isPackageDeclaredExternally.apply(packageFqName)) {
                 return EmptyPackageMemberDeclarationProvider.INSTANCE;
@@ -121,15 +127,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             return null;
         }
 
-        FileBasedPackageMemberDeclarationProvider provider =
-                new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.get().filesByPackage.get(packageFqName));
-
-        PackageMemberDeclarationProvider oldValue = packageDeclarationProviders.putIfAbsent(packageFqName, provider);
-        if (oldValue != null) {
-            return oldValue;
-        }
-
-        return provider;
+        return new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.get().filesByPackage.get(packageFqName));
     }
 
     @NotNull
