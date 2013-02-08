@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
-import org.jetbrains.jet.codegen.AbstractJavaVisibilityTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
@@ -95,13 +94,6 @@ public class GenerateTests {
                 "BlackBoxWithStdlibCodegenTestGenerated",
                 AbstractBlackBoxCodegenTest.class,
                 testModel("compiler/testData/codegen/boxWithStdlib", "doTestWithStdlib")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "JavaVisibilityTestGenerated",
-                AbstractJavaVisibilityTest.class,
-                testModel("compiler/testData/codegen/visibility", "blackBoxFileWithJavaByFullPath")
         );
 
         generateTest(

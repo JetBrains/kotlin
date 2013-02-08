@@ -166,8 +166,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             fail("Double initialization of class loader in same test");
         }
 
-        ClassLoader parentClassLoader = new URLClassLoader(getClassPathURLs(), CodegenTestCase.class.getClassLoader());
-        initializedClassLoader = new GeneratedClassLoader(factory, parentClassLoader);
+        initializedClassLoader = new GeneratedClassLoader(factory, CodegenTestCase.class.getClassLoader(), getClassPathURLs());
         return initializedClassLoader;
     }
 
