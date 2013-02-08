@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -41,8 +43,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected final DP declarationProvider;
     protected final D thisDescriptor;
 
-    private final Function<Name, ClassDescriptor> classDescriptors;
-    private final Function<Name, ClassDescriptor> objectDescriptors;
+    private final Function<Name, List<ClassDescriptor>> classDescriptors;
+    private final Function<Name, List<ClassDescriptor>> objectDescriptors;
 
     private final Function<Name, Set<FunctionDescriptor>> functionDescriptors;
     private final Function<Name, Set<VariableDescriptor>> propertyDescriptors;
@@ -64,15 +66,15 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         this.thisDescriptor = thisDescriptor;
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.classDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
+        this.classDescriptors = storageManager.createMemoizedFunction(new Function<Name, List<ClassDescriptor>>() {
             @Override
-            public ClassDescriptor fun(Name name) {
+            public List<ClassDescriptor> fun(Name name) {
                 return resolveClassOrObjectDescriptor(name, false);
             }
         }, STRONG);
-        this.objectDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function<Name, ClassDescriptor>() {
+        this.objectDescriptors = storageManager.createMemoizedFunction(new Function<Name, List<ClassDescriptor>>() {
             @Override
-            public ClassDescriptor fun(Name name) {
+            public List<ClassDescriptor> fun(Name name) {
                 return resolveClassOrObjectDescriptor(name, true);
             }
         }, STRONG);
@@ -99,16 +101,18 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     }
 
     @Nullable
-    private ClassDescriptor resolveClassOrObjectDescriptor(@NotNull Name name, boolean object) {
+    private List<ClassDescriptor> resolveClassOrObjectDescriptor(@NotNull final Name name, final boolean object) {
         Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
 
-        for (JetClassOrObject classOrObjectDeclaration : classOrObjectDeclarations) {
-            if (object != declaresObjectOrEnumConstant(classOrObjectDeclaration)) continue;
+        return Lists.newArrayList(ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassOrObject, ClassDescriptor>() {
+            @Override
+            public ClassDescriptor fun(JetClassOrObject classOrObject) {
+                if (object != declaresObjectOrEnumConstant(classOrObject)) return null;
 
-            return new LazyClassDescriptor(resolveSession, thisDescriptor, name,
-                                           JetClassInfoUtil.createClassLikeInfo(classOrObjectDeclaration));
-        }
-        return null;
+                return new LazyClassDescriptor(resolveSession, thisDescriptor, name,
+                                               JetClassInfoUtil.createClassLikeInfo(classOrObject));
+            }
+        }));
     }
 
     private static boolean declaresObjectOrEnumConstant(JetClassOrObject declaration) {
@@ -117,12 +121,17 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        return classDescriptors.fun(name);
+        return first(classDescriptors.fun(name));
     }
 
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return objectDescriptors.fun(name);
+        return first(objectDescriptors.fun(name));
+    }
+
+    private static <T> T first(@NotNull List<T> list) {
+        if (list.isEmpty()) return null;
+        return list.get(0);
     }
 
     @NotNull
@@ -251,7 +260,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
                 if (name != null) {
-                    result.all.add(getClassifier(name));
+                    result.all.addAll(classDescriptors.fun(name));
                 }
             }
             else if (declaration instanceof JetFunction) {
