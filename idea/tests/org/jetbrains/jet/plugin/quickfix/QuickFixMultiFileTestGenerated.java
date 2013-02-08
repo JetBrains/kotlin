@@ -134,7 +134,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
             
             @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype")
-            @InnerTestClasses({FinalJavaSupertype.JavaCode.class, })
+            @InnerTestClasses({FinalJavaSupertype.JavaCode.class})
             public static class FinalJavaSupertype extends AbstractQuickFixMultiFileTest {
                 public void testAllFilesPresentInFinalJavaSupertype() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);

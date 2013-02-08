@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.google.common.collect.Lists;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
@@ -35,9 +37,16 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetKeywordToken modifier;
     private final boolean isRedundant;
+    private static final Collection<JetKeywordToken> VISIBILITY_MODIFIERS =
+            Lists.newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD,
+                               JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD);
 
     public RemoveModifierFix(@NotNull JetModifierListOwner element, @NotNull JetKeywordToken modifier, boolean isRedundant) {
         super(element);
@@ -121,17 +130,25 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
         return createRemoveModifierFactory(false);
     }
 
+    private static JetModifierListOwner getModifierListOwner(Diagnostic diagnostic) {
+        return QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
+    }
+
+    private static JetKeywordToken getModifier(Diagnostic diagnostic) {
+        PsiElement psiElement = diagnostic.getPsiElement();
+        IElementType elementType = psiElement.getNode().getElementType();
+        if (!(elementType instanceof JetKeywordToken)) return null;
+        return (JetKeywordToken) elementType;
+    }
+
     public static JetIntentionActionFactory createRemoveModifierFactory(final boolean isRedundant) {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
             public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
-                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
-                if (modifierListOwner == null) return null;
-                PsiElement psiElement = diagnostic.getPsiElement();
-                IElementType elementType = psiElement.getNode().getElementType();
-                if (!(elementType instanceof JetKeywordToken)) return null;
-                JetKeywordToken modifier = (JetKeywordToken) elementType;
+                JetModifierListOwner modifierListOwner = getModifierListOwner(diagnostic);
+                JetKeywordToken modifier = getModifier(diagnostic);
+                if (modifierListOwner == null || modifier == null) return null;
                 return new RemoveModifierFix(modifierListOwner, modifier, isRedundant);
             }
         };
@@ -152,5 +169,45 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
                 return new RemoveModifierFix(projection, variance, true);
             }
         };
+    }
+
+    /**
+     * Checks whether these two modifiers can be used together.
+     */
+    private static boolean areCompatible(JetKeywordToken thisModifier, JetKeywordToken otherModifier) {
+        if (thisModifier == otherModifier) return false;
+        if (VISIBILITY_MODIFIERS.contains(thisModifier) && VISIBILITY_MODIFIERS.contains(otherModifier)) return false;
+        if ((thisModifier == JetTokens.OPEN_KEYWORD || thisModifier == JetTokens.ABSTRACT_KEYWORD) &&
+            otherModifier == JetTokens.FINAL_KEYWORD) return false;
+        if ((otherModifier == JetTokens.OPEN_KEYWORD || otherModifier == JetTokens.ABSTRACT_KEYWORD) &&
+            thisModifier == JetTokens.FINAL_KEYWORD) return false;
+        return true;
+    }
+
+    private static JetIntentionActionFactory createRemoveIncompatibleModifierFactory(final JetKeywordToken modifierToRemove) {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetModifierListOwner modifierListOwner = getModifierListOwner(diagnostic);
+                JetKeywordToken modifier = getModifier(diagnostic);
+                if (modifierListOwner == null || modifier == null
+                    || areCompatible(modifier, modifierToRemove)
+                    || !modifierListOwner.hasModifier(modifierToRemove)) {
+                    return null;
+                }
+                return new RemoveModifierFix(modifierListOwner, modifierToRemove, false);
+            }
+        };
+    }
+    public static List<JetIntentionActionFactory> getIncompatibleModifiersFactories() {
+        List<JetIntentionActionFactory> factories = new ArrayList<JetIntentionActionFactory>();
+        for(JetKeywordToken modifier : VISIBILITY_MODIFIERS) {
+            factories.add(createRemoveIncompatibleModifierFactory(modifier));
+        }
+        factories.add(createRemoveIncompatibleModifierFactory(JetTokens.OPEN_KEYWORD));
+        factories.add(createRemoveIncompatibleModifierFactory(JetTokens.ABSTRACT_KEYWORD));
+        factories.add(createRemoveIncompatibleModifierFactory(JetTokens.FINAL_KEYWORD));
+        return factories;
     }
 }

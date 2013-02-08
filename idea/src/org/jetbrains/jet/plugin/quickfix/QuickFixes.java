@@ -112,6 +112,9 @@ public class QuickFixes {
         factories.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
         factories.put(REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
         factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
+        for (JetIntentionActionFactory factory : RemoveModifierFix.getIncompatibleModifiersFactories()) {
+            factories.put(INCOMPATIBLE_MODIFIERS, factory);
+        }
 
         JetIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);

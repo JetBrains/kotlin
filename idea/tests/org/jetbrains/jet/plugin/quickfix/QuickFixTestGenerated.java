@@ -403,6 +403,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeFinalAbstractClass1.kt")
+        public void testFinalAbstractClass1() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeFinalAbstractClass1.kt");
+        }
+        
+        @TestMetadata("beforeFinalAbstractClass2.kt")
+        public void testFinalAbstractClass2() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeFinalAbstractClass2.kt");
+        }
+        
+        @TestMetadata("beforeFinalOpenClass1.kt")
+        public void testFinalOpenClass1() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeFinalOpenClass1.kt");
+        }
+        
+        @TestMetadata("beforeFinalOpenClass2.kt")
+        public void testFinalOpenClass2() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeFinalOpenClass2.kt");
+        }
+        
         @TestMetadata("beforeFinalTrait.kt")
         public void testFinalTrait() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeFinalTrait.kt");
@@ -416,6 +436,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeOpenMemberInFinalClass2.kt")
         public void testOpenMemberInFinalClass2() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass2.kt");
+        }
+        
+        @TestMetadata("beforePrivatePublicFunction1.kt")
+        public void testPrivatePublicFunction1() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforePrivatePublicFunction1.kt");
+        }
+        
+        @TestMetadata("beforePrivatePublicFunction2.kt")
+        public void testPrivatePublicFunction2() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforePrivatePublicFunction2.kt");
+        }
+        
+        @TestMetadata("beforePrivatePublicFunction3.kt")
+        public void testPrivatePublicFunction3() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforePrivatePublicFunction3.kt");
         }
         
         @TestMetadata("beforeRemoveRedundantModifier1.kt")
@@ -481,7 +516,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
             
             @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype")
-            @InnerTestClasses({FinalJavaSupertype.JavaCode.class, })
+            @InnerTestClasses({FinalJavaSupertype.JavaCode.class})
             public static class FinalJavaSupertype extends AbstractQuickFixTest {
                 public void testAllFilesPresentInFinalJavaSupertype() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype"), Pattern.compile("^before(\\w+)\\.kt$"), true);
