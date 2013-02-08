@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.openapi.util.Computable;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -29,6 +31,8 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+
+import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.MemoizationMode.WEAK;
 
 public class LockBasedStorageManager implements StorageManager {
 
@@ -43,6 +47,35 @@ public class LockBasedStorageManager implements StorageManager {
     @Override
     public <K, V> ConcurrentMap<K, V> createConcurrentMap() {
         return new ConcurrentHashMap<K, V>();
+    }
+
+    @NotNull
+    @Override
+    public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final MemoizationMode mode) {
+        return new Function<K, V>() {
+            private final ConcurrentMap<K, LazyValue<V>> cache;
+            {
+                cache = (mode == WEAK) ? new ConcurrentWeakValueHashMap<K, LazyValue<V>>() : new ConcurrentHashMap<K, LazyValue<V>>();
+            }
+
+            @Override
+            public V fun(@NotNull final K input) {
+                LazyValue<V> lazyValue = cache.get(input);
+                if (lazyValue != null) return lazyValue.get();
+
+                lazyValue = createLazyValue(new Computable<V>() {
+                    @Override
+                    public V compute() {
+                        return compute.fun(input);
+                    }
+                });
+
+                LazyValue<V> oldValue = cache.putIfAbsent(input, lazyValue);
+                if (oldValue != null) return oldValue.get();
+
+                return lazyValue.get();
+            }
+        };
     }
 
     @Override

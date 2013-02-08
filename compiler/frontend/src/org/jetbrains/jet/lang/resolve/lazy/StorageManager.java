@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.openapi.util.Computable;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
@@ -27,6 +28,14 @@ public interface StorageManager {
     @NotNull
     <K, V> ConcurrentMap<K, V> createConcurrentMap();
 
+    /**
+     * Given a function compute: K -> V create a memoized version of it that computes a value only once for each key
+     * @param compute the function to be memoized
+     * @param modeForValues how to store teh memoized values
+     */
+    @NotNull
+    <K, V> Function<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues);
+
     <E> Collection<E> createConcurrentCollection();
 
     @NotNull
@@ -34,4 +43,9 @@ public interface StorageManager {
 
     @NotNull
     BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);
+
+    enum MemoizationMode {
+        STRONG,
+        WEAK
+    }
 }
