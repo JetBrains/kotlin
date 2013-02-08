@@ -22,12 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentMap;
 
 public interface StorageManager {
-    @NotNull
-    <K, V> ConcurrentMap<K, V> createConcurrentMap();
-
     /**
      * Given a function compute: K -> V create a memoized version of it that computes a value only once for each key
      * @param compute the function to be memoized

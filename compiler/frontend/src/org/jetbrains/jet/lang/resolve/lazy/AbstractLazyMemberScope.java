@@ -91,11 +91,8 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @Nullable
     private ClassDescriptor resolveClassOrObjectDescriptor(@NotNull Name name, boolean object) {
         Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
-        if (classOrObjectDeclarations.isEmpty()) return null;
 
         for (JetClassOrObject classOrObjectDeclaration : classOrObjectDeclarations) {
-
-            // TODO: when enum entries with constructors are dropped, replace with declaresObjectOrEnumConstant()
             if (object != declaresObjectOrEnumConstant(classOrObjectDeclaration)) continue;
 
             ClassDescriptor classDescriptor = new LazyClassDescriptor(resolveSession, thisDescriptor, name,

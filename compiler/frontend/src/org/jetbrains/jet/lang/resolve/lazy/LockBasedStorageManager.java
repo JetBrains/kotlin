@@ -45,12 +45,6 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> ConcurrentMap<K, V> createConcurrentMap() {
-        return new ConcurrentHashMap<K, V>();
-    }
-
-    @NotNull
-    @Override
     public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final MemoizationMode mode) {
         return createMemoizedFunction(compute, mode, false);
     }
