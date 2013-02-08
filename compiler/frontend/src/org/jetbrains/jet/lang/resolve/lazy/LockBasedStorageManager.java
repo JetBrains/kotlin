@@ -81,8 +81,8 @@ public class LockBasedStorageManager implements StorageManager {
             synchronized (lock) {
                 _value = value;
                 if (_value == null) {
-                    value = computable.compute();
-                    _value = value;
+                    _value = computable.compute();
+                    value = _value;
                 }
                 return _value;
             }
