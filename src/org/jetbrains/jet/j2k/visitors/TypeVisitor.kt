@@ -43,11 +43,11 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         val identifier : Identifier = constructClassTypeIdentifier(classType)
         val resolvedClassTypeParams : List<Type> = createRawTypesForResolvedReference(classType)
         if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
-            val myParamList : ArrayList<Type> = ArrayList<Type>()
+            val starParamList : ArrayList<Type> = ArrayList<Type>()
             if (resolvedClassTypeParams.size() == 1) {
                 if ((resolvedClassTypeParams.get(0) as ClassType).`type`.name == "Any") {
-                    myParamList.add(StarProjectionType())
-                    myResult = ClassType(identifier, myParamList, true)
+                    starParamList.add(StarProjectionType())
+                    myResult = ClassType(identifier, starParamList, true)
                 }
                 else {
                     myResult = ClassType(identifier, resolvedClassTypeParams, true)

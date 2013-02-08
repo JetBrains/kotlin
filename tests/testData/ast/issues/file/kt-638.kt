@@ -30,8 +30,8 @@ public open class User() {
 class object {
 public open fun main(args : Array<String?>?) : Unit {
 var i1 : Identifier<*>? = Identifier.init<String?>("name", false, true)
-var i2 : Identifier<Any?>? = Identifier.init<String?>("name", false)
-var i3 : Identifier<Any?>? = Identifier.init<String?>("name")
+var i2 : Identifier<*>? = Identifier.init<String?>("name", false)
+var i3 : Identifier<*>? = Identifier.init<String?>("name")
 }
 }
 }
