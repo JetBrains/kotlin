@@ -129,7 +129,7 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     }
 
     @Override
-    public boolean hasUnknownTypeParameters() {
-        return variableCall.hasUnknownTypeParameters();
+    public boolean hasIncompleteTypeParameters() {
+        return variableCall.hasIncompleteTypeParameters();
     }
 }

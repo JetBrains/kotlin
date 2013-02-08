@@ -193,7 +193,7 @@ public class CandidateResolver {
             CallCandidateResolutionContext<D> context
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
-        assert resolvedCall.hasUnknownTypeParameters();
+        assert resolvedCall.hasIncompleteTypeParameters();
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
 
@@ -217,7 +217,7 @@ public class CandidateResolver {
             boolean isInnerCall
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
-        assert resolvedCall.hasUnknownTypeParameters();
+        assert resolvedCall.hasIncompleteTypeParameters();
         D descriptor = resolvedCall.getCandidateDescriptor();
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
@@ -297,7 +297,7 @@ public class CandidateResolver {
 
                 CallCandidateResolutionContext<FunctionDescriptor> contextForArgument =
                         storedContextForArgument.replaceResolveMode(ResolveMode.TOP_LEVEL_CALL).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
-                if (contextForArgument.candidateCall.hasUnknownTypeParameters()) {
+                if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
                     completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
                 }
                 else {

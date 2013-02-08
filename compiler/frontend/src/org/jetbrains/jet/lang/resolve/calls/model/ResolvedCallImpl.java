@@ -109,7 +109,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     }
 
     @Override
-    public boolean hasUnknownTypeParameters() {
+    public boolean hasIncompleteTypeParameters() {
         return hasUnknownTypeParameters;
     }
 

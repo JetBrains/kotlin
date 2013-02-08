@@ -26,7 +26,13 @@ public interface ResolvedCallWithTrace<D extends CallableDescriptor> extends Res
     @NotNull
     ResolutionStatus getStatus();
 
-    boolean hasUnknownTypeParameters();
+    /**
+     * Resolved call can have incomplete type parameters
+     * if ResolutionStatus is INCOMPLETE_TYPE_INFERENCE (might be completed successfully)
+     * or OTHER_ERROR (cannot be completed successfully, but if there's only one candidate, should be completed anyway).
+     * @return true if resolved call has unknown type parameters (inference is incomplete)
+     */
+    boolean hasIncompleteTypeParameters();
 
     boolean isDirty();
 

@@ -332,7 +332,7 @@ public class CallResolver {
         ResolvedCallWithTrace<D> resolvedCall = (ResolvedCallWithTrace<D>) results.getResultingCall();
         //todo[ResolvedCallImpl]
         if (!(resolvedCall instanceof ResolvedCallImpl)) return results;
-        if (!resolvedCall.hasUnknownTypeParameters()) {
+        if (!resolvedCall.hasIncompleteTypeParameters()) {
             CallCandidateResolutionContext<D> callCandidateResolutionContext =
                     CallCandidateResolutionContext.createForCallBeingAnalyzed((ResolvedCallImpl<D>) resolvedCall, context, tracing);
             candidateResolver.completeNestedCallsInference(callCandidateResolutionContext);

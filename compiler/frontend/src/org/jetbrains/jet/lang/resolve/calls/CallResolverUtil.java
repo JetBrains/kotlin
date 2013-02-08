@@ -65,7 +65,7 @@ public class CallResolverUtil {
         if (call.isDirty()) {
             copy.argumentHasNoType();
         }
-        copy.setHasUnknownTypeParameters(call.hasUnknownTypeParameters());
+        copy.setHasUnknownTypeParameters(call.hasIncompleteTypeParameters());
         ConstraintSystem constraintSystem = call.getConstraintSystem();
         if (constraintSystem != null) {
             copy.setConstraintSystem(constraintSystem.copy());
