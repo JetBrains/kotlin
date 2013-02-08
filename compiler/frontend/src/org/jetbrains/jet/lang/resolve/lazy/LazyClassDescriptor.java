@@ -492,12 +492,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         }
     }
 
-    private static JetClassLikeInfo noEnumEntries(JetClassLikeInfo classLikeInfo) {
-        return new FilteringClassLikeInfo(classLikeInfo, Predicates.not(ONLY_ENUM_ENTRIES));
+    private JetClassLikeInfo noEnumEntries(JetClassLikeInfo classLikeInfo) {
+        return new FilteringClassLikeInfo(resolveSession.getStorageManager(), classLikeInfo, Predicates.not(ONLY_ENUM_ENTRIES));
     }
 
-    private static JetClassLikeInfo enumClassObjectInfo(JetClassLikeInfo classLikeInfo) {
-        return new FilteringClassLikeInfo(classLikeInfo, ONLY_ENUM_ENTRIES) {
+    private JetClassLikeInfo enumClassObjectInfo(JetClassLikeInfo classLikeInfo) {
+        return new FilteringClassLikeInfo(resolveSession.getStorageManager(), classLikeInfo, ONLY_ENUM_ENTRIES) {
             @Override
             public JetClassOrObject getCorrespondingClassOrObject() {
                 return null;
