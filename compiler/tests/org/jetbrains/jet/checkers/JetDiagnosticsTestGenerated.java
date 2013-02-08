@@ -3074,6 +3074,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/overload/FunNoConflictInDifferentPackages.kt");
             }
             
+            @TestMetadata("kt1998.kt")
+            public void testKt1998() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/overload/kt1998.kt");
+            }
+            
             @TestMetadata("OverloadFunRegularAndExt.kt")
             public void testOverloadFunRegularAndExt() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/overload/OverloadFunRegularAndExt.kt");
