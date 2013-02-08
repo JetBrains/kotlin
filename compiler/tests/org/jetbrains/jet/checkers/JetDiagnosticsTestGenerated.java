@@ -3217,6 +3217,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/override/kt1862.kt");
             }
             
+            @TestMetadata("kt880.kt")
+            public void testKt880() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/kt880.kt");
+            }
+            
             @TestMetadata("MultipleDefaultParametersInSupertypes.kt")
             public void testMultipleDefaultParametersInSupertypes() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/MultipleDefaultParametersInSupertypes.kt");
