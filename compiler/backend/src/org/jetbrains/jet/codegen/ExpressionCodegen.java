@@ -569,13 +569,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 // E tmp<e> = tmp<iterator>.next()
                 final Type asmElementType = asmType(elementType);
-                loopParameterVar = myFrameMap.enterTemp(asmElementType);
-                runAfterLoop(new Runnable() {
-                    @Override
-                    public void run() {
-                        myFrameMap.leaveTemp(asmElementType);
-                    }
-                });
+                loopParameterVar = createLoopTempVariable(asmElementType);
             }
         }
 
@@ -629,12 +623,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(forExpression.getBody(), Type.VOID_TYPE);
         }
 
-        protected void runAfterBody(Runnable runnable) {
+        private void runAfterBody(Runnable runnable) {
             afterBodyLeaveVariableTasks.add(runnable);
         }
 
-        protected void runAfterLoop(Runnable runnable) {
+        private void runAfterLoop(Runnable runnable) {
             afterLoopLeaveVariableTasks.add(runnable);
+        }
+
+        protected int createLoopTempVariable(final Type type) {
+            int varIndex = myFrameMap.enterTemp(type);
+            runAfterLoop(new Runnable() {
+                @Override
+                public void run() {
+                    myFrameMap.leaveTemp(type);
+                }
+            });
+            return varIndex;
         }
 
         public void afterBody() {
@@ -683,13 +688,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             // Iterator<E> tmp<iterator> = c.iterator()
 
-            iteratorVarIndex = myFrameMap.enterTemp(asmTypeForIterator);
-            runAfterLoop(new Runnable() {
-                @Override
-                public void run() {
-                    myFrameMap.leaveTemp(asmTypeForIterator);
-                }
-            });
+            iteratorVarIndex = createLoopTempVariable(asmTypeForIterator);
 
             Call call = bindingContext.get(LOOP_RANGE_ITERATOR_CALL, forExpression.getLoopRange());
             invokeFunction(call, StackValue.none(), iteratorCall);
@@ -739,13 +738,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         public void beforeLoop() {
             super.beforeLoop();
 
-            indexVar = myFrameMap.enterTemp(Type.INT_TYPE);
-            runAfterLoop(new Runnable() {
-                @Override
-                public void run() {
-                    myFrameMap.leaveTemp(Type.INT_TYPE);
-                }
-            });
+            indexVar = createLoopTempVariable(Type.INT_TYPE);
 
             JetExpression loopRange = forExpression.getLoopRange();
             StackValue value = gen(loopRange);
@@ -754,13 +747,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 arrayVar = ((StackValue.Local) value).index; // no need to copy local variable into another variable
             }
             else {
-                arrayVar = myFrameMap.enterTemp(OBJECT_TYPE);
-                runAfterLoop(new Runnable() {
-                    @Override
-                    public void run() {
-                        myFrameMap.leaveTemp(OBJECT_TYPE);
-                    }
-                });
+                arrayVar = createLoopTempVariable(OBJECT_TYPE);
                 value.put(asmLoopRangeType, v);
                 v.store(arrayVar, OBJECT_TYPE);
             }
@@ -826,23 +813,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert elementType != null;
             asmElementType = asmType(elementType);
 
-            indexVar = myFrameMap.enterTemp(asmElementType);
-            runAfterLoop(new Runnable() {
-                @Override
-                public void run() {
-                    myFrameMap.leaveTemp(asmElementType);
-                }
-            });
+            indexVar = createLoopTempVariable(asmElementType);
             gen(rangeCall.left, asmElementType);
             v.store(indexVar, asmElementType);
 
-            lastVar = myFrameMap.enterTemp(asmElementType);
-            runAfterLoop(new Runnable() {
-                @Override
-                public void run() {
-                    myFrameMap.leaveTemp(asmElementType);
-                }
-            });
+            lastVar = createLoopTempVariable(asmElementType);
             gen(rangeCall.right, asmElementType);
             v.store(lastVar, asmElementType);
         }
@@ -947,24 +922,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(forExpression.getLoopRange(), asmLoopRangeType);
             v.dup();
 
-            indexVar = myFrameMap.enterTemp(Type.INT_TYPE);
-            runAfterLoop(new Runnable() {
-                @Override
-                public void run() {
-                    myFrameMap.leaveTemp(Type.INT_TYPE);
-                }
-            });
+            indexVar = createLoopTempVariable(Type.INT_TYPE);
             v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getStart", "()Ljava/lang/Integer;");
             StackValue.coerce(Type.getType("Ljava/lang/Integer;"), Type.INT_TYPE, v);
             v.store(indexVar, Type.INT_TYPE);
 
-            endVar = myFrameMap.enterTemp(Type.INT_TYPE);
-            runAfterLoop(new Runnable() {
-                @Override
-                public void run() {
-                    myFrameMap.leaveTemp(Type.INT_TYPE);
-                }
-            });
+            endVar = createLoopTempVariable(Type.INT_TYPE);
             v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getEnd", "()Ljava/lang/Integer;");
             StackValue.coerce(Type.getType("Ljava/lang/Integer;"), Type.INT_TYPE, v);
             v.store(endVar, Type.INT_TYPE);
