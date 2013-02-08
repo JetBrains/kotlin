@@ -552,7 +552,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
                 @SuppressWarnings("ConstantConditions") final Type asmTypeForParameter = asmType(parameterDescriptor.getType());
                 loopParameterVar = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
-                afterLoopLeaveVariableTasks.add(new Runnable() {
+                runAfterLoop(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(parameterDescriptor);
@@ -570,7 +570,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 // E tmp<e> = tmp<iterator>.next()
                 final Type asmElementType = asmType(elementType);
                 loopParameterVar = myFrameMap.enterTemp(asmElementType);
-                afterLoopLeaveVariableTasks.add(new Runnable() {
+                runAfterLoop(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leaveTemp(asmElementType);
@@ -601,7 +601,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 @SuppressWarnings("ConstantConditions") final Type componentAsmType = asmType(componentDescriptor.getReturnType());
                 final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
-                afterBodyLeaveVariableTasks.add(new Runnable() {
+                runAfterBody(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(componentDescriptor);
@@ -627,6 +627,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         public void body() {
             gen(forExpression.getBody(), Type.VOID_TYPE);
+        }
+
+        protected void runAfterBody(Runnable runnable) {
+            afterBodyLeaveVariableTasks.add(runnable);
+        }
+
+        protected void runAfterLoop(Runnable runnable) {
+            afterLoopLeaveVariableTasks.add(runnable);
         }
 
         public void afterBody() {
