@@ -22,7 +22,7 @@ public class MultiFileGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
     }
 
     public void testSimple() {
@@ -39,5 +39,9 @@ public class MultiFileGenTest extends CodegenTestCase {
 
     public void testSameNames() {
         blackBoxMultiFile("/multi/same/1/box.kt", "/multi/same/2/box.kt");
+    }
+
+    public void testKt1515() {
+        blackBoxMultiFile("/multi/kt1515/thisPackage.kt", "/multi/kt1515/otherPackage.kt");
     }
 }
