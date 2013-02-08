@@ -463,11 +463,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert resolvedCall != null;
 
             CallableDescriptor rangeTo = resolvedCall.getResultingDescriptor();
-            if (RangeCodegenUtil.isOptimizableRangeTo(rangeTo)
-                // todo: currently, only Int ranges are supported, but all primitives must be optimized
-                && RangeCodegenUtil.isIntRange(rangeTo.getReturnType())
-            ) {
-                generateForLoop(new ForInIntRangeLiteralLoopGenerator(forExpression, binaryCall, resolvedCall));
+            if (RangeCodegenUtil.isOptimizableRangeTo(rangeTo)) {
+                generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall, resolvedCall));
                 return StackValue.none();
             }
         }
@@ -783,14 +780,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private class ForInIntRangeLiteralLoopGenerator extends AbstractForLoopGenerator {
+    private class ForInRangeLiteralLoopGenerator extends AbstractForLoopGenerator {
         private final RangeCodegenUtil.BinaryCall rangeCall;
         private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
         private Type asmElementType;
         private int indexVar;
         private int lastVar;
 
-        private ForInIntRangeLiteralLoopGenerator(
+        private ForInRangeLiteralLoopGenerator(
                 @NotNull JetForExpression forExpression,
                 @NotNull RangeCodegenUtil.BinaryCall rangeCall,
                 ResolvedCall<? extends CallableDescriptor> resolvedCall
@@ -819,7 +816,30 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         public void conditionAndJump(@NotNull Label loopExit) {
             v.load(indexVar, asmElementType);
             v.load(lastVar, asmElementType);
-            v.ificmpgt(loopExit);
+
+            int sort = asmElementType.getSort();
+            switch (sort) {
+                case Type.INT:
+                case Type.CHAR:
+                case Type.BYTE:
+                case Type.SHORT:
+                    v.ificmpgt(loopExit);
+                    break;
+
+                case Type.LONG:
+                    v.lcmp();
+                    v.ifgt(loopExit);
+                    break;
+
+                case Type.FLOAT:
+                case Type.DOUBLE:
+                    v.cmpg(asmElementType);
+                    v.ifgt(loopExit);
+                    break;
+
+                default:
+                    throw new IllegalStateException("Unexpected range element type: " + asmElementType);
+            }
         }
 
         @Override
@@ -831,7 +851,43 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         @Override
         public void afterBody() {
-            v.iinc(indexVar, 1);
+            int sort = asmElementType.getSort();
+            switch (sort) {
+                case Type.INT:
+                case Type.CHAR:
+                case Type.BYTE:
+                case Type.SHORT:
+                    v.iinc(indexVar, 1);
+                    if (sort != Type.INT) {
+                        v.load(indexVar, Type.INT_TYPE);
+                        StackValue.coerce(Type.INT_TYPE, asmElementType, v);
+                        v.store(indexVar, asmElementType);
+                    }
+                    break;
+
+                case Type.LONG:
+                    v.load(indexVar, asmElementType);
+                    v.lconst(1);
+                    v.add(asmElementType);
+                    v.store(indexVar, asmElementType);
+                    break;
+
+                case Type.FLOAT:
+                case Type.DOUBLE:
+                    v.load(indexVar, asmElementType);
+                    if (sort == Type.DOUBLE) {
+                        v.dconst(1.0);
+                    }
+                    else {
+                        v.fconst(1.0f);
+                    }
+                    v.add(asmElementType);
+                    v.store(indexVar, asmElementType);
+                    break;
+
+                default:
+                    throw new IllegalStateException("Unexpected range element type: " + asmElementType);
+            }
             super.afterBody();
         }
 
