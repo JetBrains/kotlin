@@ -90,7 +90,7 @@ public class SimpleTestClassModel implements TestClassModel {
                 File[] listFiles = rootFile.listFiles();
                 if (listFiles != null) {
                     for (File file : listFiles) {
-                        if (!file.isDirectory() && filenamePattern.matcher(file.getName()).matches()) {
+                        if (filenamePattern.matcher(file.getName()).matches()) {
                             result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern));
                         }
                     }

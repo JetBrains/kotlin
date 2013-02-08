@@ -84,7 +84,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected String loadFileByFullPath(@NotNull String fullPath) {
         try {
             File file = new File(fullPath);
-            final String content = FileUtil.loadFile(file, true);
+            String content = FileUtil.loadFile(file, true);
             myFiles = CodegenTestFiles.create(file.getName(), content, myEnvironment.getProject());
             return content;
         } catch (IOException e) {
@@ -94,6 +94,14 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     protected void loadFiles(@NotNull String... names) {
         myFiles = CodegenTestFiles.create(myEnvironment.getProject(), names);
+    }
+
+    protected void loadFilesByFullPath(@NotNull String... fullNames) {
+        String[] names = new String[fullNames.length];
+        for (int i = 0; i < fullNames.length; i++) {
+            names[i] = fullNames[i].substring("compiler/testData/codegen/".length());
+        }
+        loadFiles(names);
     }
 
     protected void loadFile() {
@@ -112,6 +120,11 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     protected void blackBoxMultiFile(@NotNull String... filenames) {
         loadFiles(filenames);
+        blackBox();
+    }
+
+    protected void blackBoxMultiFileByFullPath(@NotNull String... filenames) {
+        loadFilesByFullPath(filenames);
         blackBox();
     }
 

@@ -67,6 +67,8 @@ public class GenerateTests {
                 testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest")
         );
 
+        GenerateRangesCodegenTestData.main(args);
+
         generateTest(
                 "compiler/tests/",
                 "BlackBoxCodegenTestGenerated",
@@ -74,7 +76,12 @@ public class GenerateTests {
                 testModel("compiler/testData/codegen/box", "doTest")
         );
 
-        GenerateRangesCodegenTestData.main(args);
+        generateTest(
+                "compiler/tests/",
+                "BlackBoxMultiFileCodegenTestGenerated",
+                AbstractBlackBoxCodegenTest.class,
+                new SimpleTestClassModel(new File("compiler/testData/codegen/boxMultiFile"), false, Pattern.compile("^(.+)$"), "doTestMultiFile")
+        );
 
         generateTest(
                 "compiler/tests/",

@@ -16,10 +16,16 @@
 
 package org.jetbrains.jet.codegen.generated;
 
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.CodegenTestCase;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     public void doTest(@NotNull String filename) {
@@ -35,5 +41,22 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     public void doTestWithStdlib(@NotNull String filename) {
         myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
         blackBoxFileByFullPath(filename);
+    }
+
+    public void doTestMultiFile(@NotNull String folderName) {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
+
+        final List<String> files = new ArrayList<String>(2);
+        FileUtil.processFilesRecursively(new File(folderName), new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                if (file.getName().endsWith(".kt")) {
+                    files.add(file.getPath());
+                }
+                return true;
+            }
+        });
+
+        blackBoxMultiFileByFullPath(files.toArray(new String[files.size()]));
     }
 }
