@@ -16,12 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import org.jetbrains.annotations.NotNull;
-
 public interface LazyValue<T> {
-    /**
-     * Use Optional&lt;T&gt;
-     */
-    @NotNull
     T get();
 }

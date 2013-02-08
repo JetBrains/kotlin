@@ -52,6 +52,19 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final MemoizationMode mode) {
+        return createMemoizedFunction(compute, mode, false);
+    }
+
+    @NotNull
+    @Override
+    public <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(
+            @NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues
+    ) {
+        return createMemoizedFunction(compute, modeForValues, true);
+    }
+
+    @NotNull
+    private <K, V> Function<K, V> createMemoizedFunction(final Function<K, V> compute, final MemoizationMode mode, final boolean nullable) {
         return new Function<K, V>() {
             private final ConcurrentMap<K, LazyValue<V>> cache;
             {
@@ -63,12 +76,13 @@ public class LockBasedStorageManager implements StorageManager {
                 LazyValue<V> lazyValue = cache.get(input);
                 if (lazyValue != null) return lazyValue.get();
 
-                lazyValue = createLazyValue(new Computable<V>() {
+                Computable<V> computable = new Computable<V>() {
                     @Override
                     public V compute() {
                         return compute.fun(input);
                     }
-                });
+                };
+                lazyValue = nullable ? createNullableLazyValue(computable) : createLazyValue(computable);
 
                 LazyValue<V> oldValue = cache.putIfAbsent(input, lazyValue);
                 if (oldValue != null) return oldValue.get();
@@ -87,6 +101,12 @@ public class LockBasedStorageManager implements StorageManager {
     @Override
     public <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable) {
         return new LockBasedLazyValue<T>(lock, computable);
+    }
+
+    @NotNull
+    @Override
+    public <T> LazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable) {
+        return new LockBasedNullableLazyValue<T>(lock, computable);
     }
 
     @NotNull
@@ -124,6 +144,45 @@ public class LockBasedStorageManager implements StorageManager {
                     value = _value;
                 }
                 return _value;
+            }
+        }
+    }
+
+    private static class LockBasedNullableLazyValue<T> implements LazyValue<T> {
+        private final Object lock;
+        private final Computable<T> computable;
+
+        private volatile boolean computed = false;
+        @Nullable
+        private volatile T value = null;
+
+        public LockBasedNullableLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+            this.lock = lock;
+            this.computable = computable;
+        }
+
+        @Override
+        @Nullable
+        public T get() {
+            // NOTE: no local variables used here, because they would not reduce the number of volatile reads/writes
+
+            // We want to guarantee that whenever computed = true, value is not null
+            // First, read computed, then read value
+            if (computed) {
+                return value;
+            }
+
+            synchronized (lock) {
+                if (!computed) {
+                    T _value = computable.compute();
+
+                    // First write value, then write computed
+                    value = _value;
+                    computed = true;
+
+                    return _value;
+                }
+                return value;
             }
         }
     }

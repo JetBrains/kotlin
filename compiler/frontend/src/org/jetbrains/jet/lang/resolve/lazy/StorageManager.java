@@ -35,11 +35,16 @@ public interface StorageManager {
      */
     @NotNull
     <K, V> Function<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues);
+    @NotNull
+    <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues);
 
     <E> Collection<E> createConcurrentCollection();
 
     @NotNull
     <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable);
+
+    @NotNull
+    <T> LazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable);
 
     @NotNull
     BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);
