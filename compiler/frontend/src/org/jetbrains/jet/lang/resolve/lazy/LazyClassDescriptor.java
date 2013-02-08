@@ -16,17 +16,22 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnnotationResolver;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -64,17 +69,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final ClassKind kind;
     private final boolean isInner;
 
-    private ReceiverParameterDescriptor thisAsReceiverParameter;
-    private List<AnnotationDescriptor> annotations;
-    private ClassDescriptor classObjectDescriptor;
-    private boolean classObjectDescriptorResolved = false;
+    private final LazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
+    private final LazyValue<List<AnnotationDescriptor>> annotations;
+    private final LazyValue<Optional<ClassDescriptor>> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
     private final JetScope unsubstitutedInnerClassesScope;
 
-    private JetScope scopeForClassHeaderResolution;
-    private JetScope scopeForMemberDeclarationResolution;
-    private JetScope scopeForPropertyInitializerResolution;
+    private final LazyValue<JetScope> scopeForClassHeaderResolution;
+    private final LazyValue<JetScope> scopeForMemberDeclarationResolution;
+    private final LazyValue<JetScope> scopeForPropertyInitializerResolution;
 
 
     public LazyClassDescriptor(
@@ -111,6 +115,44 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         }
         this.visibility = resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
         this.isInner = isInnerClass(modifierList);
+
+        StorageManager storageManager = resolveSession.getStorageManager();
+        this.thisAsReceiverParameter = storageManager.createLazyValue(new Computable<ReceiverParameterDescriptor>() {
+            @Override
+            public ReceiverParameterDescriptor compute() {
+                return DescriptorResolver.createLazyReceiverParameterDescriptor(LazyClassDescriptor.this);
+            }
+        });
+        this.annotations = storageManager.createLazyValue(new Computable<List<AnnotationDescriptor>>() {
+            @Override
+            public List<AnnotationDescriptor> compute() {
+                return resolveAnnotations();
+            }
+        });
+        this.classObjectDescriptor = storageManager.createLazyValue(new Computable<Optional<ClassDescriptor>>() {
+            @Override
+            public Optional<ClassDescriptor> compute() {
+                return Optional.fromNullable(computeClassObjectDescriptor());
+            }
+        });
+        this.scopeForClassHeaderResolution = storageManager.createLazyValue(new Computable<JetScope>() {
+            @Override
+            public JetScope compute() {
+                return computeScopeForClassHeaderResolution();
+            }
+        });
+        this.scopeForMemberDeclarationResolution = storageManager.createLazyValue(new Computable<JetScope>() {
+            @Override
+            public JetScope compute() {
+                return computeScopeForMemberDeclarationResolution();
+            }
+        });
+        this.scopeForPropertyInitializerResolution = storageManager.createLazyValue(new Computable<JetScope>() {
+            @Override
+            public JetScope compute() {
+                return computeScopeForPropertyInitializerResolution();
+            }
+        });
     }
 
     @Override
@@ -126,59 +168,67 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @NotNull
     public JetScope getScopeForClassHeaderResolution() {
-        if (scopeForClassHeaderResolution == null) {
-            WritableScopeImpl scope = new WritableScopeImpl(
-                    JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
-            for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
-                scope.addClassifierDescriptor(typeParameterDescriptor);
-            }
-            scope.changeLockLevel(WritableScope.LockLevel.READING);
-
-            PsiElement scopeAnchor = declarationProvider.getOwnerInfo().getScopeAnchor();
-            scopeForClassHeaderResolution = new ChainedScope(
-                    this,
-                    "ScopeForClassHeaderResolution: " + getName(),
-                    scope, getScopeProvider().getResolutionScopeForDeclaration(scopeAnchor));
-        }
-        return scopeForClassHeaderResolution;
+        return scopeForClassHeaderResolution.get();
     }
 
+    @NotNull
+    private JetScope computeScopeForClassHeaderResolution() {
+        WritableScopeImpl scope = new WritableScopeImpl(
+                JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Class Header Resolution");
+        for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
+            scope.addClassifierDescriptor(typeParameterDescriptor);
+        }
+        scope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        PsiElement scopeAnchor = declarationProvider.getOwnerInfo().getScopeAnchor();
+        return new ChainedScope(
+                this,
+                "ScopeForClassHeaderResolution: " + getName(),
+                scope, getScopeProvider().getResolutionScopeForDeclaration(scopeAnchor));
+    }
+
+    @NotNull
     public JetScope getScopeForMemberDeclarationResolution() {
-        if (scopeForMemberDeclarationResolution == null) {
-            WritableScopeImpl scope = new WritableScopeImpl(
-                    JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
-            scope.addLabeledDeclaration(this);
-            scope.changeLockLevel(WritableScope.LockLevel.READING);
-
-            scopeForMemberDeclarationResolution = new ChainedScope(
-                    this,
-                    "ScopeForMemberDeclarationResolution: " + getName(),
-                    scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
-        }
-        return scopeForMemberDeclarationResolution;
+        return scopeForMemberDeclarationResolution.get();
     }
 
+    @NotNull
+    private JetScope computeScopeForMemberDeclarationResolution() {
+        WritableScopeImpl scope = new WritableScopeImpl(
+                JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Member Declaration Resolution");
+        scope.addLabeledDeclaration(this);
+        scope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        return new ChainedScope(
+                this,
+                "ScopeForMemberDeclarationResolution: " + getName(),
+                scope, getScopeForMemberLookup(), getScopeForClassHeaderResolution());
+    }
+
+    @NotNull
     public JetScope getScopeForPropertyInitializerResolution() {
+        return scopeForPropertyInitializerResolution.get();
+    }
+
+    @NotNull
+    private JetScope computeScopeForPropertyInitializerResolution() {
         ConstructorDescriptor primaryConstructor = getUnsubstitutedPrimaryConstructor();
         if (primaryConstructor == null) return getScopeForMemberDeclarationResolution();
 
-        if (scopeForPropertyInitializerResolution == null) {
-            WritableScopeImpl scope = new WritableScopeImpl(
-                    JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Property Initializer Resolution");
+        WritableScopeImpl scope = new WritableScopeImpl(
+                JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Property Initializer Resolution");
 
-            List<ValueParameterDescriptor> parameters = primaryConstructor.getValueParameters();
-            for (ValueParameterDescriptor valueParameterDescriptor : parameters) {
-                scope.addVariableDescriptor(valueParameterDescriptor);
-            }
-
-            scope.changeLockLevel(WritableScope.LockLevel.READING);
-
-            scopeForPropertyInitializerResolution = new ChainedScope(
-                    this,
-                    "ScopeForPropertyInitializerResolution: " + getName(),
-                    scope, getScopeForMemberDeclarationResolution());
+        List<ValueParameterDescriptor> parameters = primaryConstructor.getValueParameters();
+        for (ValueParameterDescriptor valueParameterDescriptor : parameters) {
+            scope.addVariableDescriptor(valueParameterDescriptor);
         }
-        return scopeForPropertyInitializerResolution;
+
+        scope.changeLockLevel(WritableScope.LockLevel.READING);
+
+        return new ChainedScope(
+                this,
+                "ScopeForPropertyInitializerResolution: " + getName(),
+                scope, getScopeForMemberDeclarationResolution());
     }
 
     @NotNull
@@ -223,16 +273,18 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        if (!classObjectDescriptorResolved) {
-            JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
+        return classObjectDescriptor.get().orNull();
+    }
 
-            JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
-            if (classObjectInfo != null) {
-                classObjectDescriptor = new LazyClassDescriptor(resolveSession, this, getClassObjectName(getName()), classObjectInfo);
-            }
-            classObjectDescriptorResolved = true;
+    @Nullable
+    private ClassDescriptor computeClassObjectDescriptor() {
+        JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
+
+        JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
+        if (classObjectInfo != null) {
+            return new LazyClassDescriptor(resolveSession, this, getClassObjectName(getName()), classObjectInfo);
         }
-        return classObjectDescriptor;
+        return null;
     }
 
     @Nullable
@@ -281,27 +333,26 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     @NotNull
     @Override
     public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        if (thisAsReceiverParameter == null) {
-            thisAsReceiverParameter = DescriptorResolver.createLazyReceiverParameterDescriptor(this);
-        }
-        return thisAsReceiverParameter;
+        return thisAsReceiverParameter.get();
     }
 
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
-        if (annotations == null) {
-            JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
-            JetModifierList modifierList = classInfo.getModifierList();
-            if (modifierList != null) {
-                AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
-                JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
-                annotations = annotationResolver.resolveAnnotations(scopeForDeclaration, modifierList, resolveSession.getTrace());
-            }
-            else {
-                annotations = Collections.emptyList();
-            }
+        return annotations.get();
+    }
+
+    @NotNull
+    private List<AnnotationDescriptor> resolveAnnotations() {
+        JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+        JetModifierList modifierList = classInfo.getModifierList();
+        if (modifierList != null) {
+            AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
+            JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
+            return annotationResolver.resolveAnnotations(scopeForDeclaration, modifierList, resolveSession.getTrace());
         }
-        return annotations;
+        else {
+            return Collections.emptyList();
+        }
     }
 
     @NotNull
@@ -339,35 +390,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     private class LazyClassTypeConstructor implements LazyDescriptor, TypeConstructor {
-        private Collection<JetType> supertypes = null;
-        private List<TypeParameterDescriptor> parameters = null;
-
-        @NotNull
-        @Override
-        public List<TypeParameterDescriptor> getParameters() {
-            if (parameters == null) {
-                JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
-                List<JetTypeParameter> typeParameters = classInfo.getTypeParameters();
-                parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
-
-                for (int i = 0; i < typeParameters.size(); i++) {
-                    parameters.add(new LazyTypeParameterDescriptor(resolveSession, LazyClassDescriptor.this, typeParameters.get(i), i));
-                }
-            }
-            return parameters;
-        }
-
-        @NotNull
-        @Override
-        public Collection<JetType> getSupertypes() {
-            if (supertypes == null) {
+        private final LazyValue<Collection<JetType>> supertypes = resolveSession.getStorageManager().createLazyValue(new Computable<Collection<JetType>>() {
+            @Override
+            public Collection<JetType> compute() {
                 if (resolveSession.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
-                    this.supertypes = Collections.emptyList();
+                    return Collections.emptyList();
                 }
                 else {
                     JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
                     if (classOrObject == null) {
-                        this.supertypes = Collections.emptyList();
+                        return Collections.emptyList();
                     }
                     else {
                         List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
@@ -375,12 +407,38 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                                                    LazyClassDescriptor.this, classOrObject,
                                                    resolveSession.getTrace());
                         List<JetType> validSupertypes = Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
-                        this.supertypes = validSupertypes;
+
                         findAndDisconnectLoopsInTypeHierarchy(validSupertypes);
+                        return validSupertypes;
                     }
                 }
             }
-            return supertypes;
+        });
+        private final LazyValue<List<TypeParameterDescriptor>> parameters = resolveSession.getStorageManager().createLazyValue(new Computable<List<TypeParameterDescriptor>>() {
+            @Override
+            public List<TypeParameterDescriptor> compute() {
+                JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+                List<JetTypeParameter> typeParameters = classInfo.getTypeParameters();
+
+                List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
+                for (int i = 0; i < typeParameters.size(); i++) {
+                    parameters.add(new LazyTypeParameterDescriptor(resolveSession, LazyClassDescriptor.this, typeParameters.get(i), i));
+                }
+
+                return parameters;
+            }
+        });
+
+        @NotNull
+        @Override
+        public List<TypeParameterDescriptor> getParameters() {
+            return parameters.get();
+        }
+
+        @NotNull
+        @Override
+        public Collection<JetType> getSupertypes() {
+            return supertypes.get();
         }
 
         private void findAndDisconnectLoopsInTypeHierarchy(List<JetType> supertypes) {
