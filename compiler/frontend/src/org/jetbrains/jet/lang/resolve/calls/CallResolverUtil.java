@@ -57,9 +57,9 @@ public class CallResolverUtil {
 
         TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, call.getTrace().toString() + "(copy)");
         ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, trace, call.getTracing());
-
+        //todo remove because call's trace isn't used (?)
         call.getTrace().addAllMyDataTo(trace);
-        trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);
+        context.trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);
 
         copy.addStatus(call.getStatus());
         if (call.isDirty()) {
