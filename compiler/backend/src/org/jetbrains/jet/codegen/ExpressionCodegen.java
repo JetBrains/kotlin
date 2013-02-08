@@ -526,6 +526,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         protected final JetType elementType;
 
+        protected int loopParameterVar;
+
         private AbstractForLoopGenerator(@NotNull JetForExpression forExpression) {
             this.forExpression = forExpression;
             this.elementType = getElementType(forExpression);
@@ -553,7 +555,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 // E e = tmp<iterator>.next()
                 final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
                 @SuppressWarnings("ConstantConditions") final Type asmTypeForParameter = asmType(parameterDescriptor.getType());
-                final int parameterIndex = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
+                loopParameterVar = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
                 leaveVariableTasks.add(new Runnable() {
                     @Override
                     public void run() {
@@ -561,10 +563,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         v.visitLocalVariable(parameterDescriptor.getName().getName(),
                                              asmTypeForParameter.getDescriptor(), null,
                                              bodyStart, bodyEnd,
-                                             parameterIndex);
+                                             loopParameterVar);
                     }
                 });
-                assignToLoopParameter(parameterIndex);
+                assignToLoopParameter();
             }
             else {
                 JetMultiDeclaration multiParameter = forExpression.getMultiParameter();
@@ -572,22 +574,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 // E tmp<e> = tmp<iterator>.next()
                 final Type asmElementType = asmType(elementType);
-                int tmpParameterIndex = myFrameMap.enterTemp(asmElementType);
+                loopParameterVar = myFrameMap.enterTemp(asmElementType);
                 leaveVariableTasks.add(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leaveTemp(asmElementType);
                     }
                 });
-                assignToLoopParameter(tmpParameterIndex);
+                assignToLoopParameter();
 
-                generateMultiVariables(tmpParameterIndex, multiParameter.getEntries());
+                generateMultiVariables(multiParameter.getEntries());
             }
         }
 
-        protected abstract void assignToLoopParameter(int parameterIndex);
+        protected abstract void assignToLoopParameter();
 
-        private void generateMultiVariables(int tmpParameterIndex, List<JetMultiDeclarationEntry> entries) {
+        private void generateMultiVariables(List<JetMultiDeclarationEntry> entries) {
             Type asmElementType = asmType(elementType);
             for (JetMultiDeclarationEntry variableDeclaration : entries) {
                 final VariableDescriptor componentDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
@@ -610,7 +612,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, variableDeclaration);
                 assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
                 Call call = makeFakeCall(new TransientReceiver(elementType));
-                invokeFunction(call, StackValue.local(tmpParameterIndex, asmElementType), resolvedCall);
+                invokeFunction(call, StackValue.local(loopParameterVar, asmElementType), resolvedCall);
 
                 v.store(componentVarIndex, componentAsmType);
             }
@@ -687,12 +689,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void assignToLoopParameter(int parameterIndex) {
+        protected void assignToLoopParameter() {
             @SuppressWarnings("ConstantConditions") Call fakeCall =
                     makeFakeCall(new TransientReceiver(iteratorCall.getResultingDescriptor().getReturnType()));
             invokeFunction(fakeCall, StackValue.local(iteratorVarIndex, asmTypeForIterator), nextCall);
             //noinspection ConstantConditions
-            v.store(parameterIndex, asmType(nextCall.getResultingDescriptor().getReturnType()));
+            v.store(loopParameterVar, asmType(nextCall.getResultingDescriptor().getReturnType()));
         }
 
         @Override
@@ -748,7 +750,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void assignToLoopParameter(int parameterIndex) {
+        protected void assignToLoopParameter() {
             Type arrayElParamType;
             Type asmElementType = asmType(elementType);
             if (KotlinBuiltIns.getInstance().isArray(loopRangeType)) {
@@ -762,7 +764,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.load(indexVar, Type.INT_TYPE);
             v.aload(arrayElParamType);
             StackValue.onStack(arrayElParamType).put(asmElementType, v);
-            v.store(parameterIndex, asmElementType);
+            v.store(loopParameterVar, asmElementType);
         }
 
         @Override
@@ -843,10 +845,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void assignToLoopParameter(int parameterIndex) {
+        protected void assignToLoopParameter() {
             // todo: don't create a temp variable if this is not a multi-decl for
             v.load(indexVar, asmElementType);
-            v.store(parameterIndex, asmElementType);
+            v.store(loopParameterVar, asmElementType);
         }
 
         @Override
@@ -935,10 +937,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @Override
-        protected void assignToLoopParameter(int parameterIndex) {
+        protected void assignToLoopParameter() {
             // todo: no temp var when this is not a multi-declaration for-loop
             v.load(indexVar, Type.INT_TYPE);
-            v.store(parameterIndex, Type.INT_TYPE);
+            v.store(loopParameterVar, Type.INT_TYPE);
         }
 
         @Override
