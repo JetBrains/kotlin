@@ -17,6 +17,7 @@
 package org.jetbrains.jet.generators.tests;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.LineSeparator;
 
 import java.io.File;
@@ -40,7 +41,7 @@ public class GenerateRangesCodegenTestData {
                                                      "        $LIST.add(i)\n" +
                                                      "    }\n" +
                                                      "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
-                                                     "        return \"Wrong elements for $RANGE_EXPR: $$LIST\"\n" +
+                                                     "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
                                                      "    }\n" +
                                                      "\n";
 
@@ -50,7 +51,7 @@ public class GenerateRangesCodegenTestData {
                                                      "        $LIST.add(i)\n" +
                                                      "    }\n" +
                                                      "    if ($LIST != listOf<$TYPE>($LIST_ELEMENTS)) {\n" +
-                                                     "        return \"Wrong elements for $RANGE_EXPR: $$LIST\"\n" +
+                                                     "        return \"Wrong elements for $RANGE_EXPR_ESCAPED: $$LIST\"\n" +
                                                      "    }\n" +
                                                      "\n";
 
@@ -59,7 +60,7 @@ public class GenerateRangesCodegenTestData {
         if (matcher.find()) {
             return matcher.group(1);
         }
-        if (rangeExpression.contains("'")) {
+        if (rangeExpression.contains("'") || rangeExpression.contains("\"")) {
             return "Char";
         }
         if (Pattern.compile("\\d\\.\\d").matcher(rangeExpression).find()) {
@@ -70,6 +71,7 @@ public class GenerateRangesCodegenTestData {
 
     private static String renderTemplate(String template, int number, String elementType, String rangeExpression, String expectedListElements) {
         return template
+                .replace("$RANGE_EXPR_ESCAPED", StringUtil.escapeStringCharacters(rangeExpression))
                 .replace("$RANGE_EXPR", rangeExpression)
                 .replace("$LIST_ELEMENTS", expectedListElements)
                 .replace("$LIST", "list" + number)

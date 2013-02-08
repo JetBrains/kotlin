@@ -466,6 +466,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/simpleRange.kt");
             }
             
+            @TestMetadata("simpleRangeWithNonConstantEnds.kt")
+            public void testSimpleRangeWithNonConstantEnds() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/simpleRangeWithNonConstantEnds.kt");
+            }
+            
             @TestMetadata("simpleSteppedDownTo.kt")
             public void testSimpleSteppedDownTo() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/expression/simpleSteppedDownTo.kt");
@@ -552,6 +557,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("simpleRange.kt")
             public void testSimpleRange() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/literal/simpleRange.kt");
+            }
+            
+            @TestMetadata("simpleRangeWithNonConstantEnds.kt")
+            public void testSimpleRangeWithNonConstantEnds() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/ranges/literal/simpleRangeWithNonConstantEnds.kt");
             }
             
             @TestMetadata("simpleSteppedDownTo.kt")

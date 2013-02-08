@@ -69,6 +69,20 @@ public class RangeIterationTest {
     }
 
 
+    test fun simpleRangeWithNonConstantEnds() {
+        doTest((1 + 2)..(10 - 1), 3, 9, 1, listOf(3, 4, 5, 6, 7, 8, 9))
+        doTest((1.toByte() + 2.toByte()).toByte()..(10.toByte() - 1.toByte()).toByte(), 3.toByte(), 9.toByte(), 1, listOf<Byte>(3, 4, 5, 6, 7, 8, 9))
+        doTest((1.toShort() + 2.toShort()).toShort()..(10.toShort() - 1.toShort()).toShort(), 3.toShort(), 9.toShort(), 1, listOf<Short>(3, 4, 5, 6, 7, 8, 9))
+        doTest((1.toLong() + 2.toLong())..(10.toLong() - 1.toLong()), 3.toLong(), 9.toLong(), 1.toLong(), listOf<Long>(3, 4, 5, 6, 7, 8, 9))
+
+        doTest(("ace"[1])..("age"[1]), 'c', 'g', 1, listOf('c', 'd', 'e', 'f', 'g'))
+
+        doTest((1.5 * 2)..(3.0 * 3.0), 3.0, 9.0, 1.0, listOf(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0))
+        doTest((1.5.toFloat() * 2.toFloat())..(3.0.toFloat() * 3.0.toFloat()), 3.0.toFloat(), 9.0.toFloat(), 1.toFloat(),
+                listOf<Float>(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0))
+    }
+
+
     test fun emptyDownto() {
         doTest(5 downTo 10, 5, 10, -1, listOf())
         doTest(5.toByte() downTo 10.toByte(), 5.toByte(), 10.toByte(), -1, listOf())
