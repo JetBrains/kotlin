@@ -21,8 +21,6 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
-import java.util.Collection;
-
 public interface StorageManager {
     /**
      * Given a function compute: K -> V create a memoized version of it that computes a value only once for each key
@@ -33,8 +31,6 @@ public interface StorageManager {
     <K, V> Function<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues);
     @NotNull
     <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues);
-
-    <E> Collection<E> createConcurrentCollection();
 
     @NotNull
     <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable);

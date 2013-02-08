@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
+import java.util.Collection;
 import java.util.Set;
 
 public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, PackageMemberDeclarationProvider> {
@@ -38,12 +39,13 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
             @NotNull NamespaceDescriptor thisPackage) {
         super(resolveSession, declarationProvider, thisPackage);
 
-        this.packageDescriptors = resolveSession.getStorageManager().createMemoizedFunctionWithNullableValues(new Function<Name, NamespaceDescriptor>() {
-            @Override
-            public NamespaceDescriptor fun(Name name) {
-                return createPackageDescriptor(name);
-            }
-        }, StorageManager.MemoizationMode.STRONG);
+        this.packageDescriptors = resolveSession.getStorageManager().createMemoizedFunctionWithNullableValues(
+                new Function<Name, NamespaceDescriptor>() {
+                    @Override
+                    public NamespaceDescriptor fun(Name name) {
+                        return createPackageDescriptor(name);
+                    }
+                }, StorageManager.MemoizationMode.STRONG);
     }
 
     @Override
@@ -58,11 +60,8 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
         PackageMemberDeclarationProvider packageMemberDeclarationProvider = resolveSession.getDeclarationProviderFactory().getPackageMemberDeclarationProvider(
                 DescriptorUtils.getFQName(thisDescriptor).child(name).toSafe());
         assert packageMemberDeclarationProvider != null : "Package is declared, but declaration provider is not found: " + name;
-        NamespaceDescriptor namespaceDescriptor = new LazyPackageDescriptor(thisDescriptor, name, resolveSession, packageMemberDeclarationProvider);
 
-        registerDescriptor(namespaceDescriptor);
-
-        return namespaceDescriptor;
+        return new LazyPackageDescriptor(thisDescriptor, name, resolveSession, packageMemberDeclarationProvider);
     }
 
     @Override
@@ -94,9 +93,9 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
     }
 
     @Override
-    protected void addExtraDescriptors() {
+    protected void addExtraDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
         for (FqName packageFqName : declarationProvider.getAllDeclaredPackages()) {
-            getNamespace(packageFqName.shortName());
+            result.add(getNamespace(packageFqName.shortName()));
         }
     }
 

@@ -282,26 +282,26 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     @Override
-    protected void addExtraDescriptors() {
+    protected void addExtraDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof FunctionDescriptor) {
-                    getFunctions(descriptor.getName());
+                    result.addAll(getFunctions(descriptor.getName()));
                 }
                 else if (descriptor instanceof PropertyDescriptor) {
-                    getProperties(descriptor.getName());
+                    result.addAll(getProperties(descriptor.getName()));
                 }
                 // Nothing else is inherited
             }
         }
 
-        getFunctions(DescriptorResolver.VALUES_METHOD_NAME);
-        getFunctions(DescriptorResolver.VALUE_OF_METHOD_NAME);
+        result.addAll(getFunctions(DescriptorResolver.VALUES_METHOD_NAME));
+        result.addAll(getFunctions(DescriptorResolver.VALUE_OF_METHOD_NAME));
 
-        addDataClassMethods();
+        addDataClassMethods(result);
     }
 
-    private void addDataClassMethods() {
+    private void addDataClassMethods(@NotNull Collection<DeclarationDescriptor> result) {
         if (!KotlinBuiltIns.getInstance().isData(thisDescriptor)) return;
 
         ConstructorDescriptor constructor = getPrimaryConstructor();
@@ -313,9 +313,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             Name componentName = Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + n);
             Set<FunctionDescriptor> functions = getFunctions(componentName);
             if (functions.isEmpty()) break;
+
+            result.addAll(functions);
+
             n++;
         }
-        getFunctions(Name.identifier("copy"));
+        result.addAll(getFunctions(Name.identifier("copy")));
     }
 
     @Override

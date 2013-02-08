@@ -29,7 +29,6 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.MemoizationMode.WEAK;
@@ -84,11 +83,6 @@ public class LockBasedStorageManager implements StorageManager {
                 return lazyValue.get();
             }
         };
-    }
-
-    @Override
-    public <E> Collection<E> createConcurrentCollection() {
-        return new ConcurrentLinkedQueue<E>();
     }
 
     @NotNull
