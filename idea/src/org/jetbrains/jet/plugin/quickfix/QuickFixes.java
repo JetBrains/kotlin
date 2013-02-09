@@ -164,5 +164,7 @@ public class QuickFixes {
         factories.put(FINAL_SUPERTYPE, FinalSupertypeFix.createFactory());
 
         factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
+
+        factories.put(OPEN_MODIFIER_IN_ENUM, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD));
     }
 }
