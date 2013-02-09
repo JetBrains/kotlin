@@ -214,21 +214,32 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(parameter));
     }
 
-    private static void removeTypeAnnotation(@NotNull JetNamedDeclaration property, @Nullable JetTypeReference typeReference) {
+    private static void removeTypeAnnotation(@NotNull PsiElement removeAfter, @Nullable JetTypeReference typeReference) {
         if (typeReference == null) return;
-        PsiElement identifier = property.getNameIdentifier();
-        if (identifier == null) return;
-        PsiElement sibling = identifier.getNextSibling();
+        PsiElement sibling = removeAfter.getNextSibling();
         if (sibling == null) return;
         PsiElement nextSibling = typeReference.getNextSibling();
         sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling == null ? null : nextSibling.getNode());
     }
 
     public static void removeTypeAnnotation(JetProperty property) {
-        removeTypeAnnotation(property, property.getTypeRef());
+        PsiElement identifier = property.getNameIdentifier();
+        if (identifier != null) {
+            removeTypeAnnotation(identifier, property.getTypeRef());
+        }
     }
 
     public static void removeTypeAnnotation(JetParameter parameter) {
-        removeTypeAnnotation(parameter, parameter.getTypeReference());
+        PsiElement identifier = parameter.getNameIdentifier();
+        if (identifier != null) {
+            removeTypeAnnotation(identifier, parameter.getTypeReference());
+        }
+    }
+
+    public static void removeTypeAnnotation(JetFunction function) {
+        PsiElement parameterList = function.getValueParameterList();
+        if (parameterList != null) {
+            removeTypeAnnotation(parameterList, function.getReturnTypeRef());
+        }
     }
 }

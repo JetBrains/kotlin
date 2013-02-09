@@ -481,7 +481,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
             
             @TestMetadata("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype")
-            @InnerTestClasses({FinalJavaSupertype.JavaCode.class, })
+            @InnerTestClasses({FinalJavaSupertype.JavaCode.class})
             public static class FinalJavaSupertype extends AbstractQuickFixTest {
                 public void testAllFilesPresentInFinalJavaSupertype() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers/finalSupertype/finalJavaSupertype"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -567,6 +567,31 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeParameterNameChangedRenamePossible.kt")
         public void testParameterNameChangedRenamePossible() throws Exception {
             doTest("idea/testData/quickfix/override/beforeParameterNameChangedRenamePossible.kt");
+        }
+        
+        @TestMetadata("beforeReturnTypeMismatchOnMultipleOverride.kt")
+        public void testReturnTypeMismatchOnMultipleOverride() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeReturnTypeMismatchOnMultipleOverride.kt");
+        }
+        
+        @TestMetadata("beforeReturnTypeMismatchOnMultipleOverrideAmbiguity.kt")
+        public void testReturnTypeMismatchOnMultipleOverrideAmbiguity() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeReturnTypeMismatchOnMultipleOverrideAmbiguity.kt");
+        }
+        
+        @TestMetadata("beforeReturnTypeMismatchOnOverrideIntLong.kt")
+        public void testReturnTypeMismatchOnOverrideIntLong() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeReturnTypeMismatchOnOverrideIntLong.kt");
+        }
+        
+        @TestMetadata("beforeReturnTypeMismatchOnOverrideIntVoid.kt")
+        public void testReturnTypeMismatchOnOverrideIntVoid() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeReturnTypeMismatchOnOverrideIntVoid.kt");
+        }
+        
+        @TestMetadata("beforeReturnTypeMismatchOnOverrideVoidInt.kt")
+        public void testReturnTypeMismatchOnOverrideVoidInt() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeReturnTypeMismatchOnOverrideVoidInt.kt");
         }
         
         @TestMetadata("beforeVirtualMethodHidden.kt")
