@@ -265,21 +265,24 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         return null;
     }
 
-    private static void removeTypeAnnotation(@NotNull JetNamedDeclaration property, @Nullable JetTypeReference typeReference) {
+    private static void removeTypeAnnotation(@Nullable PsiElement removeAfter, @Nullable JetTypeReference typeReference) {
+        if (removeAfter == null) return;
         if (typeReference == null) return;
-        PsiElement identifier = property.getNameIdentifier();
-        if (identifier == null) return;
-        PsiElement sibling = identifier.getNextSibling();
+        PsiElement sibling = removeAfter.getNextSibling();
         if (sibling == null) return;
         PsiElement nextSibling = typeReference.getNextSibling();
         sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling == null ? null : nextSibling.getNode());
     }
 
     public static void removeTypeAnnotation(JetProperty property) {
-        removeTypeAnnotation(property, property.getTypeRef());
+        removeTypeAnnotation(property.getNameIdentifier(), property.getTypeRef());
     }
 
     public static void removeTypeAnnotation(JetParameter parameter) {
-        removeTypeAnnotation(parameter, parameter.getTypeReference());
+        removeTypeAnnotation(parameter.getNameIdentifier(), parameter.getTypeReference());
+    }
+
+    public static void removeTypeAnnotation(JetFunction function) {
+        removeTypeAnnotation(function.getValueParameterList(), function.getReturnTypeRef());
     }
 }
