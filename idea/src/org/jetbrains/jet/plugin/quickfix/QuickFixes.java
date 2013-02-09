@@ -144,6 +144,7 @@ public class QuickFixes {
         ChangeVariableMutabilityFix changeVariableMutabilityFix = new ChangeVariableMutabilityFix();
         actions.put(VAL_WITH_SETTER, changeVariableMutabilityFix);
         actions.put(VAL_REASSIGNMENT, changeVariableMutabilityFix);
+        actions.put(VAR_OVERRIDDEN_BY_VAL, changeVariableMutabilityFix);
 
         actions.put(UNNECESSARY_SAFE_CALL, ReplaceCallFix.toDotCallFromSafeCall());
         actions.put(UNSAFE_CALL, ReplaceCallFix.toSafeCall());

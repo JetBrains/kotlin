@@ -746,6 +746,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
+            @TestMetadata("beforeValOverrideVar.kt")
+            public void testValOverrideVar() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeMutability/beforeValOverrideVar.kt");
+            }
+            
             @TestMetadata("beforeValReassignmentLocal.kt")
             public void testValReassignmentLocal() throws Exception {
                 doTest("idea/testData/quickfix/variables/changeMutability/beforeValReassignmentLocal.kt");
