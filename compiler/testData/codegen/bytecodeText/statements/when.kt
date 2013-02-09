@@ -7,3 +7,5 @@ fun foo(x: Int) {
         else -> {}
     }
 }
+
+// 0 GETSTATIC

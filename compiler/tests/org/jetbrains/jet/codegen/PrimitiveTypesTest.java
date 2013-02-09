@@ -271,24 +271,4 @@ public class PrimitiveTypesTest extends CodegenTestCase {
         final Method main = generateFunction();
         assertEquals(expected, main.invoke(null, arg1, arg2));
     }
-
-    public void testSureNonnull () throws Exception {
-        loadText("fun box() = 10!!.toString()");
-        assertFalse(generateToText().contains("IFNONNULL"));
-    }
-
-    public void testSureNullable () throws Exception {
-        loadText("val a : Int? = 10; fun box() = a!!.toString()");
-        assertTrue(generateToText().contains("IFNONNULL"));
-    }
-
-    public void testSafeNonnull () throws Exception {
-        loadText("fun box() = 10?.toString()");
-        assertFalse(generateToText().contains("IFNULL"));
-    }
-
-    public void testSafeNullable () throws Exception {
-        loadText("val a : Int? = 10; fun box() = a?.toString()");
-        assertTrue(generateToText().contains("IFNULL"));
-    }
 }

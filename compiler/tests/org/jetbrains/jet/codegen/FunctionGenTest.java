@@ -54,11 +54,4 @@ public class FunctionGenTest extends CodegenTestCase {
         assertTrue((Boolean) foo.invoke(null, "lala"));
         assertFalse((Boolean) foo.invoke(null, "mama"));
     }
-
-    public void testPrivateDefaultArgs() throws Exception {
-        loadFile("functions/privateDefaultArgs.kt");
-        String text = generateToText();
-        assertFalse(text.contains("INVOKEVIRTUAL"));
-        assertTrue(text.contains("INVOKESPECIAL"));
-    }
 }

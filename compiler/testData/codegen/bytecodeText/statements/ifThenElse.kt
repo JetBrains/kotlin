@@ -7,3 +7,5 @@ fun foo(b: Boolean) {
         z(b)
     }
 }
+
+// 0 GETSTATIC

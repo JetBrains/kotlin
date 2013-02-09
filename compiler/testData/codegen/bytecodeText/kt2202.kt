@@ -16,3 +16,6 @@ class B {
        foo = 2
     }
 }
+
+// 0 INVOKEVIRTUAL
+// 4 INVOKESPECIAL

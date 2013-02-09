@@ -259,12 +259,4 @@ public class PropertyGenTest extends CodegenTestCase {
             throw new RuntimeException(e);
         }
     }
-
-    public void testKt2202() {
-        loadFile("properties/kt2202.kt");
-        String text = generateToText();
-        assertFalse(text.contains("INVOKEVIRTUAL"));
-        assertTrue(text.contains("INVOKESPECIAL"));
-    }
-
 }

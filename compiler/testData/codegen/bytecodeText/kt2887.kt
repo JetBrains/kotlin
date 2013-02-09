@@ -12,5 +12,6 @@ class Child: Base<String>() {
     override fun bar() {
         super.bar()
     }
-
 }
+
+// 1 bridge

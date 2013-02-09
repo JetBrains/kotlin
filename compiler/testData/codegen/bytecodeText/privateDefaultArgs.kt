@@ -11,3 +11,6 @@ class B {
 fun box(): String {
     return "OK"
 }
+
+// 0 INVOKEVIRTUAL
+// 3 INVOKESPECIAL

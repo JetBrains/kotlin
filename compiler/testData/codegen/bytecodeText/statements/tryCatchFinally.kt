@@ -21,3 +21,5 @@ fun foo() {
         z()
     }
 }
+
+// 0 GETSTATIC

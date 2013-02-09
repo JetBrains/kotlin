@@ -3,3 +3,5 @@ fun foo(b: Boolean) {
     } else {
     }
 }
+
+// 0 GETSTATIC

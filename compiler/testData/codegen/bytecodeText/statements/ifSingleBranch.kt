@@ -7,3 +7,5 @@ fun foo() {
         return
     }
 }
+
+// 0 GETSTATIC

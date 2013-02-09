@@ -15,3 +15,5 @@ class Tester() {
 }
 
 fun box() = Tester().box()
+
+// 1 NEW S
