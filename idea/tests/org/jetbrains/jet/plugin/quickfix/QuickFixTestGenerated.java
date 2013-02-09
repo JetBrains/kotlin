@@ -695,6 +695,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/override")
+    @InnerTestClasses({Override.TypeMismatchOnOverride.class})
     public static class Override extends AbstractQuickFixTest {
         public void testAllFilesPresentInOverride() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -730,6 +731,55 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/override/beforeVirtualMethodHidden.kt");
         }
         
+        @TestMetadata("idea/testData/quickfix/override/typeMismatchOnOverride")
+        public static class TypeMismatchOnOverride extends AbstractQuickFixTest {
+            public void testAllFilesPresentInTypeMismatchOnOverride() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/override/typeMismatchOnOverride"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforePropertyTypeMismatchOnOverrideIntLong.kt")
+            public void testPropertyTypeMismatchOnOverrideIntLong() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforePropertyTypeMismatchOnOverrideIntLong.kt");
+            }
+            
+            @TestMetadata("beforePropertyTypeMismatchOnOverrideIntUnit.kt")
+            public void testPropertyTypeMismatchOnOverrideIntUnit() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforePropertyTypeMismatchOnOverrideIntUnit.kt");
+            }
+            
+            @TestMetadata("beforeReturnTypeMismatchOnMultipleOverride.kt")
+            public void testReturnTypeMismatchOnMultipleOverride() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeReturnTypeMismatchOnMultipleOverride.kt");
+            }
+            
+            @TestMetadata("beforeReturnTypeMismatchOnMultipleOverrideAmbiguity.kt")
+            public void testReturnTypeMismatchOnMultipleOverrideAmbiguity() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeReturnTypeMismatchOnMultipleOverrideAmbiguity.kt");
+            }
+            
+            @TestMetadata("beforeReturnTypeMismatchOnOverrideIntLong.kt")
+            public void testReturnTypeMismatchOnOverrideIntLong() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeReturnTypeMismatchOnOverrideIntLong.kt");
+            }
+            
+            @TestMetadata("beforeReturnTypeMismatchOnOverrideIntUnit.kt")
+            public void testReturnTypeMismatchOnOverrideIntUnit() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeReturnTypeMismatchOnOverrideIntUnit.kt");
+            }
+            
+            @TestMetadata("beforeReturnTypeMismatchOnOverrideUnitInt.kt")
+            public void testReturnTypeMismatchOnOverrideUnitInt() throws Exception {
+                doTest("idea/testData/quickfix/override/typeMismatchOnOverride/beforeReturnTypeMismatchOnOverrideUnitInt.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Override");
+            suite.addTestSuite(Override.class);
+            suite.addTestSuite(TypeMismatchOnOverride.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/quickfix/supertypeInitialization")
@@ -1056,7 +1106,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         suite.addTestSuite(Migration.class);
         suite.addTest(Modifiers.innerSuite());
         suite.addTest(Nullables.innerSuite());
-        suite.addTestSuite(Override.class);
+        suite.addTest(Override.innerSuite());
         suite.addTestSuite(SupertypeInitialization.class);
         suite.addTestSuite(TypeAddition.class);
         suite.addTestSuite(TypeImports.class);

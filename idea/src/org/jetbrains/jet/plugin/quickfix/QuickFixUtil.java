@@ -25,11 +25,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
@@ -62,5 +64,28 @@ public class QuickFixUtil {
             type = ((DeferredType) type).getActualType();
         }
         return type;
+    }
+
+    @Nullable
+    public static JetType findLowerBoundOfOverriddenCallablesReturnTypes(BindingContext context, JetDeclaration callable) {
+        DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, callable);
+        if (!(descriptor instanceof CallableDescriptor)) {
+            return null;
+        }
+
+        JetType matchingReturnType = null;
+        for (CallableDescriptor overriddenDescriptor : ((CallableDescriptor) descriptor).getOverriddenDescriptors()) {
+            JetType overriddenReturnType = overriddenDescriptor.getReturnType();
+            if (overriddenReturnType == null) {
+                return null;
+            }
+            if (matchingReturnType == null || JetTypeChecker.INSTANCE.isSubtypeOf(overriddenReturnType, matchingReturnType)) {
+                matchingReturnType = overriddenReturnType;
+            }
+            else if (!JetTypeChecker.INSTANCE.isSubtypeOf(matchingReturnType, overriddenReturnType)) {
+                return null;
+            }
+        }
+        return matchingReturnType;
     }
 }
