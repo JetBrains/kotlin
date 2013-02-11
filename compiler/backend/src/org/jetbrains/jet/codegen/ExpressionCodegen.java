@@ -659,6 +659,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 task.run();
             }
         }
+
+        // This method consumes range/progression from stack
+        // The result is stored to local variable
+        protected void generateRangeOrProgressionProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
+            JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(elementType);
+            assert primitiveType != null : elementType;
+            Type asmWrapperType = primitiveType.getWrapper().getAsmType();
+
+            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + asmWrapperType.getDescriptor());
+            StackValue.coerce(asmWrapperType, elementType, v);
+            v.store(varToStore, elementType);
+        }
     }
 
     private class IteratorForLoopGenerator extends AbstractForLoopGenerator {
@@ -922,17 +934,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(forExpression.getLoopRange(), asmLoopRangeType);
             v.dup();
 
-            JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(asmElementType);
-            assert primitiveType != null : asmElementType;
-            Type asmWrapperType = primitiveType.getWrapper().getAsmType();
-
-            v.invokevirtual(asmLoopRangeType.getInternalName(), "getStart", "()" + asmWrapperType.getDescriptor());
-            StackValue.coerce(asmWrapperType, asmElementType, v);
-            v.store(loopParameterVar, asmElementType);
-
-            v.invokevirtual(asmLoopRangeType.getInternalName(), "getEnd", "()" + asmWrapperType.getDescriptor());
-            StackValue.coerce(asmWrapperType, asmElementType, v);
-            v.store(endVar, asmElementType);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getStart", asmElementType, loopParameterVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getEnd", asmElementType, endVar);
         }
     }
 
