@@ -797,7 +797,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private class ForInRangeLiteralLoopGenerator extends AbstractForLoopGenerator {
         private final RangeCodegenUtil.BinaryCall rangeCall;
-        private int lastVar;
+        protected int endVar;
 
         private ForInRangeLiteralLoopGenerator(
                 @NotNull JetForExpression forExpression,
@@ -811,18 +811,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         public void beforeLoop() {
             super.beforeLoop();
 
+            endVar = createLoopTempVariable(asmElementType);
+            storeRangeStartAndEnd();
+        }
+
+        protected void storeRangeStartAndEnd() {
             gen(rangeCall.left, asmElementType);
             v.store(loopParameterVar, asmElementType);
 
-            lastVar = createLoopTempVariable(asmElementType);
             gen(rangeCall.right, asmElementType);
-            v.store(lastVar, asmElementType);
+            v.store(endVar, asmElementType);
         }
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
             v.load(loopParameterVar, asmElementType);
-            v.load(lastVar, asmElementType);
+            v.load(endVar, asmElementType);
 
             int sort = asmElementType.getSort();
             switch (sort) {
