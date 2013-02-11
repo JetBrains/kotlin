@@ -18,6 +18,7 @@ package org.jetbrains.jet.jvm.compiler;
 
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
@@ -40,7 +41,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
         compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         List<String> options = Arrays.asList(
-                "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + "out/production/stdlib",
+                "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + ForTestCompileRuntime.runtimeJarForTests(),
                 "-d", tmpdir.getPath()
         );
         JetTestUtils.compileJavaFiles(Collections.singleton(javaFile), options);
