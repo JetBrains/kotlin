@@ -22,23 +22,26 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitiveNumberClassDescriptor;
 
 public class RangeCodegenUtil {
-    private static final ImmutableMap<String, JetType> RANGE_TO_ELEMENT_TYPE = ImmutableMap.<String, JetType>builder()
-            .put("ByteRange", KotlinBuiltIns.getInstance().getByteType())
-            .put("ShortRange", KotlinBuiltIns.getInstance().getShortType())
-            .put("IntRange", KotlinBuiltIns.getInstance().getIntType())
-            .put("LongRange", KotlinBuiltIns.getInstance().getLongType())
-            .put("FloatRange", KotlinBuiltIns.getInstance().getFloatType())
-            .put("DoubleRange", KotlinBuiltIns.getInstance().getDoubleType())
-            .put("CharRange", KotlinBuiltIns.getInstance().getCharType())
-            .build();
+    private static final ImmutableMap<FqName, PrimitiveType> RANGE_TO_ELEMENT_TYPE;
+
+    static {
+        ImmutableMap.Builder<FqName, PrimitiveType> rangeBuilder = ImmutableMap.builder();
+        for (PrimitiveType primitiveType : PrimitiveType.values()) {
+            rangeBuilder.put(primitiveType.getRangeClassName(), primitiveType);
+        }
+        RANGE_TO_ELEMENT_TYPE = rangeBuilder.build();
+    }
 
     private RangeCodegenUtil() {}
 
@@ -77,14 +80,14 @@ public class RangeCodegenUtil {
     }
 
     @Nullable
-    public static JetType getPrimitiveRangeElementType(JetType rangeType) {
+    private static PrimitiveType getPrimitiveRangeElementType(JetType rangeType) {
         ClassifierDescriptor declarationDescriptor = rangeType.getConstructor().getDeclarationDescriptor();
         assert declarationDescriptor != null;
         if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(declarationDescriptor.getName())) {
             // Must be a standard library class
             return null;
         }
-        return RANGE_TO_ELEMENT_TYPE.get(declarationDescriptor.getName().getName());
+        return RANGE_TO_ELEMENT_TYPE.get(DescriptorUtils.getFQName(declarationDescriptor).toSafe());
     }
 
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {
