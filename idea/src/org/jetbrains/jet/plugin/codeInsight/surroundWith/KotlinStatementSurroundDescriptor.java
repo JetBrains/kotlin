@@ -26,7 +26,7 @@ import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 public class KotlinStatementSurroundDescriptor implements SurroundDescriptor {
 
     private static final Surrounder[] SURROUNDERS = {
-
+            new KotlinIfSurrounder()
     };
 
     @NotNull

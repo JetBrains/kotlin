@@ -29,6 +29,7 @@ import org.jetbrains.jet.jvm.compiler.*;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
 import org.jetbrains.jet.plugin.highlighter.AbstractDeprecatedHighlightingTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
@@ -220,6 +221,13 @@ public class GenerateTests {
                 "DeprecatedHighlightingTestGenerated",
                 AbstractDeprecatedHighlightingTest.class,
                 testModel("idea/testData/highlighter/deprecated")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithIfTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/if", "doTestWithIfSurrounder")
         );
     }
 
