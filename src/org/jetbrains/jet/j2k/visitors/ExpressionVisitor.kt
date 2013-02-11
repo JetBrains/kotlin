@@ -12,6 +12,7 @@ import java.util.ArrayList
 import java.util.Collections
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.types.lang.PrimitiveType
 
 public open class ExpressionVisitor(converter: Converter): StatementVisitor(converter) {
     {
@@ -235,6 +236,14 @@ public open class ExpressionVisitor(converter: Converter): StatementVisitor(conv
         }
         else if (qualifier == null) {
             val resolved = expression.getReference()?.resolve()
+            if (resolved is PsiClass) {
+                val clazz = resolved as PsiClass
+
+                if (PrimitiveType.values() any { it.getTypeName().getName() == clazz.getName() }) {
+                    myResult = Identifier(clazz.getQualifiedName()!!, false)
+                    return
+                }
+            }
             if (resolved is PsiMember && resolved.hasModifierProperty(PsiModifier.STATIC) &&
                 resolved.getContainingClass() != null &&
                  PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass() &&
