@@ -1,1 +1,1 @@
-var ss : Array<Array<String?>?>? = Array<Array<String?>?>(5, {Array<String?>(5)})
+var ss : Array<Array<String?>?>? = Array<Array<String?>?>(5, {arrayOfNulls<String?>(5)})
