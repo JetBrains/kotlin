@@ -464,7 +464,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             CallableDescriptor rangeTo = resolvedCall.getResultingDescriptor();
             if (RangeCodegenUtil.isOptimizableRangeTo(rangeTo)) {
-                generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall, resolvedCall));
+                generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall));
                 return StackValue.none();
             }
         }
@@ -526,12 +526,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         private final List<Runnable> afterLoopLeaveVariableTasks = Lists.newArrayList();
 
         protected final JetType elementType;
+        protected final Type asmElementType;
 
         protected int loopParameterVar;
 
         private AbstractForLoopGenerator(@NotNull JetForExpression forExpression) {
             this.forExpression = forExpression;
             this.elementType = getElementType(forExpression);
+            this.asmElementType = asmType(elementType);
         }
 
         @NotNull
@@ -568,7 +570,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 assert multiParameter != null;
 
                 // E tmp<e> = tmp<iterator>.next()
-                final Type asmElementType = asmType(elementType);
                 loopParameterVar = createLoopTempVariable(asmElementType);
             }
         }
@@ -589,7 +590,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         private void generateMultiVariables(List<JetMultiDeclarationEntry> entries) {
-            Type asmElementType = asmType(elementType);
             for (JetMultiDeclarationEntry variableDeclaration : entries) {
                 final VariableDescriptor componentDescriptor = bindingContext.get(BindingContext.VARIABLE, variableDeclaration);
 
@@ -775,7 +775,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         @Override
         protected void assignToLoopParameter() {
             Type arrayElParamType;
-            Type asmElementType = asmType(elementType);
             if (KotlinBuiltIns.getInstance().isArray(loopRangeType)) {
                 arrayElParamType = boxType(asmElementType);
             }
@@ -798,26 +797,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private class ForInRangeLiteralLoopGenerator extends AbstractForLoopGenerator {
         private final RangeCodegenUtil.BinaryCall rangeCall;
-        private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
-        private Type asmElementType;
         private int lastVar;
 
         private ForInRangeLiteralLoopGenerator(
                 @NotNull JetForExpression forExpression,
-                @NotNull RangeCodegenUtil.BinaryCall rangeCall,
-                ResolvedCall<? extends CallableDescriptor> resolvedCall
+                @NotNull RangeCodegenUtil.BinaryCall rangeCall
         ) {
             super(forExpression);
             this.rangeCall = rangeCall;
-            this.resolvedCall = resolvedCall;
         }
 
         @Override
         public void beforeLoop() {
             super.beforeLoop();
-            JetType elementType = RangeCodegenUtil.getPrimitiveRangeElementType(resolvedCall.getResultingDescriptor().getReturnType());
-            assert elementType != null;
-            asmElementType = asmType(elementType);
 
             gen(rangeCall.left, asmElementType);
             v.store(loopParameterVar, asmElementType);
