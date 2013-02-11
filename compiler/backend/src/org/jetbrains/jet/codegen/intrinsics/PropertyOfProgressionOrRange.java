@@ -61,9 +61,4 @@ public class PropertyOfProgressionOrRange implements IntrinsicMethod {
         StackValue.coerce(wrapperClass.getAsmType(), expectedType, v);
         return StackValue.onStack(expectedType);
     }
-
-    public enum OwnerKind {
-        SEQUENCE,
-        RANGE
-    }
 }
