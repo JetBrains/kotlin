@@ -432,6 +432,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetParameter catchParameter = catchClause.getCatchParameter();
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
+                ASTNode valOrVarNode = catchParameter.getValOrVarNode();
+                if (valOrVarNode != null) {
+                    context.trace.report(VAL_OR_VAR_ON_CATCH_PARAMETER.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
+                }
+
                 VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
                         context.scope.getContainingDeclaration(), context.scope, catchParameter, context.trace);
                 JetType throwableType = KotlinBuiltIns.getInstance().getThrowable().getDefaultType();

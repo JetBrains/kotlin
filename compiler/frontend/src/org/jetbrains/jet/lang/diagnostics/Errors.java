@@ -475,6 +475,7 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, JetKeywordToken> VAL_OR_VAR_ON_LOOP_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, JetKeywordToken> VAL_OR_VAR_ON_FUN_PARAMETER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, JetKeywordToken> VAL_OR_VAR_ON_CATCH_PARAMETER = DiagnosticFactory1.create(ERROR);
 
     // Backing fields
 

@@ -712,7 +712,7 @@ public class DescriptorResolver {
                 annotationResolver.getResolvedAnnotations(parameter.getModifierList(), trace),
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
-                parameter.isMutable());
+                false);
         trace.record(BindingContext.VALUE_PARAMETER, parameter, variableDescriptor);
         return variableDescriptor;
     }
