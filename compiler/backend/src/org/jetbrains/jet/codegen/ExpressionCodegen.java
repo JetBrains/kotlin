@@ -2484,16 +2484,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetExpression left = expression.getLeft();
         JetExpression right = expression.getRight();
-        StackValue receiver = gen(left);
         Callable callable = resolveToCallable(descriptor, false);
 
         Type type;
         if (callable instanceof IntrinsicMethod) {
             // Compare two primitive values
             type = comparisonOperandType(expressionType(left), expressionType(right));
+            StackValue receiver = gen(left);
             receiver.put(type, v);
             gen(right, type);
-        } else {
+        }
+        else {
             type = Type.INT_TYPE;
             StackValue result = invokeOperation(expression, descriptor, (CallableMethod) callable);
             result.put(type, v);
