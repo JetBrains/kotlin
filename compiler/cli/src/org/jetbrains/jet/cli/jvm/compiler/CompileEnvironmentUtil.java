@@ -99,17 +99,20 @@ public class CompileEnvironmentUtil {
         configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, moduleScriptFile);
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
-        JetCoreEnvironment scriptEnvironment = new JetCoreEnvironment(disposable, configuration);
+        List<Module> modules;
+        try {
+            JetCoreEnvironment scriptEnvironment = new JetCoreEnvironment(disposable, configuration);
+            GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment, false);
+            if (generationState == null) {
+                throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed:\n" +
+                                                      loadModuleScriptText(moduleScriptFile));
+            }
 
-        GenerationState generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(scriptEnvironment, false);
-        if (generationState == null) {
-            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " analyze failed:\n" +
-                                                  loadModuleScriptText(moduleScriptFile));
+            modules = runDefineModules(paths, moduleScriptFile, generationState.getFactory());
         }
-
-        List<Module> modules = runDefineModules(paths, moduleScriptFile, generationState.getFactory());
-
-        Disposer.dispose(disposable);
+        finally {
+            Disposer.dispose(disposable);
+        }
 
         if (modules == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
