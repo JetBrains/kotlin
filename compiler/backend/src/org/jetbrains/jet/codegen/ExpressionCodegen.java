@@ -56,6 +56,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -481,6 +482,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             if (RangeCodegenUtil.isRange(loopRangeType)) {
                 generateForLoop(new ForInRangeInstanceLoopGenerator(forExpression));
+                return StackValue.none();
+            }
+
+            if (RangeCodegenUtil.isProgression(loopRangeType)) {
+                generateForLoop(new ForInProgressionExpressionLoopGenerator(forExpression));
                 return StackValue.none();
             }
 
@@ -936,6 +942,140 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             generateRangeOrProgressionProperty(asmLoopRangeType, "getStart", asmElementType, loopParameterVar);
             generateRangeOrProgressionProperty(asmLoopRangeType, "getEnd", asmElementType, endVar);
+        }
+    }
+
+    private class ForInProgressionExpressionLoopGenerator extends AbstractForLoopGenerator {
+        private int endVar;
+        private int incrementVar;
+        private Type incrementType;
+
+        private ForInProgressionExpressionLoopGenerator(@NotNull JetForExpression forExpression) {
+            super(forExpression);
+        }
+
+        @Override
+        public void beforeLoop() {
+            super.beforeLoop();
+
+            endVar = createLoopTempVariable(asmElementType);
+            incrementVar = createLoopTempVariable(asmElementType);
+
+            JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
+            assert loopRangeType != null;
+            Type asmLoopRangeType = asmType(loopRangeType);
+
+            Collection<VariableDescriptor> incrementProp = loopRangeType.getMemberScope().getProperties(Name.identifier("increment"));
+            assert incrementProp.size() == 1 : loopRangeType + " " + incrementProp.size();
+            incrementType = asmType(incrementProp.iterator().next().getType());
+
+            gen(forExpression.getLoopRange(), asmLoopRangeType);
+            v.dup();
+            v.dup();
+
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getStart", asmElementType, loopParameterVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getEnd", asmElementType, endVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getIncrement", incrementType, incrementVar);
+        }
+
+        @Override
+        public void conditionAndJump(@NotNull Label loopExit) {
+            v.load(loopParameterVar, asmElementType);
+            v.load(incrementVar, asmElementType);
+
+            Label negativeIncrement = new Label();
+            Label afterIf = new Label();
+
+            int sort = asmElementType.getSort();
+            switch (sort) {
+                case Type.INT:
+                case Type.CHAR:
+                case Type.BYTE:
+                case Type.SHORT:
+                    v.ifle(negativeIncrement); // if increment < 0, jump
+
+                    // increment > 0
+                    v.load(endVar, asmElementType);
+                    v.ificmpgt(loopExit);
+                    v.goTo(afterIf);
+
+                    // increment < 0
+                    v.visitLabel(negativeIncrement);
+                    v.load(endVar, asmElementType);
+                    v.ificmplt(loopExit);
+                    v.visitLabel(afterIf);
+
+                    break;
+
+                case Type.LONG:
+                    v.lconst(0L);
+                    v.lcmp();
+                    v.ifle(negativeIncrement); // if increment < 0, jump
+
+                    // increment > 0
+                    v.load(endVar, asmElementType);
+                    v.lcmp();
+                    v.ifgt(loopExit);
+                    v.goTo(afterIf);
+
+                    // increment < 0
+                    v.visitLabel(negativeIncrement);
+                    v.load(endVar, asmElementType);
+                    v.lcmp();
+                    v.iflt(loopExit);
+                    v.visitLabel(afterIf);
+
+                    break;
+
+                case Type.DOUBLE:
+                case Type.FLOAT:
+                    if (sort == Type.DOUBLE) {
+                        v.dconst(0.0);
+                    }
+                    else {
+                        v.fconst(0.0f);
+                    }
+                    v.cmpl(incrementType);
+                    v.ifle(negativeIncrement); // if increment < 0, jump
+
+                    // increment > 0
+                    v.load(endVar, asmElementType);
+                    v.cmpg(asmElementType); // if loop parameter is NaN, exit from loop, as well
+                    v.ifgt(loopExit);
+                    v.goTo(afterIf);
+
+                    // increment < 0
+                    v.visitLabel(negativeIncrement);
+                    v.load(endVar, asmElementType);
+                    v.cmpl(asmElementType); // if loop parameter is NaN, exit from loop, as well
+                    v.iflt(loopExit);
+                    v.visitLabel(afterIf);
+
+                    break;
+
+                default:
+                    throw new IllegalStateException("Unexpected range element type: " + asmElementType);
+            }
+
+        }
+
+        @Override
+        protected void assignToLoopParameter() {
+        }
+
+        @Override
+        protected void increment() {
+
+            v.load(loopParameterVar, asmElementType);
+            v.load(incrementVar, asmElementType);
+            v.add(asmElementType);
+
+            int sort = asmElementType.getSort();
+            if (sort == Type.CHAR || sort == Type.BYTE || sort == Type.SHORT) {
+                StackValue.coerce(Type.INT_TYPE, asmElementType, v);
+            }
+
+            v.store(loopParameterVar, asmElementType);
         }
     }
 

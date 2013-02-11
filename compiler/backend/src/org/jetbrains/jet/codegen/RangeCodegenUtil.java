@@ -34,19 +34,27 @@ import static org.jetbrains.jet.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 
 public class RangeCodegenUtil {
     private static final ImmutableMap<FqName, PrimitiveType> RANGE_TO_ELEMENT_TYPE;
+    private static final ImmutableMap<FqName, PrimitiveType> PROGRESSION_TO_ELEMENT_TYPE;
 
     static {
         ImmutableMap.Builder<FqName, PrimitiveType> rangeBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<FqName, PrimitiveType> progressionBuilder = ImmutableMap.builder();
         for (PrimitiveType primitiveType : PrimitiveType.values()) {
             rangeBuilder.put(primitiveType.getRangeClassName(), primitiveType);
+            progressionBuilder.put(primitiveType.getProgressionClassName(), primitiveType);
         }
         RANGE_TO_ELEMENT_TYPE = rangeBuilder.build();
+        PROGRESSION_TO_ELEMENT_TYPE = progressionBuilder.build();
     }
 
     private RangeCodegenUtil() {}
 
     public static boolean isRange(JetType rangeType) {
         return !rangeType.isNullable() && getPrimitiveRangeElementType(rangeType) != null;
+    }
+
+    public static boolean isProgression(JetType rangeType) {
+        return !rangeType.isNullable() && getPrimitiveProgressionElementType(rangeType) != null;
     }
 
     @Nullable
@@ -88,6 +96,17 @@ public class RangeCodegenUtil {
             return null;
         }
         return RANGE_TO_ELEMENT_TYPE.get(DescriptorUtils.getFQName(declarationDescriptor).toSafe());
+    }
+
+    @Nullable
+    private static PrimitiveType getPrimitiveProgressionElementType(JetType rangeType) {
+        ClassifierDescriptor declarationDescriptor = rangeType.getConstructor().getDeclarationDescriptor();
+        assert declarationDescriptor != null;
+        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(declarationDescriptor.getName())) {
+            // Must be a standard library class
+            return null;
+        }
+        return PROGRESSION_TO_ELEMENT_TYPE.get(DescriptorUtils.getFQName(declarationDescriptor).toSafe());
     }
 
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {
