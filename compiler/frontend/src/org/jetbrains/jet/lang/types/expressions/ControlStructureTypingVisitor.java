@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -44,6 +45,8 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.ArrayList;
@@ -311,6 +314,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetType expectedParameterType,
             ExpressionTypingContext context
     ) {
+        ASTNode valOrVarNode = loopParameter.getValOrVarNode();
+        if (valOrVarNode != null) {
+            context.trace.report(VAL_OR_VAR_ON_LOOP_PARAMETER.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
+        }
+
         JetTypeReference typeReference = loopParameter.getTypeReference();
         VariableDescriptor variableDescriptor;
         if (typeReference != null) {

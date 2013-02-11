@@ -1045,6 +1045,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlStructures/tryReturnType.kt");
             }
             
+            @TestMetadata("valVarLoopParameter.kt")
+            public void testValVarLoopParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlStructures/valVarLoopParameter.kt");
+            }
+            
             @TestMetadata("when.kt234.kt973.kt")
             public void testWhen_kt234_kt973() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlStructures/when.kt234.kt973.kt");
