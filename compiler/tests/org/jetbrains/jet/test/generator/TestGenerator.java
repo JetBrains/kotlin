@@ -213,13 +213,18 @@ public class TestGenerator {
         Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
         if (innerTestClasses.isEmpty()) return;
         p.print("@InnerTestClasses({");
-        for (Iterator<TestClassModel> iterator = innerTestClasses.iterator(); iterator.hasNext(); ) {
-            TestClassModel innerTestClass = iterator.next();
+
+        boolean isFirst = true;
+        for (TestClassModel innerTestClass : innerTestClasses) {
             if (!innerTestClass.isEmpty()) {
-                p.printWithNoIndent(testClassModel.getName(), ".", innerTestClass.getName(), ".class");
-                if (iterator.hasNext()) {
+                if (!isFirst) {
                     p.printWithNoIndent(", ");
                 }
+                else {
+                    isFirst = false;
+                }
+
+                p.printWithNoIndent(testClassModel.getName(), ".", innerTestClass.getName(), ".class");
             }
         }
         p.printlnWithNoIndent("})");
