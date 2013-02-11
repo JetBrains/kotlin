@@ -16,17 +16,6 @@ val Collection<*>.indices : IntRange
 val Int.indices: IntRange
     get() = 0..this-1
 
-/**
- * Converts the collection to an array
- */
-public inline fun <T> Collection<T>.toArray() : Array<T> {
-  val answer = arrayOfNulls<T>(this.size)
-  var idx = 0
-  for (elem in this)
-    answer[idx++] = elem
-  return answer as Array<T>
-}
-
 /** Returns true if the collection is not empty */
 public inline fun <T> Collection<T>.notEmpty() : Boolean = !this.isEmpty()
 
