@@ -2604,6 +2604,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         
         @TestMetadata("compiler/testData/diagnostics/tests/j+k")
         public static class J_k extends AbstractDiagnosticsTestWithEagerResolve {
+            @TestMetadata("accessClassObjectFromJava.kt")
+            public void testAccessClassObjectFromJava() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/accessClassObjectFromJava.kt");
+            }
+            
             public void testAllFilesPresentInJ_k() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/j+k"), Pattern.compile("^(.+)\\.kt$"), true);
             }
