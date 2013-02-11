@@ -795,16 +795,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private class ForInRangeLiteralLoopGenerator extends AbstractForLoopGenerator {
-        private final RangeCodegenUtil.BinaryCall rangeCall;
+    private abstract class AbstractForInRangeLoopGenerator extends AbstractForLoopGenerator {
         protected int endVar;
 
-        private ForInRangeLiteralLoopGenerator(
-                @NotNull JetForExpression forExpression,
-                @NotNull RangeCodegenUtil.BinaryCall rangeCall
-        ) {
+        private AbstractForInRangeLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
-            this.rangeCall = rangeCall;
         }
 
         @Override
@@ -815,13 +810,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             storeRangeStartAndEnd();
         }
 
-        protected void storeRangeStartAndEnd() {
-            gen(rangeCall.left, asmElementType);
-            v.store(loopParameterVar, asmElementType);
-
-            gen(rangeCall.right, asmElementType);
-            v.store(endVar, asmElementType);
-        }
+        protected abstract void storeRangeStartAndEnd();
 
         @Override
         public void conditionAndJump(@NotNull Label loopExit) {
@@ -896,6 +885,27 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 default:
                     throw new IllegalStateException("Unexpected range element type: " + asmElementType);
             }
+        }
+    }
+
+    private class ForInRangeLiteralLoopGenerator extends AbstractForInRangeLoopGenerator {
+        private final RangeCodegenUtil.BinaryCall rangeCall;
+
+        private ForInRangeLiteralLoopGenerator(
+                @NotNull JetForExpression forExpression,
+                @NotNull RangeCodegenUtil.BinaryCall rangeCall
+        ) {
+            super(forExpression);
+            this.rangeCall = rangeCall;
+        }
+
+        @Override
+        protected void storeRangeStartAndEnd() {
+            gen(rangeCall.left, asmElementType);
+            v.store(loopParameterVar, asmElementType);
+
+            gen(rangeCall.right, asmElementType);
+            v.store(endVar, asmElementType);
         }
     }
 
