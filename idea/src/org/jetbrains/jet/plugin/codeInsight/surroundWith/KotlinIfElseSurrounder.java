@@ -20,16 +20,16 @@ package org.jetbrains.jet.plugin.codeInsight.surroundWith;
 import com.intellij.codeInsight.CodeInsightBundle;
 import org.jetbrains.annotations.NotNull;
 
-public class KotlinIfSurrounder extends KotlinIfSurrounderBase {
+public class KotlinIfElseSurrounder extends KotlinIfSurrounderBase {
 
     @Override
     public String getTemplateDescription() {
-        return CodeInsightBundle.message("surround.with.if.template");
+        return CodeInsightBundle.message("surround.with.ifelse.template");
     }
 
     @NotNull
     @Override
     protected String getCodeTemplate() {
-        return "if (a) { \n}";
+        return "if (a) { \n} else { \n}";
     }
 }

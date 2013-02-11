@@ -28,6 +28,12 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         checkResultByFile(path + ".after");
     }
 
+    public void doTestWithIfElseSurrounder(String path) throws Exception {
+        configureByFile(path);
+        SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), new KotlinIfElseSurrounder());
+        checkResultByFile(path + ".after");
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
