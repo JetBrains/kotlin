@@ -33,10 +33,9 @@ import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -95,6 +94,25 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
                 return Collections.singletonList((JetClassOrObject) element);
             }
         }
+
+        if (JvmAbi.isClassObjectFqName(fqName)) {
+            Collection<JetClassOrObject> parentClasses = findClassOrObjectDeclarations(fqName.parent(), searchScope);
+            return ContainerUtil.mapNotNull(parentClasses,
+                                            new Function<JetClassOrObject, JetClassOrObject>() {
+                                                @Override
+                                                public JetClassOrObject fun(JetClassOrObject classOrObject) {
+                                                    if (classOrObject instanceof JetClass) {
+                                                        JetClass jetClass = (JetClass) classOrObject;
+                                                        JetClassObject classObject = jetClass.getClassObject();
+                                                        if (classObject != null) {
+                                                            return classObject.getObjectDeclaration();
+                                                        }
+                                                    }
+                                                    return null;
+                                                }
+                                            });
+        }
+
         return Collections.emptyList();
     }
 

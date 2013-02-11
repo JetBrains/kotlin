@@ -16,6 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+
 public class JvmAbi {
     /**
      * This constant is used to identify binary format (class file) versions
@@ -38,6 +42,10 @@ public class JvmAbi {
 
     public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION =
             JvmClassName.byFqNameWithoutInnerClasses("org.jetbrains.annotations.NotNull");
+
+    public static boolean isClassObjectFqName(@NotNull FqName fqName) {
+        return fqName.lastSegmentIs(Name.identifier(CLASS_OBJECT_CLASS_NAME));
+    }
 
     private JvmAbi() {
     }

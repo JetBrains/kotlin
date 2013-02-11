@@ -36,7 +36,8 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
     protected List<File> getKotlinSourceRoots() {
         return Lists.newArrayList(
                 new File("compiler/testData/asJava/lightClasses/Declared.kt"),
-                new File("compiler/testData/asJava/lightClasses/Package.kt")
+                new File("compiler/testData/asJava/lightClasses/Package.kt"),
+                new File("compiler/testData/asJava/lightClasses/ClassObject.kt")
         );
     }
 
@@ -48,7 +49,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
     @NotNull
     protected PsiClass doTest(String qualifiedName) {
         KotlinLightClass psiClass = (KotlinLightClass) finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject()));
-        assertNotNull(psiClass);
+        assertNotNull("Class not found: " + qualifiedName, psiClass);
 
         Asserter asserter = new Asserter();
 
@@ -202,5 +203,9 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
 
     public void testDeprecatedWithBracketsFQNSpaces() throws Exception {
         doTest();
+    }
+
+    public void testClassObject() throws Exception {
+        doTest("test.WithClassObject.object");
     }
 }
