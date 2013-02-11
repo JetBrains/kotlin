@@ -56,12 +56,13 @@ abstract class Sum() : Iteratee<Int, Int>() {
 }
 
 abstract class Collection<E> : Iterable<E> {
-  fun iterate<O>(var iteratee : Iteratee<E, O>) : O {
+  fun iterate<O>(iteratee : Iteratee<E, O>) : O {
+      var current = iteratee
       for (x in this) {
-        val it = iteratee.process(x)
+        val it = current.process(x)
         if (it.isDone) return it.result
-        iteratee = it
+        current = it
       }
-      return iteratee.done()
+      return current.done()
   }
 }

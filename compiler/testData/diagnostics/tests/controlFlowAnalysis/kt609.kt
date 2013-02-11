@@ -2,8 +2,9 @@
 
 package kt609
 
-fun test(var a: Int) {
-    a = <!UNUSED_VALUE!>324<!> //should be an 'unused value' warning here
+fun test(a: Int) {
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>aa<!> = a
+    aa = <!UNUSED_VALUE!>324<!> //should be an 'unused value' warning here
 }
 
 class C() {

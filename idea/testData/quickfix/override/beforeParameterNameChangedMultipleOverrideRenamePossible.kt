@@ -8,8 +8,8 @@ trait X {
 }
 
 class B : A(), X {
-    override fun foo(var agr<caret> : Int) : Int {
-        agr += 5
+    override fun foo(agr<caret> : Int) : Int {
+        val x = agr + agr
         return agr
     }
 }

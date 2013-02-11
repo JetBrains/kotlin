@@ -2,12 +2,13 @@ package foo
 
 var c = 2
 
-fun loop(var times : Int) {
-   while(times > 0) {
+fun loop(times : Int) {
+   var left = times
+   while(left > 0) {
         val u : (value : Int) -> Unit = {
             c++
         }
-        u(times--)
+        u(left--)
    }
 }
 

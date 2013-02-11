@@ -53,10 +53,8 @@ fun t2() {
 
 class A() {}
 
-fun t4(a: A, val b: A, var c: A) {
+fun t4(a: A) {
     <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>A()<!>
-    <!VAL_REASSIGNMENT!>b<!> = <!UNUSED_VALUE!>A()<!>
-    c = <!UNUSED_VALUE!>A()<!>
 }
 
 // ------------------------------------------------
@@ -190,7 +188,7 @@ class AnonymousInitializers(var a: String, val b: String) {
     }
 }
 
-fun reassignFunParams(val a: Int) {
+fun reassignFunParams(a: Int) {
     <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>1<!>
 }
 

@@ -22,7 +22,7 @@ class SyntaxHighligher() {
     val styleMap = createStyleMap()
 
     /** Highlights the given kotlin code as HTML */
-    fun highlight(val code: String): String {
+    fun highlight(code: String): String {
         try {
             val builder = StringBuilder()
             builder.append(

@@ -495,6 +495,6 @@ class Vector(val x: Double = 0.0, val y: Double = 0.0) {
         get() = this * (1.0 / Math.sqrt(sqr))
 }
 
-fun getRandomArbitary(val min: Int, val max: Int): Double {
+fun getRandomArbitary(min: Int, max: Int): Double {
     return Math.random() * (max - min) + min;
 }

@@ -4,8 +4,8 @@ abstract class A {
 }
 
 class B : A() {
-    override fun foo(var agr<caret> : Int) : Int {
-        agr += 5
+    override fun foo(agr<caret> : Int) : Int {
+        var x = agr + agr
         return agr
     }
 }

@@ -2,7 +2,7 @@ import java.util.*
 
 fun <T> ArrayList<T>.findAll(predicate:  (T) -> Boolean): ArrayList<T> {
   val result = ArrayList<T>()
-  for(val t in this) {
+  for(t in this) {
     if (predicate(t)) result.add(t)
   }
   return result

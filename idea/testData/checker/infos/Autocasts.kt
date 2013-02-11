@@ -206,7 +206,8 @@ fun f(): String {
     return ""
 }
 
-fun foo(var a: Any): Int {
+fun foo(aa: Any): Int {
+    var a = aa
     if (a is Int) {
         return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to 'jet.Int' is impossible, because 'a' could have changed since the is-check">a</error>
     }

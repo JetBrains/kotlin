@@ -1,4 +1,5 @@
-fun simpleDoWhile(x: Int?, var y: Int) {
+fun simpleDoWhile(x: Int?, y0: Int) {
+    var y = y0
     do {
         x : Int?
         y++
@@ -6,7 +7,8 @@ fun simpleDoWhile(x: Int?, var y: Int) {
     x : Int
 }
 
-fun doWhileWithBreak(x: Int?, var y: Int) {
+fun doWhileWithBreak(x: Int?, y0: Int) {
+    var y = y0
     do {
         x : Int?
         y++

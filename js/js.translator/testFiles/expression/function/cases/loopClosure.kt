@@ -2,12 +2,13 @@ package foo
 
 var b = 0
 
-fun loop(var times: Int) {
-    while (times > 0) {
+fun loop(times: Int) {
+    var left = times
+    while (left > 0) {
         val u = {(value: Int) ->
             b = b + 1
         }
-        u(times--)
+        u(left--)
     }
 }
 

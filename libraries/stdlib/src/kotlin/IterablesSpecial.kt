@@ -54,7 +54,7 @@ public fun <T> Iterable<T>.containsItem(item : T) : Boolean {
     return this.contains(item);
   }
 
-  for (var elem in this) {
+  for (elem in this) {
     if (elem == item) {
       return true
     }

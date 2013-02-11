@@ -1,4 +1,5 @@
-fun simpleWhile(x: Int?, var y: Int) {
+fun simpleWhile(x: Int?, y0: Int) {
+    var y = y0
     while (x!! == y) {
         x : Int
         y++
@@ -6,7 +7,8 @@ fun simpleWhile(x: Int?, var y: Int) {
     x : Int
 }
 
-fun whileWithBreak(x: Int?, var y: Int) {
+fun whileWithBreak(x: Int?, y0: Int) {
+    var y = y0
     while (x!! == y) {
         x : Int
         break

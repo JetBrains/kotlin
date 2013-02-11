@@ -8,7 +8,7 @@ fun box() : Boolean {
     a1[3] = 3
     a1[5] = 5
 
-    for (var a : Int? in a1) {
+    for (a : Int? in a1) {
         if (a != null) {
             c += 1;
         } else {

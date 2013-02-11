@@ -58,7 +58,7 @@ fun box() : String {
     val filtered = x where { it % 2 == 0 }
     val xx = x select { it * 2 }
     var res = 0
-    for (val x in xx)
+    for (x in xx)
         res += x
     return if (res == 10100) "OK" else "fail"
 }

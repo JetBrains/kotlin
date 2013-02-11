@@ -1,11 +1,12 @@
 fun foo(x: Int) {}
 
-fun loop(var times : Int) {
-   while(times > 0) {
+fun loop(times : Int) {
+   var left = times
+   while(left > 0) {
         val u : (value : Int) -> Unit = {
             foo(it)
         }
-        u(times--)
+        u(left--)
    }
 }
 

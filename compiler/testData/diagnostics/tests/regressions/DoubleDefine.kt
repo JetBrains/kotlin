@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
   val numbers = ArrayList<Int>(4)
   val rnd = Random();
   val prompt = StringBuilder()
-  for(val i in 0..3) {
+  for(i in 0..3) {
     val n = rnd.nextInt(9) + 1
     numbers.add(n)
     if (i > 0) prompt.append(" ");

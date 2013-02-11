@@ -11,11 +11,11 @@ public fun <T> MutableCollection<out T>.filterToMy(result : MutableList<in T>, f
     return this
 }
 
-fun foo(result: MutableList<in String>, val collection: MutableCollection<String>, prefix : String){
+fun foo(result: MutableList<in String>, collection: MutableCollection<String>, prefix : String){
     collection.filterToMy(result, {it.startsWith(prefix)})
 }
 
-fun test(result: MutableList<in Any>, val collection: MutableCollection<String>, prefix : String){
+fun test(result: MutableList<in Any>, collection: MutableCollection<String>, prefix : String){
     val c = collection.filterToMy(result, {it.startsWith(prefix)})
     c: MutableCollection<out String>
 }

@@ -9,7 +9,7 @@ abstract class Item(val room: <warning>Object</warning>) {
 val items: ArrayList<Item> = ArrayList<Item>()
 
 fun test(room : <warning>Object</warning>) {
-  for(val item: Item in items) {
+  for(item: Item in items) {
     if (item.room === room) {
       System.out.println("You see " + item.name)
     }

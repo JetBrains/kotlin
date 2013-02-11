@@ -38,7 +38,9 @@ class D() {
 
 fun foo(): Unit {}
 
-fun cannotBe(var <!UNUSED_PARAMETER!>i<!>: Int) {
+fun cannotBe() {
+    var <!UNUSED_VARIABLE!>i<!>: Int = 5
+
     <!UNRESOLVED_REFERENCE!>z<!> = 30;
     <!VARIABLE_EXPECTED!>""<!> = "";
     <!VARIABLE_EXPECTED!>foo()<!> = Unit.VALUE;
@@ -49,7 +51,8 @@ fun cannotBe(var <!UNUSED_PARAMETER!>i<!>: Int) {
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
 
-fun canBe(var i: Int, val j: Int) {
+fun canBe(i0: Int, j: Int) {
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = i0
     (i: Int) = <!UNUSED_VALUE!>36<!>
     (@label i) = <!UNUSED_VALUE!>34<!>
 
@@ -60,7 +63,7 @@ fun canBe(var i: Int, val j: Int) {
     (@ a.a) = 3894
 }
 
-fun canBe2(val j: Int) {
+fun canBe2(j: Int) {
     (@label <!VAL_REASSIGNMENT!>j<!>) = <!UNUSED_VALUE!>34<!>
 }
 

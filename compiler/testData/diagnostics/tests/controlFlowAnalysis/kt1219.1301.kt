@@ -2,7 +2,8 @@
 
 package kt1219
 
-fun <T, R> Iterable<T>.fold(var r: R, op: (T, R) -> R) : R {
+fun <T, R> Iterable<T>.fold(a: R, op: (T, R) -> R) : R {
+    var r = a
     this.foreach { r = op(it, r) } //unused value here
     return r
 }

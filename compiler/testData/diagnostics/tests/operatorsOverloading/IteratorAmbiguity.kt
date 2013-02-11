@@ -22,6 +22,6 @@ class MyElement
 
 fun test1(collection: MyCollection) {
     collection.<!OVERLOAD_RESOLUTION_AMBIGUITY!>iterator()<!>
-    for (val element in <!ITERATOR_AMBIGUITY!>collection<!>) {
+    for (element in <!ITERATOR_AMBIGUITY!>collection<!>) {
     }
 }

@@ -210,7 +210,8 @@ fun f(): String {
     return ""
 }
 
-fun foo(var a: Any): Int {
+fun foo(aa: Any): Int {
+    var a = aa
     if (a is Int) {
         return <!AUTOCAST_IMPOSSIBLE!>a<!>
     }

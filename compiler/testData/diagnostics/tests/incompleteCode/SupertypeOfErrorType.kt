@@ -15,7 +15,7 @@ fun foo() {
     }
 }
 
-fun bar(val i: Int, val a: <!UNRESOLVED_REFERENCE!>U<!>) {
+fun bar(i: Int, a: <!UNRESOLVED_REFERENCE!>U<!>) {
     val r = if (true) i else <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
     val <!UNUSED_VARIABLE!>b<!>: Any = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>r<!>
 }

@@ -126,7 +126,8 @@ fun t8() : Boolean {
     return x == 30.toShort()
 }
 
-fun t9(var x: Int) : Boolean {
+fun t9(x0: Int) : Boolean {
+    var x = x0
     while(x < 100) {
        x++
     }
@@ -145,7 +146,8 @@ fun t10() : Boolean {
     return y == 2
 }
 
-fun t11(var x: Int) : Int {
+fun t11(x0: Int) : Int {
+    var x = x0
     val foo = {
         x = x + 1
         val bar = {

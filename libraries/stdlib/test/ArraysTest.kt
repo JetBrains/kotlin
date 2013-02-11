@@ -3,7 +3,7 @@ package test.arrays
 import kotlin.test.*
 import org.junit.Test as test
 
-fun <T> checkContent(val iter : Iterator<T>, val length : Int, val value : (Int) -> T) {
+fun <T> checkContent(iter : Iterator<T>, length : Int, value : (Int) -> T) {
     var idx = 0
     while (idx != length && iter.hasNext()) {
         assertEquals(value(idx++), iter.next(), "Invalid element")

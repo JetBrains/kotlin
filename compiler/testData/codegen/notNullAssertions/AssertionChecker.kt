@@ -23,7 +23,7 @@ class Delegated : Tr by Derived() {
 }
 
 
-fun checkAssertions(val illegalStateExpected: Boolean) {
+fun checkAssertions(illegalStateExpected: Boolean) {
     val check = AssertionChecker(illegalStateExpected)
     
     // simple call

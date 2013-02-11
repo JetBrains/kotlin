@@ -82,7 +82,7 @@ public fun StringTemplate.toHtml(formatter : HtmlFormatter = HtmlFormatter()) : 
  * to escape particular characters in different output formats such as [[HtmlFormatter]
  */
 public trait Formatter {
-    public fun format(buffer : Appendable, val value : Any?) : Unit
+    public fun format(buffer : Appendable, value : Any?) : Unit
 }
 
 /**
