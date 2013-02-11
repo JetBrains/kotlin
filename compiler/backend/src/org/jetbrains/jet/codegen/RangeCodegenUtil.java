@@ -42,9 +42,8 @@ public class RangeCodegenUtil {
 
     private RangeCodegenUtil() {}
 
-    public static boolean isIntRange(JetType rangeType) {
-        return !rangeType.isNullable()
-               && KotlinBuiltIns.getInstance().getIntType().equals(getPrimitiveRangeElementType(rangeType));
+    public static boolean isRange(JetType rangeType) {
+        return !rangeType.isNullable() && getPrimitiveRangeElementType(rangeType) != null;
     }
 
     @Nullable

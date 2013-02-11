@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -478,9 +479,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.none();
         }
         else {
-            // todo: Only IntRange optimized so far
-            if (RangeCodegenUtil.isIntRange(loopRangeType)) {
-                generateForLoop(new ForInIntRangeInstanceLoopGenerator(forExpression));
+            if (RangeCodegenUtil.isRange(loopRangeType)) {
+                generateForLoop(new ForInRangeInstanceLoopGenerator(forExpression));
                 return StackValue.none();
             }
 
@@ -909,49 +909,30 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private class ForInIntRangeInstanceLoopGenerator extends AbstractForLoopGenerator {
-        private int endVar;
-
-        private ForInIntRangeInstanceLoopGenerator(
-                @NotNull JetForExpression forExpression
-        ) {
+    private class ForInRangeInstanceLoopGenerator extends AbstractForInRangeLoopGenerator {
+        private ForInRangeInstanceLoopGenerator(@NotNull JetForExpression forExpression) {
             super(forExpression);
         }
 
         @Override
-        public void beforeLoop() {
-            super.beforeLoop();
-
+        protected void storeRangeStartAndEnd() {
             JetType loopRangeType = bindingContext.get(EXPRESSION_TYPE, forExpression.getLoopRange());
             assert loopRangeType != null;
             Type asmLoopRangeType = asmType(loopRangeType);
             gen(forExpression.getLoopRange(), asmLoopRangeType);
             v.dup();
 
-            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getStart", "()Ljava/lang/Integer;");
-            StackValue.coerce(Type.getType("Ljava/lang/Integer;"), Type.INT_TYPE, v);
-            v.store(loopParameterVar, Type.INT_TYPE);
+            JvmPrimitiveType primitiveType = JvmPrimitiveType.getByAsmType(asmElementType);
+            assert primitiveType != null : asmElementType;
+            Type asmWrapperType = primitiveType.getWrapper().getAsmType();
 
-            endVar = createLoopTempVariable(Type.INT_TYPE);
-            v.invokevirtual(JET_INT_RANGE_TYPE.getInternalName(), "getEnd", "()Ljava/lang/Integer;");
-            StackValue.coerce(Type.getType("Ljava/lang/Integer;"), Type.INT_TYPE, v);
-            v.store(endVar, Type.INT_TYPE);
-        }
+            v.invokevirtual(asmLoopRangeType.getInternalName(), "getStart", "()" + asmWrapperType.getDescriptor());
+            StackValue.coerce(asmWrapperType, asmElementType, v);
+            v.store(loopParameterVar, asmElementType);
 
-        @Override
-        public void conditionAndJump(@NotNull Label loopExit) {
-            v.load(loopParameterVar, Type.INT_TYPE);
-            v.load(endVar, Type.INT_TYPE);
-            v.ificmpgt(loopExit);
-        }
-
-        @Override
-        protected void assignToLoopParameter() {
-        }
-
-        @Override
-        protected void increment() {
-            v.iinc(loopParameterVar, 1);
+            v.invokevirtual(asmLoopRangeType.getInternalName(), "getEnd", "()" + asmWrapperType.getDescriptor());
+            StackValue.coerce(asmWrapperType, asmElementType, v);
+            v.store(endVar, asmElementType);
         }
     }
 
