@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.MemoizationMode.WEAK;
+import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.ReferenceKind.WEAK;
 
 public class ScopeProvider {
     private final ResolveSession resolveSession;

@@ -45,7 +45,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDes
                     public NamespaceDescriptor fun(Name name) {
                         return createPackageDescriptor(name);
                     }
-                }, StorageManager.MemoizationMode.STRONG);
+                }, StorageManager.ReferenceKind.STRONG);
     }
 
     @Override

@@ -26,12 +26,15 @@ public interface StorageManager {
     /**
      * Given a function compute: K -> V create a memoized version of it that computes a value only once for each key
      * @param compute the function to be memoized
-     * @param modeForValues how to store teh memoized values
+     * @param valuesReferenceKind how to store teh memoized values
+     *
+     * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
+     *       the value gets collected and then re-computed
      */
     @NotNull
-    <K, V> Function<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues);
+    <K, V> Function<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
     @NotNull
-    <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues);
+    <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
 
     @NotNull
     <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable);
@@ -56,7 +59,7 @@ public interface StorageManager {
     @NotNull
     BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);
 
-    enum MemoizationMode {
+    enum ReferenceKind {
         STRONG,
         WEAK
     }

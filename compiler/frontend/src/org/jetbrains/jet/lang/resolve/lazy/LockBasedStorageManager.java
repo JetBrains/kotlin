@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.MemoizationMode.WEAK;
+import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.ReferenceKind.WEAK;
 
 public class LockBasedStorageManager implements StorageManager {
 
@@ -45,9 +45,9 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final MemoizationMode modeForValues) {
+    public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind) {
         return new Function<K, V>() {
-            private final ConcurrentMap<K, V> cache = createConcurrentMap(modeForValues);
+            private final ConcurrentMap<K, V> cache = createConcurrentMap(valuesReferenceKind);
 
             @Override
             public V fun(@NotNull final K input) {
@@ -72,10 +72,10 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(
-            @NotNull final Function<K, V> compute, @NotNull final MemoizationMode modeForValues
+            @NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind
     ) {
         return new Function<K, V>() {
-            private final ConcurrentMap<K, LazyValue<V>> cache = createConcurrentMap(modeForValues);
+            private final ConcurrentMap<K, LazyValue<V>> cache = createConcurrentMap(valuesReferenceKind);
 
             @Override
             public V fun(@NotNull final K input) {
@@ -97,8 +97,8 @@ public class LockBasedStorageManager implements StorageManager {
         };
     }
 
-    private static <K, V> ConcurrentMap<K, V> createConcurrentMap(MemoizationMode mode) {
-        return (mode == WEAK) ? new ConcurrentWeakValueHashMap<K, V>() : new ConcurrentHashMap<K, V>();
+    private static <K, V> ConcurrentMap<K, V> createConcurrentMap(ReferenceKind referenceKind) {
+        return (referenceKind == WEAK) ? new ConcurrentWeakValueHashMap<K, V>() : new ConcurrentHashMap<K, V>();
     }
 
     @NotNull

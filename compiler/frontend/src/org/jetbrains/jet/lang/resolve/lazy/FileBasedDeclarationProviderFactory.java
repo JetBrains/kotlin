@@ -70,7 +70,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             public PackageMemberDeclarationProvider fun(FqName fqName) {
                 return createPackageMemberDeclarationProvider(fqName);
             }
-        }, StorageManager.MemoizationMode.STRONG);
+        }, StorageManager.ReferenceKind.STRONG);
     }
 
     @NotNull

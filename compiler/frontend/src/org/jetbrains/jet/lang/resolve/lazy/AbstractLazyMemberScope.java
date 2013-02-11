@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
-import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.MemoizationMode.STRONG;
+import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.ReferenceKind.STRONG;
 
 public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> implements JetScope {
     protected final ResolveSession resolveSession;
