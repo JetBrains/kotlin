@@ -474,6 +474,7 @@ public interface Errors {
     DiagnosticFactory3<JetExpression, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_SETTER = DiagnosticFactory3.create(ERROR);
 
     DiagnosticFactory1<PsiElement, JetKeywordToken> VAL_OR_VAR_ON_LOOP_PARAMETER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, JetKeywordToken> VAL_OR_VAR_ON_FUN_PARAMETER = DiagnosticFactory1.create(ERROR);
 
     // Backing fields
 

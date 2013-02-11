@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValue;
 import org.jetbrains.jet.util.lazy.RecursionIntolerantLazyValueWithDefault;
@@ -440,7 +441,7 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        for (int i = 0, valueParametersSize = valueParameters.size(); i < valueParametersSize; i++) {
+        for (int i = 0; i < valueParameters.size(); i++) {
             JetParameter valueParameter = valueParameters.get(i);
             JetTypeReference typeReference = valueParameter.getTypeReference();
 
@@ -451,6 +452,13 @@ public class DescriptorResolver {
             }
             else {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true);
+            }
+
+            if (!(functionDescriptor instanceof ConstructorDescriptor)) {
+                ASTNode valOrVarNode = valueParameter.getValOrVarNode();
+                if (valOrVarNode != null) {
+                    trace.report(VAL_OR_VAR_ON_FUN_PARAMETER.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
+                }
             }
 
             ValueParameterDescriptor valueParameterDescriptor =
@@ -477,7 +485,7 @@ public class DescriptorResolver {
                 index,
                 annotationResolver.resolveAnnotations(scope, valueParameter.getModifierList(), trace),
                 JetPsiUtil.safeName(valueParameter.getName()),
-                valueParameter.isMutable(),
+                false,
                 variableType,
                 valueParameter.getDefaultValue() != null,
                 varargElementType

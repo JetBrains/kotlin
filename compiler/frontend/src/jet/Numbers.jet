@@ -87,7 +87,7 @@ public class Double : Number, Comparable<Double>  {
   public override fun toByte() : Byte
 
   public override fun hashCode() : Int
-  public override fun equals(val other : Any?) : Boolean
+  public override fun equals(other : Any?) : Boolean
 }
 
 public class Float : Number, Comparable<Float>  {
@@ -161,7 +161,7 @@ public class Float : Number, Comparable<Float>  {
   public override fun toByte() : Byte
 
   public override fun hashCode() : Int
-  public override fun equals(val other : Any?) : Boolean
+  public override fun equals(other : Any?) : Boolean
 }
 
 public class Long : Number, Comparable<Long> {
@@ -243,7 +243,7 @@ public class Long : Number, Comparable<Long> {
   public override fun toByte() : Byte
 
   public override fun hashCode() : Int
-  public override fun equals(val other : Any?) : Boolean
+  public override fun equals(other : Any?) : Boolean
 }
 
 public class Int : Number, Comparable<Int> {
@@ -325,7 +325,7 @@ public class Int : Number, Comparable<Int> {
   public override fun toByte() : Byte
 
   public override fun hashCode() : Int
-  public override fun equals(val other : Any?) : Boolean
+  public override fun equals(other : Any?) : Boolean
 }
 
 public class Char : Number, Comparable<Char> {
@@ -393,7 +393,7 @@ public class Char : Number, Comparable<Char> {
   public override fun toByte() : Byte
 
   public override fun hashCode() : Int
-  public override fun equals(val other : Any?) : Boolean
+  public override fun equals(other : Any?) : Boolean
 }
 
 public class Short : Number, Comparable<Short> {
@@ -467,7 +467,7 @@ public class Short : Number, Comparable<Short> {
   public override fun toByte() : Byte
 
   public override fun hashCode() : Int
-  public override fun equals(val other : Any?) : Boolean
+  public override fun equals(other : Any?) : Boolean
 }
 
 public class Byte : Number, Comparable<Byte> {
@@ -541,5 +541,5 @@ public class Byte : Number, Comparable<Byte> {
   public override fun toByte() : Byte
 
   public override fun hashCode() : Int
-  public override fun equals(val other : Any?) : Boolean
+  public override fun equals(other : Any?) : Boolean
 }

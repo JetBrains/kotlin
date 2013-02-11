@@ -1543,6 +1543,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDecl.kt");
             }
             
+            @TestMetadata("valVarFunctionParameter.kt")
+            public void testValVarFunctionParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/valVarFunctionParameter.kt");
+            }
+            
             @TestMetadata("VarianceOnFunctionAndPropertyTypeParameters.kt")
             public void testVarianceOnFunctionAndPropertyTypeParameters() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/VarianceOnFunctionAndPropertyTypeParameters.kt");
