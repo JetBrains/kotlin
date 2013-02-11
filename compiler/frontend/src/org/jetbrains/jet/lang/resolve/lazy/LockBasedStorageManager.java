@@ -44,38 +44,49 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final MemoizationMode mode) {
-        return createMemoizedFunction(compute, mode, false);
+    public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final MemoizationMode modeForValues) {
+        return new Function<K, V>() {
+            private final ConcurrentMap<K, V> cache = createConcurrentMap(modeForValues);
+
+            @Override
+            public V fun(@NotNull final K input) {
+                V value = cache.get(input);
+                if (value != null) return value;
+
+                synchronized (lock) {
+                    value = cache.get(input);
+                    if (value != null) return value;
+
+                    value = compute.fun(input);
+
+                    V oldValue = cache.put(input, value);
+                    assert oldValue == null : "Race condition detected";
+                }
+
+                return value;
+            }
+        };
     }
 
     @NotNull
     @Override
     public <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(
-            @NotNull Function<K, V> compute, @NotNull MemoizationMode modeForValues
+            @NotNull final Function<K, V> compute, @NotNull final MemoizationMode modeForValues
     ) {
-        return createMemoizedFunction(compute, modeForValues, true);
-    }
-
-    @NotNull
-    private <K, V> Function<K, V> createMemoizedFunction(final Function<K, V> compute, final MemoizationMode mode, final boolean nullable) {
         return new Function<K, V>() {
-            private final ConcurrentMap<K, LazyValue<V>> cache;
-            {
-                cache = (mode == WEAK) ? new ConcurrentWeakValueHashMap<K, LazyValue<V>>() : new ConcurrentHashMap<K, LazyValue<V>>();
-            }
+            private final ConcurrentMap<K, LazyValue<V>> cache = createConcurrentMap(modeForValues);
 
             @Override
             public V fun(@NotNull final K input) {
                 LazyValue<V> lazyValue = cache.get(input);
                 if (lazyValue != null) return lazyValue.get();
 
-                Computable<V> computable = new Computable<V>() {
+                lazyValue = createNullableLazyValue(new Computable<V>() {
                     @Override
                     public V compute() {
                         return compute.fun(input);
                     }
-                };
-                lazyValue = nullable ? createNullableLazyValue(computable) : createLazyValue(computable);
+                });
 
                 LazyValue<V> oldValue = cache.putIfAbsent(input, lazyValue);
                 if (oldValue != null) return oldValue.get();
@@ -83,6 +94,10 @@ public class LockBasedStorageManager implements StorageManager {
                 return lazyValue.get();
             }
         };
+    }
+
+    private static <K, V> ConcurrentMap<K, V> createConcurrentMap(MemoizationMode mode) {
+        return (mode == WEAK) ? new ConcurrentWeakValueHashMap<K, V>() : new ConcurrentHashMap<K, V>();
     }
 
     @NotNull
