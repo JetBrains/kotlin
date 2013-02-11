@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.openapi.util.Computable;
+import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -35,8 +36,22 @@ public interface StorageManager {
     @NotNull
     <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable);
 
+    /**
+     * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
+     * see it in between)
+     */
+    @NotNull
+    <T> LazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
+
     @NotNull
     <T> LazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable);
+
+    /**
+     * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
+     * see it in between)
+     */
+    @NotNull
+    <T> LazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
 
     @NotNull
     BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);

@@ -243,6 +243,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest("idea/testData/checker/TraitSupertypeList.kt");
         }
         
+        @TestMetadata("trivialHierarchyLoop.kt")
+        public void testTrivialHierarchyLoop() throws Exception {
+            doTest("idea/testData/checker/trivialHierarchyLoop.kt");
+        }
+        
         @TestMetadata("UnreachableCode.kt")
         public void testUnreachableCode() throws Exception {
             doTest("idea/testData/checker/UnreachableCode.kt");

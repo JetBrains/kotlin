@@ -22,6 +22,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -389,30 +390,36 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     private class LazyClassTypeConstructor implements LazyDescriptor, TypeConstructor {
-        private final LazyValue<Collection<JetType>> supertypes = resolveSession.getStorageManager().createLazyValue(new Computable<Collection<JetType>>() {
-            @Override
-            public Collection<JetType> compute() {
-                if (resolveSession.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
-                    return Collections.emptyList();
-                }
-                else {
-                    JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-                    if (classOrObject == null) {
-                        return Collections.emptyList();
-                    }
-                    else {
-                        List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
-                                .resolveSupertypes(getScopeForClassHeaderResolution(),
-                                                   LazyClassDescriptor.this, classOrObject,
-                                                   resolveSession.getTrace());
-                        List<JetType> validSupertypes = Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
+        private final LazyValue<Collection<JetType>> supertypes = resolveSession.getStorageManager().createLazyValueWithPostCompute(
+                new Computable<Collection<JetType>>() {
+                    @Override
+                    public Collection<JetType> compute() {
+                        if (resolveSession.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
+                            return Collections.emptyList();
+                        }
+                        else {
+                            JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+                            if (classOrObject == null) {
+                                return Collections.emptyList();
+                            }
+                            else {
+                                List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
+                                        .resolveSupertypes(getScopeForClassHeaderResolution(),
+                                                           LazyClassDescriptor.this, classOrObject,
+                                                           resolveSession.getTrace());
 
-                        findAndDisconnectLoopsInTypeHierarchy(validSupertypes);
-                        return validSupertypes;
+                                return Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
+                            }
+                        }
                     }
-                }
-            }
-        });
+                },
+                new Consumer<Collection<JetType>>() {
+                    @Override
+                    public void consume(@NotNull Collection<JetType> supertypes) {
+                        findAndDisconnectLoopsInTypeHierarchy(supertypes);
+                    }
+                });
+
         private final LazyValue<List<TypeParameterDescriptor>> parameters = resolveSession.getStorageManager().createLazyValue(new Computable<List<TypeParameterDescriptor>>() {
             @Override
             public List<TypeParameterDescriptor> compute() {
@@ -440,7 +447,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             return supertypes.get();
         }
 
-        private void findAndDisconnectLoopsInTypeHierarchy(List<JetType> supertypes) {
+        private void findAndDisconnectLoopsInTypeHierarchy(Collection<JetType> supertypes) {
             for (Iterator<JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
                 JetType supertype = iterator.next();
                 if (isReachable(supertype.getConstructor(), this, new HashSet<TypeConstructor>())) {

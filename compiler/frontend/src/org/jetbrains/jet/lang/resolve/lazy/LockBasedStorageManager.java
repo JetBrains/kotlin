@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.intellij.openapi.util.Computable;
+import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -108,8 +109,33 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
+    public <T> LazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute) {
+        return new LockBasedLazyValue<T>(lock, computable) {
+            @Override
+            protected void postCompute(@NotNull T value) {
+                postCompute.consume(value);
+            }
+        };
+    }
+
+    @NotNull
+    @Override
     public <T> LazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable) {
         return new LockBasedNullableLazyValue<T>(lock, computable);
+    }
+
+    @NotNull
+    @Override
+    public <T> LazyValue<T> createNullableLazyValueWithPostCompute(
+            @NotNull Computable<T> computable,
+            @NotNull final Consumer<T> postCompute
+    ) {
+        return new LockBasedNullableLazyValue<T>(lock, computable) {
+            @Override
+            protected void postCompute(@Nullable T value) {
+                postCompute.consume(value);
+            }
+        };
     }
 
     @NotNull
@@ -145,9 +171,14 @@ public class LockBasedStorageManager implements StorageManager {
                 if (_value == null) {
                     _value = computable.compute();
                     value = _value;
+                    postCompute(_value);
                 }
                 return _value;
             }
+        }
+
+        protected void postCompute(@NotNull T value) {
+            // Doing something in post-compute helps prevent infinite recursion
         }
     }
 
@@ -183,10 +214,16 @@ public class LockBasedStorageManager implements StorageManager {
                     value = _value;
                     computed = true;
 
+                    postCompute(_value);
+
                     return _value;
                 }
                 return value;
             }
+        }
+
+        protected void postCompute(@Nullable T value) {
+            // Doing something in post-compute helps prevent infinite recursion
         }
     }
 
