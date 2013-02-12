@@ -46,28 +46,8 @@ public class LockBasedStorageManager implements StorageManager {
     public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
             @NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind
     ) {
-        return new MemoizedFunctionToNotNull<K, V>() {
-            private final ConcurrentMap<K, V> cache = createConcurrentMap(valuesReferenceKind);
-
-            @NotNull
-            @Override
-            public V fun(@NotNull final K input) {
-                V value = cache.get(input);
-                if (value != null) return value;
-
-                synchronized (lock) {
-                    value = cache.get(input);
-                    if (value != null) return value;
-
-                    value = compute.fun(input);
-
-                    V oldValue = cache.put(input, value);
-                    assert oldValue == null : "Race condition detected";
-                }
-
-                return value;
-            }
-        };
+        ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
+        return new MapBasedMemoizedFunctionToNotNull<K, V>(lock, map, compute);
     }
 
     @NotNull
@@ -75,28 +55,8 @@ public class LockBasedStorageManager implements StorageManager {
     public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
             @NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind
     ) {
-        return new MemoizedFunctionToNullable<K, V>() {
-            private final ConcurrentMap<K, NullableLazyValue<V>> cache = createConcurrentMap(valuesReferenceKind);
-
-            @Override
-            @Nullable
-            public V fun(@NotNull final K input) {
-                NullableLazyValue<V> lazyValue = cache.get(input);
-                if (lazyValue != null) return lazyValue.compute();
-
-                lazyValue = createNullableLazyValue(new Computable<V>() {
-                    @Override
-                    public V compute() {
-                        return compute.fun(input);
-                    }
-                });
-
-                NullableLazyValue<V> oldValue = cache.putIfAbsent(input, lazyValue);
-                if (oldValue != null) return oldValue.compute();
-
-                return lazyValue.compute();
-            }
-        };
+        ConcurrentMap<K, Object> map = createConcurrentMap(valuesReferenceKind);
+        return new MapBasedMemoizedFunction<K, V>(lock, map, compute);
     }
 
     private static <K, V> ConcurrentMap<K, V> createConcurrentMap(ReferenceKind referenceKind) {
@@ -123,7 +83,7 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable) {
-        return new LockBasedNullableLazyValue<T>(lock, computable);
+        return new LockBasedLazyValue<T>(lock, computable);
     }
 
     @NotNull
@@ -131,7 +91,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
             @NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute
     ) {
-        return new LockBasedNullableLazyValue<T>(lock, computable) {
+        return new LockBasedLazyValue<T>(lock, computable) {
             @Override
             protected void postCompute(@Nullable T value) {
                 postCompute.consume(value);
@@ -147,84 +107,120 @@ public class LockBasedStorageManager implements StorageManager {
         return new LockProtectedTrace(lock, originalTrace);
     }
 
-    private static class LockBasedNotNullLazyValue<T> implements NotNullLazyValue<T> {
+    private static class Nulls {
+        private static final Object NULL_VALUE = new Object();
+    
+        @Nullable
+        @SuppressWarnings("unchecked")
+        private static <V> V unescape(@NotNull Object value) {
+            if (value == NULL_VALUE) return null;
+            return (V) value;
+        }
+    
+        @NotNull
+        private static <V> Object escape(@Nullable V value) {
+            if (value == null) return NULL_VALUE;
+            return value;
+        }
+    }
+
+    private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
         private final Object lock;
         private final Computable<T> computable;
 
         @Nullable
-        private volatile T value;
+        private volatile Object value = null;
 
-        public LockBasedNotNullLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+        public LockBasedLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
             this.lock = lock;
             this.computable = computable;
         }
 
-        @NotNull
         @Override
         public T compute() {
-            T _value = value;
-            if (_value != null) {
-                return _value;
-            }
+            Object _value = value;
+            if (_value != null) return Nulls.unescape(_value);
 
             synchronized (lock) {
                 _value = value;
-                if (_value == null) {
-                    _value = computable.compute();
-                    value = _value;
-                    postCompute(_value);
-                }
-                return _value;
+                if (_value != null) return Nulls.unescape(_value);
+
+                T typedValue = computable.compute();
+                value = Nulls.escape(typedValue);
+
+                postCompute(typedValue);
+
+                return typedValue;
             }
         }
 
-        protected void postCompute(@NotNull T value) {
+        protected void postCompute(T value) {
             // Doing something in post-compute helps prevent infinite recursion
         }
     }
 
-    private static class LockBasedNullableLazyValue<T> implements NullableLazyValue<T> {
+    private static class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
+
+        public LockBasedNotNullLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+            super(lock, computable);
+        }
+
+        @Override
+        @NotNull
+        public T compute() {
+            T result = super.compute();
+            assert result != null : "compute() returned null";
+            return result;
+        }
+    }
+
+    private static class MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNullable<K, V> {
         private final Object lock;
-        private final Computable<T> computable;
+        private final ConcurrentMap<K, Object> cache;
+        private final Function<K, V> compute;
 
-        private volatile boolean computed = false;
-        @Nullable
-        private volatile T value = null;
-
-        public LockBasedNullableLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+        public MapBasedMemoizedFunction(@NotNull Object lock, @NotNull ConcurrentMap<K, Object> map, @NotNull Function<K, V> compute) {
             this.lock = lock;
-            this.computable = computable;
+            this.cache = map;
+            this.compute = compute;
         }
 
         @Override
         @Nullable
-        public T compute() {
-            // NOTE: no local variables used here, because they would not reduce the number of volatile reads/writes
-
-            // We want to guarantee that whenever computed = true, value is not null
-            // First, read computed, then read value
-            if (computed) {
-                return value;
-            }
+        public V fun(@NotNull final K input) {
+            Object value = cache.get(input);
+            if (value != null) return Nulls.unescape(value);
 
             synchronized (lock) {
-                if (!computed) {
-                    T _value = computable.compute();
+                value = cache.get(input);
+                if (value != null) return Nulls.unescape(value);
 
-                    // First write value, then write computed
-                    value = _value;
-                    computed = true;
+                V typedValue = compute.fun(input);
 
-                    postCompute(_value);
+                Object oldValue = cache.put(input, Nulls.escape(typedValue));
+                assert oldValue == null : "Race condition detected";
 
-                    return _value;
-                }
-                return value;
+                return typedValue;
             }
         }
+    }
 
-        protected void postCompute(@Nullable T value) {
-            // Doing something in post-compute helps prevent infinite recursion
+    private static class MapBasedMemoizedFunctionToNotNull<K, V> extends MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNotNull<K, V> {
+
+        public MapBasedMemoizedFunctionToNotNull(
+                @NotNull Object lock,
+                @NotNull ConcurrentMap<K, Object> map,
+                @NotNull Function<K, V> compute
+        ) {
+            super(lock, map, compute);
+        }
+
+        @NotNull
+        @Override
+        public V fun(@NotNull K input) {
+            V result = super.fun(input);
+            assert result != null : "compute() returned null";
+            return result;
         }
     }
 
@@ -281,4 +277,5 @@ public class LockBasedStorageManager implements StorageManager {
             }
         }
     }
+
 }
