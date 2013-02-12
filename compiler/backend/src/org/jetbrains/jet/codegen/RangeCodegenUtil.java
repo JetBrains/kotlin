@@ -89,24 +89,26 @@ public class RangeCodegenUtil {
 
     @Nullable
     private static PrimitiveType getPrimitiveRangeElementType(JetType rangeType) {
-        ClassifierDescriptor declarationDescriptor = rangeType.getConstructor().getDeclarationDescriptor();
-        assert declarationDescriptor != null;
-        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(declarationDescriptor.getName())) {
-            // Must be a standard library class
-            return null;
-        }
-        return RANGE_TO_ELEMENT_TYPE.get(DescriptorUtils.getFQName(declarationDescriptor).toSafe());
+        return getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE);
     }
 
     @Nullable
     private static PrimitiveType getPrimitiveProgressionElementType(JetType rangeType) {
-        ClassifierDescriptor declarationDescriptor = rangeType.getConstructor().getDeclarationDescriptor();
+        return getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE);
+    }
+
+    @Nullable
+    private static PrimitiveType getPrimitiveRangeOrProgressionElementType(
+            @NotNull JetType rangeOrProgression,
+            @NotNull ImmutableMap<FqName, PrimitiveType> map
+    ) {
+        ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();
         assert declarationDescriptor != null;
         if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(declarationDescriptor.getName())) {
             // Must be a standard library class
             return null;
         }
-        return PROGRESSION_TO_ELEMENT_TYPE.get(DescriptorUtils.getFQName(declarationDescriptor).toSafe());
+        return map.get(DescriptorUtils.getFQName(declarationDescriptor).toSafe());
     }
 
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {
