@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
 
     private static final Surrounder[] SURROUNDERS = {
-
+            new KotlinNotSurrounder()
     };
 
     @NotNull

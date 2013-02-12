@@ -17,20 +17,27 @@
 package org.jetbrains.jet.plugin.codeInsight.surroundWith;
 
 import com.intellij.codeInsight.generation.surroundWith.SurroundWithHandler;
+import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase {
 
     public void doTestWithIfSurrounder(String path) throws Exception {
-        configureByFile(path);
-        SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), new KotlinIfSurrounder());
-        checkResultByFile(path + ".after");
+        doTest(path, new KotlinIfSurrounder());
     }
 
     public void doTestWithIfElseSurrounder(String path) throws Exception {
+        doTest(path, new KotlinIfElseSurrounder());
+    }
+
+    public void doTestWithNotSurrounder(String path) throws Exception {
+        doTest(path, new KotlinNotSurrounder());
+    }
+
+    private void doTest(String path, Surrounder surrounder) throws Exception{
         configureByFile(path);
-        SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), new KotlinIfElseSurrounder());
+        SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), surrounder);
         checkResultByFile(path + ".after");
     }
 

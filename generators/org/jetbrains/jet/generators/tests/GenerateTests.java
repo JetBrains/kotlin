@@ -236,6 +236,13 @@ public class GenerateTests {
                 AbstractSurroundWithTest.class,
                 testModel("idea/testData/codeInsight/surroundWith/ifElse", "doTestWithIfElseSurrounder")
         );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithNotTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/not", "doTestWithNotSurrounder")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
