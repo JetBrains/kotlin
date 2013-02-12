@@ -112,7 +112,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public Set<JetType> getUpperBounds() {
-        return upperBounds.get();
+        return upperBounds.compute();
     }
 
     @NotNull
@@ -166,7 +166,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public JetType getUpperBoundsAsType() {
-        return upperBoundsAsType.get();
+        return upperBoundsAsType.compute();
     }
 
     @NotNull
@@ -195,7 +195,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public TypeConstructor getTypeConstructor() {
-        return typeConstructor.get();
+        return typeConstructor.compute();
     }
 
     @NotNull
@@ -238,7 +238,7 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     @NotNull
     @Override
     public JetType getDefaultType() {
-        return defaultType.get();
+        return defaultType.compute();
     }
 
     @NotNull

@@ -88,7 +88,7 @@ public class ScopeProvider {
                                 rootPackageDescriptor.getMemberScope(),
                                 packageDescriptor.getMemberScope(),
                                 importsScope,
-                                defaultImportsScope.get());
+                                defaultImportsScope.compute());
     }
 
     private JetScope createScopeWithDefaultImports() {

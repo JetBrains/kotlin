@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.storage;
 
-public interface LazyValue<T> {
-    T get();
+import com.intellij.openapi.util.Computable;
+
+public interface LazyValue<T> extends Computable<T> {
+    @Override
+    T compute();
 }

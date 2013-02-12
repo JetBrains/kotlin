@@ -343,7 +343,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @Nullable
     public ConstructorDescriptor getPrimaryConstructor() {
-        return primaryConstructor.get();
+        return primaryConstructor.compute();
     }
 
     @Nullable

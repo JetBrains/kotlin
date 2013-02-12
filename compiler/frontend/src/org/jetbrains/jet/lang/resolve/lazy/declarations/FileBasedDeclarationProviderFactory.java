@@ -99,7 +99,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     }
 
     /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
-        return index.get().declaredPackages.contains(packageFqName);
+        return index.compute().declaredPackages.contains(packageFqName);
     }
 
     /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
@@ -107,7 +107,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     }
 
     /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
-        return Collections2.filter(index.get().declaredPackages, new Predicate<FqName>() {
+        return Collections2.filter(index.compute().declaredPackages, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
                 return !fqName.isRoot() && fqName.parent().equals(parent);
@@ -129,13 +129,13 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
             return null;
         }
 
-        return new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.get().filesByPackage.get(packageFqName));
+        return new FileBasedPackageMemberDeclarationProvider(storageManager, packageFqName, this, index.compute().filesByPackage.get(packageFqName));
     }
 
     @NotNull
     @Override
     public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
-        if (!index.get().filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
+        if (!index.compute().filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
             throw new IllegalStateException("This factory doesn't know about this class: " + classLikeInfo);
         }
 

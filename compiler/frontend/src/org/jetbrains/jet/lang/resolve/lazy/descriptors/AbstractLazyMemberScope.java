@@ -208,7 +208,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<ClassDescriptor> getObjectDescriptors() {
-        return allDescriptors.get().objects;
+        return allDescriptors.compute().objects;
     }
 
     @Override
@@ -237,7 +237,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        return allDescriptors.get().all;
+        return allDescriptors.compute().all;
     }
 
     @NotNull

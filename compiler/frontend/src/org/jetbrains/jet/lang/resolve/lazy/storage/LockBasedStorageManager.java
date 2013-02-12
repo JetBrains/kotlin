@@ -78,7 +78,7 @@ public class LockBasedStorageManager implements StorageManager {
             @Override
             public V fun(@NotNull final K input) {
                 LazyValue<V> lazyValue = cache.get(input);
-                if (lazyValue != null) return lazyValue.get();
+                if (lazyValue != null) return lazyValue.compute();
 
                 lazyValue = createNullableLazyValue(new Computable<V>() {
                     @Override
@@ -88,9 +88,9 @@ public class LockBasedStorageManager implements StorageManager {
                 });
 
                 LazyValue<V> oldValue = cache.putIfAbsent(input, lazyValue);
-                if (oldValue != null) return oldValue.get();
+                if (oldValue != null) return oldValue.compute();
 
-                return lazyValue.get();
+                return lazyValue.compute();
             }
         };
     }
@@ -158,7 +158,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         @NotNull
         @Override
-        public T get() {
+        public T compute() {
             T _value = value;
             if (_value != null) {
                 return _value;
@@ -195,7 +195,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         @Override
         @Nullable
-        public T get() {
+        public T compute() {
             // NOTE: no local variables used here, because they would not reduce the number of volatile reads/writes
 
             // We want to guarantee that whenever computed = true, value is not null
