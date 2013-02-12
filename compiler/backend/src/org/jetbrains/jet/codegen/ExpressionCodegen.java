@@ -528,8 +528,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected final JetForExpression forExpression;
         private final Label bodyStart = new Label();
         private final Label bodyEnd = new Label();
-        private final List<Runnable> afterBodyLeaveVariableTasks = Lists.newArrayList();
-        private final List<Runnable> afterLoopLeaveVariableTasks = Lists.newArrayList();
+        private final List<Runnable> leaveVariableTasks = Lists.newArrayList();
 
         protected final JetType elementType;
         protected final Type asmElementType;
@@ -560,7 +559,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 final VariableDescriptor parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, loopParameter);
                 @SuppressWarnings("ConstantConditions") final Type asmTypeForParameter = asmType(parameterDescriptor.getType());
                 loopParameterVar = myFrameMap.enter(parameterDescriptor, asmTypeForParameter);
-                runAfterLoop(new Runnable() {
+                scheduleLeaveVariable(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(parameterDescriptor);
@@ -601,7 +600,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 @SuppressWarnings("ConstantConditions") final Type componentAsmType = asmType(componentDescriptor.getReturnType());
                 final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
-                runAfterBody(new Runnable() {
+                scheduleLeaveVariable(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(componentDescriptor);
@@ -631,17 +630,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(forExpression.getBody(), Type.VOID_TYPE);
         }
 
-        private void runAfterBody(Runnable runnable) {
-            afterBodyLeaveVariableTasks.add(runnable);
-        }
-
-        private void runAfterLoop(Runnable runnable) {
-            afterLoopLeaveVariableTasks.add(runnable);
+        private void scheduleLeaveVariable(Runnable runnable) {
+            leaveVariableTasks.add(runnable);
         }
 
         protected int createLoopTempVariable(final Type type) {
             int varIndex = myFrameMap.enterTemp(type);
-            runAfterLoop(new Runnable() {
+            scheduleLeaveVariable(new Runnable() {
                 @Override
                 public void run() {
                     myFrameMap.leaveTemp(type);
@@ -654,14 +649,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             increment();
 
             v.mark(bodyEnd);
-            // e goes out of scope
-            for (Runnable task : Lists.reverse(afterBodyLeaveVariableTasks)) {
-                task.run();
-            }
         }
 
         public void afterLoop() {
-            for (Runnable task : Lists.reverse(afterLoopLeaveVariableTasks)) {
+            for (Runnable task : Lists.reverse(leaveVariableTasks)) {
                 task.run();
             }
         }
