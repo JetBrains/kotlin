@@ -56,7 +56,7 @@ public abstract class AbstractList<E>(): AbstractCollection<E>(), MutableList<E>
 }
 
 library
-public open class ArrayList<E>() : AbstractList<E>() {
+public open class ArrayList<E>(capacity:Int=0) : AbstractList<E>() {
 }
 
 library
@@ -64,7 +64,19 @@ public open class HashSet<E>(): AbstractCollection<E>(), MutableSet<E> {
 }
 
 library
-public open class HashMap<K, V>() : MutableMap<K, V> {
+public trait SortedSet<E> : Set<E> {
+}
+
+library
+public open class TreeSet<E>() : AbstractCollection<E>(), MutableSet<E>, SortedSet<E> {
+}
+
+library
+public open class LinkedHashSet<E>(): AbstractCollection<E>(), MutableSet<E> {
+}
+
+library
+public open class HashMap<K, V>(capacity:Int=0) : MutableMap<K, V> {
     public override fun size() : Int = js.noImpl
     public override fun isEmpty() : Boolean = js.noImpl
     public override fun get(key : Any?) : V? = js.noImpl

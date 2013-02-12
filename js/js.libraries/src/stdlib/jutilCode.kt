@@ -59,12 +59,3 @@ public inline fun <K,V,R> MutableMap<K,V>.mapValues(transform : (Map.Entry<K,V>)
     return mapValuesTo(HashMap<K,R>(), transform)
 }
 
-
-/**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- *
- * @includeFunctionBody ../../test/CollectionTest.kt map
- */
-public inline fun <T, R> Collection<T>.map(transform : (T) -> R) : List<R> {
-    return mapTo(java.util.ArrayList<R>(), transform)
-}
