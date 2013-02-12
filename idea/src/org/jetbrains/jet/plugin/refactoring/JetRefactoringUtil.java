@@ -68,7 +68,7 @@ public class JetRefactoringUtil {
             String text = file.getText();
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionStart))) ++selectionStart;
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionEnd - 1))) --selectionEnd;
-            callback.run(findExpression(editor, file, selectionStart, selectionEnd));
+            callback.run(findExpression(file, selectionStart, selectionEnd));
         }
         else {
             int offset = editor.getCaretModel().getOffset();
@@ -181,8 +181,7 @@ public class JetRefactoringUtil {
     }
 
     @Nullable
-    public static JetExpression findExpression(@NotNull Editor editor, @NotNull PsiFile file,
-                                               int startOffset, int endOffset) throws IntroduceRefactoringException{
+    public static JetExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) throws IntroduceRefactoringException{
         PsiElement element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
         if (element == null || element.getTextRange().getStartOffset() != startOffset ||
             element.getTextRange().getEndOffset() != endOffset) {
