@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
@@ -58,7 +58,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         private final Collection<ClassDescriptor> objects = Sets.newLinkedHashSet();
     }
 
-    private final LazyValue<AllDescriptors> allDescriptors;
+    private final NotNullLazyValue<AllDescriptors> allDescriptors;
 
     protected AbstractLazyMemberScope(
             @NotNull ResolveSession resolveSession,

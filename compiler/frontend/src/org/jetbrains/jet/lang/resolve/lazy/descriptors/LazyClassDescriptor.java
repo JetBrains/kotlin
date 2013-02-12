@@ -32,12 +32,16 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.*;
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -73,16 +77,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final ClassKind kind;
     private final boolean isInner;
 
-    private final LazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
-    private final LazyValue<List<AnnotationDescriptor>> annotations;
-    private final LazyValue<ClassDescriptor> classObjectDescriptor;
+    private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
+    private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
+    private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
     private final JetScope unsubstitutedInnerClassesScope;
 
-    private final LazyValue<JetScope> scopeForClassHeaderResolution;
-    private final LazyValue<JetScope> scopeForMemberDeclarationResolution;
-    private final LazyValue<JetScope> scopeForPropertyInitializerResolution;
+    private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
+    private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
+    private final NotNullLazyValue<JetScope> scopeForPropertyInitializerResolution;
 
 
     public LazyClassDescriptor(
@@ -394,7 +398,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     private class LazyClassTypeConstructor implements LazyDescriptor, TypeConstructor {
-        private final LazyValue<Collection<JetType>> supertypes = resolveSession.getStorageManager().createLazyValueWithPostCompute(
+        private final NotNullLazyValue<Collection<JetType>> supertypes = resolveSession.getStorageManager().createLazyValueWithPostCompute(
                 new Computable<Collection<JetType>>() {
                     @Override
                     public Collection<JetType> compute() {
@@ -424,7 +428,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                     }
                 });
 
-        private final LazyValue<List<TypeParameterDescriptor>> parameters = resolveSession.getStorageManager().createLazyValue(new Computable<List<TypeParameterDescriptor>>() {
+        private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = resolveSession.getStorageManager().createLazyValue(new Computable<List<TypeParameterDescriptor>>() {
             @Override
             public List<TypeParameterDescriptor> compute() {
                 JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();

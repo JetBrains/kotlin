@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -54,10 +54,10 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
     private final LazyClassDescriptor containingDeclaration;
     private final Name name;
 
-    private final LazyValue<TypeConstructor> typeConstructor;
-    private final LazyValue<JetType> defaultType;
-    private final LazyValue<Set<JetType>> upperBounds;
-    private final LazyValue<JetType> upperBoundsAsType;
+    private final NotNullLazyValue<TypeConstructor> typeConstructor;
+    private final NotNullLazyValue<JetType> defaultType;
+    private final NotNullLazyValue<Set<JetType>> upperBounds;
+    private final NotNullLazyValue<JetType> upperBoundsAsType;
 
     public LazyTypeParameterDescriptor(
             @NotNull ResolveSession resolveSession,

@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.resolve.lazy.storage;
 
 import com.intellij.openapi.util.Computable;
+import org.jetbrains.annotations.NotNull;
 
-public interface LazyValue<T> extends Computable<T> {
+public interface NotNullLazyValue<T> extends Computable<T> {
     @Override
+    @NotNull
     T compute();
 }

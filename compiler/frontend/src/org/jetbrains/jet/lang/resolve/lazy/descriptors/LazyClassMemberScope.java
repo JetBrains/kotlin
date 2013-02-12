@@ -25,10 +25,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NullableLazyValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
@@ -68,7 +68,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         Collection<T> extract(@NotNull JetType extractFrom, @NotNull Name name);
     }
 
-    private final LazyValue<ConstructorDescriptor> primaryConstructor;
+    private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
     public LazyClassMemberScope(
             @NotNull ResolveSession resolveSession,

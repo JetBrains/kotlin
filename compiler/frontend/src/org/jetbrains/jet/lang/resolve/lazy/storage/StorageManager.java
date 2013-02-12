@@ -37,24 +37,24 @@ public interface StorageManager {
     <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
 
     @NotNull
-    <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable);
+    <T> NotNullLazyValue<T> createLazyValue(@NotNull Computable<T> computable);
 
     /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */
     @NotNull
-    <T> LazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
+    <T> NotNullLazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
 
     @NotNull
-    <T> LazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable);
+    <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable);
 
     /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */
     @NotNull
-    <T> LazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
+    <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull Consumer<T> postCompute);
 
     @NotNull
     BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace);

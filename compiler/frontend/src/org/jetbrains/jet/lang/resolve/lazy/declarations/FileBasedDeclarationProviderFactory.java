@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -46,7 +46,7 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private final Predicate<FqName> isPackageDeclaredExternally;
 
     private final StorageManager storageManager;
-    private final LazyValue<Index> index;
+    private final NotNullLazyValue<Index> index;
 
     private final Function<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders;
 

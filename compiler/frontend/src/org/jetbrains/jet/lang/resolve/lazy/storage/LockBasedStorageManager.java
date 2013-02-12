@@ -73,11 +73,11 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind
     ) {
         return new Function<K, V>() {
-            private final ConcurrentMap<K, LazyValue<V>> cache = createConcurrentMap(valuesReferenceKind);
+            private final ConcurrentMap<K, NullableLazyValue<V>> cache = createConcurrentMap(valuesReferenceKind);
 
             @Override
             public V fun(@NotNull final K input) {
-                LazyValue<V> lazyValue = cache.get(input);
+                NullableLazyValue<V> lazyValue = cache.get(input);
                 if (lazyValue != null) return lazyValue.compute();
 
                 lazyValue = createNullableLazyValue(new Computable<V>() {
@@ -87,7 +87,7 @@ public class LockBasedStorageManager implements StorageManager {
                     }
                 });
 
-                LazyValue<V> oldValue = cache.putIfAbsent(input, lazyValue);
+                NullableLazyValue<V> oldValue = cache.putIfAbsent(input, lazyValue);
                 if (oldValue != null) return oldValue.compute();
 
                 return lazyValue.compute();
@@ -101,14 +101,14 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <T> LazyValue<T> createLazyValue(@NotNull Computable<T> computable) {
-        return new LockBasedLazyValue<T>(lock, computable);
+    public <T> NotNullLazyValue<T> createLazyValue(@NotNull Computable<T> computable) {
+        return new LockBasedNotNullLazyValue<T>(lock, computable);
     }
 
     @NotNull
     @Override
-    public <T> LazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute) {
-        return new LockBasedLazyValue<T>(lock, computable) {
+    public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(@NotNull Computable<T> computable, @NotNull final Consumer<T> postCompute) {
+        return new LockBasedNotNullLazyValue<T>(lock, computable) {
             @Override
             protected void postCompute(@NotNull T value) {
                 postCompute.consume(value);
@@ -118,13 +118,13 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <T> LazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable) {
+    public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Computable<T> computable) {
         return new LockBasedNullableLazyValue<T>(lock, computable);
     }
 
     @NotNull
     @Override
-    public <T> LazyValue<T> createNullableLazyValueWithPostCompute(
+    public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
             @NotNull Computable<T> computable,
             @NotNull final Consumer<T> postCompute
     ) {
@@ -144,14 +144,14 @@ public class LockBasedStorageManager implements StorageManager {
         return new LockProtectedTrace(lock, originalTrace);
     }
 
-    private static class LockBasedLazyValue<T> implements LazyValue<T> {
+    private static class LockBasedNotNullLazyValue<T> implements NotNullLazyValue<T> {
         private final Object lock;
         private final Computable<T> computable;
 
         @Nullable
         private volatile T value;
 
-        public LockBasedLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
+        public LockBasedNotNullLazyValue(@NotNull Object lock, @NotNull Computable<T> computable) {
             this.lock = lock;
             this.computable = computable;
         }
@@ -180,7 +180,7 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private static class LockBasedNullableLazyValue<T> implements LazyValue<T> {
+    private static class LockBasedNullableLazyValue<T> implements NullableLazyValue<T> {
         private final Object lock;
         private final Computable<T> computable;
 

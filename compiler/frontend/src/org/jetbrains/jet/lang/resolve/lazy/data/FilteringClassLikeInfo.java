@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class FilteringClassLikeInfo implements JetClassLikeInfo {
     private final JetClassLikeInfo delegate;
-    private final LazyValue<List<JetDeclaration>> filteredDeclarations;
+    private final NotNullLazyValue<List<JetDeclaration>> filteredDeclarations;
 
     public FilteringClassLikeInfo(
             @NotNull StorageManager storageManager,

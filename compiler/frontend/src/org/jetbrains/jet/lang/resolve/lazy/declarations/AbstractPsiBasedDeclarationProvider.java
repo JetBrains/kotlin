@@ -23,7 +23,7 @@ import com.google.common.collect.Multimap;
 import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -68,7 +68,7 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
 
     }
 
-    private final LazyValue<Index> index;
+    private final NotNullLazyValue<Index> index;
 
     public AbstractPsiBasedDeclarationProvider(@NotNull StorageManager storageManager) {
         index = storageManager.createLazyValue(new Computable<Index>() {
