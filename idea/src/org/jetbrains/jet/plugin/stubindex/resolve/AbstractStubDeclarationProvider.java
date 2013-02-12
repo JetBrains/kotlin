@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.stubindex.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.lazy.DeclarationProvider;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;

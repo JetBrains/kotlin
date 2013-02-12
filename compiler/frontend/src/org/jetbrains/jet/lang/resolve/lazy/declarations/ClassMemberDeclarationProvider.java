@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 
-import java.util.Collection;
+public interface ClassMemberDeclarationProvider extends DeclarationProvider {
+    @NotNull
+    JetClassLikeInfo getOwnerInfo();
 
-public interface PackageMemberDeclarationProvider extends DeclarationProvider {
-
-    boolean isPackageDeclared(@NotNull Name name);
-
-    Collection<FqName> getAllDeclaredPackages();
 }
