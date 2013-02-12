@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.doc.highlighter2
 
-import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElement
 
 private fun PsiElement.getTextChildRelativeOffset() =
     getTextRange()!!.getStartOffset() - getParent()!!.getTextRange()!!.getStartOffset()

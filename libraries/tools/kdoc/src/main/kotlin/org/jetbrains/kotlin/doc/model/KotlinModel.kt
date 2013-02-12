@@ -2,11 +2,11 @@ package org.jetbrains.kotlin.doc.model
 
 import java.io.File
 import java.util.*
-import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
-import org.jetbrains.jet.internal.com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
-import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
-import org.jetbrains.jet.internal.com.intellij.psi.PsiFileSystemItem
+import com.intellij.openapi.vfs.local.CoreLocalVirtualFile
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind

@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.doc.highlighter
 
-import org.jetbrains.jet.internal.com.intellij.psi.PsiComment
-import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
-import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
-import org.jetbrains.jet.internal.com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.*
 
 class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {

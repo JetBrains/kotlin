@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.doc.highlighter2
 
 import java.io.File
-import org.jetbrains.jet.internal.com.intellij.openapi.vfs.local.CoreLocalVirtualFile
-import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
-import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
-import org.jetbrains.jet.internal.com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.openapi.vfs.local.CoreLocalVirtualFile
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.kotlin.doc.*
 import org.jetbrains.kotlin.doc.model.KModel

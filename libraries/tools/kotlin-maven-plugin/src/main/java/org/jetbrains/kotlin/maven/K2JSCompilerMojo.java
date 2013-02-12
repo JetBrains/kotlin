@@ -24,7 +24,7 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CompilerArguments;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.js.K2JSCompilerArguments;
-import org.jetbrains.jet.internal.com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.k2js.config.MetaInfServices;
 
 import java.io.*;
