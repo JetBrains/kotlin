@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -122,11 +124,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    /*package*/ InjectorForLazyResolve getInjector() {
+    public InjectorForLazyResolve getInjector() {
         return injector;
     }
 
-    /*package*/ boolean isClassSpecial(@NotNull FqNameUnsafe fqName) {
+    public boolean isClassSpecial(@NotNull FqNameUnsafe fqName) {
         return specialClasses.apply(fqName);
     }
 
@@ -136,7 +138,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    /*package*/ StorageManager getStorageManager() {
+    public StorageManager getStorageManager() {
         return storageManager;
     }
 
@@ -209,7 +211,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    /*package*/ BindingTrace getTrace() {
+    public BindingTrace getTrace() {
         return trace;
     }
 
@@ -319,7 +321,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     @NotNull
-    /*package*/ Name resolveClassifierAlias(@NotNull FqName packageName, @NotNull Name alias) {
+    public Name resolveClassifierAlias(@NotNull FqName packageName, @NotNull Name alias) {
         // TODO: creating a new FqName object every time...
         Name actualName = classifierAliases.fun(packageName.child(alias));
         if (actualName == null) {

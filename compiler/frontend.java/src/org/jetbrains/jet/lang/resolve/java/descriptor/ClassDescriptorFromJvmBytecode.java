@@ -23,12 +23,11 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
-import org.jetbrains.jet.lang.resolve.lazy.LazyClassDescriptor;
 
 import java.util.Collection;
 
 /**
- * @see LazyClassDescriptor
+ * @see org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
  */
 public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
 
