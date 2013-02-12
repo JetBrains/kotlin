@@ -34,6 +34,7 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.compileJava;
@@ -67,6 +68,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 return true;
             }
         });
+
+        Collections.sort(files);
 
         loadFiles(files.toArray(new String[files.size()]));
         blackBox();
