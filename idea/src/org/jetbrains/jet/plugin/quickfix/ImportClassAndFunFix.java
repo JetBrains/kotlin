@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -158,14 +159,14 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     /*
      * Searches for possible class names in kotlin context and java facade.
      */
-    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull ResolveSession resolveSession) {
+    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull KotlinCodeAnalyzer analyzer) {
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
         if (!JsModuleDetector.isJsModule(file)) {
             possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
         }
         else {
-            possibleResolveNames.addAll(getJetClasses(referenceName, file.getProject(), resolveSession));
+            possibleResolveNames.addAll(getJetClasses(referenceName, file.getProject(), analyzer));
         }
 
         // TODO: Do appropriate sorting
@@ -205,7 +206,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         return PsiShortNamesCache.getInstance(jetFile.getProject());
     }
 
-    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull Project project, @NotNull ResolveSession resolveSession) {
+    private static Collection<FqName> getJetClasses(@NotNull final String typeName, @NotNull Project project, @NotNull KotlinCodeAnalyzer resolveSession) {
         JetShortNamesCache cache = JetShortNamesCache.getKotlinInstance(project);
         Collection<ClassDescriptor> descriptors = cache.getJetClassesDescriptors(new Condition<String>() {
             @Override

@@ -35,10 +35,9 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -135,7 +134,7 @@ public class KotlinBuiltIns {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private final ResolveSession resolveSession;
+    private final KotlinCodeAnalyzer anazlyer;
     private final ModuleDescriptor builtInsModule;
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
@@ -172,7 +171,7 @@ public class KotlinBuiltIns {
     private KotlinBuiltIns(@NotNull Project project) {
         try {
             this.builtInsModule = new ModuleDescriptor(Name.special("<built-ins lazy module>"));
-            this.resolveSession = createLazyResolveSession(project);
+            this.anazlyer = createLazyResolveSession(project);
 
             this.functionClassesSet = computeIndexedClasses("Function", getFunctionTraitCount());
             this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", getFunctionTraitCount());
@@ -215,13 +214,13 @@ public class KotlinBuiltIns {
 
         nonPhysicalClasses = computeNonPhysicalClasses();
 
-        resolveSession.forceResolveAll();
+        anazlyer.forceResolveAll();
 
-        AnalyzingUtils.throwExceptionOnErrors(resolveSession.getBindingContext());
+        AnalyzingUtils.throwExceptionOnErrors(anazlyer.getBindingContext());
     }
 
     @NotNull
-    private ResolveSession createLazyResolveSession(@NotNull Project project) throws IOException {
+    private KotlinCodeAnalyzer createLazyResolveSession(@NotNull Project project) throws IOException {
         List<JetFile> files = loadResourcesAsJetFiles(project, LIBRARY_FILES);
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         return new ResolveSession(

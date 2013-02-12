@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 /**
@@ -35,14 +35,14 @@ public final class JetLookupObject {
     private final DeclarationDescriptor descriptor;
 
     @NotNull
-    private final ResolveSession resolveSession;
+    private final KotlinCodeAnalyzer analyzer;
 
     @Nullable
     private final PsiElement psiElement;
 
-    public JetLookupObject(@Nullable DeclarationDescriptor descriptor, @NotNull ResolveSession resolveSession, @Nullable PsiElement psiElement) {
+    public JetLookupObject(@Nullable DeclarationDescriptor descriptor, @NotNull KotlinCodeAnalyzer analyzer, @Nullable PsiElement psiElement) {
         this.descriptor = descriptor;
-        this.resolveSession = resolveSession;
+        this.analyzer = analyzer;
         this.psiElement = psiElement;
     }
 
@@ -79,7 +79,7 @@ public final class JetLookupObject {
 
         // Same descriptor - same lookup element
         if (descriptor != null && other.descriptor != null) {
-            if (resolveSession == other.resolveSession) {
+            if (analyzer == other.analyzer) {
                 if (descriptor.equals(other.descriptor)) {
                     return true;
                 }

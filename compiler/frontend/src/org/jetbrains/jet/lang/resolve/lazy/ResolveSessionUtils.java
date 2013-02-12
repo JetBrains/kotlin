@@ -154,12 +154,12 @@ public class ResolveSessionUtils {
         return trace.getBindingContext();
     }
 
-    private static void delegationSpecifierAdditionalResolve(final ResolveSession resolveSession,
+    private static void delegationSpecifierAdditionalResolve(final KotlinCodeAnalyzer analyzer,
             final JetDelegationSpecifierList specifier, DelegatingBindingTrace trace, JetFile file) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getModuleConfiguration());
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getModuleConfiguration());
 
         JetClassOrObject classOrObject = (JetClassOrObject) specifier.getParent();
-        LazyClassDescriptor descriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
+        LazyClassDescriptor descriptor = (LazyClassDescriptor) analyzer.resolveToDescriptor(classOrObject);
 
         // Activate resolving of supertypes
         descriptor.getTypeConstructor().getSupertypes();
@@ -206,14 +206,14 @@ public class ResolveSessionUtils {
     }
 
     private static boolean initializerAdditionalResolve(
-            ResolveSession resolveSession,
+            KotlinCodeAnalyzer analyzer,
             JetClassInitializer classInitializer,
             DelegatingBindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getModuleConfiguration());
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getModuleConfiguration());
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(classInitializer, JetClassOrObject.class);
-        LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
+        LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) analyzer.resolveToDescriptor(classOrObject);
         bodyResolver.resolveAnonymousInitializers(classOrObject, classOrObjectDescriptor.getUnsubstitutedPrimaryConstructor(),
                 classOrObjectDescriptor.getScopeForPropertyInitializerResolution());
 
@@ -321,15 +321,15 @@ public class ResolveSessionUtils {
 
     @NotNull
     public static Collection<ClassDescriptor> getClassDescriptorsByFqName(
-                @NotNull ResolveSession resolveSession,
+                @NotNull KotlinCodeAnalyzer analyzer,
                 @NotNull FqName fqName
     ) {
-        return getClassOrObjectDescriptorsByFqName(resolveSession, fqName, false);
+        return getClassOrObjectDescriptorsByFqName(analyzer, fqName, false);
     }
 
     @NotNull
     public static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
-            @NotNull ResolveSession resolveSession,
+            @NotNull KotlinCodeAnalyzer analyzer,
             @NotNull FqName fqName,
             boolean includeObjectDeclarations
     ) {
@@ -341,7 +341,7 @@ public class ResolveSessionUtils {
 
         FqName packageFqName = fqName.parent();
         while (true) {
-            NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(packageFqName);
+            NamespaceDescriptor packageDescriptor = analyzer.getPackageDescriptorByFqName(packageFqName);
             if (packageDescriptor != null) {
                 FqName classInPackagePath = new FqName(QualifiedNamesUtil.tail(packageFqName, fqName));
                 Collection<ClassDescriptor> descriptors = getClassOrObjectDescriptorsByFqName(packageDescriptor, classInPackagePath,

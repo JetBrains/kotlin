@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
@@ -59,7 +59,7 @@ public final class DescriptorLookupConverter {
     private DescriptorLookupConverter() {}
 
     @NotNull
-    public static LookupElement createLookupElement(@NotNull ResolveSession resolveSession,
+    public static LookupElement createLookupElement(@NotNull KotlinCodeAnalyzer analyzer,
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
         if (declaration != null) {
             MutableLookupElement javaLookupElement = createJavaLookupElementIfPossible(declaration);
@@ -75,7 +75,7 @@ public final class DescriptorLookupConverter {
         }
 
         LookupElementBuilder element = LookupElementBuilder.create(
-                new JetLookupObject(descriptor, resolveSession, declaration), descriptor.getName().getName());
+                new JetLookupObject(descriptor, analyzer, declaration), descriptor.getName().getName());
 
         String presentableText = descriptor.getName().getName();
         String typeText = "";
@@ -172,7 +172,7 @@ public final class DescriptorLookupConverter {
 
     @NotNull
     public static LookupElement createLookupElement(
-            @NotNull ResolveSession resolveSession,
+            @NotNull KotlinCodeAnalyzer analyzer,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
@@ -183,17 +183,17 @@ public final class DescriptorLookupConverter {
             }
             descriptor = callableMemberDescriptor;
         }
-        return createLookupElement(resolveSession, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
+        return createLookupElement(analyzer, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
     }
 
     public static LookupElement[] collectLookupElements(
-            @NotNull ResolveSession resolveSession,
+            @NotNull KotlinCodeAnalyzer analyzer,
             @NotNull BindingContext bindingContext,
             @NotNull Iterable<DeclarationDescriptor> descriptors) {
         List<LookupElement> result = Lists.newArrayList();
 
         for (final DeclarationDescriptor descriptor : descriptors) {
-            result.add(createLookupElement(resolveSession, bindingContext, descriptor));
+            result.add(createLookupElement(analyzer, bindingContext, descriptor));
         }
 
         return result.toArray(new LookupElement[result.size()]);

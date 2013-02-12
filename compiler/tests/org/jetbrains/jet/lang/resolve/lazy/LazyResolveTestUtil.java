@@ -82,7 +82,7 @@ public class LazyResolveTestUtil {
         return module;
     }
 
-    public static ResolveSession resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment) {
+    public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
         ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));

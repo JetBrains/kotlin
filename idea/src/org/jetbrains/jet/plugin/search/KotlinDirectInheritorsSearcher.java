@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex;
@@ -63,7 +63,7 @@ public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, 
                 for (JetClassOrObject candidate : candidates) {
                     if (!(candidate instanceof JetClass)) continue;
                     JetFile containingFile = (JetFile) candidate.getContainingFile();
-                    ResolveSession sessionForFile = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(containingFile);
+                    KotlinCodeAnalyzer sessionForFile = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile(containingFile);
                     ClassDescriptor classDescriptor = (ClassDescriptor) sessionForFile.resolveToDescriptor(candidate);
                     for (JetType type : classDescriptor.getTypeConstructor().getSupertypes()) {
                         ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();

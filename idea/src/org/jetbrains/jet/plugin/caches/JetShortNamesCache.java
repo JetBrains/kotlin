@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -347,14 +348,14 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     public Collection<ClassDescriptor> getJetClassesDescriptors(
             @NotNull Condition<String> acceptedShortNameCondition,
-            @NotNull ResolveSession resolveSession
+            @NotNull KotlinCodeAnalyzer analyzer
     ) {
         Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
             FqName classFQName = new FqName(fqName);
             if (acceptedShortNameCondition.value(classFQName.shortName().getName())) {
-                classDescriptors.addAll(ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession, classFQName));
+                classDescriptors.addAll(ResolveSessionUtils.getClassDescriptorsByFqName(analyzer, classFQName));
             }
         }
 

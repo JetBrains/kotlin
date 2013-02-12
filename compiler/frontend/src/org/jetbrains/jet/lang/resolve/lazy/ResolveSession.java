@@ -38,7 +38,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
-public class ResolveSession {
+public class ResolveSession implements KotlinCodeAnalyzer {
     private static final Function<FqName, Name> NO_ALIASES = new Function<FqName, Name>() {
 
         @Override
@@ -128,6 +128,7 @@ public class ResolveSession {
         return specialClasses.apply(fqName);
     }
 
+    @Override
     public ModuleDescriptor getRootModuleDescriptor() {
         return module;
     }
@@ -137,16 +138,19 @@ public class ResolveSession {
         return storageManager;
     }
 
+    @Override
     @NotNull
     public ModuleConfiguration getModuleConfiguration() {
         return moduleConfiguration;
     }
 
+    @Override
     @Nullable
     public NamespaceDescriptor getPackageDescriptor(@NotNull Name shortName) {
         return rootPackage.getMemberScope().getNamespace(shortName);
     }
 
+    @Override
     @Nullable
     public NamespaceDescriptor getPackageDescriptorByFqName(FqName fqName) {
         if (fqName.isRoot()) {
@@ -162,6 +166,7 @@ public class ResolveSession {
         return current;
     }
 
+    @Override
     @NotNull
     public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
         if (classOrObject.getParent() instanceof JetClassObject) {
@@ -195,6 +200,7 @@ public class ResolveSession {
         return classObjectDescriptor;
     }
 
+    @Override
     @NotNull
     public BindingContext getBindingContext() {
         return trace.getBindingContext();
@@ -210,6 +216,7 @@ public class ResolveSession {
         return declarationProviderFactory;
     }
 
+    @Override
     @NotNull
     public DeclarationDescriptor resolveToDescriptor(JetDeclaration declaration) {
         DeclarationDescriptor result = declaration.accept(new JetVisitor<DeclarationDescriptor, Void>() {
@@ -319,11 +326,7 @@ public class ResolveSession {
         return actualName;
     }
 
-    /**
-     * Forces all descriptors to be resolved.
-     *
-     * Use this method when laziness plays against you, e.g. when lazy descriptors may be accessed in a multi-threaded setting
-     */
+    @Override
     public void forceResolveAll() {
         rootPackage.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
 

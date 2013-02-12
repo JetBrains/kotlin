@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -207,7 +208,7 @@ public class JetSourceNavigationHelper {
                         return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
                     }
                 });
-        ResolveSession resolveSession = new ResolveSession(
+        KotlinCodeAnalyzer analyzer = new ResolveSession(
                 project,
                 storageManager,
                 new ModuleDescriptor(Name.special("<library module>")),
@@ -216,7 +217,7 @@ public class JetSourceNavigationHelper {
 
         for (JetNamedDeclaration candidate : candidates) {
             //noinspection unchecked
-            CallableDescriptor candidateDescriptor = (CallableDescriptor) resolveSession.resolveToDescriptor(candidate);
+            CallableDescriptor candidateDescriptor = (CallableDescriptor) analyzer.resolveToDescriptor(candidate);
             if (receiversMatch(decompiledDeclaration, candidateDescriptor)
                     && valueParametersTypesMatch(decompiledDeclaration, candidateDescriptor)
                     && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {

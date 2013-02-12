@@ -71,7 +71,7 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
             }
         });
 
-        ResolveSession resolveSession = LazyResolveTestUtil.resolveLazilyWithSession(files, getEnvironment());
+        KotlinCodeAnalyzer resolveSession = LazyResolveTestUtil.resolveLazilyWithSession(files, getEnvironment());
 
         NamespaceDescriptor actual = resolveSession.getPackageDescriptor(Name.identifier("test"));
         Assert.assertNotNull("Package 'test' was not found", actual);
