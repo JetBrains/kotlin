@@ -253,7 +253,7 @@ public class JavaTypeTransformer {
     }
 
     private static boolean isRaw(@NotNull PsiClassType classType, boolean argumentsExpected) {
-        // The second option is needed because sometimes we get weird versions of JDK classes in teh class path,
+        // The second option is needed because sometimes we get weird versions of JDK classes in the class path,
         // such as collections with no generics, so the Java types are not raw, formally, but they don't match with
         // their Kotlin analogs, so we treat them as raw to avoid exceptions
         return classType.isRaw() || argumentsExpected && classType.getParameterCount() == 0;

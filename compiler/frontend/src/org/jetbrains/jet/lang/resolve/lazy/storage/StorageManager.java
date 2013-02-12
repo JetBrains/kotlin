@@ -26,7 +26,7 @@ public interface StorageManager {
     /**
      * Given a function compute: K -> V create a memoized version of it that computes a value only once for each key
      * @param compute the function to be memoized
-     * @param valuesReferenceKind how to store teh memoized values
+     * @param valuesReferenceKind how to store the memoized values
      *
      * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
      *       the value gets collected and then re-computed

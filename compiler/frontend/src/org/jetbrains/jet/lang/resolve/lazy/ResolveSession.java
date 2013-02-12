@@ -182,7 +182,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
-        // and if we find teh class by name only, we may b-not get the right one.
+        // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
         resolutionScope.getClassifier(name);
         DeclarationDescriptor declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);

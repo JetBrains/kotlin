@@ -134,7 +134,7 @@ public class KotlinBuiltIns {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private final KotlinCodeAnalyzer anazlyer;
+    private final KotlinCodeAnalyzer analyzer;
     private final ModuleDescriptor builtInsModule;
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
@@ -171,7 +171,7 @@ public class KotlinBuiltIns {
     private KotlinBuiltIns(@NotNull Project project) {
         try {
             this.builtInsModule = new ModuleDescriptor(Name.special("<built-ins lazy module>"));
-            this.anazlyer = createLazyResolveSession(project);
+            this.analyzer = createLazyResolveSession(project);
 
             this.functionClassesSet = computeIndexedClasses("Function", getFunctionTraitCount());
             this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", getFunctionTraitCount());
@@ -214,9 +214,9 @@ public class KotlinBuiltIns {
 
         nonPhysicalClasses = computeNonPhysicalClasses();
 
-        anazlyer.forceResolveAll();
+        analyzer.forceResolveAll();
 
-        AnalyzingUtils.throwExceptionOnErrors(anazlyer.getBindingContext());
+        AnalyzingUtils.throwExceptionOnErrors(analyzer.getBindingContext());
     }
 
     @NotNull
