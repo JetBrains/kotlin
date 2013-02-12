@@ -24,8 +24,9 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -35,7 +36,7 @@ import java.util.Set;
 
 public class LazyPackageMemberScope extends AbstractLazyMemberScope<NamespaceDescriptor, PackageMemberDeclarationProvider> {
 
-    private final Function<Name, NamespaceDescriptor> packageDescriptors;
+    private final MemoizedFunctionToNullable<Name, NamespaceDescriptor> packageDescriptors;
 
     public LazyPackageMemberScope(@NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider,

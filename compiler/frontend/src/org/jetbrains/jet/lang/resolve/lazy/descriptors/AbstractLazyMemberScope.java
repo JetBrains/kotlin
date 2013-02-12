@@ -25,11 +25,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -47,11 +48,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected final DP declarationProvider;
     protected final D thisDescriptor;
 
-    private final Function<Name, List<ClassDescriptor>> classDescriptors;
-    private final Function<Name, List<ClassDescriptor>> objectDescriptors;
+    private final MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> classDescriptors;
+    private final MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> objectDescriptors;
 
-    private final Function<Name, Set<FunctionDescriptor>> functionDescriptors;
-    private final Function<Name, Set<VariableDescriptor>> propertyDescriptors;
+    private final MemoizedFunctionToNotNull<Name, Set<FunctionDescriptor>> functionDescriptors;
+    private final MemoizedFunctionToNotNull<Name, Set<VariableDescriptor>> propertyDescriptors;
 
     private static class AllDescriptors {
         private final Collection<DeclarationDescriptor> all = Sets.newLinkedHashSet();

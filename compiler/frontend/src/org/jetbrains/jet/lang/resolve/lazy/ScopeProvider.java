@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.lang.resolve.lazy.storage.NotNullLazyValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
@@ -41,7 +42,7 @@ import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.Referen
 public class ScopeProvider {
     private final ResolveSession resolveSession;
 
-    private final Function<JetFile, JetScope> fileScopes;
+    private final MemoizedFunctionToNotNull<JetFile, JetScope> fileScopes;
 
     private final NotNullLazyValue<JetScope> defaultImportsScope;
 

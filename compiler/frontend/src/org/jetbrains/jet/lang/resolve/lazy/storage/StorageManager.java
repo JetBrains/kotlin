@@ -32,9 +32,9 @@ public interface StorageManager {
      *       the value gets collected and then re-computed
      */
     @NotNull
-    <K, V> Function<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
+    <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
     @NotNull
-    <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
+    <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function<K, V> compute, @NotNull ReferenceKind valuesReferenceKind);
 
     @NotNull
     <T> NotNullLazyValue<T> createLazyValue(@NotNull Computable<T> computable);

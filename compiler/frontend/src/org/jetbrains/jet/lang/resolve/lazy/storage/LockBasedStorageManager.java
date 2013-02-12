@@ -43,10 +43,11 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> Function<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind) {
-        return new Function<K, V>() {
+    public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind) {
+        return new MemoizedFunctionToNotNull<K, V>() {
             private final ConcurrentMap<K, V> cache = createConcurrentMap(valuesReferenceKind);
 
+            @NotNull
             @Override
             public V fun(@NotNull final K input) {
                 V value = cache.get(input);
@@ -69,13 +70,14 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> Function<K, V> createMemoizedFunctionWithNullableValues(
+    public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
             @NotNull final Function<K, V> compute, @NotNull final ReferenceKind valuesReferenceKind
     ) {
-        return new Function<K, V>() {
+        return new MemoizedFunctionToNullable<K, V>() {
             private final ConcurrentMap<K, NullableLazyValue<V>> cache = createConcurrentMap(valuesReferenceKind);
 
             @Override
+            @Nullable
             public V fun(@NotNull final K input) {
                 NullableLazyValue<V> lazyValue = cache.get(input);
                 if (lazyValue != null) return lazyValue.compute();
