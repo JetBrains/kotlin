@@ -34,7 +34,7 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -67,7 +67,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
     @NotNull
     @Override
-    protected ExitCode doExecute(K2JSCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
+    protected ExitCode doExecute(K2JSCompilerArguments arguments, MessageCollector messageCollector, Disposable rootDisposable) {
         if (arguments.sourceFiles == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -sourceFiles", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
@@ -99,10 +99,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         MainCallParameters mainCallParameters = arguments.createMainCallParameters();
-        return translateAndGenerateOutputFile(mainCallParameters, messageCollector, environmentForJS, config, outputFile);
+        return translateAndGenerateOutputFile(mainCallParameters, environmentForJS, config, outputFile);
     }
 
-    private static void reportCompiledSourcesList(@NotNull PrintingMessageCollector messageCollector,
+    private static void reportCompiledSourcesList(@NotNull MessageCollector messageCollector,
             @NotNull JetCoreEnvironment environmentForJS) {
         List<JetFile> files = environmentForJS.getSourceFiles();
         Iterable<String> fileNames = Iterables.transform(files, new Function<JetFile, String>() {
@@ -121,23 +121,22 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     }
 
     @NotNull
-    private static ExitCode translateAndGenerateOutputFile(@NotNull MainCallParameters mainCall,
-            @NotNull PrintingMessageCollector messageCollector,
-            @NotNull JetCoreEnvironment environmentForJS, @NotNull Config config, @NotNull String outputFile) {
+    private static ExitCode translateAndGenerateOutputFile(
+            @NotNull MainCallParameters mainCall,
+            @NotNull JetCoreEnvironment environmentForJS,
+            @NotNull Config config,
+            @NotNull String outputFile
+    ) {
         try {
             K2JSTranslator.translateWithMainCallParametersAndSaveToFile(mainCall, environmentForJS.getSourceFiles(), outputFile, config);
         }
         catch (Exception e) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),
-                                    CompilerMessageLocation.NO_LOCATION);
-            // TODO we should report the exception nicely to the collector so it can report
-            // for example inside a mvn plugin we need to see the stack trace
-            return ExitCode.INTERNAL_ERROR;
+            throw new RuntimeException(e);
         }
-        return messageCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : OK;
+        return OK;
     }
 
-    private static boolean analyzeAndReportErrors(@NotNull PrintingMessageCollector messageCollector,
+    private static boolean analyzeAndReportErrors(@NotNull MessageCollector messageCollector,
             @NotNull final List<JetFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
         analyzerWithCompilerReport.analyzeAndReport(new Function0<AnalyzeExhaust>() {

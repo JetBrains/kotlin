@@ -20,16 +20,14 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
-import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.config.CompilerConfiguration;
 
 import java.io.PrintStream;
 
+import static org.jetbrains.jet.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
 import static org.jetbrains.jet.cli.common.ExitCode.OK;
 
@@ -99,30 +97,50 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      * Executes the compiler on the parsed arguments
      */
     @NotNull
-    public ExitCode exec(final PrintStream errStream, A arguments) {
+    public ExitCode exec(@NotNull PrintStream errStream, @NotNull A arguments) {
         if (arguments.isHelp()) {
             usage(errStream);
             return OK;
         }
-        System.setProperty("java.awt.headless", "true");
-        final MessageRenderer messageRenderer = getMessageRenderer(arguments);
+        MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
+
         printVersionIfNeeded(errStream, arguments, messageRenderer);
+
         PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
-        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+
         try {
-            return doExecute(arguments, messageCollector, rootDisposable);
+            return exec(messageCollector, arguments);
         }
         finally {
             messageCollector.printToErrStream();
             errStream.print(messageRenderer.renderConclusion());
-            Disposer.dispose(rootDisposable);
+        }
+    }
+
+    @NotNull
+    public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
+        try {
+            Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+            try {
+                MessageSeverityCollector severityCollector = new MessageSeverityCollector(messageCollector);
+                ExitCode code = doExecute(arguments, severityCollector, rootDisposable);
+                return severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
+            }
+            finally {
+                Disposer.dispose(rootDisposable);
+            }
+        }
+        catch (Throwable t) {
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
+                                    CompilerMessageLocation.NO_LOCATION);
+            return INTERNAL_ERROR;
         }
     }
 
     //TODO: can't declare parameters as not null due to KT-1863
     @NotNull
-    protected abstract ExitCode doExecute(A arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable);
+    protected abstract ExitCode doExecute(A arguments, MessageCollector messageCollector, Disposable rootDisposable);
 
     //TODO: can we make it private?
     @NotNull
@@ -145,6 +163,9 @@ public abstract class CLICompiler<A extends CompilerArguments> {
      * Useful main for derived command line tools
      */
     public static void doMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
+        // We depend on swing (indirectly through PSI or something), so we want to declare headless mode,
+        // to avoid accidentally starting the UI thread
+        System.setProperty("java.awt.headless", "true");
         ExitCode exitCode = doMainNoExit(compiler, args);
         if (exitCode != OK) {
             System.exit(exitCode.getCode());

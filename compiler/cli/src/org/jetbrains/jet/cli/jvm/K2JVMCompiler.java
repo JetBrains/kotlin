@@ -58,7 +58,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
     @Override
     @NotNull
-    protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
+    protected ExitCode doExecute(K2JVMCompilerArguments arguments, MessageCollector messageCollector, Disposable rootDisposable) {
         KotlinPaths paths = arguments.kotlinHome != null
                                 ? new KotlinPathsFromHomeDir(new File(arguments.kotlinHome))
                                 : PathUtil.getKotlinPathsForCompiler();
@@ -127,10 +127,9 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             File outputDir = arguments.outputDir != null ? new File(arguments.outputDir) : null;
 
             if (arguments.module != null) {
-                boolean oldVerbose = messageCollector.isVerbose();
-                messageCollector.setVerbose(false);
-                List<Module> modules = CompileEnvironmentUtil.loadModuleScript(paths, arguments.module, messageCollector);
-                messageCollector.setVerbose(oldVerbose);
+                MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector);
+                List<Module> modules = CompileEnvironmentUtil.loadModuleScript(paths, arguments.module, sanitizedCollector);
+
                 File directory = new File(arguments.module).getParentFile();
                 KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
                                                                       directory, jar, outputDir,
@@ -145,16 +144,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, configuration);
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
-            return messageCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : OK;
+            return OK;
         }
         catch (CompilationException e) {
             messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
                                     MessageUtil.psiElementToMessageLocation(e.getElement()));
-            return INTERNAL_ERROR;
-        }
-        catch (Throwable t) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
-                                    CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
         }
     }
@@ -180,7 +174,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     // probably relates to KT-1863... well, may be not
     @NotNull
     @Override
-    public ExitCode exec(PrintStream errStream, K2JVMCompilerArguments arguments) {
+    public ExitCode exec(@NotNull PrintStream errStream, @NotNull K2JVMCompilerArguments arguments) {
         return super.exec(errStream, arguments);
     }
 
@@ -213,5 +207,22 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
         }
         return annotationsPath;
+    }
+
+    private static class FilteringMessageCollector implements MessageCollector {
+        private final MessageCollector messageCollector;
+
+        public FilteringMessageCollector(@NotNull MessageCollector messageCollector) {
+            this.messageCollector = messageCollector;
+        }
+
+        @Override
+        public void report(
+                @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
+        ) {
+            if (!(severity == CompilerMessageSeverity.LOGGING || severity == CompilerMessageSeverity.OUTPUT)) {
+                messageCollector.report(severity, message, location);
+            }
+        }
     }
 }
