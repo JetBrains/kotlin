@@ -162,5 +162,8 @@ public class QuickFixes {
         factories.put(FINAL_SUPERTYPE, FinalSupertypeFix.createFactory());
 
         factories.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, RenameParameterToMatchOverriddenMethodFix.createFactory());
+
+        factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, ChangeTypeFix.createChangeTypeToMatchOverriddenPropertyOrFunctionFactory(true));
+        factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, ChangeTypeFix.createChangeTypeToMatchOverriddenPropertyOrFunctionFactory(false));
     }
 }
