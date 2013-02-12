@@ -418,9 +418,7 @@
 
     <javac destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
       <src path="${basedir}/j2k/src"/>
-      <src path="${basedir}/compiler/frontend/src"/>
-      <src path="${basedir}/compiler/util/src"/>
-      <classpath refid="classpath"/>
+      <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
     </javac>
 
     <jar jarfile="${output}/j2k-before-jarjar.jar">
