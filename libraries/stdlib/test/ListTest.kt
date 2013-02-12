@@ -33,15 +33,29 @@ class ListTest {
         assertEquals("bar", data.last)
     }
 
-    test fun withIndices() {
+    test fun forEachWithIndex() {
         val data = arrayList("foo", "bar")
-        val wis = data.withIndices()
         var index = 0
-        for (withIndex in wis) {
-            assertEquals(withIndex.first, index)
-            assertEquals(withIndex.second, data[index])
+
+        data.forEachWithIndex { (i, d) ->
+            assertEquals(i, index)
+            assertEquals(d, data[index])
             index++
         }
+
+        assertEquals(data.size(), index)
+    }
+
+    test fun withIndices() {
+        val data = arrayList("foo", "bar")
+        var index = 0
+
+        for ((i, d) in data.withIndices()) {
+            assertEquals(i, index)
+            assertEquals(d, data[index])
+            index++
+        }
+
         assertEquals(data.size(), index)
     }
 

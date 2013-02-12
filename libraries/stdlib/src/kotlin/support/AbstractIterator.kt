@@ -33,13 +33,13 @@ public abstract class AbstractIterator<T>: Iterator<T> {
     override fun next(): T {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
-        return next!!
+        return next as T
     }
 
     /** Returns the next element in the iteration without advancing the iteration */
     fun peek(): T {
         if (!hasNext()) throw NoSuchElementException()
-        return next!!;
+        return next as T;
     }
 
     private fun tryToComputeNext(): Boolean {
@@ -76,59 +76,4 @@ public abstract class AbstractIterator<T>: Iterator<T> {
     }
 }
 
-/** An [[Iterator]] which invokes a function to calculate the next value in the iteration until the function returns *null* */
-class FunctionIterator<T>(val nextFunction: () -> T?): AbstractIterator<T>() {
-
-    override protected fun computeNext(): Unit {
-        val next = (nextFunction)()
-        if (next == null) {
-            done()
-        } else {
-            setNext(next)
-        }
-    }
-}
-
-/** An [[Iterator]] which iterates over a number of iterators in sequence */
-class CompositeIterator<T>(vararg iterators: Iterator<T>): AbstractIterator<T>() {
-
-    val iteratorsIter = iterators.iterator()
-    var currentIter: Iterator<T>? = null
-
-    override protected fun computeNext(): Unit {
-        while (true) {
-            if (currentIter == null) {
-                if (iteratorsIter.hasNext()) {
-                    currentIter = iteratorsIter.next()
-                } else {
-                    done()
-                    return
-                }
-            }
-            val iter = currentIter
-            if (iter != null) {
-                if (iter.hasNext()) {
-                    setNext(iter.next())
-                    return
-                } else {
-                    currentIter = null
-                }
-            }
-        }
-    }
-}
-
-/** A singleton [[Iterator]] which invokes once over a value */
-class SingleIterator<T>(val value: T): AbstractIterator<T>() {
-    var first = true
-
-    override protected fun computeNext(): Unit {
-        if (first) {
-            first = false
-            setNext(value)
-        } else {
-            done()
-        }
-    }
-}
 

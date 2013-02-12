@@ -115,3 +115,21 @@ public inline fun <K,V> Map<K,V>.toMap(map: MutableMap<K,V>): Map<K,V> {
     map.putAll(this)
     return map
 }
+
+/**
+ * Returns a new List containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt map
+ */
+public inline fun <K,V,R> Map<K,V>.map(transform: (Map.Entry<K,V>) -> R) : List<R> {
+    return mapTo(java.util.ArrayList<R>(this.size), transform)
+}
+
+/**
+ * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
+ *
+ * @includeFunctionBody ../../test/MapTest.kt mapValues
+ */
+public inline fun <K,V,R> Map<K,V>.mapValues(transform : (Map.Entry<K,V>) -> R): Map<K,R> {
+    return mapValuesTo(java.util.HashMap<K,R>(this.size), transform)
+}

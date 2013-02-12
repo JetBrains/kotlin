@@ -6,7 +6,7 @@ import java.util.Comparator
 * Helper method for implementing [[Comparable]] methods using a list of functions
 * to calculate the values to compare
 */
-inline fun <T> compareBy(a: T?, b: T?, vararg functions: T.() -> Any?): Int {
+inline fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparable<*>?): Int {
     require(functions.size > 0)
     if (a === b) return 0
     if (a == null) return - 1
@@ -25,34 +25,23 @@ inline fun <T> compareBy(a: T?, b: T?, vararg functions: T.() -> Any?): Int {
  * they are compared via [[#equals()]] and if they are not the same then
  * the [[#hashCode()]] method is used as the difference
  */
-public inline fun <T> compareValues(a: T?, b: T?): Int {
+public inline fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
     if (a === b) return 0
     if (a == null) return - 1
     if (b == null) return 1
-    if (a is Comparable<*>) {
-        return (a as Comparable<Any?>).compareTo(b)
-    }
-    if (a == b) {
-        return 0
-    }
-    if (a is Object && b is Object) {
-        val diff = a.hashCode() - b.hashCode()
-        return if (diff == 0) 1 else diff
-    } else {
-        // TODO???
-        return 1
-    }
+
+    return (a as Comparable<Any?>).compareTo(b)
 }
 
 /**
  * Creates a comparator using the sequence of functions used to calculate a value to compare on
  */
-public inline fun <T> comparator(vararg val functions: T.() -> Any?): Comparator<T> {
+public inline fun <T> comparator(vararg val functions: T.() -> Comparable<*>?): Comparator<T> {
     return FunctionComparator<T>(*functions)
 }
 
 
-private class FunctionComparator<T>(vararg val functions: T.() -> Any?):  Comparator<T> {
+private class FunctionComparator<T>(vararg val functions: T.() -> Comparable<*>?):  Comparator<T> {
 
     public override fun toString(): String {
         return "FunctionComparator${functions.toList()}"

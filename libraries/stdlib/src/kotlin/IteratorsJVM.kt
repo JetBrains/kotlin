@@ -1,7 +1,6 @@
 package kotlin
 
 import kotlin.support.*
-import java.util.Collections
 
 /** Returns an iterator over elements that are instances of a given type *R* which is a subclass of *T* */
 public inline fun <T, R: T> Iterator<T>.filterIsInstance(klass: Class<R>): Iterator<R> = FilterIsIterator<T,R>(this, klass)

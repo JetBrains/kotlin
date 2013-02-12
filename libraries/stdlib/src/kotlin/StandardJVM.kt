@@ -47,3 +47,14 @@ public inline fun <T> callable(action: ()-> T): Callable<T> {
         public override fun call() = action()
     }
 }
+
+/**
+ * A helper method for creating a [[Runnable]] from a function
+ */
+public inline fun runnable(action: ()-> Unit): Runnable {
+    return object: Runnable {
+        public override fun run() {
+            action()
+        }
+    }
+}

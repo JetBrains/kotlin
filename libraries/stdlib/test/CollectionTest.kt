@@ -351,7 +351,6 @@ class CollectionTest {
 
     test fun lastException() {
         fails { arrayList<Int>().last() }
-        fails { hashSet<Char>().last() }
     }
 
     test fun subscript() {
