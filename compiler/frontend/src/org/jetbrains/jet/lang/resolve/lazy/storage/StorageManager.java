@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.lang.resolve.lazy.storage;
 
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;

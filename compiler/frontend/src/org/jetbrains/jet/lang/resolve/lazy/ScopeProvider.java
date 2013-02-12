@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.storage.LazyValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
@@ -35,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.ReferenceKind.WEAK;
+import static org.jetbrains.jet.lang.resolve.lazy.storage.StorageManager.ReferenceKind.WEAK;
 
 public class ScopeProvider {
     private final ResolveSession resolveSession;

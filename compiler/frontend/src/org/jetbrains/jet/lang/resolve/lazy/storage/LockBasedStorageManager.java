@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.lang.resolve.lazy.storage;
 
 import com.intellij.openapi.util.Computable;
 import com.intellij.util.Consumer;
@@ -31,8 +31,6 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import static org.jetbrains.jet.lang.resolve.lazy.StorageManager.ReferenceKind.WEAK;
 
 public class LockBasedStorageManager implements StorageManager {
 
@@ -98,7 +96,7 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     private static <K, V> ConcurrentMap<K, V> createConcurrentMap(ReferenceKind referenceKind) {
-        return (referenceKind == WEAK) ? new ConcurrentWeakValueHashMap<K, V>() : new ConcurrentHashMap<K, V>();
+        return (referenceKind == ReferenceKind.WEAK) ? new ConcurrentWeakValueHashMap<K, V>() : new ConcurrentHashMap<K, V>();
     }
 
     @NotNull

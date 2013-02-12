@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy;
+package org.jetbrains.jet.lang.resolve.lazy.storage;
 
 public interface LazyValue<T> {
     T get();
