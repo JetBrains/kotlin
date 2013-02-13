@@ -25,6 +25,9 @@ public class FloatProgression implements Progression<Float> {
     private final float increment;
 
     public FloatProgression(float start, float end, float increment) {
+        if (Float.isNaN(increment)) {
+            throw new IllegalArgumentException("Increment must be not NaN");
+        }
         if (increment == 0.0f || increment == -0.0f) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }

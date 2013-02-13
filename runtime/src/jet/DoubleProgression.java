@@ -25,6 +25,9 @@ public class DoubleProgression implements Progression<Double> {
     private final double increment;
 
     public DoubleProgression(double start, double end, double increment) {
+        if (Double.isNaN(increment)) {
+            throw new IllegalArgumentException("Increment must be not NaN");
+        }
         if (increment == 0.0 || increment == -0.0) {
             throw new IllegalArgumentException("Increment must be non-zero: " + increment);
         }

@@ -139,11 +139,13 @@ public fun LongRange.step(step: Long): LongProgression {
 }
 
 public fun FloatRange.step(step: Float): FloatProgression {
+    if (java.lang.Float.isNaN(step)) throw IllegalArgumentException("Step must not be NaN")
     checkStepIsPositive(step > 0, step)
     return FloatProgression(start, end, step)
 }
 
 public fun DoubleRange.step(step: Double): DoubleProgression {
+    if (java.lang.Double.isNaN(step)) throw IllegalArgumentException("Step must not be NaN")
     checkStepIsPositive(step > 0, step)
     return DoubleProgression(start, end, step)
 }

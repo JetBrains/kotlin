@@ -184,5 +184,15 @@ public class RangeTest {
         failsWith(javaClass<IllegalArgumentException>()) { 'z' downTo 'a' step -2 }
         failsWith(javaClass<IllegalArgumentException>()) { 0.0 downTo -5.0 step -0.5 }
         failsWith(javaClass<IllegalArgumentException>()) { 0.0.toFloat() downTo -5.0.toFloat() step -0.5.toFloat() }
+
+        // NaN increment or step
+        failsWith(javaClass<IllegalArgumentException>()) { DoubleProgression(0.0, 5.0, jDouble.NaN) }
+        failsWith(javaClass<IllegalArgumentException>()) { FloatProgression(0.0.toFloat(), 5.0.toFloat(), jFloat.NaN) }
+
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0..5.0 step jDouble.NaN }
+        failsWith(javaClass<IllegalArgumentException>()) { 0.0.toFloat()..5.0.toFloat() step jFloat.NaN }
+
+        failsWith(javaClass<IllegalArgumentException>()) { 5.0 downTo 0.0 step jDouble.NaN }
+        failsWith(javaClass<IllegalArgumentException>()) { 5.0.toFloat() downTo 0.0.toFloat() step jFloat.NaN }
     }
 }
