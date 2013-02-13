@@ -134,7 +134,8 @@ public class QuickFixes {
 
         factories.put(UNRESOLVED_REFERENCE, MigrateSureInProjectFix.createFactory());
 
-        factories.put(REDUNDANT_NULLABLE, RemoveRedundantNullableFix.createFactory());
+        factories.put(REDUNDANT_NULLABLE, RemoveNullableFix.createFactory(false));
+        factories.put(NULLABLE_SUPERTYPE, RemoveNullableFix.createFactory(true));
 
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
         actions.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
