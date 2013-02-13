@@ -286,9 +286,12 @@ public class CodegenUtil {
      * @return true if a value of this type can be null
      */
     public static boolean isNullableType(@NotNull JetType type) {
+        if (type.isNullable()) {
+            return true;
+        }
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return TypeUtils.hasNullableSuperType(type);
         }
-        return type.isNullable();
+        return false;
     }
 }

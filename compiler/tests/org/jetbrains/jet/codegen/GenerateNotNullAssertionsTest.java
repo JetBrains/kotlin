@@ -154,6 +154,14 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         assertNoIntrinsicsMethodIsCalled(PackageClassUtils.getPackageClassName(FqName.ROOT));
     }
 
+    public void testNoAssertionForNullableGenericMethodCall() {
+        setUpEnvironment(true, false);
+
+        loadFile("notNullAssertions/noAssertionForNullableGenericMethodCall.kt");
+
+        assertNoIntrinsicsMethodIsCalled("A");
+    }
+
     private void assertNoIntrinsicsMethodIsCalled(String className) {
         ClassFileFactory classes = generateClassesInFile();
         ClassReader reader = new ClassReader(classes.asBytes(className + ".class"));
