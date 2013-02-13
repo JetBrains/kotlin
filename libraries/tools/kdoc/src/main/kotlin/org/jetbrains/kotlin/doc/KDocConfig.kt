@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.doc
 
 import java.util.*
+import org.jetbrains.kotlin.doc.model.KPackage
 
 /**
 * The configuration used with KDoc
