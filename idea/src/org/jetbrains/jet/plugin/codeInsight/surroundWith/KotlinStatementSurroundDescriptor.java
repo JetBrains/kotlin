@@ -21,7 +21,7 @@ import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 
 public class KotlinStatementSurroundDescriptor implements SurroundDescriptor {
 
@@ -32,7 +32,7 @@ public class KotlinStatementSurroundDescriptor implements SurroundDescriptor {
 
     @NotNull
     public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-        return JetRefactoringUtil.findStatements(file, startOffset, endOffset);
+        return CodeInsightUtils.findStatements(file, startOffset, endOffset);
     }
 
     @NotNull public Surrounder[] getSurrounders() {

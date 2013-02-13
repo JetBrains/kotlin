@@ -21,12 +21,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,13 +33,13 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
@@ -180,111 +177,14 @@ public class JetRefactoringUtil {
         return expressionText;
     }
 
-    @Nullable
-    public static JetExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) throws IntroduceRefactoringException{
-        PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
+    @NotNull
+    private static JetExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) throws IntroduceRefactoringException {
+        JetExpression element = CodeInsightUtils.findExpression(file, startOffset, endOffset);
         if (element == null) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
         }
-        else if (!(element instanceof JetExpression)) {
-            throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        }
-        else if (element instanceof JetBlockExpression) {
-            List<JetElement> statements = ((JetBlockExpression) element).getStatements();
-            if (statements.size() == 1) {
-                JetElement elem = statements.get(0);
-                if (elem.getText().equals(element.getText()) && elem instanceof JetExpression) {
-                    return (JetExpression) elem;
-                }
-            }
-        }
-        return (JetExpression) element;
-    }
-
-    @Nullable
-    public static PsiElement findElementOfClassAtRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<JetExpression> aClass) {
-        PsiElement element1 = getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset);
-        PsiElement element2 = getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset);
-
-        if (element1 == null || element2 == null) return null;
-
-        return PsiTreeUtil.findElementOfClassAtRange(file, element1.getTextRange().getStartOffset(),
-                                                     element2.getTextRange().getEndOffset(), aClass);
-    }
-
-    @Nullable
-    private static PsiElement getElementAtOffsetIgnoreWhitespaceBefore(@NotNull PsiFile file, int offset) {
-        PsiElement element = file.findElementAt(offset);
-        if (element instanceof PsiWhiteSpace) {
-            return file.findElementAt(element.getTextRange().getEndOffset());
-        }
         return element;
-    }
-
-    @Nullable
-    private static PsiElement getElementAtOffsetIgnoreWhitespaceAfter(@NotNull PsiFile file, int offset) {
-        PsiElement element = file.findElementAt(offset - 1);
-        if (element instanceof PsiWhiteSpace) {
-            return file.findElementAt(element.getTextRange().getStartOffset() - 1);
-        }
-        return element;
-    }
-
-    @NotNull
-    public static PsiElement[] findStatements(@NotNull PsiFile file, int startOffset, int endOffset) {
-        PsiElement element1 = getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset);
-        PsiElement element2 = getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset);
-
-        if (element1 == null || element2 == null) return PsiElement.EMPTY_ARRAY;
-
-        startOffset = element1.getTextRange().getStartOffset();
-        endOffset = element2.getTextRange().getEndOffset();
-
-        PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
-        if (parent == null) return PsiElement.EMPTY_ARRAY;
-        while (true) {
-            if (parent instanceof JetBlockExpression) break;
-            if (parent == null || parent instanceof JetFile) return PsiElement.EMPTY_ARRAY;
-            parent = parent.getParent();
-        }
-
-        if (!parent.equals(element1)) {
-            while (!parent.equals(element1.getParent())) {
-                element1 = element1.getParent();
-            }
-        }
-        if (startOffset != element1.getTextRange().getStartOffset()) return PsiElement.EMPTY_ARRAY;
-
-        if (!parent.equals(element2)) {
-            while (!parent.equals(element2.getParent())) {
-                element2 = element2.getParent();
-            }
-        }
-        if (endOffset != element2.getTextRange().getEndOffset()) return PsiElement.EMPTY_ARRAY;
-
-        PsiElement[] children = parent.getChildren();
-        ArrayList<PsiElement> array = new ArrayList<PsiElement>();
-        boolean flag = false;
-        for (PsiElement child : children) {
-            if (child.equals(element1)) {
-                flag = true;
-            }
-            if (flag && !(child instanceof PsiWhiteSpace)) {
-                array.add(child);
-            }
-            if (child.equals(element2)) {
-                break;
-            }
-        }
-
-        for (PsiElement element : array) {
-            if (!(element instanceof JetExpression || element instanceof PsiWhiteSpace || element instanceof PsiComment)) {
-                return PsiElement.EMPTY_ARRAY;
-            }
-        }
-
-        return PsiUtilCore.toPsiElementArray(array);
     }
 
     public static class IntroduceRefactoringException extends Exception {

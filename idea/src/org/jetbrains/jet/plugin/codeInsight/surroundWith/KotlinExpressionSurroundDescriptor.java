@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
@@ -32,17 +33,11 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
 
     @NotNull
     public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-        try {
-            JetExpression expression = JetRefactoringUtil.findExpression(file, startOffset, endOffset);
-            if (expression == null) {
-                return PsiElement.EMPTY_ARRAY;
-            }
-            return new PsiElement[] {expression};
-        }
-        catch (JetRefactoringUtil.IntroduceRefactoringException e) {
-            // Cannot find expression in this file with given offset
+        JetExpression expression = CodeInsightUtils.findExpression(file, startOffset, endOffset);
+        if (expression == null) {
             return PsiElement.EMPTY_ARRAY;
         }
+        return new PsiElement[] {expression};
     }
 
     @NotNull
