@@ -19,18 +19,14 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
-public class KotlinNotSurrounder implements Surrounder {
+public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     @Override
     public String getTemplateDescription() {
         return CodeInsightBundle.message("surround.with.not.template");
     }
 
     @Override
-    public boolean isApplicable(@NotNull PsiElement[] elements) {
-        if (elements.length != 1 || !(elements[0] instanceof JetExpression)) {
-            return false;
-        }
-        JetExpression expression = (JetExpression) elements[0];
+    public boolean isApplicable(@NotNull JetExpression expression) {
         ResolveSession resolveSession = WholeProjectAnalyzerFacade.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
         BindingContext expressionBindingContext = ResolveSessionUtils.resolveToExpression(resolveSession, expression);
         JetType type = expressionBindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
@@ -39,21 +35,19 @@ public class KotlinNotSurrounder implements Surrounder {
 
     @Nullable
     @Override
-    public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements) throws IncorrectOperationException {
-        JetExpression expr = (JetExpression) elements[0];
-
+    public TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression) {
         JetPrefixExpression prefixExpr = (JetPrefixExpression)JetPsiFactory.createExpression(project, "!(a)");
         JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) prefixExpr.getBaseExpression();
         assert parenthesizedExpression != null : "JetParenthesizedExpression should exists for " + prefixExpr.getText() + " expression";
         JetExpression expressionWithoutParentheses = parenthesizedExpression.getExpression();
         assert expressionWithoutParentheses != null : "JetExpression should exists for " + parenthesizedExpression.getText() + " expression";
-        expressionWithoutParentheses.replace(expr);
+        expressionWithoutParentheses.replace(expression);
 
-        expr = (JetExpression) expr.replace(prefixExpr);
+        expression = (JetExpression) expression.replace(prefixExpr);
 
-        CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(expr);
+        CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(expression);
 
-        int offset = expr.getTextRange().getEndOffset();
+        int offset = expression.getTextRange().getEndOffset();
         return new TextRange(offset, offset);
     }
 }
