@@ -67,3 +67,16 @@ public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T) : T {
 
     return r
 }
+
+/**
+ * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ */
+public inline fun <T:Any> List<T?>.requireNoNulls() : List<T> {
+    for (element in this) {
+        if (element == null) {
+            throw IllegalArgumentException("null element found in $this")
+        }
+    }
+    return this as List<T>
+}
+
