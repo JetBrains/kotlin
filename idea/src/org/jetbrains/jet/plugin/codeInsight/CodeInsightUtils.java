@@ -102,8 +102,16 @@ public class CodeInsightUtils {
 
         if (element1 == null || element2 == null) return null;
 
-        return PsiTreeUtil.findElementOfClassAtRange(file, element1.getTextRange().getStartOffset(),
-                                                     element2.getTextRange().getEndOffset(), aClass);
+        startOffset = element1.getTextRange().getStartOffset();
+        endOffset = element2.getTextRange().getEndOffset();
+
+        JetExpression jetExpression = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, aClass);
+        if (jetExpression == null ||
+            jetExpression.getTextRange().getStartOffset() != startOffset ||
+            jetExpression.getTextRange().getEndOffset() != endOffset) {
+            return null;
+        }
+        return jetExpression;
     }
 
     @Nullable
