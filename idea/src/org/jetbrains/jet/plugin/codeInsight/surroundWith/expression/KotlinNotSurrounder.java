@@ -1,4 +1,4 @@
-package org.jetbrains.jet.plugin.codeInsight.surroundWith;
+package org.jetbrains.jet.plugin.codeInsight.surroundWith.expression;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.CodeInsightUtilBase;

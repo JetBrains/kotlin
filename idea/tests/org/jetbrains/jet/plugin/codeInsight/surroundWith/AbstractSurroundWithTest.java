@@ -20,6 +20,9 @@ import com.intellij.codeInsight.generation.surroundWith.SurroundWithHandler;
 import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinNotSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.KotlinIfElseSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.KotlinIfSurrounder;
 
 public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase {
 

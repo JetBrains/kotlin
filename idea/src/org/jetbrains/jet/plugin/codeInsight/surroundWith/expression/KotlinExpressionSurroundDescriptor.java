@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight.surroundWith;
+package org.jetbrains.jet.plugin.codeInsight.surroundWith.expression;
 
 import com.intellij.lang.surroundWith.SurroundDescriptor;
 import com.intellij.lang.surroundWith.Surrounder;
@@ -23,7 +23,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
 

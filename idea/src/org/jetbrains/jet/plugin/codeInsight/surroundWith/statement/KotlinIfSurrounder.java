@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight.surroundWith;
+package org.jetbrains.jet.plugin.codeInsight.surroundWith.statement;
 
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import org.jetbrains.annotations.NotNull;
 
-public class KotlinIfElseSurrounder extends KotlinIfSurrounderBase {
+public class KotlinIfSurrounder extends KotlinIfSurrounderBase {
 
     @Override
     public String getTemplateDescription() {
-        return CodeInsightBundle.message("surround.with.ifelse.template");
+        return CodeInsightBundle.message("surround.with.if.template");
     }
 
     @NotNull
     @Override
     protected String getCodeTemplate() {
-        return "if (a) { \n} else { \n}";
+        return "if (a) { \n}";
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight.surroundWith;
+package org.jetbrains.jet.plugin.codeInsight.surroundWith.statement;
 
 
 import com.intellij.codeInsight.CodeInsightUtilBase;
@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetIfExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 
 import java.lang.String;
 
