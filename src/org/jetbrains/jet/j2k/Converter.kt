@@ -21,10 +21,10 @@ import java.text.MessageFormat
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.jet.lang.resolve.java.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.internal.com.intellij.openapi.project.Project
+import com.intellij.openapi.project.Project
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.internal.com.intellij.openapi.Disposable
+import com.intellij.openapi.Disposable
 import org.jetbrains.jet.lang.resolve.name.FqName
 
 public open class Converter() {

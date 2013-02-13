@@ -9,7 +9,7 @@ public open class ClassType(val `type` : Identifier, val parameters : List<Eleme
     public override fun toKotlin() : String {
         // TODO change to map() when KT-2051 is fixed
         val parametersToKotlin = ArrayList<String>()
-        for(val param in parameters) {
+        for(param in parameters) {
             parametersToKotlin.add(param.toKotlin())
         }
         var params : String = if (parametersToKotlin.size() == 0)
