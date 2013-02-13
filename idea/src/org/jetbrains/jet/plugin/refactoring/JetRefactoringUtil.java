@@ -182,9 +182,8 @@ public class JetRefactoringUtil {
 
     @Nullable
     public static JetExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) throws IntroduceRefactoringException{
-        PsiElement element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
-        if (element == null || element.getTextRange().getStartOffset() != startOffset ||
-            element.getTextRange().getEndOffset() != endOffset) {
+        PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
+        if (element == null) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
         }
@@ -203,19 +202,44 @@ public class JetRefactoringUtil {
         return (JetExpression) element;
     }
 
+    @Nullable
+    public static PsiElement findElementOfClassAtRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<JetExpression> aClass) {
+        PsiElement element1 = getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset);
+        PsiElement element2 = getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset);
+
+        if (element1 == null || element2 == null) return null;
+
+        return PsiTreeUtil.findElementOfClassAtRange(file, element1.getTextRange().getStartOffset(),
+                                                     element2.getTextRange().getEndOffset(), aClass);
+    }
+
+    @Nullable
+    private static PsiElement getElementAtOffsetIgnoreWhitespaceBefore(@NotNull PsiFile file, int offset) {
+        PsiElement element = file.findElementAt(offset);
+        if (element instanceof PsiWhiteSpace) {
+            return file.findElementAt(element.getTextRange().getEndOffset());
+        }
+        return element;
+    }
+
+    @Nullable
+    private static PsiElement getElementAtOffsetIgnoreWhitespaceAfter(@NotNull PsiFile file, int offset) {
+        PsiElement element = file.findElementAt(offset - 1);
+        if (element instanceof PsiWhiteSpace) {
+            return file.findElementAt(element.getTextRange().getStartOffset() - 1);
+        }
+        return element;
+    }
+
     @NotNull
     public static PsiElement[] findStatements(@NotNull PsiFile file, int startOffset, int endOffset) {
-        PsiElement element1 = file.findElementAt(startOffset);
-        PsiElement element2 = file.findElementAt(endOffset - 1);
-        if (element1 instanceof PsiWhiteSpace) {
-            startOffset = element1.getTextRange().getEndOffset();
-            element1 = file.findElementAt(startOffset);
-        }
-        if (element2 instanceof PsiWhiteSpace) {
-            endOffset = element2.getTextRange().getStartOffset();
-            element2 = file.findElementAt(endOffset - 1);
-        }
+        PsiElement element1 = getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset);
+        PsiElement element2 = getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset);
+
         if (element1 == null || element2 == null) return PsiElement.EMPTY_ARRAY;
+
+        startOffset = element1.getTextRange().getStartOffset();
+        endOffset = element2.getTextRange().getEndOffset();
 
         PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
         if (parent == null) return PsiElement.EMPTY_ARRAY;
