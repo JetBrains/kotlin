@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -455,10 +456,7 @@ public class DescriptorResolver {
             }
 
             if (!(functionDescriptor instanceof ConstructorDescriptor)) {
-                ASTNode valOrVarNode = valueParameter.getValOrVarNode();
-                if (valOrVarNode != null) {
-                    trace.report(VAL_OR_VAR_ON_FUN_PARAMETER.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
-                }
+                checkParameterHasNoValOrVar(trace, valueParameter, VAL_OR_VAR_ON_FUN_PARAMETER);
             }
 
             ValueParameterDescriptor valueParameterDescriptor =
@@ -1381,5 +1379,16 @@ public class DescriptorResolver {
             descriptor = descriptor.getContainingDeclaration();
         }
         return true;
+    }
+
+    public static void checkParameterHasNoValOrVar(
+            @NotNull BindingTrace trace,
+            @NotNull JetParameter parameter,
+            @NotNull DiagnosticFactory1<PsiElement, JetKeywordToken> diagnosticFactory
+    ) {
+        ASTNode valOrVarNode = parameter.getValOrVarNode();
+        if (valOrVarNode != null) {
+            trace.report(diagnosticFactory.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
+        }
     }
 }
