@@ -84,29 +84,29 @@ fun main(args: Array<String>) {
     templates.clear()
 
     collections()
-    templates.writeTo(File(outDir, "Arrays.kt")) {
+    templates.writeTo(File(outDir, "_Arrays.kt")) {
         buildFor(Arrays, "")
     }
 
     for (a in otherArrayNames) {
-        templates.writeTo(File(outDir, "${a}Arrays.kt")) {
+        templates.writeTo(File(outDir, "_${a}Arrays.kt")) {
             buildFor(PrimitiveArrays, a)
         }
     }
 
-    templates.writeTo(File(outDir, "Iterables.kt")) {
+    templates.writeTo(File(outDir, "_Iterables.kt")) {
         if (iteratorSignatures contains signature.flat()) "" else buildFor(Iterables, "")
     }
 
-    templates.writeTo(File(outDir, "IteratorsCommon.kt")) {
+    templates.writeTo(File(outDir, "_IteratorsCommon.kt")) {
         if (iteratorSignatures contains signature.flat()) "" else buildFor(Iterators, "")
     }
 
-    templates.writeTo(File(outDir, "Collections.kt")) {
+    templates.writeTo(File(outDir, "_Collections.kt")) {
         if (iteratorSignatures contains signature.flat()) buildFor(Collections, "") else ""
     }
 
-    generateDownTos(File(outDir, "DownTo.kt"), "package kotlin")
+    generateDownTos(File(outDir, "_DownTo.kt"), "package kotlin")
 }
 
 fun String.flat() = this.replaceAll(" ", "")
