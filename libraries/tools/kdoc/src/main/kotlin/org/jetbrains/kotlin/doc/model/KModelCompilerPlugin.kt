@@ -17,7 +17,7 @@ abstract class KModelCompilerPlugin(
         val bindingContext = context.getContext()
         val sources = context.getFiles()
         val sourceDirs: List<File> = arguments.getSourceDirs().orEmpty().requireNoNulls().map { path -> File(path) }
-        val model = KModel(bindingContext, arguments.apply(), sourceDirs, sources.requireNoNulls())
+        val model = KModel(bindingContext, arguments.apply(), sourceDirs, sources.orEmpty().requireNoNulls())
 
         processModel(model)
     }
