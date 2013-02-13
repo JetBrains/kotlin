@@ -39,7 +39,7 @@ public class SeleniumQUnit(val driver: WebDriver) {
             resultsElement != null
         }
         assertNotNull(resultsElement, "No qunit test elements could be found in ${driver.getCurrentUrl()}")
-        return resultsElement!!.findElements(By.xpath("li")).filterNotNull()
+        return resultsElement!!.findElements(By.xpath("li"))?.filterNotNull() ?: arrayListOf<WebElement>()
     }
 
     public fun findTestName(element: WebElement): String {
