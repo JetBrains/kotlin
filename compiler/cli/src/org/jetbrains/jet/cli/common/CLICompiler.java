@@ -102,28 +102,29 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             usage(errStream);
             return OK;
         }
+
         MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
 
         printVersionIfNeeded(errStream, arguments, messageRenderer);
 
-        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
+        PrintingMessageCollector printingCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
 
         try {
-            return exec(messageCollector, arguments);
+            return exec(printingCollector, arguments);
         }
         finally {
-            messageCollector.printToErrStream();
             errStream.print(messageRenderer.renderConclusion());
         }
     }
 
     @NotNull
     public ExitCode exec(@NotNull MessageCollector messageCollector, @NotNull A arguments) {
+        GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
             Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
             try {
-                MessageSeverityCollector severityCollector = new MessageSeverityCollector(messageCollector);
+                MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
                 ExitCode code = doExecute(arguments, severityCollector, rootDisposable);
                 return severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
             }
@@ -132,9 +133,12 @@ public abstract class CLICompiler<A extends CompilerArguments> {
             }
         }
         catch (Throwable t) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
-                                    CompilerMessageLocation.NO_LOCATION);
+            groupingCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
+                                     CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
+        }
+        finally {
+            groupingCollector.flush();
         }
     }
 

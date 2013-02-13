@@ -16,21 +16,18 @@
 
 package org.jetbrains.jet.cli.common.messages;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
-import java.util.Collection;
+
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.LOGGING;
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.OUTPUT;
 
 public class PrintingMessageCollector implements MessageCollector {
 
     private final boolean verbose;
     private final PrintStream errStream;
     private final MessageRenderer messageRenderer;
-
-    // File path (nullable) -> error message
-    private final Multimap<String, String> groupedMessages = LinkedHashMultimap.create();
 
     public PrintingMessageCollector(
             @NotNull PrintStream errStream,
@@ -48,27 +45,9 @@ public class PrintingMessageCollector implements MessageCollector {
             @NotNull String message,
             @NotNull CompilerMessageLocation location
     ) {
+        boolean verboseMessage = severity == LOGGING || severity == OUTPUT;
+        if (!verbose && verboseMessage) return;
 
-        String text = messageRenderer.render(severity, message, location);
-        if (severity == CompilerMessageSeverity.LOGGING || severity == CompilerMessageSeverity.OUTPUT) {
-            if (!verbose) {
-                return;
-            }
-            errStream.println(text);
-        }
-        else {
-            groupedMessages.put(location.getPath(), text);
-        }
-    }
-
-    public void printToErrStream() {
-        if (!groupedMessages.isEmpty()) {
-            for (String path : groupedMessages.keySet()) {
-                Collection<String> messageTexts = groupedMessages.get(path);
-                for (String text : messageTexts) {
-                    errStream.println(text);
-                }
-            }
-        }
+        errStream.println(messageRenderer.render(severity, message, location));
     }
 }

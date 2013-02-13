@@ -374,7 +374,7 @@ public class KotlinToJVMBytecodeCompiler {
             @Nullable List<AnalyzerScriptParameter> scriptParameters,
             @Nullable List<JetScriptDefinition> scriptDefinitions) {
         final MessageRenderer messageRenderer = MessageRenderer.PLAIN;
-        PrintingMessageCollector messageCollector = new PrintingMessageCollector(System.err, messageRenderer, false);
+        GroupingMessageCollector messageCollector = new GroupingMessageCollector(new PrintingMessageCollector(System.err, messageRenderer, false));
         Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
         try {
             CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
@@ -407,7 +407,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         }
         finally {
-            messageCollector.printToErrStream();
+            messageCollector.flush();
             Disposer.dispose(rootDisposable);
         }
     }

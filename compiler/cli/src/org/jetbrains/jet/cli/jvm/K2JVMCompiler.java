@@ -220,7 +220,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         public void report(
                 @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
         ) {
-            if (!(severity == CompilerMessageSeverity.LOGGING || severity == CompilerMessageSeverity.OUTPUT)) {
+            if (!CompilerMessageSeverity.VERBOSE.contains(severity)) {
                 messageCollector.report(severity, message, location);
             }
         }
