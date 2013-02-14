@@ -403,6 +403,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeCannotMakeClassAnnotation.kt")
+        public void testCannotMakeClassAnnotation() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeCannotMakeClassAnnotation.kt");
+        }
+        
         @TestMetadata("beforeFinalTrait.kt")
         public void testFinalTrait() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeFinalTrait.kt");
@@ -416,6 +421,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeIllegalEnumAnnotation2.kt")
         public void testIllegalEnumAnnotation2() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeIllegalEnumAnnotation2.kt");
+        }
+        
+        @TestMetadata("beforeNotAnAnnotationClass.kt")
+        public void testNotAnAnnotationClass() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeNotAnAnnotationClass.kt");
         }
         
         @TestMetadata("beforeOpenMemberInFinalClass1.kt")
