@@ -734,7 +734,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/variables")
-    @InnerTestClasses({Variables.ChangeMutability.class, Variables.ChangeToBackingField.class, Variables.ChangeToFunctionInvocation.class})
+    @InnerTestClasses({Variables.ChangeMutability.class, Variables.ChangeToBackingField.class, Variables.ChangeToFunctionInvocation.class, Variables.ChangeToPropertyName.class})
     public static class Variables extends AbstractQuickFixTest {
         public void testAllFilesPresentInVariables() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/variables"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -804,12 +804,31 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             
         }
         
+        @TestMetadata("idea/testData/quickfix/variables/changeToPropertyName")
+        public static class ChangeToPropertyName extends AbstractQuickFixTest {
+            @TestMetadata("beforeAbstractProperty.kt")
+            public void testAbstractProperty() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeAbstractProperty.kt");
+            }
+            
+            @TestMetadata("beforeAbstractPropertyThis.kt")
+            public void testAbstractPropertyThis() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeAbstractPropertyThis.kt");
+            }
+            
+            public void testAllFilesPresentInChangeToPropertyName() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/variables/changeToPropertyName"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Variables");
             suite.addTestSuite(Variables.class);
             suite.addTestSuite(ChangeMutability.class);
             suite.addTestSuite(ChangeToBackingField.class);
             suite.addTestSuite(ChangeToFunctionInvocation.class);
+            suite.addTestSuite(ChangeToPropertyName.class);
             return suite;
         }
     }
