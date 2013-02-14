@@ -726,6 +726,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/uselessImports"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeRemoveUselessHiddenImport.kt")
+        public void testRemoveUselessHiddenImport() throws Exception {
+            doTest("idea/testData/quickfix/uselessImports/beforeRemoveUselessHiddenImport.kt");
+        }
+        
         @TestMetadata("beforeRemoveUselessImport.kt")
         public void testRemoveUselessImport() throws Exception {
             doTest("idea/testData/quickfix/uselessImports/beforeRemoveUselessImport.kt");
