@@ -496,6 +496,11 @@ public open class Converter() {
         if (isPrimitiveTypeOrNull && expression.isNullable()) {
             expression = BangBangExpression(expression)
         }
+        else if (expectedType is PsiPrimitiveType && actualType is PsiClassType) {
+            if (PsiPrimitiveType.getUnboxedType(actualType) == expectedType) {
+                expression = BangBangExpression(expression)
+            }
+        }
 
         if (actualType != null) {
             if (isConversionNeeded(actualType, expectedType) && !(expression is LiteralExpression))

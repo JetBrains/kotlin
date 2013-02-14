@@ -4,6 +4,6 @@ open fun getInteger(i : Int?) : Int? {
 return i
 }
 open fun test() : Unit {
-var i : Int = getInteger(10)
+var i : Int = getInteger(10)!!
 }
 }
