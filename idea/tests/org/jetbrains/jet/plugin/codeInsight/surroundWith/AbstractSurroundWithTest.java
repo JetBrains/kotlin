@@ -64,7 +64,11 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
         doTest(path, new KotlinTryFinallySurrounder());
     }
 
-    private void doTest(String path, Surrounder surrounder) throws Exception{
+    public void doTestWithFunctionLiteralSurrounder(String path) throws Exception {
+        doTest(path, new KotlinFunctionLiteralSurrounder());
+    }
+
+    private void doTest(String path, Surrounder surrounder) throws Exception {
         configureByFile(path);
         SurroundWithHandler.invoke(getProject(), getEditor(), getFile(), surrounder);
         checkResultByFile(path + ".after");

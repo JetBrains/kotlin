@@ -285,6 +285,13 @@ public class GenerateTests {
                 AbstractSurroundWithTest.class,
                 testModel("idea/testData/codeInsight/surroundWith/tryFinally", "doTestWithTryFinallySurrounder")
         );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithFunctionLiteralTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/functionLiteral", "doTestWithFunctionLiteralSurrounder")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
