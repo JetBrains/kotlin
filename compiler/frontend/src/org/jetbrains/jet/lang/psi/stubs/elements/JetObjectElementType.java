@@ -25,6 +25,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetClassObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetObjectStubImpl;
@@ -53,7 +54,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
             PsiElement psiElement = node.getPsi();
             if (psiElement instanceof JetObjectDeclaration) {
                 JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) psiElement;
-                return objectDeclaration.getName() != null;
+                return objectDeclaration.getName() != null || isClassObject(objectDeclaration);
             }
         }
 
@@ -63,10 +64,8 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
     @Override
     public PsiJetObjectStub createStub(@NotNull JetObjectDeclaration psi, @NotNull StubElement parentStub) {
         String name = psi.getName();
-        assert name != null;
-
         FqName fqName = psi.getFqName();
-        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, psi.isTopLevel());
+        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, psi.isTopLevel(), isClassObject(psi));
     }
 
     @Override
@@ -75,6 +74,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         FqName fqName = stub.getFQName();
         dataStream.writeName(fqName != null ? fqName.toString() : null);
         dataStream.writeBoolean(stub.isTopLevel());
+        dataStream.writeBoolean(stub.isClassObject());
     }
 
     @Override
@@ -83,12 +83,17 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         StringRef fqNameStr = dataStream.readName();
         FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
         boolean isTopLevel = dataStream.readBoolean();
+        boolean isClassObject = dataStream.readBoolean();
 
-        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, isTopLevel);
+        return new PsiJetObjectStubImpl(JetStubElementTypes.OBJECT_DECLARATION, parentStub, name, fqName, isTopLevel, isClassObject);
     }
 
     @Override
     public void indexStub(PsiJetObjectStub stub, IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexObject(stub, sink);
+    }
+
+    private static boolean isClassObject(@NotNull JetObjectDeclaration objectDeclaration) {
+        return objectDeclaration.getParent() instanceof JetClassObject;
     }
 }

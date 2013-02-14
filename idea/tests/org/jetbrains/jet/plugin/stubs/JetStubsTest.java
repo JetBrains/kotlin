@@ -72,6 +72,16 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "      TYPE_PARAMETER:PsiJetTypeParameterStubImpl[name=T extendText=null]\n");
     }
 
+    public void testClassObject() {
+        doBuildTest("class C { class object { fun foo() {} }}",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=C fqn=C superNames=[]]\n" +
+                    "    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl\n" +
+                    "    OBJECT_DECLARATION:PsiJetObjectStubImpl[class-object name=null fqName=null]\n" +
+                    "      FUN:PsiJetFunctionStubImpl[name=foo]\n" +
+                    "        VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+    }
+
     public void testFunctionInNotNamedObject() {
         doBuildTest("object { fun testing() = 12 }",
                     "PsiJetFileStubImpl[package=]\n" +

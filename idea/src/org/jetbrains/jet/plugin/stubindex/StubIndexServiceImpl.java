@@ -21,7 +21,9 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.stubs.*;
 import org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class StubIndexServiceImpl implements StubIndexService {
 
@@ -61,7 +63,22 @@ public class StubIndexServiceImpl implements StubIndexService {
     @Override
     public void indexObject(PsiJetObjectStub stub, IndexSink sink) {
         String name = stub.getName();
-        assert name != null;
+        FqName fqName = stub.getFQName();
+
+        if (stub.isClassObject()) {
+            StubElement parentStub = stub.getParentStub();
+            assert parentStub instanceof PsiJetClassStub : "Something but a class is a parent to class object stub: " + parentStub;
+
+            name = JvmAbi.CLASS_OBJECT_CLASS_NAME;
+
+            String qualifiedName = ((PsiJetClassStub) parentStub).getQualifiedName();
+            if (qualifiedName != null) {
+                fqName = new FqName(qualifiedName).child(Name.identifier(name));
+            }
+        }
+        else {
+            assert name != null;
+        }
 
         sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
 
@@ -69,7 +86,6 @@ public class StubIndexServiceImpl implements StubIndexService {
             sink.occurrence(JetTopLevelShortObjectNameIndex.getInstance().getKey(), name);
         }
 
-        FqName fqName = stub.getFQName();
         if (fqName != null) {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqName.getFqName());
         }

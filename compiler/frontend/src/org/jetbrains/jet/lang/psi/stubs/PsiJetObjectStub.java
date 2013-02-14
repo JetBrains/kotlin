@@ -25,4 +25,5 @@ public interface PsiJetObjectStub extends NamedStub<JetObjectDeclaration> {
     @Nullable
     FqName getFQName();
     boolean isTopLevel();
+    boolean isClassObject();
 }

@@ -30,27 +30,32 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     private final StringRef name;
     private final FqName fqName;
     private final boolean isTopLevel;
+    private final boolean isClassObject;
 
     public PsiJetObjectStubImpl(
             @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
-            @NotNull String name,
+            @Nullable String name,
             @Nullable FqName fqName,
-            boolean isTopLevel) {
-        this(elementType, parent, StringRef.fromString(name), fqName, isTopLevel);
+            boolean isTopLevel,
+            boolean isClassObject
+    ) {
+        this(elementType, parent, StringRef.fromString(name), fqName, isTopLevel, isClassObject);
     }
 
     public PsiJetObjectStubImpl(
             @NotNull IStubElementType elementType,
             @NotNull StubElement parent,
-            @NotNull StringRef name,
+            @Nullable StringRef name,
             @Nullable FqName fqName,
-            boolean isTopLevel) {
+            boolean isTopLevel,
+            boolean isClassObject) {
         super(parent, elementType);
 
         this.name = name;
         this.fqName = fqName;
         this.isTopLevel = isTopLevel;
+        this.isClassObject = isClassObject;
     }
 
     @Override
@@ -70,10 +75,19 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     }
 
     @Override
+    public boolean isClassObject() {
+        return isClassObject;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
         builder.append("PsiJetObjectStubImpl[");
+
+        if (isClassObject) {
+            builder.append("class-object ");
+        }
 
         if (isTopLevel) {
             builder.append("top ");
