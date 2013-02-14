@@ -22,6 +22,7 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinNotSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinParenthesesSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinStringTemplateSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.KotlinIfElseSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.KotlinIfSurrounder;
 
@@ -41,6 +42,10 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
 
     public void doTestWithParenthesesSurrounder(String path) throws Exception {
         doTest(path, new KotlinParenthesesSurrounder());
+    }
+
+    public void doTestWithStringTemplateSurrounder(String path) throws Exception {
+        doTest(path, new KotlinStringTemplateSurrounder());
     }
 
     private void doTest(String path, Surrounder surrounder) throws Exception{

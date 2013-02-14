@@ -250,6 +250,13 @@ public class GenerateTests {
                 AbstractSurroundWithTest.class,
                 testModel("idea/testData/codeInsight/surroundWith/parentheses", "doTestWithParenthesesSurrounder")
         );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithStringTemplateTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/stringTemplate", "doTestWithStringTemplateSurrounder")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {

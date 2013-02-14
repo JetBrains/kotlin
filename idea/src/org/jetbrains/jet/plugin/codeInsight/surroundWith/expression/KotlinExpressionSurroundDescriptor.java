@@ -28,6 +28,7 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
 
     private static final Surrounder[] SURROUNDERS = {
             new KotlinNotSurrounder(),
+            new KotlinStringTemplateSurrounder(),
             new KotlinParenthesesSurrounder()
     };
 
