@@ -243,6 +243,13 @@ public class GenerateTests {
                 AbstractSurroundWithTest.class,
                 testModel("idea/testData/codeInsight/surroundWith/not", "doTestWithNotSurrounder")
         );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithParenthesesTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/parentheses", "doTestWithParenthesesSurrounder")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {

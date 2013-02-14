@@ -27,7 +27,8 @@ import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
 
     private static final Surrounder[] SURROUNDERS = {
-            new KotlinNotSurrounder()
+            new KotlinNotSurrounder(),
+            new KotlinParenthesesSurrounder()
     };
 
     @NotNull
