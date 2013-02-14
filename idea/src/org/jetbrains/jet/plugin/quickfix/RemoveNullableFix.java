@@ -27,21 +27,26 @@ import org.jetbrains.jet.lang.psi.JetTypeElement;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class RemoveNullableFix extends JetIntentionAction<JetNullableType> {
-    boolean isInSuperType;
+    public enum NullableKind {
+        REDUNDANT, SUPERTYPE, USELESS
+    }
+    private final NullableKind typeOfError;
 
-    public RemoveNullableFix(@NotNull JetNullableType element, boolean isInSuperTypeArg) {
+    public RemoveNullableFix(@NotNull JetNullableType element, @NotNull NullableKind type) {
         super(element);
-        isInSuperType = isInSuperTypeArg;
+        typeOfError = type;
     }
 
     @NotNull
     @Override
     public String getText() {
-        if (isInSuperType) {
-            return JetBundle.message("remove.supertype.nullable");
-        }
-        else {
-            return JetBundle.message("remove.redundant.nullable");
+        switch (typeOfError) {
+            case REDUNDANT:
+                return JetBundle.message("remove.redundant.nullable");
+            case SUPERTYPE:
+                return JetBundle.message("remove.supertype.nullable");
+            default:
+                return JetBundle.message("remove.useless.nullable");
         }
     }
 
@@ -57,13 +62,13 @@ public class RemoveNullableFix extends JetIntentionAction<JetNullableType> {
         super.element.replace(type);
     }
 
-    public static JetIntentionActionFactory createFactory(final boolean isInSupertypeArg) {
+    public static JetIntentionActionFactory createFactory(final NullableKind typeOfError) {
         return new JetIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetNullableType> createAction(Diagnostic diagnostic) {
-                JetNullableType type = QuickFixUtil.getParentElementOfType(diagnostic, JetNullableType.class);
-                if (type == null) return null;
-                return new RemoveNullableFix(type, isInSupertypeArg);
+                JetNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, JetNullableType.class);
+                if (nullType == null) return null;
+                return new RemoveNullableFix(nullType, typeOfError);
             }
         };
     }
