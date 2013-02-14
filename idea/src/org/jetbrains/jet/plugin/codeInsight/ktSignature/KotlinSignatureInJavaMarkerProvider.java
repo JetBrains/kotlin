@@ -34,17 +34,21 @@ import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
 
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -83,9 +87,12 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
+        KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(project);
+        BindingContext bindingContext = declarationsCache.getBindingContext();
+        DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(bindingContext, "wrapped context of declarations cache");
+
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, bindingTrace, new ModuleDescriptor(Name.special("<fake>")));
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        BindingContext bindingContext = injector.getBindingTrace().getBindingContext();
 
         for (PsiElement element : elements) {
             if (!(element instanceof PsiMember)) {
