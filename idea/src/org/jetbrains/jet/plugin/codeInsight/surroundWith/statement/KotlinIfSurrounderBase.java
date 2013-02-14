@@ -18,12 +18,10 @@ package org.jetbrains.jet.plugin.codeInsight.surroundWith.statement;
 
 
 import com.intellij.codeInsight.CodeInsightUtilBase;
-import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
@@ -34,29 +32,12 @@ import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 
 import java.lang.String;
 
-public abstract class KotlinIfSurrounderBase implements Surrounder {
-
-    @Override
-    public boolean isApplicable(@NotNull PsiElement[] elements) {
-        return true;
-    }
+public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder {
 
     @Nullable
     @Override
-    public TextRange surroundElements(
-            @NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements
-    ) throws IncorrectOperationException {
-        PsiElement container = elements[0].getParent();
-        if (container == null) return null;
-        return surroundStatements (project, editor, container, elements);
-    }
-
-    public TextRange surroundStatements(Project project, Editor editor, PsiElement container, PsiElement[] statements) throws IncorrectOperationException{
+    protected TextRange surroundStatements(Project project, Editor editor, PsiElement container, PsiElement[] statements) {
         // TODO extract variables declaration
-
-        if (statements.length == 0){
-            return null;
-        }
 
         JetIfExpression ifExpression = (JetIfExpression) JetPsiFactory.createExpression(project, getCodeTemplate());
         ifExpression = (JetIfExpression) container.addAfter(ifExpression, statements[statements.length - 1]);
