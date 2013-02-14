@@ -27,7 +27,10 @@ public class KotlinStatementSurroundDescriptor implements SurroundDescriptor {
 
     private static final Surrounder[] SURROUNDERS = {
             new KotlinIfSurrounder(),
-            new KotlinIfElseSurrounder()
+            new KotlinIfElseSurrounder(),
+            new KotlinTryFinallySurrounder(),
+            new KotlinTryCatchFinallySurrounder(),
+            new KotlinTryCatchSurrounder()
     };
 
     @NotNull

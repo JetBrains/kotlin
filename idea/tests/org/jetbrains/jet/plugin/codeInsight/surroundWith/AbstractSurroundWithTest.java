@@ -23,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinNotSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinParenthesesSurrounder;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinStringTemplateSurrounder;
-import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.KotlinIfElseSurrounder;
-import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.KotlinIfSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.expression.KotlinWhenSurrounder;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.statement.*;
 
 public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase {
 
@@ -46,6 +46,22 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
 
     public void doTestWithStringTemplateSurrounder(String path) throws Exception {
         doTest(path, new KotlinStringTemplateSurrounder());
+    }
+    
+    public void doTestWithWhenSurrounder(String path) throws Exception {
+        doTest(path, new KotlinWhenSurrounder());
+    }
+
+    public void doTestWithTryCatchSurrounder(String path) throws Exception {
+        doTest(path, new KotlinTryCatchSurrounder());
+    }
+
+    public void doTestWithTryCatchFinallySurrounder(String path) throws Exception {
+        doTest(path, new KotlinTryCatchFinallySurrounder());
+    }
+
+    public void doTestWithTryFinallySurrounder(String path) throws Exception {
+        doTest(path, new KotlinTryFinallySurrounder());
     }
 
     private void doTest(String path, Surrounder surrounder) throws Exception{

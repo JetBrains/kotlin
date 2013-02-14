@@ -264,6 +264,27 @@ public class GenerateTests {
                 AbstractSurroundWithTest.class,
                 testModel("idea/testData/codeInsight/surroundWith/when", "doTestWithWhenSurrounder")
         );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithTryCatchTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/tryCatch", "doTestWithTryCatchSurrounder")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithTryCatchFinallyTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/tryCatchFinally", "doTestWithTryCatchFinallySurrounder")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithTryFinallyTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/tryFinally", "doTestWithTryFinallySurrounder")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {

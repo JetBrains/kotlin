@@ -1,0 +1,8 @@
+fun foo() {
+    try {
+        "aaa"
+        "aaa"
+    } catch(e: <selection>Exception</selection>) {
+    } finally {
+    }
+}
