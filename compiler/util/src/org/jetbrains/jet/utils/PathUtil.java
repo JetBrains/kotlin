@@ -17,6 +17,7 @@
 package org.jetbrains.jet.utils;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -138,30 +139,25 @@ public class PathUtil {
 
     @NotNull
     public static File findRtJar() {
-        String javaHome = System.getProperty("java.home");
-        if ("jre".equals(new File(javaHome).getName())) {
-            javaHome = new File(javaHome).getParent();
-        }
-
-        File rtJar = findRtJar(javaHome);
-
-        if (rtJar == null || !rtJar.exists()) {
-            throw new IllegalArgumentException("No JDK rt.jar found under " + javaHome);
-        }
-
-        return rtJar;
+        return findRtJar(System.getProperty("java.home"));
     }
 
     private static File findRtJar(String javaHome) {
-        File rtJar = new File(javaHome, "jre/lib/rt.jar");
-        if (rtJar.exists()) {
-            return rtJar;
-        }
+        if (SystemInfo.isMac) {
+            File classesJar = new File(new File(javaHome).getParentFile(), "Classes/classes.jar");
+            if (classesJar.exists()) {
+                return classesJar;
+            }
 
-        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
-        if (classesJar.exists()) {
-            return classesJar;
+            throw new IllegalArgumentException("No classes.jar found under " + classesJar.getParent());
         }
-        return null;
+        else {
+            File rtJar = new File(javaHome, "lib/rt.jar");
+            if (rtJar.exists()) {
+                return rtJar;
+            }
+
+            throw new IllegalArgumentException("No rt.jar found under " + rtJar.getParent());
+        }
     }
 }

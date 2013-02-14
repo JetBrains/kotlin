@@ -67,8 +67,16 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                 "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION);
 
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
-        configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));
+
+        try {
+            configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, getClasspath(paths, arguments));
+            configuration.addAll(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, getAnnotationsPath(paths, arguments));
+        }
+        catch (Throwable t) {
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
+                                    CompilerMessageLocation.NO_LOCATION);
+            return INTERNAL_ERROR;
+        }
 
         final List<String> argumentsSourceDirs = arguments.getSourceDirs();
         if (!arguments.script &&
