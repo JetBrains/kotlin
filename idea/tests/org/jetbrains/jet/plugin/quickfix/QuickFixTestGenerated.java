@@ -668,6 +668,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/nullables/beforeRemoveSupertypeNullable2.kt");
         }
         
+        @TestMetadata("beforeRemoveUselessNullable.kt")
+        public void testRemoveUselessNullable() throws Exception {
+            doTest("idea/testData/quickfix/nullables/beforeRemoveUselessNullable.kt");
+        }
+        
         @TestMetadata("idea/testData/quickfix/nullables/unsafeInfixCall")
         public static class UnsafeInfixCall extends AbstractQuickFixTest {
             public void testAllFilesPresentInUnsafeInfixCall() throws Exception {

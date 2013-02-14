@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 
 import java.util.Collection;
@@ -143,8 +144,10 @@ public class QuickFixes {
 
         factories.put(UNRESOLVED_REFERENCE, MigrateSureInProjectFix.createFactory());
 
-        factories.put(REDUNDANT_NULLABLE, RemoveNullableFix.createFactory(false));
-        factories.put(NULLABLE_SUPERTYPE, RemoveNullableFix.createFactory(true));
+        factories.put(REDUNDANT_NULLABLE, RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.REDUNDANT));
+        factories.put(NULLABLE_SUPERTYPE, RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.SUPERTYPE));
+        factories.put(USELESS_NULLABLE_CHECK, RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.USELESS));
+
 
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
         actions.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
