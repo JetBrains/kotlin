@@ -1,0 +1,12 @@
+enum class MyEnum {
+    FIRST
+    SECOND
+}
+
+fun foo() {
+    val a = MyEnum.FIRST
+    when(a) {
+        <caret> -> {
+        }
+    }
+}

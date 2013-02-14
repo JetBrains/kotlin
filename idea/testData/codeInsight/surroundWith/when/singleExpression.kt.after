@@ -1,0 +1,9 @@
+fun foo() {
+    val a = "aa"
+    when(a) {
+        <caret> -> {
+        }
+        else -> {
+        }
+    }
+}

@@ -257,6 +257,13 @@ public class GenerateTests {
                 AbstractSurroundWithTest.class,
                 testModel("idea/testData/codeInsight/surroundWith/stringTemplate", "doTestWithStringTemplateSurrounder")
         );
+
+        generateTest(
+                "idea/tests/",
+                "SurroundWithWhenTestGenerated",
+                AbstractSurroundWithTest.class,
+                testModel("idea/testData/codeInsight/surroundWith/when", "doTestWithWhenSurrounder")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
