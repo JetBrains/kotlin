@@ -104,7 +104,7 @@ public class QuickFixes {
         factories.put(ABSTRACT_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ABSTRACT_KEYWORD, true));
         factories.put(OPEN_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true));
         factories.put(TRAIT_CAN_NOT_BE_FINAL, removeFinalModifierFactory);
-        factories.put(REDUNDANT_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory());
+        factories.put(REDUNDANT_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory(true));
         factories.put(INCOMPATIBLE_MODIFIERS, RemoveModifierFix.createRemoveModifierFactory(false));
         factories.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, RemoveModifierFix.createRemoveVarianceFactory());
 
@@ -201,6 +201,8 @@ public class QuickFixes {
         factories.put(ILLEGAL_ENUM_ANNOTATION, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ENUM_KEYWORD));
 
         factories.put(NESTED_CLASS_NOT_ALLOWED, AddModifierFix.createFactory(INNER_KEYWORD));
+
+        factories.put(CONFLICTING_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory(false));
 
         factories.put(NOT_AN_ANNOTATION_CLASS, MakeClassAnAnnotationClassFix.createFactory());
 
