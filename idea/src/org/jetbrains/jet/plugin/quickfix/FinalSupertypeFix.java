@@ -53,7 +53,7 @@ public class FinalSupertypeFix extends JetIntentionAction<JetClass> {
             return false;
         }
 
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(project).getBindingContext();
+        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
         ClassDescriptor childClassDescriptor = context.get(BindingContext.CLASS, childClass);
         if (childClassDescriptor == null) {
             return false;

@@ -53,7 +53,7 @@ public class KotlinCacheManager {
     }
 
     @NotNull
-    public KotlinDeclarationsCache getDeclarationsFromProject(@NotNull Project project) {
+    public KotlinDeclarationsCache getDeclarationsFromProject() {
         // To prevent dead locks, the lock below must be obtained only inside a read action
         ApplicationManager.getApplication().assertReadAccessAllowed();
         synchronized (declarationAnalysisLock) {

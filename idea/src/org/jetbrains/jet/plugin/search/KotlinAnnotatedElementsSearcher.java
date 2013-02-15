@@ -75,7 +75,7 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
                 public void run() {
                     //TODO LazyResolve
                     Project project = elt.getProject();
-                    KotlinDeclarationsCache declarations = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(project);
+                    KotlinDeclarationsCache declarations = KotlinCacheManager.getInstance(project).getDeclarationsFromProject();
                     BindingContext context = declarations.getBindingContext();
 
                     JetDeclaration parentOfType = PsiTreeUtil.getParentOfType(elt, JetDeclaration.class);

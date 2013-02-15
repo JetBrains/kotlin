@@ -53,7 +53,7 @@ public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotat
             return false;
         }
 
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(project).getBindingContext();
+        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject().getBindingContext();
         AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
         if (annotationDescriptor == null) {
             return false;

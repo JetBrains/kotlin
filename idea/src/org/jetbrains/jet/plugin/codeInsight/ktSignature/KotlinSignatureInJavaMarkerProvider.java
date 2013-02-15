@@ -87,7 +87,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(project);
+        KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(project).getDeclarationsFromProject();
         BindingContext bindingContext = declarationsCache.getBindingContext();
         DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(bindingContext, "wrapped context of declarations cache");
 
