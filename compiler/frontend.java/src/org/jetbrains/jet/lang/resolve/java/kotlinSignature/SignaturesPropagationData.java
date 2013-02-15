@@ -220,8 +220,9 @@ public class SignaturesPropagationData {
             assert classFqName != null;
 
             if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(new FqName(classFqName)).isEmpty()) {
-                List<FunctionDescriptor> funsFromMap = JavaToKotlinMethodMap.INSTANCE.getFunctions(superMethod, containingClass);
-                superFunctions.addAll(funsFromMap);
+                for (FunctionDescriptor superFun : JavaToKotlinMethodMap.INSTANCE.getFunctions(superMethod, containingClass)) {
+                    superFunctions.add(substituteSuperFunction(superclassToSupertype, superFun));
+                }
                 continue;
             }
 
@@ -385,7 +386,8 @@ public class SignaturesPropagationData {
             return autoArguments;
         }
 
-        List<List<TypeProjectionAndVariance>> typeArgumentsFromSuper = calculateTypeArgumentsFromSuper((ClassDescriptor) classifier, typesFromSuper);
+        List<List<TypeProjectionAndVariance>> typeArgumentsFromSuper = calculateTypeArgumentsFromSuper((ClassDescriptor) classifier,
+                                                                                                       typesFromSuper);
 
         // Modify type arguments using info from typesFromSuper
         List<TypeProjection> resultArguments = Lists.newArrayList();
