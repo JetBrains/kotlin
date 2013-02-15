@@ -1,6 +1,0 @@
-package test
-
-public open class CustomVariance : java.lang.Object {
-    public constructor CustomVariance()
-    public open fun foo() : jet.MutableList<out jet.Number>
-}

@@ -283,9 +283,9 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTest("compiler/testData/loadJava/kotlinSignature/ConstructorWithoutParams.java");
         }
         
-        @TestMetadata("CustomVariance.java")
-        public void testCustomVariance() throws Exception {
-            doTest("compiler/testData/loadJava/kotlinSignature/CustomVariance.java");
+        @TestMetadata("CustomProjectionKind.java")
+        public void testCustomProjectionKind() throws Exception {
+            doTest("compiler/testData/loadJava/kotlinSignature/CustomProjectionKind.java");
         }
         
         @TestMetadata("MethodWithFunctionTypes.java")
@@ -697,6 +697,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.java");
                 }
                 
+                @TestMetadata("InheritProjectionKind.java")
+                public void testInheritProjectionKind() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritProjectionKind.java");
+                }
+                
                 @TestMetadata("InheritReadOnlinessOfArgument.java")
                 public void testInheritReadOnlinessOfArgument() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.java");
@@ -710,11 +715,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("InheritReadOnlinessSubclass.java")
                 public void testInheritReadOnlinessSubclass() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.java");
-                }
-                
-                @TestMetadata("InheritVariance.java")
-                public void testInheritVariance() throws Exception {
-                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/return/InheritVariance.java");
                 }
                 
                 @TestMetadata("SameProjectionKind.java")

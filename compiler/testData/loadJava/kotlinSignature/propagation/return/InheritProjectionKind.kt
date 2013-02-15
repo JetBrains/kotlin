@@ -1,6 +1,6 @@
 package test
 
-public trait InheritVariance: Object {
+public trait InheritProjectionKind: Object {
 
     public trait Super: Object {
         public fun foo(): MutableCollection<out Number>

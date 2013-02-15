@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import jet.runtime.typeinfo.KotlinSignature;
 
-public interface InheritVariance {
+public interface InheritProjectionKind {
 
     public interface Super {
         @KotlinSignature("fun foo(): MutableCollection<out Number>")

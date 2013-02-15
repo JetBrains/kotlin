@@ -1,8 +1,8 @@
 package test
 
-public trait InheritVariance : java.lang.Object {
+public trait InheritProjectionKind : java.lang.Object {
     
-    public trait Sub : test.InheritVariance.Super {
+    public trait Sub : test.InheritProjectionKind.Super {
         public abstract override /*1*/ fun foo() : jet.MutableList<out jet.Number>
     }
     
