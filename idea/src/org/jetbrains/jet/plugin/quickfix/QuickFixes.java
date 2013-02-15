@@ -204,6 +204,7 @@ public class QuickFixes {
 
         factories.put(CONFLICTING_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory(false));
         factories.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, RemoveModifierFix.createRemoveProjectionFactory(false));
+        factories.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, RemoveModifierFix.createRemoveProjectionFactory(false));
 
         factories.put(NOT_AN_ANNOTATION_CLASS, MakeClassAnAnnotationClassFix.createFactory());
 
