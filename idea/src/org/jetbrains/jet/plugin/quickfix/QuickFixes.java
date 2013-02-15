@@ -203,6 +203,7 @@ public class QuickFixes {
         factories.put(NESTED_CLASS_NOT_ALLOWED, AddModifierFix.createFactory(INNER_KEYWORD));
 
         factories.put(CONFLICTING_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory(false));
+        factories.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, RemoveModifierFix.createRemoveProjectionFactory(false));
 
         factories.put(NOT_AN_ANNOTATION_CLASS, MakeClassAnAnnotationClassFix.createFactory());
 
