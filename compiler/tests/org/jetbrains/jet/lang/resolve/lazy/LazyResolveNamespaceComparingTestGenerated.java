@@ -1568,6 +1568,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.kt");
                     }
                     
+                    @TestMetadata("OverrideWithErasedParameter.kt")
+                    public void testOverrideWithErasedParameter() throws Exception {
+                        doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/OverrideWithErasedParameter.kt");
+                    }
+                    
                     @TestMetadata("ReadOnlyToMutable.kt")
                     public void testReadOnlyToMutable() throws Exception {
                         doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.kt");

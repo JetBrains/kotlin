@@ -62,6 +62,7 @@ public class SignaturesPropagationData {
     private final List<String> signatureErrors = Lists.newArrayList();
     private final List<FunctionDescriptor> superFunctions;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> autoTypeParameterToModified;
+    private final ClassDescriptor containingClass;
 
     public SignaturesPropagationData(
             @NotNull ClassDescriptor containingClass,
@@ -71,6 +72,7 @@ public class SignaturesPropagationData {
             @NotNull PsiMethodWrapper method,
             @NotNull BindingTrace trace
     ) {
+        this.containingClass = containingClass;
         superFunctions = getSuperFunctionsForMethod(method, trace, containingClass);
 
         autoTypeParameterToModified = SignaturesUtil.recreateTypeParametersAndReturnMapping(autoTypeParameters);
@@ -614,6 +616,37 @@ public class SignaturesPropagationData {
         else if (someSupersNotCovariantReadOnly || someSupersCovariantReadOnly) {
             if (collectionMapping.isMutableCollection(klass)) {
                 return collectionMapping.convertMutableToReadOnly(klass);
+            }
+        }
+
+        // Weird workaround for weird case. The sample code below is compiled by javac.
+        // In this case, we try to replace "Any" parameter type with "T" to fix substitution principle.
+        //
+        //    public interface Super<T> {
+        //        void foo(T t);
+        //    }
+        //
+        //    public interface Sub<T> extends Super<T> {
+        //        void foo(Object o);
+        //    }
+
+        List<TypeParameterDescriptor> typeParameterClassifiersFromSuper = Lists.newArrayList();
+        for (TypeAndVariance typeFromSuper : typesFromSuper) {
+            ClassifierDescriptor classifierFromSuper = typeFromSuper.type.getConstructor().getDeclarationDescriptor();
+            if (classifierFromSuper instanceof TypeParameterDescriptor) {
+                typeParameterClassifiersFromSuper.add((TypeParameterDescriptor) classifierFromSuper);
+            }
+        }
+
+        if (!typeParameterClassifiersFromSuper.isEmpty() && typeParameterClassifiersFromSuper.size() == typesFromSuper.size()) {
+            for (TypeParameterDescriptor typeParameter : typeParameterClassifiersFromSuper) {
+                if (typeParameter.getContainingDeclaration() != containingClass) {
+                    continue;
+                }
+
+                return autoTypeParameterToModified.containsKey(typeParameter) ? autoTypeParameterToModified
+                        .get(typeParameter) : typeParameter;
+
             }
         }
 

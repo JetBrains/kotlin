@@ -599,6 +599,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.java");
                 }
                 
+                @TestMetadata("OverrideWithErasedParameter.java")
+                public void testOverrideWithErasedParameter() throws Exception {
+                    doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/OverrideWithErasedParameter.java");
+                }
+                
                 @TestMetadata("ReadOnlyToMutable.java")
                 public void testReadOnlyToMutable() throws Exception {
                     doTest("compiler/testData/loadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.java");

@@ -1,0 +1,12 @@
+package test
+
+public trait OverrideWithErasedParameter : java.lang.Object {
+    
+    public trait Sub</*0*/ T> : test.OverrideWithErasedParameter.Super<T> {
+        public abstract override /*1*/ fun foo(/*0*/ p0 : T?) : Unit
+    }
+    
+    public trait Super</*0*/ T> : java.lang.Object {
+        public abstract fun foo(/*0*/ p0 : T?) : Unit
+    }
+}
