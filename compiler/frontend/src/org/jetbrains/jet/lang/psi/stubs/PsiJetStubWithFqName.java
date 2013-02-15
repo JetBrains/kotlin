@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.stubs.NamedStub;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public interface PsiJetObjectStub extends PsiJetStubWithFqName<JetObjectDeclaration> {
-    boolean isTopLevel();
-    boolean isClassObject();
+public interface PsiJetStubWithFqName<T extends PsiNamedElement> extends NamedStub<T> {
+    @Nullable
+    FqName getFqName();
 }

@@ -71,7 +71,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
     @Override
     public void serialize(PsiJetObjectStub stub, StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
-        FqName fqName = stub.getFQName();
+        FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.toString() : null);
         dataStream.writeBoolean(stub.isTopLevel());
         dataStream.writeBoolean(stub.isClassObject());

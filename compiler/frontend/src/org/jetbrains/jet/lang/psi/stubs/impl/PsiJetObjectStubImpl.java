@@ -65,7 +65,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
 
     @Nullable
     @Override
-    public FqName getFQName() {
+    public FqName getFqName() {
         return fqName;
     }
 

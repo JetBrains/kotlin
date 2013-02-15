@@ -16,18 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.psi.stubs.NamedStub;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 
 import java.util.List;
 
-public interface PsiJetClassStub extends NamedStub<JetClass> {
-    @NonNls
-    @Nullable
-    String getQualifiedName();
+public interface PsiJetClassStub extends PsiJetStubWithFqName<JetClass> {
 
     boolean isTrait();
 

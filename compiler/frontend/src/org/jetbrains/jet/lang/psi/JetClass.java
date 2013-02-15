@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
@@ -197,7 +198,8 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     private String getQualifiedName() {
         PsiJetClassStub stub = getStub();
         if (stub != null) {
-            return stub.getQualifiedName();
+            FqName fqName = stub.getFqName();
+            return fqName == null ? null : fqName.getFqName();
         }
 
         List<String> parts = new ArrayList<String>();

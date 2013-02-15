@@ -66,7 +66,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     public FqName getFqName() {
         PsiJetObjectStub stub = getStub();
         if (stub != null) {
-            return stub.getFQName();
+            return stub.getFqName();
         }
 
         return JetPsiUtil.getFQName(this);

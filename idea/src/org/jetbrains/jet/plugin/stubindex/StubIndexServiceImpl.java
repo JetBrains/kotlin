@@ -48,9 +48,9 @@ public class StubIndexServiceImpl implements StubIndexService {
             sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
         }
         
-        String fqn = stub.getQualifiedName();
+        FqName fqn = stub.getFqName();
         if (fqn != null) {
-            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn);
+            sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn.getFqName());
         }
 
         for (String superName : stub.getSuperNames()) {
@@ -63,17 +63,17 @@ public class StubIndexServiceImpl implements StubIndexService {
     @Override
     public void indexObject(PsiJetObjectStub stub, IndexSink sink) {
         String name = stub.getName();
-        FqName fqName = stub.getFQName();
+        FqName fqName = stub.getFqName();
 
         if (stub.isClassObject()) {
             StubElement parentStub = stub.getParentStub();
-            assert parentStub instanceof PsiJetClassStub : "Something but a class is a parent to class object stub: " + parentStub;
+            assert parentStub instanceof PsiJetStubWithFqName<?> : "Something but a class/object is a parent to class object stub: " + parentStub;
 
             name = JvmAbi.CLASS_OBJECT_CLASS_NAME;
 
-            String qualifiedName = ((PsiJetClassStub) parentStub).getQualifiedName();
-            if (qualifiedName != null) {
-                fqName = new FqName(qualifiedName).child(Name.identifier(name));
+            FqName parentFqName = ((PsiJetStubWithFqName<?>) parentStub).getFqName();
+            if (parentFqName != null) {
+                fqName = parentFqName.child(Name.identifier(name));
             }
         }
         else {
