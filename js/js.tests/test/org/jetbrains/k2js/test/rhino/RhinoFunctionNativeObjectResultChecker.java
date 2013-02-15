@@ -21,7 +21,7 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeJavaObject;
 
 /**
- * Assert that a Rhino function returns a Native Java object which when unwrapped is equal to the expecte result
+ * Assert that a Rhino function returns a Native Java object which when unwrapped is equal to the expected result
  */
 public class RhinoFunctionNativeObjectResultChecker extends RhinoFunctionResultChecker {
 
