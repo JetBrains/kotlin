@@ -234,17 +234,7 @@ public class SignaturesPropagationData {
 
             assert superFun instanceof FunctionDescriptor : superFun.getClass().getName();
 
-            DeclarationDescriptor superFunContainer = superFun.getContainingDeclaration();
-            assert superFunContainer instanceof ClassDescriptor: superFunContainer;
-
-            JetType supertype = superclassToSupertype.get(superFunContainer);
-            assert supertype != null : "Couldn't find super type for super function: " + superFun;
-            TypeSubstitutor supertypeSubstitutor = TypeSubstitutor.create(supertype);
-
-            FunctionDescriptor substitutedSuperFun = ((FunctionDescriptor) superFun).substitute(supertypeSubstitutor);
-            assert substitutedSuperFun != null;
-
-            superFunctions.add(substitutedSuperFun);
+            superFunctions.add(substituteSuperFunction(superclassToSupertype, (FunctionDescriptor) superFun));
         }
 
         // sorting for diagnostic stability
@@ -661,6 +651,23 @@ public class SignaturesPropagationData {
             superclassToSupertype.put((ClassDescriptor) superclass, supertype);
         }
         return superclassToSupertype;
+    }
+
+    @NotNull
+    private static FunctionDescriptor substituteSuperFunction(
+            @NotNull Map<ClassDescriptor, JetType> superclassToSupertype,
+            @NotNull FunctionDescriptor superFun
+    ) {
+        DeclarationDescriptor superFunContainer = superFun.getContainingDeclaration();
+        assert superFunContainer instanceof ClassDescriptor: superFunContainer;
+
+        JetType supertype = superclassToSupertype.get(superFunContainer);
+        assert supertype != null : "Couldn't find super type for super function: " + superFun;
+        TypeSubstitutor supertypeSubstitutor = TypeSubstitutor.create(supertype);
+
+        FunctionDescriptor substitutedSuperFun = superFun.substitute(supertypeSubstitutor);
+        assert substitutedSuperFun != null;
+        return substitutedSuperFun;
     }
 
     private static boolean isArrayType(@NotNull JetType type) {
