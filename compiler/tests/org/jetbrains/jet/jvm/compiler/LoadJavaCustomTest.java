@@ -161,6 +161,12 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
                dir + "SubclassWithRawType.java");
     }
 
+    public void testArraysInSubtypes() throws Exception {
+        String dir = PATH + "/arraysInSubtypes/";
+        doTest(dir + "ArraysInSubtypes.txt",
+               dir + "ArraysInSubtypes.java");
+    }
+
     public void testMethodTypeParameterErased() throws Exception {
         String dir = PATH + "/methodTypeParameterErased/";
         doTest(dir + "MethodTypeParameterErased.txt",

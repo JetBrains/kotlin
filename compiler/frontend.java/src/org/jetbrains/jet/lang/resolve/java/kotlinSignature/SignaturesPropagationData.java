@@ -22,6 +22,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.psi.PsiClass;
@@ -41,7 +42,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -329,11 +332,51 @@ public class SignaturesPropagationData {
             resultScope = autoType.getMemberScope();
         }
 
-        return new JetTypeImpl(autoType.getAnnotations(),
-                               resultClassifier.getTypeConstructor(),
-                               resultNullable,
-                               resultArguments,
-                               resultScope);
+        JetTypeImpl type = new JetTypeImpl(autoType.getAnnotations(),
+                                           resultClassifier.getTypeConstructor(),
+                                           resultNullable,
+                                           resultArguments,
+                                           resultScope);
+
+        checkArrayInReturnTypeType(type, typesFromSuper);
+
+        return type;
+    }
+
+    // Checks for case when method returning Super[] is overridden with method returning Sub[]
+    private void checkArrayInReturnTypeType(JetType type, List<TypeAndVariance> typesFromSuper) {
+        List<TypeAndVariance> arrayTypesFromSuper = ContainerUtil.filter(typesFromSuper, new Condition<TypeAndVariance>() {
+            @Override
+            public boolean value(TypeAndVariance typeAndVariance) {
+                return typeAndVariance.type.getConstructor().getDeclarationDescriptor() == KotlinBuiltIns.getInstance().getArray();
+            }
+        });
+        if (KotlinBuiltIns.getInstance().getArray() == type.getConstructor().getDeclarationDescriptor() && !arrayTypesFromSuper.isEmpty()) {
+            assert type.getArguments().size() == 1;
+            if (type.getArguments().get(0).getProjectionKind() == Variance.INVARIANT) {
+                for (TypeAndVariance typeAndVariance : arrayTypesFromSuper) {
+                    JetType arrayTypeFromSuper = typeAndVariance.type;
+                    assert arrayTypeFromSuper.getArguments().size() == 1;
+                    JetType elementTypeInSuper = arrayTypeFromSuper.getArguments().get(0).getType();
+                    JetType elementType = type.getArguments().get(0).getType();
+
+                    if (JetTypeChecker.INSTANCE.isSubtypeOf(elementType, elementTypeInSuper)
+                            && !JetTypeChecker.INSTANCE.equalTypes(elementType, elementTypeInSuper)) {
+                        JetTypeImpl betterTypeInSuper = new JetTypeImpl(
+                                arrayTypeFromSuper.getAnnotations(),
+                                arrayTypeFromSuper.getConstructor(),
+                                arrayTypeFromSuper.isNullable(),
+                                Arrays.asList(new TypeProjection(Variance.OUT_VARIANCE, elementTypeInSuper)),
+                                JetScope.EMPTY);
+
+                        reportError("Return type is not a subtype of overridden method. " +
+                                    "To fix it, add annotation with Kotlin signature to super method with type "
+                                    + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(arrayTypeFromSuper) + " replaced with "
+                                    + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(betterTypeInSuper) + " in return type");
+                    }
+                }
+            }
+        }
     }
 
     @NotNull
