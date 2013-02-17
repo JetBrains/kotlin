@@ -713,6 +713,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeProjection"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeRemoveConflictingProjection1.kt")
+        public void testRemoveConflictingProjection1() throws Exception {
+            doTest("idea/testData/quickfix/typeProjection/beforeRemoveConflictingProjection1.kt");
+        }
+        
+        @TestMetadata("beforeRemoveConflictingProjection2.kt")
+        public void testRemoveConflictingProjection2() throws Exception {
+            doTest("idea/testData/quickfix/typeProjection/beforeRemoveConflictingProjection2.kt");
+        }
+        
         @TestMetadata("beforeRemoveRedundantProjection1.kt")
         public void testRemoveRedundantProjection1() throws Exception {
             doTest("idea/testData/quickfix/typeProjection/beforeRemoveRedundantProjection1.kt");

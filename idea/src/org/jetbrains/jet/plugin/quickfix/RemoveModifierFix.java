@@ -140,7 +140,7 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
         };
     }
 
-    public static JetIntentionActionFactory createRemoveProjectionFactory() {
+    public static JetIntentionActionFactory createRemoveProjectionFactory(final boolean isRedundant) {
         return new JetIntentionActionFactory() {
             @Nullable
             @Override
@@ -152,7 +152,7 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
                 IElementType elementType = projectionAstNode.getElementType();
                 if (!(elementType instanceof JetKeywordToken)) return null;
                 JetKeywordToken variance = (JetKeywordToken) elementType;
-                return new RemoveModifierFix(projection, variance, true);
+                return new RemoveModifierFix(projection, variance, isRedundant);
             }
         };
     }
