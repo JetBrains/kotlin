@@ -835,6 +835,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/variables/changeToPropertyName"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
+            @TestMetadata("beforeCustomAccessors.kt")
+            public void testCustomAccessors() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeCustomAccessors.kt");
+            }
+            
         }
         
         public static Test innerSuite() {
