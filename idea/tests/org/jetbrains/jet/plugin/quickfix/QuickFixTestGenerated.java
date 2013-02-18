@@ -860,6 +860,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeCustomAccessors.kt");
             }
             
+            @TestMetadata("beforeInaccessibleBackingField.kt")
+            public void testInaccessibleBackingField() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeInaccessibleBackingField.kt");
+            }
+            
+            @TestMetadata("beforeInaccessibleBackingFieldQualified.kt")
+            public void testInaccessibleBackingFieldQualified() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeInaccessibleBackingFieldQualified.kt");
+            }
+            
         }
         
         public static Test innerSuite() {
