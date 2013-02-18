@@ -5,10 +5,15 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
 
 public abstract class KotlinExpressionSurrounder implements Surrounder {
 
@@ -17,7 +22,16 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
         if (elements.length != 1 || !(elements[0] instanceof JetExpression)) {
             return false;
         }
-        return isApplicable((JetExpression) elements[0]);
+
+        JetExpression expression = (JetExpression) elements[0];
+        if (expression instanceof JetCallExpression && expression.getParent() instanceof JetQualifiedExpression) {
+            return false;
+        }
+        JetType type = KotlinSurrounderUtils.getExpressionType(expression);
+        if (type == null || type.equals(KotlinBuiltIns.getInstance().getUnitType())) {
+            return false;
+        }
+        return isApplicable(expression);
     }
 
     protected abstract boolean isApplicable(@NotNull JetExpression expression);

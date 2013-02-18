@@ -142,6 +142,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     }
     
     @TestMetadata("idea/testData/codeInsight/surroundWith/parentheses")
+    @InnerTestClasses({Parentheses.NotApplicable.class})
     public static class Parentheses extends AbstractSurroundWithTest {
         public void testAllFilesPresentInParentheses() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/parentheses"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -162,6 +163,65 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/partOfExpr.kt");
         }
         
+        @TestMetadata("idea/testData/codeInsight/surroundWith/parentheses/notApplicable")
+        public static class NotApplicable extends AbstractSurroundWithTest {
+            public void testAllFilesPresentInNotApplicable() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/parentheses/notApplicable"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("if.kt")
+            public void testIf() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/if.kt");
+            }
+            
+            @TestMetadata("import.kt")
+            public void testImport() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/import.kt");
+            }
+            
+            @TestMetadata("importQualifiedFirst.kt")
+            public void testImportQualifiedFirst() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/importQualifiedFirst.kt");
+            }
+            
+            @TestMetadata("importQualifiedSecond.kt")
+            public void testImportQualifiedSecond() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/importQualifiedSecond.kt");
+            }
+            
+            @TestMetadata("packageName.kt")
+            public void testPackageName() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/packageName.kt");
+            }
+            
+            @TestMetadata("parameterName.kt")
+            public void testParameterName() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/parameterName.kt");
+            }
+            
+            @TestMetadata("parameterWithType.kt")
+            public void testParameterWithType() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/parameterWithType.kt");
+            }
+            
+            @TestMetadata("qualifiedExpressionSecond.kt")
+            public void testQualifiedExpressionSecond() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/qualifiedExpressionSecond.kt");
+            }
+            
+            @TestMetadata("qualifiedExpressionSecondWithBracket.kt")
+            public void testQualifiedExpressionSecondWithBracket() throws Exception {
+                doTestWithParenthesesSurrounder("idea/testData/codeInsight/surroundWith/parentheses/notApplicable/qualifiedExpressionSecondWithBracket.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Parentheses");
+            suite.addTestSuite(Parentheses.class);
+            suite.addTestSuite(NotApplicable.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/codeInsight/surroundWith/stringTemplate")
@@ -292,7 +352,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         suite.addTestSuite(If.class);
         suite.addTestSuite(IfElse.class);
         suite.addTestSuite(Not.class);
-        suite.addTestSuite(Parentheses.class);
+        suite.addTest(Parentheses.innerSuite());
         suite.addTestSuite(StringTemplate.class);
         suite.addTestSuite(When.class);
         suite.addTestSuite(TryCatch.class);
