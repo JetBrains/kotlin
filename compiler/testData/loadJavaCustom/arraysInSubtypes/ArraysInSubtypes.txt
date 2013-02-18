@@ -2,13 +2,15 @@ package test
 
 public trait ArraysInSubtypes : java.lang.Object {
     
-    public trait Sub : test.ArraysInSubtypes.Super {
+    public trait Sub</*0*/ T> : test.ArraysInSubtypes.Super {
         public abstract override /*1*/ fun array() : jet.Array<jet.String>?
         public abstract override /*1*/ fun listOfArray() : jet.MutableList<out jet.Array<jet.String>?>?
+        public abstract override /*1*/ fun objArray() : jet.Array<T>?
     }
     
     public trait Super : java.lang.Object {
         public abstract fun array() : jet.Array<jet.CharSequence>?
         public abstract fun listOfArray() : jet.MutableList<out jet.Array<jet.CharSequence>?>?
+        public abstract fun objArray() : jet.Array<jet.Any>?
     }
 }
