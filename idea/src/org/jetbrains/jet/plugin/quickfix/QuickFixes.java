@@ -153,6 +153,8 @@ public class QuickFixes {
         actions.put(VAL_REASSIGNMENT, changeVariableMutabilityFix);
         actions.put(VAR_OVERRIDDEN_BY_VAL, changeVariableMutabilityFix);
 
+        factories.put(UNUSED_VARIABLE, RemoveVariableFix.createRemoveVariableFactory());
+
         actions.put(UNNECESSARY_SAFE_CALL, ReplaceCallFix.toDotCallFromSafeCall());
         actions.put(UNSAFE_CALL, ReplaceCallFix.toSafeCall());
 
