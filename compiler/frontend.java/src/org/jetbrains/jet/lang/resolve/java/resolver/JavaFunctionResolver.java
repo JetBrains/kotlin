@@ -192,7 +192,7 @@ public final class JavaFunctionResolver {
             throw new IllegalStateException("non-static method in subclass");
         }
 
-        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod)) {
+        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod) && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(psiMethod)) {
             if (signatureErrors.isEmpty()) {
                 checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
             }

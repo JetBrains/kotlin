@@ -67,7 +67,7 @@ public final class LoadDescriptorUtil {
     )
             throws IOException {
         compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, outDir, disposable, configurationKind);
-        return loadTestNamespaceAndBindingContextFromBinaries(outDir, disposable, ConfigurationKind.JDK_ONLY).first;
+        return loadTestNamespaceAndBindingContextFromJavaRoot(outDir, disposable, ConfigurationKind.JDK_ONLY).first;
     }
 
     @NotNull
@@ -86,8 +86,8 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static Pair<NamespaceDescriptor, BindingContext> loadTestNamespaceAndBindingContextFromBinaries(
-            @NotNull File outDir,
+    public static Pair<NamespaceDescriptor, BindingContext> loadTestNamespaceAndBindingContextFromJavaRoot(
+            @NotNull File javaRoot,
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
     ) {
@@ -95,7 +95,7 @@ public final class LoadDescriptorUtil {
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
                 configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(),
-                outDir,
+                javaRoot,
                 ForTestCompileRuntime.runtimeJarForTests(),
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
@@ -117,7 +117,7 @@ public final class LoadDescriptorUtil {
     )
             throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
-        return loadTestNamespaceAndBindingContextFromBinaries(outDir, disposable, configurationKind);
+        return loadTestNamespaceAndBindingContextFromJavaRoot(outDir, disposable, configurationKind);
     }
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {

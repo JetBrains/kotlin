@@ -1,0 +1,22 @@
+package test
+
+public trait ReturnNotSubtype : java.lang.Object {
+    
+    public trait Sub : test.ReturnNotSubtype.Super<jet.Boolean> {
+        public abstract override /*1*/ fun _void() : jet.Boolean
+        public abstract override /*1*/ fun array() : jet.Array<java.lang.Void>?
+        public abstract override /*1*/ fun klass() : java.lang.Class<out jet.Any?>?
+        public abstract override /*1*/ fun string1() : Unit
+        public abstract override /*1*/ fun string2() : jet.MutableList<jet.Boolean>?
+        public abstract override /*1*/ fun t() : java.lang.Void?
+    }
+    
+    public trait Super</*0*/ T> : java.lang.Object {
+        public abstract fun _void() : Unit
+        public abstract fun array() : jet.Array<T>?
+        public abstract fun klass() : java.lang.Class<out jet.CharSequence?>?
+        public abstract fun string1() : jet.String?
+        public abstract fun string2() : jet.String?
+        public abstract fun t() : T?
+    }
+}

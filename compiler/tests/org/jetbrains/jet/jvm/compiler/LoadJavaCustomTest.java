@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.compileJavaAndLoadTestNamespaceAndBindingContextFromBinary;
+import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.loadTestNamespaceAndBindingContextFromJavaRoot;
 import static org.jetbrains.jet.test.util.NamespaceComparator.compareNamespaceWithFile;
 
 /*
@@ -77,6 +78,15 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
                 = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(files, tmpDir, getTestRootDisposable(),
                                                                              ConfigurationKind.JDK_ONLY);
+
+        AbstractLoadJavaTest.checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
+    }
+
+    private void doTestNoCompile(@NotNull String expectedFileName, @NotNull String javaRoot) throws Exception {
+        File expectedFile = new File(expectedFileName);
+
+        Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndBindingContext
+                = loadTestNamespaceAndBindingContextFromJavaRoot(new File(javaRoot), getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         AbstractLoadJavaTest.checkJavaNamespace(expectedFile, javaNamespaceAndBindingContext);
     }
@@ -170,6 +180,11 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         String dir = PATH + "/methodTypeParameterErased/";
         doTest(dir + "MethodTypeParameterErased.txt",
                dir + "MethodTypeParameterErased.java");
+    }
+
+    public void testReturnNotSubtype() throws Exception {
+        String dir = PATH + "/returnNotSubtype/";
+        doTestNoCompile(dir + "ReturnNotSubtype.txt", dir);
     }
 
     public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironmentManagement {
