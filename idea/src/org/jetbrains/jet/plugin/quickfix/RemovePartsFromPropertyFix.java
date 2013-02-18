@@ -34,14 +34,14 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     private final boolean removeInitializer;
     private final boolean removeGetter;
     private final boolean removeSetter;
-    
+
     private RemovePartsFromPropertyFix(@NotNull JetProperty element, boolean removeInitializer, boolean removeGetter, boolean removeSetter) {
         super(element);
         this.removeInitializer = removeInitializer;
         this.removeGetter = removeGetter;
         this.removeSetter = removeSetter;
     }
-    
+
     private RemovePartsFromPropertyFix(@NotNull JetProperty element) {
         this(element, element.getInitializer() != null,
              element.getGetter() != null && element.getGetter().getBodyExpression() != null,
@@ -117,7 +117,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
         }
         element = (JetProperty) element.replace(newElement);
         if (typeToAdd != null) {
-            SpecifyTypeExplicitlyAction.addTypeAnnotation(project, element, typeToAdd);
+            SpecifyTypeExplicitlyAction.addTypeAnnotation(project, editor, element, typeToAdd);
         }
     }
 

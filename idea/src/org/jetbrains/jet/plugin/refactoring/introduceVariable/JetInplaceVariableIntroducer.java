@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.refactoring.introduceVariable;
 
-import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.ASTNode;
@@ -25,9 +23,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -35,7 +31,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
 import org.jetbrains.annotations.Nullable;
@@ -127,7 +122,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
                                         }
                                     }
                                 }
-                                SpecifyTypeExplicitlyAction.addTypeAnnotation(myProject, myProperty, myExprType);
+                                SpecifyTypeExplicitlyAction.addTypeAnnotation(myProject, myEditor, myProperty, myExprType);
                                 PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
                                 TemplateState templateState = TemplateManagerImpl.getTemplateState(myEditor);
                                 if (templateState != null) {

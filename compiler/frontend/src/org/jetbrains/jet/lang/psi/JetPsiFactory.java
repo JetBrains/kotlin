@@ -63,7 +63,7 @@ public class JetPsiFactory {
     }
 
     //the pair contains the first and the last elements of a range
-    public static Pair<PsiElement, PsiElement> createColon(Project project) {
+    public static Pair<PsiElement, PsiElement> createColonAndWhiteSpaces(Project project) {
         JetProperty property = createProperty(project, "val x : Int");
         return Pair.create(property.findElementAt(5), property.findElementAt(7));
     }

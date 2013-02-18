@@ -693,6 +693,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeAddition"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
         
+        @TestMetadata("beforeAmbiguousFunctionReturnType.kt")
+        public void testAmbiguousFunctionReturnType() throws Exception {
+            doTest("idea/testData/quickfix/typeAddition/beforeAmbiguousFunctionReturnType.kt");
+        }
+        
+        @TestMetadata("beforeAmbiguousPropertyReturnType.kt")
+        public void testAmbiguousPropertyReturnType() throws Exception {
+            doTest("idea/testData/quickfix/typeAddition/beforeAmbiguousPropertyReturnType.kt");
+        }
+        
         @TestMetadata("beforeNoAddErrorType.kt")
         public void testNoAddErrorType() throws Exception {
             doTest("idea/testData/quickfix/typeAddition/beforeNoAddErrorType.kt");
