@@ -561,6 +561,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/nullables")
+    @InnerTestClasses({Nullables.UnsafeInfixCall.class})
     public static class Nullables extends AbstractQuickFixTest {
         public void testAllFilesPresentInNullables() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/nullables"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -581,6 +582,25 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/nullables/beforeRemoveSupertypeNullable2.kt");
         }
         
+        @TestMetadata("idea/testData/quickfix/nullables/unsafeInfixCall")
+        public static class UnsafeInfixCall extends AbstractQuickFixTest {
+            public void testAllFilesPresentInUnsafeInfixCall() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeUnsafeInfixCall.kt")
+            public void testUnsafeInfixCall() throws Exception {
+                doTest("idea/testData/quickfix/nullables/unsafeInfixCall/beforeUnsafeInfixCall.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Nullables");
+            suite.addTestSuite(Nullables.class);
+            suite.addTestSuite(UnsafeInfixCall.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/quickfix/override")
@@ -890,7 +910,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         suite.addTestSuite(Expressions.class);
         suite.addTestSuite(Migration.class);
         suite.addTest(Modifiers.innerSuite());
-        suite.addTestSuite(Nullables.class);
+        suite.addTest(Nullables.innerSuite());
         suite.addTestSuite(Override.class);
         suite.addTestSuite(TypeAddition.class);
         suite.addTestSuite(TypeImports.class);

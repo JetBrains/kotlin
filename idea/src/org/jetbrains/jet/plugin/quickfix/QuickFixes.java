@@ -157,6 +157,7 @@ public class QuickFixes {
 
         actions.put(UNSAFE_CALL, ExclExclCallFix.introduceExclExclCall());
         actions.put(UNNECESSARY_NOT_NULL_ASSERTION, ExclExclCallFix.removeExclExclCall());
+        factories.put(UNSAFE_INFIX_CALL, ReplaceInfixCallFix.createFactory());
 
         JetIntentionActionFactory removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD);
         factories.put(PACKAGE_MEMBER_CANNOT_BE_PROTECTED, removeProtectedModifierFactory);
