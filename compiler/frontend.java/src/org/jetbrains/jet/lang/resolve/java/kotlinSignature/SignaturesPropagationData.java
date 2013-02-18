@@ -22,7 +22,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.HierarchicalMethodSignature;
 import com.intellij.psi.PsiClass;
@@ -42,9 +41,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -62,7 +59,7 @@ public class SignaturesPropagationData {
     private final List<String> signatureErrors = Lists.newArrayList();
     private final List<FunctionDescriptor> superFunctions;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> autoTypeParameterToModified;
-    private final ClassDescriptor containingClass;
+    final ClassDescriptor containingClass;
 
     public SignaturesPropagationData(
             @NotNull ClassDescriptor containingClass,
@@ -102,7 +99,7 @@ public class SignaturesPropagationData {
         return superFunctions;
     }
 
-    private void reportError(String error) {
+    void reportError(String error) {
         signatureErrors.add(error);
     }
 
@@ -331,45 +328,8 @@ public class SignaturesPropagationData {
                                            resultArguments,
                                            resultScope);
 
-        checkArrayInReturnTypeType(type, typesFromSuper);
-
+        PropagationHeuristics.checkArrayInReturnTypeType(this, type, typesFromSuper);
         return type;
-    }
-
-    // Checks for case when method returning Super[] is overridden with method returning Sub[]
-    private void checkArrayInReturnTypeType(JetType type, List<TypeAndVariance> typesFromSuper) {
-        List<TypeAndVariance> arrayTypesFromSuper = ContainerUtil.filter(typesFromSuper, new Condition<TypeAndVariance>() {
-            @Override
-            public boolean value(TypeAndVariance typeAndVariance) {
-                return typeAndVariance.type.getConstructor().getDeclarationDescriptor() == KotlinBuiltIns.getInstance().getArray();
-            }
-        });
-        if (KotlinBuiltIns.getInstance().getArray() == type.getConstructor().getDeclarationDescriptor() && !arrayTypesFromSuper.isEmpty()) {
-            assert type.getArguments().size() == 1;
-            if (type.getArguments().get(0).getProjectionKind() == Variance.INVARIANT) {
-                for (TypeAndVariance typeAndVariance : arrayTypesFromSuper) {
-                    JetType arrayTypeFromSuper = typeAndVariance.type;
-                    assert arrayTypeFromSuper.getArguments().size() == 1;
-                    JetType elementTypeInSuper = arrayTypeFromSuper.getArguments().get(0).getType();
-                    JetType elementType = type.getArguments().get(0).getType();
-
-                    if (JetTypeChecker.INSTANCE.isSubtypeOf(elementType, elementTypeInSuper)
-                            && !JetTypeChecker.INSTANCE.equalTypes(elementType, elementTypeInSuper)) {
-                        JetTypeImpl betterTypeInSuper = new JetTypeImpl(
-                                arrayTypeFromSuper.getAnnotations(),
-                                arrayTypeFromSuper.getConstructor(),
-                                arrayTypeFromSuper.isNullable(),
-                                Arrays.asList(new TypeProjection(Variance.OUT_VARIANCE, elementTypeInSuper)),
-                                JetScope.EMPTY);
-
-                        reportError("Return type is not a subtype of overridden method. " +
-                                    "To fix it, add annotation with Kotlin signature to super method with type "
-                                    + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(arrayTypeFromSuper) + " replaced with "
-                                    + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(betterTypeInSuper) + " in return type");
-                    }
-                }
-            }
-        }
     }
 
     @NotNull
@@ -611,38 +571,8 @@ public class SignaturesPropagationData {
             }
         }
 
-        // Weird workaround for weird case. The sample code below is compiled by javac.
-        // In this case, we try to replace "Any" parameter type with "T" to fix substitution principle.
-        //
-        //    public interface Super<T> {
-        //        void foo(T t);
-        //    }
-        //
-        //    public interface Sub<T> extends Super<T> {
-        //        void foo(Object o);
-        //    }
-
-        List<TypeParameterDescriptor> typeParameterClassifiersFromSuper = Lists.newArrayList();
-        for (TypeAndVariance typeFromSuper : typesFromSuper) {
-            ClassifierDescriptor classifierFromSuper = typeFromSuper.type.getConstructor().getDeclarationDescriptor();
-            if (classifierFromSuper instanceof TypeParameterDescriptor) {
-                typeParameterClassifiersFromSuper.add((TypeParameterDescriptor) classifierFromSuper);
-            }
-        }
-
-        if (!typeParameterClassifiersFromSuper.isEmpty() && typeParameterClassifiersFromSuper.size() == typesFromSuper.size()) {
-            for (TypeParameterDescriptor typeParameter : typeParameterClassifiersFromSuper) {
-                if (typeParameter.getContainingDeclaration() != containingClass) {
-                    continue;
-                }
-
-                return autoTypeParameterToModified.containsKey(typeParameter) ? autoTypeParameterToModified
-                        .get(typeParameter) : typeParameter;
-
-            }
-        }
-
-        return classifier;
+        ClassifierDescriptor fixed = PropagationHeuristics.tryToFixOverridingTWithRawType(this, typesFromSuper);
+        return fixed != null ? fixed : classifier;
     }
 
     private static Map<ClassDescriptor, JetType> getSuperclassToSupertypeMap(ClassDescriptor containingClass) {
@@ -717,7 +647,7 @@ public class SignaturesPropagationData {
         }
     }
 
-    private static class TypeAndVariance {
+    static class TypeAndVariance {
         public final JetType type;
         public final Variance varianceOfPosition;
 
