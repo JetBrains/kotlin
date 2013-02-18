@@ -62,6 +62,16 @@ public final class InTextDirectivesUtils {
         return result;
     }
 
+    @Nullable
+    public static String findStringWithPrefix(String prefix, String fileText) {
+        List<String> strings = findListWithPrefix(prefix, fileText);
+        if (strings.isEmpty()) {
+            return null;
+        }
+        assert strings.size() == 1 : "There is more than one string with given prefix " + prefix + ". Use findListWithPrefix() instead.";
+        return strings.get(0);
+    }
+
     @NotNull
     public static List<String> findLinesWithPrefixRemoved(String prefix, String fileText) {
         ArrayList<String> result = new ArrayList<String>();
