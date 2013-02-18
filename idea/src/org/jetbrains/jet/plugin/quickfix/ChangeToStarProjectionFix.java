@@ -59,11 +59,17 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
-                if (expression == null) return null;
-                JetTypeReference typeReference = expression.getRight();
+                JetTypeReference typeReference;
+                if (expression == null) {
+                    typeReference = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeReference.class);
+                }
+                else {
+                    typeReference = expression.getRight();
+                }
                 if (typeReference == null) return null;
                 JetTypeElement typeElement = typeReference.getTypeElement();
-                return typeElement == null ? null : new ChangeToStarProjectionFix(typeElement);
+                assert typeElement != null;
+                return new ChangeToStarProjectionFix(typeElement);
             }
         };
     }
