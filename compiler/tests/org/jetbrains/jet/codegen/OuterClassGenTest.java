@@ -92,15 +92,15 @@ public class OuterClassGenTest extends CodegenTestCase {
 
 
     private void checkInfo(ClassReader kotlinReader, ClassReader javaReader) {
-        String [] kotlinInfo = getOuterClasInfo(kotlinReader);
-        String [] javaInfo = getOuterClasInfo(javaReader);
+        String [] kotlinInfo = getOuterClassInfo(kotlinReader);
+        String [] javaInfo = getOuterClassInfo(javaReader);
         for (int i = 0; i < kotlinInfo.length; i++) {
             String info = kotlinInfo[i];
             assertEquals("Error in enclosingMethodInfo info for: " + kotlinReader.getClassName() + " class in " + INFO_PARTS[i] + " part", javaInfo[i], info);
         }
     }
 
-    public String [] getOuterClasInfo(ClassReader reader) {
+    public String [] getOuterClassInfo(ClassReader reader) {
         final String [] info = new String [3];
         reader.accept(new ClassVisitor(Opcodes.ASM4) {
             @Override

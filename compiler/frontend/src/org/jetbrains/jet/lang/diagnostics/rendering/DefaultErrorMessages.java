@@ -441,6 +441,8 @@ public class DefaultErrorMessages {
                     "Names of the parameter #{1} conflict in the following members of supertypes: ''{0}''" +
                     "This may cause problems when calling this function with named arguments.", commaSeparated(TO_STRING), TO_STRING);
 
+        MAP.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", TO_STRING);
+
         MAP.setImmutable();
 
         for (Field field : Errors.class.getFields()) {

@@ -229,6 +229,8 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, JetClassOrObject, CallableMemberDescriptor> MANY_IMPL_MEMBER_NOT_IMPLEMENTED =
             DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory1<JetNamedDeclaration, Collection<JetType>> AMBIGUOUS_ANONYMOUS_TYPE_INFERRED = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
+
     // Property-specific
 
     DiagnosticFactory2<JetProperty, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =

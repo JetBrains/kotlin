@@ -1453,6 +1453,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/declarationChecks"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("ambiguousObjectExpressionType.kt")
+            public void testAmbiguousObjectExpressionType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/ambiguousObjectExpressionType.kt");
+            }
+            
             @TestMetadata("ComponentFunctionReturnTypeMismatch.kt")
             public void testComponentFunctionReturnTypeMismatch() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/ComponentFunctionReturnTypeMismatch.kt");
@@ -1546,6 +1551,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("RedeclarationsInMultiDecl.kt")
             public void testRedeclarationsInMultiDecl() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/declarationChecks/RedeclarationsInMultiDecl.kt");
+            }
+            
+            @TestMetadata("unambiguousObjectExpressionType.kt")
+            public void testUnambiguousObjectExpressionType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/declarationChecks/unambiguousObjectExpressionType.kt");
             }
             
             @TestMetadata("valVarFunctionParameter.kt")
