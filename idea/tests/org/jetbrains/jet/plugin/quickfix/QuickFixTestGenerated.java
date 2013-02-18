@@ -835,6 +835,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/variables/changeToPropertyName"), Pattern.compile("^before(\\w+)\\.kt$"), true);
             }
             
+            @TestMetadata("beforeInaccessibleBackingField.kt")
+            public void testInaccessibleBackingField() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeInaccessibleBackingField.kt");
+            }
+            
+            @TestMetadata("beforeInaccessibleBackingFieldQualified.kt")
+            public void testInaccessibleBackingFieldQualified() throws Exception {
+                doTest("idea/testData/quickfix/variables/changeToPropertyName/beforeInaccessibleBackingFieldQualified.kt");
+            }
+            
         }
         
         public static Test innerSuite() {

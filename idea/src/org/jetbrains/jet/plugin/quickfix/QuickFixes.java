@@ -121,6 +121,7 @@ public class QuickFixes {
 
         JetIntentionActionFactory changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory();
         factories.put(NO_BACKING_FIELD_ABSTRACT_PROPERTY, changeToPropertyNameFactory);
+        factories.put(INACCESSIBLE_BACKING_FIELD, changeToPropertyNameFactory);
 
         JetIntentionActionFactory unresolvedReferenceFactory = ImportClassAndFunFix.createFactory();
         factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
