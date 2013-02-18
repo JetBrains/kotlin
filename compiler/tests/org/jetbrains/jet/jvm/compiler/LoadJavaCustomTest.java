@@ -71,7 +71,6 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
                 return new File(s);
             }
         });
-        files.add(ExpectedLoadErrorsUtil.ANNOTATION_SOURCE_FILE);
         File expectedFile = new File(expectedFileName);
         File tmpDir = JetTestUtils.tmpDir(expectedFile.getName());
 

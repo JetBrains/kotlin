@@ -94,8 +94,11 @@ public final class LoadDescriptorUtil {
         Disposer.dispose(disposable);
 
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), outDir,
-                ForTestCompileRuntime.runtimeJarForTests());
+                configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(),
+                outDir,
+                ForTestCompileRuntime.runtimeJarForTests(),
+                new File("compiler/tests") // for @ExpectLoadError annotation
+        );
         JetCoreEnvironment jetCoreEnvironment = new JetCoreEnvironment(disposable, configuration);
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
@@ -121,6 +124,7 @@ public final class LoadDescriptorUtil {
         String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
         JetTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
                 "-classpath", classPath,
+                "-sourcepath", "compiler/tests", // for @ExpectLoadError annotation
                 "-d", outDir.getPath()
         ));
     }

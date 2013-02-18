@@ -36,7 +36,6 @@ import static com.intellij.testFramework.UsefulTestCase.assertSameElements;
 
 public class ExpectedLoadErrorsUtil {
     public static final String ANNOTATION_CLASS_NAME = ExpectLoadError.class.getName();
-    public static final File ANNOTATION_SOURCE_FILE = new File("compiler/tests/" + ANNOTATION_CLASS_NAME.replace('.', '/') + ".java");
 
     public static void checkForLoadErrors(
             @NotNull NamespaceDescriptor namespaceFromJava,
