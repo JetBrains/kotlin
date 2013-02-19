@@ -81,7 +81,7 @@ public class OuterClassGenTest extends CodegenTestCase {
     }
 
     private void compareOuterClassInfo(String kotlinName, String javaName) throws ClassNotFoundException, IOException {
-        String javaClassPath = javaName.replaceAll("\\.", File.separator) + ".class";
+        String javaClassPath = javaName.replace('.', File.separatorChar) + ".class";
         InputStream javaClassStream = javaClassLoader.getResourceAsStream(javaClassPath);
         ClassReader javaReader =  new ClassReader(javaClassStream);
 
