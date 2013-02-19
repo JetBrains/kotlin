@@ -62,6 +62,13 @@ public class JetPsiFactory {
         return property.getTypeRef();
     }
 
+    @NotNull
+    public static PsiElement createStar(Project project) {
+        PsiElement star = createType(project, "List<*>").findElementAt(5);
+        assert star != null;
+        return star;
+    }
+
     //the pair contains the first and the last elements of a range
     public static Pair<PsiElement, PsiElement> createColonAndWhiteSpaces(Project project) {
         JetProperty property = createProperty(project, "val x : Int");

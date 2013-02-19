@@ -146,7 +146,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
     
     @TestMetadata("idea/testData/quickfix/addStarProjections")
-    @InnerTestClasses({AddStarProjections.JavaClass.class, AddStarProjections.When.class})
+    @InnerTestClasses({AddStarProjections.Cast.class, AddStarProjections.JavaClass.class, AddStarProjections.When.class})
     public static class AddStarProjections extends AbstractQuickFixTest {
         public void testAllFilesPresentInAddStarProjections() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/addStarProjections"), Pattern.compile("^before(\\w+)\\.kt$"), true);
@@ -180,6 +180,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeUnqualifiedMapOneArg.kt")
         public void testUnqualifiedMapOneArg() throws Exception {
             doTest("idea/testData/quickfix/addStarProjections/beforeUnqualifiedMapOneArg.kt");
+        }
+        
+        @TestMetadata("idea/testData/quickfix/addStarProjections/cast")
+        public static class Cast extends AbstractQuickFixTest {
+            public void testAllFilesPresentInCast() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/addStarProjections/cast"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("beforeChangeToStarProjection.kt")
+            public void testChangeToStarProjection() throws Exception {
+                doTest("idea/testData/quickfix/addStarProjections/cast/beforeChangeToStarProjection.kt");
+            }
+            
+            @TestMetadata("beforeChangeToStarProjectionNullable.kt")
+            public void testChangeToStarProjectionNullable() throws Exception {
+                doTest("idea/testData/quickfix/addStarProjections/cast/beforeChangeToStarProjectionNullable.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/quickfix/addStarProjections/javaClass")
@@ -251,6 +269,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("AddStarProjections");
             suite.addTestSuite(AddStarProjections.class);
+            suite.addTestSuite(Cast.class);
             suite.addTestSuite(JavaClass.class);
             suite.addTestSuite(When.class);
             return suite;
