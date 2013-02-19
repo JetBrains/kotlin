@@ -29,6 +29,7 @@ import java.util.List;
 public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
     private WritableScope memberScope;
+    private NamespaceLikeBuilder builder;
 
     public NamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration,
                                    @NotNull List<AnnotationDescriptor> annotations,
@@ -56,43 +57,11 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
         return DescriptorUtils.getFQName(this).toSafe();
     }
 
-    private NamespaceLikeBuilder builder = null;
+    @NotNull
     public NamespaceLikeBuilder getBuilder() {
         if (builder == null) {
-            builder = new NamespaceLikeBuilder() {
-                @Override
-                public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-                    getMemberScope().addClassifierDescriptor(classDescriptor);
-                }
-
-                @Override
-                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-                    getMemberScope().addObjectDescriptor(objectDescriptor);
-                }
-
-                @Override
-                public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                    getMemberScope().addFunctionDescriptor(functionDescriptor);
-                }
-
-                @Override
-                public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-                    getMemberScope().addPropertyDescriptor(propertyDescriptor);
-                }
-
-                @NotNull
-                @Override
-                public DeclarationDescriptor getOwnerForChildren() {
-                    return NamespaceDescriptorImpl.this;
-                }
-
-                @Override
-                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                    throw new IllegalStateException("Must be guaranteed not to happen by the parser");
-                }
-            };
+            builder = new ScopeBasedNamespaceLikeBuilder(this, getMemberScope());
         }
-
         return builder;
     }
 }
