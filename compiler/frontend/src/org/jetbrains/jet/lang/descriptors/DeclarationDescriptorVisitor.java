@@ -42,4 +42,12 @@ public interface DeclarationDescriptorVisitor<R, D> {
     R visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, D data);
 
     R visitReceiverParameterDescriptor(ReceiverParameterDescriptor descriptor, D data);
+
+    R visitModuleDescriptor(ModuleDescriptor descriptor, D data);
+
+    R visitSubModuleDescriptor(SubModuleDescriptor descriptor, D data);
+
+    R visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, D data);
+
+    R visitPackageViewDescriptor(PackageViewDescriptor descriptor, D data);
 }
