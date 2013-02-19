@@ -36,6 +36,8 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.CompilerModeProvider;
+import org.jetbrains.jet.OperationModeProvider;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
@@ -88,6 +90,8 @@ public class JetCoreEnvironment {
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "jet");
         applicationEnvironment.registerParserDefinition(new JavaParserDefinition());
         applicationEnvironment.registerParserDefinition(new JetParserDefinition());
+
+        applicationEnvironment.getApplication().registerService(OperationModeProvider.class, new CompilerModeProvider());
 
         projectEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
 

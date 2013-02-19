@@ -74,6 +74,9 @@
       <applicationService serviceInterface="org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService"
                           serviceImplementation="org.jetbrains.jet.plugin.stubindex.StubIndexServiceImpl" />
 
+      <applicationService serviceInterface="org.jetbrains.jet.OperationModeProvider"
+                          serviceImplementation="org.jetbrains.jet.plugin.IdeModeProvider" />
+
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.JetFilesProvider"
                       serviceImplementation="org.jetbrains.jet.plugin.project.PluginJetFilesProvider"/>
 
