@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
@@ -55,10 +55,7 @@ public class CallResolverUtil {
                                                                       call.getReceiverArgument(), call.getExplicitReceiverKind(),
                                                                       call.isSafeCall());
 
-        TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, call.getTrace().toString() + "(copy)");
-        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, trace, call.getTracing());
-        //todo remove because call's trace isn't used (?)
-        call.getTrace().addAllMyDataTo(trace);
+        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, TraceUtil.DELEGATING_TRACE_STUB, call.getTracing());
         context.trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);
 
         copy.addStatus(call.getStatus());

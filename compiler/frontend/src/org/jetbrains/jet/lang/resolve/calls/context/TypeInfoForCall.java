@@ -19,59 +19,15 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.Call;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.TraceUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
-
-import java.util.Collection;
 
 public class TypeInfoForCall {
-
-    private final static BindingTrace TRACE_STUB = new BindingTrace() {
-
-        @Override
-        public BindingContext getBindingContext() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Nullable
-        @Override
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            throw new UnsupportedOperationException();
-        }
-
-        @NotNull
-        @Override
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void report(@NotNull Diagnostic diagnostic) {
-            throw new UnsupportedOperationException();
-        }
-    };
 
     private final JetTypeInfo typeInfo;
 
@@ -97,7 +53,7 @@ public class TypeInfoForCall {
         if (resolvedCall instanceof ResolvedCallImpl) {
             //todo[ResolvedCallImpl]
             callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                    (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, context.replaceBindingTrace(TRACE_STUB),
+                    (ResolvedCallImpl<FunctionDescriptor>) resolvedCall, context.replaceBindingTrace(TraceUtil.TRACE_STUB),
                     call, resolveMode, ((ResolvedCallImpl<FunctionDescriptor>) resolvedCall).getTracing());
         }
         else {
