@@ -38,7 +38,7 @@ import java.util.List;
 // This class contains heuristics for processing corner cases in propagation
 class PropagationHeuristics {
     // Checks for case when method returning Super[] is overridden with method returning Sub[]
-    static void checkArrayInReturnTypeType(
+    static void checkArrayInReturnType(
             @NotNull SignaturesPropagationData data,
             @NotNull JetType type,
             @NotNull List<SignaturesPropagationData.TypeAndVariance> typesFromSuper

@@ -328,7 +328,7 @@ public class SignaturesPropagationData {
                                            resultArguments,
                                            resultScope);
 
-        PropagationHeuristics.checkArrayInReturnTypeType(this, type, typesFromSuper);
+        PropagationHeuristics.checkArrayInReturnType(this, type, typesFromSuper);
         return type;
     }
 
