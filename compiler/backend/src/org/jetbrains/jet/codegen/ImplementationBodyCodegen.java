@@ -224,7 +224,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         else {
             NamespaceDescriptor namespaceDescriptor = DescriptorUtils.getParentOfType(classDescriptor, NamespaceDescriptor.class);
             assert namespaceDescriptor != null : "Namespace descriptor should be present: " + classDescriptor.getName();
-            FqName namespaceQN = namespaceDescriptor.getQualifiedName();
+            FqName namespaceQN = namespaceDescriptor.getFqName();
             boolean isMultiFile = CodegenBinding.isMultiFileNamespace(state.getBindingContext(), namespaceQN);
             return isMultiFile
                    ? NamespaceCodegen.getNamespacePartInternalName(
