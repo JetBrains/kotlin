@@ -23,25 +23,26 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
     private final String debugName;
-    private final JetScope[] scopeChain;
+    private final Collection<JetScope> scopeChain;
     private Collection<DeclarationDescriptor> allDescriptors;
     private List<ReceiverParameterDescriptor> implicitReceiverHierarchy;
 
-    public ChainedScope(DeclarationDescriptor containingDeclaration, JetScope... scopes) {
+    public ChainedScope(@NotNull DeclarationDescriptor containingDeclaration, JetScope... scopes) {
         this(containingDeclaration, "Untitled chained scope", scopes);
     }
 
-    public ChainedScope(DeclarationDescriptor containingDeclaration, String debugName, JetScope... scopes) {
+    public ChainedScope(@NotNull DeclarationDescriptor containingDeclaration, @NotNull String debugName, JetScope... scopes) {
+        this(containingDeclaration, debugName, Arrays.asList(scopes));
+    }
+
+    public ChainedScope(@NotNull DeclarationDescriptor containingDeclaration, @NotNull String debugName, List<JetScope> scopes) {
         this.containingDeclaration = containingDeclaration;
-        scopeChain = scopes.clone();
+        this.scopeChain = scopes;
 
         this.debugName = debugName;
     }
@@ -109,7 +110,7 @@ public class ChainedScope implements JetScope {
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        if (scopeChain.length == 0) {
+        if (scopeChain.isEmpty()) {
             return Collections.emptySet();
         }
 

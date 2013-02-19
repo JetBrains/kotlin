@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -26,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.List;
 
+@Deprecated
 public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
     private WritableScope memberScope;
@@ -48,11 +48,6 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
     @NotNull
     public WritableScope getMemberScope() {
         return memberScope;
-    }
-
-    @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        getMemberScope().addNamespace(namespaceDescriptor);
     }
 
     @NotNull

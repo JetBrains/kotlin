@@ -91,4 +91,24 @@ public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements Declaratio
     public R visitReceiverParameterDescriptor(ReceiverParameterDescriptor descriptor, D data) {
         return visitDeclarationDescriptor(descriptor, data);
     }
+
+    @Override
+    public R visitModuleDescriptor(ModuleDescriptor descriptor, D data) {
+        return visitDeclarationDescriptor(descriptor, data);
+    }
+
+    @Override
+    public R visitSubModuleDescriptor(SubModuleDescriptor descriptor, D data) {
+        return visitDeclarationDescriptor(descriptor, data);
+    }
+
+    @Override
+    public R visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, D data) {
+        return visitDeclarationDescriptor(descriptor, data);
+    }
+
+    @Override
+    public R visitPackageViewDescriptor(PackageViewDescriptor descriptor, D data) {
+        return visitDeclarationDescriptor(descriptor, data);
+    }
 }
