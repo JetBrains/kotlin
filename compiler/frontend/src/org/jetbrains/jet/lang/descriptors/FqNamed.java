@@ -22,5 +22,5 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 public interface FqNamed {
 
     @NotNull
-    FqName getQualifiedName();
+    FqName getFqName();
 }

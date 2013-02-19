@@ -145,7 +145,7 @@ public class JetTypeMapper extends BindingTraceAware {
             if (r.length() > 0) {
                 r.append("/");
             }
-            r.append(PackageClassUtils.getPackageClassName(namespace.getQualifiedName()));
+            r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
         }
 
         if (r.length() == 0) {

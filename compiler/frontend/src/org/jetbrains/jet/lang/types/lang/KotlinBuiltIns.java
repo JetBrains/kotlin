@@ -316,7 +316,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public FqName getBuiltInsPackageFqName() {
-        return getBuiltInsPackage().getQualifiedName();
+        return getBuiltInsPackage().getFqName();
     }
 
     @NotNull

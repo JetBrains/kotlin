@@ -67,7 +67,7 @@ public class JsConfiguration implements ModuleConfiguration {
                 .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
 
         // Extend root namespace with standard classes
-        if (namespaceDescriptor.getQualifiedName().shortNameOrSpecial().equals(FqNameUnsafe.ROOT_NAME)) {
+        if (namespaceDescriptor.getFqName().shortNameOrSpecial().equals(FqNameUnsafe.ROOT_NAME)) {
             namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
         }
 

@@ -87,7 +87,7 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     * @return
     */
     @Nullable
-    public FqName getQualifiedName() {
+    public FqName getFqName() {
         final PsiJetFunctionStub stub = getStub();
         if (stub != null) {
             return stub.getTopFQName();

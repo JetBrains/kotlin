@@ -67,7 +67,7 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
         final boolean isTopLevel = psi.getParent() instanceof JetFile;
         final boolean isExtension = psi.getReceiverTypeRef() != null;
 
-        FqName qualifiedName = psi.getQualifiedName();
+        FqName qualifiedName = psi.getFqName();
 
         return new PsiJetFunctionStubImpl(JetStubElementTypes.FUNCTION, parentStub, psi.getName(), isTopLevel, qualifiedName, isExtension);
     }

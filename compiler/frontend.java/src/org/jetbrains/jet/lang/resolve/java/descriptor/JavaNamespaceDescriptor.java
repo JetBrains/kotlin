@@ -47,7 +47,7 @@ public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
 
     @NotNull
     @Override
-    public FqName getQualifiedName() {
+    public FqName getFqName() {
         return qualifiedName;
     }
 }
