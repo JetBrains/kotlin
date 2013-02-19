@@ -298,15 +298,6 @@ public class BindingContextUtils {
         }
     }
 
-    public static void recordContextForExpressionCall(
-            @NotNull JetExpression expression,
-            @NotNull BindingTrace trace,
-            @Nullable CallCandidateResolutionContext<FunctionDescriptor> context
-    ) {
-        if (context == null) return;
-        trace.record(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression, context);
-    }
-
     @Nullable
     public static TypeInfoForCall getRecordedTypeInfoForCall(
             @NotNull JetExpression expression,

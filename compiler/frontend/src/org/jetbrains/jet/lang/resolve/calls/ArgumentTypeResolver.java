@@ -20,11 +20,13 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
@@ -46,7 +48,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfoForCall;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordContextForExpressionCall;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordExpressionType;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
@@ -189,7 +190,10 @@ public class ArgumentTypeResolver {
         }
         if (result != null) {
             recordExpressionType(expression, context, result.getTypeInfo());
-            recordContextForExpressionCall(expression, context.trace, result.getCallCandidateResolutionContext());
+            CallCandidateResolutionContext<FunctionDescriptor> deferredContext = result.getCallCandidateResolutionContext();
+            if (deferredContext != null) {
+                context.trace.record(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression, deferredContext);
+            }
             return result;
         }
         return TypeInfoForCall.create(
