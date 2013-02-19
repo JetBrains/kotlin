@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;

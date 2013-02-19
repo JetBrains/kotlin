@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors;
+package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 
 public class NamespaceLikeBuilderDummy implements NamespaceLikeBuilder {
     @NotNull

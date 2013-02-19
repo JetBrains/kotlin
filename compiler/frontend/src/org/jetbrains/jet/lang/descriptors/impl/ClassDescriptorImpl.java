@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors;
+package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -39,7 +40,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
     private ReceiverParameterDescriptor thisAsReceiverParameter;
     private final Modality modality;
     private ClassDescriptor classObjectDescriptor;
-    private final  ClassKind kind;
+    private final ClassKind kind;
     private boolean isInner;
 
     public ClassDescriptorImpl(

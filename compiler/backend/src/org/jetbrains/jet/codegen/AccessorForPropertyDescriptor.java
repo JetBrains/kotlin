@@ -18,6 +18,10 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.PropertySetterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;

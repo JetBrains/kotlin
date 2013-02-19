@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
@@ -140,7 +141,8 @@ public class CandidateResolver {
                 checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, context.trace);
 
                 Map<TypeConstructor, TypeProjection>
-                        substitutionContext = FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor)candidate, typeArguments);
+                        substitutionContext = FunctionDescriptorUtil
+                        .createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
                 TypeSubstitutor substitutor = TypeSubstitutor.create(substitutionContext);
                 candidateCall.setResultingSubstitutor(substitutor);
 

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 
 import java.util.HashSet;

@@ -33,8 +33,6 @@ public interface DeclarationDescriptorVisitor<R, D> {
 
     R visitScriptDescriptor(ScriptDescriptor scriptDescriptor, D data);
 
-    R visitLocalVariableDescriptor(LocalVariableDescriptor descriptor, D data);
-
     R visitPropertyDescriptor(PropertyDescriptor descriptor, D data);
 
     R visitValueParameterDescriptor(ValueParameterDescriptor descriptor, D data);

@@ -22,6 +22,7 @@ import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 
 import javax.swing.*;
 

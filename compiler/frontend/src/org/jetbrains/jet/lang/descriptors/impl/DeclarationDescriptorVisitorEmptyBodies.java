@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.descriptors;
+package org.jetbrains.jet.lang.descriptors.impl;
+
+import org.jetbrains.jet.lang.descriptors.*;
 
 public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements DeclarationDescriptorVisitor<R, D> {
     public R visitDeclarationDescriptor(DeclarationDescriptor descriptor, D data) {
@@ -59,11 +61,6 @@ public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements Declaratio
     @Override
     public R visitScriptDescriptor(ScriptDescriptor scriptDescriptor, D data) {
         return visitDeclarationDescriptor(scriptDescriptor, data);
-    }
-
-    @Override
-    public R visitLocalVariableDescriptor(LocalVariableDescriptor descriptor, D data) {
-        return visitVariableDescriptor(descriptor, data);
     }
 
     @Override
