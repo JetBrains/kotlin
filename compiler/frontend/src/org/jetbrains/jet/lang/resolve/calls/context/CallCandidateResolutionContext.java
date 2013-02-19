@@ -42,9 +42,9 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ResolveMode resolveMode,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
+        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
@@ -54,7 +54,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull TracingStrategy tracing, @NotNull Call call) {
         candidateCall.setInitialDataFlowInfo(context.dataFlowInfo);
         return new CallCandidateResolutionContext<D>(candidateCall, tracing, trace, context.scope, call, context.expectedType,
-                                                        context.dataFlowInfo, context.resolveMode, context.namespacesAllowed);
+                                                        context.dataFlowInfo, context.resolveMode, context.expressionPosition);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
@@ -74,7 +74,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ResolveMode resolveMode, @NotNull TracingStrategy tracing
     ) {
         return new CallCandidateResolutionContext<D>(candidateCall, tracing, context.trace, context.scope, call,
-                                                        context.expectedType, context.dataFlowInfo, resolveMode, context.namespacesAllowed);
+                                                        context.expectedType, context.dataFlowInfo, resolveMode, context.expressionPosition);
     }
 
     @Override
@@ -83,10 +83,10 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     ) {
         return new CallCandidateResolutionContext<D>(
-                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
+                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
     }
 
     @Override
@@ -98,6 +98,6 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public CallCandidateResolutionContext<D> replaceResolveMode(@NotNull ResolveMode newResolveMode) {
         if (newResolveMode == resolveMode) return this;
         return new CallCandidateResolutionContext<D>(
-                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, newResolveMode, namespacesAllowed);
+                candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, newResolveMode, expressionPosition);
     }
 }

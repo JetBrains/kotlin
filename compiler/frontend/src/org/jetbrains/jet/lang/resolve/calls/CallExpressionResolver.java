@@ -25,9 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -50,7 +48,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 
-import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallExpressionResolver {
@@ -71,12 +68,12 @@ public class CallExpressionResolver {
             if (classObjectType != null) {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
                 JetType result;
-                if (context.namespacesAllowed && classifier instanceof ClassDescriptor) {
+                if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT && classifier instanceof ClassDescriptor) {
                     JetScope scope = new ChainedScope(classifier, classObjectType.getMemberScope(),
                                                       getStaticNestedClassesScope((ClassDescriptor) classifier));
                     result = new NamespaceType(referencedName, scope);
                 }
-                else if (context.namespacesAllowed || classifier.isClassObjectAValue()) {
+                else if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT || classifier.isClassObjectAValue()) {
                     result = classObjectType;
                 }
                 else {
@@ -95,7 +92,7 @@ public class CallExpressionResolver {
         }
         // To report NO_CLASS_OBJECT when no namespace found
         if (classifier != null) {
-            if (!context.namespacesAllowed) {
+            if (context.expressionPosition == ExpressionPosition.FREE) {
                 context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
             }
             context.trace.record(REFERENCE_TARGET, expression, classifier);
@@ -117,7 +114,7 @@ public class CallExpressionResolver {
         if (namespaceType == null) {
             return false;
         }
-        if (context.namespacesAllowed) {
+        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT) {
             result[0] = namespaceType;
             return true;
         }
@@ -218,7 +215,7 @@ public class CallExpressionResolver {
         JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceBindingTrace(traceForVariable), result);
         if (result[0]) {
             traceForVariable.commit();
-            if (type instanceof NamespaceType && !context.namespacesAllowed) {
+            if (type instanceof NamespaceType && context.expressionPosition == ExpressionPosition.FREE) {
                 type = null;
             }
             return JetTypeInfo.create(type, context.dataFlowInfo);

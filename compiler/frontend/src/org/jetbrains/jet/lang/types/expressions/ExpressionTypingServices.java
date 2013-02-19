@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -129,7 +130,7 @@ public class ExpressionTypingServices {
     @NotNull
     public JetTypeInfo getTypeInfo(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                this, trace, scope, dataFlowInfo, expectedType, false
+                this, trace, scope, dataFlowInfo, expectedType, ExpressionPosition.FREE
         );
         return expressionTypingFacade.getTypeInfo(expression, context);
     }
@@ -141,7 +142,7 @@ public class ExpressionTypingServices {
 
     public JetTypeInfo getTypeInfoWithNamespaces(@NotNull JetExpression expression, @NotNull JetScope scope, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                this, trace, scope, dataFlowInfo, expectedType, true);
+                this, trace, scope, dataFlowInfo, expectedType, ExpressionPosition.LHS_OF_DOT);
         return expressionTypingFacade.getTypeInfo(expression, context);
     }
 
@@ -165,7 +166,7 @@ public class ExpressionTypingServices {
             }
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
-                this, trace, functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, false
+                this, trace, functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, ExpressionPosition.FREE
         ), trace);
     }
 
@@ -232,7 +233,7 @@ public class ExpressionTypingServices {
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
         expressionTypingFacade.getTypeInfo(bodyExpression, ExpressionTypingContext.newContext(
                 this,
-                trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, false), !function.hasBlockBody());
+                trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, ExpressionPosition.FREE), !function.hasBlockBody());
         //todo function literals
         final Collection<JetExpression> returnedExpressions = Lists.newArrayList();
         if (function.hasBlockBody()) {
@@ -363,7 +364,7 @@ public class ExpressionTypingServices {
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
         return ExpressionTypingContext.newContext(
-                this, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, oldContext.namespacesAllowed);
+                this, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, oldContext.expressionPosition);
     }
 
     @Nullable

@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -40,8 +41,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            boolean namespacesAllowed) {
-        return newContext(expressionTypingServices, new LabelResolver(), trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+            ExpressionPosition expressionPosition) {
+        return newContext(expressionTypingServices, new LabelResolver(), trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }
 
     @NotNull
@@ -52,9 +53,9 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            boolean namespacesAllowed) {
+            ExpressionPosition expressionPosition) {
         return new ExpressionTypingContext(expressionTypingServices, 
-                                           labelResolver, trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+                                           labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }
 
     public final ExpressionTypingServices expressionTypingServices;
@@ -70,8 +71,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            boolean namespacesAllowed) {
-        super(trace, scope, expectedType, dataFlowInfo, namespacesAllowed);
+            ExpressionPosition expressionPosition) {
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
         this.expressionTypingServices = expressionTypingServices;
         this.labelResolver = labelResolver;
     }
@@ -82,9 +83,9 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     ) {
-        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }
 
     @Override

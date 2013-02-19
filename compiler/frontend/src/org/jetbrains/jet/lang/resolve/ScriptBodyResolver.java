@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -73,7 +74,7 @@ public class ScriptBodyResolver {
                     scope,
                     DataFlowInfo.EMPTY,
                     NO_EXPECTED_TYPE,
-                    false);
+                    ExpressionPosition.FREE);
             JetType returnType = expressionTypingServices.getBlockReturnedType(scope, declaration.getBlockExpression(), CoercionStrategy.NO_COERCION, context, trace).getType();
             if (returnType == null) {
                 returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");

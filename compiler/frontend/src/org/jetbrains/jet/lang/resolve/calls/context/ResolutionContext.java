@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -30,21 +29,20 @@ public abstract class ResolutionContext<Context extends ResolutionContext> {
     public final JetScope scope;
     public final JetType expectedType;
     public final DataFlowInfo dataFlowInfo;
-    // true for positions on the lhs of a '.', i.e. allows namespace results and 'super'
-    public final boolean namespacesAllowed;
+    public final ExpressionPosition expressionPosition;
 
     protected ResolutionContext(
             BindingTrace trace,
             JetScope scope,
             JetType expectedType,
             DataFlowInfo dataFlowInfo,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     ) {
         this.trace = trace;
         this.scope = scope;
         this.expectedType = expectedType;
         this.dataFlowInfo = dataFlowInfo;
-        this.namespacesAllowed = namespacesAllowed;
+        this.expressionPosition = expressionPosition;
     }
 
     protected abstract Context create(
@@ -52,38 +50,38 @@ public abstract class ResolutionContext<Context extends ResolutionContext> {
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     );
     
     protected abstract Context self();
     
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+        return create(trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }
     
     @NotNull
-    public Context replaceNamespacesAllowed(boolean namespacesAllowed) {
-        if (namespacesAllowed == this.namespacesAllowed) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
+    public Context replaceExpressionPosition(@NotNull ExpressionPosition expressionPosition) {
+        if (expressionPosition == this.expressionPosition) return self();
+        return create(trace, scope, dataFlowInfo, expectedType, expressionPosition);
     }
 
     @NotNull
-    public Context replaceDataFlowInfo(DataFlowInfo newDataFlowInfo) {
+    public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
-        return create(trace, scope, newDataFlowInfo, expectedType, namespacesAllowed);
+        return create(trace, scope, newDataFlowInfo, expectedType, expressionPosition);
     }
 
     @NotNull
     public Context replaceExpectedType(@Nullable JetType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
-        return create(trace, scope, dataFlowInfo, newExpectedType, namespacesAllowed);
+        return create(trace, scope, dataFlowInfo, newExpectedType, expressionPosition);
     }
 
     @NotNull
     public Context replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return self();
-        return create(trace, newScope, dataFlowInfo, expectedType, namespacesAllowed);
+        return create(trace, newScope, dataFlowInfo, expectedType, expressionPosition);
     }
 }

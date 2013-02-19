@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -128,7 +129,7 @@ public class CallResolver {
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        return resolveFunctionCall(BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, ResolveMode.TOP_LEVEL_CALL, false));
+        return resolveFunctionCall(BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, ResolveMode.TOP_LEVEL_CALL, ExpressionPosition.FREE));
     }
 
     @NotNull
@@ -490,7 +491,7 @@ public class CallResolver {
                             public List<JetExpression> getFunctionLiteralArguments() {
                                 return Collections.emptyList();
                             }
-                        }, task.expectedType, task.dataFlowInfo, task.resolveMode, task.namespacesAllowed);
+                        }, task.expectedType, task.dataFlowInfo, task.resolveMode, task.expressionPosition);
             OverloadResolutionResultsImpl<F> resultsWithFunctionLiteralsStripped = performResolution(newTask, callTransformer, traceForResolutionCache);
             if (resultsWithFunctionLiteralsStripped.isSuccess() || resultsWithFunctionLiteralsStripped.isAmbiguity()) {
                 task.tracing.danglingFunctionLiteralArgumentSuspected(task.trace, task.call.getFunctionLiteralArguments());

@@ -32,19 +32,20 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ResolveMode resolveMode,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     ) {
-        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
     }
     @NotNull
     public static BasicCallResolutionContext create(@NotNull ResolutionContext context, @NotNull Call call, @NotNull ResolveMode resolveMode) {
-        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, resolveMode, context.namespacesAllowed);
+        return create(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, resolveMode, context.expressionPosition);
     }
 
     private BasicCallResolutionContext(
-            BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo, ResolveMode resolveMode, boolean namespacesAllowed
+            BindingTrace trace, JetScope scope, Call call, JetType expectedType,
+            DataFlowInfo dataFlowInfo, ResolveMode resolveMode, ExpressionPosition expressionPosition
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
+        super(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
     }
 
     @Override
@@ -53,9 +54,9 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     ) {
-        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
+        return create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
     }
 
     @Override

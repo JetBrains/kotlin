@@ -33,14 +33,14 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             JetType expectedType,
             DataFlowInfo dataFlowInfo,
             ResolveMode resolveMode,
-            boolean namespacesAllowed
+            ExpressionPosition expressionPosition
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, namespacesAllowed);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition);
         this.call = call;
         this.resolveMode = resolveMode;
     }
 
     public BasicCallResolutionContext toBasic() {
-        return BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, namespacesAllowed);
+        return BasicCallResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo, resolveMode, expressionPosition);
     }
 }

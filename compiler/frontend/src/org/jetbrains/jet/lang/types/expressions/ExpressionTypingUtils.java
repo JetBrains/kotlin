@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -166,7 +167,7 @@ public class ExpressionTypingUtils {
                 scope,
                 DataFlowInfo.EMPTY,
                 TypeUtils.NO_EXPECTED_TYPE,
-                false
+                ExpressionPosition.FREE
         );
         return ControlStructureTypingVisitor.checkIterableConvention(expressionReceiver, context) != null;
     }
