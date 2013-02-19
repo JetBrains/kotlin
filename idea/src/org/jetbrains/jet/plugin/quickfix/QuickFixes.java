@@ -204,8 +204,10 @@ public class QuickFixes {
         factories.put(NOT_AN_ANNOTATION_CLASS, MakeClassAnAnnotationClassFix.createFactory());
 
         factories.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED, AddSemicolonAfterFunctionCallFix.createFactory());
-        
+
         factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, ChangeReturnTypeToMatchOverriddenMethodFix.createFactory());
         factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, ChangePropertyTypeToMatchOverriddenPropertyFix.createFactory());
+
+        factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
     }
 }
