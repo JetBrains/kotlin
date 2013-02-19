@@ -129,6 +129,11 @@
     <codeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetCodeStyleSettingsProvider"/>
     <langCodeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetLanguageCodeStyleSettingsProvider"/>
 
+    <projectConfigurable instance="org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerConfigurableTab"
+                         id="project.kotlinCompiler"
+                         displayName="Kotlin Compiler"
+                         parentId="project.propCompiler"/>
+
     <templateParameterTraversalPolicy implementation="org.jetbrains.jet.plugin.completion.JetTemplateParameterTraversalPolicy"/>
 
     <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
