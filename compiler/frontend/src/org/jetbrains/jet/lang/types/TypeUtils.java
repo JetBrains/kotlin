@@ -42,29 +42,29 @@ public class TypeUtils {
         @NotNull
         @Override
         public TypeConstructor getConstructor() {
-            throw new UnsupportedOperationException(); // TODO
+            throw new IllegalStateException();
         }
 
         @NotNull
         @Override
         public List<TypeProjection> getArguments() {
-            throw new UnsupportedOperationException(); // TODO
+            throw new IllegalStateException();
         }
 
         @Override
         public boolean isNullable() {
-            throw new UnsupportedOperationException(); // TODO
+            throw new IllegalStateException();
         }
 
         @NotNull
         @Override
         public JetScope getMemberScope() {
-            throw new UnsupportedOperationException(); // TODO
+            throw new IllegalStateException();
         }
 
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
-            throw new UnsupportedOperationException(); // TODO
+            throw new IllegalStateException();
         }
 
         @Override
