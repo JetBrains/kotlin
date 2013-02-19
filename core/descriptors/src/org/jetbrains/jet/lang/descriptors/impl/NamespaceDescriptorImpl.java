@@ -17,10 +17,6 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -32,10 +28,11 @@ import java.util.List;
 public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
 
     private WritableScope memberScope;
+    private NamespaceLikeBuilder builder;
 
     public NamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration,
-                                   @NotNull List<AnnotationDescriptor> annotations,
-                                   @NotNull Name name) {
+            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Name name) {
         super(containingDeclaration, annotations, name);
     }
 
@@ -53,49 +50,17 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
         return memberScope;
     }
 
-    @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        getMemberScope().addNamespace(namespaceDescriptor);
-    }
-
     @NotNull
     @Override
     public FqName getFqName() {
         return DescriptorUtils.getFQName(this).toSafe();
     }
 
-    private NamespaceLikeBuilder builder = null;
+    @NotNull
     public NamespaceLikeBuilder getBuilder() {
         if (builder == null) {
-            builder = new NamespaceLikeBuilder() {
-                @Override
-                public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-                    getMemberScope().addClassifierDescriptor(classDescriptor);
-                }
-
-                @Override
-                public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                    getMemberScope().addFunctionDescriptor(functionDescriptor);
-                }
-
-                @Override
-                public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-                    getMemberScope().addPropertyDescriptor(propertyDescriptor);
-                }
-
-                @NotNull
-                @Override
-                public DeclarationDescriptor getOwnerForChildren() {
-                    return NamespaceDescriptorImpl.this;
-                }
-
-                @Override
-                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                    throw new IllegalStateException("Must be guaranteed not to happen by the parser");
-                }
-            };
+            builder = new ScopeBasedNamespaceLikeBuilder(this, getMemberScope());
         }
-
         return builder;
     }
 }
