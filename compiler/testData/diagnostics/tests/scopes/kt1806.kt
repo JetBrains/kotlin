@@ -11,12 +11,14 @@ fun test1() {
     doSmth(MyObject.<!INVISIBLE_MEMBER!>message<!>)
 }
 
-val MyObject1 = object {
-    private var message: String = "'Static'"
-}
+class Test {
+  private val MyObject1 = object {
+      private var message: String = "'Static'"
+  }
 
-fun test2() {
-    doSmth(MyObject1.<!INVISIBLE_MEMBER!>message<!>)
+  fun test2() {
+      doSmth(MyObject1.<!INVISIBLE_MEMBER!>message<!>)
+  }
 }
 
 fun doSmth(s: String) = s

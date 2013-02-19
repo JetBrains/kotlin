@@ -1,9 +1,15 @@
-fun <T : Any> T?.iterator() = object {
+
+trait MyIterator<T> {
+    fun hasNext() : Boolean
+    fun next() : T
+}
+
+fun <T : Any> T?.iterator() = object : MyIterator<T> {
     var hasNext = this@iterator != null
       private set
-    fun hasNext() = hasNext
+    override fun hasNext() = hasNext
 
-    fun next() : T {
+    override fun next() : T {
         if (hasNext) {
             hasNext = false
             return this@iterator!!

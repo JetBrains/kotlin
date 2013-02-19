@@ -1,20 +1,22 @@
-package toplevelObjectDeclarations {
-  class Foo(y : Int) {
-    ~foo()~open fun foo() : Int = 1
+package toplevelObjectDeclarations
+
+class Foo(y : Int) {
+  ~foo()~open fun foo() : Int = 1
+}
+
+object ~A~A : Foo(0) {
+  ~x~val x : Int = 2
+
+  fun test() {
+    return `x`x + `foo()`foo()
   }
+}
 
-  object ~A~A : Foo(0) {
-    ~x~val x : Int = 2
+object B : A {}
 
-    fun test() {
-      return `x`x + `foo()`foo()
-    }
-  }
+~ns.x~val x = `A`A.`foo()`foo()
 
-  object B : A {}
-
-  ~ns.x~val x = `A`A.`foo()`foo()
-
+fun f() {
   ~y~val y = object : Foo(`ns.x`x) {
     {
       `ns.x`x + 12
@@ -25,4 +27,3 @@ package toplevelObjectDeclarations {
 
   val z = `y`y.`y.foo()`foo()
 }
-
