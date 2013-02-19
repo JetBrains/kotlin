@@ -27,10 +27,11 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
 
-public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
+@Deprecated
+public class OldModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
     private NamespaceDescriptor rootNamepsace;
 
-    public ModuleDescriptor(@NotNull Name name) {
+    public OldModuleDescriptor(@NotNull Name name) {
         super(Collections.<AnnotationDescriptor>emptyList(), name);
         if (!name.isSpecial()) {
             throw new IllegalArgumentException("module name must be special: " + name);
@@ -60,7 +61,7 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
 
     @NotNull
     @Override
-    public ModuleDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
+    public OldModuleDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
         return this;
     }
 

@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
@@ -211,7 +211,7 @@ public class JetSourceNavigationHelper {
         KotlinCodeAnalyzer analyzer = new ResolveSession(
                 project,
                 storageManager,
-                new ModuleDescriptor(Name.special("<library module>")),
+                new OldModuleDescriptor(Name.special("<library module>")),
                 DefaultModuleConfiguration.createStandardConfiguration(),
                 providerFactory);
 

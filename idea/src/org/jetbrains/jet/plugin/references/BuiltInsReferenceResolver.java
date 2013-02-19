@@ -235,7 +235,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         private WritableScope memberScope;
 
         private FakeJetNamespaceDescriptor() {
-            super(new NamespaceDescriptorImpl(new ModuleDescriptor(Name.special("<fake_module>")),
+            super(new NamespaceDescriptorImpl(new OldModuleDescriptor(Name.special("<fake_module>")),
                                               Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")),
                   Collections.<AnnotationDescriptor>emptyList(),
                   KotlinBuiltIns.getInstance().getBuiltInsPackage().getName());

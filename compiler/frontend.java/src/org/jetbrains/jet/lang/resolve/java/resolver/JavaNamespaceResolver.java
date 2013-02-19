@@ -22,7 +22,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -46,7 +46,7 @@ import java.util.Set;
 public final class JavaNamespaceResolver {
 
     @NotNull
-    public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
+    public static final OldModuleDescriptor FAKE_ROOT_MODULE = new OldModuleDescriptor(JavaDescriptorResolver.JAVA_ROOT);
     @NotNull
     private final Map<FqName, JavaBaseScope> resolvedNamespaceCache = Maps.newHashMap();
     @NotNull

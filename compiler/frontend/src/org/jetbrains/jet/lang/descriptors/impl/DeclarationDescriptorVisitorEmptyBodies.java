@@ -49,7 +49,7 @@ public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements Declaratio
     }
 
     @Override
-    public R visitModuleDeclaration(ModuleDescriptor descriptor, D data) {
+    public R visitModuleDeclaration(OldModuleDescriptor descriptor, D data) {
         return visitDeclarationDescriptor(descriptor, data);
     }
 

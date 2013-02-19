@@ -108,7 +108,7 @@ public class DescriptorUtils {
     public static FqNameUnsafe getFQName(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
-        if (descriptor instanceof ModuleDescriptor || containingDeclaration instanceof ModuleDescriptor) {
+        if (descriptor instanceof OldModuleDescriptor || containingDeclaration instanceof OldModuleDescriptor) {
             return FqName.ROOT.toUnsafe();
         }
 
@@ -237,7 +237,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isRootNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
+        return namespaceDescriptor.getContainingDeclaration() instanceof OldModuleDescriptor;
     }
 
     @NotNull

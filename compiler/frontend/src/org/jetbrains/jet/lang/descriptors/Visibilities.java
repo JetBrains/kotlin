@@ -66,8 +66,8 @@ public class Visibilities {
     public static final Visibility INTERNAL = new Visibility("internal", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(what, ModuleDescriptor.class, false);
-            ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(from, ModuleDescriptor.class, false);
+            OldModuleDescriptor parentModule = DescriptorUtils.getParentOfType(what, OldModuleDescriptor.class, false);
+            OldModuleDescriptor fromModule = DescriptorUtils.getParentOfType(from, OldModuleDescriptor.class, false);
             assert parentModule != null && fromModule != null;
             return parentModule.equals(fromModule);
         }

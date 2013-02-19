@@ -55,7 +55,7 @@ public class TopDownAnalyzer {
     @NotNull
     private BindingTrace trace;
     @NotNull
-    private ModuleDescriptor moduleDescriptor;
+    private OldModuleDescriptor moduleDescriptor;
     @NotNull
     private NamespaceFactoryImpl namespaceFactory;
     @NotNull
@@ -97,7 +97,7 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
+    public void setModuleDescriptor(@NotNull OldModuleDescriptor moduleDescriptor) {
         this.moduleDescriptor = moduleDescriptor;
     }
 
@@ -186,7 +186,7 @@ public class TopDownAnalyzer {
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
     ) {
-        ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<dummy for object>"));
+        OldModuleDescriptor moduleDescriptor = new OldModuleDescriptor(Name.special("<dummy for object>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()),

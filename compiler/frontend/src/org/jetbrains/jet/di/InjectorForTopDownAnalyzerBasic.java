@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.di;
 
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
@@ -25,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
@@ -60,7 +60,7 @@ public class InjectorForTopDownAnalyzerBasic {
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
-    private final ModuleDescriptor moduleDescriptor;
+    private final OldModuleDescriptor moduleDescriptor;
     private final ModuleConfiguration moduleConfiguration;
     private DependencyClassByQualifiedNameResolverDummyImpl dependencyClassByQualifiedNameResolverDummy;
     private NamespaceFactoryImpl namespaceFactory;
@@ -85,7 +85,7 @@ public class InjectorForTopDownAnalyzerBasic {
         @NotNull Project project,
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptor moduleDescriptor,
+        @NotNull OldModuleDescriptor moduleDescriptor,
         @NotNull ModuleConfiguration moduleConfiguration
     ) {
         this.topDownAnalyzer = new TopDownAnalyzer();

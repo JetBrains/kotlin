@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -34,7 +34,7 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
 
         super(containingDeclaration, annotations, name);
 
-        boolean rootAccordingToContainer = containingDeclaration instanceof ModuleDescriptor;
+        boolean rootAccordingToContainer = containingDeclaration instanceof OldModuleDescriptor;
         if (rootAccordingToContainer != name.isSpecial()) {
             throw new IllegalStateException("something is wrong, name: " + name + ", container: " + containingDeclaration);
         }

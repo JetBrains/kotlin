@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
+@Deprecated
 public interface NamespaceDescriptor extends Annotated, Named, FqNamed, ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
     @NotNull
     JetScope getMemberScope();

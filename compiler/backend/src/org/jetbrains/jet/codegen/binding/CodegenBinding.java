@@ -313,11 +313,11 @@ public class CodegenBinding {
             throw new IllegalStateException("requested fq name for function: " + descriptor);
         }
 
-        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor || descriptor instanceof ScriptDescriptor) {
+        if (descriptor.getContainingDeclaration() instanceof OldModuleDescriptor || descriptor instanceof ScriptDescriptor) {
             return "";
         }
 
-        if (descriptor instanceof ModuleDescriptor) {
+        if (descriptor instanceof OldModuleDescriptor) {
             throw new IllegalStateException("missed something");
         }
 

@@ -32,7 +32,7 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
@@ -59,7 +59,7 @@ public class LazyResolveTestUtil {
     }
 
     public static InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(JetCoreEnvironment environment) {
-        ModuleDescriptor eagerModuleForLazy = new ModuleDescriptor(Name.special("<eager module for lazy>"));
+        OldModuleDescriptor eagerModuleForLazy = new OldModuleDescriptor(Name.special("<eager module for lazy>"));
 
         InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy, environment);
         // This line is required fro the 'jet' namespace to be filled in with functions
@@ -68,7 +68,7 @@ public class LazyResolveTestUtil {
         return tdaInjectorForLazy;
     }
 
-    public static InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptor module, JetCoreEnvironment environment) {
+    public static InjectorForTopDownAnalyzer createInjectorForTDA(OldModuleDescriptor module, JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
@@ -77,8 +77,8 @@ public class LazyResolveTestUtil {
         return new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, module);
     }
 
-    public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
-        ModuleDescriptor module = new ModuleDescriptor(Name.special("<test module>"));
+    public static OldModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
+        OldModuleDescriptor module = new OldModuleDescriptor(Name.special("<test module>"));
         InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
         return module;
@@ -87,7 +87,7 @@ public class LazyResolveTestUtil {
     public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
-        ModuleDescriptor javaModule = new ModuleDescriptor(Name.special("<java module>"));
+        OldModuleDescriptor javaModule = new OldModuleDescriptor(Name.special("<java module>"));
 
         final Project project = environment.getProject();
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
@@ -137,11 +137,11 @@ public class LazyResolveTestUtil {
             }
         };
 
-        ModuleDescriptor lazyModule = new ModuleDescriptor(Name.special("<lazy module>"));
+        OldModuleDescriptor lazyModule = new OldModuleDescriptor(Name.special("<lazy module>"));
         return new ResolveSession(project, storageManager, lazyModule, moduleConfiguration, declarationProviderFactory, sharedTrace);
     }
 
-    public static ModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
+    public static OldModuleDescriptor resolveLazily(List<JetFile> files, JetCoreEnvironment environment) {
         return resolveLazilyWithSession(files, environment).getRootModuleDescriptor();
     }
 

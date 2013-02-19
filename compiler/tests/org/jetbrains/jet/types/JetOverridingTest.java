@@ -23,7 +23,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class JetOverridingTest extends JetLiteFixture {
 
-    private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
+    private OldModuleDescriptor root = new OldModuleDescriptor(Name.special("<test_root>"));
     private KotlinBuiltIns builtIns;
     private DescriptorResolver descriptorResolver;
 

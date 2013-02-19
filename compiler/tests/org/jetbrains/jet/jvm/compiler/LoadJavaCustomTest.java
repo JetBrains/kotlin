@@ -32,7 +32,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -229,7 +229,7 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
             configuration.put(CommonConfigurationKeys.SOURCE_ROOTS_KEY, Arrays.asList(new File(dir, "kotlin").getAbsolutePath()));
             JetCoreEnvironment environment = new JetCoreEnvironment(getTestRootDisposable(), configuration);
 
-            ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<test module>"));
+            OldModuleDescriptor moduleDescriptor = new OldModuleDescriptor(Name.special("<test module>"));
 
             // we need the same binding trace for resolve from Java and Kotlin
             BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
