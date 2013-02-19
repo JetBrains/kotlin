@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.NamespaceType;
 
 public interface NamespaceDescriptor extends Annotated, Named, FqNamed, ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
     @NotNull
