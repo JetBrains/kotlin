@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.versions;
 
 import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -44,7 +45,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.framework.JetFrameworkConfigurator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -118,24 +118,17 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         return null;
     }
 
-    private EditorNotificationPanel createConfigureRuntimeLibraryNotificationPanel(final Module module) {
+    private static EditorNotificationPanel createConfigureRuntimeLibraryNotificationPanel(final Module module) {
         EditorNotificationPanel answer = new EditorNotificationPanel();
 
         answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
-        answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
+        answer.createActionLabel("Set up Kotlin framework", new Runnable() {
             @Override
             public void run() {
-                if (JetFrameworkConfigurator.configureAsJavaModule(module)) {
-                    updateNotifications();
-                }
-            }
-        });
-
-        answer.createActionLabel("Set up module '" + module.getName() + "' as JavaScript Kotlin module", new Runnable() {
-            @Override
-            public void run() {
-                if (JetFrameworkConfigurator.configureAsJavaScriptModule(module)) {
-                    updateNotifications();
+                // TODO: make choose only from Kotlin frameworks
+                AddFrameworkSupportDialog dialog = AddFrameworkSupportDialog.createDialog(module);
+                if (dialog != null) {
+                    dialog.show();
                 }
             }
         });
