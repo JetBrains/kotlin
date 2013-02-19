@@ -36,7 +36,7 @@ import javax.swing.*;
 import java.util.Set;
 
 public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
-    public static final LibraryKind KOTLIN_KIND = LibraryKind.create("kotlin-java-runtime");
+    public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
     private final FrameworkSourcePanel frameworkSourcePanel;
 
     public JetJavaRuntimeLibraryDescription(FrameworkSourcePanel frameworkSourcePanel) {
@@ -47,7 +47,7 @@ public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return Sets.newHashSet(KOTLIN_KIND);
+        return Sets.newHashSet(KOTLIN_JAVA_RUNTIME_KIND);
     }
 
     @Nullable

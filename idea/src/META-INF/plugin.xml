@@ -216,6 +216,8 @@
 
     <framework.type implementation="org.jetbrains.jet.plugin.framework.JetJavaFrameworkType"/>
     <framework.type implementation="org.jetbrains.jet.plugin.framework.JavaScriptFrameworkType"/>
+    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.KotlinJavaRuntimePresentationProvider"/>
+    <library.presentationProvider implementation="org.jetbrains.jet.plugin.framework.KotlinJavaScriptHeadersPresentationProvider"/>
 
     <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
