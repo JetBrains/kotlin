@@ -229,10 +229,12 @@ public final class JavaFunctionResolver {
                     isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, functionDescriptor);
             if (!paramsOk || !returnTypeOk) {
                 String errorMessage = "Loaded Java method overrides another, but resolved as Kotlin function, doesn't.\n"
-                           + "super function = " + superFunction + "\n"
-                                                + "this function = " + functionDescriptor + "\n"
-                                                + "this method = " + PsiFormatUtil.getExternalName(method.getPsiMethod()) + "\n"
-                           + "@KotlinSignature = " + method.getSignatureAnnotation().signature();
+                                      + "super function = " + superFunction + "\n"
+                                      + "super class = " + superFunction.getContainingDeclaration() + "\n"
+                                      + "sub function = " + functionDescriptor + "\n"
+                                      + "sub class = " + functionDescriptor.getContainingDeclaration() + "\n"
+                                      + "sub method = " + PsiFormatUtil.getExternalName(method.getPsiMethod()) + "\n"
+                                      + "@KotlinSignature = " + method.getSignatureAnnotation().signature();
 
                 if (ApplicationManager.getApplication().isUnitTestMode()) {
                     throw new IllegalStateException(errorMessage);
