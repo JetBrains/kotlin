@@ -418,6 +418,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/modifiers/beforeIllegalEnumAnnotation2.kt");
         }
         
+        @TestMetadata("beforeNestedClassNotAllowed.kt")
+        public void testNestedClassNotAllowed() throws Exception {
+            doTest("idea/testData/quickfix/modifiers/beforeNestedClassNotAllowed.kt");
+        }
+        
         @TestMetadata("beforeOpenMemberInFinalClass1.kt")
         public void testOpenMemberInFinalClass1() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass1.kt");
@@ -701,6 +706,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     public static class TypeProjection extends AbstractQuickFixTest {
         public void testAllFilesPresentInTypeProjection() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/typeProjection"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("beforeConflictingProjection.kt")
+        public void testConflictingProjection() throws Exception {
+            doTest("idea/testData/quickfix/typeProjection/beforeConflictingProjection.kt");
+        }
+        
+        @TestMetadata("beforeProjectionInImmediateArgumentToSupertype.kt")
+        public void testProjectionInImmediateArgumentToSupertype() throws Exception {
+            doTest("idea/testData/quickfix/typeProjection/beforeProjectionInImmediateArgumentToSupertype.kt");
+        }
+        
+        @TestMetadata("beforeProjectionOnNonClassTypeArgument1.kt")
+        public void testProjectionOnNonClassTypeArgument1() throws Exception {
+            doTest("idea/testData/quickfix/typeProjection/beforeProjectionOnNonClassTypeArgument1.kt");
+        }
+        
+        @TestMetadata("beforeProjectionOnNonClassTypeArgument2.kt")
+        public void testProjectionOnNonClassTypeArgument2() throws Exception {
+            doTest("idea/testData/quickfix/typeProjection/beforeProjectionOnNonClassTypeArgument2.kt");
         }
         
         @TestMetadata("beforeRemoveRedundantProjection1.kt")
