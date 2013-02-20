@@ -361,7 +361,7 @@ public class Converter {
         return new Field(
                 new IdentifierImpl(field.getName()), // TODO
                 modifiers,
-                typeToType(field.getType()),
+                typeToType(field.getType(), ConverterUtil.isAnnotatedAsNotNull(field.getModifierList())),
                 createSureCallOnlyForChain(field.getInitializer(), field.getType()), // TODO: add modifiers
                 countWritingAccesses(field, psiClass)
         );
