@@ -112,6 +112,17 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             }
         }
 
-        return c1TypeParameters.size() - c2TypeParameters.size();
+        int typeParametersCompareTo = c1TypeParameters.size() - c2TypeParameters.size();
+        if (typeParametersCompareTo != 0) {
+            return typeParametersCompareTo;
+        }
+
+        if (c1 instanceof CallableMemberDescriptor && c2 instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor.Kind c1Kind = ((CallableMemberDescriptor) c1).getKind();
+            CallableMemberDescriptor.Kind c2Kind = ((CallableMemberDescriptor) c2).getKind();
+            return c1Kind.ordinal() - c2Kind.ordinal();
+        }
+
+        return 0;
     }
 }

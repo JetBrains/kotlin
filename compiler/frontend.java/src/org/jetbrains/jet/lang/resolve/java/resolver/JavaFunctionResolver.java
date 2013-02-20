@@ -38,10 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.provider.PsiDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.java.wrapper.PsiMethodWrapper;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.SubstitutionUtils;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -197,7 +194,9 @@ public final class JavaFunctionResolver {
             throw new IllegalStateException("non-static method in subclass");
         }
 
-        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod) && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(psiMethod)) {
+        if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(psiMethod)
+                && JavaMethodSignatureUtil.isMethodReturnTypeCompatible(psiMethod)
+                && !containsErrorType(superFunctions, functionDescriptorImpl)) {
             if (signatureErrors.isEmpty()) {
                 checkFunctionsOverrideCorrectly(method, superFunctions, functionDescriptorImpl);
             }
@@ -363,5 +362,39 @@ public final class JavaFunctionResolver {
             return true;
         }
         return (methodName.equals("values") && methodTypeParameters.isEmpty());
+    }
+
+    private static boolean containsErrorType(@NotNull List<FunctionDescriptor> superFunctions, @NotNull FunctionDescriptor function) {
+        if (containsErrorType(function)) {
+            return true;
+        }
+
+        for (FunctionDescriptor superFunction : superFunctions) {
+            if (containsErrorType(superFunction)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean containsErrorType(@NotNull FunctionDescriptor function) {
+        if (ErrorUtils.containsErrorType(function.getReturnType())) {
+            return true;
+        }
+        for (ValueParameterDescriptor parameter : function.getValueParameters()) {
+            if (ErrorUtils.containsErrorType(parameter.getType())) {
+                return true;
+            }
+        }
+        for (TypeParameterDescriptor parameter : function.getTypeParameters()) {
+            for (JetType upperBound : parameter.getUpperBounds()) {
+                if (ErrorUtils.containsErrorType(upperBound)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

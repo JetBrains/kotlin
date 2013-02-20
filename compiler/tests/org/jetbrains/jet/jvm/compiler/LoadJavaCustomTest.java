@@ -187,9 +187,9 @@ public final class LoadJavaCustomTest extends KotlinTestWithEnvironment {
         doTestNoCompile(dir + "ReturnNotSubtype.txt", dir);
     }
 
-    public void testWrongNumberOfGenericParameters() throws Exception {
-        String dir = PATH + "/errors/";
-        doTestNoCompile(dir + "WrongNumberOfGenericParameters.txt", dir);
+    public void testErrorTypes() throws Exception {
+        String dir = PATH + "/errorTypes/";
+        doTestNoCompile(dir + "ErrorTypes.txt", dir);
     }
 
     public static class SubclassingKotlinInJavaTest extends KotlinTestWithEnvironmentManagement {
