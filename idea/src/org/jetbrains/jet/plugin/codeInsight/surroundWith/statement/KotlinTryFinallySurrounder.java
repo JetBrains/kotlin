@@ -38,7 +38,9 @@ public class KotlinTryFinallySurrounder extends KotlinTrySurrounderBase {
     @Override
     protected TextRange surroundStatements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement container, @NotNull PsiElement[] statements) {
         TextRange textRange = super.surroundStatements(project, editor, container, statements);
-        assert textRange != null;
+        if (textRange == null) {
+            return null;
+        }
         // Delete dummy "b" element for caret
         editor.getDocument().deleteString(textRange.getStartOffset(), textRange.getEndOffset());
         return new TextRange(textRange.getStartOffset(), textRange.getStartOffset());

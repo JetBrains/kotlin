@@ -1,0 +1,11 @@
+fun foo() {
+
+    if (<caret>) {
+        fun test() {}
+        "aaa"
+        test()
+    }
+
+
+    val a = "ss"
+}

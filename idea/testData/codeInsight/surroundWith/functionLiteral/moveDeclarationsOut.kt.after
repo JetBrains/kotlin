@@ -1,0 +1,11 @@
+fun foo() {
+    val a: String
+    val b: String
+    <selection>run</selection> {
+        a = "aaa"
+        b = "aaa"
+    }
+
+    a.charAt(1)
+    b.charAt(1)
+}

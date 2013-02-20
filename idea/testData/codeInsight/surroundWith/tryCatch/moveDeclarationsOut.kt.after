@@ -1,0 +1,12 @@
+fun foo() {
+    val a: String
+    val b: String
+    try {
+        a = "aaa"
+        b = "aaa"
+    } catch(e: <selection>Exception</selection>) {
+    }
+
+    a.charAt(1)
+    b.charAt(1)
+}

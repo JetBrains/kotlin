@@ -1,0 +1,12 @@
+package test
+
+class A {}
+
+fun foo() {
+    val a: A
+    if (<caret>) {
+        a = test.A()
+    }
+
+    a.hashCode()
+}

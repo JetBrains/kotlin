@@ -32,4 +32,9 @@ public class KotlinIfElseSurrounder extends KotlinIfSurrounderBase {
     protected String getCodeTemplate() {
         return "if (a) { \n} else { \n}";
     }
+
+    @Override
+    protected boolean isGenerateDefaultInitializers() {
+        return false;
+    }
 }

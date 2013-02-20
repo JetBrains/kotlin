@@ -1,0 +1,7 @@
+fun foo() {
+    var a: String? = null
+    if (<caret>) {
+        a = "aaa"
+    }
+    a = "bbb"
+}

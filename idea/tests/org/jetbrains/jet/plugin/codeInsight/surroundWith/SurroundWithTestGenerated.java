@@ -33,6 +33,7 @@ import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTes
 @InnerTestClasses({SurroundWithTestGenerated.If.class, SurroundWithTestGenerated.IfElse.class, SurroundWithTestGenerated.Not.class, SurroundWithTestGenerated.Parentheses.class, SurroundWithTestGenerated.StringTemplate.class, SurroundWithTestGenerated.When.class, SurroundWithTestGenerated.TryCatch.class, SurroundWithTestGenerated.TryCatchFinally.class, SurroundWithTestGenerated.TryFinally.class, SurroundWithTestGenerated.FunctionLiteral.class})
 public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     @TestMetadata("idea/testData/codeInsight/surroundWith/if")
+    @InnerTestClasses({If.MoveDeclarationsOut.class})
     public static class If extends AbstractSurroundWithTest {
         public void testAllFilesPresentInIf() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -63,6 +64,195 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/variable.kt");
         }
         
+        @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut")
+        @InnerTestClasses({MoveDeclarationsOut.Class.class, MoveDeclarationsOut.Function.class, MoveDeclarationsOut.Object.class, MoveDeclarationsOut.Order.class, MoveDeclarationsOut.Val.class, MoveDeclarationsOut.Var.class})
+        public static class MoveDeclarationsOut extends AbstractSurroundWithTest {
+            public void testAllFilesPresentInMoveDeclarationsOut() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/class")
+            public static class Class extends AbstractSurroundWithTest {
+                public void testAllFilesPresentInClass() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/class"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("classInType.kt")
+                public void testClassInType() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/class/classInType.kt");
+                }
+                
+                @TestMetadata("localClass.kt")
+                public void testLocalClass() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/class/localClass.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/function")
+            public static class Function extends AbstractSurroundWithTest {
+                public void testAllFilesPresentInFunction() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/function"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("firstChildLocalFun.kt")
+                public void testFirstChildLocalFun() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/function/firstChildLocalFun.kt");
+                }
+                
+                @TestMetadata("localFun.kt")
+                public void testLocalFun() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/function/localFun.kt");
+                }
+                
+                @TestMetadata("unusedLocalFun.kt")
+                public void testUnusedLocalFun() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/function/unusedLocalFun.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/object")
+            public static class Object extends AbstractSurroundWithTest {
+                public void testAllFilesPresentInObject() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/object"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("localObject.kt")
+                public void testLocalObject() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/object/localObject.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/order")
+            public static class Order extends AbstractSurroundWithTest {
+                public void testAllFilesPresentInOrder() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/order"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("twoClasses.kt")
+                public void testTwoClasses() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/order/twoClasses.kt");
+                }
+                
+                @TestMetadata("valAndClass.kt")
+                public void testValAndClass() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/order/valAndClass.kt");
+                }
+                
+                @TestMetadata("valOrder.kt")
+                public void testValOrder() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/order/valOrder.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val")
+            public static class Val extends AbstractSurroundWithTest {
+                public void testAllFilesPresentInVal() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("fullQualifiedType.kt")
+                public void testFullQualifiedType() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val/fullQualifiedType.kt");
+                }
+                
+                @TestMetadata("fullQualifiedTypeWithoutTypeRef.kt")
+                public void testFullQualifiedTypeWithoutTypeRef() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val/fullQualifiedTypeWithoutTypeRef.kt");
+                }
+                
+                @TestMetadata("valWithTypeWithInitializer.kt")
+                public void testValWithTypeWithInitializer() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val/valWithTypeWithInitializer.kt");
+                }
+                
+                @TestMetadata("valWithTypeWoInitializer.kt")
+                public void testValWithTypeWoInitializer() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val/valWithTypeWoInitializer.kt");
+                }
+                
+                @TestMetadata("valWoTypeWithInitializer.kt")
+                public void testValWoTypeWithInitializer() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/val/valWoTypeWithInitializer.kt");
+                }
+                
+            }
+            
+            @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var")
+            @InnerTestClasses({Var.DefaultValue.class})
+            public static class Var extends AbstractSurroundWithTest {
+                public void testAllFilesPresentInVar() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("varWithNotNullableTypeWithInitializer.kt")
+                public void testVarWithNotNullableTypeWithInitializer() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/varWithNotNullableTypeWithInitializer.kt");
+                }
+                
+                @TestMetadata("varWithTypeWoInitializer.kt")
+                public void testVarWithTypeWoInitializer() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/varWithTypeWoInitializer.kt");
+                }
+                
+                @TestMetadata("varWoTypeWithInitializer.kt")
+                public void testVarWoTypeWithInitializer() throws Exception {
+                    doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/varWoTypeWithInitializer.kt");
+                }
+                
+                @TestMetadata("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue")
+                public static class DefaultValue extends AbstractSurroundWithTest {
+                    public void testAllFilesPresentInDefaultValue() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+                    
+                    @TestMetadata("boolean.kt")
+                    public void testBoolean() throws Exception {
+                        doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue/boolean.kt");
+                    }
+                    
+                    @TestMetadata("nullable.kt")
+                    public void testNullable() throws Exception {
+                        doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue/nullable.kt");
+                    }
+                    
+                    @TestMetadata("primitiveNumbers.kt")
+                    public void testPrimitiveNumbers() throws Exception {
+                        doTestWithIfSurrounder("idea/testData/codeInsight/surroundWith/if/moveDeclarationsOut/var/defaultValue/primitiveNumbers.kt");
+                    }
+                    
+                }
+                
+                public static Test innerSuite() {
+                    TestSuite suite = new TestSuite("Var");
+                    suite.addTestSuite(Var.class);
+                    suite.addTestSuite(DefaultValue.class);
+                    return suite;
+                }
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("MoveDeclarationsOut");
+                suite.addTestSuite(MoveDeclarationsOut.class);
+                suite.addTestSuite(Class.class);
+                suite.addTestSuite(Function.class);
+                suite.addTestSuite(Object.class);
+                suite.addTestSuite(Order.class);
+                suite.addTestSuite(Val.class);
+                suite.addTest(Var.innerSuite());
+                return suite;
+            }
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("If");
+            suite.addTestSuite(If.class);
+            suite.addTest(MoveDeclarationsOut.innerSuite());
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/codeInsight/surroundWith/ifElse")
@@ -74,6 +264,16 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
         @TestMetadata("block.kt")
         public void testBlock() throws Exception {
             doTestWithIfElseSurrounder("idea/testData/codeInsight/surroundWith/ifElse/block.kt");
+        }
+        
+        @TestMetadata("moveDeclarationsOutVal.kt")
+        public void testMoveDeclarationsOutVal() throws Exception {
+            doTestWithIfElseSurrounder("idea/testData/codeInsight/surroundWith/ifElse/moveDeclarationsOutVal.kt");
+        }
+        
+        @TestMetadata("moveDeclarationsOutVar.kt")
+        public void testMoveDeclarationsOutVar() throws Exception {
+            doTestWithIfElseSurrounder("idea/testData/codeInsight/surroundWith/ifElse/moveDeclarationsOutVar.kt");
         }
         
         @TestMetadata("severalStatements.kt")
@@ -281,6 +481,11 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/tryCatch"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("moveDeclarationsOut.kt")
+        public void testMoveDeclarationsOut() throws Exception {
+            doTestWithTryCatchSurrounder("idea/testData/codeInsight/surroundWith/tryCatch/moveDeclarationsOut.kt");
+        }
+        
         @TestMetadata("multiExpression.kt")
         public void testMultiExpression() throws Exception {
             doTestWithTryCatchSurrounder("idea/testData/codeInsight/surroundWith/tryCatch/multiExpression.kt");
@@ -335,6 +540,11 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/codeInsight/surroundWith/functionLiteral"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("moveDeclarationsOut.kt")
+        public void testMoveDeclarationsOut() throws Exception {
+            doTestWithFunctionLiteralSurrounder("idea/testData/codeInsight/surroundWith/functionLiteral/moveDeclarationsOut.kt");
+        }
+        
         @TestMetadata("multiStatement.kt")
         public void testMultiStatement() throws Exception {
             doTestWithFunctionLiteralSurrounder("idea/testData/codeInsight/surroundWith/functionLiteral/multiStatement.kt");
@@ -349,7 +559,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
     
     public static Test suite() {
         TestSuite suite = new TestSuite("SurroundWithTestGenerated");
-        suite.addTestSuite(If.class);
+        suite.addTest(If.innerSuite());
         suite.addTestSuite(IfElse.class);
         suite.addTestSuite(Not.class);
         suite.addTest(Parentheses.innerSuite());

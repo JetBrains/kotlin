@@ -25,12 +25,18 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.MoveDeclarationsOutHelper;
 
 public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder {
     @Nullable
     @Override
     protected TextRange surroundStatements(Project project, Editor editor, PsiElement container, PsiElement[] statements) {
-        // TODO extract variables declaration
+        statements = MoveDeclarationsOutHelper.move(container, statements, true);
+
+        if (statements.length == 0) {
+            KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR);
+            return null;
+        }
 
         JetCallExpression callExpression = (JetCallExpression) JetPsiFactory.createExpression(project, "run {\n}");
         callExpression = (JetCallExpression) container.addAfter(callExpression, statements[statements.length - 1]);

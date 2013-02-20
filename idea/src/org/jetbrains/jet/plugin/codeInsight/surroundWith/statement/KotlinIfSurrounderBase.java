@@ -29,15 +29,19 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetIfExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.KotlinSurrounderUtils;
-
-import java.lang.String;
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.MoveDeclarationsOutHelper;
 
 public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder {
 
     @Nullable
     @Override
     protected TextRange surroundStatements(Project project, Editor editor, PsiElement container, PsiElement[] statements) {
-        // TODO extract variables declaration
+        statements = MoveDeclarationsOutHelper.move(container, statements, isGenerateDefaultInitializers());
+
+        if (statements.length == 0) {
+            KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR);
+            return null;
+        }
 
         JetIfExpression ifExpression = (JetIfExpression) JetPsiFactory.createExpression(project, getCodeTemplate());
         ifExpression = (JetIfExpression) container.addAfter(ifExpression, statements[statements.length - 1]);
@@ -65,4 +69,6 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
 
     @NotNull
     protected abstract String getCodeTemplate();
+
+    protected abstract boolean isGenerateDefaultInitializers();
 }

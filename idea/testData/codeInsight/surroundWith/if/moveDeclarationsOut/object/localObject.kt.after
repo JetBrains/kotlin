@@ -1,0 +1,8 @@
+fun foo() {
+    object A {}
+    if (<caret>) {
+        "bbb"
+    }
+
+    val myClass = A
+}

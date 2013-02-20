@@ -1,0 +1,11 @@
+fun foo() {
+    val a: String
+    val b: String
+    if (<caret>) {
+        a = "aaa"
+        b = a
+    }
+
+    a.charAt(1)
+    b.charAt(1)
+}
