@@ -496,7 +496,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetWhenCondition> EXPECTED_CONDITION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetWhenEntry> ELSE_MISPLACED_IN_WHEN = DiagnosticFactory0.create(ERROR, ELSE_ENTRY);
-    DiagnosticFactory0<JetWhenExpression> NO_ELSE_IN_WHEN = new DiagnosticFactory0<JetWhenExpression>(ERROR, WHEN_EXPRESSION);
+    DiagnosticFactory0<JetWhenExpression> NO_ELSE_IN_WHEN = DiagnosticFactory0.create(ERROR, WHEN_EXPRESSION);
 
     // Type mismatch
 
@@ -507,12 +507,12 @@ public interface Errors {
     DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<JetElement, JetType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory3<JetExpression, String, JetType, JetType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
-    DiagnosticFactory0<JetWhenConditionInRange>
-            TYPE_MISMATCH_IN_RANGE = new DiagnosticFactory0<JetWhenConditionInRange>(ERROR, WHEN_CONDITION_IN_RANGE);
+    DiagnosticFactory0<JetWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = DiagnosticFactory0.create(ERROR, WHEN_CONDITION_IN_RANGE);
 
     DiagnosticFactory1<JetParameter, JetType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetTypeReference, JetType> EXPECTED_RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<JetFunctionLiteral, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH = DiagnosticFactory2.create(ERROR, FUNCTION_LITERAL_PARAMETERS);
+    DiagnosticFactory2<JetFunctionLiteral, Integer, List<JetType>> EXPECTED_PARAMETERS_NUMBER_MISMATCH =
+            DiagnosticFactory2.create(ERROR, FUNCTION_LITERAL_PARAMETERS);
 
     DiagnosticFactory2<JetElement, JetType, JetType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR);
 
