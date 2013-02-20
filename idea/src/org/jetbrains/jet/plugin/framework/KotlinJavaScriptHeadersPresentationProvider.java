@@ -41,12 +41,9 @@ public class KotlinJavaScriptHeadersPresentationProvider extends LibraryPresenta
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
-        for (VirtualFile root : classesRoots) {
-            // TODO: Better detection for headers library
-            if (root.getName().equals(PathUtil.JS_LIB_JS_NAME)) {
-                // TODO: Detect library version
-                return new LibraryVersionProperties("Unknown");
-            }
+        // TODO: Ask for better api of library detection
+        if (classesRoots.isEmpty()) {
+            return new LibraryVersionProperties("Unknown");
         }
 
         return null;

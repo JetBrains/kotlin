@@ -18,25 +18,32 @@ package org.jetbrains.jet.plugin.framework;
 
 import com.google.common.collect.Sets;
 import com.intellij.framework.library.LibraryVersionProperties;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.plugin.framework.ui.FrameworkSourcePanel;
 import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import javax.management.openmbean.InvalidOpenTypeException;
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
+
+    private static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";
+
     private final FrameworkSourcePanel frameworkSourcePanel;
 
     public JetJavaRuntimeLibraryDescription(FrameworkSourcePanel frameworkSourcePanel) {
@@ -54,30 +61,46 @@ public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
         if (frameworkSourcePanel.isConfigureFromBundled()) {
-            final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-
-            descriptor.setTitle("Select Folder");
-            descriptor.setDescription("Select folder where bundled Kotlin java runtime library should be copied");
-
-            final VirtualFile[] files = FileChooser.chooseFiles(descriptor, parentComponent, null, contextDirectory);
-            if (files.length == 0) {
-                return null;
-            }
-
-            assert files.length == 1: "Only one folder is expected";
-
-            final VirtualFile directory = files[0];
-            assert directory.isDirectory();
-
-            return new NewLibraryConfiguration(KotlinRuntimeLibraryUtil.LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
-                @Override
-                public void addRoots(@NotNull LibraryEditor editor) {
-                    editor.addRoot(directory.getUrl() + "/" + KotlinRuntimeLibraryUtil.KOTLIN_RUNTIME_JAR, OrderRootType.CLASSES);
-                }
-            };
+            return createFromPlugin(parentComponent, contextDirectory);
         }
         else {
             throw new InvalidOpenTypeException("Isn't supported yet");
         }
+    }
+
+    private NewLibraryConfiguration createFromPlugin(JComponent parentComponent, VirtualFile contextDirectory) {
+        File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
+
+        if (!runtimePath.exists()) {
+            Messages.showErrorDialog("Java Runtime library was not found. Make sure plugin is installed properly.",
+                                     JAVA_RUNTIME_LIBRARY_CREATION);
+            return null;
+        }
+
+        final VirtualFile directory = FileUIUtils.selectCopyToDirectory(
+                "Select folder where bundled Kotlin java runtime library should be copied",
+                parentComponent, contextDirectory);
+
+        if (directory == null) {
+            return null;
+        }
+
+        final File targetFile;
+        try {
+            targetFile = FileUIUtils.copyWithOverwriteDialog(directory, runtimePath);
+        }
+        catch (IOException e) {
+            Messages.showErrorDialog("Error during file copy", JAVA_RUNTIME_LIBRARY_CREATION);
+            return null;
+        }
+
+        return new NewLibraryConfiguration(
+                KotlinRuntimeLibraryUtil.LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+            @Override
+            public void addRoots(@NotNull LibraryEditor editor) {
+                editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.CLASSES);
+                editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile) + "src", OrderRootType.SOURCES);
+            }
+        };
     }
 }

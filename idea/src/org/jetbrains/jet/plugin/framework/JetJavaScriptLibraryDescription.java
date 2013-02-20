@@ -18,20 +18,18 @@ package org.jetbrains.jet.plugin.framework;
 
 import com.google.common.collect.Sets;
 import com.intellij.framework.library.LibraryVersionProperties;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
 import org.jetbrains.jet.plugin.framework.ui.FrameworkSourcePanel;
-import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -41,6 +39,8 @@ import java.util.Set;
 
 public class JetJavaScriptLibraryDescription extends CustomLibraryDescription {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
+
+    private static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
 
     private final FrameworkSourcePanel configurationPanel;
 
@@ -58,47 +58,44 @@ public class JetJavaScriptLibraryDescription extends CustomLibraryDescription {
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
         if (configurationPanel.isConfigureFromBundled()) {
-            // Select folder where to copy bundled library
-            final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-            descriptor.setTitle("Select Folder");
-            descriptor.setDescription("Select folder where bundled runtime should be placed");
-
-            final VirtualFile[] files = FileChooser.chooseFiles(descriptor, parentComponent, null, contextDirectory);
-            if (files.length == 0) {
-                return null;
-            }
-
-            assert files.length == 1: "Only one folder is expected";
-
-            final VirtualFile directory = files[0];
-            assert directory.isDirectory();
-
-            File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath();
-            if (!runtimePath.exists()) {
-                return null;
-            }
-
-            File targetJar = new File(com.intellij.util.PathUtil.getLocalPath(directory), KotlinRuntimeLibraryUtil.KOTLIN_RUNTIME_JAR);
-            try {
-                FileUtil.copy(runtimePath, targetJar);
-                VirtualFile jarVfs = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetJar);
-                if (jarVfs != null) {
-                    jarVfs.refresh(false, false);
-                }
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            return new NewLibraryConfiguration(KotlinRuntimeLibraryUtil.LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
-                @Override
-                public void addRoots(@NotNull LibraryEditor editor) {
-                    editor.addRoot(directory.getUrl() + "/" + KotlinRuntimeLibraryUtil.KOTLIN_RUNTIME_JAR, OrderRootType.CLASSES);
-                }
-            };
+            return createFromPlugin(parentComponent, contextDirectory);
         }
         else {
             throw new IllegalStateException("Feature isn't ready yet");
         }
    }
+
+    private NewLibraryConfiguration createFromPlugin(JComponent parentComponent, VirtualFile contextDirectory) {
+        File runtimePath = PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJarPath();
+
+        if (!runtimePath.exists()) {
+            Messages.showErrorDialog("JavaScript standard library was not found. Make sure plugin is installed properly.",
+                                     JAVA_SCRIPT_LIBRARY_CREATION);
+            return null;
+        }
+
+        final VirtualFile directory = FileUIUtils.selectCopyToDirectory(
+                "Select folder where Kotlin JavaScript header should be copied",
+                parentComponent, contextDirectory);
+
+        if (directory == null) {
+            return null;
+        }
+
+        final File targetFile;
+        try {
+            targetFile = FileUIUtils.copyWithOverwriteDialog(directory, runtimePath);
+        }
+        catch (IOException e) {
+            Messages.showErrorDialog("Error during file copy", JAVA_SCRIPT_LIBRARY_CREATION);
+            return null;
+        }
+
+        return new NewLibraryConfiguration(PathUtil.JS_LIB_JAR_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+            @Override
+            public void addRoots(@NotNull LibraryEditor editor) {
+                editor.addRoot(VfsUtil.getUrlForLibraryRoot(targetFile), OrderRootType.SOURCES);
+            }
+        };
+    }
 }

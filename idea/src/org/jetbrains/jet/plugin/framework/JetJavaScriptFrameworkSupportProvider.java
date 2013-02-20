@@ -72,6 +72,7 @@ public class JetJavaScriptFrameworkSupportProvider extends FrameworkSupportInMod
                     @NotNull Module module,
                     @NotNull ModifiableRootModel rootModel,
                     @NotNull ModifiableModelsProvider modifiableModelsProvider) {
+
             }
 
             private FrameworkSourcePanel getConfigurationPanel() {

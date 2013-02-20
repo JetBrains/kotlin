@@ -16,17 +16,22 @@
 
 package org.jetbrains.jet.plugin.framework.ui;
 
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-public class CopyFileUtil {
-    private CopyFileUtil() {
+public class FileUIUtils {
+    private FileUIUtils() {
     }
 
     @NotNull
@@ -42,7 +47,7 @@ public class CopyFileUtil {
         }
         else {
             int replaceIfExist = Messages.showYesNoDialog(
-                    String.format("File \"%s\" already exist in %s. Do you want to rewrite it?", targetFile.getName(),
+                    String.format("File \"%s\" is already exist in %s.\nDo you want to rewrite it?", targetFile.getName(),
                                   folder.getAbsolutePath()),
                     "Replace File", Messages.getWarningIcon());
 
@@ -54,5 +59,35 @@ public class CopyFileUtil {
         LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile);
 
         return targetFile;
+    }
+
+    public static File copyWithOverwriteDialog(@NotNull VirtualFile directory, @NotNull File path) throws IOException {
+        String localPath = PathUtil.getLocalPath(directory);
+        assert localPath != null;
+
+        return copyWithOverwriteDialog(localPath, path);
+    }
+
+    @Nullable
+    public static VirtualFile selectCopyToDirectory(
+            @NotNull String description,
+            @Nullable JComponent parentComponent,
+            @Nullable VirtualFile contextDirectory) {
+        final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
+
+        descriptor.setTitle("Select Folder");
+        descriptor.setDescription(description);
+
+        final VirtualFile[] files = FileChooser.chooseFiles(descriptor, parentComponent, null, contextDirectory);
+        if (files.length == 0) {
+            return null;
+        }
+
+        assert files.length == 1: "Only one folder is expected";
+
+        final VirtualFile directory = files[0];
+        assert directory.isDirectory();
+
+        return directory;
     }
 }
