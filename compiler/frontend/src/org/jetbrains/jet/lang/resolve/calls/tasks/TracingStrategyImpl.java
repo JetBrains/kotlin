@@ -87,7 +87,7 @@ public class TracingStrategyImpl implements TracingStrategy {
 
     @Override
     public void unresolvedReference(@NotNull BindingTrace trace) {
-        trace.report(UNRESOLVED_REFERENCE.on(reference, reference.getText()));
+        trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
     }
 
     @Override

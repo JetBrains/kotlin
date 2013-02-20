@@ -68,7 +68,8 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, String> REDECLARATION = DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
 
-    DiagnosticFactory1<JetReferenceExpression, String> UNRESOLVED_REFERENCE = DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
+    DiagnosticFactory1<JetReferenceExpression, JetReferenceExpression> UNRESOLVED_REFERENCE =
+            DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
 
     //Elements with "INVISIBLE_REFERENCE" error are marked as unresolved, unlike elements with "INVISIBLE_MEMBER" error
     //"INVISIBLE_REFERENCE" is used for invisible classes references and references in import
@@ -308,7 +309,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> MIXING_NAMED_AND_POSITIONED_ARGUMENTS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetReferenceExpression> ARGUMENT_PASSED_TWICE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<JetReferenceExpression, String> NAMED_PARAMETER_NOT_FOUND =
+    DiagnosticFactory1<JetReferenceExpression, JetReferenceExpression> NAMED_PARAMETER_NOT_FOUND =
             DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
 
     DiagnosticFactory0<JetExpression> VARARG_OUTSIDE_PARENTHESES = DiagnosticFactory0.create(ERROR);

@@ -430,7 +430,7 @@ public class CallResolver {
             resolveFunctionArguments(context, resultsForFirstNonemptyCandidateSet);
         }
         else {
-            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference.getText()));
+            context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
             argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
         }
         return resultsForFirstNonemptyCandidateSet != null ? resultsForFirstNonemptyCandidateSet : OverloadResolutionResultsImpl.<F>nameNotFound();
