@@ -57,9 +57,9 @@ public interface Errors {
 
     // TODO: Temporary error message: to deprecate tuples we report this error and provide a quick fix
     @Deprecated // Tuples will be dropped in Kotlin M4
-    SimpleDiagnosticFactory<PsiElement> TUPLES_ARE_NOT_SUPPORTED = SimpleDiagnosticFactory.create(ERROR);
+            DiagnosticFactory0<PsiElement> TUPLES_ARE_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
     @Deprecated // Tuples will be dropped in Kotlin M4
-    SimpleDiagnosticFactory<PsiElement> TUPLES_ARE_NOT_SUPPORTED_BIG = SimpleDiagnosticFactory.create(ERROR);
+            DiagnosticFactory0<PsiElement> TUPLES_ARE_NOT_SUPPORTED_BIG = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,9 +86,9 @@ public interface Errors {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, VARIANCE_IN_PROJECTION);
+    DiagnosticFactory0<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = DiagnosticFactory0.create(ERROR, VARIANCE_IN_PROJECTION);
     DiagnosticFactory2<JetTypeReference, JetType, JetType> UPPER_BOUND_VIOLATED = DiagnosticFactory2.create(ERROR);
-    SimpleDiagnosticFactory<JetNullableType> REDUNDANT_NULLABLE = SimpleDiagnosticFactory.create(WARNING, NULLABLE_TYPE);
+    DiagnosticFactory0<JetNullableType> REDUNDANT_NULLABLE = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
     DiagnosticFactory1<JetNullableType, JetType> BASE_WITH_NULLABLE_UPPER_BOUND = DiagnosticFactory1.create(WARNING, NULLABLE_TYPE);
     DiagnosticFactory1<JetElement, Integer> WRONG_NUMBER_OF_TYPE_ARGUMENTS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetUserType, Integer, String> NO_TYPE_ARGUMENTS_ON_RHS_OF_IS_EXPRESSION = DiagnosticFactory2.create(ERROR);
@@ -106,9 +106,9 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_IMPORT_FROM_ELEMENT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, DeclarationDescriptor> CANNOT_BE_IMPORTED = DiagnosticFactory1.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> USELESS_HIDDEN_IMPORT = SimpleDiagnosticFactory.create(WARNING);
+    DiagnosticFactory0<JetExpression> USELESS_HIDDEN_IMPORT = DiagnosticFactory0.create(WARNING);
 
-    SimpleDiagnosticFactory<JetExpression> USELESS_SIMPLE_IMPORT = SimpleDiagnosticFactory.create(WARNING);
+    DiagnosticFactory0<JetExpression> USELESS_SIMPLE_IMPORT = DiagnosticFactory0.create(WARNING);
 
     // Modifiers
 
@@ -119,63 +119,63 @@ public interface Errors {
     // Annotations
 
     DiagnosticFactory1<JetAnnotationEntry, String> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
-    SimpleDiagnosticFactory<PsiElement> ANNOTATION_CLASS_WITH_BODY = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> ANNOTATION_CLASS_WITH_BODY = DiagnosticFactory0.create(ERROR);
 
     // Classes and traits
 
-    SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
-            SimpleDiagnosticFactory.create(ERROR, VARIANCE_IN_PROJECTION);
+    DiagnosticFactory0<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
+            DiagnosticFactory0.create(ERROR, VARIANCE_IN_PROJECTION);
 
-    SimpleDiagnosticFactory<PsiElement> CYCLIC_INHERITANCE_HIERARCHY = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> CYCLIC_INHERITANCE_HIERARCHY = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED_DEFAULT = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED_DEFAULT = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetTypeReference> DELEGATION_NOT_TO_TRAIT = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> DELEGATION_NOT_TO_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetTypeReference> SUPERTYPE_APPEARS_TWICE = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SUPERTYPE_APPEARS_TWICE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory3<JetDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<JetType>>
             INCONSISTENT_TYPE_PARAMETER_VALUES = DiagnosticFactory3.create(ERROR);
 
 
-    SimpleDiagnosticFactory<JetTypeReference> FINAL_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetNullableType> NULLABLE_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, NULLABLE_TYPE);
+    DiagnosticFactory0<JetTypeReference> FINAL_SUPERTYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetNullableType> NULLABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR, NULLABLE_TYPE);
 
     // Trait-specific
 
-    SimpleDiagnosticFactory<JetModifierListOwner> ABSTRACT_MODIFIER_IN_TRAIT = SimpleDiagnosticFactory
+    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_TRAIT = DiagnosticFactory0
             .create(WARNING, ABSTRACT_MODIFIER);
-    SimpleDiagnosticFactory<JetModifierListOwner> OPEN_MODIFIER_IN_TRAIT = SimpleDiagnosticFactory
+    DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_TRAIT = DiagnosticFactory0
             .create(WARNING, modifierSetPosition(JetTokens.OPEN_KEYWORD));
-    SimpleDiagnosticFactory<PsiElement> TRAIT_CAN_NOT_BE_FINAL = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> TRAIT_CAN_NOT_BE_FINAL = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<PsiElement> CONSTRUCTOR_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetDelegatorByExpressionSpecifier> DELEGATION_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetDelegatorByExpressionSpecifier> DELEGATION_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
     // Enum-specific
 
-    SimpleDiagnosticFactory<JetModifierListOwner> ILLEGAL_ENUM_ANNOTATION = SimpleDiagnosticFactory
+    DiagnosticFactory0<JetModifierListOwner> ILLEGAL_ENUM_ANNOTATION = DiagnosticFactory0
             .create(ERROR, modifierSetPosition(JetTokens.ENUM_KEYWORD));
 
-    SimpleDiagnosticFactory<JetModifierListOwner> OPEN_MODIFIER_IN_ENUM = SimpleDiagnosticFactory
+    DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_ENUM = DiagnosticFactory0
             .create(ERROR, modifierSetPosition(JetTokens.OPEN_KEYWORD));
 
-    SimpleDiagnosticFactory<PsiElement> CLASS_IN_SUPERTYPE_FOR_ENUM = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> CLASS_IN_SUPERTYPE_FOR_ENUM = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, NAME_IDENTIFIER);
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR);
 
     // Class objects
 
-    SimpleDiagnosticFactory<JetClassObject> MANY_CLASS_OBJECTS = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetClassObject> CLASS_OBJECT_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetClassObject> MANY_CLASS_OBJECTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetClassObject> CLASS_OBJECT_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
     // Type parameter declarations
 
@@ -188,17 +188,18 @@ public interface Errors {
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER =
             DiagnosticFactory2.create(ERROR);
 
-    SimpleDiagnosticFactory<JetTypeParameter> VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY = SimpleDiagnosticFactory.create(ERROR, VARIANCE_MODIFIER);
+    DiagnosticFactory0<JetTypeParameter>
+            VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY = DiagnosticFactory0.create(ERROR, VARIANCE_MODIFIER);
 
     // Members
 
-    SimpleDiagnosticFactory<PsiElement> PACKAGE_MEMBER_CANNOT_BE_PROTECTED = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> PACKAGE_MEMBER_CANNOT_BE_PROTECTED = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    DiagnosticFactory0<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
 
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS = DiagnosticFactory2.create(ERROR, DECLARATION);
 
-    SimpleDiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = SimpleDiagnosticFactory.create(WARNING, modifierSetPosition(
+    DiagnosticFactory0<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory0.create(WARNING, modifierSetPosition(
             JetTokens.OPEN_KEYWORD));
 
     DiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = DiagnosticFactory1.create(ERROR, OVERRIDE_MODIFIER);
@@ -212,7 +213,7 @@ public interface Errors {
     DiagnosticFactory2<JetAnnotationEntry, CallableMemberDescriptor, DeclarationDescriptor> DATA_CLASS_OVERRIDE_CONFLICT =
             DiagnosticFactory2.create(ERROR);
 
-    SimpleDiagnosticFactory<JetDeclaration> CANNOT_INFER_VISIBILITY = SimpleDiagnosticFactory.create(ERROR, DECLARATION);
+    DiagnosticFactory0<JetDeclaration> CANNOT_INFER_VISIBILITY = DiagnosticFactory0.create(ERROR, DECLARATION);
 
     DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR);
 
@@ -237,30 +238,31 @@ public interface Errors {
     DiagnosticFactory2<JetProperty, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
             DiagnosticFactory2.create(ERROR, VAL_OR_VAR_NODE);
 
-    SimpleDiagnosticFactory<PsiElement> REDUNDANT_MODIFIER_IN_GETTER = SimpleDiagnosticFactory.create(WARNING);
-    SimpleDiagnosticFactory<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> REDUNDANT_MODIFIER_IN_GETTER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<JetTypeReference, JetType, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
 
-    SimpleDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimpleDiagnosticFactory.create(ERROR, ABSTRACT_MODIFIER);
-    SimpleDiagnosticFactory<JetExpression> ABSTRACT_PROPERTY_WITH_INITIALIZER = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_GETTER = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetPropertyAccessor>ABSTRACT_PROPERTY_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetModifierListOwner>
+            ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
+    DiagnosticFactory0<JetExpression> ABSTRACT_PROPERTY_WITH_INITIALIZER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_GETTER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_SETTER = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    DiagnosticFactory0<JetProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
 
-    SimpleDiagnosticFactory<JetProperty> MUST_BE_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
-    SimpleDiagnosticFactory<JetProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    DiagnosticFactory0<JetProperty> MUST_BE_INITIALIZED = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
+    DiagnosticFactory0<JetProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
 
-    SimpleDiagnosticFactory<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetProperty> FINAL_PROPERTY_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, FINAL_MODIFIER);
-    SimpleDiagnosticFactory<JetProperty> BACKING_FIELD_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetProperty> FINAL_PROPERTY_IN_TRAIT = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
+    DiagnosticFactory0<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
 
     DiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
 
-    SimpleDiagnosticFactory<JetPropertyAccessor> VAL_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetPropertyAccessor> VAL_WITH_SETTER = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> SETTER_PARAMETER_WITH_DEFAULT_VALUE = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetExpression> SETTER_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<JetTypeReference, JetType, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory2.create(ERROR);
 
@@ -274,11 +276,11 @@ public interface Errors {
 
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
 
-    SimpleDiagnosticFactory<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     // Named parameters
 
-    SimpleDiagnosticFactory<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = SimpleDiagnosticFactory.create(ERROR, PARAMETER_DEFAULT_VALUE);
+    DiagnosticFactory0<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
 
     DiagnosticFactory1<JetParameter, ValueParameterDescriptor> MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES = DiagnosticFactory1.create(ERROR);
 
@@ -301,26 +303,26 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, String> NAME_SHADOWING = DiagnosticFactory1.create(WARNING, PositioningStrategies.FOR_REDECLARATION);
 
-    SimpleDiagnosticFactory<JetExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = DiagnosticFactory0.create(ERROR);
 
     // Checking call arguments
 
-    SimpleDiagnosticFactory<PsiElement> MIXING_NAMED_AND_POSITIONED_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetReferenceExpression> ARGUMENT_PASSED_TWICE = SimpleDiagnosticFactory.create(ERROR);
-    DiagnosticFactory1<JetReferenceExpression, String> NAMED_PARAMETER_NOT_FOUND = 
+    DiagnosticFactory0<PsiElement> MIXING_NAMED_AND_POSITIONED_ARGUMENTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetReferenceExpression> ARGUMENT_PASSED_TWICE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<JetReferenceExpression, String> NAMED_PARAMETER_NOT_FOUND =
             DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
 
-    SimpleDiagnosticFactory<JetExpression> VARARG_OUTSIDE_PARENTHESES = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<LeafPsiElement> NON_VARARG_SPREAD = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetExpression> VARARG_OUTSIDE_PARENTHESES = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<LeafPsiElement> NON_VARARG_SPREAD = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, CallableDescriptor> TOO_MANY_ARGUMENTS = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetElement, ValueParameterDescriptor> NO_VALUE_FOR_PARAMETER = DiagnosticFactory1.create(ERROR, VALUE_ARGUMENTS);
 
     DiagnosticFactory1<JetReferenceExpression, JetType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR);
-    SimpleDiagnosticFactory<JetReferenceExpression> NO_RECEIVER_ADMITTED = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetReferenceExpression> NO_RECEIVER_ADMITTED = DiagnosticFactory0.create(ERROR);
 
     // Call resolution
 
@@ -330,19 +332,19 @@ public interface Errors {
     DiagnosticFactory2<JetReferenceExpression, JetExpression, JetType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetExpression, JetExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
 
-    SimpleDiagnosticFactory<PsiElement> NO_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<PsiElement> CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetExpression> NOT_A_CLASS = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> NO_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetExpression> NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> OVERLOAD_RESOLUTION_AMBIGUITY = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> CANNOT_COMPLETE_RESOLVE = DiagnosticFactory1.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = SimpleDiagnosticFactory.create(WARNING);
+    DiagnosticFactory0<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = DiagnosticFactory0.create(WARNING);
 
     // Type inference
 
-    SimpleDiagnosticFactory<JetParameter> CANNOT_INFER_PARAMETER_TYPE = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetParameter> CANNOT_INFER_PARAMETER_TYPE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, ExtendedInferenceErrorData> TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, ExtendedInferenceErrorData> TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS = DiagnosticFactory1.create(ERROR);
@@ -356,7 +358,7 @@ public interface Errors {
 
     // Multi-declarations
 
-    SimpleDiagnosticFactory<JetMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = SimpleDiagnosticFactory.create(ERROR, DEFAULT);
+    DiagnosticFactory0<JetMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory1<JetExpression, Name> COMPONENT_FUNCTION_MISSING = DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory2<JetExpression, Name, Collection<? extends ResolvedCall<? extends CallableDescriptor>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
     DiagnosticFactory3<JetExpression, Name, JetType, JetType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
@@ -364,24 +366,24 @@ public interface Errors {
     // Super calls
 
     DiagnosticFactory1<JetSuperExpression, String> SUPER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
-    SimpleDiagnosticFactory<JetSuperExpression> SUPER_NOT_AVAILABLE = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetSuperExpression> AMBIGUOUS_SUPER = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetExpression> ABSTRACT_SUPER_CALL = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetTypeReference> NOT_A_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<PsiElement> TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER = SimpleDiagnosticFactory.create(WARNING);
+    DiagnosticFactory0<JetSuperExpression> SUPER_NOT_AVAILABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetSuperExpression> AMBIGUOUS_SUPER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetExpression> ABSTRACT_SUPER_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> NOT_A_SUPERTYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER = DiagnosticFactory0.create(WARNING);
 
     // Conventions
 
-    SimpleDiagnosticFactory<JetArrayAccessExpression> NO_GET_METHOD = SimpleDiagnosticFactory.create(ERROR, ARRAY_ACCESS);
-    SimpleDiagnosticFactory<JetArrayAccessExpression> NO_SET_METHOD = SimpleDiagnosticFactory.create(ERROR, ARRAY_ACCESS);
+    DiagnosticFactory0<JetArrayAccessExpression> NO_GET_METHOD = DiagnosticFactory0.create(ERROR, ARRAY_ACCESS);
+    DiagnosticFactory0<JetArrayAccessExpression> NO_SET_METHOD = DiagnosticFactory0.create(ERROR, ARRAY_ACCESS);
 
-    SimpleDiagnosticFactory<JetSimpleNameExpression> INC_DEC_SHOULD_NOT_RETURN_UNIT = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetSimpleNameExpression> INC_DEC_SHOULD_NOT_RETURN_UNIT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, JetSimpleNameExpression> ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT =
             DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>>
             ASSIGN_OPERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
-    SimpleDiagnosticFactory<JetSimpleNameExpression> EQUALS_MISSING = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetSimpleNameExpression> EQUALS_MISSING = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory3<JetBinaryExpression, JetSimpleNameExpression, JetType, JetType> EQUALITY_NOT_APPLICABLE =
             DiagnosticFactory3.create(ERROR);
 
@@ -395,25 +397,25 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> NEXT_MISSING = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetExpression, JetType> NEXT_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> ITERATOR_MISSING = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetExpression> ITERATOR_MISSING = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> ITERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
 
     // Labels
 
-    SimpleDiagnosticFactory<JetSimpleNameExpression>LABEL_NAME_CLASH = SimpleDiagnosticFactory.create(WARNING);
-    SimpleDiagnosticFactory<JetSimpleNameExpression> AMBIGUOUS_LABEL = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetSimpleNameExpression> LABEL_NAME_CLASH = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetSimpleNameExpression> AMBIGUOUS_LABEL = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetLabelQualifiedExpression> BREAK_OR_CONTINUE_OUTSIDE_A_LOOP = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetLabelQualifiedExpression> BREAK_OR_CONTINUE_OUTSIDE_A_LOOP = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetLabelQualifiedExpression, String> NOT_A_LOOP_LABEL = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetReturnExpression, String> NOT_A_RETURN_LABEL = DiagnosticFactory1.create(ERROR);
 
     // Control flow / Data flow
 
-    SimpleDiagnosticFactory<JetElement> UNREACHABLE_CODE = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetElement> UNREACHABLE_CODE = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, NAME_IDENTIFIER);
+    DiagnosticFactory0<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, NAME_IDENTIFIER);
 
     DiagnosticFactory1<JetSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = DiagnosticFactory1.create(ERROR);
@@ -426,18 +428,18 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> VARIABLE_WITH_REDUNDANT_INITIALIZER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<JetElement, JetElement> UNUSED_CHANGED_VALUE = DiagnosticFactory1.create(WARNING);
-    SimpleDiagnosticFactory<JetElement> UNUSED_EXPRESSION = SimpleDiagnosticFactory.create(WARNING);
-    SimpleDiagnosticFactory<JetFunctionLiteralExpression> UNUSED_FUNCTION_LITERAL = SimpleDiagnosticFactory.create(WARNING);
+    DiagnosticFactory0<JetElement> UNUSED_EXPRESSION = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetFunctionLiteralExpression> UNUSED_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> VAL_REASSIGNMENT = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_BEFORE_DECLARATION = DiagnosticFactory1.create(ERROR);
 
-    SimpleDiagnosticFactory<JetExpression> VARIABLE_EXPECTED = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetExpression> VARIABLE_EXPECTED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory2<JetBinaryExpression, JetBinaryExpression, Boolean> SENSELESS_COMPARISON = DiagnosticFactory2.create(WARNING);
 
-    SimpleDiagnosticFactory<JetElement> SENSELESS_NULL_IN_WHEN = SimpleDiagnosticFactory.create(WARNING);
+    DiagnosticFactory0<JetElement> SENSELESS_NULL_IN_WHEN = DiagnosticFactory0.create(WARNING);
 
     // Nullability
 
@@ -451,31 +453,31 @@ public interface Errors {
     // Compile-time values
 
     DiagnosticFactory1<PsiElement, String> ERROR_COMPILE_TIME_VALUE = DiagnosticFactory1.create(ERROR);
-    SimpleDiagnosticFactory<JetEscapeStringTemplateEntry> ILLEGAL_ESCAPE_SEQUENCE = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetEscapeStringTemplateEntry> ILLEGAL_ESCAPE_SEQUENCE = DiagnosticFactory0.create(ERROR);
 
     // Casts and is-checks
 
     DiagnosticFactory1<JetElement, JetType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetBinaryExpressionWithTypeRHS, JetType, JetType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING);
 
-    SimpleDiagnosticFactory<JetSimpleNameExpression> USELESS_CAST_STATIC_ASSERT_IS_FINE = SimpleDiagnosticFactory.create(WARNING);
-    SimpleDiagnosticFactory<JetSimpleNameExpression> USELESS_CAST = SimpleDiagnosticFactory.create(WARNING);
-    SimpleDiagnosticFactory<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = SimpleDiagnosticFactory.create(WARNING);
+    DiagnosticFactory0<JetSimpleNameExpression> USELESS_CAST_STATIC_ASSERT_IS_FINE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetSimpleNameExpression> USELESS_CAST = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<JetExpression, JetType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING);
 
     DiagnosticFactory2<JetExpression, JetType, String> AUTOCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR);
 
-    SimpleDiagnosticFactory<JetNullableType> USELESS_NULLABLE_CHECK = SimpleDiagnosticFactory.create(WARNING, NULLABLE_TYPE);
+    DiagnosticFactory0<JetNullableType> USELESS_NULLABLE_CHECK = DiagnosticFactory0.create(WARNING, NULLABLE_TYPE);
 
     // Properties / locals
 
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER = DiagnosticFactory1.create(ERROR);
 
-    SimpleDiagnosticFactory<JetTypeReference> LOCAL_EXTENSION_PROPERTY = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetPropertyAccessor> LOCAL_VARIABLE_WITH_GETTER = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetPropertyAccessor> LOCAL_VARIABLE_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> LOCAL_EXTENSION_PROPERTY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetPropertyAccessor> LOCAL_VARIABLE_WITH_GETTER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetPropertyAccessor> LOCAL_VARIABLE_WITH_SETTER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory3<JetExpression, DeclarationDescriptor, Visibility, DeclarationDescriptor> INVISIBLE_SETTER = DiagnosticFactory3.create(ERROR);
 
@@ -485,16 +487,16 @@ public interface Errors {
 
     // Backing fields
 
-    SimpleDiagnosticFactory<JetElement> NO_BACKING_FIELD_ABSTRACT_PROPERTY = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetElement> NO_BACKING_FIELD_CUSTOM_ACCESSORS = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetElement> INACCESSIBLE_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetElement> NOT_PROPERTY_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetElement> NO_BACKING_FIELD_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetElement> NO_BACKING_FIELD_CUSTOM_ACCESSORS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetElement> INACCESSIBLE_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetElement> NOT_PROPERTY_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
 
     // When expressions
 
-    SimpleDiagnosticFactory<JetWhenCondition> EXPECTED_CONDITION = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetWhenEntry> ELSE_MISPLACED_IN_WHEN = SimpleDiagnosticFactory.create(ERROR, ELSE_ENTRY);
-    SimpleDiagnosticFactory<JetWhenExpression> NO_ELSE_IN_WHEN = new SimpleDiagnosticFactory<JetWhenExpression>(ERROR, WHEN_EXPRESSION);
+    DiagnosticFactory0<JetWhenCondition> EXPECTED_CONDITION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetWhenEntry> ELSE_MISPLACED_IN_WHEN = DiagnosticFactory0.create(ERROR, ELSE_ENTRY);
+    DiagnosticFactory0<JetWhenExpression> NO_ELSE_IN_WHEN = new DiagnosticFactory0<JetWhenExpression>(ERROR, WHEN_EXPRESSION);
 
     // Type mismatch
 
@@ -505,7 +507,8 @@ public interface Errors {
     DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<JetElement, JetType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory3<JetExpression, String, JetType, JetType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
-    SimpleDiagnosticFactory<JetWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = new SimpleDiagnosticFactory<JetWhenConditionInRange>(ERROR, WHEN_CONDITION_IN_RANGE);
+    DiagnosticFactory0<JetWhenConditionInRange>
+            TYPE_MISMATCH_IN_RANGE = new DiagnosticFactory0<JetWhenConditionInRange>(ERROR, WHEN_CONDITION_IN_RANGE);
 
     DiagnosticFactory1<JetParameter, JetType> EXPECTED_PARAMETER_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetTypeReference, JetType> EXPECTED_RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
@@ -516,23 +519,24 @@ public interface Errors {
     // Context tracking
 
     DiagnosticFactory1<JetExpression, JetExpression> EXPRESSION_EXPECTED = DiagnosticFactory1.create(ERROR);
-    SimpleDiagnosticFactory<JetBinaryExpression> ASSIGNMENT_IN_EXPRESSION_CONTEXT = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetDeclaration> DECLARATION_IN_ILLEGAL_CONTEXT = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetBinaryExpression> ASSIGNMENT_IN_EXPRESSION_CONTEXT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDeclaration> DECLARATION_IN_ILLEGAL_CONTEXT = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetSimpleNameExpression> EXPRESSION_EXPECTED_NAMESPACE_FOUND = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetSimpleNameExpression> EXPRESSION_EXPECTED_NAMESPACE_FOUND = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetReturnExpression> RETURN_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetDeclarationWithBody> NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = SimpleDiagnosticFactory.create(ERROR, DECLARATION_WITH_BODY);
+    DiagnosticFactory0<JetReturnExpression> RETURN_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDeclarationWithBody>
+            NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory0.create(ERROR, DECLARATION_WITH_BODY);
 
-    SimpleDiagnosticFactory<JetClassInitializer> ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
 
-    SimpleDiagnosticFactory<JetThisExpression> NO_THIS = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetRootNamespaceExpression> NAMESPACE_IS_NOT_AN_EXPRESSION = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<JetThisExpression> NO_THIS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetRootNamespaceExpression> NAMESPACE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
-    SimpleDiagnosticFactory<PsiElement> NESTED_CLASS_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
+    DiagnosticFactory0<PsiElement> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
 
     // Error sets

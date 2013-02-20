@@ -61,10 +61,10 @@ public final class AnalyzerWithCompilerReport {
     }
 
     @NotNull
-    private static final SimpleDiagnosticFactory<PsiErrorElement> SYNTAX_ERROR_FACTORY = SimpleDiagnosticFactory.create(Severity.ERROR);
+    private static final DiagnosticFactory0<PsiErrorElement> SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create(Severity.ERROR);
     @NotNull
-    private static final SimpleDiagnosticFactory<JetIdeTemplate> UNRESOLVED_IDE_TEMPLATE_ERROR_FACTORY
-            = SimpleDiagnosticFactory.create(Severity.ERROR);
+    private static final DiagnosticFactory0<JetIdeTemplate> UNRESOLVED_IDE_TEMPLATE_ERROR_FACTORY
+            = DiagnosticFactory0.create(Severity.ERROR);
 
     private boolean hasErrors = false;
     @NotNull
@@ -192,7 +192,7 @@ public final class AnalyzerWithCompilerReport {
             boolean hasErrors = false;
             boolean onlyErrorAtEof = false;
 
-            private <E extends PsiElement> void reportDiagnostic(E element, SimpleDiagnosticFactory<E> factory, String message) {
+            private <E extends PsiElement> void reportDiagnostic(E element, DiagnosticFactory0<E> factory, String message) {
                 MyDiagnostic<?> diagnostic = new MyDiagnostic<E>(element, factory, message);
                 AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, messageCollector);
                 if (element.getTextRange().getStartOffset() == file.getTextRange().getEndOffset()) {
@@ -243,7 +243,7 @@ public final class AnalyzerWithCompilerReport {
     private static class MyDiagnostic<E extends PsiElement> extends SimpleDiagnostic<E> {
         private String message;
 
-        public MyDiagnostic(@NotNull E psiElement, @NotNull SimpleDiagnosticFactory<E> factory, String message) {
+        public MyDiagnostic(@NotNull E psiElement, @NotNull DiagnosticFactory0<E> factory, String message) {
             super(psiElement, factory, Severity.ERROR);
             this.message = message;
         }

@@ -16,22 +16,19 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class SimpleDiagnostic<E extends PsiElement> extends AbstractDiagnostic<E> {
     public SimpleDiagnostic(@NotNull E psiElement,
-            @NotNull SimpleDiagnosticFactory<E> factory,
+            @NotNull DiagnosticFactory0<E> factory,
             @NotNull Severity severity) {
         super(psiElement, factory, severity);
     }
 
     @NotNull
     @Override
-    public SimpleDiagnosticFactory<E> getFactory() {
-        return (SimpleDiagnosticFactory<E>)super.getFactory();
+    public DiagnosticFactory0<E> getFactory() {
+        return (DiagnosticFactory0<E>)super.getFactory();
     }
 }

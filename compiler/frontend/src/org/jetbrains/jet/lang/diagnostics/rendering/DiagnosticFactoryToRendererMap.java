@@ -35,7 +35,7 @@ public final class DiagnosticFactoryToRendererMap {
         }
     }
 
-    public <E extends PsiElement> void put(@NotNull SimpleDiagnosticFactory<E> factory, @NotNull String message) {
+    public <E extends PsiElement> void put(@NotNull DiagnosticFactory0<E> factory, @NotNull String message) {
         checkMutability();
         map.put(factory, new SimpleDiagnosticRenderer(message));
     }

@@ -19,18 +19,18 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleDiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
+public class DiagnosticFactory0<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
 
-    protected SimpleDiagnosticFactory(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
+    protected DiagnosticFactory0(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
     }
 
-    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity) {
+    public static <T extends PsiElement> DiagnosticFactory0<T> create(Severity severity) {
         return create(severity, PositioningStrategies.DEFAULT);
     }
 
-    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
-        return new SimpleDiagnosticFactory<T>(severity, positioningStrategy);
+    public static <T extends PsiElement> DiagnosticFactory0<T> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
+        return new DiagnosticFactory0<T>(severity, positioningStrategy);
     }
 
     @NotNull
