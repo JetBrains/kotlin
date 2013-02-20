@@ -121,7 +121,7 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
     }
 
     public void testWhen() throws Exception {
-        doTest();
+        doTestWithInvert();
     }
 
     public void testWhenEntryExpr() throws Exception {

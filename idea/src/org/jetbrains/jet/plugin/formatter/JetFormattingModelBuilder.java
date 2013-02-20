@@ -35,7 +35,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @Override
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
         final JetBlock block = new JetBlock(
-            element.getNode(), null, Indent.getNoneIndent(), null, settings,
+            element.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
             createSpacingBuilder(settings));
 
         return FormattingModelProvider.createFormattingModelForPsiFile(
@@ -104,6 +104,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_EXTEND_COLON)
 
                 .between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
+                .aroundInside(ARROW, WHEN_ENTRY).spaces(1)
                 ;
     }
 
