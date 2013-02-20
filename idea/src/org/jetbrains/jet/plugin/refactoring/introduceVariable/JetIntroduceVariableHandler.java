@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.plugin.refactoring.*;
@@ -568,10 +569,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
     }
 
     private static void showErrorHint(Project project, Editor editor, String message) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) throw new RuntimeException(message);
-        CommonRefactoringUtil.showErrorHint(project, editor, message,
-                                            INTRODUCE_VARIABLE,
-                                            HelpID.INTRODUCE_VARIABLE);
+        CodeInsightUtils.showErrorHint(project, editor, message, INTRODUCE_VARIABLE, HelpID.INTRODUCE_VARIABLE);
     }
 
     @Override

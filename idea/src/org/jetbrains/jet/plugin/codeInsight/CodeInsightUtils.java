@@ -1,11 +1,15 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
@@ -150,6 +154,15 @@ public class CodeInsightUtils {
         }
 
         return null;
+    }
+
+    public static void showErrorHint(
+            @NotNull Project project, @NotNull Editor editor,
+            @NotNull String message, @NotNull String title,
+            @Nullable String helpId
+    ) {
+        if (ApplicationManager.getApplication().isUnitTestMode()) throw new RuntimeException(message);
+        CommonRefactoringUtil.showErrorHint(project, editor, message, title, helpId);
     }
 
     private CodeInsightUtils() {
