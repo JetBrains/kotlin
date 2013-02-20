@@ -32,6 +32,7 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean SPACE_AFTER_EXTEND_COLON = true;
 
     public boolean INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = true;
+    public boolean ALIGN_IN_COLUMNS_CASE_BRANCH = false;
 
     public static JetCodeStyleSettings getInstance(Project project) {
         return CodeStyleSettingsManager.getSettings(project).getCustomSettings(JetCodeStyleSettings.class);
