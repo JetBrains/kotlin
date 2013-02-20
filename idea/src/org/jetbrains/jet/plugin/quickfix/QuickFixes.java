@@ -208,5 +208,7 @@ public class QuickFixes {
         factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, ChangePropertyTypeToMatchOverriddenPropertyFix.createFactory());
 
         factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
+
+        factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
     }
 }
