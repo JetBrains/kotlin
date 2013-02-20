@@ -85,7 +85,7 @@ public class OuterClassGenTest extends CodegenTestCase {
         InputStream javaClassStream = javaClassLoader.getResourceAsStream(javaClassPath);
         ClassReader javaReader =  new ClassReader(javaClassStream);
 
-        ClassReader kotlinReader =  new ClassReader(classFileFactory.asBytes(kotlinName.replaceAll("\\.", File.separator) + ".class"));
+        ClassReader kotlinReader =  new ClassReader(classFileFactory.asBytes(kotlinName.replace('.', '/') + ".class"));
 
         checkInfo(kotlinReader, javaReader);
     }
