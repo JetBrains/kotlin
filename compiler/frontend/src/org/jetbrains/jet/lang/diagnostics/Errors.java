@@ -67,7 +67,7 @@ public interface Errors {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    RedeclarationDiagnosticFactory REDECLARATION = new RedeclarationDiagnosticFactory(ERROR);
+    DiagnosticFactory1<PsiElement, String> REDECLARATION = DiagnosticFactory1.create(ERROR, FOR_REDECLARATION);
 
     UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.create();
 
@@ -299,7 +299,7 @@ public interface Errors {
 
     // General
 
-    RedeclarationDiagnosticFactory NAME_SHADOWING = new RedeclarationDiagnosticFactory(WARNING);
+    DiagnosticFactory1<PsiElement, String> NAME_SHADOWING = DiagnosticFactory1.create(WARNING, PositioningStrategies.FOR_REDECLARATION);
 
     SimpleDiagnosticFactory<JetExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR);
 

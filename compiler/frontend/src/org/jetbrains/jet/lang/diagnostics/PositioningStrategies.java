@@ -169,6 +169,26 @@ public class PositioningStrategies {
 
     public static final PositioningStrategy<JetModifierListOwner> VARIANCE_MODIFIER = modifierSetPosition(JetTokens.IN_KEYWORD,
                                                                                                           JetTokens.OUT_KEYWORD);
+    public static final PositioningStrategy<PsiElement> FOR_REDECLARATION = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement element) {
+            if (element instanceof JetNamedDeclaration) {
+                PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            else if (element instanceof JetFile) {
+                JetFile file = (JetFile) element;
+                PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            return markElement(element);
+        }
+    };
 
     public static PositioningStrategy<JetModifierListOwner> modifierSetPosition(final JetKeywordToken... tokens) {
         return new PositioningStrategy<JetModifierListOwner>() {
