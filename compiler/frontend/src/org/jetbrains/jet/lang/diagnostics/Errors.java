@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -531,6 +532,14 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> NESTED_CLASS_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
 
+
+    // Error sets
+    ImmutableSet<? extends AbstractDiagnosticFactory> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
+            UNRESOLVED_REFERENCE, NAMED_PARAMETER_NOT_FOUND);
+    ImmutableSet<? extends AbstractDiagnosticFactory> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
+            UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE);
+    ImmutableSet<? extends AbstractDiagnosticFactory> REDECLARATION_DIAGNOSTICS = ImmutableSet.of(
+            REDECLARATION, NAME_SHADOWING);
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // This field is needed to make the Initializer class load (interfaces cannot have static initializers)

@@ -35,7 +35,9 @@ import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -145,7 +147,7 @@ public class JetPsiChecker implements Annotator {
         if (!diagnostic.isValid()) return;
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (diagnostic.getSeverity() == Severity.ERROR) {
-            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 JetReferenceExpression referenceExpression = (JetReferenceExpression)diagnostic.getPsiElement();
                 PsiReference reference = referenceExpression.getReference();
                 if (reference instanceof MultiRangeReference) {
@@ -180,7 +182,7 @@ public class JetPsiChecker implements Annotator {
                 return;
             }
 
-            if (diagnostic.getFactory() instanceof RedeclarationDiagnosticFactory) {
+            if (Errors.REDECLARATION_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 registerQuickFix(markRedeclaration(redeclarations, diagnostic, holder), diagnostic);
                 return;
             }
@@ -202,7 +204,7 @@ public class JetPsiChecker implements Annotator {
                 annotation.setTooltip(getMessage(diagnostic));
                 registerQuickFix(annotation, diagnostic);
 
-                if (diagnostic.getFactory() instanceof UnusedElementDiagnosticFactory) {
+                if (Errors.UNUSED_ELEMENT_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                     annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
                 }
             }

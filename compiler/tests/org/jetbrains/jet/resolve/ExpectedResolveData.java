@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -160,7 +160,7 @@ public abstract class ExpectedResolveData {
 
         final Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 unresolvedReferences.add(diagnostic.getPsiElement());
             }
         }

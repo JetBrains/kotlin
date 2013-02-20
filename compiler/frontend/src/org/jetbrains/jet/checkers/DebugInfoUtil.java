@@ -26,8 +26,10 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetSuperExpression;
+import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -38,8 +40,6 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
-import static org.jetbrains.jet.lexer.JetTokens.ELVIS;
-import static org.jetbrains.jet.lexer.JetTokens.EXCLEXCL;
 
 public class DebugInfoUtil {
     private static final TokenSet EXCLUDED = TokenSet.create(
@@ -62,7 +62,7 @@ public class DebugInfoUtil {
         final Map<JetReferenceExpression, AbstractDiagnosticFactory> markedWithErrorElements = Maps.newHashMap();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             AbstractDiagnosticFactory factory = diagnostic.getFactory();
-            if (factory instanceof UnresolvedReferenceDiagnosticFactory) {
+            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 markedWithErrorElements.put((JetReferenceExpression) diagnostic.getPsiElement(), factory);
             }
             else if (factory == Errors.SUPER_IS_NOT_AN_EXPRESSION
@@ -130,7 +130,7 @@ public class DebugInfoUtil {
                     }
                 }
                 if (resolved && markedWithError) {
-                    if (factory instanceof UnresolvedReferenceDiagnosticFactory) {
+                    if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(factory)) {
                         debugInfoReporter.reportUnresolvedWithTarget(expression, target);
                     }
                 }

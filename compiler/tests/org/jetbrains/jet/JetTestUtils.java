@@ -40,8 +40,8 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -134,7 +134,7 @@ public class JetTestUtils {
 
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
-            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 throw new IllegalStateException("Unresolved: " + diagnostic.getPsiElement().getText());
             }
         }
