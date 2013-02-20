@@ -258,6 +258,11 @@ public class DescriptorUtils {
                && ((ClassDescriptor) descriptor).getKind() == ClassKind.CLASS_OBJECT;
     }
 
+    public static boolean isAnonymous(@Nullable ClassifierDescriptor descriptor) {
+        return descriptor instanceof ClassDescriptor
+               && descriptor.getName().isSpecial() && ((ClassDescriptor)descriptor).getKind() == ClassKind.OBJECT;
+    }
+
     public static boolean isEnumEntry(@NotNull DeclarationDescriptor descriptor) {
         return descriptor instanceof ClassDescriptor
                && ((ClassDescriptor) descriptor).getKind() == ClassKind.ENUM_ENTRY;

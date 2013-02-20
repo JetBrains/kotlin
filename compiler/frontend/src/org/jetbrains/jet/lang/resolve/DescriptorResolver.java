@@ -1027,8 +1027,7 @@ public class DescriptorResolver {
             @NotNull final BindingTrace trace
     ) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
-        boolean isAnonymous = classifierDescriptor != null && classifierDescriptor.getName().isSpecial() && !ErrorUtils.isErrorType(type);
-        if (!isAnonymous) {
+        if (!DescriptorUtils.isAnonymous(classifierDescriptor)) {
             return type;
         }
 
