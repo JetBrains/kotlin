@@ -28,6 +28,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PositioningStrategies {
@@ -189,6 +190,20 @@ public class PositioningStrategies {
             return markElement(element);
         }
     };
+    public static final PositioningStrategy<JetReferenceExpression> FOR_UNRESOLVED_REFERENCE =
+            new PositioningStrategy<JetReferenceExpression>() {
+                @NotNull
+                @Override
+                public List<TextRange> mark(@NotNull JetReferenceExpression element) {
+                    if (element instanceof JetArrayAccessExpression) {
+                        List<TextRange> ranges = ((JetArrayAccessExpression) element).getBracketRanges();
+                        if (!ranges.isEmpty()) {
+                            return ranges;
+                        }
+                    }
+                    return Collections.singletonList(element.getTextRange());
+                }
+            };
 
     public static PositioningStrategy<JetModifierListOwner> modifierSetPosition(final JetKeywordToken... tokens) {
         return new PositioningStrategy<JetModifierListOwner>() {

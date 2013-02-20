@@ -217,7 +217,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         if (leftType == null) {
             dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
-            context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
+            context.trace.report(UNRESOLVED_REFERENCE.on(operationSign, operationSign.getText()));
             temporaryBindingTrace.commit();
             return JetTypeInfo.create(null, dataFlowInfo);
         }

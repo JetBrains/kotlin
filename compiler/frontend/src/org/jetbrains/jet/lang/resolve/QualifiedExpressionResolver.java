@@ -359,7 +359,7 @@ public class QualifiedExpressionResolver {
         // Simple case of no descriptors
         if (descriptors.isEmpty()) {
             trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
-            trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
+            trace.report(UNRESOLVED_REFERENCE.on(referenceExpression, referenceExpression.getText()));
             return;
         }
 

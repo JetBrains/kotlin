@@ -111,7 +111,7 @@ public class LabelResolver {
         Stack<JetElement> stack = labeledElements.get(labelName);
         if (stack == null || stack.isEmpty()) {
             if (reportUnresolved) {
-                context.trace.report(UNRESOLVED_REFERENCE.on(labelExpression));
+                context.trace.report(UNRESOLVED_REFERENCE.on(labelExpression, labelExpression.getText()));
             }
             return null;
         }
@@ -174,11 +174,11 @@ public class LabelResolver {
                     return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
                 }
                 else {
-                    context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel));
+                    context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel.getText()));
                 }
             }
             else {
-                context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel));
+                context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel.getText()));
             }
         }
         else {

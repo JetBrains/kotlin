@@ -616,7 +616,7 @@ public class DescriptorResolver {
                     trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, classifier);
                 }
                 else {
-                    trace.report(UNRESOLVED_REFERENCE.on(subjectTypeParameterName));
+                    trace.report(UNRESOLVED_REFERENCE.on(subjectTypeParameterName, subjectTypeParameterName.getText()));
                 }
             }
             else {

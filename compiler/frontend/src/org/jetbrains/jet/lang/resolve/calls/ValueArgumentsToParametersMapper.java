@@ -153,7 +153,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 JetSimpleNameExpression nameReference = argument.getArgumentName().getReferenceExpression();
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedNameAsName());
                 if (valueParameterDescriptor == null) {
-                    report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
+                    report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference.getText()));
                     unmappedArguments.add(argument);
                     setStatus(WEAK_ERROR);
                 }
