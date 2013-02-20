@@ -79,7 +79,7 @@ public class JetBlock extends AbstractBlock {
     private List<Block> buildSubBlocks() {
         List<Block> blocks = new ArrayList<Block>();
 
-        Map<ASTNode, Alignment> childrenAlignments = createChildrenAlignments();
+        ASTAlignmentStrategy childrenAlignmentStrategy = getChildrenAlignmentStrategy();
 
         for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
             IElementType childType = child.getElementType();
@@ -90,7 +90,7 @@ public class JetBlock extends AbstractBlock {
                 continue;
             }
 
-            Alignment childAlignment = childrenAlignments.containsKey(child) ? childrenAlignments.get(child) : null;
+            Alignment childAlignment = childrenAlignmentStrategy.getAlignment(child);
             blocks.add(buildSubBlock(child, childAlignment));
         }
         return Collections.unmodifiableList(blocks);
@@ -219,8 +219,7 @@ public class JetBlock extends AbstractBlock {
         return myNode.getFirstChildNode() == null;
     }
 
-    @NotNull
-    protected Map<ASTNode, Alignment> createChildrenAlignments() {
+    private ASTAlignmentStrategy getChildrenAlignmentStrategy() {
         CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
 
         // Prepare default null strategy
@@ -238,26 +237,7 @@ public class JetBlock extends AbstractBlock {
                     jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, VALUE_ARGUMENT, COMMA,
                     jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR);
         }
-
-        // Construct information about children alignment
-        HashMap<ASTNode, Alignment> result = new HashMap<ASTNode, Alignment>();
-
-        for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
-            IElementType childType = child.getElementType();
-
-            if (child.getTextRange().getLength() == 0) continue;
-
-            if (childType == TokenType.WHITE_SPACE) {
-                continue;
-            }
-
-            Alignment childAlignment = strategy.getAlignment(child);
-            if (childAlignment != null) {
-                result.put(child, childAlignment);
-            }
-        }
-
-        return result;
+        return strategy;
     }
 
     private static ASTAlignmentStrategy getAlignmentForChildInParenthesis(
