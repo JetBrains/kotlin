@@ -332,9 +332,9 @@ public interface Errors {
     SimpleDiagnosticFactory<PsiElement> CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> NOT_A_CLASS = SimpleDiagnosticFactory.create(ERROR);
 
-    AmbiguousDescriptorDiagnosticFactory OVERLOAD_RESOLUTION_AMBIGUITY = new AmbiguousDescriptorDiagnosticFactory();
-    AmbiguousDescriptorDiagnosticFactory NONE_APPLICABLE = new AmbiguousDescriptorDiagnosticFactory();
-    AmbiguousDescriptorDiagnosticFactory CANNOT_COMPLETE_RESOLVE = new AmbiguousDescriptorDiagnosticFactory();
+    DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> OVERLOAD_RESOLUTION_AMBIGUITY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> CANNOT_COMPLETE_RESOLVE = DiagnosticFactory1.create(ERROR);
 
     SimpleDiagnosticFactory<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = SimpleDiagnosticFactory.create(WARNING);
 
@@ -376,7 +376,8 @@ public interface Errors {
     SimpleDiagnosticFactory<JetSimpleNameExpression> INC_DEC_SHOULD_NOT_RETURN_UNIT = SimpleDiagnosticFactory.create(ERROR);
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, JetSimpleNameExpression> ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT =
             DiagnosticFactory2.create(ERROR);
-    AmbiguousDescriptorDiagnosticFactory ASSIGN_OPERATOR_AMBIGUITY = AmbiguousDescriptorDiagnosticFactory.create();
+    DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>>
+            ASSIGN_OPERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
     SimpleDiagnosticFactory<JetSimpleNameExpression> EQUALS_MISSING = SimpleDiagnosticFactory.create(ERROR);
     DiagnosticFactory3<JetBinaryExpression, JetSimpleNameExpression, JetType, JetType> EQUALITY_NOT_APPLICABLE =
@@ -393,7 +394,7 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> NEXT_NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
 
     SimpleDiagnosticFactory<JetExpression> ITERATOR_MISSING = SimpleDiagnosticFactory.create(ERROR);
-    AmbiguousDescriptorDiagnosticFactory ITERATOR_AMBIGUITY = AmbiguousDescriptorDiagnosticFactory.create();
+    DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> ITERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
 

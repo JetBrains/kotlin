@@ -61,7 +61,7 @@ public class IdeRenderers {
         return String.format(error ? RED_TEMPLATE : STRONG_TEMPLATE, o);
     }
 
-    public static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> HTML_AMBIGUOUS_CALLS =
+    public static final Renderer<Collection<? extends ResolvedCall<?>>> HTML_AMBIGUOUS_CALLS =
             new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
                 @NotNull
                 @Override
@@ -85,7 +85,7 @@ public class IdeRenderers {
     };
 
 
-    public static class NoneApplicableCallsRenderer implements Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> {
+    public static class NoneApplicableCallsRenderer implements Renderer<Collection<? extends ResolvedCall<?>>> {
         @Nullable
         private static ValueParameterDescriptor findParameterByArgumentExpression(
                 ResolvedCall<? extends CallableDescriptor> call,

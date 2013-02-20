@@ -99,7 +99,7 @@ public class Renderers {
         }
     };
 
-    public static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> AMBIGUOUS_CALLS =
+    public static final Renderer<Collection<? extends ResolvedCall<?>>> AMBIGUOUS_CALLS =
             new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
                 @NotNull
                 @Override
