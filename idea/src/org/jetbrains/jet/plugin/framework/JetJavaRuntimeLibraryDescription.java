@@ -50,7 +50,6 @@ public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
         this.frameworkSourcePanel = frameworkSourcePanel;
     }
 
-
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {

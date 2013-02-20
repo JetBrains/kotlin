@@ -24,6 +24,10 @@ import org.jetbrains.jet.plugin.JetIcons;
 import javax.swing.*;
 
 public class JetJavaFrameworkType extends FrameworkTypeEx {
+    public static JetJavaFrameworkType getInstance() {
+        return FrameworkTypeEx.EP_NAME.findExtension(JetJavaFrameworkType.class);
+    }
+
     public JetJavaFrameworkType() {
         super("kotlin-java-framework-id");
     }

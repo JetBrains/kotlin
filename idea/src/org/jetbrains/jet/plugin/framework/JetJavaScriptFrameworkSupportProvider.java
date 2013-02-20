@@ -36,7 +36,7 @@ public class JetJavaScriptFrameworkSupportProvider extends FrameworkSupportInMod
     @NotNull
     @Override
     public FrameworkTypeEx getFrameworkType() {
-        return FrameworkTypeEx.EP_NAME.findExtension(JavaScriptFrameworkType.class);
+        return JavaScriptFrameworkType.getInstance();
     }
 
     @NotNull
@@ -63,16 +63,15 @@ public class JetJavaScriptFrameworkSupportProvider extends FrameworkSupportInMod
             }
 
             @Override
-            public boolean isOnlyLibraryAdded() {
-                return true;
-            }
-
-            @Override
             public void addSupport(
                     @NotNull Module module,
                     @NotNull ModifiableRootModel rootModel,
                     @NotNull ModifiableModelsProvider modifiableModelsProvider) {
-
+                FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
+                        rootModel,
+                        JetJavaRuntimeLibraryDescription.KOTLIN_JAVA_RUNTIME_KIND,
+                        "Current module is already configured as Java Kotlin module.\nDo you want to remove Java support?",
+                        "Configure Kotlin JavaScript Support");
             }
 
             private FrameworkSourcePanel getConfigurationPanel() {

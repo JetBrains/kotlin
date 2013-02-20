@@ -29,7 +29,7 @@ import java.util.List;
 
 public class KotlinJavaScriptHeadersPresentationProvider extends LibraryPresentationProvider<LibraryVersionProperties> {
     protected KotlinJavaScriptHeadersPresentationProvider() {
-        super(JetJavaScriptLibraryDescription.KOTLIN_JAVASCRIPT_HEADERS_KIND);
+        super(JetJavaScriptLibraryDescription.KOTLIN_JAVASCRIPT_KIND);
     }
 
     @Nullable
