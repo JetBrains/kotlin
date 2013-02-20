@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfoForCall;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedTypeInfo;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.recordExpressionType;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.*;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
@@ -161,43 +161,48 @@ public class ArgumentTypeResolver {
     }
 
     @NotNull
-    public TypeInfoForCall getArgumentTypeInfo(
+    public JetTypeInfo getArgumentTypeInfo(
             @Nullable JetExpression expression,
             @NotNull CallResolutionContext context,
-            @NotNull ResolveArgumentsMode resolveArgumentsMode
+            @NotNull ResolveArgumentsMode resolveArgumentsMode,
+            @Nullable TemporaryBindingTrace traceToCommitForCall
     ) {
         if (expression == null) {
-            return TypeInfoForCall.create(null, context.dataFlowInfo);
+            return JetTypeInfo.create(null, context.dataFlowInfo);
         }
         if (expression instanceof JetFunctionLiteralExpression) {
-            return TypeInfoForCall.create(getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) expression, context, resolveArgumentsMode));
+            return getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) expression, context, resolveArgumentsMode);
         }
-        TypeInfoForCall cachedTypeInfo = getRecordedTypeInfoForCall(expression, context);
-        if (cachedTypeInfo != null) {
-            return cachedTypeInfo;
+        JetTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
+        if (recordedTypeInfo != null) {
+            return recordedTypeInfo;
         }
         //todo deparenthesize
         CallExpressionResolver callExpressionResolver = expressionTypingServices.getCallExpressionResolver();
-        TypeInfoForCall result = null;
+        if (!(expression instanceof JetCallExpression) && !(expression instanceof JetQualifiedExpression)) {
+            return expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace);
+        }
+
+        TypeInfoForCall result;
         if (expression instanceof JetCallExpression) {
             result = callExpressionResolver.getCallExpressionTypeInfoForCall(
                     (JetCallExpression) expression, ReceiverValue.NO_RECEIVER, null,
                     context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL);
         }
-        if (expression instanceof JetQualifiedExpression) {
+        else { // expression instanceof JetQualifiedExpression
             result = callExpressionResolver.getQualifiedExpressionExtendedTypeInfo(
                     (JetQualifiedExpression) expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE), ResolveMode.NESTED_CALL);
         }
-        if (result != null) {
-            recordExpressionType(expression, context, result.getTypeInfo());
-            CallCandidateResolutionContext<FunctionDescriptor> deferredContext = result.getCallCandidateResolutionContext();
-            if (deferredContext != null) {
-                context.trace.record(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression, deferredContext);
-            }
-            return result;
+
+        recordExpressionType(expression, context.trace, context.scope, result.getTypeInfo());
+        CallCandidateResolutionContext<FunctionDescriptor> deferredContext = result.getCallCandidateResolutionContext();
+        if (deferredContext != null) {
+            context.trace.record(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression, deferredContext);
         }
-        return TypeInfoForCall.create(
-                expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace));
+        if (traceToCommitForCall != null) {
+            traceToCommitForCall.commit();
+        }
+        return result.getTypeInfo();
     }
 
     @NotNull

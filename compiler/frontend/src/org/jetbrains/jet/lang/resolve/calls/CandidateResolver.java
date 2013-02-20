@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolveMode;
-import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -49,7 +48,10 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SUPER_IS_NOT_AN_EXPRESSION;
@@ -448,13 +450,8 @@ public class CandidateResolver {
                 context.trace, "transient trace to resolve argument", argumentExpression);
         JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
         CallResolutionContext newContext = context.replaceBindingTrace(traceToResolveArgument).replaceExpectedType(expectedType);
-        TypeInfoForCall typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext,
-                                                                                   resolveFunctionArgumentBodies);
-        CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = typeInfoForCall.getCallCandidateResolutionContext();
-        if (contextForArgument != null) {
-            //todo return JetTypeInfo instead of TypeInfoForCall, remove TypeInfoForCall
-            traceToResolveArgument.commit();
-        }
+        JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext,
+                                                                                   resolveFunctionArgumentBodies, traceToResolveArgument);
         JetType type = typeInfoForCall.getType();
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(
                 valueParameterDescriptor.getIndex()));
@@ -520,8 +517,8 @@ public class CandidateResolver {
                 }
                 CallResolutionContext newContext = context.replaceDataFlowInfo(candidateCall.getDataFlowInfo()).replaceBindingTrace(trace)
                         .replaceExpectedType(expectedType);
-                TypeInfoForCall typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
-                        expression, newContext, resolveFunctionArgumentBodies);
+                JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
+                        expression, newContext, resolveFunctionArgumentBodies, null);
                 JetType type = typeInfoForCall.getType();
                 candidateCall.addDataFlowInfo(typeInfoForCall.getDataFlowInfo());
 

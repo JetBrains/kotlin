@@ -24,9 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.context.TypeInfoForCall;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
@@ -284,34 +282,31 @@ public class BindingContextUtils {
         }, false);
     }
 
-    public static void recordExpressionType(@NotNull JetExpression expression, @NotNull ResolutionContext context, @NotNull JetTypeInfo result) {
+    public static void recordExpressionType(
+            @NotNull JetExpression expression, @NotNull BindingTrace trace,
+            @NotNull JetScope resolutionScope, @NotNull JetTypeInfo result
+    ) {
         JetType type = result.getType();
         if (type != null) {
-            context.trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
+            trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
         }
-        context.trace.record(BindingContext.PROCESSED, expression);
+        trace.record(BindingContext.PROCESSED, expression);
         if (result.getDataFlowInfo() != DataFlowInfo.EMPTY) {
-            context.trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
+            trace.record(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression, result.getDataFlowInfo());
         }
         if (!(expression instanceof JetReferenceExpression)) {
-            context.trace.record(BindingContext.RESOLUTION_SCOPE, expression, context.scope);
+            trace.record(BindingContext.RESOLUTION_SCOPE, expression, resolutionScope);
         }
     }
 
     @Nullable
-    public static TypeInfoForCall getRecordedTypeInfoForCall(
-            @NotNull JetExpression expression,
-            @NotNull ResolutionContext context
-    ) {
-        if (!context.trace.get(BindingContext.PROCESSED, expression)) return null;
-        JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
-        DataFlowInfo dataFlowInfo = context.trace.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression);
+    public static JetTypeInfo getRecordedTypeInfo(@NotNull JetExpression expression, @NotNull BindingContext context) {
+        if (!context.get(BindingContext.PROCESSED, expression)) return null;
+        DataFlowInfo dataFlowInfo = context.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression);
         if (dataFlowInfo == null) {
             dataFlowInfo = DataFlowInfo.EMPTY;
         }
-        JetTypeInfo typeInfo = JetTypeInfo.create(context.trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression), dataFlowInfo);
-        CallCandidateResolutionContext<FunctionDescriptor> callCandidateResolutionContext =
-                context.trace.get(BindingContext.DEFERRED_COMPUTATION_FOR_CALL, expression);
-        return TypeInfoForCall.create(typeInfo, callCandidateResolutionContext);
+        JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
+        return JetTypeInfo.create(type, dataFlowInfo);
     }
 }
