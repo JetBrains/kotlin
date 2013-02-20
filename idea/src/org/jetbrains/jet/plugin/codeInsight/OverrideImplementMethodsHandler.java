@@ -141,7 +141,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         bodyBuilder.append(descriptor.getName()).append(" : ").append(
                 DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(descriptor.getType()));
-        String initializer = defaultInitializer(descriptor.getType(), KotlinBuiltIns.getInstance());
+        String initializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
         if (initializer != null) {
             bodyBuilder.append(" = ").append(initializer);
         }
@@ -245,22 +245,6 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (receiverParameter != null) {
             bodyBuilder.append(receiverParameter.getType()).append(".");
         }
-    }
-
-    private static String defaultInitializer(JetType returnType, KotlinBuiltIns builtIns) {
-        if (returnType.isNullable()) {
-            return "null";
-        }
-        else if (returnType.equals(builtIns.getIntType()) || returnType.equals(builtIns.getLongType()) ||
-                 returnType.equals(builtIns.getShortType()) || returnType.equals(builtIns.getByteType()) ||
-                 returnType.equals(builtIns.getFloatType()) || returnType.equals(builtIns.getDoubleType())) {
-            return "0";
-        }
-        else if (returnType.equals(builtIns.getBooleanType())) {
-            return "false";
-        }
-
-        return null;
     }
 
     private static String displayableVisibility(MemberDescriptor descriptor) {
