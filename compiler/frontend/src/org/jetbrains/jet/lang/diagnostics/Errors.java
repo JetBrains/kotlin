@@ -417,10 +417,11 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = DiagnosticFactory1.create(ERROR);
 
-    UnusedElementDiagnosticFactory<JetNamedDeclaration, VariableDescriptor> UNUSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, NAME_IDENTIFIER);
-    UnusedElementDiagnosticFactory<JetParameter, VariableDescriptor> UNUSED_PARAMETER = UnusedElementDiagnosticFactory.create(WARNING, NAME_IDENTIFIER);
+    DiagnosticFactory1<PsiNameIdentifierOwner, Object> UNUSED_VARIABLE = DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
+    DiagnosticFactory1<PsiNameIdentifierOwner, Object> UNUSED_PARAMETER = DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
 
-    UnusedElementDiagnosticFactory<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, NAME_IDENTIFIER);
+    DiagnosticFactory1<PsiNameIdentifierOwner, Object> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE =
+            DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> VARIABLE_WITH_REDUNDANT_INITIALIZER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<JetElement, JetElement> UNUSED_CHANGED_VALUE = DiagnosticFactory1.create(WARNING);
