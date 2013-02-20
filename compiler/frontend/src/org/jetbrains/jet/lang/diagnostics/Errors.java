@@ -17,14 +17,13 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -352,10 +351,6 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, JetType, JetType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
-    Collection<AbstractDiagnosticFactory> TYPE_INFERENCE_ERRORS = Lists.<AbstractDiagnosticFactory>newArrayList(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER,
-        TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH, TYPE_INFERENCE_UPPER_BOUND_VIOLATED,
-        TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
-
     // Multi-declarations
 
     DiagnosticFactory0<JetMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
@@ -546,6 +541,10 @@ public interface Errors {
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE);
     ImmutableSet<? extends AbstractDiagnosticFactory> REDECLARATION_DIAGNOSTICS = ImmutableSet.of(
             REDECLARATION, NAME_SHADOWING);
+    ImmutableSet<? extends AbstractDiagnosticFactory> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
+            TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
+            TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // This field is needed to make the Initializer class load (interfaces cannot have static initializers)
