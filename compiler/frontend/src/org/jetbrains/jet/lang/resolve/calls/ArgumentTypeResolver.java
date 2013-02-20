@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -163,14 +164,13 @@ public class ArgumentTypeResolver {
     public TypeInfoForCall getArgumentTypeInfo(
             @Nullable JetExpression expression,
             @NotNull CallResolutionContext context,
-            @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies
+            @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (expression == null) {
             return TypeInfoForCall.create(null, context.dataFlowInfo);
         }
-        if (expression instanceof JetFunctionLiteralExpression && resolveFunctionArgumentBodies == SKIP_FUNCTION_ARGUMENTS) {
-            JetType type = getFunctionLiteralType((JetFunctionLiteralExpression) expression, context.scope, context.trace);
-            return TypeInfoForCall.create(type, context.dataFlowInfo);
+        if (expression instanceof JetFunctionLiteralExpression) {
+            return TypeInfoForCall.create(getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) expression, context, resolveArgumentsMode));
         }
         TypeInfoForCall cachedTypeInfo = getRecordedTypeInfoForCall(expression, context);
         if (cachedTypeInfo != null) {
@@ -198,6 +198,19 @@ public class ArgumentTypeResolver {
         }
         return TypeInfoForCall.create(
                 expressionTypingServices.getTypeInfo(context.scope, expression, context.expectedType, context.dataFlowInfo, context.trace));
+    }
+
+    @NotNull
+    public JetTypeInfo getFunctionLiteralTypeInfo(
+            @NotNull JetFunctionLiteralExpression functionLiteralExpression,
+            @NotNull CallResolutionContext context,
+            @NotNull ResolveArgumentsMode resolveArgumentsMode
+    ) {
+        if (resolveArgumentsMode == SKIP_FUNCTION_ARGUMENTS) {
+            JetType type = getFunctionLiteralType(functionLiteralExpression, context.scope, context.trace);
+            return JetTypeInfo.create(type, context.dataFlowInfo);
+        }
+        return expressionTypingServices.getTypeInfo(context.scope, functionLiteralExpression, context.expectedType, context.dataFlowInfo, context.trace);
     }
 
     @Nullable

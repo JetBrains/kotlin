@@ -335,7 +335,8 @@ public class CandidateResolver {
                     traceToResolveFunctionLiteral, statementExpression, mismatch);
             CallCandidateResolutionContext<D> newContext =
                     context.replaceBindingTrace(errorInterceptingTrace).replaceExpectedType(expectedType);
-            JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
+            JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) argumentExpression, newContext,
+                                                                           RESOLVE_FUNCTION_ARGUMENTS).getType();
             if (!mismatch[0]) {
                 constraintSystem.addSubtypeConstraint(
                         type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
@@ -346,7 +347,8 @@ public class CandidateResolver {
         }
         JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeByUnknown(expectedType) : expectedType;
         CallCandidateResolutionContext<D> newContext = context.replaceExpectedType(expectedTypeWithoutReturnType);
-        JetType type = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
+        JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo((JetFunctionLiteralExpression) argumentExpression, newContext,
+                                                                       RESOLVE_FUNCTION_ARGUMENTS).getType();
         constraintSystem.addSubtypeConstraint(
                 type, effectiveExpectedType, ConstraintPosition.getValueParameterPosition(valueParameterDescriptor.getIndex()));
     }
