@@ -33,7 +33,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.plugin.project.K2JSModuleComponent;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -63,7 +62,6 @@ public final class JsModuleSetUp {
 
         if (!copyJsLibFiles(rootDir)) return;
 
-        setUpK2JSModuleComponent(module);
         createJSLibrary(module, LibrariesContainer.LibraryLevel.MODULE, rootDir);
 
         // FacetUtil.addFacet(module, JetFacetType.getInstance());
@@ -83,12 +81,6 @@ public final class JsModuleSetUp {
 
         LibrariesContainer container = LibrariesContainerFactory.createContainer(module);
         return container.createLibrary(editor, level);
-    }
-
-    private static void setUpK2JSModuleComponent(@NotNull Module module) {
-        K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
-        jsModuleComponent.setJavaScriptModule(true);
-        jsModuleComponent.setPathToJavaScriptLibrary("/lib/" + PathUtil.JS_LIB_JAR_NAME);
     }
 
     private static void restartHighlightingInTheWholeProject(@NotNull Module module) {

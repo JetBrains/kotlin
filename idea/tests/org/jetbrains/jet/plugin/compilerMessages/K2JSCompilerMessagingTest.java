@@ -20,11 +20,8 @@ import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.compiler.K2JSCompiler;
-import org.jetbrains.jet.plugin.project.K2JSModuleComponent;
 
-import static org.jetbrains.jet.plugin.compilerMessages.Message.error;
-import static org.jetbrains.jet.plugin.compilerMessages.Message.stats;
-import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
+import static org.jetbrains.jet.plugin.compilerMessages.Message.*;
 
 public final class K2JSCompilerMessagingTest extends IDECompilerMessagingTest {
 
@@ -63,16 +60,14 @@ public final class K2JSCompilerMessagingTest extends IDECompilerMessagingTest {
     }
 
     public void testLib() {
-        K2JSModuleComponent component = myModule.getComponent(K2JSModuleComponent.class);
-        component.setJavaScriptModule(true);
-        component.setPathToJavaScriptLibrary("/lib.zip");
-        doTest(new Function1<MessageChecker, Void>() {
-            @Override
-            public Void invoke(MessageChecker checker) {
-                //nothing apart from header
-                return null;
-            }
-        });
+        throw new UnsupportedOperationException("Under construction");
+        //doTest(new Function1<MessageChecker, Void>() {
+        //    @Override
+        //    public Void invoke(MessageChecker checker) {
+        //        //nothing apart from header
+        //        return null;
+        //    }
+        //});
     }
 
     private void doTest(@NotNull Function1<MessageChecker, Void> whatToExpect) {

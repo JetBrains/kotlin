@@ -38,7 +38,8 @@ public final class JsModuleDetector {
     }
 
     public static boolean isJsModule(@NotNull Module module) {
-        return K2JSModuleComponent.getInstance(module).isJavaScriptModule();
+        // TODO: fix
+        return false;
     }
 
     public static boolean isJsModule(@NotNull JetFile file) {
@@ -66,14 +67,15 @@ public final class JsModuleDetector {
 
     @NotNull
     public static Pair<List<String>, String> getLibLocationAndTargetForProject(@NotNull Module module) {
-        K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
-        String pathToJavaScriptLibrary = jsModuleComponent.getPathToJavaScriptLibrary();
-        String basePath = ModuleRootManager.getInstance(module).getContentRoots()[0].getPath();
-        List<String> pathsToJSLib = Lists.newArrayList();
-        if (pathToJavaScriptLibrary != null) {
-            pathsToJSLib.add(basePath + pathToJavaScriptLibrary);
-        }
-        return Pair.create(pathsToJSLib, jsModuleComponent.getEcmaVersion().toString());
+        throw new IllegalStateException("Under construction");
+        //K2JSModuleComponent jsModuleComponent = K2JSModuleComponent.getInstance(module);
+        //String pathToJavaScriptLibrary = jsModuleComponent.getPathToJavaScriptLibrary();
+        //String basePath = ModuleRootManager.getInstance(module).getContentRoots()[0].getPath();
+        //List<String> pathsToJSLib = Lists.newArrayList();
+        //if (pathToJavaScriptLibrary != null) {
+        //    pathsToJSLib.add(basePath + pathToJavaScriptLibrary);
+        //}
+        //return Pair.create(pathsToJSLib, jsModuleComponent.getEcmaVersion().toString());
     }
 
     @Nullable

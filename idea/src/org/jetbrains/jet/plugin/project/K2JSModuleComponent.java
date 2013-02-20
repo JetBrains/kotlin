@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.config.EcmaVersion;
 
+@Deprecated
 @State(
         name = "K2JSModule",
         storages = @Storage(
@@ -35,51 +36,12 @@ import org.jetbrains.k2js.config.EcmaVersion;
         )
 )
 public final class K2JSModuleComponent implements ModuleComponent, PersistentStateComponent<K2JSModuleComponent> {
-
     @NotNull
     public static K2JSModuleComponent getInstance(@NotNull Module module) {
         return module.getComponent(K2JSModuleComponent.class);
     }
 
-    private boolean isJavaScriptModule;
-
-    @Nullable
-    private String pathToJavaScriptLibrary;
-
-    @NotNull
-    private EcmaVersion ecmaVersion;
-
-    @NotNull
-    public EcmaVersion getEcmaVersion() {
-        return ecmaVersion;
-    }
-
-    public K2JSModuleComponent() {
-        this.isJavaScriptModule = false;
-        this.pathToJavaScriptLibrary = null;
-        this.ecmaVersion = EcmaVersion.defaultVersion();
-    }
-
-    public void setEcmaVersion(@NotNull EcmaVersion ecmaVersion) {
-        this.ecmaVersion = ecmaVersion;
-    }
-
-    public boolean isJavaScriptModule() {
-        return isJavaScriptModule;
-    }
-
-    public void setJavaScriptModule(boolean javaScriptModule) {
-        isJavaScriptModule = javaScriptModule;
-    }
-
-    @Nullable
-    public String getPathToJavaScriptLibrary() {
-        return pathToJavaScriptLibrary;
-    }
-
-    public void setPathToJavaScriptLibrary(@Nullable String pathToJavaScriptLibrary) {
-        this.pathToJavaScriptLibrary = pathToJavaScriptLibrary;
-    }
+    public K2JSModuleComponent() {}
 
     @Override
     public void projectOpened() {
@@ -114,11 +76,12 @@ public final class K2JSModuleComponent implements ModuleComponent, PersistentSta
 
     @Override
     public K2JSModuleComponent getState() {
-        return this;
+        // Don't store starting from this version
+        return null;
     }
 
     @Override
     public void loadState(K2JSModuleComponent state) {
-        XmlSerializerUtil.copyBean(state, this);
+        // Don't restore - there could be another set of fields
     }
 }
