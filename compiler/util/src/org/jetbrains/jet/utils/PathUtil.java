@@ -143,7 +143,7 @@ public class PathUtil {
     }
 
     private static File findRtJar(String javaHome) {
-        if (SystemInfo.isMac) {
+        if (SystemInfo.isMac && !SystemInfo.isJavaVersionAtLeast("1.7")) {
             File classesJar = new File(new File(javaHome).getParentFile(), "Classes/classes.jar");
             if (classesJar.exists()) {
                 return classesJar;
