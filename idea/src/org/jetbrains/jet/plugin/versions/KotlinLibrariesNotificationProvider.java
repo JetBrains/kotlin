@@ -73,7 +73,6 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
                 updateNotifications();
             }
         });
-
         connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
             @Override
             public void enteredDumbMode() {}
@@ -102,7 +101,7 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
             if (module == null) return null;
 
             if (!KotlinRuntimeLibraryUtil.isModuleAlreadyConfigured(module)) {
-                return createConfigureRuntimeLibraryNotificationPanel(module);
+                return createFrameworkConfigurationNotificationPanel(module);
             }
 
             Collection<VirtualFile> badRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(myProject);
@@ -115,13 +114,12 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         }
         catch (IndexNotReadyException e) {
             DumbService.getInstance(myProject).runWhenSmart(updateNotifications);
-            return null;
         }
 
         return null;
     }
 
-    private static EditorNotificationPanel createConfigureRuntimeLibraryNotificationPanel(final Module module) {
+    private static EditorNotificationPanel createFrameworkConfigurationNotificationPanel(final Module module) {
         EditorNotificationPanel answer = new EditorNotificationPanel();
 
         answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
