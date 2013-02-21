@@ -34,6 +34,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -41,9 +43,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.BuiltInsInitializer;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -55,6 +55,7 @@ import java.util.List;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
+    private ModuleDescriptor moduleDescriptor = null;
 
     private final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(KotlinBuiltIns.getInstance().getTuple(0)).toSafe();
 
@@ -80,32 +81,26 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         assert bindingContext == null : "Attempt to initialize twice";
 
         BindingTraceContext context = new BindingTraceContext();
-        FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
-        context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
-
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
-                                                        "Builtin classes scope");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        jetNamespace.setMemberScope(scope);
+        MutableModuleDescriptor module = new MutableModuleDescriptor(Name.special("<fake module>"));
+        this.moduleDescriptor = module;
+        MutablePackageFragmentDescriptor jetPackageFragment = module.addSubModule(Name.identifier("src"))
+                .addPackageFragment(PackageFragmentKind.SOURCE, KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
 
         Predicate<JetFile> jetFilesIndependentOfUnit = new Predicate<JetFile>() {
             @Override
-            public boolean apply(@Nullable JetFile file) {
+            public boolean apply(JetFile file) {
                 return "Unit.jet".equals(file.getName());
             }
         };
-        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
+        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, JetScope.EMPTY, jetPackageFragment,
                                                         getJetFiles("jet", jetFilesIndependentOfUnit));
 
         ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
         assert tuple0 != null : "Can't find the declaration for Tuple0. Please invoke File -> Invalidate Caches...";
-        scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
-                                      "Builtin classes scope: needed to analyze builtins which depend on Unit type alias");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        scope.addClassifierAlias(KotlinBuiltIns.UNIT_ALIAS, tuple0);
-        jetNamespace.setMemberScope(scope);
 
-        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace,
+        jetPackageFragment.getMemberScope().addClassifierAlias(KotlinBuiltIns.UNIT_ALIAS, tuple0);
+
+        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, JetScope.EMPTY, jetPackageFragment,
                                                         getJetFiles("jet", Predicates.not(jetFilesIndependentOfUnit)));
 
         bindingContext = context.getBindingContext();
@@ -151,6 +146,17 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     }
 
     @Nullable
+    private DeclarationDescriptor findCurrentDescriptorForPackageFragment(@NotNull PackageFragmentDescriptor originalDescriptor) {
+        FqName fqName = DescriptorUtils.getFQName(originalDescriptor).toSafe();
+
+        SubModuleDescriptor subModule = moduleDescriptor.getSubModules().iterator().next();
+        Collection<PackageFragmentDescriptor> fragments = subModule.getPackageFragments(fqName);
+        assert fragments.size() == 1 : "Multiple package fragments in stdlib for " + fqName;
+
+        return fragments.iterator().next();
+    }
+
+    @Nullable
     private DeclarationDescriptor findCurrentDescriptorForMember(@NotNull MemberDescriptor originalDescriptor) {
         DeclarationDescriptor containingDeclaration = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
         JetScope memberScope = getMemberScope(containingDeclaration);
@@ -178,9 +184,8 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         if (originalDescriptor instanceof ClassDescriptor) {
             return findCurrentDescriptorForClass((ClassDescriptor) originalDescriptor);
         }
-        else if (originalDescriptor instanceof NamespaceDescriptor) {
-            return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                                      DescriptorUtils.getFQName(originalDescriptor).toSafe());
+        else if (originalDescriptor instanceof PackageFragmentDescriptor) {
+            return findCurrentDescriptorForPackageFragment((PackageFragmentDescriptor) originalDescriptor);
         }
         else if (originalDescriptor instanceof MemberDescriptor) {
             return findCurrentDescriptorForMember((MemberDescriptor) originalDescriptor);

@@ -81,7 +81,6 @@ public class GenerateInjectors {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(ModuleConfiguration.class);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
-        generator.addField(NamespaceFactoryImpl.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic", GenerateInjectors.class);
     }
 
@@ -90,7 +89,6 @@ public class GenerateInjectors {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addPublicParameter(ModuleConfiguration.class);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
-        generator.addField(NamespaceFactoryImpl.class);
         generator.generate("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs", GenerateInjectors.class);
     }
 
@@ -101,7 +99,6 @@ public class GenerateInjectors {
         generator.addField(true, ModuleConfiguration.class, null, new InstantiateType(JavaBridgeConfiguration.class));
         generator.addField(JavaDescriptorResolver.class);
         generator.addField(PsiClassFinderImpl.class);
-        generator.addPublicField(NamespaceFactoryImpl.class);
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm",
                            GenerateInjectors.class);
     }

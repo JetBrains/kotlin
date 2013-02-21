@@ -54,6 +54,7 @@ public interface ModuleConfiguration {
      * This method is called every time a namespace descriptor is created. Use it to add extra descriptors to the namespace, e.g. merge a
      * Java package with a Kotlin one
      */
+    @Deprecated
     void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
 
     @NotNull

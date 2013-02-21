@@ -23,16 +23,17 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
@@ -55,9 +56,7 @@ public class TopDownAnalyzer {
     @NotNull
     private BindingTrace trace;
     @NotNull
-    private OldModuleDescriptor moduleDescriptor;
-    @NotNull
-    private NamespaceFactoryImpl namespaceFactory;
+    private ModuleSourcesManager moduleManager;
     @NotNull
     private BodyResolver bodyResolver;
 
@@ -97,13 +96,8 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setModuleDescriptor(@NotNull OldModuleDescriptor moduleDescriptor) {
-        this.moduleDescriptor = moduleDescriptor;
-    }
-
-    @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactoryImpl namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setModuleManager(@NotNull ModuleSourcesManager moduleManager) {
+        this.moduleManager = moduleManager;
     }
 
     @Inject
@@ -116,7 +110,8 @@ public class TopDownAnalyzer {
     public void doProcess(
             JetScope outerScope,
             NamespaceLikeBuilder owner,
-            Collection<? extends PsiElement> declarations) {
+            Collection<? extends PsiElement> declarations
+    ) {
 //        context.enableDebugOutput();
         context.debug("Enter");
 
@@ -143,7 +138,7 @@ public class TopDownAnalyzer {
         for (MutableClassDescriptor mutableClassDescriptor : context.getObjects().values()) {
             mutableClassDescriptor.lockScopes();
         }
-        for (Map.Entry<JetFile, WritableScope> namespaceScope : context.getNamespaceScopes().entrySet()) {
+        for (Map.Entry<JetFile, WritableScope> namespaceScope : context.getFileScopes().entrySet()) {
             // todo: this is hack in favor of REPL
             if(!namespaceScope.getKey().isScript())
                 namespaceScope.getValue().changeLockLevel(WritableScope.LockLevel.READING);
@@ -153,8 +148,8 @@ public class TopDownAnalyzer {
     public static void processStandardLibraryNamespace(
             @NotNull Project project,
             @NotNull BindingTrace trace,
-            @NotNull WritableScope outerScope,
-            @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
+            @NotNull JetScope outerScope,
+            @NotNull MutablePackageFragmentDescriptor standardLibraryPackageFragment,
             @NotNull List<JetFile> files) {
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
@@ -163,20 +158,20 @@ public class TopDownAnalyzer {
                 project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
                 KotlinBuiltIns.getInstance().getBuiltInsModule(), ModuleConfiguration.EMPTY);
 
-        injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryNamespace, files);
+        injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryPackageFragment, files);
     }
 
     private void doProcessStandardLibraryNamespace(
-            WritableScope outerScope, NamespaceDescriptorImpl standardLibraryNamespace, List<JetFile> files) {
-        ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
+            JetScope outerScope, MutablePackageFragmentDescriptor standardLibraryPackageFragment, List<JetFile> files) {
+        List<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
         for(JetFile file : files) {
-            context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
-            context.getNamespaceScopes().put(file, standardLibraryNamespace.getMemberScope());
+            context.getPackageFragmentDescriptors().put(file, standardLibraryPackageFragment);
+            context.getFileScopes().put(file, standardLibraryPackageFragment.getMemberScope());
             toAnalyze.addAll(file.getDeclarations());
         }
 //        context.getDeclaringScopes().put(file, outerScope);
 
-        doProcess(outerScope, standardLibraryNamespace.getBuilder(), toAnalyze);
+        doProcess(outerScope, standardLibraryPackageFragment.getBuilder(), toAnalyze);
     }
 
     public static void processClassOrObject(
@@ -233,28 +228,12 @@ public class TopDownAnalyzer {
 
     public void analyzeFiles(
             @NotNull Collection<JetFile> files,
-            @NotNull List<AnalyzerScriptParameter> scriptParameters) {
-        final WritableScope scope = new WritableScopeImpl(
-                JetScope.EMPTY, moduleDescriptor,
-                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
-
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-        NamespaceDescriptorImpl rootNs = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
-
-        // map "jet" namespace into KotlinBuiltIns
-        // @see DefaultModuleConfiguraiton#extendNamespaceScope
-        namespaceFactory.createNamespaceDescriptorPathIfNeeded(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
-
-        // Import a scope that contains all top-level namespaces that come from dependencies
-        // This makes the namespaces visible at all, does not import themselves
-        scope.importScope(rootNs.getMemberScope());
-        
-        scope.changeLockLevel(WritableScope.LockLevel.READING);
+            @NotNull List<AnalyzerScriptParameter> scriptParameters
+    ) {
 
         // dummy builder is used because "root" is module descriptor,
         // namespaces added to module explicitly in
-        doProcess(scope, new NamespaceLikeBuilderDummy(), files);
+        doProcess(JetScope.EMPTY, new NamespaceLikeBuilderDummy(), files);
     }
 
 

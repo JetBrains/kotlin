@@ -1,32 +1,34 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2010-2013 JetBrains s.r.o.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.OldModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -36,12 +38,13 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 
-public class NamespaceFactoryImpl implements NamespaceFactory {
+@Deprecated
+class NamespaceFactoryImpl1 implements NamespaceFactory {
 
     private OldModuleDescriptor moduleDescriptor;
     private BindingTrace trace;
@@ -83,7 +86,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(
                     null, currentOwner, namespaceName, nameExpression, handler);
 
-            trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
+            //trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
             trace.record(RESOLUTION_SCOPE, nameExpression, outerScope);
 
             outerScope = namespaceDescriptor.getMemberScope();
@@ -104,7 +107,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
 
             trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
         }
-        trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
+        //trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
 
         return namespaceDescriptor;
     }
@@ -182,7 +185,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
                 Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                 name
         );
-        trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
+        //trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
 
         WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, handler, "Namespace member scope");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
@@ -193,7 +196,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         configuration.extendNamespaceScope(trace, namespaceDescriptor, scope);
         owner.addNamespace(namespaceDescriptor);
         if (expression != null) {
-            trace.record(BindingContext.NAMESPACE, expression, namespaceDescriptor);
+            //trace.record(BindingContext.NAMESPACE, expression, namespaceDescriptor);
         }
         return namespaceDescriptor;
     }
@@ -206,16 +209,16 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         }
 
         if (file != null) {
-            trace.record(BindingContext.FILE_TO_NAMESPACE, file, namespaceDescriptor);
+            //trace.record(BindingContext.FILE_TO_NAMESPACE, file, namespaceDescriptor);
 
             // Register files corresponding to this namespace
             // The trace currently does not support bi-di multimaps that would handle this task nicer
-            Collection<JetFile> files = trace.get(NAMESPACE_TO_FILES, namespaceDescriptor);
-            if (files == null) {
-                files = Sets.newIdentityHashSet();
-            }
-            files.add(file);
-            trace.record(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor, files);
+            //Collection<JetFile> files = trace.get(NAMESPACE_TO_FILES, namespaceDescriptor);
+            //if (files == null) {
+                //files = Sets.newIdentityHashSet();
+            //}
+            //files.add(file);
+            //trace.record(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor, files);
         }
     }
 }

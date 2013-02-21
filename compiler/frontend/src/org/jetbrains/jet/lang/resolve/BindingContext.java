@@ -187,8 +187,6 @@ public interface BindingContext {
         }
     };
 
-    WritableSlice<PsiElement, NamespaceDescriptor> NAMESPACE = Slices.<PsiElement, NamespaceDescriptor>sliceBuilder()
-            .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<PsiElement, ClassDescriptor> CLASS =
             Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
                     .build();
@@ -223,7 +221,7 @@ public interface BindingContext {
                     .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
-            NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
+            CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
             PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION
     };
 
@@ -242,15 +240,6 @@ public interface BindingContext {
             Slices.<ClassDescriptor, FunctionDescriptor>sliceBuilder().build();
 
     WritableSlice<FqName, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqName, ClassDescriptor>(DO_NOTHING, true);
-    WritableSlice<FqName, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR =
-            new BasicWritableSlice<FqName, NamespaceDescriptor>(DO_NOTHING);
-    WritableSlice<JetFile, NamespaceDescriptor> FILE_TO_NAMESPACE = Slices.createSimpleSlice();
-    WritableSlice<NamespaceDescriptor, Collection<JetFile>> NAMESPACE_TO_FILES = Slices.createSimpleSlice();
-
-    /**
-     * Each namespace found in src must be registered here.
-     */
-    WritableSlice<NamespaceDescriptor, Boolean> NAMESPACE_IS_SRC = Slices.createSimpleSlice();
 
     WritableSlice<ClassDescriptor, Boolean> INCOMPLETE_HIERARCHY = Slices.createCollectiveSetSlice();
 
@@ -261,7 +250,7 @@ public interface BindingContext {
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer
-            Void _static_initializer = BasicWritableSlice.initSliceDebugNames(BindingContext.class);
+    Void _static_initializer = BasicWritableSlice.initSliceDebugNames(BindingContext.class);
 
     Collection<Diagnostic> getDiagnostics();
 

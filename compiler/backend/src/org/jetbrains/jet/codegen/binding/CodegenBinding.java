@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.binding;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.ModuleSourcesManager;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -56,9 +58,9 @@ public class CodegenBinding {
     private CodegenBinding() {
     }
 
-    public static void initTrace(BindingTrace bindingTrace, Collection<JetFile> files) {
+    public static void initTrace(ModuleSourcesManager moduleManager, BindingTrace bindingTrace, Collection<JetFile> files) {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(bindingTrace);
-        for (JetFile file : allFilesInNamespaces(bindingTrace.getBindingContext(), files)) {
+        for (JetFile file : allFilesInNamespaces(moduleManager, files)) {
             file.accept(visitor);
         }
     }
@@ -215,25 +217,27 @@ public class CodegenBinding {
         registerClassNameForScript(bindingTrace, descriptor, className);
     }
 
-    @NotNull public static Collection<JetFile> allFilesInNamespaces(BindingContext bindingContext, Collection<JetFile> files) {
+    @NotNull
+    public static Collection<JetFile> allFilesInNamespaces(ModuleSourcesManager moduleManager, Collection<JetFile> files) {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 
-        final HashSet<FqName> names = new HashSet<FqName>();
-        for (JetFile file : files) {
-            if (!file.isScript()) {
-                names.add(JetPsiUtil.getFQName(file));
-            }
-        }
-
-        final HashSet<JetFile> answer = new HashSet<JetFile>();
+        Set<JetFile> answer = new HashSet<JetFile>();
         answer.addAll(files);
 
-        for (FqName name : names) {
-            final NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, name);
-            final Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
-            if (jetFiles != null)
-                answer.addAll(jetFiles);
+        for (JetFile file : files) {
+            if (file.isScript()) continue;
+
+            FqName fqName = JetPsiUtil.getFQName(file);
+            ModuleDescriptor module = moduleManager.getSubModuleForFile(file).getContainingDeclaration();
+            Collection<JetFile> filesByPackage = getPackageFragmentSources(moduleManager, module, fqName);
+
+            assert filesByPackage.contains(file) : "Inconsistent behavior of module manager: " +
+                                                   "file " + file + " does not belong to " +
+                                                   "its package " + fqName + " in " +
+                                                   "its module " + module;
+
+            answer.addAll(filesByPackage);
         }
 
         List<JetFile> sortedAnswer = new ArrayList<JetFile>(answer);
@@ -254,10 +258,27 @@ public class CodegenBinding {
         return sortedAnswer;
     }
 
-    public static boolean isMultiFileNamespace(BindingContext bindingContext, FqName fqName) {
-        final NamespaceDescriptor namespaceDescriptor = bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
-        final Collection<JetFile> jetFiles = bindingContext.get(NAMESPACE_TO_FILES, namespaceDescriptor);
-        return jetFiles != null && jetFiles.size() > 1;
+    @NotNull
+    private static Collection<JetFile> getPackageFragmentSources(
+            @NotNull ModuleSourcesManager moduleManager,
+            @NotNull ModuleDescriptor module,
+            @NotNull FqName packageFqName
+    ) {
+        Collection<JetFile> result = Lists.newArrayList();
+
+        for (SubModuleDescriptor subModule : module.getSubModules()) {
+            Collection<PackageFragmentDescriptor> fragments = subModule.getPackageFragments(packageFqName);
+
+            for (PackageFragmentDescriptor fragment : fragments) {
+                result.addAll(moduleManager.getPackageFragmentSources(fragment));
+            }
+        }
+
+        return result;
+    }
+
+    public static boolean isMultiFileNamespace(@NotNull ModuleSourcesManager moduleSourcesManager, @NotNull ModuleDescriptor module, @NotNull FqName fqName) {
+        return !getPackageFragmentSources(moduleSourcesManager, module, fqName).isEmpty();
     }
 
     public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {

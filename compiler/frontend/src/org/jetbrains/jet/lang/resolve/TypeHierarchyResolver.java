@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -57,7 +56,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private ScriptHeaderResolver scriptHeaderResolver;
     @NotNull
-    private NamespaceFactoryImpl namespaceFactory;
+    private MutableModuleSourcesManager moduleManager;
     @NotNull
     private BindingTrace trace;
 
@@ -82,8 +81,8 @@ public class TypeHierarchyResolver {
     }
 
     @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactoryImpl namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setModuleManager(@NotNull MutableModuleSourcesManager moduleManager) {
+        this.moduleManager = moduleManager;
     }
 
     @Inject
@@ -116,11 +115,11 @@ public class TypeHierarchyResolver {
                                     ((MutableClassDescriptorLite) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
                 }
-                else if (descriptorForDeferredResolve instanceof NamespaceDescriptorImpl) {
+                else if (descriptorForDeferredResolve instanceof MutablePackageFragmentDescriptor) {
                     forDeferredResolve.addAll(
                             collectNamespacesAndClassifiers(
                                     scope,
-                                    ((NamespaceDescriptorImpl) descriptorForDeferredResolve).getBuilder(),
+                                    ((MutablePackageFragmentDescriptor) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
                 }
                 else {
@@ -159,7 +158,7 @@ public class TypeHierarchyResolver {
     private JetScope getStaticScope(PsiElement declarationElement, @NotNull NamespaceLikeBuilder owner) {
         DeclarationDescriptor ownerDescriptor = owner.getOwnerForChildren();
         if (ownerDescriptor instanceof NamespaceDescriptorImpl) {
-            return context.getNamespaceScopes().get(declarationElement.getContainingFile());
+            return context.getFileScopes().get(declarationElement.getContainingFile());
         }
 
         if (ownerDescriptor instanceof MutableClassDescriptor) {
@@ -181,7 +180,7 @@ public class TypeHierarchyResolver {
         return null;
     }
 
-    @Nullable
+    @NotNull
     private Collection<JetDeclarationContainer> collectNamespacesAndClassifiers(
             @NotNull final JetScope outerScope,
             @NotNull final NamespaceLikeBuilder owner,
@@ -465,7 +464,6 @@ public class TypeHierarchyResolver {
     private class ClassifierCollector extends JetVisitorVoid {
         private final JetScope outerScope;
         private final NamespaceLikeBuilder owner;
-        private final Collection<JetDeclarationContainer> forDeferredResolve;
 
         public ClassifierCollector(@NotNull JetScope outerScope,
                 @NotNull NamespaceLikeBuilder owner,
@@ -473,25 +471,25 @@ public class TypeHierarchyResolver {
         ) {
             this.outerScope = outerScope;
             this.owner = owner;
-            this.forDeferredResolve = forDeferredResolve;
         }
 
         @Override
         public void visitJetFile(JetFile file) {
-            NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
-                    file, outerScope, RedeclarationHandler.DO_NOTHING);
-            context.getNamespaceDescriptors().put(file, namespaceDescriptor);
+            MutableSubModuleDescriptor subModule = moduleManager.getSubModuleForFile(file);
+            PackageFragmentKind kind = moduleManager.getPackageFragmentKindForFile(file);
+            MutablePackageFragmentDescriptor fragmentDescriptor = subModule.addPackageFragment(kind, JetPsiUtil.getFQName(file));
+            context.getPackageFragmentDescriptors().put(file, fragmentDescriptor);
 
-            WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(),
+            WriteThroughScope fileScope = new WriteThroughScope(outerScope, fragmentDescriptor.getMemberScope(),
                                                                      new TraceBasedRedeclarationHandler(trace), "namespace");
-            namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            context.getNamespaceScopes().put(file, namespaceScope);
+            fileScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+            context.getFileScopes().put(file, fileScope);
 
             if (file.isScript()) {
-                scriptHeaderResolver.processScriptHierarchy(file.getScript(), namespaceScope);
+                scriptHeaderResolver.processScriptHierarchy(file.getScript(), fileScope);
             }
 
-            prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
+            prepareForDeferredCall(fileScope, fragmentDescriptor, file);
         }
 
         @Override
@@ -650,7 +648,6 @@ public class TypeHierarchyResolver {
                 @NotNull DeclarationDescriptor descriptorForDeferredResolve,
                 @NotNull JetDeclarationContainer container
         ) {
-            forDeferredResolve.add(container);
             context.normalScope.put(container, outerScope);
             context.forDeferredResolver.put(container, descriptorForDeferredResolve);
         }

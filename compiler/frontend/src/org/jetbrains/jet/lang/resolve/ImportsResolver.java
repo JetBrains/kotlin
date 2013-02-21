@@ -84,8 +84,8 @@ public class ImportsResolver {
     }
 
     private void processImports(@NotNull LookupMode lookupMode, @NotNull JetScope rootScope) {
-        for (JetFile file : context.getNamespaceDescriptors().keySet()) {
-            WritableScope namespaceScope = context.getNamespaceScopes().get(file);
+        for (JetFile file : context.getPackageFragmentDescriptors().keySet()) {
+            WritableScope namespaceScope = context.getFileScopes().get(file);
             processImportsInFile(lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives()), rootScope);
         }
         for (JetScript script : context.getScripts().keySet()) {

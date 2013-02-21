@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -40,7 +40,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
-    protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
+    protected final Map<JetFile, MutablePackageFragmentDescriptor> packageFragmentDescriptors = Maps.newHashMap();
     private List<MutableClassDescriptorLite> classesTopologicalOrder = null;
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
@@ -50,7 +50,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private Map<JetDeclaration, CallableMemberDescriptor> members = null;
 
     // File scopes - package scope extended with imports
-    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
+    protected final Map<JetFile, WritableScope> packageFragmentScopes = Maps.newHashMap();
 
     public final Map<JetDeclarationContainer, DeclarationDescriptor> forDeferredResolver = Maps.newHashMap();
 
@@ -113,17 +113,17 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         return objects;
     }
 
-    public Map<JetFile, WritableScope> getNamespaceScopes() {
-        return namespaceScopes;
+    public Map<JetFile, WritableScope> getFileScopes() {
+        return packageFragmentScopes;
     }
 
-    public Map<JetFile, NamespaceDescriptorImpl> getNamespaceDescriptors() {
-        return namespaceDescriptors;
+    public Map<JetFile, MutablePackageFragmentDescriptor> getPackageFragmentDescriptors() {
+        return packageFragmentDescriptors;
     }
 
     @Override
     public Collection<JetFile> getFiles() {
-        return namespaceDescriptors.keySet();
+        return packageFragmentDescriptors.keySet();
     }
 
     @Override
