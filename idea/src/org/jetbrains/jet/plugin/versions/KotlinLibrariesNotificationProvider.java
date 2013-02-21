@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.versions;
 
 import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -31,6 +30,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
@@ -45,6 +45,9 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.framework.JetJavaFrameworkSupportProvider;
+import org.jetbrains.jet.plugin.framework.JetJavaScriptFrameworkSupportProvider;
+import org.jetbrains.jet.plugin.framework.ui.AddSupportForSingleFrameworkDialogFixed;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,11 +125,22 @@ public class KotlinLibrariesNotificationProvider extends EditorNotifications.Pro
         EditorNotificationPanel answer = new EditorNotificationPanel();
 
         answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
-        answer.createActionLabel("Set up Kotlin framework", new Runnable() {
+        answer.createActionLabel("Set up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
             @Override
             public void run() {
-                // TODO: make choose only from Kotlin frameworks
-                AddFrameworkSupportDialog dialog = AddFrameworkSupportDialog.createDialog(module);
+                DialogWrapper dialog = AddSupportForSingleFrameworkDialogFixed.createDialog(
+                        module, new JetJavaFrameworkSupportProvider());
+                if (dialog != null) {
+                    dialog.show();
+                }
+            }
+        });
+
+        answer.createActionLabel("Set up module '" + module.getName() + "' as JavaScript Kotlin module", new Runnable() {
+            @Override
+            public void run() {
+                DialogWrapper dialog = AddSupportForSingleFrameworkDialogFixed.createDialog(
+                        module, new JetJavaScriptFrameworkSupportProvider());
                 if (dialog != null) {
                     dialog.show();
                 }
