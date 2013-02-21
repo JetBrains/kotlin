@@ -48,7 +48,9 @@ public class JetJavaFrameworkSupportProvider extends FrameworkSupportInModulePro
             @Nullable
             @Override
             public CustomLibraryDescription createLibraryDescription() {
-                return new JetJavaRuntimeLibraryDescription(panel);
+                JetJavaRuntimeLibraryDescription description = new JetJavaRuntimeLibraryDescription();
+                description.setFrameworkSourcePanel(getConfigurationPanel());
+                return description;
             }
 
             @Nullable
@@ -74,9 +76,8 @@ public class JetJavaFrameworkSupportProvider extends FrameworkSupportInModulePro
                     @NotNull ModifiableModelsProvider modifiableModelsProvider) {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
-                        JetJavaScriptLibraryDescription.KOTLIN_JAVASCRIPT_KIND,
-                        "Current module is already configured as JavaScript Kotlin module.\nDo you want to remove JavaScript support?",
-                        "Configure Kotlin Java Support");
+                        new JetJavaScriptLibraryDescription(),
+                        JavaScriptFrameworkType.getInstance());
             }
 
             private FrameworkSourcePanel getConfigurationPanel() {

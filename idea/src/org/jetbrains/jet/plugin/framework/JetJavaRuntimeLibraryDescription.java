@@ -44,9 +44,10 @@ public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
 
     private static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";
 
-    private final FrameworkSourcePanel frameworkSourcePanel;
+    @Nullable
+    private FrameworkSourcePanel frameworkSourcePanel;
 
-    public JetJavaRuntimeLibraryDescription(FrameworkSourcePanel frameworkSourcePanel) {
+    public void setFrameworkSourcePanel(@Nullable FrameworkSourcePanel frameworkSourcePanel) {
         this.frameworkSourcePanel = frameworkSourcePanel;
     }
 
@@ -59,7 +60,7 @@ public class JetJavaRuntimeLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        if (frameworkSourcePanel.isConfigureFromBundled()) {
+        if (frameworkSourcePanel == null || frameworkSourcePanel.isConfigureFromBundled()) {
             return createFromPlugin(parentComponent, contextDirectory);
         }
         else {

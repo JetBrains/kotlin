@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.plugin.framework;
 
+import com.intellij.framework.FrameworkType;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryKind;
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class FrameworksCompatibilityUtils {
     private FrameworksCompatibilityUtils() {
@@ -36,24 +39,30 @@ public class FrameworksCompatibilityUtils {
 
     public static void suggestRemoveIncompatibleFramework(
             @NotNull ModifiableRootModel rootModel,
-            @NotNull LibraryKind kind,
-            String message,
-            String title
+            @NotNull CustomLibraryDescription libraryDescription,
+            @NotNull FrameworkType frameworkType
     ) {
         List<OrderEntry> existingEntries = new ArrayList<OrderEntry>();
+        Set<? extends LibraryKind> kinds = libraryDescription.getSuitableLibraryKinds();
 
         for (OrderEntry entry : rootModel.getOrderEntries()) {
             if (!(entry instanceof LibraryOrderEntry)) continue;
             final Library library = ((LibraryOrderEntry)entry).getLibrary();
             if (library == null) continue;
 
-            if (LibraryPresentationManager.getInstance().isLibraryOfKind(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), kind)) {
-                existingEntries.add(entry);
+            for (LibraryKind kind : kinds) {
+                if (LibraryPresentationManager.getInstance().isLibraryOfKind(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), kind)) {
+                    existingEntries.add(entry);
+                }
             }
         }
 
         if (!existingEntries.isEmpty()) {
-            int result = Messages.showYesNoDialog(message, title, Messages.getWarningIcon());
+            int result = Messages.showYesNoDialog(
+                    String.format("Current module is already configured with '%s' framework.\nDo you want to remove it?", frameworkType.getPresentableName()),
+                    "Framework Conflict",
+                    Messages.getWarningIcon());
+
 
             if (result == 0) {
                 for (OrderEntry entry : existingEntries) {

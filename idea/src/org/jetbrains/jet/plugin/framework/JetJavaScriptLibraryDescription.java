@@ -42,9 +42,10 @@ public class JetJavaScriptLibraryDescription extends CustomLibraryDescription {
 
     private static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
 
-    private final FrameworkSourcePanel configurationPanel;
+    @Nullable
+    private FrameworkSourcePanel configurationPanel;
 
-    public JetJavaScriptLibraryDescription(FrameworkSourcePanel configurationPanel) {
+    public void setConfigurationPanel(@Nullable FrameworkSourcePanel configurationPanel) {
         this.configurationPanel = configurationPanel;
     }
 
@@ -57,7 +58,7 @@ public class JetJavaScriptLibraryDescription extends CustomLibraryDescription {
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        if (configurationPanel.isConfigureFromBundled()) {
+        if (configurationPanel == null || configurationPanel.isConfigureFromBundled()) {
             return createFromPlugin(parentComponent, contextDirectory);
         }
         else {
