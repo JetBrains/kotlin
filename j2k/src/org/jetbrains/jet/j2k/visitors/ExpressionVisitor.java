@@ -368,6 +368,9 @@ public class ExpressionVisitor extends StatementVisitor {
 
     private static boolean isResolvedToNotNull(PsiReference expression) {
         PsiElement target = expression.resolve();
+        if (target instanceof PsiEnumConstant) {
+            return true;
+        }
         if (target instanceof PsiModifierListOwner) {
             return ConverterUtil.isAnnotatedAsNotNull(((PsiModifierListOwner) target).getModifierList());
         }
