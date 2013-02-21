@@ -246,18 +246,7 @@ public class BodyResolver {
                 if (classDescriptor == null) return;
                 if (descriptor.getKind() != ClassKind.TRAIT && !classDescriptor.getConstructors().isEmpty() &&
                     !ErrorUtils.isError(classDescriptor.getTypeConstructor()) && classDescriptor.getKind() != ClassKind.TRAIT) {
-                    boolean hasConstructorWithoutParams = false;
-                    for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
-                        if (constructor.getValueParameters().isEmpty()) {
-                            hasConstructorWithoutParams = true;
-                        }
-                    }
-                    if (!hasConstructorWithoutParams) {
-                        trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
-                    }
-                    else {
-                        trace.report(SUPERTYPE_NOT_INITIALIZED_DEFAULT.on(specifier));
-                    }
+                    trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
                 }
             }
 

@@ -129,7 +129,6 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> CYCLIC_INHERITANCE_HIERARCHY = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED_DEFAULT = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetTypeReference> DELEGATION_NOT_TO_TRAIT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = DiagnosticFactory0.create(ERROR);
